@@ -528,6 +528,15 @@ body.glow-off .cele .spk{display:none}
 .btn.reclive{animation:reclive 1.1s ease-in-out infinite}
 @keyframes reclive{0%,100%{filter:brightness(1)}50%{filter:brightness(1.22)}}
 @media (prefers-reduced-motion:reduce){ body:not(.glow-force) .btn.reclive{animation:none} }
+/* ===== أقسام قابلة للطيّ ===== */
+.foldh{display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;
+  border:2px solid var(--pb);background:var(--pnl);color:var(--ttl);border-radius:14px;
+  padding:12px 14px;margin:14px 0 0;font-family:inherit;font-size:15.5px;font-weight:900;
+  cursor:pointer;touch-action:manipulation;text-align:right;transition:.12s}
+.foldh:active{transform:translateY(2px)}
+.foldh.open{border-color:var(--gold)}
+.foldh .fi{flex:0 0 auto;font-size:13px;opacity:.75}
+.foldb{padding-top:10px}
 /* ===== سطر «بقي لك ... لختم القرآن» ===== */
 /* صار سطراً داخل بطاقة الترحيب */
 .khatma{display:block;width:100%;text-align:start;background:none;border:0;padding:0;
@@ -4886,19 +4895,20 @@ function fillBqnSelect(){
 }
 function bqnOnbHTML(){
   var id=planId(), p=planStore(), h='';
-  h+='<div class="lbl steplb" style="margin-top:22px">📅 خطط «بالقرآن نحيا»</div>'+
-     '<div class="note" style="margin-bottom:10px">جداول حفظ ومراجعة يومية جاهزة من <b>'+esc(BQN_SRC_T)+'</b><br>'+
-     esc(BQN_SRC_S)+' — تُغنيك عن اختيار الحجم أعلاه.</div>'+
+  var body2='<div class="note" style="margin-bottom:10px">جداول حفظ ومراجعة يومية جاهزة من <b>'+
+     esc(BQN_SRC_T)+'</b><br>'+esc(BQN_SRC_S)+' — تُغنيك عن اختيار الحجم أعلاه.</div>'+
      '<div class="onbopts" id="onbBqnList">';
+  var h2=body2;
   for(var i=0;i<BQN_PLANS.length;i++){
     var pl=BQN_PLANS[i], on=(id===pl.id), st=p.plans[pl.id], day=(st&&st.day)||0;
     if(pl.hide && !on) continue;          /* مخفيّة مؤقّتاً */
-    h+='<button type="button" class="onbopt'+(on?' sel':'')+'" data-obqn="'+pl.id+'">'+
+    h2+='<button type="button" class="onbopt'+(on?' sel':'')+'" data-obqn="'+pl.id+'">'+
        '<span class="oe">📅</span><span class="ot"><b>'+esc(pl.t)+'</b><i>'+esc(pl.sub)+
        ' • '+arNum(pl.n)+' يوماً • من '+esc(pl.from)+
        (day?(' • وقفتَ عند اليوم '+arNum(Math.min(day+1,pl.n))):'')+'</i></span></button>';
   }
-  h+='</div>';
+  h2+='</div>';
+  h+=foldHTML('fOBqn','📅 خطط «بالقرآن نحيا»',id!=='self',h2);
   /* القسم الثالث إجباريّ: إمّا أن يسجّل حفظه، وإمّا أن يبدأ من جديد */
   var pm=curP().priorMode||'';
   h+='<div class="lbl steplb" style="margin-top:22px">📌 وأين أنت من الحفظ الآن؟ <b style="color:var(--gold)">(لازم)</b></div>'+
@@ -4915,6 +4925,7 @@ function bqnOnbHTML(){
   return h;
 }
 function bqnOnbWire(){
+  try{ foldBind($('onbBody')); }catch(e){}
   try{ priorPanelWire('pO',function(){ onbGate(); }); }catch(e){}
   var mb=$('onbPMode');
   if(mb){
@@ -5125,36 +5136,68 @@ function renderKhatma(){
   el.onclick=function(){ openBqn(); };
 }
 
+/* ---------- أقسام قابلة للطيّ ---------- */
+function foldHTML(id,title,open,body){
+  return '<button type="button" class="foldh'+(open?' open':'')+'" data-fold="'+id+'">'+
+           '<span>'+title+'</span><span class="fi">'+(open?'▴ اطوِ':'▾ افتح')+'</span></button>'+
+         '<div class="foldb" id="fold_'+id+'"'+(open?'':' hidden')+'>'+body+'</div>';
+}
+function foldBind(root){
+  if(!root) return;
+  var hs=root.querySelectorAll('[data-fold]'), i;
+  for(i=0;i<hs.length;i++) hs[i].onclick=function(){
+    var b=$('fold_'+this.getAttribute('data-fold'));
+    if(!b) return;
+    b.hidden=!b.hidden;
+    this.className='foldh'+(b.hidden?'':' open');
+    this.querySelector('.fi').textContent=b.hidden?'▾ افتح':'▴ اطوِ';
+  };
+}
+/* طيُّ عنصرٍ موجودٍ في الصفحة دون إعادة بنائه، فتبقى معالجاته */
+function foldWrap(el,id,title,open){
+  if(!el||!el.parentNode) return;
+  var pnt=el.parentNode;
+  var head=document.createElement('button');
+  head.type='button'; head.className='foldh'+(open?' open':'');
+  head.setAttribute('data-fold',id);
+  head.innerHTML='<span>'+title+'</span><span class="fi">'+(open?'▴ اطوِ':'▾ افتح')+'</span>';
+  var body=document.createElement('div');
+  body.className='foldb'; body.id='fold_'+id; body.hidden=!open;
+  pnt.insertBefore(head,el); pnt.insertBefore(body,el); body.appendChild(el);
+  foldBind(pnt);
+}
 /* ---------- شاشة اختيار خطة الحفظ: مسارك الخاص أو خطة جاهزة ---------- */
 var SELF_SIZES=[['q','🌱','ربع صفحة'],['h','🌿','نصف صفحة'],['p','🌳','صفحة كاملة (وجه)'],
                 ['3','3️⃣','ثلاث آيات'],['4','4️⃣','أربع آيات'],['5','5️⃣','خمس آيات'],['8','8️⃣','ثماني آيات']];
 function renderBqnList(){
-  var p=planStore(), id=p.planId, m=segMode(), h='';
-  h+='<div class="lbl steplb">🧭 مسارك الخاص — تسير على وتيرتك</div>'+
-     '<div class="note" style="margin-bottom:10px">تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة.</div>';
+  var p=planStore(), id=p.planId, m=segMode(), h='', selfBody='', bqnBody='';
+  selfBody+='<div class="note" style="margin-bottom:10px">تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة.</div>';
   SELF_SIZES.forEach(function(z){
     var on=(id==='self' && m===z[0]), dn=doneSegsCountFor(z[0]), tot=khatmaSegs(z[0]);
-    h+='<button type="button" class="btn '+(on?'green':'blue')+' big" data-self="'+z[0]+'" '+
+    selfBody+='<button type="button" class="btn '+(on?'green':'blue')+' big" data-self="'+z[0]+'" '+
        'style="flex-direction:column;gap:5px;align-items:center">'+
        '<span>'+(on?'✅ ':z[1]+' ')+esc(z[2])+'</span>'+
        '<small style="font-weight:800;opacity:.92;font-size:13px">'+esc(khatmaLabel(z[0]))+
        (dn?(' • أتممت '+arNum(dn)+' من '+arNum(tot)+' مقطعاً'):'')+'</small></button>';
   });
-  h+='<div class="lbl steplb" style="margin-top:22px">📅 خطط «بالقرآن نحيا» — مقرَّر يومي جاهز</div>'+
-     '<div class="revsum" style="margin:0 0 12px">منقولة عن <b>'+esc(BQN_SRC_T)+'</b><br>'+
+  bqnBody+='<div class="revsum" style="margin:0 0 12px">منقولة عن <b>'+esc(BQN_SRC_T)+'</b><br>'+
      '<small style="font-weight:700;opacity:.85">'+esc(BQN_SRC_S)+'</small></div>';
   for(var i=0;i<BQN_PLANS.length;i++){
     var pl=BQN_PLANS[i], on=(id===pl.id), st=p.plans[pl.id];
     if(pl.hide && !on) continue;          /* مخفيّة مؤقّتاً — تظهر لمن اعتمدها */
     var day=(st&&st.day)||0;
-    h+='<button type="button" class="btn '+(on?'green':'blue')+' big" data-bqn="'+pl.id+'" '+
+    bqnBody+='<button type="button" class="btn '+(on?'green':'blue')+' big" data-bqn="'+pl.id+'" '+
        'style="flex-direction:column;gap:5px;align-items:center">'+
        '<span>'+(on?'✅ ':'')+esc(pl.t)+'</span>'+
        '<small style="font-weight:800;opacity:.92;font-size:13px">'+esc(pl.sub)+
        ' • '+arNum(pl.n)+' يوماً • يبدأ من '+esc(pl.from)+
        (day?(' • وقفتَ عند اليوم '+arNum(Math.min(day+1,pl.n))):'')+'</small></button>';
   }
+  var onSelf=(id==='self');
+  h = foldHTML('fSelf','🧭 خطط تطبيق «نور الوحي» — على وتيرتك',onSelf,selfBody)+
+      foldHTML('fBqn','📅 خطط «بالقرآن نحيا» — مقرَّر يومي جاهز',!onSelf,bqnBody);
   $('bqnList').innerHTML=h;
+  foldBind($('bqnList'));
   var pick=function(el){
     var sid=el.getAttribute('data-self');
     if(sid){ SET.segMode=sid; setPlan('self'); ensureAllSchedules(); saveDB(); }
@@ -5669,9 +5712,10 @@ function onbShow(i){
     '<div class="note">التقدير بمقطع واحد كل يوم، وهو للمصحف كاملاً — ولك أن تبدأ بجزء عمّ وحده.<br>'+
     'ولا تُقسَّم السورة القصيرة أبداً مهما كان الحجم: الناس والإخلاص وأمثالها مقطع واحد.</div>'+
     bqnOnbHTML());
-    B.insertAdjacentHTML('afterbegin',
-      '<div class="lbl steplb" style="margin-top:0">🌙 خطط تطبيق «نور الوحي» للحفظ</div>'+
-      '<div class="note" style="margin-bottom:10px">تسير على وتيرتك: تختار حجم المقطع وتحفظ متى شئت.</div>');
+    try{
+      foldWrap(B.querySelector('.onbopts'),'fOSelf',
+        '🌙 خطط تطبيق «نور الوحي» — على وتيرتك', !onPlan());
+    }catch(e){}
     bqnOnbWire();
     onbGate();
   }
