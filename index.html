@@ -241,6 +241,11 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .card.bare .fb{color:#eaf3fd}
 .card.bare .fb.good{color:#7ef0b0}
 .card.bare .fb.bad{color:#ff9a9a}
+/* في الوضع النهاريّ الخلفية فاتحة، فنُغمّق ألوان سطر النتيجة ليظهر بوضوح */
+body.light .card.bare .fb{color:var(--on2)}
+body.light .card.bare .fb.good{color:#0b6b39}
+body.light .card.bare .fb.bad{color:#a81f1f}
+body.light .card.bare .diffline{color:var(--on2)}
 .card.bare .ayahbox{background:#f6fbff;border-color:#5f9fd8}
 .card.bare .diffline{color:#eaf3fd}
 .card.bare #reciteInput{background:#fff}
