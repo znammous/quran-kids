@@ -5172,28 +5172,30 @@ var SELF_SIZES=[['q','🌱','ربع صفحة'],['h','🌿','نصف صفحة'],['
                 ['3','3️⃣','ثلاث آيات'],['4','4️⃣','أربع آيات'],['5','5️⃣','خمس آيات'],['8','8️⃣','ثماني آيات']];
 function renderBqnList(){
   var p=planStore(), id=p.planId, m=segMode(), h='', selfBody='', bqnBody='';
-  selfBody+='<div class="note" style="margin-bottom:10px">تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة.</div>';
+  selfBody+='<div class="note" style="margin-bottom:10px">تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة.</div>'+
+     '<div class="onbopts">';
   SELF_SIZES.forEach(function(z){
     var on=(id==='self' && m===z[0]), dn=doneSegsCountFor(z[0]), tot=khatmaSegs(z[0]);
-    selfBody+='<button type="button" class="btn '+(on?'green':'blue')+' big" data-self="'+z[0]+'" '+
-       'style="flex-direction:column;gap:5px;align-items:center">'+
-       '<span>'+(on?'✅ ':z[1]+' ')+esc(z[2])+'</span>'+
-       '<small style="font-weight:800;opacity:.92;font-size:13px">'+esc(khatmaLabel(z[0]))+
-       (dn?(' • أتممت '+arNum(dn)+' من '+arNum(tot)+' مقطعاً'):'')+'</small></button>';
+    selfBody+='<button type="button" class="onbopt'+(on?' sel':'')+'" data-self="'+z[0]+'">'+
+       '<span class="oe">'+(on?'✅':z[1])+'</span>'+
+       '<span class="ot"><b>'+esc(z[2])+'</b><i>'+esc(khatmaLabel(z[0]))+
+       (dn?(' • أتممت '+arNum(dn)+' من '+arNum(tot)+' مقطعاً'):'')+'</i></span></button>';
   });
+  selfBody+='</div>';
   bqnBody+='<div class="revsum" style="margin:0 0 12px">منقولة عن <b>'+esc(BQN_SRC_T)+'</b><br>'+
-     '<small style="font-weight:700;opacity:.85">'+esc(BQN_SRC_S)+'</small></div>';
+     '<small style="font-weight:700;opacity:.85">'+esc(BQN_SRC_S)+'</small></div>'+
+     '<div class="onbopts">';
   for(var i=0;i<BQN_PLANS.length;i++){
     var pl=BQN_PLANS[i], on=(id===pl.id), st=p.plans[pl.id];
     if(pl.hide && !on) continue;          /* مخفيّة مؤقّتاً — تظهر لمن اعتمدها */
     var day=(st&&st.day)||0;
-    bqnBody+='<button type="button" class="btn '+(on?'green':'blue')+' big" data-bqn="'+pl.id+'" '+
-       'style="flex-direction:column;gap:5px;align-items:center">'+
-       '<span>'+(on?'✅ ':'')+esc(pl.t)+'</span>'+
-       '<small style="font-weight:800;opacity:.92;font-size:13px">'+esc(pl.sub)+
-       ' • '+arNum(pl.n)+' يوماً • يبدأ من '+esc(pl.from)+
-       (day?(' • وقفتَ عند اليوم '+arNum(Math.min(day+1,pl.n))):'')+'</small></button>';
+    bqnBody+='<button type="button" class="onbopt'+(on?' sel':'')+'" data-bqn="'+pl.id+'">'+
+       '<span class="oe">'+(on?'✅':'📅')+'</span>'+
+       '<span class="ot"><b>'+esc(pl.t)+'</b><i>'+esc(pl.sub)+
+       ' • '+arNum(pl.n)+' يوماً • من '+esc(pl.from)+
+       (day?(' • وقفتَ عند اليوم '+arNum(Math.min(day+1,pl.n))):'')+'</i></span></button>';
   }
+  bqnBody+='</div>';
   var onSelf=(id==='self'), pn=onSelf?null:bqnPlan(id);
   h = foldHTML('fSelf','🧭 خطط تطبيق «نور الوحي»'+(onSelf?(' — ✅ '+esc(segModeName())):''),false,selfBody)+
       foldHTML('fBqn','📅 خطط «بالقرآن نحيا»'+(pn?(' — ✅ '+esc(pn.t)):''),false,bqnBody);
