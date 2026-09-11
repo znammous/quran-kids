@@ -4908,7 +4908,8 @@ function bqnOnbHTML(){
        (day?(' • وقفتَ عند اليوم '+arNum(Math.min(day+1,pl.n))):'')+'</i></span></button>';
   }
   h2+='</div>';
-  h+=foldHTML('fOBqn','📅 خطط «بالقرآن نحيا»',id!=='self',h2);
+  var pn2=(id!=='self')?bqnPlan(id):null;
+  h+=foldHTML('fOBqn','📅 خطط «بالقرآن نحيا»'+(pn2?(' — ✅ '+esc(pn2.t)):''),false,h2);
   /* القسم الثالث إجباريّ: إمّا أن يسجّل حفظه، وإمّا أن يبدأ من جديد */
   var pm=curP().priorMode||'';
   h+='<div class="lbl steplb" style="margin-top:22px">📌 وأين أنت من الحفظ الآن؟ <b style="color:var(--gold)">(لازم)</b></div>'+
@@ -5193,9 +5194,9 @@ function renderBqnList(){
        ' • '+arNum(pl.n)+' يوماً • يبدأ من '+esc(pl.from)+
        (day?(' • وقفتَ عند اليوم '+arNum(Math.min(day+1,pl.n))):'')+'</small></button>';
   }
-  var onSelf=(id==='self');
-  h = foldHTML('fSelf','🧭 خطط تطبيق «نور الوحي» — على وتيرتك',onSelf,selfBody)+
-      foldHTML('fBqn','📅 خطط «بالقرآن نحيا» — مقرَّر يومي جاهز',!onSelf,bqnBody);
+  var onSelf=(id==='self'), pn=onSelf?null:bqnPlan(id);
+  h = foldHTML('fSelf','🧭 خطط تطبيق «نور الوحي»'+(onSelf?(' — ✅ '+esc(segModeName())):''),false,selfBody)+
+      foldHTML('fBqn','📅 خطط «بالقرآن نحيا»'+(pn?(' — ✅ '+esc(pn.t)):''),false,bqnBody);
   $('bqnList').innerHTML=h;
   foldBind($('bqnList'));
   var pick=function(el){
@@ -5714,7 +5715,7 @@ function onbShow(i){
     bqnOnbHTML());
     try{
       foldWrap(B.querySelector('.onbopts'),'fOSelf',
-        '🌙 خطط تطبيق «نور الوحي» — على وتيرتك', !onPlan());
+        '🌙 خطط تطبيق «نور الوحي»'+(onPlan()?'':(' — ✅ '+esc(segModeName()))), false);
     }catch(e){}
     bqnOnbWire();
     onbGate();
