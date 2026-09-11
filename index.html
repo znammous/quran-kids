@@ -244,14 +244,16 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 @font-face{font-family:'SuraNames';src:url(fonts/sura_names.woff2) format('woff2');font-display:swap}
 @font-face{font-family:'UthmanicHafs';src:url(fonts/UthmanicHafs.woff2) format('woff2');font-display:swap}
 .mushaf{font-family:"UthmanicHafs","Amiri Quran","Traditional Arabic",serif;direction:rtl;color:#8792a5;
-  line-height:2.15;width:100%}
-.mline{display:flex;align-items:baseline;min-height:1.9em;padding:1px 0}
+  line-height:1.9;width:100%}
+.mline{display:flex;align-items:baseline;min-height:1.7em;padding:1px 0}
 .mline .mtxt{flex:1;display:flex;flex-wrap:wrap;align-items:baseline;gap:0 .34em;justify-content:center}
 .mw{white-space:nowrap;transition:color .18s ease}
 .mw.hl{color:#0f2d52}
 .mline.hasHl{background:linear-gradient(90deg,rgba(255,214,102,.22),rgba(255,214,102,.06));border-radius:8px}
 /* وضع خطّ الصفحة: كل كلمة محرفٌ مرسوم كما ركّبه الخطّاط — فلا مسافات ولا تمطيط */
-.mushaf.qcf{line-height:2.0;color:#9aa4b4}
+/* نسب المصحف: التباعد الرأسي قريب من مقاس الحرف، فتسع الصفحة خمسة عشر سطراً */
+.mushaf.qcf{line-height:1.25;color:#9aa4b4}
+.mushaf.qcf .mline{min-height:1.25em;padding:0}
 .mushaf.qcf .mline{justify-content:center}
 .mushaf.qcf .mtxt{flex:0 0 auto;flex-wrap:nowrap;gap:0;white-space:nowrap}
 .mushaf.qcf .mw.hl{color:#0b2547}
@@ -260,7 +262,7 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
   border:0;border-radius:0;padding:0;margin:0;vertical-align:baseline}
 .mushaf.qcf .manum.hl{color:#0b2547}
 /* عنوان السورة: لوحة مزخرفة من خط أسماء السور */
-.msura{flex:1;text-align:center;font-family:"SuraNames",serif;font-size:1.6em;line-height:1.2;color:#4e7a55}
+.msura{flex:1;text-align:center;font-family:"SuraNames",serif;font-size:1.35em;line-height:1.35;color:#4e7a55}
 .mbas{flex:1;text-align:center;font-family:"UthmanicHafs","Amiri Quran",serif;color:#8792a5;font-size:.86em}
 .mblank{flex:1}
 /* دائرة رقم الآية — للعرض البديل قبل وصول خطّ الصفحة */
