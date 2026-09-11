@@ -246,7 +246,7 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 /* خطّا المصحف المساعدان: أسماء السور المزخرفة، ورسم عثمان طه للبسملة والعرض البديل */
 @font-face{font-family:'SuraNames';src:url(fonts/sura_names.woff2) format('woff2');font-display:swap}
 @font-face{font-family:'UthmanicHafs';src:url(fonts/UthmanicHafs.woff2) format('woff2');font-display:swap}
-.mushaf{font-family:"UthmanicHafs","Amiri Quran","Traditional Arabic",serif;direction:rtl;color:#8792a5;
+.mushaf{font-family:"UthmanicHafs","Amiri Quran","Traditional Arabic",serif;direction:rtl;color:#4c5668;
   line-height:1.9;width:100%}
 .mline{display:flex;align-items:baseline;min-height:1.7em;padding:1px 0}
 .mline .mtxt{flex:1;display:flex;flex-wrap:wrap;align-items:baseline;gap:0 .34em;justify-content:center}
@@ -255,18 +255,19 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mline.hasHl{background:linear-gradient(90deg,rgba(255,214,102,.22),rgba(255,214,102,.06));border-radius:8px}
 /* وضع خطّ الصفحة: كل كلمة محرفٌ مرسوم كما ركّبه الخطّاط — فلا مسافات ولا تمطيط */
 /* نسب المصحف: التباعد الرأسي قريب من مقاس الحرف، فتسع الصفحة خمسة عشر سطراً */
-.mushaf.qcf{line-height:1.25;color:#9aa4b4}
-.mushaf.qcf .mline{min-height:1.25em;padding:0}
+.mushaf.qcf{line-height:1;color:#3f4a5d}
+/* ارتفاع السطر يحسبه mushafFit من ارتفاع الشاشة، و1.25em قيمة احتياطية */
+.mushaf.qcf .mline{height:var(--mlh,1.25em);min-height:0;padding:0;align-items:center}
 .mushaf.qcf .mline{justify-content:center}
 .mushaf.qcf .mtxt{flex:0 0 auto;flex-wrap:nowrap;gap:0;white-space:nowrap}
-.mushaf.qcf .mw.hl{color:#0b2547}
+.mushaf.qcf .mw.hl{color:#07162b}
 /* رقم الآية في وضع الخطّ محرفٌ مزخرف من الخط نفسه، فتُلغى دائرة الوضع البديل */
 .mushaf.qcf .manum{font-family:inherit;font-size:inherit;font-weight:inherit;color:inherit;
   border:0;border-radius:0;padding:0;margin:0;vertical-align:baseline}
-.mushaf.qcf .manum.hl{color:#0b2547}
+.mushaf.qcf .manum.hl{color:#07162b}
 /* عنوان السورة: لوحة مزخرفة من خط أسماء السور */
-.msura{flex:1;text-align:center;font-family:"SuraNames",serif;font-size:1.35em;line-height:1.35;color:#4e7a55}
-.mbas{flex:1;text-align:center;font-family:"UthmanicHafs","Amiri Quran",serif;color:#8792a5;font-size:.86em}
+.msura{flex:1;text-align:center;font-family:"SuraNames",serif;font-size:1.35em;line-height:1.35;color:#2d6a4a}
+.mbas{flex:1;text-align:center;font-family:"UthmanicHafs","Amiri Quran",serif;color:#5b6678;font-size:.86em}
 .mblank{flex:1}
 /* دائرة رقم الآية — للعرض البديل قبل وصول خطّ الصفحة */
 .manum{font-family:"IBM Plex Sans Arabic","Segoe UI",sans-serif;font-size:.42em;font-weight:800;
@@ -1624,16 +1625,29 @@ function mushafOpen(s, ai){
     mushafScroll(box);
   })['catch'](function(){});                     /* تعذّر الخطّ: يبقى العرض النصّيّ */
 }
-/* أسطر المصحف كلها بعرض واحد، فنقيس أعرضها ونضبط المقاس مرّة ليملأ الإطار تماماً */
+/* المقاس من العرض، فمحارف الصفحة مركّبة على عرض سطرها ولا يصحّ العبث به.
+   والتباعد من ارتفاع الشاشة، ليقع الوجه كلّه أمام الطفل كما يقع في المصحف —
+   بحدّين: أدنى لئلّا تتلاصق علامات الضبط، وأقصى لئلّا تتبعثر على شاشة طويلة. */
 function mushafFit(box){
-  var m=box.querySelector('.mushaf'); if(!m) return;
+  var m=box.querySelector('.mushaf.qcf'); if(!m) return;
   var rows=m.querySelectorAll('.mtxt'), w=0, i;
   for(i=0;i<rows.length;i++) w=Math.max(w, rows[i].getBoundingClientRect().width);
-  var avail=m.clientWidth;
-  if(!w || !avail) return;
+  var availW=m.clientWidth;
+  if(!w || !availW) return;
   var cur=parseFloat(getComputedStyle(m).fontSize)||20;
-  m.style.fontSize=Math.max(11, Math.min(64, cur*(avail/w)*0.99))+'px';
+  var fs=Math.max(11, Math.min(64, cur*(availW/w)*0.99));
+  m.style.fontSize=fs+'px';
+  var cs=getComputedStyle(box);
+  var availH=box.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0);
+  var lh=availH/15;                                  /* الوجه خمسة عشر سطراً دائماً */
+  lh=Math.max(fs*1.12, Math.min(fs*1.9, lh));
+  m.style.setProperty('--mlh', lh+'px');
 }
+/* دوران الجهاز أو تغيّر الشاشة يعيد الضبط ما دام الوجه مفتوحاً */
+window.addEventListener('resize', function(){
+  var sh=$('mfSheet');
+  if(sh && !sh.hidden) mushafFit($('mfBody'));
+});
 function mushafClose(){ if($('mfSheet')) $('mfSheet').hidden=true; }
 
 /* الآية المضاءة إلى وسط الإطار، فلا يبحث عنها الطفل */
