@@ -240,7 +240,10 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
   background:#fdf6e4;border-bottom:2px solid #e8dcc0}
 /* في وضع التحديد: رأسٌ بلون التطبيق، ولا سطرَ إرشادٍ زائد */
 .mfsheet.picking .mfhead{background:linear-gradient(180deg,#0c2e5c,#08203f);border-bottom-color:#17457f}
-.mfsheet.picking .mftitle{color:#e9f4ff;font-size:15px;text-align:center}
+.mfsheet.picking .mftitle{color:#e9f4ff;font-size:15px;text-align:center;font-weight:900;
+  white-space:normal;line-height:1.8}
+.mfsheet.picking .mftitle b{display:inline-block;background:linear-gradient(180deg,#ffd75e,#eab308);
+  color:#4a3600;border-radius:99px;padding:2px 10px;margin-inline-end:7px;font-size:14px}
 .mfsheet.picking .mfhint{display:none}
 .mfsheet.picking .mfidx{background:#0a2748;border-bottom-color:#17457f}
 .mfsheet.picking .mfidx select,.mfsheet.picking .mfidx input{color:#e9f4ff;background:#0f3a6b;border-color:#2a6ab5}
@@ -1827,9 +1830,11 @@ function mfPickDraw(){
   if(!MF_PICK) return;
   var P=MF_PICK.page, pcs=pagePieces(P), nm=pcs.length?pcs[0].s.name:'';
   var head=(MF_PICK.stage==='from')
-    ? '① اضغط على بداية النطاق'
-    : '② والآن اضغط على نهايته';
-  mushafOpenPage(P, -1, head+' — صفحة '+arNum(P)+(nm?(' • '+nm):''));
+    ? '<b>١</b> اضغط على بداية النطاق'
+    : '<b>٢</b> والآن اضغط على نهايته';
+  mushafOpenPage(P, -1, '');
+  $('mfTitle').innerHTML=head+' <span style="opacity:.65;font-weight:700">— صفحة '+
+    arNum(P)+(nm?(' • '+esc(nm)):'')+'</span>';
   var a=$('mfPrev'), b=$('mfNext');
   if(a){ a.hidden=false; a.disabled=(P<=1); }
   if(b){ b.hidden=false; b.disabled=(P>=604); }
@@ -1883,7 +1888,10 @@ function mfPickAt(t){
       if(MF_PICK.stage==='from'){
         MF_PICK.fromS=sn; MF_PICK.fromA=an; MF_PICK.stage='to';
         mfPickDraw();                     /* يبقى في الصفحة نفسها غالباً */
-        try{ navToast('② والآن اضغط على نهاية النطاق'); }catch(e){}
+        MF_PICK.busy=true;                /* لا يلتقط شيئاً حتى يقرأ ويقرّ */
+        uiBox('✅ ضُبطت البداية عند '+(sx?sx.name:'')+' — الآية '+arNum(an)+'.\n\n'+
+              'والآن اضغط على الكلمة التي تنتهي عندها مراجعتُك.',
+          '②','✅ فهمت، أُحدّد النهاية',null,function(){ if(MF_PICK) MF_PICK.busy=false; });
         return;
       }
       var f=MF_PICK, fn=f.done;
