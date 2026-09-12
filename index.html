@@ -669,7 +669,16 @@ body.glow-off .cele .spk{display:none}
   border-radius:50%;background:linear-gradient(180deg,#fff6d8,#ffd75e);border:2px solid #a1791a;
   font-size:18px;box-shadow:0 4px 10px rgba(0,0,0,.28)}
 /* زرّ الوضع في صفّ اللاعبين: مربّع بحجم الشريحة نفسها */
-.pchip.themechip{padding-inline:14px;font-size:20px;line-height:1}
+/* مفتاحُ الوضع: في ركن العنوان لا في صفّ اللاعبين — فليس لاعباً يُختار.
+   والركنُ الأيمن هو مبدأُ السطر في العربيّة، فتقع العينُ عليه أوّلاً. */
+.htop{position:relative}
+.htop h1{margin-inline:42px}                 /* فسحةٌ للمفتاح فلا يركب العنوانَ الطويل */
+.themebtn{position:absolute;top:50%;right:0;transform:translateY(-50%);
+  width:42px;height:42px;padding:0;border-radius:50%;line-height:1;font-size:21px;
+  border:2px solid var(--pb);background:var(--pnl);cursor:pointer;
+  font-family:inherit;box-shadow:0 3px 0 rgba(0,0,0,.18);
+  display:flex;align-items:center;justify-content:center;transition:.12s}
+.themebtn:active{transform:translateY(-50%) scale(.92);box-shadow:0 1px 0 rgba(0,0,0,.18)}
 
 /* ===== شريط الحالة (المواظبة، الجواهر، الهدف) ===== */
 /* شريط الحالة: سطر واحد، والشرح عند الضغط */
@@ -895,7 +904,7 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
    الألوانُ صُلبةٌ لا متدرّجةٌ بمعرّفات، فلا تتصادم معرّفاتُ SVG في صفحةٍ واحدة. */
 /* لا إطارَ له ولا صندوق: يقف وحدَه كبصمةِ شاشةِ القفل — هالتان تتّسعان
    من تحته وشعلةٌ تطفو فوقهما، فيُعرف أنّه بابٌ من نوعٍ آخر. */
-.examfp{display:flex;flex-direction:column;align-items:center;gap:2px;
+.examfp{display:flex;align-items:center;justify-content:center;
   width:100%;background:none;border:0;padding:6px 0 2px;margin:4px 0 16px;
   cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent}
 .fpwrap{position:relative;display:flex;align-items:center;justify-content:center;
@@ -911,9 +920,25 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
   22%{opacity:.9}
   100%{transform:scale(1.1);opacity:0}
 }
-.fplbl{font-size:16.5px;font-weight:900;color:var(--ttl);letter-spacing:.3px;
-  text-shadow:0 0 14px rgba(126,224,255,.55)}
-body.light .fplbl{color:#07314f;text-shadow:0 1px 0 rgba(255,255,255,.8)}
+/* الكلمةُ في قلب الدائرة تتعاقب مع الشعلة: تخبو الشعلةُ فتظهر الكلمة،
+   ثمّ تعود. دورةٌ واحدةٌ تجمعهما فلا يزدحمان على العين. */
+.fplbl{position:absolute;inset:0;z-index:2;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17.5px;font-weight:900;color:var(--ttl);letter-spacing:.3px;
+  text-shadow:0 0 16px rgba(126,224,255,.7), 0 1px 2px rgba(0,0,0,.35);
+  animation:fpword 4.4s ease-in-out infinite}
+@keyframes fpword{
+  0%,34%{opacity:0;transform:scale(.86)}
+  48%,86%{opacity:1;transform:scale(1)}
+  100%{opacity:0;transform:scale(.86)}
+}
+@keyframes fpdim{
+  0%,34%{opacity:1}
+  50%,86%{opacity:.16}
+  100%{opacity:1}
+}
+body.light .fplbl{color:#062a48;
+  text-shadow:0 0 14px rgba(255,255,255,.95), 0 1px 0 rgba(255,255,255,.9)}
 .iceflame{flex:0 0 auto;width:76px;height:100px;display:block;position:relative;z-index:1;
   filter:drop-shadow(0 0 12px rgba(126,224,255,.95))}
 .iceflame svg{width:100%;height:100%;display:block;overflow:visible}
@@ -926,12 +951,17 @@ body.light .fplbl{color:#07314f;text-shadow:0 1px 0 rgba(255,255,255,.8)}
   background:radial-gradient(circle at 50% 42%, rgba(126,224,255,.20), rgba(126,224,255,0) 70%)}
 body.light .fpwrap::before{
   background:radial-gradient(circle at 50% 42%, rgba(20,130,190,.20), rgba(20,130,190,0) 72%)}
-body.light .iceflame .f1{fill:#7fcdee}
-body.light .iceflame .f2{fill:#1f92d4}
+/* قِيست النسبُ على خلفيّة النهار (#c6e3ff): كانت الهالةُ ١٫٩٤:١
+   والشعلةُ الخارجيّة ١٫٣٣:١ — أي تكاد تساوي الخلفيّة. فصُلّبت الهالةُ
+   إلى ٦٫٧٢:١، ووُضع على الشعلة الخارجيّة خطُّ حدٍّ داكن يحمل التباين
+   عنها، فتبقى ثلجيّةَ اللون ولا تذوب. */
+body.light .iceflame .f1{fill:#5cb8e4;stroke:#0a4d7a;stroke-width:1;
+  stroke-linejoin:round}
+body.light .iceflame .f2{fill:#0b6396}
 body.light .iceflame .f3{fill:#eafaff}
-body.light .iceflame{filter:drop-shadow(0 3px 7px rgba(12,90,140,.42))}
-body.light .fpring{border-color:rgba(24,130,190,.6);
-  box-shadow:0 0 22px rgba(24,130,190,.3), inset 0 0 22px rgba(24,130,190,.16)}
+body.light .iceflame{filter:drop-shadow(0 3px 6px rgba(8,60,100,.45))}
+body.light .fpring{border-width:3px;border-color:#0a4d7a;
+  box-shadow:0 0 20px rgba(10,77,122,.32), inset 0 0 20px rgba(10,77,122,.14)}
 @keyframes icelick{
   0%,100%{transform:scale(1,1)}
   30%{transform:scale(.93,1.11)}
@@ -942,10 +972,17 @@ body.light .fpring{border-color:rgba(24,130,190,.6);
   0%,100%{filter:drop-shadow(0 0 6px rgba(126,224,255,.8))}
   50%{filter:drop-shadow(0 0 15px rgba(170,240,255,1))}
 }
-.iceflame{animation:iceglow 2.2s ease-in-out infinite}
+.iceflame{animation:iceglow 2.2s ease-in-out infinite, fpdim 4.4s ease-in-out infinite}
 body.glow-off .fpring{animation:none;opacity:.5;transform:scale(.95)}
+/* من أطفأ الحركة: تقف الشعلةُ ظاهرةً وتنزل الكلمةُ تحتها، فلا تركبها */
+body.glow-off .iceflame{opacity:1}
+body.glow-off .fplbl{animation:none;opacity:1;inset:auto 0 -6px 0;height:auto;
+  text-shadow:0 1px 0 rgba(255,255,255,.5)}
 @media (prefers-reduced-motion:reduce){
   body:not(.glow-force) .fpring{animation:none;opacity:.5;transform:scale(.95)}
+  body:not(.glow-force) .iceflame{opacity:1}
+  body:not(.glow-force) .fplbl{animation:none;opacity:1;inset:auto 0 -6px 0;height:auto;
+    text-shadow:0 1px 0 rgba(255,255,255,.5)}
 }
 .iceflame .f1{transform-origin:50% 92%;animation:icelick 1.6s ease-in-out infinite}
 .iceflame .f2{transform-origin:50% 92%;animation:icelick 1.15s ease-in-out infinite reverse}
@@ -1084,7 +1121,10 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
 <div class="wrap">
 
   <section class="screen active" id="scr-start">
-    <h1>نور الوحي 🕌</h1>
+    <div class="htop">
+      <h1>نور الوحي 🕌</h1>
+      <button type="button" class="themebtn" id="btnTheme" title="تبديل الوضع" aria-label="تبديل الوضع">🌤️</button>
+    </div>
     <p class="sub">احفظ القرآن مقطعاً مقطعاً — وابنِ مسجدك نجمةً نجمة</p>
     <div class="instbox" id="instBox" hidden>
       <button type="button" class="instx" id="instHide" aria-label="إخفاء">✕</button>
@@ -1127,8 +1167,8 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
             <path class="f3" d="M12 17.4 C12.7 19.2, 13.9 19.9, 13.9 21.8 A1.9 1.9 0 0 1 10.1 21.8 C10.1 20.3, 11.3 19.5, 12 17.4 Z"/>
           </svg>
         </span>
+        <span class="fplbl">اختبر نفسي</span>
       </span>
-      <span class="fplbl">اختبر نفسي</span>
     </button>
     <div class="row">
       <button class="btn blue" id="btnBuild">🕌 مسجدي</button>
@@ -1491,6 +1531,12 @@ function curP(){ return DB.players[DB.cur]; }
 function saveDB(){ save('nur_db',DB); }
 var SET, prog, profile, look, gender;
 /* الوضع النهاريّ: صفّ واحد على <body> يقلب كل المتغيّرات */
+/* مفتاحُ الوضع في ركن العنوان: يُربط مرّةً واحدة لأنّه لا يُعاد رسمُه
+   مع صفّ اللاعبين — وكان يُبنى معهم فيُربط في كلّ مرّة. */
+(function(){
+  var b=document.getElementById('btnTheme');
+  if(b) b.onclick=function(){ SET.light=!SET.light; saveDB(); applyTheme(); };
+})();
 function applyTheme(){
   try{
     var on = !!(SET && SET.light);
@@ -3791,9 +3837,7 @@ function renderPlayers(){
       esc(p.name||('لاعب '+arNum(i+1)))+'</button>';
   }).join('');
   h+='<button class="pchip" data-p="new">➕ لاعب جديد</button>';
-  h+='<button type="button" class="pchip themechip" id="btnTheme" title="تبديل الوضع" aria-label="تبديل الوضع">🌤️</button>';
   $('players').innerHTML=h;
-  $('btnTheme').onclick=function(){ SET.light=!SET.light; saveDB(); applyTheme(); };
   applyTheme();                                  /* الأيقونة تصف الوضع فور رسمها */
   var cs=$('players').querySelectorAll('[data-p]');
   for(var i=0;i<cs.length;i++){
