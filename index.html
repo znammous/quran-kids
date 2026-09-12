@@ -1002,13 +1002,40 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
 .exscore span{display:block;font-size:16px;color:#8a6100}
 .exscore.big{font-size:42px}
 
+/* ===== الطباعة: الشهادة ورقةٌ واحدة =====
+   تُقاس على أصغر المقاسين في كلّ بُعد — عرضُ A4 (٢١٠مم) وارتفاعُ
+   Letter (٢٧٩مم) — فتقع في الورقتين جميعاً بلا قطعٍ ولا صفحةٍ ثانية.
+   والمقاسُ لا يُفرض على الطابعة، وإنّما يضيق المحتوى ليسعهما معاً. */
+@page{ margin:12mm }
 @media print{
-  body{background:#fff}
-  .bg,.noprint{display:none!important}
-  .wrap{max-width:none;padding:0}
-  .cert{box-shadow:none;border-color:#c9a227}
+  body{background:#fff;margin:0}
+  .bg,.noprint,.tabbar{display:none!important}
+  .wrap{max-width:none;padding:0;margin:0}
   .screen{display:none!important}
   .screen.active{display:block!important}
+  #certWrap{margin:0}
+  .cert{box-shadow:none;border-color:#c9a227;border-width:8px;margin:0;
+    padding:14px 16px;page-break-inside:avoid;break-inside:avoid}
+  /* الخطوطُ تضيق لتسع الورقةَ، وتبقى النسبُ بينها كما هي على الشاشة */
+  .cert .orn{font-size:16px;letter-spacing:6px}
+  .cert h2{font-size:26px;margin:4px 0}
+  .cert .who{font-size:20px;margin:5px 0}
+  .cert .what{font-size:22px;margin:4px 0}
+  .cert .stars{font-size:20px;margin:5px 0}
+  .cert .ph{transform:scale(.82);transform-origin:center top;margin-bottom:0}
+  .cert .mosque{max-width:180px!important}
+  .cert .crowncert{margin:9px 0;padding:12px 12px 10px}
+  .cert .crowncert svg{width:132px;margin:0 auto 8px}
+  .cert .crowncert p{font-size:12.5px;line-height:1.95}
+  .cert .crowncert small{font-size:10.5px;line-height:1.75;margin-top:6px}
+  .cert .meta2{margin-top:9px;font-size:11px}
+  .cert .sign{margin-top:11px;font-size:11px}
+  .cert .waqf{margin-top:7px;font-size:10.5px;line-height:1.7}
+  .exscore{font-size:26px;margin:2px 0 6px}
+  .exscore.big{font-size:32px}
+  .exscore span{font-size:13px}
+  /* ألوانُ الشهادة تُطبع كما هي، فلا تخرج بيضاءَ باهتة */
+  .cert,.cert *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 /* ===== قشرة الجوّال: شريط تنقّل سفلي ===== */
 .tabbar{display:none}
