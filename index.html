@@ -238,6 +238,12 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfsheet{position:fixed;inset:0;z-index:120;background:#fffdf5;display:flex;flex-direction:column}
 .mfhead{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 12px;
   background:#fdf6e4;border-bottom:2px solid #e8dcc0}
+/* في وضع التحديد: رأسٌ بلون التطبيق، ولا سطرَ إرشادٍ زائد */
+.mfsheet.picking .mfhead{background:linear-gradient(180deg,#0c2e5c,#08203f);border-bottom-color:#17457f}
+.mfsheet.picking .mftitle{color:#e9f4ff;font-size:15px;text-align:center}
+.mfsheet.picking .mfhint{display:none}
+.mfsheet.picking .mfidx{background:#0a2748;border-bottom-color:#17457f}
+.mfsheet.picking .mfidx select,.mfsheet.picking .mfidx input{color:#e9f4ff;background:#0f3a6b;border-color:#2a6ab5}
 .mfttl{flex:1;min-width:0}
 .mfhint{font-family:"IBM Plex Sans Arabic","Segoe UI",sans-serif;font-size:11px;font-weight:700;
   color:#b6a077;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -249,10 +255,12 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfidx{flex:0 0 auto;display:flex;gap:8px;padding:0 12px 10px;background:#fff8e6;
   border-bottom:2px solid #ead9b0}
 .mfidx[hidden]{display:none!important}
-.mfidx select{flex:1 1 0;min-width:0;font-family:inherit;font-size:14px;font-weight:800;
-  color:#6b4e00;background:#fff;border:2px solid #d9c9a0;border-radius:10px;padding:8px 6px}
-.mfnav{flex:0 0 auto;width:38px;height:38px;border-radius:50%;border:2px solid #d9c9a0;
-  background:#fff8e6;color:#6b4e00;font-size:17px;font-weight:900;font-family:inherit;cursor:pointer}
+.mfidx select,.mfidx input{flex:1 1 0;min-width:0;font-family:inherit;font-size:14px;font-weight:800;
+  color:#6b4e00;background:#fff;border:2px solid #d9c9a0;border-radius:10px;padding:8px 6px;text-align:center}
+.mfidx input{flex:0 0 78px}
+.mfnav{flex:0 0 auto;width:42px;height:42px;border-radius:50%;border:2px solid #7ec8ff;
+  background:linear-gradient(180deg,#57a8ef,#1560b0);color:#fff;font-size:18px;font-weight:900;
+  font-family:inherit;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.22)}
 .mfnav:disabled{opacity:.35;cursor:default}
 .mfnav:active{transform:scale(.92)}
 .mfsheet.picking .mw,.mfsheet.picking .manum{cursor:pointer;border-radius:4px}
@@ -452,6 +460,7 @@ body.glow-off .cele .spk{display:none}
   font-family:inherit;cursor:pointer;padding:5px 9px;font-size:15px}
 .pstat.qachip:active{transform:scale(.9)}
 /* شريط وضع الفحص: تقديم الأيام لرؤية المراجعة دون انتظار الغد */
+#ask{z-index:200}                       /* فوق وجه المصحف، وإلّا اختفى تحته */
 #qaBar{position:fixed;inset-inline-start:10px;bottom:10px;z-index:120;display:flex;gap:6px;
   align-items:center;background:rgba(45,20,90,.94);border:2px solid #c4b5fd;border-radius:99px;
   padding:5px 9px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
@@ -968,6 +977,8 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
   <div class="mfidx" id="mfIdx" hidden>
     <select id="mfSura" aria-label="انتقل إلى سورة"></select>
     <select id="mfJuz" aria-label="انتقل إلى جزء"></select>
+    <input type="number" id="mfPg" min="1" max="604" inputmode="numeric"
+           aria-label="انتقل إلى رقم صفحة" placeholder="صفحة">
   </div>
   <div class="mfbody" id="mfBody"></div>
 </div>
@@ -1806,24 +1817,24 @@ function mushafPageHTML(P, hlGi, glyphs){
    القوائم تسأل عن سورةٍ وآيةٍ بأرقامها، والإنسان إنّما يفتح المصحف لينظر
    أين يقف بصرُه. فهذا وضعٌ يُفتح فيه الوجه، يتصفّحه، ثمّ يلمس الكلمة
    فيصير موضعها حدَّ نطاقه. */
-var MF_PICK=null;        /* {page, which:'from'|'to', done:fn} */
-function mfPickOpen(which, startGi, done){
-  MF_PICK={ page:pageOfIdx(startGi), which:which, done:done };
+var MF_PICK=null;   /* {page, stage:'from'|'to', fromS, fromA, busy, done} */
+function mfPickRange(startGi, done){
+  MF_PICK={ page:pageOfIdx(startGi), stage:'from', busy:false, done:done };
   $('mfSheet').classList.add('picking');
   mfPickDraw();
 }
 function mfPickDraw(){
   if(!MF_PICK) return;
   var P=MF_PICK.page, pcs=pagePieces(P), nm=pcs.length?pcs[0].s.name:'';
-  mushafOpenPage(P, -1, (MF_PICK.which==='from'?'📖 من أين تبدأ؟':'📖 وإلى أين تنتهي؟')+
-    ' — صفحة '+arNum(P)+(nm?(' • '+nm):''));
-  var h=$('mfhint'); if(h) h.textContent='اضغط الكلمة التي تريد';
-  var hint=document.querySelector('.mfhint');
-  if(hint) hint.textContent='اضغط على الكلمة التي تريدها حدّاً لنطاقك';
+  var head=(MF_PICK.stage==='from')
+    ? '① اضغط على بداية النطاق'
+    : '② والآن اضغط على نهايته';
+  mushafOpenPage(P, -1, head+' — صفحة '+arNum(P)+(nm?(' • '+nm):''));
   var a=$('mfPrev'), b=$('mfNext');
   if(a){ a.hidden=false; a.disabled=(P<=1); }
   if(b){ b.hidden=false; b.disabled=(P>=604); }
   if($('mfIdx')) $('mfIdx').hidden=false;
+  if($('mfPg')) $('mfPg').value=P;
   mfIdxFill(P);
 }
 /* أوّل وجهٍ لكلّ سورة ولكلّ جزء */
@@ -1855,15 +1866,30 @@ function mfPickEnd(){
 /* لمسةٌ على كلمةٍ أو رقم آية: تُقرأ سورتها وآيتها من موضعها العامّ.
    وهي تُنهي الوضع بنفسها، فلا يضرّ أن تُستدعى مرّتين من لمسٍ ونقر. */
 function mfPickAt(t){
-  if(!MF_PICK) return false;
+  if(!MF_PICK || MF_PICK.busy) return false;
   var el=(t && t.closest) ? t.closest('[data-gi]') : null;
   if(!el) return false;
   var gi=parseInt(el.getAttribute('data-gi'),10);
   if(isNaN(gi)) return false;
-  var loc=mLoc(gi), fn=MF_PICK.done;
+  var loc=mLoc(gi), sn=loc[0], an=loc[1], sx=surahBy(sn);
   try{ sPick(); }catch(e){}
-  mfPickEnd(); mushafClose(); mushafEatGhost();
-  if(fn) fn(loc[0], loc[1]);            /* [رقم السورة, رقم الآية] */
+  MF_PICK.busy=true;                      /* لمسةٌ ونقرةٌ قد تجتمعان، فتُمنع الثانية */
+  uiBox('حدّدتَ: '+(sx?sx.name:'')+' — الآية '+arNum(an)+'\n'+
+        (MF_PICK.stage==='from'?'أهذه بدايةُ نطاقك؟':'أهذه نهايةُ نطاقك؟'),
+    '📖','✅ موافق','↺ أعد التحديد', function(ok){
+      if(!MF_PICK) return;
+      MF_PICK.busy=false;
+      if(!ok) return;                     /* يبقى في الوجه ليختار غيرها */
+      if(MF_PICK.stage==='from'){
+        MF_PICK.fromS=sn; MF_PICK.fromA=an; MF_PICK.stage='to';
+        mfPickDraw();                     /* يبقى في الصفحة نفسها غالباً */
+        try{ navToast('② والآن اضغط على نهاية النطاق'); }catch(e){}
+        return;
+      }
+      var f=MF_PICK, fn=f.done;
+      mfPickEnd(); mushafClose(); mushafEatGhost();
+      if(fn) fn(f.fromS, f.fromA, sn, an);
+    });
   return true;
 }
 /* وجه المصحف ملء الشاشة: يُفتح عند الطلب ولا يزاحم القراءة */
@@ -4057,6 +4083,12 @@ function closeModal(id){
   if(id==='adab') pendingStart=null;
 }
 $('mfClose').onclick=function(){ mfPickEnd(); mushafClose(); mushafEatGhost(); };
+$('mfPg').onchange=function(){
+  if(!MF_PICK) return;
+  var v=Math.max(1,Math.min(604,parseInt(this.value,10)||1));
+  MF_PICK.page=v; sPage(); mfPickDraw();
+};
+$('mfPg').onkeydown=function(e){ if(e.key==='Enter'){ this.blur(); this.onchange(); } };
 $('mfSura').onchange=function(){ if(MF_PICK){ MF_PICK.page=mfSuraPage(parseInt(this.value,10)); sPage(); mfPickDraw(); } };
 $('mfJuz').onchange =function(){ if(MF_PICK){ MF_PICK.page=mfJuzPage(parseInt(this.value,10)); sPage(); mfPickDraw(); } };
 $('mfPrev').onclick=function(){ if(MF_PICK && MF_PICK.page>1){ MF_PICK.page--; sPage(); mfPickDraw(); } };
@@ -5565,30 +5597,24 @@ function renderRevPlan(){
     '<div class="revbox"><div class="rl">من أين تبدأ المراجعة؟</div>'+
       '<div class="revrow"><select id="revFS">'+revSurahOpts(REV.fromS)+'</select>'+
       '<select id="revFA">'+revAyahOpts(REV.fromS,REV.fromA)+'</select></div>'+
-      '<button type="button" class="btn ghost mini" id="revPickF" style="width:100%;margin-top:8px">'+
-        '📖 افتح المصحف واختر البداية</button>'+
+
       '<div class="rl" style="margin:12px 0 8px">وإلى أين تنتهي؟</div>'+
       '<div class="revrow"><select id="revTS">'+revSurahOpts(REV.toS)+'</select>'+
       '<select id="revTA">'+revAyahOpts(REV.toS,REV.toA)+'</select></div>'+
-      '<button type="button" class="btn ghost mini" id="revPickT" style="width:100%;margin-top:8px">'+
-        '📖 افتح المصحف واختر النهاية</button></div>'+
+      '<button type="button" class="btn blue mini" id="revPickR" style="width:100%;margin-top:12px">'+
+        '📖 افتح المصحف وحدّد النطاق</button></div>'+
     '<div class="revbox"><div class="rl">كم صفحةً في الجلسة الواحدة؟</div><div class="chips">'+chips(REV_SIZES,REV.size,'rs')+'</div></div>'+
     '<div class="revbox"><div class="rl">كم سؤالاً لكل صفحة؟</div><div class="chips">'+chips(REV_PER_CHOICES,revPer(),'rp')+'</div></div>'+
     '<div id="revSum"></div></div>';
 
   /* ضبطُ نطاقٍ بيده خروجٌ من الورد إلى المسار الحرّ، بإرادته لا سهواً */
   var reset=function(){ REV.wird=false; REV.done=0; REV.weak={}; revSave(); renderRevPlan(); };
-  /* الاختيار من المصحف: يفتح الوجه عند موضعه الحاليّ، فيتصفّح ويلمس */
-  if($('revPickF')) $('revPickF').onclick=function(){
-    mfPickOpen('from', GIDX[REV.fromS-1]+(REV.fromA-1), function(sn,an){
-      REV.fromS=sn; REV.fromA=an; reset();
-      try{ navToast('📖 البداية: '+surahBy(sn).name+' '+arNum(an)); }catch(e){}
-    });
-  };
-  if($('revPickT')) $('revPickT').onclick=function(){
-    mfPickOpen('to', GIDX[REV.toS-1]+(REV.toA-1), function(sn,an){
-      REV.toS=sn; REV.toA=an; reset();
-      try{ navToast('📖 النهاية: '+surahBy(sn).name+' '+arNum(an)); }catch(e){}
+  /* التحديد من المصحف: يفتح الوجه عند بدايته الحاليّة، فيحدّد الطرفين تِباعاً */
+  if($('revPickR')) $('revPickR').onclick=function(){
+    mfPickRange(GIDX[REV.fromS-1]+(REV.fromA-1), function(fs,fa,ts,ta){
+      REV.fromS=fs; REV.fromA=fa; REV.toS=ts; REV.toA=ta;
+      REV.wird=false; REV.done=0; REV.weak={}; revSave(); renderRevPlan();
+      try{ navToast('📖 '+surahBy(fs).name+' '+arNum(fa)+' ← '+surahBy(ts).name+' '+arNum(ta)); }catch(e){}
     });
   };
   $('revFS').onchange=function(){ REV.fromS=parseInt(this.value,10); REV.fromA=1; reset(); };
