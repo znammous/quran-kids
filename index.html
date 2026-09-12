@@ -518,6 +518,12 @@ body.glow-off .cele .spk{display:none}
 .bmed .bi{font-size:25px;line-height:1.25;filter:grayscale(1);opacity:.4}
 .bmed .bn{font-size:11px;font-weight:800;margin-top:2px}
 .bmed .bq{font-size:12px;font-weight:800;color:var(--on1)}
+/* تُضغط فتُبين شرطَها، فلتكن يدُها ظاهرةً ولمستُها محسوسة */
+.bmed[data-bf],.bmed[data-bsp],.crownpic[data-bcrown]{cursor:pointer;
+  -webkit-tap-highlight-color:transparent;transition:transform .12s}
+.bmed[data-bf]:active,.bmed[data-bsp]:active,.crownpic[data-bcrown]:active{transform:scale(.94)}
+.bmed[data-bf]:focus-visible,.bmed[data-bsp]:focus-visible,
+.crownpic[data-bcrown]:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .bmed.on{background:var(--psel);border-color:var(--gold);color:var(--ttl)}
 .bmed.on .bi{filter:none;opacity:1}
 .bmed.on .bq{color:var(--gink)}
@@ -3831,9 +3837,14 @@ function buildJuzTest(j){
       }
     }
     if(kind===1){
-      var ch=wordChunks(s,a,WORDS_MIN), pk=ch[Math.floor(Math.random()*ch.length)];
-      rounds.push({t:'words',a:a,from:pk[0],to:pk[1],parts:1,part:0,surah:s,segFrom:it.g[0],segTo:it.g[1]});
-    } else {
+      var aw=missPick(s,it.g[0],it.g[1],ORDER_MIN);   /* آيةٌ تحتمل الترتيب */
+      if(aw<0) kind=2;                                /* لا واحدةَ فيه: تسميعٌ بدلَها */
+      else{
+        var ch=wordChunks(s,aw,WORDS_MIN), pk=ch[Math.floor(Math.random()*ch.length)];
+        rounds.push({t:'words',a:aw,from:pk[0],to:pk[1],parts:1,part:0,surah:s,segFrom:it.g[0],segTo:it.g[1]});
+      }
+    }
+    if(kind===2){
       rounds.push({t:'recite',a:a,pi:0,np:recitePortions(s,a),surah:s,segFrom:it.g[0],segTo:it.g[1]});
     }
   }
@@ -4547,7 +4558,9 @@ function segWholePage(s,seg){
 /* ===== آياتٌ لا تحتمل الفراغ =====
    «الٓمٓ» كلمةٌ واحدة: إن أُفرِغت لم يبقَ من الآية ما يُقرأ، فالسؤالُ لغزٌ
    بلا قرينة. فيُشترط ثلاثُ كلماتٍ للفراغ الواحد، وخمسٌ للفراغين. */
-var MISS_MIN=3, MISS2_MIN=5;
+/* وترتيبُ الكلمات كذلك: آيةٌ من كلمةٍ أو كلمتين لا يُرتَّب فيها شيء —
+   تُعرض الكلمتان فيضغطهما بأيّ ترتيبٍ فيصيب، فليست سؤالاً. */
+var MISS_MIN=3, MISS2_MIN=5, ORDER_MIN=3;
 function ayahWords(s,a){ return wordsOf(ayahText(s,a)).length; }
 /* آيةٌ من المقطع تحتمل الفراغ، أو ‎-1 إن لم تكن فيه واحدة */
 function missPick(s,from,to,need){
@@ -4566,6 +4579,7 @@ function qFit(r){
     r.t='missing'; r.wi2=null;
   }
   if(n>=MISS_MIN){ if(r.wi>=n) r.wi=n-1; return r; }
+  if(n<ORDER_MIN){ r.t='read'; return r; }      /* ولا يُرتَّب فيها شيء: تُقرأ */
   ch=wordChunks(sx,r.a,WORDS_MIN);
   r.t='words'; r.parts=1; r.part=0;
   r.from=(ch&&ch.length)?ch[0][0]:0;
@@ -4578,11 +4592,14 @@ function buildRounds(s,seg,stage){
     for(i=from;i<to;i++) r.push({t:'read',a:i});
   } else if(stage===1){
     for(i=from;i<to;i++){
+      if(ayahWords(s,i)<ORDER_MIN) continue;      /* آيةٌ لا يُرتَّب فيها شيء */
       var ch=wordChunks(s,i, SET.level==='hard'?8:WORDS_MIN);
       /* الآيات الطويلة: نأخذ ٣ مقاطع كلمات فقط بدل تفكيك الآية كلها */
       if(ch.length>3) ch=shuffle(ch.slice()).slice(0,3).sort(function(a,b){ return a[0]-b[0]; });
       for(k=0;k<ch.length;k++) r.push({t:'words',a:i,from:ch[k][0],to:ch[k][1],parts:ch.length,part:k});
     }
+    /* مقطعٌ كلُّ آياته كلمةٌ أو كلمتان: يُقرأ ولا يُرتَّب */
+    if(!r.length) for(i=from;i<to;i++) r.push({t:'read',a:i});
   } else if(stage===2){
     for(i=from;i<to;i++){
       var ws=wordsOf(ayahText(s,i));
@@ -4609,9 +4626,12 @@ function buildRounds(s,seg,stage){
     if(to-from>=2) r.push({t:'ayat',from:from,to:to});
     else {
       /* مقطع من آية واحدة: نرتّب كلماتها كاملة بدل ترتيب الآيات */
-      var ch2=wordChunks(s,from, SET.level==='hard'?8:WORDS_MIN);
-      if(ch2.length>3) ch2=ch2.slice(0,3);
-      for(k=0;k<ch2.length;k++) r.push({t:'words',a:from,from:ch2[k][0],to:ch2[k][1],parts:ch2.length,part:k});
+      if(ayahWords(s,from)<ORDER_MIN) r.push({t:'read',a:from});
+      else{
+        var ch2=wordChunks(s,from, SET.level==='hard'?8:WORDS_MIN);
+        if(ch2.length>3) ch2=ch2.slice(0,3);
+        for(k=0;k<ch2.length;k++) r.push({t:'words',a:from,from:ch2[k][0],to:ch2[k][1],parts:ch2.length,part:k});
+      }
     }
   } else if(stage===4){
     /* الكلمتان الناقصتان: مرحلةٌ قبل التسميع، تشدّ الحفظَ قبل أن يُسمَّع.
@@ -4927,6 +4947,61 @@ var BADGE_FAM=[
   {f:'give',  ic:'🤲', n:'البذل',    u:'قسيمة خير',     t:[1,5,15,40],
    v:function(){ return sadTotal(); }}
 ];
+/* ===== شرحُ الشارة =====
+   لا يكفي أن يُرى الرقمُ تحتها: يضغطها الطفلُ فيُقال له ما المطلوب
+   وأين هو منه — وشريطٌ نصّيٌّ يُرى في الصندوق كما يُرى في الشاشة. */
+function badgeBar(v,need){
+  var cells=10, f=Math.max(0,Math.min(cells,Math.round(cells*v/need))), i, out='';
+  for(i=0;i<cells;i++) out+=(i<f?'▰':'▱');
+  return out+'  '+arNum(Math.min(100,Math.round(100*v/need)))+'٪';
+}
+function badgeTapFam(f,k){
+  var i, F=null;
+  for(i=0;i<BADGE_FAM.length;i++) if(BADGE_FAM[i].f===f) F=BADGE_FAM[i];
+  if(!F) return;
+  var need=F.t[k], v=F.v(), on=!!(curP().badges||{})['b:'+F.f+':'+k];
+  var msg='<b>'+F.ic+' '+F.n+' — الشارة '+TIERS[k].n+'</b>'+'\n\n'+
+    'المطلوب: '+arNum(need)+' '+F.u+'\n'+
+    'عندك الآن: '+arNum(v)+' '+F.u;
+  if(on) msg+='\n\n'+'✅ نلتَها — بارك الله فيك';
+  else   msg+='\n'+'بقي لك: '+arNum(Math.max(0,need-v))+' '+F.u+'\n\n'+badgeBar(v,need);
+  uiBox(msg, on?TIERS[k].i:F.ic, '✅ تمام', null, null);
+}
+function badgeTapSp(id){
+  var i, B=null;
+  for(i=0;i<BADGE_SP.length;i++) if(BADGE_SP[i].id===id) B=BADGE_SP[i];
+  if(!B) return;
+  var on=!!(curP().badges||{})['b:sp:'+B.id];
+  uiBox('<b>'+B.ic+' '+B.n+'</b>'+'\n\n'+'المطلوب: '+(B.q||B.d)+'\n\n'+
+    (on?'✅ نلتَها — بارك الله فيك':'⏳ لم تنلها بعد'), B.ic, '✅ تمام', null, null);
+}
+function badgeTapCrown(){
+  var on=isHafiz(), t=0;
+  try{ t=memTotal(); }catch(e){}
+  var msg='<b>👑 تاج الحافظ</b>'+'\n\n'+
+    'المطلوب: حفظ القرآن كاملاً — '+arNum(QURAN_AYAT)+' آية'+'\n'+
+    'عندك الآن: '+arNum(t)+' آية';
+  if(on) msg+='\n\n'+'✅ تُوِّجتَ حافظاً لكتاب الله — لا يفارق التاجُ رأسك';
+  else   msg+='\n'+'بقي لك: '+arNum(QURAN_AYAT-t)+' آية'+'\n\n'+badgeBar(t,QURAN_AYAT)+
+    '\n\n'+'وهو أرفع ما في هذه الصفحة، لا يُنال إلا بتمام المصحف';
+  uiBox(msg, '👑', '✅ تمام', null, null);
+}
+function badgeTapWire(){
+  var box=$('badgeWrap'); if(!box) return;
+  var els=box.querySelectorAll('[data-bf],[data-bsp],[data-bcrown]'), i;
+  var hit=function(){
+    sPick();
+    var f=this.getAttribute('data-bf');
+    if(f!=null){ badgeTapFam(f, parseInt(this.getAttribute('data-bk'),10)); return; }
+    var sp=this.getAttribute('data-bsp');
+    if(sp!=null){ badgeTapSp(sp); return; }
+    badgeTapCrown();
+  };
+  for(i=0;i<els.length;i++){
+    els[i].onclick=hit;
+    els[i].onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); this.onclick(); } };
+  }
+}
 function surahFull(n){ var s=surahBy(n); return !!s && memHas(n,0,s.ayat.length); }
 function juzFull(j){
   var list=JUZMAP[j]||[];
@@ -4934,14 +5009,22 @@ function juzFull(j){
   for(var i=0;i<list.length;i++) if(!surahFull(list[i])) return false;
   return true;
 }
+/* d خبرٌ يُقال عند نيلها، وq شرطٌ يُقال قبلَها — فلا يُخبَر بما لم يفعل */
 var BADGE_SP=[
-  {id:'fatiha',ic:'🌟',n:'أمّ الكتاب', d:'حفظتَ الفاتحة كاملة',   ok:function(){ return surahFull(1); }},
-  {id:'kursi', ic:'🛡️',n:'آية الكرسي', d:'حفظتَ البقرة ٢٥٥',     ok:function(){ return memHas(2,254,255); }},
-  {id:'yasin', ic:'💛',n:'قلب القرآن', d:'حفظتَ يس كاملة',       ok:function(){ return surahFull(36); }},
-  {id:'mulk',  ic:'🕯️',n:'المانعة',    d:'حفظتَ الملك كاملة',     ok:function(){ return surahFull(67); }},
-  {id:'kahf',  ic:'🌄',n:'نور الكهف',  d:'حفظتَ الكهف كاملة',     ok:function(){ return surahFull(18); }},
-  {id:'amma',  ic:'🌙',n:'جزء عمّ',    d:'حفظتَ الجزء الثلاثين',  ok:function(){ return juzFull(30); }},
+  {id:'fatiha',ic:'🌟',n:'أمّ الكتاب', d:'حفظتَ الفاتحة كاملة',   q:'أن تحفظ سورة الفاتحة كاملة',
+   ok:function(){ return surahFull(1); }},
+  {id:'kursi', ic:'🛡️',n:'آية الكرسي', d:'حفظتَ البقرة ٢٥٥',     q:'أن تحفظ آية الكرسيّ — البقرة ٢٥٥',
+   ok:function(){ return memHas(2,254,255); }},
+  {id:'yasin', ic:'💛',n:'قلب القرآن', d:'حفظتَ يس كاملة',       q:'أن تحفظ سورة يس كاملة',
+   ok:function(){ return surahFull(36); }},
+  {id:'mulk',  ic:'🕯️',n:'المانعة',    d:'حفظتَ الملك كاملة',     q:'أن تحفظ سورة الملك كاملة',
+   ok:function(){ return surahFull(67); }},
+  {id:'kahf',  ic:'🌄',n:'نور الكهف',  d:'حفظتَ الكهف كاملة',     q:'أن تحفظ سورة الكهف كاملة',
+   ok:function(){ return surahFull(18); }},
+  {id:'amma',  ic:'🌙',n:'جزء عمّ',    d:'حفظتَ الجزء الثلاثين',  q:'أن تحفظ جزء عمّ كاملاً — الجزء الثلاثين',
+   ok:function(){ return juzFull(30); }},
   {id:'allsad', ic:'🤲',n:'في كل بابٍ سهم', d:'بذلتَ في كل وجوه الخير',
+   q:'أن تبذل في كلّ وجهٍ من وجوه الخير في متجرك — لا تترك بابًا',
    ok:function(){ var c=sadCat(); return !!c && sadKinds()>=c.items.length; }}
 ];
 var BADGE_GEMS=15;
@@ -5023,7 +5106,7 @@ function crownRowHTML(){
   return '<div class="bfam crownfam"><div class="fh"><span>👑 تاج الحافظ</span>'+
     '<small>'+arNum(t)+' من '+arNum(QURAN_AYAT)+' آية</small></div>'+
     '<div class="crownrow">'+
-      '<div class="crownpic'+(on?' on':'')+'">'+
+      '<div class="crownpic'+(on?' on':'')+'" role="button" tabindex="0" data-bcrown="1">'+
         '<svg viewBox="24 14 52 36" aria-hidden="true">'+crownSVG()+'</svg></div>'+
       '<div class="crowntx">'+(on
         ? '<b>تُوِّجتَ حافظاً لكتاب الله</b><i>لا يفارق التاجُ رأسك — ودُم على تعاهده</i>'
@@ -5036,7 +5119,7 @@ function crownRowHTML(){
 }
 function renderBadges(){
   var p=curP(), h=crownRowHTML();
-  $('badgeSub').textContent='نلتَ '+arNum(badgeCount())+' من '+arNum(badgeTotal())+' شارة';
+  $('badgeSub').textContent='نلتَ '+arNum(badgeCount())+' من '+arNum(badgeTotal())+' شارة — اضغط أيّ شارةٍ لتعرف شرطَها';
   BADGE_FAM.forEach(function(F){
     var v=F.v(), next=null, i;
     for(i=0;i<F.t.length;i++) if(v<F.t[i]){ next=F.t[i]; break; }
@@ -5044,7 +5127,8 @@ function renderBadges(){
        '<small>'+arNum(v)+' '+esc(F.u)+'</small></div><div class="bmrow">'+
        F.t.map(function(need,k){
          var on=!!p.badges['b:'+F.f+':'+k];
-         return '<div class="bmed'+(on?' on':'')+'"><div class="bi">'+TIERS[k].i+'</div>'+
+         return '<div class="bmed'+(on?' on':'')+'" role="button" tabindex="0"'+
+                ' data-bf="'+F.f+'" data-bk="'+k+'"><div class="bi">'+TIERS[k].i+'</div>'+
                 '<div class="bq">'+arNum(need)+'</div>'+
                 '<div class="bn">'+TIERS[k].n+'</div></div>';
        }).join('')+'</div>'+
@@ -5056,10 +5140,12 @@ function renderBadges(){
      '<small>سور لها فضل خاصّ</small></div><div class="bsp">'+
      BADGE_SP.map(function(B){
        var on=!!p.badges['b:sp:'+B.id];
-       return '<div class="bmed'+(on?' on':'')+'" title="'+esc(B.d)+'">'+
+       return '<div class="bmed'+(on?' on':'')+'" role="button" tabindex="0"'+
+              ' data-bsp="'+B.id+'" title="'+esc(B.d)+'">'+
               '<div class="bi">'+B.ic+'</div><div class="bn">'+esc(B.n)+'</div></div>';
      }).join('')+'</div></div>';
   $('badgeWrap').innerHTML=h;
+  badgeTapWire();
   if($('btnQCert')) $('btnQCert').onclick=function(){ certFrom='badges'; showQuranCert(); };
 }
 
@@ -7294,9 +7380,16 @@ function revQuestion(it,P,k){
     kind='words';                                /* آيةٌ قصيرةٌ: تُرتَّب ولا تُفرَّغ */
   }
   if(kind==='words'){
-    var ch=wordChunks(it.s,it.a,WORDS_MIN), pick=ch[Math.floor(Math.random()*ch.length)];
-    return {t:'words',a:it.a,from:pick[0],to:pick[1],parts:1,part:0,surah:it.s,
-            segFrom:it.from,segTo:it.to,page:P};
+    /* إن كانت آيتُه كلمةً أو كلمتين التُمست غيرُها من القطعة نفسها */
+    var aw=(ayahWords(it.s,it.a)>=ORDER_MIN) ? it.a : missPick(it.s,it.from,it.to,ORDER_MIN);
+    if(aw>=0){
+      var ch=wordChunks(it.s,aw,WORDS_MIN), pick=ch[Math.floor(Math.random()*ch.length)];
+      return {t:'words',a:aw,from:pick[0],to:pick[1],parts:1,part:0,surah:it.s,
+              segFrom:it.from,segTo:it.to,page:P};
+    }
+    /* قطعةٌ كلُّ آياتها قِصار: تُقرأ ولا تُرتَّب */
+    if((it.to-it.from)<3)
+      return {t:'read',a:it.a,surah:it.s,segFrom:it.from,segTo:it.to,page:P};
   }
   /* ترتيب آيات: نافذة من ثلاث إلى أربع آيات متتالية داخل القطعة */
   var span=Math.min(4,it.to-it.from);
@@ -7411,9 +7504,11 @@ function beginReview(j){
         var ws=wordsOf(ayahText(s,a1));
         rounds.push({t:'missing',a:a1,wi:Math.floor(Math.random()*ws.length),surah:s,segFrom:d.from,segTo:d.to});
       }
-      var a2=d.from+Math.floor(Math.random()*span);
-      var ch=wordChunks(s,a2,WORDS_MIN), pick=ch[Math.floor(Math.random()*ch.length)];
-      rounds.push({t:'words',a:a2,from:pick[0],to:pick[1],parts:1,part:0,surah:s,segFrom:d.from,segTo:d.to});
+      var a2=missPick(s,d.from,d.to,ORDER_MIN);       /* آيةٌ تحتمل الترتيب */
+      if(a2>=0){
+        var ch=wordChunks(s,a2,WORDS_MIN), pick=ch[Math.floor(Math.random()*ch.length)];
+        rounds.push({t:'words',a:a2,from:pick[0],to:pick[1],parts:1,part:0,surah:s,segFrom:d.from,segTo:d.to});
+      }
       var a3=d.from+Math.floor(Math.random()*span);
       rounds.push({t:'recite',a:a3,pi:0,np:recitePortions(s,a3),surah:s,segFrom:d.from,segTo:d.to});
     });
@@ -7792,7 +7887,7 @@ function examQ(it){
   if(t==='mix'){ pool=['missing','words','ayat','miss2']; t=pool[Math.floor(Math.random()*pool.length)]; }
   if(t==='ayat' && (it.to-it.from)<3) t='missing';
   if(t==='words'){
-    ch=wordChunks(it.s,it.a,WORDS_MIN);
+    ch=(ayahWords(it.s,it.a)>=ORDER_MIN) ? wordChunks(it.s,it.a,WORDS_MIN) : null;
     if(ch && ch.length){
       pick=ch[Math.floor(Math.random()*ch.length)];
       return {t:'words',a:it.a,from:pick[0],to:pick[1],parts:1,part:0,surah:it.s,
