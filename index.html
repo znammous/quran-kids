@@ -638,6 +638,16 @@ body.glow-off .cele .spk{display:none}
 .pnode .lbl.wide{max-width:250px;line-height:1.5}
 
 /* هدف اليوم: بطاقة فاتحة كما كان */
+/* بطاقة «ثبّت التطبيق»: تظهر متى كان التثبيت ممكناً ولم يُثبَّت بعد */
+.instbox{position:relative;background:linear-gradient(180deg,#fff,#f4f9ff);border:3px solid #bcd9f5;
+  border-radius:14px;padding:12px 14px;margin-bottom:12px;text-align:right}
+.instbox .insth{font-weight:900;color:var(--g1);font-size:15px;margin-bottom:4px}
+.instbox .instd{font-size:13px;font-weight:700;color:#4a627e;line-height:1.7}
+.instbox .instd b{color:var(--g1)}
+.instbox .btn{margin-top:10px;margin-bottom:0}
+.instx{position:absolute;top:8px;left:8px;width:26px;height:26px;border-radius:50%;border:2px solid #d7e2f0;
+  background:#fff;color:#8aa0bb;font-size:13px;font-weight:900;font-family:inherit;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;touch-action:manipulation}
 .goalbox{background:#fff;border:3px solid #e5ecf6;border-radius:14px;padding:12px;margin-bottom:12px}
 .goalbox .gt{font-weight:900;color:var(--g1);font-size:15px;margin-bottom:8px;display:flex;justify-content:space-between}
 .goalbox .gline{display:flex;align-items:center;gap:8px;font-size:14px;color:#4a627e;margin-bottom:5px;font-weight:700}
@@ -876,6 +886,12 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
   <section class="screen active" id="scr-start">
     <h1>نور الوحي 🕌</h1>
     <p class="sub">احفظ القرآن مقطعاً مقطعاً — وابنِ مسجدك نجمةً نجمة</p>
+    <div class="instbox" id="instBox" hidden>
+      <button type="button" class="instx" id="instHide" aria-label="إخفاء">✕</button>
+      <div class="insth">📲 صار بإمكانك تثبيت «نور الوحي» على جهازك</div>
+      <div class="instd" id="instDesc"></div>
+      <button type="button" class="btn green" id="instGo" hidden>📲 ثبّتـه الآن</button>
+    </div>
     <div class="players" id="players"></div>
     <div class="card hello">
       <button type="button" class="pen" id="btnEditMe" title="تعديل اسمي وشخصيتي" aria-label="تعديل اسمي وشخصيتي">✏️</button>
@@ -1137,6 +1153,11 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
       <div class="switchrow"><span>✨ توهّج متحرّك على الزر الذي ينتظر الضغط<br><small style="font-weight:700;color:var(--mute)">يعمل حتى لو كان الجهاز يقلّل الحركة</small></span><input type="checkbox" id="setGlow"></div>
       <div class="switchrow"><span>🔓 فتح كل مقاطع السورة (بلا ترتيب)</span><input type="checkbox" id="setFree"></div>
       <div class="switchrow"><span>🏠 لوحة البيت بين أفراد الأسرة</span><input type="checkbox" id="setBoard"></div>
+      <div class="setblock" style="margin-top:12px">
+        <label class="lbl">📲 تثبيت التطبيق</label>
+        <button class="btn blue" id="btnInstall2" style="width:100%">📲 ثبّت «نور الوحي» على جهازي</button>
+        <div class="note" id="instNote2"></div>
+      </div>
       <div class="setblock" style="margin-top:12px">
         <label class="lbl">📥 المصحف دون إنترنت</label>
         <button class="btn blue" id="btnOffline" style="width:100%">📥 حمّل أوجه أجزائي</button>
@@ -5794,6 +5815,51 @@ function showJuzCert(j){
   show('scr-cert');
 }
 
+/* ===== تثبيت التطبيق على الجهاز =====
+   كروم وأندرويد يعطيان حدثاً نمسكه ونؤجّله حتى يضغط المستخدم زرّنا.
+   وسفاري لا يعطي شيئاً، فنرشده إلى «مشاركة ← إضافة إلى الشاشة الرئيسية». */
+var PWA={ ev:null };
+function pwaInstalled(){
+  try{
+    if(navigator.standalone===true) return true;
+    return !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+  }catch(e){ return false; }
+}
+function pwaIsIOS(){ return /iPad|iPhone|iPod/.test(navigator.userAgent||''); }
+function pwaHowto(){
+  if(pwaIsIOS()) return 'اضغط <b>مشاركة</b> في شريط سفاري، ثم اختر <b>«إضافة إلى الشاشة الرئيسية»</b>.';
+  return 'من قائمة المتصفّح اختر <b>«تثبيت التطبيق»</b> أو <b>«إضافة إلى الشاشة الرئيسية»</b>.';
+}
+function pwaSync(){
+  var b=$('instBox'); if(!b) return;
+  if(location.protocol==='file:' || pwaInstalled() || load('nur_inst_off',0)){ b.hidden=true; return; }
+  var go=$('instGo'), d=$('instDesc');
+  if(PWA.ev){
+    go.hidden=false;
+    d.innerHTML='أيقونةٌ على شاشتك، يفتح بملء الشاشة ويعمل بلا إنترنت — ولا يضيع تقدّمك.';
+  }else{
+    go.hidden=true;
+    d.innerHTML=pwaHowto();
+  }
+  b.hidden=false;
+}
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault(); PWA.ev=e; pwaSync();
+});
+window.addEventListener('appinstalled', function(){
+  PWA.ev=null; save('nur_inst_off',1);
+  var b=$('instBox'); if(b) b.hidden=true;
+  try{ navToast('✅ تمّ التثبيت — تجده الآن مع تطبيقاتك'); }catch(e){}
+});
+function pwaInstall(){
+  if(!PWA.ev){ try{ navToast('افتح قائمة المتصفّح واختر «تثبيت التطبيق»'); }catch(e){} return; }
+  PWA.ev.prompt();
+  PWA.ev.userChoice.then(function(r){
+    if(r && r.outcome==='accepted') save('nur_inst_off',1);
+    PWA.ev=null; pwaSync();
+  })['catch'](function(){ PWA.ev=null; pwaSync(); });
+}
+
 /* ===== تحميل أوجه المصحف للعمل دون إنترنت =====
    نكتب في الذاكرة المؤقتة نفسها التي يقرأ منها عامل الخدمة، فيجدها جاهزة.
    ونُنزّل أوجه الأجزاء المختارة وحدها، لا الستّة والأربعين ميجابايت كلها. */
@@ -5868,6 +5934,14 @@ function fillSettings(){
   $('setFont').value=String(SET.font);
   try{ fillBqnSelect(); }catch(e){}
   try{ renderPriorMode(); }catch(e){}
+  /* حالة التثبيت */
+  (function(){
+    var e=$('instNote2'), b=$('btnInstall2'); if(!e||!b) return;
+    if(location.protocol==='file:'){ b.hidden=true; e.textContent='يحتاج فتح التطبيق من الإنترنت لا من ملفّ على الجهاز.'; return; }
+    if(pwaInstalled()){ b.hidden=true; e.textContent='✅ التطبيق مثبَّت على جهازك.'; return; }
+    b.hidden=false;
+    e.innerHTML = PWA.ev ? 'يصير أيقونةً على شاشتك، ويعمل بلا إنترنت.' : pwaHowto();
+  })();
   /* بيان ما سيُنزَّل بحجمه التقريبيّ — ٧٨ ك.ب للوجه وسطياً */
   (function(){
     if(!$('offNote')) return;
@@ -5921,6 +5995,7 @@ function renderHome(){
       else el.hidden=true;
     }
   }catch(e){}
+  try{ pwaSync(); }catch(e){}
   var n=(profile.name||'').trim();
   $('homeHi').innerHTML = n ? ('السلام عليكم يا <b>'+esc(n)+'</b> 👋') : 'السلام عليكم 👋';
   var due=dueSegs().length, tb=todayBox();
@@ -6150,6 +6225,14 @@ $('btnBoardBack').onclick=function(){ show('scr-start'); };
 $('btnPathHome').onclick=function(){ renderPlayers(); show('scr-start'); };
 $('btnAddPlayer').onclick=function(){ ONB.edit=false; addPlayer(); onbShow(0); };
 if($('btnOffline')) $('btnOffline').onclick=offlineDownload;
+if($('instGo')) $('instGo').onclick=pwaInstall;
+if($('instHide')) $('instHide').onclick=function(){
+  save('nur_inst_off',1); $('instBox').hidden=true;
+};
+if($('btnInstall2')) $('btnInstall2').onclick=function(){
+  save('nur_inst_off',0); pwaInstall(); pwaSync();
+};
+pwaSync();
 $('btnDelPlayer').onclick=function(){
   if(DB.players.length<2){ alert('لا يمكن حذف اللاعب الوحيد'); return; }
   if(!confirm('حذف اللاعب «'+(profile.name||'بلا اسم')+'» وكل نجومه؟')) return;
