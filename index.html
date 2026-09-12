@@ -1432,6 +1432,10 @@ function beep(freqs,dur){
 function sGood(){ beep([660,880,1180],0.11); }
 function sBad(){ beep([300,220],0.14); }
 function sWin(){ beep([523,659,784,1046],0.14); }
+/* نغمةُ اختيار: قصيرةٌ خفيفة كنغمة وضع الكلمة في الترتيب */
+function sPick(){ beep([760,1020],0.06); }
+/* وطقّةُ تصفّحٍ أخفت منها، لتقليب الأوجه */
+function sPage(){ beep([440],0.045); }
 
 /* ===== الشخصية ===== */
 var PAL={
@@ -1857,6 +1861,7 @@ function mfPickAt(t){
   var gi=parseInt(el.getAttribute('data-gi'),10);
   if(isNaN(gi)) return false;
   var loc=mLoc(gi), fn=MF_PICK.done;
+  try{ sPick(); }catch(e){}
   mfPickEnd(); mushafClose(); mushafEatGhost();
   if(fn) fn(loc[0], loc[1]);            /* [رقم السورة, رقم الآية] */
   return true;
@@ -4052,10 +4057,10 @@ function closeModal(id){
   if(id==='adab') pendingStart=null;
 }
 $('mfClose').onclick=function(){ mfPickEnd(); mushafClose(); mushafEatGhost(); };
-$('mfSura').onchange=function(){ if(MF_PICK){ MF_PICK.page=mfSuraPage(parseInt(this.value,10)); mfPickDraw(); } };
-$('mfJuz').onchange =function(){ if(MF_PICK){ MF_PICK.page=mfJuzPage(parseInt(this.value,10)); mfPickDraw(); } };
-$('mfPrev').onclick=function(){ if(MF_PICK && MF_PICK.page>1){ MF_PICK.page--; mfPickDraw(); } };
-$('mfNext').onclick=function(){ if(MF_PICK && MF_PICK.page<604){ MF_PICK.page++; mfPickDraw(); } };
+$('mfSura').onchange=function(){ if(MF_PICK){ MF_PICK.page=mfSuraPage(parseInt(this.value,10)); sPage(); mfPickDraw(); } };
+$('mfJuz').onchange =function(){ if(MF_PICK){ MF_PICK.page=mfJuzPage(parseInt(this.value,10)); sPage(); mfPickDraw(); } };
+$('mfPrev').onclick=function(){ if(MF_PICK && MF_PICK.page>1){ MF_PICK.page--; sPage(); mfPickDraw(); } };
+$('mfNext').onclick=function(){ if(MF_PICK && MF_PICK.page<604){ MF_PICK.page++; sPage(); mfPickDraw(); } };
 /* نقرةٌ على الوجه تغلقه — أيسر للطفل من قصد الزرّ. ونميّز النقرة من
    التمرير بالمسافة والزمن، وإلّا أغلقه كلُّ سحبٍ للصفحة. */
 (function(){
