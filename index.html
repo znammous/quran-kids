@@ -4572,6 +4572,12 @@ function missPick(s,from,to,need){
 /* شبكةُ أمانٍ أخيرة: سؤالٌ لا تحتمله آيتُه يُبدَّل قبل أن يُرسم،
    فلا يقع الطفلُ على سؤالٍ لا جوابَ له مهما تغيّرت مصادرُ الأسئلة. */
 function qFit(r){
+  /* آيةٌ لا تبلغ سطراً لا تُشطر: يُبدَّل سؤالُها بفراغٍ أو بقراءة */
+  if(r && r.t==='aedge'){
+    var sa=r.surah||S.surah;
+    if(aedgeFits(sa,r.a,r.which)) return r;
+    r.t='missing'; r.wi=0;
+  }
   if(!r || (r.t!=='missing' && r.t!=='miss2')) return r;
   var sx=r.surah||S.surah, n=ayahWords(sx,r.a), ch;
   if(r.t==='miss2'){
@@ -4585,6 +4591,71 @@ function qFit(r){
   r.from=(ch&&ch.length)?ch[0][0]:0;
   r.to  =(ch&&ch.length)?ch[0][1]:n;
   return r;
+}
+/* ===== مطالعُ الآيات وخواتمُها =====
+   الطفلُ يحفظ الآيةَ فيعرف وسطَها ويضلّ عن مطلعها، أو يعرف مطلعَها ولا
+   يدري بمَ خُتمت. فيُعطى شطرَها ويُسأل عن طرفها الغائب. ولا تحتمل ذلك
+   إلّا آيةٌ تبلغ سطراً فأكثر — دونها يكون الشطرُ كلمةً أو كلمتين. */
+var AEDGE_MIN=10;      /* أقلُّ كلماتٍ تحتمل الشطرَ والسؤال — نحوُ سطرٍ في المصحف */
+var AEDGE_W=2;         /* كم كلمةً في الجواب */
+function ayahEdgePhrase(s,a,which,cnt){
+  var ws=wordsOf(ayahText(s,a));
+  cnt=cnt||AEDGE_W;
+  if(!ws.length) return '';
+  if(ws.length<=cnt) return ws.join(' ');
+  return which==='first' ? ws.slice(0,cnt).join(' ') : ws.slice(ws.length-cnt).join(' ');
+}
+/* الشطرُ المعروض: الثاني إن سُئل عن المطلع، والأوّل إن سُئل عن الخاتمة */
+function ayahEdgeShown(s,a,which){
+  var ws=wordsOf(ayahText(s,a)), h=Math.ceil(ws.length/2);
+  return which==='first' ? ('… '+ws.slice(h).join(' ')) : (ws.slice(0,h).join(' ')+' …');
+}
+function aedgeOK(s,a){ return wordsOf(ayahText(s,a)).length>=AEDGE_MIN; }
+/* وبعضُ الآيات تُعيد مطلعَها أو خاتمتَها في شطرها الآخر — كالأعراف ٩٢ —
+   فيقع الجوابُ في المعروض فيُفضح السؤال. تُستثنى في ذلك الطرف وحدَه. */
+function aedgeFits(s,a,which){
+  if(!aedgeOK(s,a)) return false;
+  var p=ayahEdgePhrase(s,a,which);
+  return !!p && ayahEdgeShown(s,a,which).indexOf(p)<0;
+}
+function aedgePick(s,from,to,which){
+  var pool=[], a;
+  for(a=from;a<to;a++) if(aedgeFits(s,a,which)) pool.push(a);
+  return pool.length ? pool[Math.floor(Math.random()*pool.length)] : -1;
+}
+/* المشتّتات: مطالعُ آياتٍ أخرى أو خواتمُها — من المقطع ثمّ من السورة */
+function aedgeOptions(s,a,which,need){
+  var correct=ayahEdgePhrase(s,a,which), seen={}, out=[], pool=[], i, p;
+  seen[norm(correct)]=1;
+  for(i=S.seg[0];i<S.seg[1];i++) if(i!==a) pool.push(i);
+  if(pool.length<need+2) for(i=0;i<s.ayat.length;i++) if(i!==a) pool.push(i);
+  shuffle(pool);
+  for(i=0;i<pool.length && out.length<need;i++){
+    p=ayahEdgePhrase(s,pool[i],which);
+    if(!p || seen[norm(p)]) continue;
+    seen[norm(p)]=1; out.push(p);
+  }
+  return out;
+}
+function aedgeRound(s,from,to,which){
+  which=which||(Math.random()<0.5?'first':'last');
+  var a=aedgePick(s,from,to,which);
+  if(a<0){ which=(which==='first'?'last':'first'); a=aedgePick(s,from,to,which); }
+  if(a<0) return null;
+  return { t:'aedge', a:a, which:which,
+           surah:s, segFrom:from, segTo:to };
+}
+/* ===== ترتيبُ المطالع والخواتم =====
+   من يراجع وجهاً فأكثر يُطلب منه أن يرصّ أوائلَ آياته أو أواخرَها على
+   ترتيبها — وهو ميزانُ من حفظ الوجهَ نسقاً لا آياتٍ متفرّقة. */
+var EORDER_MIN=4, EORDER_MAX=7;
+function eorderRound(s,from,to,which){
+  var cnt=to-from, span, lo;
+  if(cnt<EORDER_MIN) return null;
+  span=Math.min(EORDER_MAX,cnt);
+  lo=from+Math.floor(Math.random()*(cnt-span+1));
+  return { t:'eorder', which:which||(Math.random()<0.5?'first':'last'),
+           from:lo, to:lo+span, surah:s, segFrom:from, segTo:to };
 }
 function buildRounds(s,seg,stage){
   var r=[], i, k, from=seg[0], to=seg[1];
@@ -4623,6 +4694,15 @@ function buildRounds(s,seg,stage){
       if(e1) r.push(e1);
       if(e2) r.push(e2);
     }
+    /* مطلعُ آيةٍ وخاتمةُ أخرى: يُثبّتان طرفَي الآية في الذهن */
+    var a1=aedgeRound(s,from,to,'first'), a2=aedgeRound(s,from,to,'last');
+    if(a1) r.push(a1);
+    if(a2) r.push(a2);
+    /* ورصُّ المطالع والخواتم: يكفي أربعُ آياتٍ ولو دون وجه، فالمقصودُ
+       أن تترسّخ الكلماتُ لا أن يُشترط الوجه */
+    var o1=eorderRound(s,from,to,'first'), o2=eorderRound(s,from,to,'last');
+    if(o1) r.push(o1);
+    if(o2) r.push(o2);
     if(to-from>=2) r.push({t:'ayat',from:from,to:to});
     else {
       /* مقطع من آية واحدة: نرتّب كلماتها كاملة بدل ترتيب الآيات */
@@ -4785,7 +4865,10 @@ function runRound(){
   if(r.t==='edge') $('stageChip').textContent='🎯 بداية ونهاية';
   /* الكلمتان تردان داخل مرحلة «الكلمة الناقصة»، فتُسمّي الشارةُ ما هو أمامه */
   if(r.t==='miss2') $('stageChip').textContent='🔍 الكلمتان الناقصتان • '+seghere;
+  if(r.t==='aedge') $('stageChip').textContent=(r.which==='first'?'🚩 مطلعُ الآية • ':'🏁 خاتمةُ الآية • ')+seghere;
+  if(r.t==='eorder') $('stageChip').textContent=(r.which==='first'?'🚩 مطالعُ الآيات • ':'🏁 خواتمُ الآيات • ')+seghere;
   ({read:roundRead,words:roundWords,missing:roundMissing,miss2:roundMiss2,ayat:roundAyat,recite:roundRecite,
+    aedge:roundAEdge,eorder:roundEOrder,
     revpage:roundRevPage,edge:roundEdge})[r.t](r);
 }
 function nextRound(ok){
@@ -4804,7 +4887,7 @@ function nextRound(ok){
 /* ===== سلسلة الإجابات الصحيحة ===== */
 var CELE={ q:[], on:false, tm:0, then:null };
 var CELE_MS=5000;                                   /* مدّة الاحتفال قبل أن يذوب وحده */
-var QTYPES={ words:1, missing:1, miss2:1, ayat:1, edge:1 };   /* ما يُعرف صوابه من خطئه */
+var QTYPES={ words:1, missing:1, miss2:1, ayat:1, edge:1, aedge:1, eorder:1 };   /* ما يُعرف صوابه من خطئه */
 /* التسميع بالصوت يقرّه اللاعب على نفسه، فلا سبيل إلى الحكم عليه:
    لا يزيد السلسلة ولا يقطعها. أمّا تسميع الكتابة فيُقابَل بالنصّ. */
 function comboCounts(r){
@@ -5576,6 +5659,79 @@ function roundMiss2(r){
   draw();
 }
 
+function roundAEdge(r){
+  var s=r.surah||S.surah, which=r.which;
+  var correct=ayahEdgePhrase(s,r.a,which);
+  if(!correct){ nextRound(true); return; }
+  var nOpts=SET.level==='hard'?4:3;
+  var opts=aedgeOptions(s,r.a,which,nOpts-1);
+  opts.push(correct); shuffle(opts);
+  var shown=ayahEdgeShown(s,r.a,which);
+  $('playArea').innerHTML=
+    '<div class="hintline">'+(which==='first'?'🚩 مطلعُ الآية':'🏁 خاتمةُ الآية')+'</div>'+
+    '<div class="ayahbox"><div class="ayah" style="font-size:'+Math.min(SET.font,30)+'px">'+esc(shown)+
+      '<span class="anum">'+arNum(r.a+1)+'</span></div></div>'+
+    '<div class="qtitle">'+(which==='first'
+      ? 'بأيّ كلماتٍ بدأت هذه الآية؟'
+      : 'بأيّ كلماتٍ خُتمت هذه الآية؟')+'</div>'+
+    '<div class="opts" id="opts">'+opts.map(function(o,i){
+      return '<button class="opt phrase" data-i="'+i+'">'+esc(o)+'</button>'; }).join('')+'</div>';
+  var ob=$('opts').querySelectorAll('.opt'), answered=false, i;
+  for(i=0;i<ob.length;i++){
+    ob[i].onclick=function(){
+      if(answered) return;
+      if(this.textContent===correct){
+        answered=true; this.classList.add('ok');
+        sGood(); $('fb').className='fb good'; $('fb').textContent='صحيح ✅';
+        setTimeout(function(){ nextRound(true); },600);
+      } else {
+        this.classList.add('no'); this.disabled=true; sBad(); S.errors++; comboMiss();
+        $('fb').className='fb bad'; $('fb').textContent='حاول مرة أخرى 💪';
+      }
+    };
+  }
+}
+function roundEOrder(r){
+  var s=r.surah||S.surah, which=r.which, seq=[], i;
+  for(i=r.from;i<r.to;i++) seq.push(ayahEdgePhrase(s,i,which,1));
+  var pool=shuffle(seq.slice()), placed=0;
+  $('playArea').className='qfill';
+  $('playArea').innerHTML=
+    '<div class="hintline">'+(which==='first'?'🚩 مطالعُ الآيات':'🏁 خواتمُ الآيات')+' • '+
+      esc(s.name)+' '+arNum(r.from+1)+'-'+arNum(r.to)+'</div>'+
+    '<div class="qtitle">'+(which==='first'
+      ? 'رتّب أوّلَ كلمةٍ من كلّ آية، على ترتيب الآيات'
+      : 'رتّب آخرَ كلمةٍ من كلّ آية، على ترتيب الآيات')+'</div>'+
+    '<div class="qgap"></div>'+
+    '<div class="anslines" id="ansLines"><div class="ansrow"></div>'+
+      '<div class="ansrow"></div><div class="ansrow"></div></div>'+
+    '<div class="qgap"></div>'+
+    '<div class="chips" id="chips">'+pool.map(function(w,k){
+      return '<button class="chip" data-i="'+k+'">'+esc(w)+'</button>'; }).join('')+'</div>';
+  var lines=$('ansLines'), curRow=0;
+  var btns=$('chips').querySelectorAll('.chip'), k;
+  for(k=0;k<btns.length;k++){
+    btns[k].onclick=function(){
+      if(this.classList.contains('gone')) return;
+      if(this.textContent!==seq[placed]){
+        var el=this; el.classList.add('bad'); sBad(); S.errors++; comboMiss();
+        setTimeout(function(){ el.classList.remove('bad'); },380);
+        return;
+      }
+      this.classList.add('gone'); this.disabled=true;
+      var rows=lines.children||[], row=rows[Math.min(curRow,rows.length-1)]||lines;
+      var sp=document.createElement('span');
+      sp.className='chip placed'; sp.textContent=this.textContent;
+      row.appendChild(sp);
+      if(row.scrollWidth>row.clientWidth+1 && curRow+1<rows.length){ curRow++; rows[curRow].appendChild(sp); }
+      sPick(); placed++;
+      if(placed>=seq.length){
+        sGood(); $('fb').className='fb good'; $('fb').textContent='أحسنت ✅';
+        nextRound(true);
+      }
+    };
+  }
+}
 function roundAyat(r){
   var s=S.surah, idx=[], i;
   for(i=r.from;i<r.to;i++) idx.push(i);
@@ -7340,7 +7496,7 @@ function revStartPage(){
 }
 function revSkipToQuiz(){ REV.pi=REV.pages.length; revStartPage(); }
 
-var REV_KINDS=['missing','words','ayat','edge','miss2'];
+var REV_KINDS=['missing','words','ayat','edge','miss2','aedge','eorder'];
 /* تسلسلُ أنواع أسئلة الصفحة: يُخلط ترتيبُها ويُعاد الخلطُ كلّما دارت.
    وكان النوعُ يُؤخذ بحاصل قسمة العدّاد، فمن اختار ثلاثةَ أسئلةٍ للصفحة
    لم يبلغه النوعان الأخيران أبداً — يُكتبان ولا يُرَيان. */
@@ -7361,6 +7517,16 @@ function revQuestion(it,P,k){
       : null;
     if(eq) return eq;
     kind='missing';                                           /* صفحة لا تصلح: نعود للناقصة */
+  }
+  if(kind==='aedge'){
+    var ar1=aedgeRound(it.s,it.from,it.to);
+    if(ar1){ ar1.page=P; return ar1; }
+    kind='missing';                                 /* لا آيةَ تبلغ سطراً */
+  }
+  if(kind==='eorder'){
+    var er1=eorderRound(it.s,it.from,it.to);
+    if(er1){ er1.page=P; return er1; }
+    kind='missing';                                 /* أقلُّ من أربع آيات */
   }
   if(kind==='miss2'){
     var w2s=wordsOf(ayahText(it.s,it.a));
@@ -7850,7 +8016,9 @@ var EX_KINDS=[['mix','🎲','منوّعة','ترتيبُ كلماتٍ وكلمة
               ['words','🧩','ترتيب الكلمات','تُبعثر كلماتُ الآية فيعيد بناءها'],
               ['missing','🔍','الكلمة الناقصة','تسقط كلمةٌ من الآية فيختارها'],
               ['ayat','🔢','ترتيب الآيات','تُبعثر آياتُ المقطع فيعيد ترتيبها'],
-              ['miss2','🔍','الكلمتان الناقصتان','تسقط كلمتان من الآية فيختارهما تِباعاً']];
+              ['miss2','🔍','الكلمتان الناقصتان','تسقط كلمتان من الآية فيختارهما تِباعاً'],
+              ['aedge','🚩','مطلعُ الآية وخاتمتُها','يُعطى شطرَ الآية فيذكر طرفَها الغائب'],
+              ['eorder','🔢','رصُّ المطالع والخواتم','يرتّب أوائلَ الآيات أو أواخرَها']];
 var EX_COUNTS=[10,20,30,50];
 var EX_STEPS=['range','kind','count','ready'];
 var EX_HEAD={
@@ -7884,7 +8052,8 @@ function examPagesN(){ var e=examEdges(); return pageOfIdx(e[1])-pageOfIdx(e[0])
 /* سؤالٌ من آية: نوعُه ما اختاره، فإن تعذّر رجع إلى الناقصة */
 function examQ(it){
   var t=EX.kind, pool, ch, pick, ws, span, lo, j1, j2;
-  if(t==='mix'){ pool=['missing','words','ayat','miss2']; t=pool[Math.floor(Math.random()*pool.length)]; }
+  if(t==='mix'){ pool=['missing','words','ayat','miss2','aedge','eorder'];
+    t=pool[Math.floor(Math.random()*pool.length)]; }
   if(t==='ayat' && (it.to-it.from)<3) t='missing';
   if(t==='words'){
     ch=(ayahWords(it.s,it.a)>=ORDER_MIN) ? wordChunks(it.s,it.a,WORDS_MIN) : null;
@@ -7900,6 +8069,16 @@ function examQ(it){
     lo=Math.min(it.a, it.to-span);
     if(lo<it.from) lo=it.from;
     return {t:'ayat',from:lo,to:lo+span,surah:it.s,segFrom:it.from,segTo:it.to,page:it.P};
+  }
+  if(t==='aedge'){
+    var ax=aedgeRound(it.s,it.from,it.to);
+    if(ax){ ax.page=it.P; return ax; }
+    t='missing';                                    /* لا آيةَ تبلغ سطراً */
+  }
+  if(t==='eorder'){
+    var ex=eorderRound(it.s,it.from,it.to);
+    if(ex){ ex.page=it.P; return ex; }
+    t='missing';                                    /* أقلُّ من أربع آيات */
   }
   ws=wordsOf(ayahText(it.s,it.a));
   if(!ws.length) return null;
@@ -7924,7 +8103,8 @@ function examBuild(){
   for(i=0;i<tries && pool.length<EX.count;i++){
     q=examQ(items[i%items.length]);
     if(!q) continue;
-    key=q.t+'|'+q.surah.n+'|'+(q.a!=null?q.a:q.from)+'|'+(q.wi!=null?q.wi:(q.from!=null?q.from:''))+'|'+(q.wi2==null?'':q.wi2);
+    key=q.t+'|'+q.surah.n+'|'+(q.a!=null?q.a:q.from)+'|'+(q.wi!=null?q.wi:(q.from!=null?q.from:''))+'|'+
+        (q.wi2==null?'':q.wi2)+'|'+(q.which||'')+'|'+(q.to==null?'':q.to);
     if(seen[key]) continue;
     seen[key]=1; pool.push(q);
   }
