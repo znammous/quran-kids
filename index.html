@@ -2994,8 +2994,6 @@ function renderShop(){
   var S2=sad();
   $('shopBody').innerHTML=
     '<button class="btn ghost mini" id="btnShopCats" style="width:100%;margin-bottom:10px">➡️ كل الأقسام</button>'+
-    /* قسم المواد بابُه المسجد، فيُردّ إليه من حيث أتى ومن حيث لم يأتِ */
-    (cat.k==='mats' ? '<button class="btn blue mini" id="btnToBuild" style="width:100%;margin-bottom:10px">🕌 عُد إلى مسجدي</button>' : '')+
     (cat.k==='mosque' ? '<svg class="mosque" viewBox="0 0 300 170">'+mosqueSVG(1)+'</svg>' : '')+
     (cat.give ? '<div class="shelf"><div class="sh">🤲 صدقاتي</div>'+
       (sadTotal()
@@ -3027,7 +3025,6 @@ function renderShop(){
         '</div>';
     }).join('')+'</div>';
   $('btnShopCats').onclick=function(){ shopCat=''; renderShop(); window.scrollTo(0,0); };
-  if($('btnToBuild')) $('btnToBuild').onclick=function(){ SHOP_BACK=''; renderBuild(); show('scr-build'); };
   var bs=$('shopBody').querySelectorAll('[data-buy]');
   for(i=0;i<bs.length;i++){
     bs[i].onclick=function(){
@@ -4669,6 +4666,9 @@ function roundWords(r){
     };
   }
   $('btnHintW').onclick=function(){
+    /* التلميح يدلّ على الكلمة، فلا تُحتسب بعده سلسلةُ إتقان — وإلا كانت
+       الطريق إلى أعلى السلاسل: تلميحٌ فاختيار، ثم تلميحٌ فاختيار */
+    comboMiss();
     for(var j=0;j<btns.length;j++){
       if(!btns[j].classList.contains('gone') && btns[j].textContent===seg[placed]){
         btns[j].classList.add('hintme');
