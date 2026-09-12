@@ -2468,7 +2468,7 @@ function surahStats(s){
   var segs=segsOf(s), done=0, stars=0;
   segs.forEach(function(g){ var p=peek(segKey(s.n,g[0]));
     var fin=segDone(s,g);
-    stars+=fin?5:p.stars; if(fin) done++; });
+    stars+=fin?stagesN():p.stars; if(fin) done++; });
   return { segs:segs.length, done:done, stars:stars, full:done===segs.length && segs.length>0 };
 }
 function dueSegs(){
@@ -2542,12 +2542,12 @@ function ensureSchedule(s){
     var k=segKey(s.n,g[0]), p=prog[k], src;
     if(!p){
       src=inheritRank(s.n,g[0],g[1]);
-      prog[k]={ stars:5, stage:5, done:true,
+      prog[k]={ stars:stagesN(), stage:stagesN(), done:true,
                 box:(src?(src.box||0):top),
                 due:(src?(src.due==null?null:src.due):null) };
       ch=true;
     }
-    else if(!p.done){ p.stars=5; p.stage=5; p.done=true;
+    else if(!p.done){ p.stars=stagesN(); p.stage=stagesN(); p.done=true;
       if(p.due==null && p.box==null){ p.box=top; } ch=true; }
   });
   if(ch) saveDB();
@@ -2562,7 +2562,9 @@ function ensureAllSchedules(){
    اليوم • المواظبة • الهدف • الجواهر
    ========================================================= */
 var GOAL_SEGS=1;        /* مقطع كامل في اليوم — هو وحدة الحفظ، فلا يُقاس اليوم بأجزائه */
-var STAGES_PER_SEG=5;   /* خمس مراحل يتمّ بها المقطع — تُستعمل لتقدير الشريط وحده */
+/* عددُ مراحل المقطع يُقرأ من الجدول: زِيدت مرحلةٌ فلا يبقى الرقمُ مكتوباً
+   في عشرة مواضع. ودالّةٌ لا ثابتٌ، لأنّ الجدولَ يُعرَّف بعد هذا الموضع. */
+function stagesN(){ return STAGES.length; }
 function todayBox(){
   var p=curP(), t=todayNum();
   if(!p.today || p.today.d!==t) p.today={d:t,stages:0,segs:0,reviews:0};
@@ -2578,7 +2580,7 @@ function goalHifzMet(){
 function goalHifzPct(){
   var t=todayBox();
   if(goalHifzMet()) return 1;
-  return Math.min(t.stages, STAGES_PER_SEG)/STAGES_PER_SEG;
+  return Math.min(t.stages, stagesN())/stagesN();
 }
 function goalRevMet(){
   if(todayBox().reviews>=1) return true;
@@ -4094,10 +4096,12 @@ var STAGES=[
   {t:'🧩 رتّب الكلمات', d:'اضغط الكلمات بالترتيب'},
   {t:'🔍 الكلمة الناقصة', d:'اختر الكلمة الصحيحة'},
   {t:'📜 رتّب الآيات', d:'رتّب آيات المقطع'},
+  {t:'🔍 الكلمتان الناقصتان', d:'أكمل الكلمتين الساقطتين'},
   {t:'🌟 التسميع', d:'سمّع عن ظهر قلب'}
 ];
 var openJuz=0;
-function stars5(k){ var st=''; for(var i=0;i<5;i++) st+=(i<k?'★':'☆'); return st; }
+/* نجومُ المقطع بعدد مراحله، وكانت خمساً مكتوبةً قبل أن تُزاد مرحلة */
+function stars5(k){ var st='', n=stagesN(), i; for(i=0;i<n;i++) st+=(i<k?'★':'☆'); return st; }
 function juzLabel(s){
   var js=SURAH_JUZ[s.n]||[s.juz];
   return js.length>1 ? ('الأجزاء '+arNum(js[0])+'–'+arNum(js[js.length-1])) : ('الجزء '+arNum(js[0]));
@@ -4305,7 +4309,7 @@ function renderPath(){
        '<div class="dot">'+(fin?(isDue?'🔁':'✓'):(locked?'🔒':arNum(k+1)))+'</div>'+
        '<div class="lbl">'+arNum(g[0]+1)+'–'+arNum(g[1])+
          (isPageMode()?'<br><span style="opacity:.6;font-size:10px">'+segPageLabel(s,g)+'</span>':'')+'</div>'+
-       ((fin||p.stars)?'<div class="st">'+stars5(fin?5:p.stars)+'</div>':'')+
+       ((fin||p.stars)?'<div class="st">'+stars5(fin?stagesN():p.stars)+'</div>':'')+
        '</div>';
   });
   if(t.full && !SC){
@@ -4359,7 +4363,7 @@ var REVIEW_CAP=8;
 function startSeg(s,i){
   var g=segsOf(s)[i]; if(!g) return;
   var key=segKey(s.n,g[0]), p=getP(key);
-  var stage = p.done ? 0 : Math.min(p.stage,4);
+  var stage = p.done ? 0 : Math.min(p.stage, stagesN()-1);
   pendingStart={ s:s, seg:g, si:i, key:key, stage:stage, review:false };
   $('adab').hidden=false;
 }
@@ -4591,13 +4595,6 @@ function buildRounds(s,seg,stage){
         used.push(wi);
         r.push({t:'missing',a:i,wi:wi});
       }
-      /* الآيةُ الطويلةُ تحتمل سؤالَ الكلمتين: يحلّ محلَّ آخر فراغٍ مفردٍ
-         فيها، فلا يطول عددُ الأسئلة وإنّما يشتدّ آخرُها. */
-      if(ws.length>=MISS2_MIN*2){
-        var j1=Math.floor(Math.random()*(ws.length-2));
-        var j2=j1+2+Math.floor(Math.random()*(ws.length-j1-2));
-        r[r.length-1]={t:'miss2',a:i,wi:j1,wi2:j2};
-      }
     }
     /* مقطعٌ كلُّ آياته قصار: يُقرأ ولا يُفرَّغ، فلا تمرّ مرحلةٌ خاوية */
     if(!r.length) for(i=from;i<to;i++) r.push({t:'read',a:i});
@@ -4616,6 +4613,21 @@ function buildRounds(s,seg,stage){
       if(ch2.length>3) ch2=ch2.slice(0,3);
       for(k=0;k<ch2.length;k++) r.push({t:'words',a:from,from:ch2[k][0],to:ch2[k][1],parts:ch2.length,part:k});
     }
+  } else if(stage===4){
+    /* الكلمتان الناقصتان: مرحلةٌ قبل التسميع، تشدّ الحفظَ قبل أن يُسمَّع.
+       ولا تحتملهما إلّا آيةٌ من خمس كلماتٍ فأكثر، فما قصر عنها يُسأل
+       بفراغٍ واحد، وما قصر عن ذلك يُقرأ. */
+    for(i=from;i<to;i++){
+      var w2=wordsOf(ayahText(s,i));
+      if(w2.length>=MISS2_MIN){
+        var q1=Math.floor(Math.random()*(w2.length-2));
+        var q2=q1+2+Math.floor(Math.random()*(w2.length-q1-2));
+        r.push({t:'miss2',a:i,wi:q1,wi2:q2});
+      }
+      else if(w2.length>=MISS_MIN)
+        r.push({t:'missing',a:i,wi:Math.floor(Math.random()*w2.length)});
+    }
+    if(!r.length) for(i=from;i<to;i++) r.push({t:'read',a:i});
   } else {
     for(i=from;i<to;i++){
       var np=recitePortions(s,i);
@@ -5746,7 +5758,7 @@ function finishStage(){
   /* الانتهاء بآخر مرحلةٍ في هذه الجولة، لا بنجومٍ سابقة — وإلّا قُطعت تمارين المُعيد بعد أوّلها */
   var last=(S.stage+1>=STAGES.length), first=!p.done;
   if(S.stage+1>p.stars) p.stars=S.stage+1;
-  p.stage=Math.min(S.stage+1,5);
+  p.stage=Math.min(S.stage+1, stagesN());
   sWin();
   if(!S.errors) tal().perfect++;                      /* مرحلة بلا خطأ واحد */
   if(first) noteStage();                              /* التثبيت لا يُكسب جواهر مكرّرة */
@@ -5834,13 +5846,13 @@ function finishStage(){
   }
   saveProg();
   var nx=STAGES[S.stage+1];
-  $('mosque').removeAttribute('hidden'); $('playCard').classList.remove('bare'); $('mosque').innerHTML=mosqueSVG(p.stars/5); $('playArea').className='';
+  $('mosque').removeAttribute('hidden'); $('playCard').classList.remove('bare'); $('mosque').innerHTML=mosqueSVG(p.stars/stagesN()); $('playArea').className='';
   $('barFill').style.width='100%';
   $('pStars').textContent=arNum(p.stars);
   $('playArea').innerHTML=
     '<div style="text-align:center"><div style="font-size:52px">🌟</div>'+
     '<h2 style="color:var(--g1);margin:6px 0">أنجزت المرحلة!</h2>'+
-    '<p style="color:#3d5b7a;font-size:16px;margin:0 0 12px">النجمة '+arNum(p.stars)+' من ٥ في '+esc(S.surah.name)+' \u2066('+arNum(S.seg[0]+1)+'-'+arNum(S.seg[1])+')\u2069</p>'+
+    '<p style="color:#3d5b7a;font-size:16px;margin:0 0 12px">النجمة '+arNum(p.stars)+' من '+arNum(stagesN())+' في '+esc(S.surah.name)+' \u2066('+arNum(S.seg[0]+1)+'-'+arNum(S.seg[1])+')\u2069</p>'+
     '<div style="font-size:28px;letter-spacing:4px;color:#d9b400;margin-bottom:12px">'+stars5(p.stars)+'</div>'+
     '<button class="btn primary big pulse" id="btnNextStage">⬅️ المرحلة التالية: '+nx.t+'</button>'+
     '<button class="btn ghost big" id="btnSegsNow" style="margin:0">🗺️ المسار</button></div>';
@@ -7244,7 +7256,7 @@ function revSkipToQuiz(){ REV.pi=REV.pages.length; revStartPage(); }
 
 function revQuestion(it,P,k){
   var kinds=['missing','words','ayat','edge','miss2'];
-  var kind=kinds[k%4];
+  var kind=kinds[k%kinds.length];   /* كان العددُ مثبَّتاً بأربعةٍ فلا يبلغ الخامسَ أبداً */
   if(kind==='ayat' && (it.to-it.from)<3) kind='missing';      /* الترتيب يحتاج ثلاث آيات فأكثر */
   if(kind==='edge'){
     var eq = edgeOK(P,!revFree())
