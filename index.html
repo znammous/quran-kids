@@ -2534,7 +2534,7 @@ function renderHUD(){
     }).join(' • ');
     var rest = due>2 ? (' و'+arNum(due-2)+' غيرها') : '';
     var wp=false; try{ wp=wirdPending(); }catch(e){}
-    var revTxt = wp ? 'ورد المراجعة اليوم: <b>'+arNum(REV.size)+' وجه</b> من محفوظك'
+    var revTxt = wp ? 'ورد المراجعة اليوم: <b>'+arNum(revSize('wird'))+' وجه</b> من محفوظك'
                : due===0 ? 'لا مراجعة متبقية اليوم'
                : mR ? ('أتممت مراجعة اليوم — وبقي '+arNum(due)+' مقطعاً إن أردت الزيادة')
                     : ('راجع: <b>'+names+'</b>'+rest);
@@ -5524,14 +5524,15 @@ function finishStage(){
 /* ===== المراجعة بالصفحات ===== */
 var REV={ fromS:1, fromA:1, toS:114, toA:6, size:3, per:5, done:0, weak:{},
           pages:[], si:0, pi:0, due:false, view:0,
-          wird:true, dir:-1, day:null, on:null, cyc:0 };
+          wird:true, dir:-1, day:null, on:null, cyc:0, wdone:0, wsize:3, mode:null };
 var REV_SIZES=[1,2,3,5,10];
 
 /* الخطة والتقدّم يُحفظان مع اللاعب، فيمشي على المسار يوماً بعد يوم */
 function revSave(){
   curP().rev={ fromS:REV.fromS, fromA:REV.fromA, toS:REV.toS, toA:REV.toA,
                size:REV.size, per:REV.per, done:REV.done, weak:REV.weak,
-               wird:REV.wird, dir:REV.dir, day:REV.day, on:REV.on, cyc:REV.cyc };
+               wird:REV.wird, dir:REV.dir, day:REV.day, on:REV.on, cyc:REV.cyc,
+               wdone:REV.wdone, wsize:REV.wsize };
   saveDB();
 }
 function revLoad(){
@@ -5547,12 +5548,15 @@ function revLoad(){
   REV.day =(typeof r.day==='number')?r.day:null;
   REV.on  =(r.on===false)?false:(r.on===true?true:null);   /* null: لم يُسأل بعد */
   REV.cyc =r.cyc||0;                                       /* كم دورةً أتمّ على محفوظه */
+  REV.wdone=r.wdone||0;                                    /* موضعُ وقوفه في ورده */
+  REV.wsize=REV_SIZES.indexOf(r.wsize)>=0?r.wsize:3;       /* وحجمُ جلسته فيه */
+  REV.mode=null;                                           /* أيّهما يُعرض الآن */
   REV.pages=[]; REV.si=0; REV.pi=0; REV.due=false; REV.view=0;
   revClamp();
 }
 /* هل أُدّي وردُ اليوم؟ جلسةٌ واحدة في اليوم هي مقرَّره */
-function wirdOn(){ return REV.on===true && revIsWird(); }
-function wirdCount(){ try{ return revSessions().length; }catch(e){ return 0; } }
+function wirdOn(){ return REV.on===true; }      /* لا يُشترط أن يكون هو المعروض */
+function wirdCount(){ try{ return revSessions('wird').length; }catch(e){ return 0; } }
 function wirdDoneToday(){ return REV.day===todayNum(); }
 function wirdPending(){ return wirdOn() && wirdCount()>0 && !wirdDoneToday(); }
 /* لا آية خارج سورتها، ولا نهاية تسبق البداية */
@@ -5588,9 +5592,12 @@ function wirdPages(){
 }
 function revDir(){ return REV.dir<0 ? -1 : 1; }
 function revIsWird(){ return REV.wird!==false; }
-function revAllPages(){
+/* البابان مستقلّان: للوردِ صفحاتُه وجلساتُه وعدّادُه، وللمسار الحرّ مثلُها.
+   وكانا يتقاسمان حالةً واحدة، فاختيارُ أحدهما يمحو تقدّم الآخر. */
+function revMode(m){ return m || REV.mode || (revIsWird()?'wird':'free'); }
+function revAllPages(m){
   var out, P;
-  if(revIsWird()) out=wirdPages();
+  if(revMode(m)==='wird') out=wirdPages();
   else{
     revClamp();
     var p1=pageOfIdx(GIDX[REV.fromS-1]+(REV.fromA-1));
@@ -5600,9 +5607,13 @@ function revAllPages(){
   if(revDir()<0) out=out.slice().reverse();
   return out;
 }
-/* وتقسيمها جلسات بحجم ثابت */
-function revSessions(){
-  var all=revAllPages(), n=REV.size||3, out=[];
+/* حجمُ الجلسة: للورد حجمُه وللمسار حجمُه */
+function revSize(m){ return (revMode(m)==='wird') ? (REV.wsize||REV.size||3) : (REV.size||3); }
+/* وموضعُ الوقوف كذلك */
+function revDone(m){ return (revMode(m)==='wird') ? (REV.wdone||0) : (REV.done||0); }
+function revSetDone(m,v){ if(revMode(m)==='wird') REV.wdone=v; else REV.done=v; }
+function revSessions(m){
+  var all=revAllPages(m), n=revSize(m), out=[];
   for(var i=0;i<all.length;i+=n) out.push(all.slice(i,i+n));
   return out;
 }
@@ -5612,9 +5623,9 @@ function revSessionSurah(pg){
   return pcs.length? pcs[0].s.n : 1;
 }
 /* سور النطاق بالترتيب */
-function revSurahList(){
+function revSurahList(m){
   var out=[], seen={};
-  revSessions().forEach(function(pg){
+  revSessions(m).forEach(function(pg){
     var n=revSessionSurah(pg);
     if(!seen[n]){ seen[n]=1; out.push(n); }
   });
@@ -5670,7 +5681,8 @@ function renderRevPlan(){
   var freeOpen=!!curP().freeRev;
   /* نطاق حرّ سبق ضبطه؟ فالأوْلى أن يُكمل مساره لا أن يُعيد التحديد */
   /* في الورد لا يُعرض صندوق النطاق الحرّ، فلا يزاحم مقرَّرَ اليوم صندوقان */
-  var savedFree=(!!curP().rev && !revIsWird()), ss0=savedFree?revSessions():[], nS=ss0.length;
+  /* يُعرض المسار الحرّ متى ضُبط نطاقُه، ولو كان الوردُ معتمداً معه */
+  var savedFree=(!!curP().rev && !revIsWird()), ss0=savedFree?revSessions('free'):[], nS=ss0.length;
   var doneS=Math.min(REV.done||0, nS), contHTML='';
   if(savedFree && nS){
     var aa=surahBy(REV.fromS), bb=surahBy(REV.toS);
@@ -5693,9 +5705,7 @@ function renderRevPlan(){
     wirdBanner('P')+
     selfRevBanner('P')+
     contHTML+
-    ((!revIsWird() && wirdPages().length)
-      ? '<button type="button" class="btn blue big" id="btnBackWird" style="margin-top:6px">'+
-        '📖 عُد إلى وردك من محفوظك</button>' : '')+
+
     '<button type="button" class="btn '+(freeOpen?'blue':'ghost')+' big" id="btnFreeRev" style="margin-top:6px">'+
       '🎛️ '+(savedFree?'عدّل نطاق المراجعة الحرّة':'مراجعة حرّة — اختر نطاقاً بنفسك')+
       (freeOpen?' ▴':'')+'</button>'+
@@ -5714,12 +5724,13 @@ function renderRevPlan(){
     '<div id="revSum"></div></div>';
 
   /* ضبطُ نطاقٍ بيده خروجٌ من الورد إلى المسار الحرّ، بإرادته لا سهواً */
-  var reset=function(){ REV.wird=false; REV.done=0; REV.weak={}; revSave(); renderRevPlan(); };
+  /* يمسّ عدّادَ المسار الحرّ وحده — والوردُ باقٍ بعدّاده وحجمه */
+  var reset=function(){ REV.wird=false; REV.mode='free'; REV.done=0; REV.weak={}; revSave(); renderRevPlan(); };
   /* التحديد من المصحف: يفتح الوجه عند بدايته الحاليّة، فيحدّد الطرفين تِباعاً */
   if($('revPickR')) $('revPickR').onclick=function(){
     mfPickRange(GIDX[REV.fromS-1]+(REV.fromA-1), function(fs,fa,ts,ta){
       REV.fromS=fs; REV.fromA=fa; REV.toS=ts; REV.toA=ta;
-      REV.wird=false; REV.done=0; REV.weak={}; revSave(); renderRevPlan();
+      REV.wird=false; REV.mode='free'; REV.done=0; REV.weak={}; revSave(); renderRevPlan();
       try{ navToast('📖 '+surahBy(fs).name+' '+arNum(fa)+' ← '+surahBy(ts).name+' '+arNum(ta)); }catch(e){}
     });
   };
@@ -5735,22 +5746,19 @@ function renderRevPlan(){
   wirdSetupWire();
   wirdWire('P');
   selfRevWire('P');
-  if($('btnBackWird')) $('btnBackWird').onclick=function(){
-    REV.wird=true; REV.on=true; REV.done=0; REV.weak={};
-    curP().freeRev=false; revSave(); renderRevPlan();
-  };
   $('btnFreeRev').onclick=function(){
     curP().freeRev=!curP().freeRev; saveDB(); renderRevPlan();
   };
   if($('btnRevCont')) $('btnRevCont').onclick=function(){
-    if(REV.done>=revSessions().length){ REV.done=0; REV.weak={}; }
+    REV.mode='free';
+    if(REV.done>=revSessions('free').length){ REV.done=0; REV.weak={}; }
     revSave(); beginRevPath();
   };
   if($('btnRevGo')) $('btnRevGo').hidden=!freeOpen;
   renderRevSum();
 }
 function renderRevSum(){
-  var all=revAllPages(), ss=revSessions();
+  var all=revAllPages('free'), ss=revSessions('free');
   var a=surahBy(REV.fromS), b=surahBy(REV.toS);
   $('revSum').innerHTML = all.length
     ? (function(){
@@ -6053,11 +6061,11 @@ function wirdSetupWire(){
   var box=$('revPlan'); if(!box) return;
   var bs=box.querySelectorAll('[data-wsize]'), i;
   for(i=0;i<bs.length;i++) bs[i].onclick=function(){
-    REV.size=parseInt(this.getAttribute('data-wsize'),10);
-    REV.on=true; REV.wird=true; REV.done=0;
+    REV.wsize=parseInt(this.getAttribute('data-wsize'),10);
+    REV.on=true; REV.wird=true; REV.wdone=0;
     if(REV.dir!==1 && REV.dir!==-1) REV.dir=(selfFrom()==='baqarah'?1:-1);
     revSave(); renderRevPlan();
-    try{ navToast('📖 بدأ وردك — '+arNum(REV.size)+' وجه في اليوم'); }catch(e){}
+    try{ navToast('📖 بدأ وردك — '+arNum(revSize('wird'))+' وجه في اليوم'); }catch(e){}
   };
   if($('wirdSkip')) $('wirdSkip').onclick=function(){
     REV.on=false; revSave(); renderRevPlan();
@@ -6065,9 +6073,9 @@ function wirdSetupWire(){
 }
 function wirdBanner(sfx){
   if(!wirdOn()) return '';
-  var ss=[]; try{ ss=revSessions(); }catch(e){}
+  var ss=[]; try{ ss=revSessions('wird'); }catch(e){}
   if(!ss.length) return '';
-  var n=ss.length, i=(REV.done||0)%n, cur=ss[i], done=wirdDoneToday();
+  var n=ss.length, i=(REV.wdone||0)%n, cur=ss[i], done=wirdDoneToday();
   var lbl=cur.map(function(P){ return arNum(P); }).join('، ');
   var pcs=pagePieces(cur[0]), nm=pcs.length?esc(pcs[0].s.name):'';
   return '<div class="revsum" style="margin:0 0 16px;text-align:right;position:relative">'+
@@ -6088,7 +6096,7 @@ function wirdBanner(sfx){
 function wirdWire(sfx){
   var b=$('wirdGo'+sfx); if(!b) return;
   /* يرى المسار كلّه أوّلاً — جلساتِه وما تمّ منها — ثم يدخل جلسته */
-  b.onclick=function(){ beginRevPath(); };
+  b.onclick=function(){ REV.mode='wird'; revSave(); beginRevPath(); };
 }
 function selfRevWire(sfx){
   var b=$('selfRevGo'+sfx); if(!b) return;
@@ -6198,9 +6206,9 @@ function wirdOnbSync(){
     var v=this.getAttribute('data-wird');
     if(v!=null){ REV.on=(v==='1'); if(REV.on) REV.wird=true; }
     var sz=this.getAttribute('data-wsize');
-    if(sz!=null){ REV.size=parseInt(sz,10); REV.done=0; }
+    if(sz!=null){ REV.wsize=parseInt(sz,10); REV.wdone=0; }
     var dr=this.getAttribute('data-wdir');
-    if(dr!=null){ REV.dir=parseInt(dr,10); REV.done=0; }
+    if(dr!=null){ REV.dir=parseInt(dr,10); REV.wdone=0; }
     revSave(); wirdOnbSync();
     try{ onbGate(); }catch(e){}
   };
@@ -6371,7 +6379,7 @@ function priorApply(){
     if(lo){
       revLoad();
       REV.fromS=lo; REV.fromA=1; REV.toS=hi; REV.toA=surahBy(hi).ayat.length;
-      REV.done=0; REV.weak={}; revSave();
+      REV.done=0; REV.weak={}; REV.wdone=0; revSave();
     }
   }catch(e){}
   saveDB();
@@ -6698,7 +6706,7 @@ function wirdBody(){
   if(on!==true) return h;
   h+='<div class="lbl" style="margin:16px 0 6px">📏 كم وجهاً في الجلسة؟</div><div class="onbopts">';
   REV_SIZES.forEach(function(z){
-    var c=wirdCalc(z), sel=(REV.size===z);
+    var c=wirdCalc(z), sel=(revSize('wird')===z);
     h+='<button type="button" class="onbopt'+(sel?' sel':'')+'" data-wsize="'+z+'">'+
        '<span class="oe">'+(sel?'✅':arNum(z))+'</span>'+
        '<span class="ot"><b>'+(z===1?'وجه واحد':(z===2?'وجهان':arNum(z)+' أوجه'))+'</b>'+
@@ -6713,7 +6721,7 @@ function wirdBody(){
        '<span class="oe">'+(revDir()>0?'✅':'📖')+'</span>'+
        '<span class="ot"><b>من جهة البقرة</b><i>على ترتيب المصحف</i></span></button>'+
      '</div>';
-  var c=wirdCalc(REV.size);
+  var c=wirdCalc(revSize('wird'));
   h+='<div class="revsum" style="margin:16px 0 0;text-align:right">'+
      '<div style="font-size:15px">🧮 <b>حسبة ورد مراجعتك</b></div>'+
      '<div style="font-size:17px;font-weight:900;margin-top:6px">'+
@@ -6729,9 +6737,9 @@ function wirdWirePanel(){
     var v=this.getAttribute('data-wird');
     if(v!=null){ REV.on=(v==='1'); if(REV.on) REV.wird=true; }
     var sz=this.getAttribute('data-wsize');
-    if(sz!=null){ REV.size=parseInt(sz,10); REV.done=0; }
+    if(sz!=null){ REV.wsize=parseInt(sz,10); REV.wdone=0; }
     var dr=this.getAttribute('data-wdir');
-    if(dr!=null){ REV.dir=parseInt(dr,10); REV.done=0; }
+    if(dr!=null){ REV.dir=parseInt(dr,10); REV.wdone=0; }
     revSave();
     renderBqnList(); bqnGate();
   };
@@ -6786,26 +6794,26 @@ function beginRevPath(){ revLoad(); renderRevPath(); show('scr-revpath'); }
 function renderRevPath(){
   renderHUDInto('revHud');
   if($('revBqn')) $('revBqn').innerHTML='';   /* اختار المسار الحرّ، فلا يزاحمه صندوق الخطة */
-  var ss=revSessions(), list=revSurahList();
+  var md=revMode(), ss=revSessions(md), list=revSurahList(md);
   if(!ss.length){ $('revPath').innerHTML=''; $('revTitle').textContent='النطاق فارغ'; return; }
 
   /* افتح على سورة الجلسة الحالية ما لم يكن اللاعب قد تنقّل */
   if(list.indexOf(REV.view)<0){
-    var cur=ss[Math.min(REV.done, ss.length-1)];
+    var cur=ss[Math.min(revDone(md), ss.length-1)];
     REV.view = cur ? revSessionSurah(cur) : list[0];
   }
   var vi=list.indexOf(REV.view), sv=surahBy(REV.view);
   var mine=[];
   ss.forEach(function(pg,i){ if(revSessionSurah(pg)===REV.view) mine.push({pg:pg,i:i}); });
   var doneHere=0;
-  mine.forEach(function(x){ if(x.i<REV.done) doneHere++; });
+  mine.forEach(function(x){ if(x.i<revDone(md)) doneHere++; });
 
   var a=surahBy(REV.fromS), b=surahBy(REV.toS);
-  var wird=revIsWird();
+  var wird=(md==='wird');
   $('revTitle').innerHTML='<small style="display:block;font-size:12px;opacity:.75;font-weight:800">'+
       (wird?'📖 مسار ورد المراجعة':'🎛️ مسار المراجعة الحرّة')+'</small>'+esc(sv?sv.name:'—')+
     '<span>'+arNum(doneHere)+' من '+arCount(mine.length,C_SESS)+' هنا • '+
-    'المسار: '+arNum(Math.min(REV.done,ss.length))+'/'+arNum(ss.length)+' • '+
+    'المسار: '+arNum(Math.min(revDone(md),ss.length))+'/'+arNum(ss.length)+' • '+
     (wird ? ('كلّ محفوظك'+((REV.cyc||0)?(' • 🏅 '+arNum(REV.cyc)+' دورة'):''))
           : (esc(a.name)+' '+arNum(REV.fromA)+' ← '+esc(b.name)+' '+arNum(REV.toA)))+'</span>';
   $('revPrev').disabled = vi<=0;
@@ -6813,7 +6821,7 @@ function renderRevPath(){
 
   var h='';
   mine.forEach(function(x){
-    var st = x.i<REV.done ? 'done' : (x.i===REV.done ? 'now' : 'locked');
+    var st = x.i<revDone(md) ? 'done' : (x.i===revDone(md) ? 'now' : 'locked');
     var weak=false;
     for(var k=0;k<x.pg.length;k++) if(REV.weak[x.pg[k]]) weak=true;
     h+='<div class="pnode '+st+'" data-revs="'+x.i+'">'+
@@ -6821,14 +6829,14 @@ function renderRevPath(){
        '<button class="dot">'+(st==='done'?'✓':arNum(x.i+1))+'</button>'+
        '<div class="lbl wide">'+esc(revSessionLabel(x.pg))+(weak?' 🔁':'')+'</div></div>';
   });
-  if(REV.done>=ss.length && vi===list.length-1)
+  if(revDone(md)>=ss.length && vi===list.length-1)
     h+='<div class="pnode done"><button class="dot">🏁</button><div class="lbl">تمّت مراجعة النطاق كله</div></div>';
   $('revPath').innerHTML=h;
 
   var ns=$('revPath').querySelectorAll('[data-revs]');
   for(var z=0;z<ns.length;z++) ns[z].onclick=function(){
     var k=parseInt(this.getAttribute('data-revs'),10);
-    if(k!==REV.done) return;                      /* الجلسة الحالية وحدها */
+    if(k!==revDone(md)) return;                   /* الجلسة الحالية وحدها */
     pendingStart={ rev:'session', idx:k }; $('adab').hidden=false;
   };
 }
@@ -6928,16 +6936,16 @@ function finishRevQuiz(){
     pageSegKeys(P).forEach(function(k){ scheduleNext(k, !bad); });      /* الضعيفة تعود غداً */
   });
   saveProg();
-  var wirdRound=0;
+  var wirdRound=0, md=revMode();
   if(onPath){
-    REV.done=Math.max(REV.done, REV.si+1);
-    if(revIsWird()){
+    revSetDone(md, Math.max(revDone(md), REV.si+1));
+    if(md==='wird'){
       REV.day=todayNum();                    /* أُدّي وردُ اليوم */
       /* أتمّ الدورة على محفوظه كلّه؟ تُطوى وتُستأنف من أوّله */
-      var nSS=revSessions().length;
-      if(nSS && REV.done>=nSS){
+      var nSS=revSessions('wird').length;
+      if(nSS && REV.wdone>=nSS){
         REV.cyc=(REV.cyc||0)+1; wirdRound=REV.cyc;
-        REV.done=0;
+        REV.wdone=0;
       }
     }
   }
@@ -6957,7 +6965,7 @@ function finishRevQuiz(){
       rew:'＋ 100 💎 و3 ✨ ذهب' }); }catch(e){}
   }
 
-  var ss=revSessions(), more = onPath && REV.done<ss.length;
+  var ss=revSessions(md), more = onPath && revDone(md)<ss.length;
   $('playCard').classList.remove('bare');
   $('mosque').removeAttribute('hidden');
   $('mosque').innerHTML=mosqueSVG(1);
@@ -6975,10 +6983,10 @@ function finishRevQuiz(){
                         '<br>كل الصفحات تباعد موعدها 👌')+'</p>'+
     '<div style="color:#8a6100;font-weight:800;margin-bottom:12px">+'+arNum(10*donePages.length)+' 💎 و '+arNum(2*donePages.length)+' ⚙️'+
       (weakList.length?'':' و '+arNum(2*donePages.length)+' 🔷')+'</div>'+
-    (more? '<button class="btn primary big pulse" id="btnRevNext">▶️ الجلسة التالية ('+arNum(REV.done+1)+' من '+arNum(ss.length)+')</button>' : '')+
+    (more? '<button class="btn primary big pulse" id="btnRevNext">▶️ الجلسة التالية ('+arNum(revDone(md)+1)+' من '+arNum(ss.length)+')</button>' : '')+
     '<button class="btn '+(more?'ghost big':'primary big pulse')+'" id="btnRevMap">🗺️ مسار المراجعة</button>'+
     '<button class="btn ghost big" id="btnRevHome2" style="margin:0">🏠 البداية</button></div>';
-  if($('btnRevNext')) $('btnRevNext').onclick=function(){ beginRevSession(REV.done); };
+  if($('btnRevNext')) $('btnRevNext').onclick=function(){ beginRevSession(revDone(md)); };
   $('btnRevMap').onclick=function(){ renderRevPath(); show('scr-revpath'); };
   $('btnRevHome2').onclick=function(){ renderPlayers(); show('scr-start'); };
 }
@@ -7618,7 +7626,7 @@ $('btnBadgesBack').onclick=function(){ renderPlayers(); show('scr-start'); };
 $('btnRevPlan').onclick=startRevPlan;
 $('revPrev').onclick=function(){ revGoSurah(-1); };
 $('revNext').onclick=function(){ revGoSurah(1); };
-$('btnRevGo').onclick=function(){ revSave(); beginRevPath(); };
+$('btnRevGo').onclick=function(){ REV.mode='free'; revSave(); beginRevPath(); };
 $('btnBuild').onclick=function(){ renderBuild(); show('scr-build'); };
 $('btnBuildBack').onclick=function(){ show('scr-start'); };
 /* من أين جاء إلى المتجر؟ فيُردّ إليه لا إلى البداية */
