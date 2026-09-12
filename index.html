@@ -452,6 +452,18 @@ body.glow-off .cele .spk{display:none}
 .pstat.combochip.pop{transform:scale(1.18);transition:.14s}
 /* شاشة الشارات */
 .bfam{background:var(--pnl);border:2px solid var(--pb);border-radius:16px;padding:12px;margin-bottom:11px}
+/* صفّ التاج: أرفع الشارات، فله إطارٌ ذهبيّ يميّزه */
+.bfam.crownfam{border-color:var(--gold);box-shadow:0 0 0 2px rgba(242,194,48,.25) inset}
+.crownrow{display:flex;align-items:center;gap:12px;margin:8px 0 10px}
+.crownpic{flex:0 0 auto;width:74px;height:56px;border-radius:14px;display:grid;place-items:center;
+  background:#0d2f5e;border:2px solid var(--pb);opacity:.45;filter:grayscale(1)}
+.crownpic.on{opacity:1;filter:none;background:radial-gradient(circle at 50% 60%,#4a3a00,#0d2f5e);
+  border-color:var(--gold);box-shadow:0 0 14px rgba(242,194,48,.45)}
+.crownpic svg{width:66px;height:48px}
+.crowntx{flex:1 1 auto;min-width:0}
+.crowntx b{display:block;font-size:14.5px;font-weight:900;color:var(--ttl);line-height:1.7}
+.crowntx i{display:block;font-style:normal;font-size:12px;font-weight:700;color:var(--mute);line-height:1.7;margin-top:2px}
+
 .bfam .fh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;
   color:var(--ttl);font-weight:800;font-size:16px;margin-bottom:9px}
 .bfam .fh small{color:var(--on3);font-weight:700;font-size:12px;white-space:nowrap}
@@ -1514,9 +1526,11 @@ function crownCheck(){
 function crownSVG(){
   return '<g aria-label="تاج الحافظ">'+
     '<path d="M27,24 L33,34 L41,20 L50,32 L59,20 L67,34 L73,24 L70,42 L30,42 Z" '+
-      'fill="url(#crG)" stroke="#8a6100" stroke-width="1.6" stroke-linejoin="round"/>'+
-    '<rect x="29" y="41" width="42" height="7" rx="3" fill="url(#crG)" '+
+      'fill="#f2c230" stroke="#8a6100" stroke-width="1.6" stroke-linejoin="round"/>'+
+    '<path d="M27,24 L33,34 L41,20 L50,32 L59,20 L67,34 L73,24 L71,36 L29,36 Z" fill="#ffe98a" opacity=".75"/>'+
+    '<rect x="29" y="41" width="42" height="7" rx="3" fill="#e0aa12" '+
       'stroke="#8a6100" stroke-width="1.5"/>'+
+    '<rect x="30" y="42" width="40" height="2.6" rx="1.3" fill="#ffe98a" opacity=".8"/>'+
     '<circle cx="27" cy="23" r="3.2" fill="#fff6dc" stroke="#8a6100" stroke-width="1.2"/>'+
     '<circle cx="50" cy="18" r="3.6" fill="#8ef0d5" stroke="#8a6100" stroke-width="1.2"/>'+
     '<circle cx="73" cy="23" r="3.2" fill="#fff6dc" stroke="#8a6100" stroke-width="1.2"/>'+
@@ -1556,9 +1570,7 @@ function avatarSVG(){
       '<path d="M63,55 L65.5,53" stroke="'+brow+'" stroke-width="1.6" stroke-linecap="round"/>' : '';
   var crown=isHafiz()?crownSVG():'';
   return '<svg viewBox="0 0 100 128" xmlns="http://www.w3.org/2000/svg" aria-label="شخصيتي">'+
-    (crown?'<defs><linearGradient id="crG" x1="0" y1="0" x2="0" y2="1">'+
-      '<stop offset="0" stop-color="#ffe98a"/><stop offset="1" stop-color="#d9a400"/>'+
-      '</linearGradient></defs>':'')+
+
     '<rect width="100" height="128" fill="#eaf3fd"/><circle cx="50" cy="62" r="44" fill="#d3e8fb"/>'+
     '<circle cx="50" cy="62" r="34" fill="#c2ddf6" opacity=".7"/>'+
     '<path d="M4,128 C9,105 27,96 40,93 L60,93 C73,96 91,105 96,128 Z" fill="'+cloth+'" '+
@@ -4359,9 +4371,9 @@ var TIERS=[{n:'برونزية',i:'🥉'},{n:'فضّية',i:'🥈'},{n:'ذهبي�
 var BADGE_FAM=[
   {f:'combo', ic:'🔥', n:'الإتقان',  u:'إجابة متتالية', t:[5,10,20,50],
    v:function(){ return tal().combo||0; }},
-  {f:'ayat',  ic:'📖', n:'الحفظ',    u:'آية',           t:[10,50,200,600],
+  {f:'ayat',  ic:'📖', n:'الحفظ',    u:'آية',           t:[100,564,3118,6236],
    v:function(){ return memTotal(); }},
-  {f:'rev',   ic:'☀️', n:'المراجعة', u:'صفحة',          t:[10,50,200,604],
+  {f:'rev',   ic:'☀️', n:'المراجعة', u:'صفحة',          t:[20,200,604,1812],
    v:function(){ return tal().revpg||0; }},
   {f:'streak',ic:'🏮', n:'المواظبة', u:'يوم',           t:[3,7,30,100],
    v:function(){ var s=curP().streak||{}; return Math.max(s.count||0, s.best||0); }},
@@ -4494,8 +4506,24 @@ function doShare(txt){
     try{ navigator.clipboard.writeText(txt); navToast('نُسخ الإنجاز — الصقه في المحادثة'); }catch(e3){}
   }
 }
+/* التاج صفٌّ وحده فوق الشارات كلّها — هو غايتها */
+function crownRowHTML(){
+  var on=isHafiz(), t=0;
+  try{ t=memTotal(); }catch(e){}
+  var pct=Math.max(2,Math.min(100,Math.round(100*t/QURAN_AYAT)));
+  return '<div class="bfam crownfam"><div class="fh"><span>👑 تاج الحافظ</span>'+
+    '<small>'+arNum(t)+' من '+arNum(QURAN_AYAT)+' آية</small></div>'+
+    '<div class="crownrow">'+
+      '<div class="crownpic'+(on?' on':'')+'">'+
+        '<svg viewBox="24 14 52 36" aria-hidden="true">'+crownSVG()+'</svg></div>'+
+      '<div class="crowntx">'+(on
+        ? '<b>تُوِّجتَ حافظاً لكتاب الله</b><i>لا يفارق التاجُ شخصيّتك — ودُم على تعاهده</i>'
+        : '<b>إن شاء الله ستلبس التاج عند إتمامك حفظ القرآن</b><i>وهو أرفع ما في هذه الصفحة، لا يُنال إلا بتمام المصحف</i>')+
+      '</div></div>'+
+    '<div class="bbar"><i style="width:'+pct+'%"></i></div></div>';
+}
 function renderBadges(){
-  var p=curP(), h='';
+  var p=curP(), h=crownRowHTML();
   $('badgeSub').textContent='نلتَ '+arNum(badgeCount())+' من '+arNum(badgeTotal())+' شارة';
   BADGE_FAM.forEach(function(F){
     var v=F.v(), next=null, i;
@@ -4709,10 +4737,10 @@ function roundWords(r){
     };
   }
   $('btnHintW').onclick=function(){
-    /* التلميح يدلّ على الكلمة، فلا تُحتسب بعده سلسلةُ إتقان — وإلا كانت
-       الطريق إلى أعلى السلاسل: تلميحٌ فاختيار، ثم تلميحٌ فاختيار */
+    /* أوّل ضغطةٍ بيانٌ بلا ثمن: يُعلَم قبل أن يُؤخذ منه شيء، ولا تُكشف الكلمة.
+       فإذا وافق وضغط ثانيةً، كُشفت له وحُسبت خطأً وانقطعت سلسلتُه. */
+    if(uiOnce(LS.hint,'التلميح يدلّك على الكلمة،\nفإن استعنتَ به حُسب خطأً وانقطعت سلسلتُك.\nوهذه المرّة لك بلا ثمن — جرّب بنفسك، فإن احتجتَه فاضغطه مرّةً أخرى.','💡')) return;
     S.errors++; comboMiss();
-    uiOnce(LS.hint,'التلميح يدلّك على الكلمة،\nفيُحسب خطأً وتنقطع به سلسلتُك.\nجرّب بنفسك أوّلاً 💚','💡');
     for(var j=0;j<btns.length;j++){
       if(!btns[j].classList.contains('gone') && btns[j].textContent===seg[placed]){
         btns[j].classList.add('hintme');
@@ -7520,7 +7548,12 @@ function uiBox(msg,ic,yes,no,cb,muteKey){
 }
 function uiAlert(msg,ic){ uiBox(msg,ic||'💚',null,null,null); }
 /* تنبيهٌ يُقال مرّةً، ولصاحبه أن يكتمه */
-function uiOnce(key,msg,ic){ if(load(key,0)) return; uiBox(msg,ic||'💡',null,null,null,key); }
+/* تنبيهٌ يُقال مرّةً واحدة: موافقتُه عليه هي كتمُه */
+function uiOnce(key,msg,ic,btn,cb){
+  if(load(key,0)){ if(cb) cb(); return false; }
+  uiBox(msg,ic||'💡',btn||'✅ فهمت',null,function(){ save(key,1); if(cb) cb(); });
+  return true;
+}
 function uiAsk(msg,cb,ic){ uiBox(msg,ic||'🤔','✅ نعم','لا',cb); }
 function navToast(msg){
   if(!NAV.tEl){ NAV.tEl=document.createElement('div'); NAV.tEl.className='toast'; document.body.appendChild(NAV.tEl); }
