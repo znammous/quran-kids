@@ -1065,11 +1065,20 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
   </section>
 
   <section class="screen" id="scr-bqn">
-    <h1>🧭 خطة الحفظ</h1>
-    <p class="sub">مسار واحد تسير عليه — اختر ما يناسب همّتك، وتقدّم كل مسار محفوظ</p>
+    <h1 id="bqnTitle">🧭 خطة الحفظ</h1>
+    <div class="onbtop">
+      <div class="onbbar"><i id="bqnFill" style="width:25%"></i></div>
+      <div class="onbnum" id="bqnCount">1 من 3</div>
+    </div>
+    <p class="sub" id="bqnSub">مسار واحد تسير عليه — اختر ما يناسب همّتك</p>
     <div id="bqnList"></div>
-    <button class="btn primary big" id="btnBqnDone" style="margin:18px 0 12px">✅ حفظ ورجوع</button>
-    <div class="row"><button class="btn ghost" id="btnBqnHome">➡️ رجوع خطوة</button></div>
+    <div class="onbnav">
+      <button class="btn ghost" id="bqnBack" hidden>➡️ السابق</button>
+      <span class="onbgap"></span>
+      <button class="btn primary pulse" id="bqnNext">⬅️ التالي</button>
+      <button class="btn green big pulse" id="btnBqnDone" hidden style="margin:0;flex:1">✅ حفظ ورجوع</button>
+    </div>
+    <div class="row"><button class="btn ghost" id="btnBqnHome">🏠 خروج</button></div>
   </section>
 
   <section class="screen" id="scr-build">
@@ -1143,7 +1152,9 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
 
   <section class="screen" id="scr-settings">
     <h1>⚙️ الإعدادات</h1>
+    <div class="onbtabs" id="setTabs"></div>
     <div class="card">
+      <div class="setpage" data-setp="hifz">
       <div class="setblock">
         <label class="lbl">🎚️ المستوى</label>
         <select id="setLevel">
@@ -1169,6 +1180,8 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
         </div>
         <div class="note">بقية الأجزاء تظهر مقفلة 🔒 حتى لا يتشتّت الحافظ. الافتراضي: جزء عمّ فقط (٣٠).</div>
       </div>
+      </div>
+      <div class="setpage" data-setp="mushaf" hidden>
       <div class="setblock">
         <label class="lbl">✒️ رسم المصحف</label>
         <select id="setScript">
@@ -1186,6 +1199,8 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
           <option value="20">صغير</option><option value="24">متوسط</option><option value="30">كبير</option>
         </select>
       </div>
+      </div>
+      <div class="setpage" data-setp="play" hidden>
       <div class="switchrow"><span>🔔 أصوات التشجيع (نغمات فقط)</span><input type="checkbox" id="setSound"></div>
       <div class="switchrow"><span>🎤 تسجيل الصوت في القراءة والتسميع<br><small style="font-weight:700;color:var(--mute)">يستمع لنفسه بعد التسجيل — ومع التسميع يظهر النص للمقارنة</small></span><input type="checkbox" id="setRec"></div>
       <div class="switchrow"><span>🌞 الوضع النهاريّ<br><small style="font-weight:700;color:var(--mute)">خلفية فاتحة بدل سماء الليل — لكل لاعب اختياره</small></span><input type="checkbox" id="setLight"></div>
@@ -1193,6 +1208,8 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
       <div class="switchrow"><span>✨ توهّج متحرّك على الزر الذي ينتظر الضغط<br><small style="font-weight:700;color:var(--mute)">يعمل حتى لو كان الجهاز يقلّل الحركة</small></span><input type="checkbox" id="setGlow"></div>
       <div class="switchrow"><span>🔓 فتح كل مقاطع السورة (بلا ترتيب)</span><input type="checkbox" id="setFree"></div>
       <div class="switchrow"><span>🏠 لوحة البيت بين أفراد الأسرة</span><input type="checkbox" id="setBoard"></div>
+      </div>
+      <div class="setpage" data-setp="dev" hidden>
       <div class="setblock" style="margin-top:12px">
         <label class="lbl">📲 تثبيت التطبيق</label>
         <button class="btn blue" id="btnInstall2" style="width:100%">📲 ثبّت «نور الوحي» على جهازي</button>
@@ -1218,6 +1235,7 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
       </div>
       <input type="file" id="fileInput" accept=".json,application/json" style="display:none">
       <button class="btn red big" id="btnReset" style="margin-top:10px">🗑️ تصفير التقدّم</button>
+      </div>
     </div>
       <button class="btn blue big" id="btnHelp" style="margin-bottom:12px">❓ كيف ألعب</button>
     <button class="btn primary big" id="btnSetBack" style="margin:0">✅ حفظ ورجوع</button>
@@ -5974,7 +5992,7 @@ function renderPriorMode(){
   /* سجّل حفظه فصار له محفوظ — فيُسأل الآن عن ورد مراجعته */
   priorPanelWire('pS',function(){
     try{ fillBqnSelect(); }catch(e){}
-    try{ revLoad(); renderBqnList(); if(wirdAsk() && REV.on==null) bqnStepWird(); }catch(e){}
+    try{ revLoad(); bqnShow(BQ.i+1); }catch(e){}
   });
   priorFoldHead();
 }
@@ -6128,8 +6146,78 @@ function foldWrap(el,id,title,open){
 /* ---------- شاشة اختيار خطة الحفظ: مسارك الخاص أو خطة جاهزة ---------- */
 var SELF_SIZES=[['q','🌱','ربع صفحة'],['h','🌿','نصف صفحة'],['p','🌳','صفحة كاملة (وجه)'],
                 ['3','3️⃣','ثلاث آيات'],['4','4️⃣','أربع آيات'],['5','5️⃣','خمس آيات'],['8','8️⃣','ثماني آيات']];
+/* ===== معالج الخطة: سؤالٌ في كل صفحة، كمعالج اللاعب الجديد =====
+   الخطوات تتبدّل بحسب جوابه: من اعتمد خطة جاهزة لا يُسأل عن بدايته،
+   ومن لا محفوظ له لا يُسأل عن ورده. */
+var BQ={ i:0 };
+function bqnSteps(){
+  var out=['plan'], p=curP();
+  if(p.planChosen && !onPlan()) out.push('dir');
+  out.push('prior');
+  if(wirdAsk()) out.push('wird');
+  return out;
+}
+var BQ_HEAD={
+  plan : ['🧭 ما خطة حفظك؟','مسار واحد تسير عليه — اختر ما يناسب همّتك'],
+  dir  : ['🧭 من أين تبدأ؟','من قِصار السور صعوداً، أم على ترتيب المصحف'],
+  prior: ['📌 وأين أنت من الحفظ الآن؟','لنعرف من أين نبدأ بك — ولا يضيع ما حفظتَه قبلُ'],
+  wird : ['📖 وردُ المراجعة','ما حفظتَه يحتاج تعاهداً — ولك أن تقسّمه كما تطيق']
+};
+function bqnShow(i){
+  var steps=bqnSteps(), n=steps.length;
+  BQ.i=Math.max(0,Math.min(n-1,i||0));
+  var k=steps[BQ.i], hd=BQ_HEAD[k]||['',''];
+  $('bqnTitle').textContent=hd[0];
+  $('bqnSub').textContent=hd[1];
+  $('bqnFill').style.width=Math.round(100*(BQ.i+1)/n)+'%';
+  $('bqnCount').textContent=arNum(BQ.i+1)+' من '+arNum(n);
+  $('bqnBack').hidden=(BQ.i===0);
+  var last=(BQ.i===n-1);
+  $('bqnNext').hidden=last;
+  $('btnBqnDone').hidden=!last;
+  renderBqnList();
+  bqnGate();
+  window.scrollTo(0,0);
+}
+/* ما ينقص هذه الخطوة بعينها */
+function bqnStepBlocked(){
+  var k=bqnSteps()[BQ.i], p=curP();
+  if(k==='plan' && !p.planChosen) return '🧭 اختر خطّة حفظك أوّلاً';
+  if(k==='dir'  && !selfDirPicked()) return '🧭 من أين تبدأ — من الناس أم من البقرة؟';
+  if(k==='prior'&& !p.priorMode) return '📌 اختر: أبدأ من جديد، أم أسجّل حفظي السابق';
+  if(k==='wird' && REV.on==null) return '📖 أتريد ورداً يوميّاً لمراجعة محفوظك؟';
+  return '';
+}
+function bqnGate(){
+  var m=bqnStepBlocked();
+  [$('bqnNext'),$('btnBqnDone')].forEach(function(b){
+    if(!b) return;
+    b.title=m||'';
+    b.classList[m?'add':'remove']('waiting');
+  });
+}
 function renderBqnList(){
   var p=planStore(), id=p.planId, m=segMode(), h='', selfBody='', bqnBody='';
+  var step=bqnSteps()[BQ.i];
+  if(step==='dir'){
+    $('bqnList').innerHTML=selfDirHTML();
+    selfDirWire($('bqnList'), function(){ bqnShow(BQ.i); });
+    return;
+  }
+  if(step==='prior'){
+    $('bqnList').innerHTML='<div id="priorMode"></div>'+
+      '<div id="priorBox" style="margin-top:12px"></div>'+
+      '<div class="note">أشّر الأجزاء التي تحفظها — ولو كانت متفرّقة كآخر خمسة أجزاء وأوّل جزأين — '+
+      'أو اختر سوراً بعينها. تُحسب محفوظةً بخمس نجوم، وتدخل جدول المراجعة، '+
+      'ويُعاد حساب الأيام المتبقّية وموضعك في الخطة.</div>';
+    try{ renderPriorMode(); }catch(e){}
+    return;
+  }
+  if(step==='wird'){
+    $('bqnList').innerHTML=wirdBody();
+    wirdWirePanel();
+    return;
+  }
   selfBody+='<div class="lbl" style="margin-bottom:6px">📏 حجم المقطع</div>'+
      '<div class="note" style="margin-bottom:10px">تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة.</div>'+
      '<div class="onbopts">';
@@ -6141,9 +6229,6 @@ function renderBqnList(){
        (dn?(' • أتممت '+arNum(dn)+' من '+arNum(tot)+' مقطعاً'):'')+'</i></span></button>';
   });
   selfBody+='</div>';
-  /* السؤال بعد المقدار: اختار كم يحفظ، فيُسأل من أين يبدأ */
-  if(id==='self')
-    selfBody+='<div class="lbl" style="margin:16px 0 6px">🧭 من أين تبدأ؟</div>'+selfDirHTML();
   bqnBody+='<div class="revsum" style="margin:0 0 12px">منقولة عن <b>'+esc(BQN_SRC_T)+'</b><br>'+
      '<small style="font-weight:700;opacity:.85">'+esc(BQN_SRC_S)+'</small></div>'+
      '<div class="onbopts">';
@@ -6159,41 +6244,23 @@ function renderBqnList(){
   }
   bqnBody+='</div>';
   var onSelf=(id==='self'), pn=onSelf?null:bqnPlan(id);
-  /* وأين هو من الحفظ الآن؟ سؤالٌ مكانُه مع الخطة لا مع الإعدادات */
-  var pm=curP().priorMode||'';
-  var priorBody='<div id="priorMode"></div>'+
-     '<div id="priorBox" style="margin-top:12px"></div>'+
-     '<div class="note">أشّر الأجزاء التي تحفظها — ولو كانت متفرّقة كآخر خمسة أجزاء وأوّل جزأين — '+
-     'أو اختر سوراً بعينها. تُحسب محفوظةً بخمس نجوم، وتدخل جدول المراجعة، '+
-     'ويُعاد حساب الأيام المتبقّية وموضعك في الخطة.</div>';
-  h = foldHTML('fSelf','🧭 خطط تطبيق «نور الوحي»'+(onSelf?(' — ✅ '+esc(segModeName())):''),foldIsOpen('fSelf'),selfBody)+
-      foldHTML('fBqn','📅 خطط «بالقرآن نحيا»'+(pn?(' — ✅ '+esc(pn.t)):''),foldIsOpen('fBqn'),bqnBody)+
-      foldHTML('fPrior','📌 ما حفظتَه قبل التطبيق'+
-        (pm==='new'?' — ✅ أبدأ من جديد':(pm==='has'?' — ✅ مُسجّل':'')),foldIsOpen('fPrior'),priorBody);
-  /* ولمن صار له محفوظ: أتراجعه؟ وكيف تقسّمه؟ */
-  if(wirdAsk())
-    h+=foldHTML('fWird','📖 وردُ المراجعة'+
-      (REV.on===true?(' — ✅ '+arNum(REV.size)+' وجه في اليوم'):(REV.on===false?' — 🚫 بلا ورد':'')),
-      foldIsOpen('fWird'), wirdBody());
+  h = foldHTML('fSelf','🧭 خطط تطبيق «نور الوحي»'+(onSelf?(' — ✅ '+esc(segModeName())):''),
+        foldIsOpen('fSelf')||!p.planChosen||onSelf, selfBody)+
+      foldHTML('fBqn','📅 خطط «بالقرآن نحيا»'+(pn?(' — ✅ '+esc(pn.t)):''),
+        foldIsOpen('fBqn')||(!!p.planChosen&&!onSelf), bqnBody);
   $('bqnList').innerHTML=h;
   foldBind($('bqnList'));
-  try{ renderPriorMode(); }catch(e){}
-  wirdWirePanel();
-  selfDirWire($('bqnList'), function(){ renderBqnList(); if(bqnPlanDone()) bqnStepPrior(1); });
-  /* لا نخرجه بمجرّد اختيار الخطة، لأنّ تحتها سؤالاً بقي */
+  /* اختيارٌ واحد يكفي هذه الصفحة، ثم يمضي إلى التي بعدها */
   var pick=function(el){
     var sid=el.getAttribute('data-self');
     if(sid){ SET.segMode=sid; setPlan('self'); ensureAllSchedules(); }
     else setPlan(el.getAttribute('data-bqn'));
     curP().planChosen=1; saveDB();
-    renderBqnList();
-    if(bqnPlanDone()) bqnStepPrior(1);
-    else try{ navToast('🧭 وبقيت واحدة: من أين تبدأ — من الناس أم من البقرة؟'); }catch(e){}
+    bqnShow(1);
   };
   var bs=$('bqnList').querySelectorAll('[data-self],[data-bqn]');
   for(var k=0;k<bs.length;k++) bs[k].onclick=function(){ pick(this); };
 }
-/* الشاشة خطوتان: اختر خطّتك، ثمّ قل أين أنت منها */
 /* ---------- سؤال الورد: أتراجع ما تحفظ؟ وكيف تقسّمه؟ ---------- */
 function wirdAsk(){ try{ revLoad(); return wirdPages().length>0; }catch(e){ return false; } }
 /* حسبةٌ صادقة: كم يومًا، وكم يكسب — والأجر بالأوجه فالمجموع ثابت مهما قسّم */
@@ -6239,9 +6306,7 @@ function wirdBody(){
        arNum(c.pages)+' وجهاً محفوظاً • دورةٌ في '+arNum(c.days)+' يوماً</div>'+
      '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:6px">'+
        'في الدورة الواحدة: 💎 '+arNum(c.gems)+' جوهرة • 🔩 '+arNum(c.iron)+' حديد'+
-       ' • 🔷 '+arNum(c.glass)+' زجاج إن أتقنت</div>'+
-     '<div style="font-size:12px;font-weight:700;opacity:.75;margin-top:6px">'+
-       'والأجر بالأوجه لا بالجلسات — فلا يزيدك تصغيرُ الورد شيئاً.</div></div>';
+       ' • 🔷 '+arNum(c.glass)+' زجاج إن أتقنت</div></div>';
   return h;
 }
 function wirdWirePanel(){
@@ -6254,48 +6319,31 @@ function wirdWirePanel(){
     var dr=this.getAttribute('data-wdir');
     if(dr!=null){ REV.dir=parseInt(dr,10); REV.done=0; }
     revSave();
-    renderBqnList(); foldSet('fWird',true); bqnScrollTo('fWird');
+    renderBqnList(); bqnGate();
   };
   var bs=box.querySelectorAll('[data-wird],[data-wsize],[data-wdir]');
   for(var i=0;i<bs.length;i++) bs[i].onclick=hit;
 }
-function bqnPlanDone(){ return !!curP().planChosen && (onPlan() || selfDirPicked()); }
-function bqnStepPlan(){
-  foldSet('fPrior',false);
-  foldSet(onPlan()?'fBqn':'fSelf',true);
-  bqnScrollTo(onPlan()?'fBqn':'fSelf');
-}
-function bqnStepPrior(say){
-  foldSet('fSelf',false); foldSet('fBqn',false); foldSet('fPrior',true);
-  bqnScrollTo('fPrior');
-  /* لا يُبشّر باعتماد الخطة إلاّ من اعتمدها الآن */
-  if(say && !curP().priorMode)
-    try{ navToast('✅ اعتُمدت الخطة — وبقيت واحدة: ما حفظتَه قبل التطبيق'); }catch(e){}
-}
-function bqnScrollTo(id){
-  var hd=document.querySelector('[data-fold="'+id+'"]'); if(!hd) return;
-  try{ hd.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
-}
-/* ما الذي يمنع الخروج من هذه الشاشة؟ */
+/* أوّل خطوةٍ لم يُجَب عنها — إليها يُساق من أراد الخروج قبل تمامها */
 function bqnBlocked(){
-  if(!curP().planChosen) return {m:'🧭 اختر خطّة حفظك أوّلاً',go:bqnStepPlan};
-  if(!onPlan() && !selfDirPicked())
-    return {m:'🧭 وبقيت واحدة: من أين تبدأ — من الناس أم من البقرة؟',go:bqnStepPlan};
-  if(!curP().priorMode)
-    return {m:'📌 اختر أوّلاً: أبدأ من جديد، أم أسجّل حفظي السابق',go:bqnStepPrior};
-  if(wirdAsk() && REV.on==null)
-    return {m:'📖 وبقيت واحدة: أتريد ورداً يوميّاً لمراجعة محفوظك؟',go:bqnStepWird};
+  var steps=bqnSteps(), p=curP(), i, k, m;
+  for(i=0;i<steps.length;i++){
+    k=steps[i]; m='';
+    if(k==='plan' && !p.planChosen) m='🧭 اختر خطّة حفظك أوّلاً';
+    else if(k==='dir' && !selfDirPicked()) m='🧭 وبقيت واحدة: من أين تبدأ — من الناس أم من البقرة؟';
+    else if(k==='prior' && !p.priorMode) m='📌 اختر أوّلاً: أبدأ من جديد، أم أسجّل حفظي السابق';
+    else if(k==='wird' && REV.on==null) m='📖 وبقيت واحدة: أتريد ورداً يوميّاً لمراجعة محفوظك؟';
+    if(m) return { m:m, i:i, go:(function(x){ return function(){ bqnShow(x); }; })(i) };
+  }
   return null;
-}
-function bqnStepWird(){
-  foldSet('fSelf',false); foldSet('fBqn',false); foldSet('fPrior',false);
-  foldSet('fWird',true); bqnScrollTo('fWird');
 }
 var BQN_BACK='';            /* من أين جئنا إلى شاشة الاختيار: '' أو 'onb' أو 'set' */
 function startBqn(from){
-  BQN_BACK=from||''; renderBqnList(); show('scr-bqn');
-  /* يَرد الشاشة فيجد الخطوة الناقصة مفتوحة، لا يبحث عنها */
-  var b=bqnBlocked(); if(b) b.go();
+  BQN_BACK=from||'';
+  show('scr-bqn');
+  /* يَرد الشاشة فيقف عند أوّل سؤالٍ لم يُجب عنه، لا يبحث عنه */
+  var b=bqnBlocked();
+  bqnShow(b?b.i:0);
 }
 function bqnReturn(){
   var b=BQN_BACK; BQN_BACK='';
@@ -6771,6 +6819,23 @@ function fillSettings(){
     b+='<option value="'+j+'"'+(SET.juzTo===j?' selected':'')+'>إلى الجزء '+arNum(j)+'</option>';
   }
   $('setJuzFrom').innerHTML=a; $('setJuzTo').innerHTML=b;
+  renderSetTabs();
+}
+/* ===== الإعدادات صفحاتٌ لا لفيفةٌ طويلة ===== */
+var SET_TABS=[['hifz','📖 الحفظ'],['mushaf','✒️ المصحف'],['play','🔔 اللعب'],['dev','📱 الجهاز']];
+var setTab='hifz';
+function renderSetTabs(){
+  var el=$('setTabs'); if(!el) return;
+  el.innerHTML=SET_TABS.map(function(t){
+    return '<button type="button" class="onbtab'+(setTab===t[0]?' sel':'')+'" data-setp="'+t[0]+'">'+
+           t[1]+'</button>';
+  }).join('');
+  var bs=el.querySelectorAll('[data-setp]'), i;
+  for(i=0;i<bs.length;i++) bs[i].onclick=function(){
+    setTab=this.getAttribute('data-setp'); renderSetTabs(); window.scrollTo(0,0);
+  };
+  var ps=document.querySelectorAll('#scr-settings .setpage');
+  for(i=0;i<ps.length;i++) ps[i].hidden=(ps[i].getAttribute('data-setp')!==setTab);
 }
 function readSettings(){
   SET.level=$('setLevel').value;
@@ -7053,11 +7118,15 @@ $('btnRevHome').onclick=function(){ renderPlayers(); show('scr-start'); };
 $('btnRevQuit').onclick=function(){ renderPlayers(); show('scr-start'); };
 /* خطط «بالقرآن نحيا» الجاهزة */
 $('btnBqnHome').onclick=function(){
-  /* خطوةٌ واحدة للوراء: إن كان عند سؤال الحفظ السابق ردّه إلى اختيار الخطة */
-  if(foldIsOpen('fPrior') && curP().planChosen){ bqnStepPlan(); return; }
   if(BQN_BACK){ bqnReturn(); return; }
   renderPlayers(); show('scr-start');
 };
+$('bqnNext').onclick=function(){
+  var m=bqnStepBlocked();
+  if(m){ try{ navToast(m); }catch(e){} bqnGate(); return; }
+  bqnShow(BQ.i+1);
+};
+$('bqnBack').onclick=function(){ bqnShow(BQ.i-1); };
 $('btnBqnDone').onclick=function(){
   var b=bqnBlocked();
   if(b){ try{ navToast(b.m); }catch(e){} b.go(); return; }
