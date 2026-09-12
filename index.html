@@ -2032,14 +2032,35 @@ function memTotal(){
 /* المقطع منجَز إذا كانت آياته كلها محفوظة — بأي حجم مقطع كانت قد حُفظت */
 function segDone(s,g){ return memHas(s.n,g[0],g[1]) || !!peek(segKey(s.n,g[0])).done; }
 /* بعد تغيير الحجم: نمنح المقاطع المحفوظة سجلّها ونجومها وموعد مراجعتها */
+/* رتبةُ مقطعٍ بحجمٍ آخر يغطّي الآيات نفسها — فلا تضيع الرتبة بتغيير الحجم.
+   ونأخذ أدناها رتبةً احتياطاً، فلا نمنحه ما لم يستحقّه. */
+function inheritRank(n,from,to){
+  var ks=Object.keys(prog), i, m, p, f, best=null;
+  for(i=0;i<ks.length;i++){
+    m=/^(\d+)_(\d+)_([qhp\d]+)$/.exec(ks[i]);
+    if(!m || parseInt(m[1],10)!==n) continue;
+    p=prog[ks[i]]; if(!p.done) continue;
+    f=parseInt(m[2],10); if(f<from || f>=to) continue;
+    if(!best || (p.box||0)<(best.box||0)) best=p;
+  }
+  return best;
+}
+/* ما سُجّل من حفظٍ سابق يدخل الوردَ رأساً (due=null) لا الجدولَ المكثّف،
+   فلا تنهال عليه مئات المقاطع في غدٍ واحد. وما وُرِث عن حجمٍ سابق يحتفظ برتبته. */
 function ensureSchedule(s){
-  var ch=false;
+  var ch=false, top=INTERVALS.length-1;
   segsOf(s).forEach(function(g){
     if(!memHas(s.n,g[0],g[1])) return;
-    var k=segKey(s.n,g[0]), p=prog[k];
-    if(!p){ prog[k]={stars:5,stage:5,done:true,box:0,due:todayNum()+INTERVALS[0]}; ch=true; }
+    var k=segKey(s.n,g[0]), p=prog[k], src;
+    if(!p){
+      src=inheritRank(s.n,g[0],g[1]);
+      prog[k]={ stars:5, stage:5, done:true,
+                box:(src?(src.box||0):top),
+                due:(src?(src.due==null?null:src.due):null) };
+      ch=true;
+    }
     else if(!p.done){ p.stars=5; p.stage=5; p.done=true;
-      if(p.due==null){ p.box=0; p.due=todayNum()+INTERVALS[0]; } ch=true; }
+      if(p.due==null && p.box==null){ p.box=top; } ch=true; }
   });
   if(ch) saveDB();
 }
@@ -2073,7 +2094,10 @@ function goalHifzPct(){
 }
 function goalRevMet(){
   if(todayBox().reviews>=1) return true;
-  try{ return dueSegs().length===0; }catch(e){}   /* لا مراجعة مستحقّة اليوم */
+  try{
+    if(wirdPending()) return false;               /* ورده لم يُؤدَّ بعد */
+    return dueSegs().length===0;                  /* ولا مقطعٌ استحقّ اليوم */
+  }catch(e){}
   return true;
 }
 function goalMet(){
@@ -2125,8 +2149,11 @@ function celeDay(){
 function addGems(n){ curP().gems=(curP().gems||0)+n; saveDB(); }
 function noteStage(){ todayBox().stages++; addGems(5); addMat("wood",1); creditDay(); checkBadges(); }
 function noteSeg(){ todayBox().segs++; addGems(15); addMat("stone",2); creditDay(); checkBadges(); }
-function noteReview(perfect){ todayBox().reviews++; addGems(20); addMat("iron",2);
-  if(perfect) addMat("glass",2);
+/* الأجر بالأوجه المراجَعة لا بعدد الجلسات — فلا يربح من قسّم وردَه قِطعاً صغيرة */
+function noteReview(perfect,pages){
+  var n=Math.max(1, pages||1);
+  todayBox().reviews++; addGems(25*n); addMat("iron",2*n);
+  if(perfect) addMat("glass",2*n);
   creditDay(); checkBadges(); }
 function totals(){
   var stars=0, done=0;
@@ -2212,7 +2239,9 @@ function renderHUD(){
       return esc(d.s.name)+' '+arNum(d.from+1)+' — '+arNum(d.to);
     }).join(' • ');
     var rest = due>2 ? (' و'+arNum(due-2)+' غيرها') : '';
-    var revTxt = due===0 ? 'لا مراجعة متبقية اليوم'
+    var wp=false; try{ wp=wirdPending(); }catch(e){}
+    var revTxt = wp ? 'وردُ اليوم: <b>'+arNum(REV.size)+' وجه</b> من محفوظك'
+               : due===0 ? 'لا مراجعة متبقية اليوم'
                : mR ? ('أتممت مراجعة اليوم — وبقي '+arNum(due)+' مقطعاً إن أردت الزيادة')
                     : ('راجع: <b>'+names+'</b>'+rest);
     lines='<div class="gline"><span class="tick'+(mH?' on':'')+'">'+
@@ -5141,13 +5170,15 @@ function finishStage(){
 
 /* ===== المراجعة بالصفحات ===== */
 var REV={ fromS:1, fromA:1, toS:114, toA:6, size:3, per:5, done:0, weak:{},
-          pages:[], si:0, pi:0, due:false, view:0 };
+          pages:[], si:0, pi:0, due:false, view:0,
+          wird:true, dir:-1, day:null, on:null };
 var REV_SIZES=[1,2,3,5,10];
 
 /* الخطة والتقدّم يُحفظان مع اللاعب، فيمشي على المسار يوماً بعد يوم */
 function revSave(){
   curP().rev={ fromS:REV.fromS, fromA:REV.fromA, toS:REV.toS, toA:REV.toA,
-               size:REV.size, per:REV.per, done:REV.done, weak:REV.weak };
+               size:REV.size, per:REV.per, done:REV.done, weak:REV.weak,
+               wird:REV.wird, dir:REV.dir, day:REV.day, on:REV.on };
   saveDB();
 }
 function revLoad(){
@@ -5157,9 +5188,19 @@ function revLoad(){
   REV.size=REV_SIZES.indexOf(r.size)>=0?r.size:3;
   REV.per=REV_PER_CHOICES.indexOf(r.per)>=0?r.per:REV_PER_DEFAULT;
   REV.done=r.done||0; REV.weak=r.weak||{};
+  /* الورد هو الأصل، والنطاق الحرّ خيارٌ يختاره بنفسه */
+  REV.wird=(r.wird===false)?false:true;
+  REV.dir =(r.dir===-1)?-1:(r.dir===1?1:(selfFrom()==='baqarah'?1:-1));
+  REV.day =(typeof r.day==='number')?r.day:null;
+  REV.on  =(r.on===false)?false:(r.on===true?true:null);   /* null: لم يُسأل بعد */
   REV.pages=[]; REV.si=0; REV.pi=0; REV.due=false; REV.view=0;
   revClamp();
 }
+/* هل أُدّي وردُ اليوم؟ جلسةٌ واحدة في اليوم هي مقرَّره */
+function wirdOn(){ return REV.on===true && revIsWird(); }
+function wirdCount(){ try{ return revSessions().length; }catch(e){ return 0; } }
+function wirdDoneToday(){ return REV.day===todayNum(); }
+function wirdPending(){ return wirdOn() && wirdCount()>0 && !wirdDoneToday(); }
 /* لا آية خارج سورتها، ولا نهاية تسبق البداية */
 function revClamp(){
   var a=surahBy(REV.fromS)||SURAHS[0], b=surahBy(REV.toS)||SURAHS[SURAHS.length-1];
@@ -5171,11 +5212,38 @@ function revClamp(){
   }
 }
 /* صفحات النطاق كلها */
+/* أوجهٌ ما زالت في الجدول المكثّف — طريّةٌ لم تتخرّج، فلا تدخل الورد */
+function wirdFresh(){
+  var set={}, ks=Object.keys(prog), i, m, p, s, from, to, gg, z, a;
+  for(i=0;i<ks.length;i++){
+    m=/^(\d+)_(\d+)_([qhp\d]+)$/.exec(ks[i]);
+    if(!m || m[3]!==segMode()) continue;
+    p=prog[ks[i]]; if(!p.done || p.due==null) continue;
+    s=surahBy(parseInt(m[1],10)); if(!s) continue;
+    from=parseInt(m[2],10); gg=segsOf(s); to=from+1;
+    for(z=0;z<gg.length;z++) if(gg[z][0]===from) to=gg[z][1];
+    for(a=from;a<to;a++) set[ayahPage(s,a)]=1;
+  }
+  return set;
+}
+/* الورد: ما حفظه ورسخ — لا مدًى متّصل يبتلع ما لم يُحفظ */
+function wirdPages(){
+  var fresh=wirdFresh(), all=memPages(), out=[], i;
+  for(i=0;i<all.length;i++) if(!fresh[all[i]]) out.push(all[i]);
+  return out;
+}
+function revDir(){ return REV.dir<0 ? -1 : 1; }
+function revIsWird(){ return REV.wird!==false; }
 function revAllPages(){
-  revClamp();
-  var p1=pageOfIdx(GIDX[REV.fromS-1]+(REV.fromA-1));
-  var p2=pageOfIdx(GIDX[REV.toS-1]+(REV.toA-1));
-  var out=[]; for(var P=p1;P<=p2;P++) out.push(P);
+  var out, P;
+  if(revIsWird()) out=wirdPages();
+  else{
+    revClamp();
+    var p1=pageOfIdx(GIDX[REV.fromS-1]+(REV.fromA-1));
+    var p2=pageOfIdx(GIDX[REV.toS-1]+(REV.toA-1));
+    out=[]; for(P=p1;P<=p2;P++) out.push(P);
+  }
+  if(revDir()<0) out=out.slice().reverse();
   return out;
 }
 /* وتقسيمها جلسات بحجم ثابت */
@@ -5202,6 +5270,17 @@ function revSessionLabel(pg){
   return pg.length>1 ? ('صفحات '+arNum(pg[0])+'–'+arNum(pg[pg.length-1])) : ('صفحة '+arNum(pg[0]));
 }
 /* صفحات فيها مقطع حلّ موعده */
+/* كم وجهاً تغطّيه هذه المقاطع؟ ليكون الأجر على قدر ما راجع */
+function segsPages(list){
+  var seen={}, n=0;
+  (list||[]).forEach(function(d){
+    for(var a=d.from;a<d.to;a++){
+      var P=ayahPage(d.s,a);
+      if(!seen[P]){ seen[P]=1; n++; }
+    }
+  });
+  return n||1;
+}
 function duePages(){
   var seen={}, out=[];
   dueSegs().forEach(function(d){
@@ -5236,7 +5315,8 @@ function renderRevPlan(){
   };
   var freeOpen=!!curP().freeRev;
   /* نطاق حرّ سبق ضبطه؟ فالأوْلى أن يُكمل مساره لا أن يُعيد التحديد */
-  var savedFree=!!curP().rev, ss0=savedFree?revSessions():[], nS=ss0.length;
+  /* في الورد لا يُعرض صندوق النطاق الحرّ، فلا يزاحم مقرَّرَ اليوم صندوقان */
+  var savedFree=(!!curP().rev && !revIsWird()), ss0=savedFree?revSessions():[], nS=ss0.length;
   var doneS=Math.min(REV.done||0, nS), contHTML='';
   if(savedFree && nS){
     var aa=surahBy(REV.fromS), bb=surahBy(REV.toS);
@@ -5255,8 +5335,12 @@ function renderRevPlan(){
   }
   $('revPlan').innerHTML=
     bqnRevBanner('P')+
+    wirdBanner('P')+
     selfRevBanner('P')+
     contHTML+
+    ((!revIsWird() && wirdPages().length)
+      ? '<button type="button" class="btn blue big" id="btnBackWird" style="margin-top:6px">'+
+        '📖 عُد إلى وردك من محفوظك</button>' : '')+
     '<button type="button" class="btn '+(freeOpen?'blue':'ghost')+' big" id="btnFreeRev" style="margin-top:6px">'+
       '🎛️ '+(savedFree?'عدّل نطاق المراجعة الحرّة':'مراجعة حرّة — اختر نطاقاً بنفسك')+
       (freeOpen?' ▴':'')+'</button>'+
@@ -5271,7 +5355,8 @@ function renderRevPlan(){
     '<div class="revbox"><div class="rl">كم سؤالاً لكل صفحة؟</div><div class="chips">'+chips(REV_PER_CHOICES,revPer(),'rp')+'</div></div>'+
     '<div id="revSum"></div></div>';
 
-  var reset=function(){ REV.done=0; REV.weak={}; revSave(); renderRevPlan(); };
+  /* ضبطُ نطاقٍ بيده خروجٌ من الورد إلى المسار الحرّ، بإرادته لا سهواً */
+  var reset=function(){ REV.wird=false; REV.done=0; REV.weak={}; revSave(); renderRevPlan(); };
   $('revFS').onchange=function(){ REV.fromS=parseInt(this.value,10); REV.fromA=1; reset(); };
   $('revFA').onchange=function(){ REV.fromA=parseInt(this.value,10); reset(); };
   $('revTS').onchange=function(){ REV.toS=parseInt(this.value,10); REV.toA=(surahBy(REV.toS)||SURAHS[0]).ayat.length; reset(); };
@@ -5281,7 +5366,12 @@ function renderRevPlan(){
   var rp=$('revPlan').querySelectorAll('[data-rp]');
   for(var j=0;j<rp.length;j++) rp[j].onclick=function(){ REV.per=parseInt(this.getAttribute('data-rp'),10); revSave(); renderRevPlan(); };
   bqnRevWire('P');
+  wirdWire('P');
   selfRevWire('P');
+  if($('btnBackWird')) $('btnBackWird').onclick=function(){
+    REV.wird=true; REV.on=true; REV.done=0; REV.weak={};
+    curP().freeRev=false; revSave(); renderRevPlan();
+  };
   $('btnFreeRev').onclick=function(){
     curP().freeRev=!curP().freeRev; saveDB(); renderRevPlan();
   };
@@ -5314,7 +5404,8 @@ function revPer(){ var n=REV.per||REV_PER_DEFAULT; return REV_PER_CHOICES.indexO
 function revQuizCount(nPages){ return Math.min(REV_MAX_Q, Math.max(revPer(), revPer()*nPages)); }
 /* «ما استحقّ اليوم» تتبع ما حفظه في التطبيق؛ وما عداها حرّ على المصحف كله */
 function revFree(){ return !REV.due; }
-function pageScopePieces(P){ return revFree()? pagePieces(P) : pageMemPieces(P); }
+/* في الورد لا يُسأل إلا عمّا حفظ. والنطاق الحرّ وحده يُتلى كاملاً، لمن أراد التلاوة. */
+function pageScopePieces(P){ return (revFree() && !revIsWird()) ? pagePieces(P) : pageMemPieces(P); }
 function pageScopeCount(P){
   var n=0; pageScopePieces(P).forEach(function(p){ n+=p.to-p.from; }); return n;
 }
@@ -5563,6 +5654,37 @@ function selfRevBanner(sfx){
     (done?'':'<button type="button" class="btn blue big" id="selfRevGo'+sfx+'" '+
       'style="margin:12px 0 0">☀️ ابدأ مراجعة اليوم — '+arNum(pg.length)+' وجه</button>')+
   '</div>';
+}
+/* صندوق الورد: مقرَّرٌ يوميّ مرتّب من محفوظه الراسخ — جلسةٌ في اليوم */
+function wirdBanner(sfx){
+  if(!wirdOn()) return '';
+  var ss=[]; try{ ss=revSessions(); }catch(e){}
+  if(!ss.length) return '';
+  var n=ss.length, i=(REV.done||0)%n, cur=ss[i], done=wirdDoneToday();
+  var lbl=cur.map(function(P){ return arNum(P); }).join('، ');
+  var pcs=pagePieces(cur[0]), nm=pcs.length?esc(pcs[0].s.name):'';
+  return '<div class="revsum" style="margin:0 0 16px;text-align:right;position:relative">'+
+    (done?'<span title="أُدّي وردُ اليوم" style="position:absolute;top:-11px;left:-9px;'+
+      'background:linear-gradient(180deg,#34c47c,#147c40);color:#fff;border:2px solid #0b2a46;'+
+      'border-radius:50%;width:30px;height:30px;line-height:26px;text-align:center;'+
+      'font-size:16px;font-weight:900;box-shadow:0 4px 10px rgba(0,0,0,.35)">✓</span>':'')+
+    '<div style="font-size:15px">📖 <b>وردُ اليوم</b> — من محفوظك</div>'+
+    '<div style="font-size:18px;font-weight:900;margin-top:6px">'+
+      nm+' — '+(cur.length>1?('أوجه '+lbl):('وجه '+lbl))+'</div>'+
+    '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:4px">'+
+      'الجلسة '+arNum(i+1)+' من '+arNum(n)+' • تتمّ الدورة في '+arNum(n)+' يوماً</div>'+
+    '<button type="button" class="btn '+(done?'ghost':'blue')+' big" id="wirdGo'+sfx+'" '+
+      'style="margin:12px 0 0">'+(done?'📖 زِد على وردك':'📖 ابدأ وردَ اليوم')+'</button>'+
+  '</div>';
+}
+function wirdWire(sfx){
+  var b=$('wirdGo'+sfx); if(!b) return;
+  b.onclick=function(){
+    var ss=revSessions(); if(!ss.length) return;
+    REV.si=(REV.done||0)%ss.length;
+    REV.pages=ss[REV.si].slice(); REV.pi=0; REV.due=false; REV.weak=REV.weak||{};
+    revStartPage();
+  };
 }
 function selfRevWire(sfx){
   var b=$('selfRevGo'+sfx); if(!b) return;
@@ -5849,7 +5971,11 @@ function renderPriorMode(){
   for(z=0;z<ms.length;z++) ms[z].onclick=function(){
     curP().priorMode=this.getAttribute('data-pmode'); saveDB(); renderPriorMode();
   };
-  priorPanelWire('pS',function(){ try{ fillBqnSelect(); }catch(e){} });
+  /* سجّل حفظه فصار له محفوظ — فيُسأل الآن عن ورد مراجعته */
+  priorPanelWire('pS',function(){
+    try{ fillBqnSelect(); }catch(e){}
+    try{ revLoad(); renderBqnList(); if(wirdAsk() && REV.on==null) bqnStepWird(); }catch(e){}
+  });
   priorFoldHead();
 }
 /* علامة الطيّة تُحدّث مكانها، فلا يُعاد رسم القائمة فتنطبق تحت يده */
@@ -6044,9 +6170,15 @@ function renderBqnList(){
       foldHTML('fBqn','📅 خطط «بالقرآن نحيا»'+(pn?(' — ✅ '+esc(pn.t)):''),foldIsOpen('fBqn'),bqnBody)+
       foldHTML('fPrior','📌 ما حفظتَه قبل التطبيق'+
         (pm==='new'?' — ✅ أبدأ من جديد':(pm==='has'?' — ✅ مُسجّل':'')),foldIsOpen('fPrior'),priorBody);
+  /* ولمن صار له محفوظ: أتراجعه؟ وكيف تقسّمه؟ */
+  if(wirdAsk())
+    h+=foldHTML('fWird','📖 وردُ المراجعة'+
+      (REV.on===true?(' — ✅ '+arNum(REV.size)+' وجه في اليوم'):(REV.on===false?' — 🚫 بلا ورد':'')),
+      foldIsOpen('fWird'), wirdBody());
   $('bqnList').innerHTML=h;
   foldBind($('bqnList'));
   try{ renderPriorMode(); }catch(e){}
+  wirdWirePanel();
   selfDirWire($('bqnList'), function(){ renderBqnList(); if(bqnPlanDone()) bqnStepPrior(1); });
   /* لا نخرجه بمجرّد اختيار الخطة، لأنّ تحتها سؤالاً بقي */
   var pick=function(el){
@@ -6062,6 +6194,71 @@ function renderBqnList(){
   for(var k=0;k<bs.length;k++) bs[k].onclick=function(){ pick(this); };
 }
 /* الشاشة خطوتان: اختر خطّتك، ثمّ قل أين أنت منها */
+/* ---------- سؤال الورد: أتراجع ما تحفظ؟ وكيف تقسّمه؟ ---------- */
+function wirdAsk(){ try{ revLoad(); return wirdPages().length>0; }catch(e){ return false; } }
+/* حسبةٌ صادقة: كم يومًا، وكم يكسب — والأجر بالأوجه فالمجموع ثابت مهما قسّم */
+function wirdCalc(size){
+  var n=0; try{ n=wirdPages().length; }catch(e){}
+  var days=Math.ceil(n/Math.max(1,size));
+  return { pages:n, days:days, gems:25*n, iron:2*n, glass:2*n };
+}
+function wirdBody(){
+  var on=REV.on, h='';
+  h+='<div class="note" style="margin-bottom:10px">المراجعة تُثبّت ما حفظت، '+
+     'والورد يمشي في محفوظك وجهاً وجهاً ثم يعود من أوّله.</div>'+
+     '<div class="onbopts">'+
+     '<button type="button" class="onbopt'+(on===true?' sel':'')+'" data-wird="1">'+
+       '<span class="oe">'+(on===true?'✅':'📖')+'</span>'+
+       '<span class="ot"><b>نعم، أُريد ورداً يوميّاً</b><i>جلسةٌ كل يوم من محفوظك</i></span></button>'+
+     '<button type="button" class="onbopt'+(on===false?' sel':'')+'" data-wird="0">'+
+       '<span class="oe">'+(on===false?'✅':'🚫')+'</span>'+
+       '<span class="ot"><b>لا، الحفظ الجديد يكفيني</b><i>تبقى مراجعة ما تحفظه في التطبيق وحدها</i></span></button>'+
+     '</div>';
+  if(on!==true) return h;
+  h+='<div class="lbl" style="margin:16px 0 6px">📏 كم وجهاً في الجلسة؟</div><div class="onbopts">';
+  REV_SIZES.forEach(function(z){
+    var c=wirdCalc(z), sel=(REV.size===z);
+    h+='<button type="button" class="onbopt'+(sel?' sel':'')+'" data-wsize="'+z+'">'+
+       '<span class="oe">'+(sel?'✅':arNum(z))+'</span>'+
+       '<span class="ot"><b>'+(z===1?'وجه واحد':(z===2?'وجهان':arNum(z)+' أوجه'))+'</b>'+
+       '<i>تُتمّ محفوظك في '+arNum(c.days)+' يوماً</i></span></button>';
+  });
+  h+='</div>';
+  h+='<div class="lbl" style="margin:16px 0 6px">🧭 من أين يمشي الورد؟</div><div class="onbopts">'+
+     '<button type="button" class="onbopt'+(revDir()<0?' sel':'')+'" data-wdir="-1">'+
+       '<span class="oe">'+(revDir()<0?'✅':'🌙')+'</span>'+
+       '<span class="ot"><b>من جهة الناس</b><i>من آخر المصحف إلى أوّله</i></span></button>'+
+     '<button type="button" class="onbopt'+(revDir()>0?' sel':'')+'" data-wdir="1">'+
+       '<span class="oe">'+(revDir()>0?'✅':'📖')+'</span>'+
+       '<span class="ot"><b>من جهة البقرة</b><i>على ترتيب المصحف</i></span></button>'+
+     '</div>';
+  var c=wirdCalc(REV.size);
+  h+='<div class="revsum" style="margin:16px 0 0;text-align:right">'+
+     '<div style="font-size:15px">🧮 <b>حسبة وردك</b></div>'+
+     '<div style="font-size:17px;font-weight:900;margin-top:6px">'+
+       arNum(c.pages)+' وجهاً محفوظاً • دورةٌ في '+arNum(c.days)+' يوماً</div>'+
+     '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:6px">'+
+       'في الدورة الواحدة: 💎 '+arNum(c.gems)+' جوهرة • 🔩 '+arNum(c.iron)+' حديد'+
+       ' • 🔷 '+arNum(c.glass)+' زجاج إن أتقنت</div>'+
+     '<div style="font-size:12px;font-weight:700;opacity:.75;margin-top:6px">'+
+       'والأجر بالأوجه لا بالجلسات — فلا يزيدك تصغيرُ الورد شيئاً.</div></div>';
+  return h;
+}
+function wirdWirePanel(){
+  var box=$('bqnList'); if(!box) return;
+  var hit=function(){
+    var v=this.getAttribute('data-wird');
+    if(v!=null){ REV.on=(v==='1'); if(REV.on) REV.wird=true; }
+    var sz=this.getAttribute('data-wsize');
+    if(sz!=null){ REV.size=parseInt(sz,10); REV.done=0; }
+    var dr=this.getAttribute('data-wdir');
+    if(dr!=null){ REV.dir=parseInt(dr,10); REV.done=0; }
+    revSave();
+    renderBqnList(); foldSet('fWird',true); bqnScrollTo('fWird');
+  };
+  var bs=box.querySelectorAll('[data-wird],[data-wsize],[data-wdir]');
+  for(var i=0;i<bs.length;i++) bs[i].onclick=hit;
+}
 function bqnPlanDone(){ return !!curP().planChosen && (onPlan() || selfDirPicked()); }
 function bqnStepPlan(){
   foldSet('fPrior',false);
@@ -6086,7 +6283,13 @@ function bqnBlocked(){
     return {m:'🧭 وبقيت واحدة: من أين تبدأ — من الناس أم من البقرة؟',go:bqnStepPlan};
   if(!curP().priorMode)
     return {m:'📌 اختر أوّلاً: أبدأ من جديد، أم أسجّل حفظي السابق',go:bqnStepPrior};
+  if(wirdAsk() && REV.on==null)
+    return {m:'📖 وبقيت واحدة: أتريد ورداً يوميّاً لمراجعة محفوظك؟',go:bqnStepWird};
   return null;
+}
+function bqnStepWird(){
+  foldSet('fSelf',false); foldSet('fBqn',false); foldSet('fPrior',false);
+  foldSet('fWird',true); bqnScrollTo('fWird');
 }
 var BQN_BACK='';            /* من أين جئنا إلى شاشة الاختيار: '' أو 'onb' أو 'set' */
 function startBqn(from){
@@ -6260,14 +6463,14 @@ function finishRevQuiz(){
     pageSegKeys(P).forEach(function(k){ scheduleNext(k, !bad); });      /* الضعيفة تعود غداً */
   });
   saveProg();
-  if(onPath) REV.done=Math.max(REV.done, REV.si+1);
+  if(onPath){
+    REV.done=Math.max(REV.done, REV.si+1);
+    if(revIsWird()) REV.day=todayNum();      /* أُدّي وردُ اليوم */
+  }
   revSave();
   tal().revpg=(tal().revpg||0)+donePages.length;
   if(!S.errors) tal().perfect++;
-  noteReview(weakList.length===0);
-  addGems(10*donePages.length);
-  addMat('iron',2*donePages.length);
-  if(!weakList.length) addMat('glass',2*donePages.length);
+  noteReview(weakList.length===0, donePages.length);
 
   var ss=revSessions(), more = onPath && REV.done<ss.length;
   $('playCard').classList.remove('bare');
@@ -6332,7 +6535,7 @@ function finishReview(){
   if(!isTest){
     S.due.forEach(function(d){ scheduleNext(d.key, ok); });
     saveProg();
-    noteReview(S.errors===0);
+    noteReview(S.errors===0, segsPages(S.due));   /* بالأوجه كالورد، لا بالجلسة */
   } else if(ok){
     curP().badges['juz'+j]=true; saveDB(); checkBadges();
     addGems(100); addMat('gold',5);
@@ -6608,8 +6811,10 @@ function renderHome(){
   try{ pwaSync(); }catch(e){}
   var n=(profile.name||'').trim();
   $('homeHi').innerHTML = n ? ('السلام عليكم يا <b>'+esc(n)+'</b> 👋') : 'السلام عليكم 👋';
-  var due=dueSegs().length, tb=todayBox();
-  $('homeHi2').textContent = due ? ('عندك '+arNum(due)+' مقطع يحتاج مراجعة اليوم ☀️')
+  var due=dueSegs().length, tb=todayBox(), w=false;
+  try{ revLoad(); w=wirdPending(); }catch(e){}
+  $('homeHi2').textContent = w ? 'وردُ اليوم ينتظرك 📖'
+    : due ? ('عندك '+arNum(due)+' مقطع يحتاج مراجعة اليوم ☀️')
     : (tb.stages>0 ? ('أنجزت '+arNum(tb.stages)+' مراحل اليوم — أحسنت 🌟')
                    : 'مستعدّ لحفظ جديد اليوم؟');
 }
@@ -6837,9 +7042,11 @@ $('btnReviewGo').onclick=function(){
   /* على خطة ولم تكتمل مراجعة اليوم؟ فليرَ مقرَّرها أوّلاً */
   var T=null; try{ T=bqnToday(); }catch(e){}
   if(T && T.r && !T.revDone){ startRevPlan(); return; }
-  /* وعلى خطط «نور الوحي» كذلك: ما استحقّ اليوم يُرى قبل المسار الحرّ */
-  var due=0; try{ due=dueSegs().length; }catch(e){}
-  if(due){ startRevPlan(); return; }
+  /* وكذلك وردُ اليوم وما استحقّ: يُرى قبل المسار الحرّ */
+  var due=0, w=false;
+  try{ due=dueSegs().length; }catch(e){}
+  try{ revLoad(); w=wirdPending(); }catch(e){}
+  if(due || w){ startRevPlan(); return; }
   if(curP().rev) beginRevPath(); else startRevPlan();
 };
 $('btnRevHome').onclick=function(){ renderPlayers(); show('scr-start'); };
