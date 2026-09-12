@@ -455,6 +455,13 @@ body.glow-off .cele .spk{display:none}
 /* صفّ التاج: أرفع الشارات، فله إطارٌ ذهبيّ يميّزه */
 .bfam.crownfam{border-color:var(--gold);box-shadow:0 0 0 2px rgba(242,194,48,.25) inset}
 .crownrow{display:flex;align-items:center;gap:12px;margin:8px 0 10px}
+/* مقطع تاج الوقار في شهادة الختم */
+.cert .crowncert{margin:12px 0;padding:12px 14px;border:2px dashed #d9b45a;border-radius:14px;
+  background:#fffaf0;text-align:center}
+.cert .crowncert svg{width:78px;height:56px;display:block;margin:0 auto 6px}
+.cert .crowncert p{margin:0;font-size:14px;font-weight:800;color:#6b4e00;line-height:2}
+.cert .crowncert b{color:#8a6100}
+.cert .crowncert small{display:block;margin-top:8px;font-size:12px;font-weight:700;color:#8a7a55;line-height:1.9}
 .crownpic{flex:0 0 auto;width:74px;height:56px;border-radius:14px;display:grid;place-items:center;
   background:#0d2f5e;border:2px solid var(--pb);opacity:.45;filter:grayscale(1)}
 .crownpic.on{opacity:1;filter:none;background:radial-gradient(circle at 50% 60%,#4a3a00,#0d2f5e);
@@ -1135,7 +1142,6 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
     <h1>🎖️ شاراتي</h1>
     <p class="sub" id="badgeSub">—</p>
     <div id="badgeWrap"></div>
-    <button class="btn green big" id="btnShareBadges">📤 شارك إنجازي</button>
     <button class="btn primary big" id="btnBadgesBack" style="margin:0">➡️ رجوع</button>
   </section>
 
@@ -1171,7 +1177,6 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
     <div id="certWrap"></div>
     <div class="noprint">
       <button class="btn green big pulse" id="btnPrint">🖨️ طباعة / حفظ الشهادة</button>
-      <button class="btn blue big" id="btnShareCert">📤 شارك الشهادة</button>
       <button class="btn ghost big" id="btnCertBack" style="margin:0">🗺️ رجوع للسور</button>
     </div>
   </section>
@@ -1521,6 +1526,7 @@ function crownCheck(){
     sub:'ستّة آلاف ومئتان وستٌّ وثلاثون آية — ولا يفارق التاجُ رأسك بعد اليوم.'+
         String.fromCharCode(10)+'وإنّما التمام تعاهدٌ لا وقوف، فدُم على وردك.',
     rew:'👑 تاج الحافظ' }); }catch(e){}
+  try{ CELE.then=function(){ showQuranCert(); }; }catch(e){}   /* ثمّ تُعرض شهادته */
   return true;
 }
 function crownSVG(){
@@ -2931,10 +2937,7 @@ function gftPanelHTML(){
       '<div id="gftOut" hidden>'+
         '<div class="gftcode" id="gftCode"></div>'+
         '<div class="gfttxt" id="gftText"></div>'+
-        '<div class="row">'+
-          '<button class="btn blue" id="gftCopy">📋 انسخ الرسالة</button>'+
-          '<button class="btn blue" id="gftShare">📤 شارك</button>'+
-        '</div>'+
+        '<button class="btn blue" id="gftCopy" style="width:100%">📋 انسخ الرسالة</button>'+
       '</div>'+
     '</div>';
 }
@@ -2981,7 +2984,6 @@ function gftBindOut(){
     try{ navigator.clipboard.writeText(GFT_CARD); navToast('نُسخت الرسالة — الصقها لأخيك'); }
     catch(e){ try{ navToast('انسخ الرسالة من الصندوق أعلاه'); }catch(e2){} }
   };
-  $('gftShare').onclick=function(){ try{ doShare(GFT_CARD); }catch(e){} };
 }
 function gftMsg(s,bad){
   var e=$('gftMsg'); if(!e) return;
@@ -3912,6 +3914,8 @@ function renderPath(){
    الجلسة
    ========================================================= */
 var S=null, pendingStart=null;
+/* تنبيه التلميح يُقال مرّةً في كل جلسة، ما لم يكتمه صاحبه */
+var HINT_SEEN=false;
 var REVIEW_CAP=8;
 
 function startSeg(s,i){
@@ -4473,39 +4477,7 @@ function badgeLine(got){
 }
 /* ===== مشاركة الإنجاز ===== */
 var NL=String.fromCharCode(10);
-function shareLink(){
-  return /^https?:$/.test(location.protocol) ? (location.origin+location.pathname) : '';
-}
-function shareText(){
-  var p=curP(), tt=totals(), st=p.streak||{}, L=[];
-  L.push('🕌 نور الوحي — '+(p.name||'صديقي'));
-  L.push('📖 حفظتُ '+arNum(tt.ayat)+' آية');
-  L.push('⭐ '+arNum(tt.stars)+' نجمة  •  🏮 '+arNum(st.count||0)+' يوم مواظبة');
-  L.push('🎖️ '+arNum(badgeCount())+' شارة من '+arNum(badgeTotal()));
-  if(tal().combo) L.push('🔥 أطول سلسلة: '+arNum(tal().combo)+' إجابة متتالية');
-  if(sadTotal()) L.push('🤲 '+arNum(sadTotal())+' قسيمة خير');
-  var u=shareLink(); if(u) L.push(u);
-  return L.join(NL);
-}
-function certText(s){
-  var p=curP(), L=[];
-  L.push('🎉 أتممتُ بفضل الله حفظ سورة '+s.name);
-  L.push('— '+(p.name||'صديقي')+' في «نور الوحي» 🕌');
-  L.push('📖 مجموع ما حفظتُه: '+arNum(totals().ayat)+' آية');
-  var u=shareLink(); if(u) L.push(u);
-  return L.join(NL);
-}
-function doShare(txt){
-  txt=txt||shareText();
-  try{
-    if(navigator.share){ navigator.share({ text:txt }).catch(function(){}); return; }
-  }catch(e){}
-  try{
-    window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank');
-  }catch(e2){
-    try{ navigator.clipboard.writeText(txt); navToast('نُسخ الإنجاز — الصقه في المحادثة'); }catch(e3){}
-  }
-}
+/* رُفعت المشاركة: لا يغادر التطبيقَ أحد */
 /* التاج صفٌّ وحده فوق الشارات كلّها — هو غايتها */
 function crownRowHTML(){
   var on=isHafiz(), t=0;
@@ -4517,7 +4489,8 @@ function crownRowHTML(){
       '<div class="crownpic'+(on?' on':'')+'">'+
         '<svg viewBox="24 14 52 36" aria-hidden="true">'+crownSVG()+'</svg></div>'+
       '<div class="crowntx">'+(on
-        ? '<b>تُوِّجتَ حافظاً لكتاب الله</b><i>لا يفارق التاجُ رأسك — ودُم على تعاهده</i>'
+        ? '<b>تُوِّجتَ حافظاً لكتاب الله</b><i>لا يفارق التاجُ رأسك — ودُم على تعاهده</i>'+
+          '<button type="button" class="btn green mini" id="btnQCert" style="margin:8px 0 0">📜 شهادة ختم القرآن</button>'
         : '<b>إن شاء الله ستلبس التاج عند إتمامك حفظ القرآن</b><i>وهو أرفع ما في هذه الصفحة، لا يُنال إلا بتمام المصحف</i>')+
       '</div></div>'+
     '<div class="bbar"><i style="width:'+pct+'%"></i></div></div>';
@@ -4548,6 +4521,7 @@ function renderBadges(){
               '<div class="bi">'+B.ic+'</div><div class="bn">'+esc(B.n)+'</div></div>';
      }).join('')+'</div></div>';
   $('badgeWrap').innerHTML=h;
+  if($('btnQCert')) $('btnQCert').onclick=function(){ certFrom='badges'; showQuranCert(); };
 }
 
 /* ===== نقاط الوصل ===== */
@@ -4737,9 +4711,9 @@ function roundWords(r){
     };
   }
   $('btnHintW').onclick=function(){
-    /* أوّل ضغطةٍ بيانٌ بلا ثمن: يُعلَم قبل أن يُؤخذ منه شيء، ولا تُكشف الكلمة.
-       فإذا وافق وضغط ثانيةً، كُشفت له وحُسبت خطأً وانقطعت سلسلتُه. */
-    if(uiOnce(LS.hint,'التلميح يدلّك على الكلمة،\nفإن استعنتَ به حُسب خطأً وانقطعت سلسلتُك.\nوهذه المرّة لك بلا ثمن — جرّب بنفسك، فإن احتجتَه فاضغطه مرّةً أخرى.','💡')) return;
+    /* أوّلُ تلميحٍ في كل جلسة بيانٌ بلا ثمن: يُعلَم قبل أن يُؤخذ منه شيء،
+       ولا تُكشف الكلمة. ومن مَلّ التذكير كتمه بخانته فلا يُعاد عليه أبداً. */
+    if(!load(LS.hint,0) && !HINT_SEEN){ HINT_SEEN=true; uiBox('التلميح يدلّك على الكلمة،\nفإن استعنتَ به حُسب خطأً وانقطعت سلسلتُك.\nوهذه لك بلا ثمن — جرّب بنفسك، فإن احتجتَه فاضغطه مرّةً أخرى.','💡','✅ فهمت',null,null,LS.hint); return; }
     S.errors++; comboMiss();
     for(var j=0;j<btns.length;j++){
       if(!btns[j].classList.contains('gone') && btns[j].textContent===seg[placed]){
@@ -6827,6 +6801,39 @@ function showCert(s){
   renderAvatars();
   show('scr-cert');
 }
+/* ===== شهادة ختم القرآن =====
+   أرفع شهاداته، ولا تُمنح إلا بتمام المصحف في سجلّ الآيات. */
+function showQuranCert(){
+  certFrom='';
+  var t=0; try{ t=memTotal(); }catch(e){}
+  $('certWrap').innerHTML=
+    '<div class="cert">'+
+      '<div class="orn">❖ ❖ ❖ ❖ ❖</div>'+
+      '<h2>👑 شهادة ختم القرآن الكريم</h2>'+
+      '<div class="ph" id="certAvatar"></div>'+
+      '<div style="font-size:14px;color:#4a627e">تشهد أسرة تطبيق «نور الوحي» بأن</div>'+
+      '<div class="who">'+esc(profile.name||'الطالب')+'</div>'+
+      '<div style="font-size:14px;color:#4a627e">قد أتمّ بفضل الله تعالى ومنّته حفظ</div>'+
+      '<div class="what">القرآن الكريم كاملاً</div>'+
+      '<div style="font-size:14px;color:#4a627e">'+arNum(t)+' آية • 114 سورة • 30 جزءاً</div>'+
+      '<div class="stars">★★★★★</div>'+
+      '<div class="crowncert">'+
+        '<svg viewBox="24 14 52 36" aria-hidden="true">'+crownSVG()+'</svg>'+
+        '<p>وفي الحديث أنّ حاملَ القرآن يُلبَس والداه <b>تاجَ الوقار</b> يوم القيامة،<br>'+
+        'ضياؤه أحسنُ من ضياء الشمس — فهنيئاً لك، وهنيئاً لوالديك.</p>'+
+        '<small>ونسأل الله أن يجعله حجّةً لك لا عليك، وأن يثبّته في صدرك.</small>'+
+      '</div>'+
+      (buildCount()?'<svg class="mosque" viewBox="0 0 400 250" style="max-width:280px">'+bigMosqueSVG()+'</svg>'
+                  :'<svg class="mosque" viewBox="0 0 300 170" style="max-width:250px">'+mosqueSVG(1)+'</svg>')+
+      '<div class="meta2"><span>📅 '+greg()+'</span>'+(hijriDate()?'<span>🌙 '+hijriDate()+'</span>':'')+'</div>'+
+      '<div class="sign"><div>توقيع المعلّم / المستمع</div><div>ختم البيت 🏠</div></div>'+
+      '<div class="waqf">🤲 هذا التطبيق وقف لله تعالى — صدقة جارية عن أمي لمياء قباني</div>'+
+      '<div class="orn">❖ ❖ ❖ ❖ ❖</div>'+
+    '</div>';
+  certSurah=null;
+  renderAvatars();
+  show('scr-cert');
+}
 function showJuzCert(j){
   var list=juzStartSurahs(j);
   $('certWrap').innerHTML=
@@ -7281,6 +7288,7 @@ document.addEventListener('keydown', function(e){
   else if(e.key===','){ e.preventDefault(); qaEndStage(); }
 });
 $('btnCertBack').onclick=function(){
+  if(certFrom==='badges'){ certFrom=''; renderBadges(); show('scr-badges'); return; }
   if(certFrom==='map'){ certFrom=''; renderMap(); show('scr-map'); return; }
   if(curSurah){ renderPath(); show('scr-path'); } else { renderMap(); show('scr-map'); }
 };
@@ -7331,8 +7339,6 @@ $('btnBqnDone').onclick=function(){
 };
 $('btnBadges').onclick=function(){ renderBadges(); show('scr-badges'); };
 $('homeAvaBtn').onclick=function(){ renderBadges(); show('scr-badges'); };
-$('btnShareBadges').onclick=function(){ doShare(); };
-$('btnShareCert').onclick=function(){ doShare(certSurah?certText(certSurah):null); };
 $('btnBadgesBack').onclick=function(){ renderPlayers(); show('scr-start'); };
 $('btnRevPlan').onclick=startRevPlan;
 $('revPrev').onclick=function(){ revGoSurah(-1); };
