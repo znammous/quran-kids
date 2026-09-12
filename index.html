@@ -1660,6 +1660,16 @@ window.addEventListener('resize', function(){
   if(sh && !sh.hidden) mushafFit($('mfBody'));
 });
 function mushafClose(){ if($('mfSheet')) $('mfSheet').hidden=true; }
+/* شاشة اللمس تُولّد نقرةً تابعة بعد رفع الإصبع، وتُختبَر إصابتها بعد إخفاء
+   الوجه — فتقع على الزرّ الذي كان خلفه. فيبتلعها حارسٌ لحظيّ. */
+function mushafEatGhost(){
+  var evs=['click','mousedown','mouseup'], i;
+  function kill(e){ e.stopPropagation(); e.preventDefault(); }
+  for(i=0;i<evs.length;i++) document.addEventListener(evs[i], kill, true);
+  setTimeout(function(){
+    for(var j=0;j<evs.length;j++) document.removeEventListener(evs[j], kill, true);
+  }, 400);
+}
 
 /* الآية المضاءة إلى وسط الإطار، فلا يبحث عنها الطفل */
 function mushafScroll(box){
@@ -3432,7 +3442,7 @@ function closeModal(id){
   $(id).hidden=true;
   if(id==='adab') pendingStart=null;
 }
-$('mfClose').onclick=mushafClose;
+$('mfClose').onclick=function(){ mushafClose(); mushafEatGhost(); };
 /* نقرةٌ على الوجه تغلقه — أيسر للطفل من قصد الزرّ. ونميّز النقرة من
    التمرير بالمسافة والزمن، وإلّا أغلقه كلُّ سحبٍ للصفحة. */
 (function(){
@@ -3446,11 +3456,12 @@ $('mfClose').onclick=mushafClose;
     if(Math.abs(e.clientX-sx)>10 || Math.abs(e.clientY-sy)>10) moved=true;
   });
   b.addEventListener('pointercancel', function(){ down=false; });
-  b.addEventListener('pointerup', function(){
+  b.addEventListener('pointerup', function(e){
     if(!down) return;
     down=false;
     if(moved || Date.now()-st>600) return;              /* سحبٌ أو ضغطة طويلة */
-    mushafClose();
+    if(e.cancelable) e.preventDefault();
+    mushafClose(); mushafEatGhost();
   });
 })();
 ['help','adab'].forEach(function(id){
