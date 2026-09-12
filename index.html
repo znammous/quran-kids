@@ -7254,9 +7254,20 @@ function revStartPage(){
 }
 function revSkipToQuiz(){ REV.pi=REV.pages.length; revStartPage(); }
 
+var REV_KINDS=['missing','words','ayat','edge','miss2'];
+/* تسلسلُ أنواع أسئلة الصفحة: يُخلط ترتيبُها ويُعاد الخلطُ كلّما دارت.
+   وكان النوعُ يُؤخذ بحاصل قسمة العدّاد، فمن اختار ثلاثةَ أسئلةٍ للصفحة
+   لم يبلغه النوعان الأخيران أبداً — يُكتبان ولا يُرَيان. */
+function revKindOrder(cnt){
+  var out=[], pool=[], i;
+  while(out.length<cnt){
+    if(!pool.length){ for(i=0;i<REV_KINDS.length;i++) pool.push(i); shuffle(pool); }
+    out.push(pool.pop());
+  }
+  return out;
+}
 function revQuestion(it,P,k){
-  var kinds=['missing','words','ayat','edge','miss2'];
-  var kind=kinds[k%kinds.length];   /* كان العددُ مثبَّتاً بأربعةٍ فلا يبلغ الخامسَ أبداً */
+  var kind=REV_KINDS[k%REV_KINDS.length];
   if(kind==='ayat' && (it.to-it.from)<3) kind='missing';      /* الترتيب يحتاج ثلاث آيات فأكثر */
   if(kind==='edge'){
     var eq = edgeOK(P,!revFree())
@@ -7301,9 +7312,10 @@ function beginRevQuiz(){
       for(var a=p.from;a<p.to;a++) items.push({ s:p.s, a:a, from:p.from, to:p.to });
     });
     if(!items.length) return;
+    var order=revKindOrder(revPer());   /* نصيبٌ لكلّ نوعٍ مهما قلّ العدد */
     for(var k=0;k<revPer();k++){
       var it=items[Math.floor(Math.random()*items.length)];
-      rounds.push(revQuestion(it,P,k));
+      rounds.push(revQuestion(it,P,order[k]));
     }
   });
   if(!rounds.length){ REV.quizDone=true; renderRevPath(); show('scr-revpath'); return; }
