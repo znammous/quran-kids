@@ -913,13 +913,25 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
 }
 .fplbl{font-size:16.5px;font-weight:900;color:var(--ttl);letter-spacing:.3px;
   text-shadow:0 0 14px rgba(126,224,255,.55)}
-body.light .fplbl{text-shadow:0 0 10px rgba(31,176,239,.35)}
+body.light .fplbl{color:#07314f;text-shadow:0 1px 0 rgba(255,255,255,.8)}
 .iceflame{flex:0 0 auto;width:76px;height:100px;display:block;position:relative;z-index:1;
   filter:drop-shadow(0 0 12px rgba(126,224,255,.95))}
 .iceflame svg{width:100%;height:100%;display:block;overflow:visible}
 .iceflame .f1{fill:#cdefff}
 .iceflame .f2{fill:#79d3ff}
 .iceflame .f3{fill:#fff}
+/* في النهار تذوب الألوانُ الثلجيّةُ في بياض الخلفيّة، فتُعمَّق درجاتُها
+   وتُظلَّل الهالةُ — ليبقى الزرُّ بارزاً كما هو في الليل. */
+.fpwrap::before{content:'';position:absolute;inset:16px;border-radius:50%;
+  background:radial-gradient(circle at 50% 42%, rgba(126,224,255,.20), rgba(126,224,255,0) 70%)}
+body.light .fpwrap::before{
+  background:radial-gradient(circle at 50% 42%, rgba(20,130,190,.20), rgba(20,130,190,0) 72%)}
+body.light .iceflame .f1{fill:#7fcdee}
+body.light .iceflame .f2{fill:#1f92d4}
+body.light .iceflame .f3{fill:#eafaff}
+body.light .iceflame{filter:drop-shadow(0 3px 7px rgba(12,90,140,.42))}
+body.light .fpring{border-color:rgba(24,130,190,.6);
+  box-shadow:0 0 22px rgba(24,130,190,.3), inset 0 0 22px rgba(24,130,190,.16)}
 @keyframes icelick{
   0%,100%{transform:scale(1,1)}
   30%{transform:scale(.93,1.11)}
@@ -3730,9 +3742,14 @@ function buildJuzTest(j){
     var s=it.s, a=it.g[0]+Math.floor(Math.random()*(it.g[1]-it.g[0]));
     var kind=rounds.length%3;
     if(kind===0){
-      var ws=wordsOf(ayahText(s,a));
-      rounds.push({t:'missing',a:a,wi:Math.floor(Math.random()*ws.length),surah:s,segFrom:it.g[0],segTo:it.g[1]});
-    } else if(kind===1){
+      var ma=missPick(s,it.g[0],it.g[1]);        /* آيةٌ تحتمل الفراغ من المقطع */
+      if(ma<0) kind=1;                           /* لا واحدةَ فيه: ترتيبُ كلماتٍ بدلَها */
+      else{
+        var ws=wordsOf(ayahText(s,ma));
+        rounds.push({t:'missing',a:ma,wi:Math.floor(Math.random()*ws.length),surah:s,segFrom:it.g[0],segTo:it.g[1]});
+      }
+    }
+    if(kind===1){
       var ch=wordChunks(s,a,WORDS_MIN), pk=ch[Math.floor(Math.random()*ch.length)];
       rounds.push({t:'words',a:a,from:pk[0],to:pk[1],parts:1,part:0,surah:s,segFrom:it.g[0],segTo:it.g[1]});
     } else {
@@ -4446,6 +4463,34 @@ function segWholePage(s,seg){
   if(pcs.length!==1) return 0;
   return (pcs[0].s.n===s.n && pcs[0].from===seg[0] && pcs[0].to===seg[1]) ? P : 0;
 }
+/* ===== آياتٌ لا تحتمل الفراغ =====
+   «الٓمٓ» كلمةٌ واحدة: إن أُفرِغت لم يبقَ من الآية ما يُقرأ، فالسؤالُ لغزٌ
+   بلا قرينة. فيُشترط ثلاثُ كلماتٍ للفراغ الواحد، وخمسٌ للفراغين. */
+var MISS_MIN=3, MISS2_MIN=5;
+function ayahWords(s,a){ return wordsOf(ayahText(s,a)).length; }
+/* آيةٌ من المقطع تحتمل الفراغ، أو ‎-1 إن لم تكن فيه واحدة */
+function missPick(s,from,to,need){
+  var pool=[], i;
+  need=need||MISS_MIN;
+  for(i=from;i<to;i++) if(ayahWords(s,i)>=need) pool.push(i);
+  return pool.length ? pool[Math.floor(Math.random()*pool.length)] : -1;
+}
+/* شبكةُ أمانٍ أخيرة: سؤالٌ لا تحتمله آيتُه يُبدَّل قبل أن يُرسم،
+   فلا يقع الطفلُ على سؤالٍ لا جوابَ له مهما تغيّرت مصادرُ الأسئلة. */
+function qFit(r){
+  if(!r || (r.t!=='missing' && r.t!=='miss2')) return r;
+  var sx=r.surah||S.surah, n=ayahWords(sx,r.a), ch;
+  if(r.t==='miss2'){
+    if(n>=MISS2_MIN) return r;
+    r.t='missing'; r.wi2=null;
+  }
+  if(n>=MISS_MIN){ if(r.wi>=n) r.wi=n-1; return r; }
+  ch=wordChunks(sx,r.a,WORDS_MIN);
+  r.t='words'; r.parts=1; r.part=0;
+  r.from=(ch&&ch.length)?ch[0][0]:0;
+  r.to  =(ch&&ch.length)?ch[0][1]:n;
+  return r;
+}
 function buildRounds(s,seg,stage){
   var r=[], i, k, from=seg[0], to=seg[1];
   if(stage===0){
@@ -4460,6 +4505,7 @@ function buildRounds(s,seg,stage){
   } else if(stage===2){
     for(i=from;i<to;i++){
       var ws=wordsOf(ayahText(s,i));
+      if(ws.length<MISS_MIN) continue;           /* آيةٌ قصيرةٌ يبتلعها الفراغ */
       var blanks=Math.min(3, Math.max(1, Math.ceil(ws.length/8)));
       var used=[];
       for(k=0;k<blanks;k++){
@@ -4469,6 +4515,8 @@ function buildRounds(s,seg,stage){
         r.push({t:'missing',a:i,wi:wi});
       }
     }
+    /* مقطعٌ كلُّ آياته قصار: يُقرأ ولا يُفرَّغ، فلا تمرّ مرحلةٌ خاوية */
+    if(!r.length) for(i=from;i<to;i++) r.push({t:'read',a:i});
   } else if(stage===3){
     var Pw=segWholePage(s,seg);
     if(Pw && edgeOK(Pw,false)){
@@ -4602,6 +4650,7 @@ function runRound(){
   if(S.i>=S.rounds.length){ finishStage(); return; }
   var r=S.rounds[S.i];
   if(S.review && r.surah){ S.surah=r.surah; S.seg=[r.segFrom,r.segTo]; }
+  r=qFit(r);                       /* آيةٌ لا تحتمل الفراغ: يُبدَّل سؤالُها */
   $('pSurah').textContent=S.surah.name;
   $('pSeg').textContent=S.review?('☀️ '+arNum(r.segFrom+1)+'-'+arNum(r.segTo)):segLabel();
   var seghere = S.surah.name+' '+arNum(S.seg[0]+1)+'-'+arNum(S.seg[1]);
@@ -5292,7 +5341,7 @@ function roundMissing(r){
    الترتيب: الأوّلُ مضاءٌ حتى يُصاب، ثمّ ينتقل الضوءُ إلى الثاني. */
 function roundMiss2(r){
   var s=S.surah, ws=wordsOf(ayahText(s,r.a));
-  if(ws.length<5){ roundMissing(r); return; }        /* آيةٌ قصيرةٌ لا تحتمل فراغين */
+  if(ws.length<MISS2_MIN){ roundMissing(r); return; }   /* آيةٌ قصيرةٌ لا تحتمل فراغين */
   var i1=Math.min(r.wi||0, ws.length-1), i2=Math.min(r.wi2==null?0:r.wi2, ws.length-1);
   if(Math.abs(i1-i2)<2) i2 = (i1+2<ws.length) ? i1+2 : i1-2;
   if(i2<0) i2=ws.length-1;
@@ -7120,7 +7169,7 @@ function revQuestion(it,P,k){
   }
   if(kind==='miss2'){
     var w2s=wordsOf(ayahText(it.s,it.a));
-    if(w2s.length>=5){
+    if(w2s.length>=MISS2_MIN){
       var k1=Math.floor(Math.random()*(w2s.length-2));
       var k2=k1+2+Math.floor(Math.random()*(w2s.length-k1-2));
       return {t:'miss2',a:it.a,wi:k1,wi2:k2,surah:it.s,
@@ -7130,8 +7179,10 @@ function revQuestion(it,P,k){
   }
   if(kind==='missing'){
     var ws=wordsOf(ayahText(it.s,it.a));
-    return {t:'missing',a:it.a,wi:Math.floor(Math.random()*ws.length),surah:it.s,
-            segFrom:it.from,segTo:it.to,page:P};
+    if(ws.length>=MISS_MIN)
+      return {t:'missing',a:it.a,wi:Math.floor(Math.random()*ws.length),surah:it.s,
+              segFrom:it.from,segTo:it.to,page:P};
+    kind='words';                                /* آيةٌ قصيرةٌ: تُرتَّب ولا تُفرَّغ */
   }
   if(kind==='words'){
     var ch=wordChunks(it.s,it.a,WORDS_MIN), pick=ch[Math.floor(Math.random()*ch.length)];
@@ -7245,9 +7296,11 @@ function beginReview(j){
     due=due.slice(0,REVIEW_CAP);
     due.forEach(function(d){
       var s=d.s, span=d.to-d.from;
-      var a1=d.from+Math.floor(Math.random()*span);
-      var ws=wordsOf(ayahText(s,a1));
-      rounds.push({t:'missing',a:a1,wi:Math.floor(Math.random()*ws.length),surah:s,segFrom:d.from,segTo:d.to});
+      var a1=missPick(s,d.from,d.to);            /* آيةٌ تحتمل الفراغ */
+      if(a1>=0){
+        var ws=wordsOf(ayahText(s,a1));
+        rounds.push({t:'missing',a:a1,wi:Math.floor(Math.random()*ws.length),surah:s,segFrom:d.from,segTo:d.to});
+      }
       var a2=d.from+Math.floor(Math.random()*span);
       var ch=wordChunks(s,a2,WORDS_MIN), pick=ch[Math.floor(Math.random()*ch.length)];
       rounds.push({t:'words',a:a2,from:pick[0],to:pick[1],parts:1,part:0,surah:s,segFrom:d.from,segTo:d.to});
@@ -7592,7 +7645,7 @@ var EX_KINDS=[['mix','🎲','منوّعة','ترتيبُ كلماتٍ وكلمة
               ['words','🧩','ترتيب الكلمات','تُبعثر كلماتُ الآية فيعيد بناءها'],
               ['missing','🔍','الكلمة الناقصة','تسقط كلمةٌ من الآية فيختارها'],
               ['ayat','🔢','ترتيب الآيات','تُبعثر آياتُ المقطع فيعيد ترتيبها'],
-              ['miss2','🔍🔍','فراغان','كلمتان تسقطان من الآية — أجرُهما ضِعف']];
+              ['miss2','🔍🔍','فراغان','كلمتان تسقطان من الآية معاً']];
 var EX_COUNTS=[10,20,30,50];
 var EX_STEPS=['range','kind','count','ready'];
 var EX_HEAD={
@@ -7646,14 +7699,15 @@ function examQ(it){
   ws=wordsOf(ayahText(it.s,it.a));
   if(!ws.length) return null;
   if(t==='miss2'){
-    if(ws.length<5) t='missing';                    /* آيةٌ لا تحتمل فراغين */
-    else{
+    if(ws.length>=MISS2_MIN){
       j1=Math.floor(Math.random()*(ws.length-2));
       j2=j1+2+Math.floor(Math.random()*(ws.length-j1-2));
       return {t:'miss2',a:it.a,wi:j1,wi2:j2,surah:it.s,
               segFrom:it.from,segTo:it.to,page:it.P};
     }
+    t='missing';                                  /* آيةٌ لا تحتمل فراغين */
   }
+  if(ws.length<MISS_MIN) return null;             /* ولا فراغاً واحداً: تُترك لغيرها */
   return {t:'missing',a:it.a,wi:Math.floor(Math.random()*ws.length),surah:it.s,
           segFrom:it.from,segTo:it.to,page:it.P};
 }
@@ -7752,8 +7806,6 @@ function examKindName(){
   for(var i=0;i<EX_KINDS.length;i++) if(EX_KINDS[i][0]===EX.kind) return EX_KINDS[i][2];
   return '';
 }
-/* وزنُ السؤال: الفراغان ضِعفُ الواحد، لأنّ احتمال الحدس فيهما التسع لا الثلث */
-function qWeight(t){ return t==='miss2' ? 2 : 1; }
 /* حصيلةُ الإتقان: ثلاثُ جواهر عن كلّ صحيحةٍ من أوّل محاولة */
 var EX_GEM=3;
 /* مقدارُ النطاق وحدَه: يُعرض في خطوة النطاق قبل أن يُختار نوعٌ أو عدد */
@@ -7769,7 +7821,7 @@ function examSummary(){
   return '<div class="revsum">من <b>'+esc(a.name)+' '+arNum(EX.fromA)+'</b> إلى <b>'+esc(b.name)+' '+arNum(EX.toA)+'</b><br>'+
     arCount(ay,C_AYAH)+' • '+arCount(examPagesN(),C_PAGE)+'<br>'+
     '<b>'+esc(examKindName())+'</b> • '+arCount(EX.count,C_QUES)+' في الاختبار كلّه'+
-    '<div class="revtot">🎁 إن أتقنتَ الكلَّ: <b>'+arNum(EX_GEM*EX.count*qWeight(EX.kind))+' 💎</b>'+
+    '<div class="revtot">🎁 إن أتقنتَ الكلَّ: <b>'+arNum(EX_GEM*EX.count)+' 💎</b>'+
       ' و '+arNum(Math.max(1,Math.floor(EX.count/4)))+' ⚙️ و 2 🔷</div>'+
     '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:6px">'+
       'الاختبارُ لا ينوب عن مراجعتك ولا يغيّر مواعيدها — إنّما يدلّك على موضع الخلل</div></div>';
@@ -7813,7 +7865,7 @@ function examQuitAsk(){
   uiBox('إن خرجتَ الآن ضاع اختبارُك كلُّه، وبدأتَه من أوّله.'+
     String.fromCharCode(10)+'أتخرج؟','⚠️','🚪 نعم، أخرج','↩️ أُكمل الاختبار', function(ok){
       if(!ok) return;
-      S=null; examShow(EX.i); show('scr-exam');
+      S=null; renderPlayers(); show('scr-start');
     });
 }
 /* ===== الاختبار نفسه ===== */
@@ -7848,12 +7900,11 @@ function examWeakest(){
 }
 var EX_LAST=null;   /* آخرُ نتيجةٍ — لتُطبع بعد قراءتها */
 function finishExam(){
-  var tot=EX.log.length||1, right=0, wsum=0, i;
-  /* الأجرُ بالوزن لا بالعدد: الفراغان ضِعفٌ */
-  for(i=0;i<EX.log.length;i++) if(EX.log[i].ok){ right++; wsum+=qWeight(EX.log[i].t); }
+  var tot=EX.log.length||1, right=0, i;
+  for(i=0;i<EX.log.length;i++) if(EX.log[i].ok) right++;
   var pct=Math.round(100*right/tot), g=examGrade(pct);
   var secs=Math.max(1, Math.round((Date.now()-EX.t0)/1000));
-  var gems=EX_GEM*wsum, iron=Math.max(1,Math.floor(right/4)), glass=(pct>=90?2:0);
+  var gems=EX_GEM*right, iron=Math.max(1,Math.floor(right/4)), glass=(pct>=90?2:0);
   addGems(gems); addMat('iron',iron);
   if(glass) addMat('glass',glass);
   /* ولا شاراتٍ تُفحص هنا: الاختبارُ ميزانٌ لا مرحلةٌ تُحتسب */
