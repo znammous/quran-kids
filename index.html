@@ -2679,15 +2679,18 @@ function gftMake(type, val){
   gftMinted()[gftNorm(code)]=1; saveDB();
   return { ok:true, code:code, txt:gftDesc({type:type,val:val}) };
 }
-/* نصّ بطاقة الهديّة */
+/* نصّ بطاقة الهديّة: الكود وحده في سطر ليسهل نسخه، والمُهدي يُذكر بجنسه */
 function gftCard(code, txt, note){
-  var me=(curP().name||'').trim();
-  return '🎁 هديّة'+(me?(' من أخيك '+me):'')+'\n\n'+
-    '«تَهَادَوْا تَحَابُّوا»\n\n'+
-    (note? (note+'\n\n') : '')+
-    'لك مني '+txt+' في تطبيق «نور الوحي» —\n'+
-    'من باب الأخوّة في الله تعالى، وأسأل الله أن يعينك على حفظ كتابه.\n\n'+
-    'كودك: '+code+'\n'+
+  var p=curP(), me=(p.name||'').trim();
+  var from=(p.gender==='m') ? 'من أخيك' : 'من أختك';
+  var NL2='\n';
+  return '🎁 هديّة '+from+(me?(' '+me):'')+NL2+NL2+
+    '«تَهَادَوْا تَحَابُّوا»'+NL2+NL2+
+    (note? (note+NL2+NL2) : '')+
+    'لك مني '+txt+' في تطبيق «نور الوحي» —'+NL2+
+    'من باب الأخوّة في الله تعالى، وأسأل الله أن يعينك على حفظ كتابه.'+NL2+NL2+
+    'كودك:'+NL2+NL2+
+    code+NL2+NL2+
     'اصرفه من: 💎 متجري ← 🎁 تهادوا تحابّوا';
 }
 
