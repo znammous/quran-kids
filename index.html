@@ -2994,6 +2994,8 @@ function renderShop(){
   var S2=sad();
   $('shopBody').innerHTML=
     '<button class="btn ghost mini" id="btnShopCats" style="width:100%;margin-bottom:10px">➡️ كل الأقسام</button>'+
+    /* قسم المواد بابُه المسجد، فيُردّ إليه من حيث أتى ومن حيث لم يأتِ */
+    (cat.k==='mats' ? '<button class="btn blue mini" id="btnToBuild" style="width:100%;margin-bottom:10px">🕌 عُد إلى مسجدي</button>' : '')+
     (cat.k==='mosque' ? '<svg class="mosque" viewBox="0 0 300 170">'+mosqueSVG(1)+'</svg>' : '')+
     (cat.give ? '<div class="shelf"><div class="sh">🤲 صدقاتي</div>'+
       (sadTotal()
@@ -3025,6 +3027,7 @@ function renderShop(){
         '</div>';
     }).join('')+'</div>';
   $('btnShopCats').onclick=function(){ shopCat=''; renderShop(); window.scrollTo(0,0); };
+  if($('btnToBuild')) $('btnToBuild').onclick=function(){ SHOP_BACK=''; renderBuild(); show('scr-build'); };
   var bs=$('shopBody').querySelectorAll('[data-buy]');
   for(i=0;i<bs.length;i++){
     bs[i].onclick=function(){
@@ -3132,7 +3135,7 @@ function buildShort(i){
   if(earn.length) msg+='📖 '+earn.join('\n📖 ')+'\n';
   if(buy.length){
     uiAsk(msg+'\nنذهب إلى متجر المواد الآن؟',function(ok){
-      if(ok){ shopCat='mats'; renderShop(); show('scr-shop'); }
+      if(ok){ shopFrom('scr-build'); shopCat='mats'; renderShop(); show('scr-shop'); }
     },'🧱');
   } else uiAlert(msg,'🧱');
 }
@@ -3300,7 +3303,7 @@ function renderBuild(){
   $('exchange').innerHTML='<div class="matgo">🧱 الحجر والخشب يُشتريان من 💎 متجري ← قسم «مواد البناء»<br>'+
     '⚙️ الحديد و🔷 الزجاج و✨ الذهب لا تُباع — تأتي من المراجعة واختبار الجزء وحدها</div>'+
     '<button class="btn blue mini" id="btnGoMats" style="width:100%;margin-top:9px">🧱 اذهب إلى مواد البناء</button>';
-  $('btnGoMats').onclick=function(){ shopCat='mats'; renderShop(); show('scr-shop'); };
+  $('btnGoMats').onclick=function(){ shopFrom('scr-build'); shopCat='mats'; renderShop(); show('scr-shop'); };
 }
 
 /* =========================================================
@@ -5700,11 +5703,11 @@ function wirdSetupBanner(){
   var n=0; try{ n=wirdPages().length; }catch(e){}
   if(!n) return '';
   var h='<div class="revsum" style="margin:0 0 16px;text-align:right">'+
-    '<div style="font-size:15px">📖 <b>كيف تراجع ما حفظت؟</b></div>'+
+    '<div style="font-size:15px">🎉 <b>هنيئاً لك ما تحفظ من كتاب الله</b></div>'+
     '<div style="font-size:17px;font-weight:900;margin-top:6px">'+
-      'عندك '+arNum(n)+' وجهاً محفوظاً بلا وردِ مراجعة</div>'+
+      'عندك '+arNum(n)+' وجهاً محفوظاً — أفنضع لها ورداً يوميّاً يثبّتها؟</div>'+
     '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin:4px 0 12px">'+
-      'الورد يمشي في محفوظك وجهاً وجهاً ثم يعود من أوّله — اختر مقداره وجهته.</div>'+
+      'يمشي الورد في محفوظك وجهاً وجهاً ثمّ يعود من أوّله — اختر مقداره:</div>'+
     '<div class="onbopts">';
   REV_SIZES.forEach(function(z){
     var c=wirdCalc(z);
@@ -6988,6 +6991,10 @@ function onbTabs(){
 }
 /* الخروج من وضع التعديل: كل شيء محفوظ أوّلاً بأوّل، فهذا رجوع وتثبيت */
 function onbEditDone(){
+  /* وفي التعديل كذلك: لا يخرج وقد أشّر حفظاً لم يُعتمد */
+  if(ONB.i===1 && curP().priorMode==='has' && PRIOR_COMMIT){
+    if(PRIOR_COMMIT()){ try{ wirdOnbSync(); onbGate(); }catch(e){} return; }
+  }
   ONB.edit=false;
   if(!(profile.name||'').trim()) profile.name='صديقي';
   $('pname').value=profile.name;
@@ -7142,6 +7149,10 @@ $('btnRandomLook2').onclick=randomLook;
 $('btnOpenLook').onclick=function(){ renderAvatars(); show('scr-look'); };
 $('btnLookDone').onclick=function(){ show('scr-start'); };
 $('onbNext').onclick=function(){
+  /* خطوة الخطة: مغادرتها تعتمد ما أشّره من حفظٍ سابق، ثم يُسأل عن ورده */
+  if(ONB.i===1 && curP().priorMode==='has' && PRIOR_COMMIT){
+    if(PRIOR_COMMIT()){ try{ wirdOnbSync(); onbGate(); }catch(e){} return; }
+  }
   var m=onbBlocked();
   if(m){ onbNudge(m); return; }
   if(ONB.i<ONB.n-1) onbShow(ONB.i+1); else onbFinish();
@@ -7186,7 +7197,7 @@ $('btnSetBack').onclick=function(){ readSettings(); ensureAllSchedules(); openJu
   if(curSurah&&inRange(curSurah)) openSurah(curSurah.n); else openSurah(defaultSurah().n); };
 $('btnHelp').onclick=function(){ $('help').hidden=false; };
 $('btnIndex').onclick=function(){ if(!openJuz) openJuz=(curSurah?curSurah.juz:Math.max(SET.juzFrom,SET.juzTo)); renderMap(); show('scr-map'); };
-$('btnShop').onclick=function(){ shopCat=''; renderShop(); show('scr-shop'); };
+$('btnShop').onclick=function(){ shopFrom(''); shopCat=''; renderShop(); show('scr-shop'); };
 /* من الرئيسية: مَن له خطّة محفوظة يذهب إلى مساره، ومَن لا فإلى شاشة الخطة */
 $('btnReviewGo').onclick=function(){
   /* على خطة ولم تكتمل مراجعة اليوم؟ فليرَ مقرَّرها أوّلاً */
@@ -7236,8 +7247,12 @@ $('revNext').onclick=function(){ revGoSurah(1); };
 $('btnRevGo').onclick=function(){ revSave(); beginRevPath(); };
 $('btnBuild').onclick=function(){ renderBuild(); show('scr-build'); };
 $('btnBuildBack').onclick=function(){ show('scr-start'); };
+/* من أين جاء إلى المتجر؟ فيُردّ إليه لا إلى البداية */
+var SHOP_BACK='';
+function shopFrom(id){ SHOP_BACK=id||''; }
 $('btnShopBack').onclick=function(){
   if(shopCat){ shopCat=''; renderShop(); window.scrollTo(0,0); return; }   /* من القسم إلى الأقسام */
+  if(SHOP_BACK==='scr-build'){ SHOP_BACK=''; renderBuild(); show('scr-build'); return; }
   show('scr-start');
 };
 $('btnBoard').onclick=function(){ renderBoard(); show('scr-board'); };
