@@ -235,33 +235,27 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
   cursor:pointer;touch-action:manipulation;transition:.12s;box-shadow:0 3px 0 rgba(0,0,0,.10)}
 .mfbtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.10)}
 /* وجه المصحف ملء الشاشة */
-.mfsheet{position:fixed;inset:0;z-index:120;background:#fffdf5;display:flex;flex-direction:column}
+.mfsheet{position:fixed;inset:0;z-index:120;background:var(--paper);display:flex;flex-direction:column}
 .mfhead{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 12px;
-  background:#fdf6e4;border-bottom:2px solid #e8dcc0}
-/* في وضع التحديد: رأسٌ بلون التطبيق، ولا سطرَ إرشادٍ زائد */
-.mfsheet.picking .mfhead{background:linear-gradient(180deg,#0c2e5c,#08203f);border-bottom-color:#17457f}
-.mfsheet.picking .mftitle{color:#e9f4ff;font-size:15px;text-align:center;font-weight:900;
-  white-space:normal;line-height:1.8}
+  background:var(--pnl);border-bottom:2px solid var(--pb)}
 /* في وضع التحديد لا رأسَ أصلاً — الشريط وحده يكفي */
 .mfsheet.picking .mfhead{display:none}
 #mfPg{flex:0 0 62px;width:62px;text-align:center;font-family:inherit;font-size:15px;
-  font-weight:900;color:#e9f4ff;background:#0f3a6b;border:2px solid #2a6ab5;
+  font-weight:900;color:var(--ttl);background:var(--pnl2);border:2px solid var(--pb);
   border-radius:10px;padding:7px 2px}
 #mfPg[hidden]{display:none!important}
 #mfPg::-webkit-outer-spin-button,#mfPg::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.mfsheet.picking .mftitle b{display:inline-block;background:linear-gradient(180deg,#ffd75e,#eab308);
-  color:#4a3600;border-radius:99px;padding:2px 10px;margin-inline-end:7px;font-size:14px}
 .mfsheet.picking .mfhint{display:none}
 .mfttl{flex:1;min-width:0}
 .mfhint{font-family:"IBM Plex Sans Arabic","Segoe UI",sans-serif;font-size:11px;font-weight:700;
-  color:#b6a077;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  color:var(--on3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mftitle{min-width:0;font-family:"IBM Plex Sans Arabic","Segoe UI",sans-serif;font-size:14px;
-  font-weight:800;color:#8a6b2a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  font-weight:800;color:var(--ttl);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* زرّ الإنهاء: علامة صحّ رمادية، فالإغلاق هنا إتمامٌ لا إلغاء */
 /* تصفّح الأوجه في وضع تحديد النطاق */
 /* شريطٌ واحد يجمع التنقّل كلّه: خطوةٌ وسهمان وفهرسان ورقمُ صفحة */
 .mfbar{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:9px 10px;
-  background:#0a2748;border-bottom:2px solid #17457f}
+  background:var(--pnl);border-bottom:2px solid var(--pb)}
 .mfbar[hidden]{display:none!important}
 .mfmid{flex:0 0 auto;display:flex;align-items:center;gap:6px}
 /* شارةُ الخطوة تطفو على الوجه، فلا تزاحم الشريط */
@@ -269,12 +263,12 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
   padding:6px 14px;border-radius:99px;white-space:nowrap;
   font-family:"IBM Plex Sans Arabic","Segoe UI",sans-serif;
   background:linear-gradient(180deg,#ffd75e,#eab308);color:#4a3600;border:2px solid #a1791a;
-  font-weight:900;font-size:13.5px;box-shadow:0 3px 10px rgba(0,0,0,.32)}
+  font-weight:900;font-size:13.5px;box-shadow:0 3px 10px var(--qsh)}
 .mfstep[hidden]{display:none!important}
 .mfbar select{flex:1 1 0;min-width:0;width:0;font-family:inherit;font-size:13px;font-weight:800;
-  color:#e9f4ff;background:#0f3a6b;border:2px solid #2a6ab5;border-radius:10px;
+  color:var(--ttl);background:var(--pnl2);border:2px solid var(--pb);border-radius:10px;
   padding:7px 4px;text-align:center}
-.mfnav{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:2px solid #7ec8ff;
+.mfnav{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:2px solid var(--pb3);
   background:linear-gradient(180deg,#57a8ef,#1560b0);color:#fff;font-size:15px;font-weight:900;
   font-family:inherit;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.22);padding:0}
 .mfnav:disabled{opacity:.35;cursor:default}
