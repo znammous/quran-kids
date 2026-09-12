@@ -456,10 +456,13 @@ body.glow-off .cele .spk{display:none}
 .bfam.crownfam{border-color:var(--gold);box-shadow:0 0 0 2px rgba(242,194,48,.25) inset}
 .crownrow{display:flex;align-items:center;gap:12px;margin:8px 0 10px}
 /* مقطع تاج الوقار في شهادة الختم */
-.cert .crowncert{margin:12px 0;padding:12px 14px;border:2px dashed #d9b45a;border-radius:14px;
-  background:#fffaf0;text-align:center}
-.cert .crowncert svg{width:78px;height:56px;display:block;margin:0 auto 6px}
-.cert .crowncert p{margin:0;font-size:14px;font-weight:800;color:#6b4e00;line-height:2}
+.cert .crowncert{margin:14px 0;padding:18px 14px 16px;border:3px solid #d9b45a;border-radius:18px;
+  background:radial-gradient(ellipse at 50% 22%,#fff8e2,#fffaf0 62%);text-align:center;
+  box-shadow:0 4px 16px rgba(190,140,0,.18)}
+.cert .crowncert svg{width:220px;height:auto;display:block;margin:2px auto 12px;
+  filter:drop-shadow(0 6px 14px rgba(190,140,0,.45))}
+@media(max-width:420px){ .cert .crowncert svg{width:170px} }
+.cert .crowncert p{margin:0;font-size:15px;font-weight:800;color:#6b4e00;line-height:2.2}
 .cert .crowncert b{color:#8a6100}
 .cert .crowncert small{display:block;margin-top:8px;font-size:12px;font-weight:700;color:#8a7a55;line-height:1.9}
 .crownpic{flex:0 0 auto;width:74px;height:56px;border-radius:14px;display:grid;place-items:center;
@@ -6819,12 +6822,12 @@ function showQuranCert(){
       '<div class="stars">★★★★★</div>'+
       '<div class="crowncert">'+
         '<svg viewBox="24 14 52 36" aria-hidden="true">'+crownSVG()+'</svg>'+
-        '<p>وفي الحديث أنّ حاملَ القرآن يُلبَس والداه <b>تاجَ الوقار</b> يوم القيامة،<br>'+
-        'ضياؤه أحسنُ من ضياء الشمس — فهنيئاً لك، وهنيئاً لوالديك.</p>'+
-        '<small>ونسأل الله أن يجعله حجّةً لك لا عليك، وأن يثبّته في صدرك.</small>'+
+        '<p>«مَن قرأ القرآنَ وتعلَّم وعمِل به، أُلْبِس والداه يومَ القيامةِ '+
+        '<b>تاجًا من نورٍ</b> ضوءُه مثلُ الشَّمسِ، ويُكسَى والداه <b>حُلَّتَيْن</b> '+
+        'لا يقومُ لهما الدُّنيا، فيقولان: بمَ كُسينا هذا؟ '+
+        'فيُقالُ: <b>بأخذِ ولدِكما القرآنَ</b>»</p>'+
+        '<small>فهنيئاً لك، وهنيئاً لوالديك. ونسأل الله أن يجعله حجّةً لك لا عليك، وأن يثبّته في صدرك.</small>'+
       '</div>'+
-      (buildCount()?'<svg class="mosque" viewBox="0 0 400 250" style="max-width:280px">'+bigMosqueSVG()+'</svg>'
-                  :'<svg class="mosque" viewBox="0 0 300 170" style="max-width:250px">'+mosqueSVG(1)+'</svg>')+
       '<div class="meta2"><span>📅 '+greg()+'</span>'+(hijriDate()?'<span>🌙 '+hijriDate()+'</span>':'')+'</div>'+
       '<div class="sign"><div>توقيع المعلّم / المستمع</div><div>ختم البيت 🏠</div></div>'+
       '<div class="waqf">🤲 هذا التطبيق وقف لله تعالى — صدقة جارية عن أمي لمياء قباني</div>'+
