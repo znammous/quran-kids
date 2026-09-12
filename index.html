@@ -847,13 +847,17 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
 .pchip{display:flex;align-items:center;gap:6px;border:3px solid #e5ecf6;background:#fff;border-radius:14px;
   padding:6px 10px;font-family:inherit;font-weight:800;color:#3d5b7a;font-size:15px;cursor:pointer}
 .pchip.sel{border-color:var(--g2);background:#e2f1ff;color:var(--g1)}
-/* سلسلةُ اللاعب إلى جنب اسمه: يعرف موضعَه منها قبل أن يبدأ
-   (و[hidden] يحتاج تصريحاً لأنّ .pchip تجعلها flex فتغلب قاعدةَ المتصفّح) */
-.pchip.combochip{border-color:#ffb877;background:linear-gradient(180deg,#f97f31,#b8440a);
-  color:#fff;font-weight:900;cursor:default}
-.pchip.combochip b{color:#fff;font-weight:900}
-.pchip.combochip .ico{font-size:1.15em;line-height:1}
-.pchip.combochip[hidden]{display:none}
+/* شارةُ السلسلة: في صندوق الترحيب وفي هدف اليوم، لا في صفّ الأسماء
+   ([hidden] يحتاج تصريحاً لأنّ القاعدة تجعلها inline-flex) */
+.combopill{display:inline-flex;align-items:center;gap:6px;margin-top:9px;
+  border:2px solid #ffb877;background:linear-gradient(180deg,#f97f31,#b8440a);
+  color:#fff;font-weight:900;font-size:13.5px;border-radius:999px;padding:4px 12px;
+  box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.combopill b{color:#fff;font-weight:900}
+.combopill i{font-style:normal;font-weight:800;opacity:.92;font-size:12px}
+.combopill[hidden]{display:none}
+/* وفي هدف اليوم تلبس زيّ السطر لا زيّ الشارة */
+.goalbox .tick.fire{background:#fff1e3;border-color:#f97f31;color:#b8440a}
 .pchip .ph{width:28px;height:34px;border-width:2px;border-radius:7px;margin:0}
 
 /* ===== المواد وورشة البناء ===== */
@@ -1026,6 +1030,8 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
       <div class="hellotxt">
         <div class="hi" id="homeHi">السلام عليكم 👋</div>
         <div class="hi2" id="homeHi2">مستعدّ لحفظ جديد اليوم؟</div>
+        <span class="combopill" id="homeCombo" hidden title="إجاباتٌ صحيحةٌ متتالية">
+          <span class="ico">🔥</span><b id="homeComboN"></b> <i>سلسلة</i></span>
         <button type="button" class="khatma" id="homeKhatma" hidden></button>
       </div>
     </div>
@@ -2550,10 +2556,15 @@ function renderHUD(){
       '<div class="gline"><span class="tick'+(mR?' on':'')+'">'+(mR?'✓':'☀️')+'</span> '+
         revTxt+'</div>';
   }
+  /* السلسلةُ في هدف اليوم أيضاً: هي أثرُ إتقانه لا عدَدُ أيّامه */
+  var cN=0; try{ cN=comboNow(); }catch(e){}
+  var cLine = cN>0 ? ('<div class="gline" style="margin-top:6px"><span class="tick on fire">🔥</span> '+
+      'سلسلتك: <b>'+arNum(cN)+' من '+arNum(comboNext(cN))+'</b> إجابة صحيحة متتالية</div>') : '';
   $('goalWrap').innerHTML='<div class="goalbox">'+
     '<div class="gt"><span>'+(T?'📅 مقرَّر اليوم':'🎯 هدف اليوم')+'</span><span>'+(met?'تمّ ✅':head)+'</span></div>'+
     lines+
     '<div class="gbar"><i style="width:'+pct+'%"></i></div>'+
+    cLine+
     ((st.freezes||0)?'<div class="gline" style="margin-top:6px">🛡️ يوم راحة متاح: '+arNum(st.freezes)+' — لا تنقطع مواظبتك إن فاتك يوم</div>':'')+
   '</div>';
 }
@@ -3670,10 +3681,7 @@ function renderBoard(){
 function renderPlayers(){
   var h=DB.players.map(function(p,i){
     return '<button class="pchip'+(i===DB.cur?' sel':'')+'" data-p="'+i+'">'+
-      esc(p.name||('لاعب '+arNum(i+1)))+'</button>'+
-      /* سلسلةُ صاحب الدور تلي اسمَه، فلا تُنسب إلى غيره */
-      (i===DB.cur ? '<span class="pchip combochip" id="homeCombo" hidden title="سلسلتُك: إجاباتٌ صحيحةٌ متتالية">'+
-        '<span class="ico">🔥</span><b id="homeComboN"></b></span>' : '');
+      esc(p.name||('لاعب '+arNum(i+1)))+'</button>';
   }).join('');
   h+='<button class="pchip" data-p="new">➕ لاعب جديد</button>';
   h+='<button type="button" class="pchip themechip" id="btnTheme" title="تبديل الوضع" aria-label="تبديل الوضع">🌤️</button>';
