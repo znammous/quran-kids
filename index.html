@@ -1606,11 +1606,12 @@ function mushafPageHTML(P, hlGi, glyphs){
 }
 /* وجه المصحف ملء الشاشة: يُفتح عند الطلب ولا يزاحم القراءة */
 var MFSEQ=0;
-function mushafOpen(s, ai){
-  var gi=GIDX[s.n-1]+ai, P=pageOfIdx(gi), seq=++MFSEQ;
-  $('mfTitle').textContent='📖 صفحة '+arNum(P)+' — '+s.name+' '+arNum(ai+1);
+/* فتح الوجه بصفحته: تُستعمل في التسميع ومراجعة الصفحة حيث لا آية بعينها */
+function mushafOpenPage(P, hlGi, title){
+  var seq=++MFSEQ;
+  $('mfTitle').textContent=title;
   /* عرضٌ فوريّ بالرسم النصّيّ، ثم ترقية إلى خطّ الصفحة متى وصل — فلا انتظار ولا شاشة فارغة */
-  $('mfBody').innerHTML='<div class="mushaf">'+mushafPageHTML(P, gi, false)+'</div>';
+  $('mfBody').innerHTML='<div class="mushaf">'+mushafPageHTML(P, hlGi, false)+'</div>';
   $('mfSheet').hidden=false;
   mushafScroll($('mfBody'));
   mushafFont(P).then(function(fam){
@@ -1619,11 +1620,15 @@ function mushafOpen(s, ai){
     var d=document.createElement('div');
     d.className='mushaf qcf';
     d.style.fontFamily=fam;
-    d.innerHTML=mushafPageHTML(P, gi, true);
+    d.innerHTML=mushafPageHTML(P, hlGi, true);
     box.innerHTML=''; box.appendChild(d);
     mushafFit(box);
     mushafScroll(box);
   })['catch'](function(){});                     /* تعذّر الخطّ: يبقى العرض النصّيّ */
+}
+function mushafOpen(s, ai){
+  var gi=GIDX[s.n-1]+ai, P=pageOfIdx(gi);
+  mushafOpenPage(P, gi, '📖 صفحة '+arNum(P)+' — '+s.name+' '+arNum(ai+1));
 }
 /* المقاس من العرض، فمحارف الصفحة مركّبة على عرض سطرها ولا يصحّ العبث به.
    والتباعد من ارتفاع الشاشة، ليقع الوجه كلّه أمام الطفل كما يقع في المصحف —
@@ -4352,18 +4357,24 @@ function roundRevPage(r){
             : '')+
     '<button class="btn '+(useRec?'ghost big':'green big pulse')+'" id="btnOkR">✅ سمّعتُها صحيحة</button>'+
     '<div class="row" id="rowR">'+
-      '<button class="btn ghost" id="btnShow">👀 أظهر الصفحة</button>'+
+      '<button class="btn ghost" id="btnShow">📖 اعرض الوجه</button>'+
       '<button class="btn ghost" id="btnAgainR">🔁 أخطأتُ فيها</button></div>'+
     (useRec ? '<button class="btn ghost big" id="btnNoMic3">🔇 لا أستطيع التسجيل الآن</button>' : '')+
-    '<button class="btn ghost big" id="btnSkipQuiz">⏭️ سمّعتُها كلها — إلى الأسئلة</button>';
+    /* التخطّي يعني قفز الصفحات الباقية، وفي آخر صفحة لا يزيد شيئاً على ✅ فيُخفى */
+    ((REV.pages && REV.pi < REV.pages.length-1)
+      ? '<button class="btn ghost big" id="btnSkipQuiz">⏭️ سمّعتُها كلها — إلى الأسئلة</button>'
+      : '');
   function reveal(on){
     $('ayHidden').innerHTML = on?esc(full):('صفحة '+arNum(r.page)+' …');
     $('ayHidden').style.color = on?'#102b4a':'#9db2c9';
     var box=$('pageBox'); if(box) box.scrollTop=0;        /* نبدأ من أوّل الصفحة دائماً */
   }
   $('btnOkR').onclick=function(){ recReset(); sGood(); finishRevPage(); };
-  $('btnSkipQuiz').onclick=function(){ recReset(); revSkipToQuiz(); };
-  $('btnShow').onclick=function(){ reveal(true); revWeak(r.page); };
+  if($('btnSkipQuiz')) $('btnSkipQuiz').onclick=function(){ recReset(); revSkipToQuiz(); };
+  $('btnShow').onclick=function(){
+    mushafOpenPage(r.page, -1, '📖 صفحة '+arNum(r.page));
+    reveal(true); revWeak(r.page);
+  };
   $('btnAgainR').onclick=function(){
     revWeak(r.page); reveal(true);
     $('fb').className='fb'; $('fb').textContent='لا بأس — اقرأها ثم أعد التسميع 💚';
@@ -4425,7 +4436,7 @@ function roundRecite(r){
       '<div class="ayahbox"><div class="ayah" style="font-size:'+SET.font+'px;color:#9db2c9">'+esc(hint)+'</div></div>'+
       '<input type="text" id="reciteInput" placeholder="اكتب هنا…" autocomplete="off" spellcheck="false">'+
       '<button class="btn green big" id="btnCheck" style="margin-top:10px">✅ تحقّق</button>'+
-      '<button class="btn ghost mini" id="btnShow" style="width:100%">👀 أظهر النص</button>';
+      '<button class="btn ghost mini" id="btnShow" style="width:100%">📖 اعرض الوجه</button>';
     var tries=0;
     $('reciteInput').focus();
     $('reciteInput').onkeydown=function(e){ if(e.key==='Enter') $('btnCheck').click(); };
@@ -4442,7 +4453,11 @@ function roundRecite(r){
         } else { $('fb').className='fb bad'; $('fb').textContent='قريب! راجعها وحاول مرة أخرى 💪'; }
       }
     };
-    $('btnShow').onclick=function(){ $('fb').className='fb'; $('fb').innerHTML='<div class="diffline">'+esc(txt)+'</div>'; S.errors++; comboMiss(); };
+    $('btnShow').onclick=function(){
+      mushafOpen(s, r.a);                      /* الوجه أنفع من النصّ مجرّداً */
+      $('fb').className='fb'; $('fb').innerHTML='<div class="diffline">'+esc(txt)+'</div>';
+      S.errors++; comboMiss();
+    };
   } else {
     recReset();
     var useRec=useRecNow();
@@ -4458,7 +4473,7 @@ function roundRecite(r){
               : '')+
       '<button class="btn '+(useRec?'ghost big':'green big pulse')+'" id="btnOkR">✅ سمّعتُها صحيحة</button>'+
       '<div class="row" id="rowR">'+
-        '<button class="btn ghost" id="btnShow">👀 أظهر النص</button>'+
+        '<button class="btn ghost" id="btnShow">📖 اعرض الوجه</button>'+
         '<button class="btn ghost" id="btnAgainR"'+(useRec?' hidden':'')+'>🔁 سأعيدها</button></div>'+
       (useRec ? '<button class="btn ghost big" id="btnNoMic2">🔇 لا أستطيع التسجيل الآن</button>' : '');
 
@@ -4470,7 +4485,10 @@ function roundRecite(r){
       $('ayHidden').style.color = on?'#102b4a':'#9db2c9';
     }
     $('btnOkR').onclick=function(){ recReset(); sGood(); $('fb').className='fb good'; $('fb').textContent='أحسنت 🌟'; nextRound(true); };
-    $('btnShow').onclick=function(){ reveal(true); S.errors++; comboMiss(); };
+    $('btnShow').onclick=function(){
+      mushafOpen(s, r.a);                      /* يرى موضعها في الوجه لا نصّها وحده */
+      reveal(true); S.errors++; comboMiss();
+    };
     $('btnAgainR').onclick=function(){
       reveal(false);
       $('fb').className='fb'; $('fb').textContent='خذ وقتك 💚';
