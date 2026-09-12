@@ -5207,14 +5207,14 @@ function finishStage(){
 /* ===== المراجعة بالصفحات ===== */
 var REV={ fromS:1, fromA:1, toS:114, toA:6, size:3, per:5, done:0, weak:{},
           pages:[], si:0, pi:0, due:false, view:0,
-          wird:true, dir:-1, day:null, on:null };
+          wird:true, dir:-1, day:null, on:null, cyc:0 };
 var REV_SIZES=[1,2,3,5,10];
 
 /* الخطة والتقدّم يُحفظان مع اللاعب، فيمشي على المسار يوماً بعد يوم */
 function revSave(){
   curP().rev={ fromS:REV.fromS, fromA:REV.fromA, toS:REV.toS, toA:REV.toA,
                size:REV.size, per:REV.per, done:REV.done, weak:REV.weak,
-               wird:REV.wird, dir:REV.dir, day:REV.day, on:REV.on };
+               wird:REV.wird, dir:REV.dir, day:REV.day, on:REV.on, cyc:REV.cyc };
   saveDB();
 }
 function revLoad(){
@@ -5229,6 +5229,7 @@ function revLoad(){
   REV.dir =(r.dir===-1)?-1:(r.dir===1?1:(selfFrom()==='baqarah'?1:-1));
   REV.day =(typeof r.day==='number')?r.day:null;
   REV.on  =(r.on===false)?false:(r.on===true?true:null);   /* null: لم يُسأل بعد */
+  REV.cyc =r.cyc||0;                                       /* كم دورةً أتمّ على محفوظه */
   REV.pages=[]; REV.si=0; REV.pi=0; REV.due=false; REV.view=0;
   revClamp();
 }
@@ -5750,7 +5751,8 @@ function wirdBanner(sfx){
     '<div style="font-size:18px;font-weight:900;margin-top:6px">'+
       nm+' — '+(cur.length>1?('أوجه '+lbl):('وجه '+lbl))+'</div>'+
     '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:4px">'+
-      'الجلسة '+arNum(i+1)+' من '+arNum(n)+' • تتمّ الدورة في '+arNum(n)+' يوماً</div>'+
+      'الجلسة '+arNum(i+1)+' من '+arNum(n)+' • تتمّ الدورة في '+arNum(n)+' يوماً'+
+      ((REV.cyc||0)? (' • 🏅 أتممت '+arNum(REV.cyc)+(REV.cyc===1?' دورة':' دورات')) : '')+'</div>'+
     '<button type="button" class="btn '+(done?'ghost':'blue')+' big" id="wirdGo'+sfx+'" '+
       'style="margin:12px 0 0">'+(done?'📖 زِد على وردك':'📖 ابدأ ورد المراجعة')+'</button>'+
   '</div>';
@@ -6599,14 +6601,34 @@ function finishRevQuiz(){
     pageSegKeys(P).forEach(function(k){ scheduleNext(k, !bad); });      /* الضعيفة تعود غداً */
   });
   saveProg();
+  var wirdRound=0;
   if(onPath){
     REV.done=Math.max(REV.done, REV.si+1);
-    if(revIsWird()) REV.day=todayNum();      /* أُدّي وردُ اليوم */
+    if(revIsWird()){
+      REV.day=todayNum();                    /* أُدّي وردُ اليوم */
+      /* أتمّ الدورة على محفوظه كلّه؟ تُطوى وتُستأنف من أوّله */
+      var nSS=revSessions().length;
+      if(nSS && REV.done>=nSS){
+        REV.cyc=(REV.cyc||0)+1; wirdRound=REV.cyc;
+        REV.done=0;
+      }
+    }
   }
   revSave();
   tal().revpg=(tal().revpg||0)+donePages.length;
   if(!S.errors) tal().perfect++;
   noteReview(weakList.length===0, donePages.length);
+  /* إتمامُ الدورة على المحفوظ كلّه: منزلةٌ تُذكر، لا جلسةٌ تمرّ */
+  if(wirdRound){
+    var np=0; try{ np=wirdPages().length; }catch(e){}
+    addGems(100); addMat('gold',3);
+    try{ celeShow({ ic:'🏅', kick:'🎉 دورةٌ كاملة',
+      title:'تعاهدتَ محفوظك كلّه',
+      sub:'راجعتَ '+arNum(np)+' وجهاً — وهذه '+
+          (wirdRound===1?'دورتك الأولى':('دورتك رقم '+arNum(wirdRound)))+
+          '، ويستأنف وردك من أوّله غداً',
+      rew:'＋ 100 💎 و3 ✨ ذهب' }); }catch(e){}
+  }
 
   var ss=revSessions(), more = onPath && REV.done<ss.length;
   $('playCard').classList.remove('bare');
