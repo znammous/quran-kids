@@ -7251,8 +7251,9 @@ $('btnBuildBack').onclick=function(){ show('scr-start'); };
 var SHOP_BACK='';
 function shopFrom(id){ SHOP_BACK=id||''; }
 $('btnShopBack').onclick=function(){
+  /* جهةُ المجيء أوْلى من «كل الأقسام»: من جاء من مسجده رُدّ إليه من أوّل ضغطة */
+  if(SHOP_BACK==='scr-build'){ SHOP_BACK=''; shopCat=''; renderBuild(); show('scr-build'); return; }
   if(shopCat){ shopCat=''; renderShop(); window.scrollTo(0,0); return; }   /* من القسم إلى الأقسام */
-  if(SHOP_BACK==='scr-build'){ SHOP_BACK=''; renderBuild(); show('scr-build'); return; }
   show('scr-start');
 };
 $('btnBoard').onclick=function(){ renderBoard(); show('scr-board'); };
