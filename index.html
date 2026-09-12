@@ -263,13 +263,16 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfbar{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:9px 10px;
   background:#0a2748;border-bottom:2px solid #17457f}
 .mfbar[hidden]{display:none!important}
-.mfstep{flex:0 0 auto;width:30px;height:30px;line-height:26px;text-align:center;border-radius:50%;
+.mfmid{flex:0 0 auto;display:flex;align-items:center;gap:6px}
+/* شارةُ الخطوة تطفو على الوجه، فلا تزاحم الشريط */
+.mfstep{position:absolute;top:58px;inset-inline-end:12px;z-index:3;
+  width:32px;height:32px;line-height:28px;text-align:center;border-radius:50%;
   background:linear-gradient(180deg,#ffd75e,#eab308);color:#4a3600;border:2px solid #a1791a;
-  font-weight:900;font-size:15px}
-.mfbar select{flex:1 1 0;min-width:0;font-family:inherit;font-size:13px;font-weight:800;
+  font-weight:900;font-size:16px;box-shadow:0 3px 8px rgba(0,0,0,.3)}
+.mfstep[hidden]{display:none!important}
+.mfbar select{flex:1 1 0;min-width:0;width:0;font-family:inherit;font-size:13px;font-weight:800;
   color:#e9f4ff;background:#0f3a6b;border:2px solid #2a6ab5;border-radius:10px;
   padding:7px 4px;text-align:center}
-.mfbar #mfJuz{flex:0 0 86px}
 .mfnav{flex:0 0 auto;width:34px;height:34px;border-radius:50%;border:2px solid #7ec8ff;
   background:linear-gradient(180deg,#57a8ef,#1560b0);color:#fff;font-size:15px;font-weight:900;
   font-family:inherit;cursor:pointer;box-shadow:0 2px 0 rgba(0,0,0,.22);padding:0}
@@ -985,13 +988,15 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
     <button class="xbtn mfx" id="mfClose" aria-label="تمّ، أغلِق وجه المصحف">✓</button>
   </div>
   <div class="mfbar" id="mfBar" hidden>
-    <span class="mfstep" id="mfStep">١</span>
-    <button class="mfnav" id="mfPrev" aria-label="الوجه السابق">▶</button>
     <select id="mfSura" aria-label="انتقل إلى سورة"></select>
+    <div class="mfmid">
+      <button class="mfnav" id="mfPrev" aria-label="الوجه السابق">▶</button>
+      <input type="number" id="mfPg" min="1" max="604" inputmode="numeric" aria-label="رقم الصفحة">
+      <button class="mfnav" id="mfNext" aria-label="الوجه التالي">◀</button>
+    </div>
     <select id="mfJuz" aria-label="انتقل إلى جزء"></select>
-    <input type="number" id="mfPg" min="1" max="604" inputmode="numeric" aria-label="رقم الصفحة">
-    <button class="mfnav" id="mfNext" aria-label="الوجه التالي">◀</button>
   </div>
+  <span class="mfstep" id="mfStep" hidden>١</span>
   <div class="mfbody" id="mfBody"></div>
 </div>
 
@@ -1839,7 +1844,7 @@ function mfPickDraw(){
   if(!MF_PICK) return;
   var P=MF_PICK.page, pcs=pagePieces(P), nm=pcs.length?pcs[0].s.name:'';
   mushafOpenPage(P, -1, '');
-  if($('mfStep')) $('mfStep').textContent=(MF_PICK.stage==='from')?'١':'٢';
+  if($('mfStep')){ $('mfStep').hidden=false; $('mfStep').textContent=(MF_PICK.stage==='from')?'١':'٢'; }
   var a=$('mfPrev'), b=$('mfNext');
   if(a) a.disabled=(P<=1);
   if(b) b.disabled=(P>=604);
@@ -1867,6 +1872,7 @@ function mfPickEnd(){
   MF_PICK=null;
   $('mfSheet').classList.remove('picking');
   if($('mfBar')) $('mfBar').hidden=true;
+  if($('mfStep')) $('mfStep').hidden=true;
   var hint=document.querySelector('.mfhint');
   if(hint) hint.textContent='اضغط على الوجه لإغلاقه';
 }
@@ -4119,6 +4125,14 @@ $('mfNext').onclick=function(){ if(MF_PICK && MF_PICK.page<604){ MF_PICK.page++;
   b.addEventListener('pointerup', function(e){
     if(!down) return;
     down=false;
+    /* سحبٌ أفقيّ في وضع التحديد: يقلّب الوجه كما يُقلَّب في المصحف.
+       سحبٌ إلى اليسار يمضي، وإلى اليمين يرجع — كاتّجاه السهمين. */
+    var dx=e.clientX-sx, dy=e.clientY-sy;
+    if(MF_PICK && !MF_PICK.busy && Math.abs(dx)>55 && Math.abs(dx)>Math.abs(dy)*1.4){
+      if(dx<0 && MF_PICK.page<604){ MF_PICK.page++; sPage(); mfPickDraw(); }
+      else if(dx>0 && MF_PICK.page>1){ MF_PICK.page--; sPage(); mfPickDraw(); }
+      return;
+    }
     if(moved || Date.now()-st>600) return;              /* سحبٌ أو ضغطة طويلة */
     if(e.cancelable) e.preventDefault();
     if(MF_PICK){ mfPickAt(e.target); return; }   /* في وضع الاختيار يلتقط لا يغلق */
