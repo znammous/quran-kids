@@ -275,6 +275,9 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfnav:active{transform:scale(.92)}
 .mfsheet.picking .mw,.mfsheet.picking .manum{cursor:pointer;border-radius:4px}
 .mfsheet.picking .mw:active,.mfsheet.picking .manum:active{background:#ffe9a8}
+/* الكلمةُ التي وقع عليها الاختيار تبقى مضاءةً حتى يُقرّها أو يعدل */
+.mushaf .mpick{background:linear-gradient(180deg,#ffe08a,#f6c445);color:#3b2a00;
+  border-radius:5px;box-shadow:0 0 0 2px rgba(161,121,26,.55)}
 .mfhead .xbtn{position:static;flex:0 0 auto;width:38px;height:38px;font-size:19px;
   background:linear-gradient(180deg,#c6ccd4,#939ca8);box-shadow:0 4px 0 rgba(0,0,0,.16)}
 .mfhead .xbtn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.16)}
@@ -1876,14 +1879,36 @@ function mfPickEnd(){
 }
 /* لمسةٌ على كلمةٍ أو رقم آية: تُقرأ سورتها وآيتها من موضعها العامّ.
    وهي تُنهي الوضع بنفسها، فلا يضرّ أن تُستدعى مرّتين من لمسٍ ونقر. */
-function mfPickAt(t){
+/* أقربُ كلمةٍ أو رقمِ آيةٍ إلى موضع الإصبع — فالمحارف دقيقةٌ لا تُصاب بالضبط،
+   ولا يجوز توسيعُها بحشوٍ لأنّ أسطر الوجه مركّبةٌ على عرضها بالضبط. */
+function mfNearest(x,y){
+  var box=$('mfBody'); if(!box) return null;
+  var all=box.querySelectorAll('[data-gi]'), best=null, bd=1e9, i, r, cx, cy, d;
+  for(i=0;i<all.length;i++){
+    r=all[i].getBoundingClientRect();
+    if(!r.width && !r.height) continue;
+    cx=Math.max(r.left,Math.min(x,r.right));
+    cy=Math.max(r.top,Math.min(y,r.bottom));
+    d=(cx-x)*(cx-x)+(cy-y)*(cy-y);
+    if(d<bd){ bd=d; best=all[i]; }
+  }
+  return (bd<=70*70) ? best : null;            /* البعيدُ لا يُلتقط */
+}
+function mfPickAt(t,x,y){
   if(!MF_PICK || MF_PICK.busy) return false;
   var el=(t && t.closest) ? t.closest('[data-gi]') : null;
+  if(!el && x!=null) el=mfNearest(x,y);        /* لم يُصب حرفاً؟ فأقربُ ما إليه */
   if(!el) return false;
   var gi=parseInt(el.getAttribute('data-gi'),10);
   if(isNaN(gi)) return false;
   var loc=mLoc(gi), sn=loc[0], an=loc[1], sx=surahBy(sn);
   try{ sPick(); }catch(e){}
+  /* تُضاء الكلمة الملموسة، فيرى أنّ لمسته وقعت موقعها */
+  try{
+    var old=$('mfBody').querySelectorAll('.mpick'), z;
+    for(z=0;z<old.length;z++) old[z].classList.remove('mpick');
+    el.classList.add('mpick');
+  }catch(e){}
   MF_PICK.busy=true;                      /* لمسةٌ ونقرةٌ قد تجتمعان، فتُمنع الثانية */
   uiBox('حدّدتَ: '+(sx?sx.name:'')+' — الآية '+arNum(an)+'\n'+
         (MF_PICK.stage==='from'?'أهذه بدايةُ نطاقك؟':'أهذه نهايةُ نطاقك؟'),
@@ -4125,18 +4150,20 @@ $('mfNext').onclick=function(){ if(MF_PICK && MF_PICK.page<604){ MF_PICK.page++;
     down=false;
     /* سحبٌ أفقيّ في وضع التحديد: يقلّب الوجه كما يُقلَّب في المصحف.
        سحبٌ إلى اليسار يمضي، وإلى اليمين يرجع — كاتّجاه السهمين. */
-    var dx=e.clientX-sx, dy=e.clientY-sy;
-    if(MF_PICK && !MF_PICK.busy && Math.abs(dx)>55 && Math.abs(dx)>Math.abs(dy)*1.4){
+    var dx=e.clientX-sx, dy=e.clientY-sy, ax=Math.abs(dx), ay=Math.abs(dy);
+    if(MF_PICK && !MF_PICK.busy && ax>45 && ax>ay*1.2){
       if(dx<0 && MF_PICK.page<604){ MF_PICK.page++; sPage(); mfPickDraw(); }
       else if(dx>0 && MF_PICK.page>1){ MF_PICK.page--; sPage(); mfPickDraw(); }
       return;
     }
-    if(moved || Date.now()-st>600) return;              /* سحبٌ أو ضغطة طويلة */
+    if(Date.now()-st>600) return;                       /* ضغطةٌ طويلة */
+    /* في التحديد نتسامح مع درجان الإصبع: ما دون خمسةٍ وعشرين لمسةٌ لا سحب */
+    if(MF_PICK ? (ax>25 || ay>25) : moved) return;
     if(e.cancelable) e.preventDefault();
-    if(MF_PICK){ mfPickAt(e.target); return; }   /* في وضع الاختيار يلتقط لا يغلق */
+    if(MF_PICK){ mfPickAt(e.target, e.clientX, e.clientY); return; }
     mushafClose(); mushafEatGhost();
   });
-  b.addEventListener('click', function(e){ if(MF_PICK) mfPickAt(e.target); });
+  b.addEventListener('click', function(e){ if(MF_PICK) mfPickAt(e.target, e.clientX, e.clientY); });
 })();
 ['help','adab'].forEach(function(id){
   $(id).addEventListener('click', function(e){ if(e.target===this) closeModal(id); });
