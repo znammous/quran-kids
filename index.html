@@ -4326,11 +4326,9 @@ function chunkRanges(len,size,min){
   return out;
 }
 /* عدد أجزاء التسميع لآية طويلة */
-function recitePortions(s,a){
-  var arr = wordsOf(SET.level==='hard' ? ayahTyping(s,a) : ayahText(s,a));
-  var per = SET.level==='hard' ? 12 : 18;
-  return Math.max(1, Math.ceil(arr.length/per));
-}
+/* سؤالُ التسميع آيةٌ كاملة دائماً — لا يبدأ من وسطها ولا يقف دون آخرها.
+   وكان يُقطّع الطويلةَ أجزاءً بعدد الكلمات، فتُسمَّع من غير مبتدأ. */
+function recitePortions(s,a){ return 1; }
 function portionOf(s,a,pi,np){
   var arr = wordsOf(SET.level==='hard' ? ayahTyping(s,a) : ayahText(s,a));
   var per = Math.ceil(arr.length/np);
