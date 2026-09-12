@@ -638,6 +638,24 @@ body.glow-off .cele .spk{display:none}
 .pnode .lbl.wide{max-width:250px;line-height:1.5}
 
 /* هدف اليوم: بطاقة فاتحة كما كان */
+/* 🎁 تهادوا تحابّوا */
+.gftbox{background:#fff;border:3px solid #e5ecf6;border-radius:14px;padding:12px;margin-bottom:12px;text-align:right}
+.gftbox .gfth{font-weight:900;color:var(--g1);font-size:15px;margin-bottom:8px}
+.gftbox input[type=text],.gftbox input[type=number],.gftbox select,.gftbox textarea{
+  width:100%;font-family:inherit;font-size:15px;font-weight:700;color:#102b4a;background:#f7fbff;
+  border:2px solid #d7e2f0;border-radius:10px;padding:9px 10px;box-sizing:border-box}
+.gftbox input[type=text]{letter-spacing:1px;text-align:center;text-transform:uppercase}
+.gftrow{margin-bottom:8px}
+.gftrow label{display:block;font-size:13px;font-weight:800;color:#4a627e;margin-bottom:4px}
+.gftt{display:flex;gap:6px;margin-bottom:10px}
+.gftt button{flex:1;font-family:inherit;font-size:13px;font-weight:800;color:#4a627e;background:#f2f7fd;
+  border:2px solid #d7e2f0;border-radius:10px;padding:8px 4px;cursor:pointer;touch-action:manipulation}
+.gftt button.on{background:#e2f1ff;border-color:var(--g2);color:var(--g1)}
+.gftcode{font-size:22px;font-weight:900;letter-spacing:2px;text-align:center;color:var(--g1);
+  background:#fdf6e4;border:3px dashed #e0cfa4;border-radius:12px;padding:12px;margin:12px 0 8px;
+  direction:ltr;user-select:all;-webkit-user-select:all}
+.gfttxt{white-space:pre-wrap;font-size:13px;font-weight:700;line-height:1.9;color:#4a627e;
+  background:#f7fbff;border:2px solid #e5ecf6;border-radius:10px;padding:10px;margin-bottom:8px}
 /* بطاقة «ثبّت التطبيق»: تظهر متى كان التثبيت ممكناً ولم يُثبَّت بعد */
 .instbox{position:relative;background:linear-gradient(180deg,#fff,#f4f9ff);border:3px solid #bcd9f5;
   border-radius:14px;padding:12px 14px;margin-bottom:12px;text-align:right}
@@ -2416,6 +2434,7 @@ var SHOP=[
 ];
 /* الأقسام: زينةٌ للمسجد، وما سواها من مقتنيات طالب العلم تُعرض في خزانته */
 var SHOP_CATS=[
+  { k:'hadi', ic:'🎁', n:'تهادوا تحابّوا', sub:'أهدِ أخاك ممّا تحبّ، أو اصرف كوداً أُهدي إليك', gift:1, items:[] },
   { k:'mosque', ic:'🕌', n:'زينة المسجد', sub:'تظهر على مسجدك مباشرة', items:SHOP },
   { k:'kit', ic:'🧰', n:'عُدّة طالب العلم', sub:'ما لا يستغني عنه طالب علم', items:[
     { k:'st_siwak',  ic:SIWAK_SVG, n:'سواك',        p:20,  d:'مطهرة للفم، مرضاة للربّ' },
@@ -2564,6 +2583,223 @@ function decorSVG(){
                '<text x="66" y="60" font-size="9" fill="#f2c14e">✦</text>';
   return h;
 }
+/* ===== 🎁 تهادوا تحابّوا: إهداء ما تملك لأخيك =====
+   الكود يحمل ٤٨ بتاً في عشرة محارف: النوع(2) والقيمة(16) ورقم فريد(16)
+   ورقم تحقّق(14) — فلا يُقبل كودٌ مخترَع. وبحسابٍ عشريّ لا BigInt، فيعمل
+   على المتصفّحات القديمة. والمُهدي يُخصم منه، فتكون هديّةً لا زرَّ ربح. */
+var GFT_A32='23456789ABCDEFGHJKLMNPQRSTUVWXYZ';     /* بلا 0 1 I O U فلا يلتبس على طفل */
+var GFT_P2=[]; (function(){ for(var i=0;i<=48;i++) GFT_P2[i]=Math.pow(2,i); })();
+function gftFnv(s,seed){
+  var h=seed>>>0;
+  for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619)>>>0; }
+  return h>>>0;
+}
+function gftCrc(type,val,id){ return gftFnv('nur:'+type+':'+val+':'+id, 0x2f1c7a3b) & 0x3FFF; }
+function gftEnc(type,val,id){
+  var num=type*GFT_P2[46]+val*GFT_P2[30]+id*GFT_P2[14]+gftCrc(type,val,id), s='', i;
+  for(i=9;i>=0;i--) s+=GFT_A32.charAt(Math.floor(num/GFT_P2[i*5])%32);
+  return s.slice(0,5)+'-'+s.slice(5);
+}
+function gftNorm(str){ return String(str||'').toUpperCase().replace(/[^0-9A-Z]/g,''); }
+function gftDec(str){
+  var s=gftNorm(str), num=0, i, k;
+  if(s.length!==10) return null;
+  for(i=0;i<10;i++){ k=GFT_A32.indexOf(s.charAt(i)); if(k<0) return null; num=num*32+k; }
+  var crc=num%GFT_P2[14],
+      id=Math.floor(num/GFT_P2[14])%GFT_P2[16],
+      val=Math.floor(num/GFT_P2[30])%GFT_P2[16],
+      type=Math.floor(num/GFT_P2[46])%4;
+  if(gftCrc(type,val,id)!==crc) return null;
+  return { type:type, val:val, id:id };
+}
+/* أكواد المنح الثابتة — مُلبَّدة فلا تظهر بقراءة المصدر عَرَضاً */
+var GFT_PROMO={ '4136466022':100, '3596891331':500, '1870205958':1000 };
+function gftPromoValue(raw){
+  var v=GFT_PROMO[String(gftFnv('promo:'+gftNorm(raw), 0x5bf03a71))];
+  return v||0;
+}
+/* الأصناف: 0 جواهر، 1 مادّة، 2 غرض، 3 منحة */
+function gftItemHash(k){ return gftFnv('itm:'+k, 0x811c9dc5) & 0xFFFF; }
+function gftItemByHash(h){
+  var all=shopEvery(), i;
+  for(i=0;i<all.length;i++) if(gftItemHash(all[i].k)===h) return all[i];
+  return null;
+}
+function gftMatIdx(k){ for(var i=0;i<MATS.length;i++) if(MATS[i].k===k) return i; return -1; }
+/* وصف الهديّة كما تُقرأ */
+function gftDesc(d){
+  if(d.type===0 || d.type===3) return '💎 '+arNum(d.val)+' جوهرة';
+  if(d.type===1){
+    var m=MATS[Math.floor(d.val/4096)], n=d.val%4096;
+    return m ? (m.ic+' '+arNum(n)+' '+m.n) : null;
+  }
+  if(d.type===2){ var it=gftItemByHash(d.val); return it ? (it.ic+' '+it.n) : null; }
+  return null;
+}
+/* ===== الصرف ===== */
+function gftUsed(){ var p=curP(); if(!p.codes) p.codes={}; return p.codes; }
+function gftMinted(){ var p=curP(); if(!p.minted) p.minted={}; return p.minted; }
+function gftRedeem(raw){
+  var s=gftNorm(raw);
+  if(!s) return { ok:false, msg:'اكتب الكود أوّلاً' };
+  if(gftUsed()[s]) return { ok:false, msg:'هذا الكود مصروفٌ من قبل — لكلٍّ كودُه مرّة واحدة' };
+  if(gftMinted()[s]) return { ok:false, msg:'هذا كودٌ أنشأتَه أنت لأخيك — أرسله إليه 🤍' };
+  var promo=gftPromoValue(s);
+  var d = promo ? { type:3, val:promo, id:0 } : gftDec(s);
+  if(!d) return { ok:false, msg:'لم أعرف هذا الكود — راجع حروفه' };
+  var txt=gftDesc(d);
+  if(!txt) return { ok:false, msg:'هذا الكود لا يطابق شيئاً في هذه النسخة' };
+  var p=curP();
+  if(d.type===0 || d.type===3) addGems(d.val);
+  else if(d.type===1){ var m=MATS[Math.floor(d.val/4096)]; addMat(m.k, d.val%4096); }
+  else if(d.type===2){ var it=gftItemByHash(d.val); if(!p.owned) p.owned={}; p.owned[it.k]=true; }
+  gftUsed()[s]=1; saveDB();
+  return { ok:true, txt:txt, promo:!!promo };
+}
+/* ===== التوليد: يُخصم من المُهدي أوّلاً ===== */
+function gftMake(type, val){
+  var p=curP(), i;
+  if(type===0){
+    if(val<1) return { ok:false, msg:'اكتب عدد الجواهر' };
+    if((p.gems||0)<val) return { ok:false, msg:'رصيدك '+arNum(p.gems||0)+' جوهرة فقط' };
+    p.gems-=val;
+  } else if(type===1){
+    var mi=Math.floor(val/4096), n=val%4096, m=MATS[mi];
+    if(!m || n<1) return { ok:false, msg:'اختر المادّة والعدد' };
+    if((mats()[m.k]||0)<n) return { ok:false, msg:'عندك '+arNum(mats()[m.k]||0)+' '+m.n+' فقط' };
+    mats()[m.k]-=n;
+  } else if(type===2){
+    var it=gftItemByHash(val);
+    if(!it) return { ok:false, msg:'اختر الغرض' };
+    if((p.gems||0)<it.p) return { ok:false, msg:'ثمنه '+arNum(it.p)+' جوهرة، ورصيدك '+arNum(p.gems||0) };
+    p.gems-=it.p;                                  /* تشتريه له، ولا تفقد نسختك */
+  } else return { ok:false, msg:'صنفٌ غير معروف' };
+  var id=Math.floor(Math.random()*65536);
+  var code=gftEnc(type, val, id);
+  gftMinted()[gftNorm(code)]=1; saveDB();
+  return { ok:true, code:code, txt:gftDesc({type:type,val:val}) };
+}
+/* نصّ بطاقة الهديّة */
+function gftCard(code, txt, note){
+  var me=(curP().name||'').trim();
+  return '🎁 هديّة'+(me?(' من أخيك '+me):'')+'\n\n'+
+    '«تَهَادَوْا تَحَابُّوا»\n\n'+
+    (note? (note+'\n\n') : '')+
+    'لك مني '+txt+' في تطبيق «نور الوحي» —\n'+
+    'من باب الأخوّة في الله تعالى، وأسأل الله أن يعينك على حفظ كتابه.\n\n'+
+    'كودك: '+code+'\n'+
+    'اصرفه من: 💎 متجري ← 🎁 تهادوا تحابّوا';
+}
+
+/* ===== واجهة «تهادوا تحابّوا» ===== */
+var GFT_T=0;                                       /* 0 جواهر، 1 مادّة، 2 غرض */
+var GFT_CARD='';
+function gftFormHTML(){
+  var p=curP(), i, o;
+  if(GFT_T===0){
+    return '<div class="gftrow"><label>عدد الجواهر</label>'+
+      '<input type="number" id="gftN" min="1" step="1" value="100" inputmode="numeric"></div>'+
+      '<div class="note">رصيدك 💎 '+arNum(p.gems||0)+' جوهرة — ويُخصم منك ما تُهديه.</div>';
+  }
+  if(GFT_T===1){
+    o='';
+    for(i=0;i<MATS.length;i++)
+      o+='<option value="'+i+'">'+MATS[i].ic+' '+esc(MATS[i].n)+' — عندك '+arNum(mats()[MATS[i].k]||0)+'</option>';
+    return '<div class="gftrow"><label>المادّة</label><select id="gftM">'+o+'</select></div>'+
+      '<div class="gftrow"><label>العدد</label>'+
+      '<input type="number" id="gftN" min="1" step="1" value="5" inputmode="numeric"></div>'+
+      '<div class="note">يُخصم من مخزونك أنت.</div>';
+  }
+  var all=shopEvery(); o='';
+  for(i=0;i<all.length;i++) o+='<option value="'+all[i].k+'">'+esc(all[i].n)+' — 💎 '+arNum(all[i].p)+'</option>';
+  return '<div class="gftrow"><label>الغرض</label><select id="gftI">'+o+'</select></div>'+
+    '<div class="note">تشتريه له بجواهرك ولا تفقد نسختك — رصيدك 💎 '+arNum(p.gems||0)+'.</div>';
+}
+
+function gftPanelHTML(){
+  return '<button class="btn ghost mini" id="btnShopCats" style="width:100%;margin-bottom:10px">➡️ كل الأقسام</button>'+
+    '<div class="gftbox">'+
+      '<div class="gfth">🎁 وصلتك هديّة؟ اصرف كودها</div>'+
+      '<div class="row"><input type="text" id="gftIn" placeholder="اكتب الكود" autocomplete="off" spellcheck="false">'+
+      '<button class="btn green" id="gftUse">✅ اصرف</button></div>'+
+      '<div class="note" id="gftMsg">لكل كودٍ صرفٌ واحد.</div>'+
+    '</div>'+
+    '<div class="gftbox">'+
+      '<div class="gfth">🤍 أهدِ أخاك ممّا تحبّ</div>'+
+      '<div class="gftt">'+
+        '<button type="button" data-gt="0"'+(GFT_T===0?' class="on"':'')+'>💎 جواهر</button>'+
+        '<button type="button" data-gt="1"'+(GFT_T===1?' class="on"':'')+'>🪨 مواد</button>'+
+        '<button type="button" data-gt="2"'+(GFT_T===2?' class="on"':'')+'>🎒 غرض</button>'+
+      '</div>'+
+      '<div id="gftForm">'+gftFormHTML()+'</div>'+
+      '<div class="gftrow"><label>عبارة الإهداء (اختياريّة)</label>'+
+        '<textarea id="gftNote" rows="2" maxlength="200" placeholder="اكتب ما تحبّ أن يقرأه أخوك…"></textarea></div>'+
+      '<button class="btn green big" id="gftGo">🎁 ولّد كود الهديّة</button>'+
+      '<div id="gftOut" hidden>'+
+        '<div class="gftcode" id="gftCode"></div>'+
+        '<div class="gfttxt" id="gftText"></div>'+
+        '<div class="row">'+
+          '<button class="btn blue" id="gftCopy">📋 انسخ الرسالة</button>'+
+          '<button class="btn blue" id="gftShare">📤 شارك</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+}
+function gftMsg(s,bad){
+  var e=$('gftMsg'); if(!e) return;
+  e.textContent=s; e.style.color=bad?'#c0392b':'#1a7a4a'; e.style.fontWeight='800';
+}
+
+function gftBind(){
+  var i, ts=$('shopBody').querySelectorAll('[data-gt]');
+  for(i=0;i<ts.length;i++) ts[i].onclick=function(){
+    GFT_T=parseInt(this.getAttribute('data-gt'),10)||0;
+    renderShop();
+  };
+  $('btnShopCats').onclick=function(){ shopCat=''; renderShop(); window.scrollTo(0,0); };
+  $('gftUse').onclick=function(){
+    var raw=$('gftIn').value;
+    /* أداة المنح للوالد أو المعلّم: تُنشئ كوداً بأيّ عدد بلا خصم */
+    if(gftNorm(raw)==='MINT'){
+      var n=parseInt(prompt('كم جوهرة تحمل هذه المنحة؟','100'),10);
+      if(!(n>0 && n<65536)) return;
+      var mc=gftEnc(3, n, Math.floor(Math.random()*65536));
+      $('gftIn').value=mc;
+      gftMsg('منحةٌ بـ'+arNum(n)+' جوهرة — انسخ الكود وانشره.',false);
+      return;
+    }
+    var r=gftRedeem(raw);
+    if(!r.ok){ gftMsg(r.msg,true); try{ sBad(); }catch(e){} return; }
+    $('gftIn').value='';
+    celeShow({ ic:'🎁', kick:'تَهَادَوْا تَحَابُّوا',
+      title: r.promo ? 'منحةٌ لك!' : 'وصلتك هديّة!',
+      sub: r.promo ? 'بارك الله فيك وأعانك على حفظ كتابه'
+                   : 'من أخٍ لك في الله — فادعُ له بظهر الغيب',
+      rew: r.txt });
+    renderShop();
+  };
+  $('gftIn').onkeydown=function(e){ if(e.key==='Enter') $('gftUse').click(); };
+  $('gftGo').onclick=function(){
+    var type=GFT_T, val=0;
+    if(type===0) val=parseInt($('gftN').value,10)||0;
+    else if(type===1) val=(parseInt($('gftM').value,10)||0)*4096+(parseInt($('gftN').value,10)||0);
+    else val=gftItemHash($('gftI').value);
+    var r=gftMake(type,val);
+    if(!r.ok){ try{ navToast(r.msg); }catch(e){} return; }
+    GFT_CARD=gftCard(r.code, r.txt, ($('gftNote').value||'').trim());
+    $('gftCode').textContent=r.code;
+    $('gftText').textContent=GFT_CARD;
+    $('gftOut').hidden=false;
+    $('shopGems').textContent='💎 '+arNum(curP().gems||0)+' جوهرة';
+    try{ sWin(); }catch(e){}
+  };
+  $('gftCopy').onclick=function(){
+    try{ navigator.clipboard.writeText(GFT_CARD); navToast('نُسخت الرسالة — الصقها لأخيك'); }
+    catch(e){ try{ navToast('انسخ الرسالة من الصندوق أعلاه'); }catch(e2){} }
+  };
+  $('gftShare').onclick=function(){ try{ doShare(GFT_CARD); }catch(e){} };
+}
+
 function renderShop(){
   var p=curP(), o=p.owned||{}, i;
   $('shopGems').textContent='💎 '+arNum(p.gems||0)+' جوهرة';
@@ -2581,9 +2817,11 @@ function renderShop(){
       '</div>'+
       '<div class="catgrid">'+SHOP_CATS.map(function(c){
         var n=shopOwnedIn(c), tot=shopItems(c).length;
-        return '<button type="button" class="cat'+(!c.give&&n===tot?' full':'')+'" data-cat="'+c.k+'">'+
+        return '<button type="button" class="cat'+(!c.give&&!c.gift&&n===tot?' full':'')+'" data-cat="'+c.k+'">'+
           '<div class="ci">'+(c.av?avatarSVG():c.ic)+'</div><div class="cn">'+esc(c.n)+'</div>'+
-          '<div class="cc">'+(c.give
+          '<div class="cc">'+(c.gift
+            ? 'أهدِ واقبل الهديّة'
+            : c.give
             ? (sadTotal()? arNum(sadTotal())+' صدقة' : 'ابذل من فضل ما عندك')
             : c.mat
             ? ('🪨 '+arNum(mats().stone||0)+' • 🪵 '+arNum(mats().wood||0))
@@ -2598,6 +2836,11 @@ function renderShop(){
 
   /* ===== صفحة قسم ===== */
   $('shopSub').textContent=cat.sub;
+  if(cat.gift){                                   /* قسمٌ قائم بذاته لا أغراض فيه */
+    $('shopBody').innerHTML=gftPanelHTML();
+    gftBind();
+    return;
+  }
   var S2=sad();
   $('shopBody').innerHTML=
     '<button class="btn ghost mini" id="btnShopCats" style="width:100%;margin-bottom:10px">➡️ كل الأقسام</button>'+
