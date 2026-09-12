@@ -434,6 +434,19 @@ body.light .card.bare .diffline{color:var(--on2)}
 body.glow-off .cele .big{animation:none}
 body.glow-off .cele .spk{display:none}
 /* عدّاد السلسلة في شريط اللعب */
+/* شارتا الفحص: لا تظهران إلا بعلامة qa في الرابط — للاختبار لا للّعب */
+.pstat.qachip{background:linear-gradient(180deg,#8b5cf6,#5b21b6);border-color:#c4b5fd;color:#fff;
+  font-family:inherit;cursor:pointer;padding:5px 9px;font-size:15px}
+.pstat.qachip:active{transform:scale(.9)}
+/* شريط وضع الفحص: تقديم الأيام لرؤية المراجعة دون انتظار الغد */
+#qaBar{position:fixed;inset-inline-start:10px;bottom:10px;z-index:120;display:flex;gap:6px;
+  align-items:center;background:rgba(45,20,90,.94);border:2px solid #c4b5fd;border-radius:99px;
+  padding:5px 9px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+#qaBar button{font-family:inherit;font-weight:900;font-size:14px;cursor:pointer;color:#fff;
+  background:linear-gradient(180deg,#8b5cf6,#5b21b6);border:2px solid #c4b5fd;border-radius:99px;
+  padding:3px 10px;line-height:1.5}
+#qaBar button:active{transform:scale(.92)}
+#qaBar b{color:#e9d5ff;font-size:13px;font-weight:900;padding:0 4px}
 .pstat.combochip{background:linear-gradient(180deg,#f97f31,#b8440a);border-color:#ffb877;color:#fff}
 .pstat.combochip b{color:#fff}
 .pstat.combochip.pop{transform:scale(1.18);transition:.14s}
@@ -885,6 +898,12 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
 </div>
 
 <div class="cele" id="cele" hidden></div>
+<div id="qaBar" hidden>
+  <button type="button" id="qaDayUp" title="غداً — لرؤية المراجعة">🌙 +يوم</button>
+  <button type="button" id="qaDayDn" title="أمس">−</button>
+  <b id="qaDayN">اليوم</b>
+  <button type="button" id="qaDayZero" title="العودة إلى اليوم الحقيقيّ">↺</button>
+</div>
 
 <div class="mfsheet" id="mfSheet" hidden>
   <div class="mfhead">
@@ -1099,6 +1118,8 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
       <div class="pstat"><span class="ico">⭐</span><b id="pStars">0</b></div>
       <div class="pstat" id="pStep">1/1</div>
       <div class="pstat combochip" id="comboChip" hidden><span class="ico">🔥</span><b id="comboN">0</b></div>
+      <button type="button" class="pstat qachip" id="qaSkip" hidden title="تخطّي السؤال — للفحص">⏩</button>
+      <button type="button" class="pstat qachip" id="qaEnd" hidden title="إنهاء المرحلة — للفحص">⏭️</button>
     </div>
     <!-- اسم السورة ورقم المقطع يبقيان في الشيفرة لأن سطر الإرشاد داخل كل سؤال يذكرهما -->
     <div hidden aria-hidden="true"><span id="pSurah">—</span><span id="pSeg">—</span></div>
@@ -1252,12 +1273,14 @@ function load(k,d){ try{ var v=localStorage.getItem(k); return v==null?d:JSON.pa
 function save(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
 function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
-function todayNum(){ var d=new Date(); return Math.floor(new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime()/86400000); }
+/* QA_DAYS إزاحةٌ للفحص وحده — صفرٌ دائماً عند اللاعب، تُحرَّك من شريط وضع الفحص */
+var QA_DAYS=0;
+function todayNum(){ var d=new Date(); return Math.floor(new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime()/86400000)+QA_DAYS; }
 /* أرقام لاتينية (23، 123) في كل الواجهة */
 function arNum(n){ return String(n); }
 
 /* ===== اللاعبون: لكل لاعب تقدّمه ومواظبته وجواهره وإعداداته ===== */
-function defSet(){ return { level:'easy', script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', juzFrom:30, juzTo:30, free:false }; }
+function defSet(){ return { level:'easy', script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false }; }
 /* ثلاث درجات للخطّ لا خمس — ويُردّ القديم إلى أقربها */
 var FONTS=[{v:20,n:'صغير'},{v:24,n:'متوسط'},{v:30,n:'كبير'}];
 function normFont(f){ f=parseInt(f,10)||24; return f<=22?20:(f<=27?24:30); }
@@ -1320,6 +1343,8 @@ function bindPlayer(){
   applyGlow();
   applyTheme();
   if(!/^(q|h|p|[2-8])$/.test(String(SET.segMode))) SET.segMode="q";
+  /* بداية المسار الحرّ: '' يعني لم يُسأل بعد، فيُسأل عند اختيار المقدار */
+  if(SET.selfFrom!=='baqarah' && SET.selfFrom!=='nas') SET.selfFrom='';
   if(!(SET.juzFrom>=1&&SET.juzFrom<=30)) SET.juzFrom=30;
   if(!(SET.juzTo>=1&&SET.juzTo<=30)) SET.juzTo=30;
 }
@@ -2033,20 +2058,37 @@ function ensureAllSchedules(){
 /* =========================================================
    اليوم • المواظبة • الهدف • الجواهر
    ========================================================= */
-var GOAL_STAGES=3;
+var GOAL_SEGS=1;        /* مقطع كامل في اليوم — هو وحدة الحفظ، فلا يُقاس اليوم بأجزائه */
+var STAGES_PER_SEG=5;   /* خمس مراحل يتمّ بها المقطع — تُستعمل لتقدير الشريط وحده */
 function todayBox(){
   var p=curP(), t=todayNum();
   if(!p.today || p.today.d!==t) p.today={d:t,stages:0,segs:0,reviews:0};
   return p.today;
 }
-function goalMet(){
+/* شطرا اليوم في المسار الحرّ: حفظ ومراجعة — ولا يتمّ اليوم حتى يتمّا معاً */
+function goalHifzMet(){
+  if(todayBox().segs>=GOAL_SEGS) return true;
+  try{ if(!selfNext()) return true; }catch(e){}   /* لم يبقَ في نطاقه ما يُحفظ */
+  return false;
+}
+/* ما بلغه من مقطع اليوم: ١ إن أتمّه، وإلا نصيبه من مراحله */
+function goalHifzPct(){
   var t=todayBox();
-  /* على خطة؟ يحقّق الهدف إتمام مقرَّرها فعلاً، أو تأكيده بزرّ «أنجزت اليوم» */
+  if(goalHifzMet()) return 1;
+  return Math.min(t.stages, STAGES_PER_SEG)/STAGES_PER_SEG;
+}
+function goalRevMet(){
+  if(todayBox().reviews>=1) return true;
+  try{ return dueSegs().length===0; }catch(e){}   /* لا مراجعة مستحقّة اليوم */
+  return true;
+}
+function goalMet(){
+  /* على خطة؟ الهدف مقرَّرها وحده: حفظه ومراجعته، أو تأكيده بزرّ «أنجزت اليوم» */
   try{
     var T=bqnToday();
-    if(T && (T.dayDone || (T.hifzDone && T.revDone))) return true;
+    if(T) return !!(T.dayDone || (T.hifzDone && T.revDone));
   }catch(e){}
-  return t.stages>=GOAL_STAGES || t.reviews>=1;
+  return goalHifzMet() && goalRevMet();
 }
 function creditDay(){
   var p=curP(), t=todayNum(), s=p.streak;
@@ -2143,11 +2185,18 @@ function renderHUD(){
   var pct, head, lines;
   if(T && T.dayDone){                     /* أتمّ مقرَّر يومه، وما يظهر بعده مقرَّر الغد */
     pct=100; head='تمّ ✅';
+    /* شطرا الغد كلاهما: حفظه ومراجعته — فلا تغيب المراجعة عن عينه */
     lines='<div class="gline"><span class="tick on">✓</span> أتممت مقرَّر اليوم من خطة «'+esc(T.plan.t)+'»</div>'+
-      '<div class="gline"><span class="tick">🌅</span> مقرَّر الغد: '+
-        (T.h?bqnLabel(T.h):'مراجعة فقط')+'</div>';
+      '<div class="gline"><span class="tick">🌅</span> حفظ الغد: '+
+        (T.h?bqnLabel(T.h):'لا حفظ جديد')+'</div>'+
+      '<div class="gline"><span class="tick">☀️</span> مراجعة الغد: '+
+        (T.r?(bqnLabel(T.r)+' — '+arNum(T.pages.length)+' وجه'):'لا مراجعة')+'</div>';
   }else if(T){                            /* على خطة «بالقرآن نحيا»: الهدف مقرَّر اليوم */
-    var okR=T.revDone, okH=T.hifzDone, n=(T.r?2:1), got=(okR?1:0)+(T.h&&okH?1:0);
+    var okR=T.revDone, okH=T.hifzDone;
+    /* الشطران يُعدّان بما هو مقرَّر فعلاً: يومٌ بلا حفظ جديد لا يُنقص الشريط نصفه */
+    var n=((T.h?1:0)+(T.r?1:0))||1;
+    var got=(T.h&&okH?1:0)+(T.r&&okR?1:0);
+    if(!T.h && !T.r) got=1;
     pct=Math.min(100,Math.round(100*got/n));
     head='اليوم '+arNum(T.day+1)+' من '+arNum(T.plan.n);
     lines='<div class="gline"><span class="tick'+(okH?' on':'')+'">'+(okH?'✓':'📖')+'</span> '+
@@ -2158,18 +2207,24 @@ function renderHUD(){
     /* المسار الحرّ: يُقال للطفل ما يحفظ وما يراجع بالاسم والآيات، لا «ثلاث مراحل» */
     var nx=null; try{ nx=selfNext(); }catch(e){}
     var dl=dueSegs();
-    pct=Math.min(100, Math.round(100*Math.min(t.stages,GOAL_STAGES)/GOAL_STAGES));
-    head=met?'تمّ ✅':arNum(Math.min(t.stages,GOAL_STAGES))+'/'+arNum(GOAL_STAGES);
+    /* الشريط نصفان: نصفٌ للحفظ ونصفٌ للمراجعة، فلا يمتلئ بأحدهما دون الآخر */
+    var mH=goalHifzMet(), mR=goalRevMet();
+    pct=Math.round(50*goalHifzPct() + (mR?50:0));
+    head=(mH?'✓ حفظ':arNum(Math.min(t.segs,GOAL_SEGS))+'/'+arNum(GOAL_SEGS)+' مقطع')+
+         ' • '+(mR?'✓ مراجعة':'☀️ مراجعة');
     var hifz = nx ? ('احفظ: <b>'+esc(nx.s.name)+' '+arNum(nx.g[0]+1)+' — '+arNum(nx.g[1])+'</b>')
                   : 'أتممت كلّ ما في نطاقك — وسّع الأجزاء من الإعدادات';
     var names = dl.slice(0,2).map(function(d){
       return esc(d.s.name)+' '+arNum(d.from+1)+' — '+arNum(d.to);
     }).join(' • ');
     var rest = due>2 ? (' و'+arNum(due-2)+' غيرها') : '';
-    lines='<div class="gline"><span class="tick'+(t.stages>=GOAL_STAGES?' on':'')+'">'+
-        (t.stages>=GOAL_STAGES?'✓':'📖')+'</span> '+hifz+'</div>'+
-      '<div class="gline"><span class="tick'+(due===0?' on':'')+'">'+(due===0?'✓':'☀️')+'</span> '+
-        (due===0?'لا مراجعة متبقية اليوم':('راجع: <b>'+names+'</b>'+rest))+'</div>';
+    var revTxt = due===0 ? 'لا مراجعة متبقية اليوم'
+               : mR ? ('أتممت مراجعة اليوم — وبقي '+arNum(due)+' مقطعاً إن أردت الزيادة')
+                    : ('راجع: <b>'+names+'</b>'+rest);
+    lines='<div class="gline"><span class="tick'+(mH?' on':'')+'">'+
+        (mH?'✓':'📖')+'</span> '+hifz+'</div>'+
+      '<div class="gline"><span class="tick'+(mR?' on':'')+'">'+(mR?'✓':'☀️')+'</span> '+
+        revTxt+'</div>';
   }
   $('goalWrap').innerHTML='<div class="goalbox">'+
     '<div class="gt"><span>'+(T?'📅 مقرَّر اليوم':'🎯 هدف اليوم')+'</span><span>'+(met?'تمّ ✅':head)+'</span></div>'+
@@ -3620,12 +3675,23 @@ function scopedSegs(s){
   }
   return out;
 }
+/* أوّل سورة في النطاق ما زال فيها مقطع لم يُتمّ — على ترتيب الخطة لا ترتيب المصحف */
+function scopeNextSurah(){
+  if(!PATH_SCOPE) return null;
+  var ns=PATH_SCOPE.surahs.slice(), i, k;
+  if(planDir()<0) ns.reverse();
+  for(i=0;i<ns.length;i++){
+    var s=surahBy(ns[i]); if(!s) continue;
+    var v=scopedSegs(s);
+    for(k=0;k<v.length;k++) if(!segDone(s,v[k].g)) return s;
+  }
+  return null;
+}
 function allowedSurahs(){ return SURAHS.filter(inRange); }
 function defaultSurah(){
-  var p=curP(), list=allowedSurahs(), i;
+  var p=curP(), list=allowedSurahs();
   if(p.last){ var s=surahBy(p.last); if(s&&inRange(s)) return s; }
-  for(i=0;i<list.length;i++) if(list[i].n===114) return list[i];
-  return list[0] || SURAHS[SURAHS.length-1];
+  return selfStartSurah() || list[0] || SURAHS[SURAHS.length-1];
 }
 function openSurah(n){
   var s=surahBy(n); if(!s) return;
@@ -3715,14 +3781,7 @@ function renderPath(){
     nodes[i].onclick=function(){
       var act=this.getAttribute('data-act');
       if(act==='planrev'){ bqnRevStart(); return; }
-      if(act==='nextday'){
-        var T=bqnToday(); if(!T) return;
-        if(!(T.hifzDone&&T.revDone) &&
-           !confirm('لم يكتمل مقرَّر اليوم في سجلّك. أتنتقل إلى الغد؟')) return;
-        T.st.lastDone=todayNum();
-        T.st.day=Math.min(T.st.day+1,T.plan.n); T.st.rp=0; saveDB();
-        openBqn(); return;
-      }
+      if(act==='nextday'){ bqnNextDay(); return; }
       if(act==='review'){ startReview(); return; }
       if(act==='cert'){ showCert(curSurah); return; }
       if(act==='juz'){
@@ -4001,8 +4060,53 @@ function stageAyahHTMLs(fontPx, portioned){
   }
   return out;
 }
+/* =========================================================
+   اختصار الفحص — للاختبار وحده
+   يُفتح بإضافة ‎?qa=1‎ إلى الرابط، أو بـ Ctrl+Shift+Q داخل الصفحة.
+   ولا يُحفظ في بيانات اللاعب، فلا يبقى مفتوحاً بعد إغلاق الصفحة.
+   ========================================================= */
+var QA=/(^|[?&#])qa\b/.test(String(location.search)+String(location.hash));
+function qaSync(){
+  var a=$('qaSkip'), b=$('qaEnd'), bar=$('qaBar'), n=$('qaDayN');
+  if(a) a.hidden=!QA;
+  if(b) b.hidden=!QA;
+  if(bar) bar.hidden=!QA;
+  if(n) n.textContent = QA_DAYS===0 ? 'اليوم'
+      : (QA_DAYS>0 ? ('+'+arNum(QA_DAYS)+' يوم') : (arNum(QA_DAYS)+' يوم'));
+}
+/* تقديم اليوم يغيّر كل ما بُني عليه: الهدف والمواظبة وما استحقّ من مراجعة */
+function qaDay(n){
+  if(!QA) return;
+  QA_DAYS=(n===0)?0:(QA_DAYS+n);
+  qaSync();
+  try{ renderHUD(); }catch(e){}
+  try{ if($('scr-path').classList.contains('active')) renderPath(); }catch(e){}
+  try{ if($('scr-start').classList.contains('active')) renderHome(); }catch(e){}
+  try{ if($('scr-rev').classList.contains('active')) renderRevPlan(); }catch(e){}
+  try{ navToast('🌙 اليوم الوهميّ: '+$('qaDayN').textContent+' • المستحقّ للمراجعة: '+
+                arNum(dueSegs().length)); }catch(e){}
+}
+/* يُذهب أيّ احتفالٍ قائم، فلا يحجب الشارة ولا يبتلع النقلة */
+function qaClearCele(){
+  try{
+    CELE.q.length=0; CELE.on=false; CELE.then=null; clearTimeout(CELE.tm);
+    var el=$('cele'); if(el){ el.hidden=true; el.onclick=null; }
+  }catch(e){}
+}
+/* تخطٍّ محايد: لا يُحسب خطأً ولا يزيد سلسلة، حتى تبقى شاشات النهاية على حقيقتها */
+function qaSkipRound(){
+  if(!S || !QA) return;
+  qaClearCele();
+  S.i++; runRound();
+}
+function qaEndStage(){
+  if(!S || !QA) return;
+  qaClearCele();
+  S.i=S.rounds.length; runRound();
+}
 function runRound(){
   recReset();
+  qaSync();
   $('playArea').className='qfill qcenter';
   if(!S) return;
   if(S.i>=S.rounds.length){ finishStage(); return; }
@@ -4935,32 +5039,93 @@ function finishStage(){
   if(S.rev==='page'){ finishRevPage(); return; }
   if(S.review){ finishReview(); return; }
   var p=getP(S.key);
+  /* الانتهاء بآخر مرحلةٍ في هذه الجولة، لا بنجومٍ سابقة — وإلّا قُطعت تمارين المُعيد بعد أوّلها */
+  var last=(S.stage+1>=STAGES.length), first=!p.done;
   if(S.stage+1>p.stars) p.stars=S.stage+1;
   p.stage=Math.min(S.stage+1,5);
   sWin();
   if(!S.errors) tal().perfect++;                      /* مرحلة بلا خطأ واحد */
-  noteStage();
-  if(p.stars>=5){
+  if(first) noteStage();                              /* التثبيت لا يُكسب جواهر مكرّرة */
+  if(last){
     p.done=true;
     if(p.due==null){ p.box=0; p.due=todayNum()+INTERVALS[0]; }
     memAdd(S.surah.n, S.seg[0], S.seg[1]);
     saveProg();
-    noteSeg();
+    if(first) noteSeg();
     var t=surahStats(S.surah);
-    if(t.full){ showCert(S.surah); return; }
+    if(t.full && first){ showCert(S.surah); return; }
+    /* هل المقطع التالي داخل مقرَّر اليوم؟ لا يُدفع الطفل خارجه وهو لا يدري */
+    var SC=PATH_SCOPE, PT=null; try{ PT=bqnToday(); }catch(e){}
+    var more=(S.si+1<t.segs), inSC=true, z, vv;
+    if(SC){
+      inSC=false; vv=scopedSegs(S.surah);
+      for(z=0;z<vv.length;z++) if(vv[z].i===S.si+1) inSC=true;
+    }
+    var dayH=!!(SC && PT && PT.hifzDone), dayAll=!!(dayH && PT.revDone);
+    var note='', btns='';
+    var PATH_BTN='<button class="btn ghost big" id="btnSegsNow" style="margin:0">🗺️ المسار</button>';
+    var MORE_BTN='<button class="btn ghost big" id="btnExtraSeg" style="margin:8px 0 0">'+
+                 '📖 زدني حفظاً — المقطع التالي</button>';
+    if(!SC){
+      /* المسار الحرّ: هدفه مقطعٌ كامل ومراجعةُ ما استحقّ — فيُعامَل معاملة الخطط */
+      var mH=goalHifzMet(), mR=goalRevMet(), dueN=0;
+      try{ dueN=dueSegs().length; }catch(e){}
+      if(!mH){
+        btns=(more?'<button class="btn primary big pulse" id="btnNextSeg">⬅️ المقطع التالي</button>':'')+
+             PATH_BTN;
+      }else if(!mR){
+        note='<p style="color:#146b3f;font-size:15px;font-weight:800;margin:0 0 12px">'+
+             '✅ تمّ حفظ اليوم — وبقيت مراجعتك: '+arNum(dueN)+' مقطعاً</p>';
+        btns='<button class="btn primary big pulse" id="btnDayRev">☀️ ابدأ مراجعة اليوم</button>'+
+             PATH_BTN+(more?MORE_BTN:'');
+      }else{
+        note='<p style="color:#146b3f;font-size:15px;font-weight:800;margin:0 0 12px">'+
+             '🎉 تمّ هدف اليوم — حفظاً ومراجعة</p>';
+        btns='<button class="btn primary big pulse" id="btnSegsNow">🗺️ المسار</button>'+
+             (more?MORE_BTN:'');
+      }
+    }else if(inSC && more){
+      btns='<button class="btn primary big pulse" id="btnNextSeg">⬅️ المقطع التالي من مقرَّر اليوم</button>'+
+           PATH_BTN;
+    }else if(dayAll){
+      note='<p style="color:#146b3f;font-size:15px;font-weight:800;margin:0 0 12px">'+
+           '🎉 تمّ مقرَّر اليوم كاملاً — حفظاً ومراجعة</p>';
+      btns='<button class="btn primary big pulse" id="btnNextDay">📅 إلى مقرَّر الغد ←</button>'+PATH_BTN;
+    }else if(dayH && PT && PT.r){
+      note='<p style="color:#146b3f;font-size:15px;font-weight:800;margin:0 0 12px">'+
+           '✅ تمّ حفظ اليوم — وبقيت مراجعته: '+bqnLabel(PT.r)+'</p>';
+      btns='<button class="btn primary big pulse" id="btnDayRev">☀️ ابدأ مراجعة اليوم</button>'+PATH_BTN;
+    }else{
+      note='<p style="color:#3d5b7a;font-size:15px;font-weight:800;margin:0 0 12px">'+
+           'تمّ ما في هذه السورة من مقرَّر اليوم — وبقي منه في سورة أخرى</p>';
+      btns='<button class="btn primary big pulse" id="btnSegsNow">🗺️ تابع مقرَّر اليوم</button>';
+    }
+    /* ومن أراد الزيادة على مقرَّره فله ذلك — لكن بعد أن يعلم أنه خارجه */
+    if(SC && !(inSC && more) && more)
+      btns+='<button class="btn ghost big" id="btnExtraSeg" style="margin:8px 0 0">'+
+            '📖 زدني حفظاً — خارج مقرَّر اليوم</button>';
     $('mosque').removeAttribute('hidden'); $('playCard').classList.remove('bare'); $('mosque').innerHTML=mosqueSVG(1); $('playArea').className='';
     $('barFill').style.width='100%';
     $('playArea').innerHTML=
       '<div style="text-align:center"><div style="font-size:52px">🎉</div>'+
-      '<h2 style="color:var(--g1);margin:6px 0">أتممتَ المقطع!</h2>'+
+      '<h2 style="color:var(--g1);margin:6px 0">'+(first?'أتممتَ المقطع!':'ثبّتَّ المقطع 💪')+'</h2>'+
       '<p style="color:#3d5b7a;font-size:16px;margin:0 0 6px">'+esc(S.surah.name)+' — الآيات '+arNum(S.seg[0]+1)+' إلى '+arNum(S.seg[1])+'</p>'+
       '<p style="color:#3d5b7a;font-size:15px;margin:0 0 12px">أنجزت '+arNum(t.done)+' من '+arNum(t.segs)+' مقاطع السورة ✨</p>'+
       '<div style="font-size:28px;letter-spacing:4px;color:#d9b400;margin-bottom:12px">★★★★★</div>'+
-      (S.si+1<t.segs?'<button class="btn primary big pulse" id="btnNextSeg">⬅️ المقطع التالي</button>':'')+
-      '<button class="btn ghost big" id="btnSegsNow" style="margin:0">🗺️ المسار</button></div>';
+      note+btns+'</div>';
     $('fb').textContent='';
     if($('btnNextSeg')) $('btnNextSeg').onclick=function(){ startSeg(S.surah, S.si+1); };
-    $('btnSegsNow').onclick=function(){ curSurah=S.surah; renderPath(); show('scr-path'); };
+    if($('btnNextDay')) $('btnNextDay').onclick=function(){ bqnNextDay(); };
+    /* مراجعة الخطة مقرَّرٌ بالأوجه، ومراجعة المسار الحرّ ما استحقّ من مقاطعه */
+    if($('btnDayRev'))  $('btnDayRev').onclick =function(){ if(SC) bqnRevStart(); else startReview(); };
+    /* الزيادة تُخرجه من النطاق فيعود إلى مسار السورة الأصلي كاملاً */
+    if($('btnExtraSeg')) $('btnExtraSeg').onclick=function(){ clearScope(); startSeg(S.surah, S.si+1); };
+    /* داخل المقرَّر: يعود إلى السورة التي بقي فيها منه شيء، لا إلى سورةٍ فرغ منها */
+    $('btnSegsNow').onclick=function(){
+      var s2=(SC?scopeNextSurah():null)||S.surah;
+      curSurah=s2; curP().last=s2.n; saveDB();
+      renderPath(); show('scr-path');
+    };
     return;
   }
   saveProg();
@@ -5070,7 +5235,6 @@ function revAyahOpts(n,sel){
   return o;
 }
 function renderRevPlan(){
-  var due=duePages().length;
   var chips=function(list,cur,attr){
     return list.map(function(c){
       return '<button type="button" class="chipsel'+(cur===c?' sel':'')+'" data-'+attr+'="'+c+'">'+arNum(c)+'</button>';
@@ -5097,7 +5261,7 @@ function renderRevPlan(){
   }
   $('revPlan').innerHTML=
     bqnRevBanner('P')+
-    (due? '<button type="button" class="btn blue big" id="btnRevDue">☀️ راجِع ما استحقّ اليوم — '+arNum(due)+' صفحة</button>' : '')+
+    selfRevBanner('P')+
     contHTML+
     '<button type="button" class="btn '+(freeOpen?'blue':'ghost')+' big" id="btnFreeRev" style="margin-top:6px">'+
       '🎛️ '+(savedFree?'عدّل نطاق المراجعة الحرّة':'مراجعة حرّة — اختر نطاقاً بنفسك')+
@@ -5122,8 +5286,8 @@ function renderRevPlan(){
   for(var i=0;i<rs.length;i++) rs[i].onclick=function(){ REV.size=parseInt(this.getAttribute('data-rs'),10); reset(); };
   var rp=$('revPlan').querySelectorAll('[data-rp]');
   for(var j=0;j<rp.length;j++) rp[j].onclick=function(){ REV.per=parseInt(this.getAttribute('data-rp'),10); revSave(); renderRevPlan(); };
-  if($('btnRevDue')) $('btnRevDue').onclick=beginDueSession;
   bqnRevWire('P');
+  selfRevWire('P');
   $('btnFreeRev').onclick=function(){
     curP().freeRev=!curP().freeRev; saveDB(); renderRevPlan();
   };
@@ -5194,9 +5358,51 @@ function planId(){ return planStore().planId; }
 /* اتجاه السير في المصحف: +1 من البقرة إلى الناس، -1 من الناس إلى البقرة */
 function planDir(){
   var id=planId();
-  if(id==='self') return 1;                  /* مسارك الخاص يمشي من الفاتحة صعوداً */
+  if(id==='self') return selfFrom()==='baqarah' ? 1 : -1;   /* بداية اختارها بنفسه */
   var pl=bqnPlan(id);
   return (pl && pl.from==='البقرة') ? 1 : -1;
+}
+/* ---------- بداية المسار الحرّ: من الناس نزولاً أم من البقرة صعوداً ---------- */
+function selfFrom(){ return (SET.selfFrom==='baqarah') ? 'baqarah' : 'nas'; }
+/* هل أجاب عن السؤال؟ ما لم يُجب مشى على الناس، ولم يُعلَّم له خيار */
+function selfDirPicked(){ return SET.selfFrom==='nas' || SET.selfFrom==='baqarah'; }
+/* أوّل سورة يبدأ منها: طرف نطاقه على الاتجاه الذي اختاره */
+function selfStartSurah(){
+  var list=allowedSurahs(); if(!list.length) return null;
+  var baq=(selfFrom()==='baqarah'), want=baq?2:114, i;
+  for(i=0;i<list.length;i++) if(list[i].n===want) return list[i];
+  return baq ? list[0] : list[list.length-1];
+}
+function selfDirHTML(){
+  var got=selfDirPicked(), f=selfFrom(), cur=selfStartSurah();
+  var row=function(v,e,t,d){
+    var on=(got && f===v);
+    return '<button type="button" class="onbopt'+(on?' sel':'')+'" data-sdir="'+v+'">'+
+      '<span class="oe">'+(on?'✅':e)+'</span>'+
+      '<span class="ot"><b>'+t+'</b><i>'+d+'</i></span></button>';
+  };
+  return '<div class="onbopts" style="margin-bottom:10px">'+
+      row('nas','🌙','من الناس','قِصار السور أوّلاً، ثم يصعد إلى البقرة')+
+      row('baqarah','📖','من البقرة','على ترتيب المصحف، من أوّله إلى آخره')+
+    '</div>'+
+    '<div class="note" style="margin-bottom:10px">'+
+      (got ? ('يبدأ حفظك من: <b>'+(cur?esc(cur.name):'—')+'</b>')
+           : 'اختر واحدة لنعرف من أين نبدأ بك.')+'</div>';
+}
+/* اختيار البداية يحرّك موضع المسار فوراً لمن هو على المسار الحرّ */
+function selfDirWire(root,after){
+  if(!root) return;
+  var bs=root.querySelectorAll('[data-sdir]'), i;
+  var hit=function(){
+    var v=(this.getAttribute('data-sdir')==='baqarah') ? 'baqarah' : 'nas';
+    SET.selfFrom=v;
+    /* اختيارُه البدايةَ يفتح الجزء الذي فيه — فلا يُطالَب بفتح ما طلبه بنفسه */
+    if(v==='baqarah') SET.juzFrom=1; else SET.juzTo=30;
+    if(!onPlan()) setPlan('self');
+    saveDB();
+    if(after) after();
+  };
+  for(i=0;i<bs.length;i++) bs[i].onclick=hit;
 }
 function onPlan(){ return planId()!=='self'; }
 function bqnState(){
@@ -5228,7 +5434,7 @@ function setPlan(id){
   }
   /* لا نورّث موضع الخطة السابقة: نبدأ من أوّل المسار الجديد */
   try{ clearScope(); }catch(e){}
-  var st=planStartSurah(p.planId);
+  var st=(p.planId==='self') ? ((selfStartSurah()||{}).n||0) : planStartSurah(p.planId);
   if(st) p.last=st;
   else{
     var list=allowedSurahs();
@@ -5336,6 +5542,38 @@ function bqnToday(){
            dayDone:(st.lastDone===todayNum()) };
 }
 /* لافتة «مراجعة اليوم من خطتك» — تظهر قبل اختيار نطاق منفصل */
+/* مقرَّر مراجعة اليوم في خطط «نور الوحي»: ما استحقّ من محفوظه بالمواعيد —
+   صندوقٌ كصندوق خطط «بالقرآن نحيا» سواء، فلا يُحرم أهلُ المسار الأوّل بيانَ يومهم. */
+function selfRevBanner(sfx){
+  var dl=[], pg=[];
+  try{ dl=dueSegs(); pg=duePages(); }catch(e){}
+  var revd=todayBox().reviews>0, done=(dl.length===0);
+  if(done && !revd) return '';                 /* لا مستحقّ ولا مراجعة — فلا صندوق */
+  var names=dl.slice(0,3).map(function(d){
+    return esc(d.s.name)+' '+arNum(d.from+1)+'—'+arNum(d.to);
+  }).join(' • ');
+  var more=dl.length>3 ? (' و'+arNum(dl.length-3)+' غيرها') : '';
+  return '<div class="revsum" style="margin:0 0 16px;text-align:right;position:relative">'+
+    (done?'<span title="تمّت مراجعة اليوم" style="position:absolute;top:-11px;left:-9px;'+
+      'background:linear-gradient(180deg,#34c47c,#147c40);color:#fff;border:2px solid #0b2a46;'+
+      'border-radius:50%;width:30px;height:30px;line-height:26px;text-align:center;'+
+      'font-size:16px;font-weight:900;box-shadow:0 4px 10px rgba(0,0,0,.35)">✓</span>':'')+
+    '<div style="font-size:15px">'+(onPlan()
+      ? '☀️ <b>وما استحقّ من محفوظك</b> — خارج مقرَّر خطتك'
+      : '☀️ <b>مراجعة اليوم</b> من خطط «نور الوحي»')+'</div>'+
+    '<div style="font-size:18px;font-weight:900;margin-top:6px">'+
+      (done ? 'أتممت مراجعة اليوم — أحسنت' : (names+more))+'</div>'+
+    '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:4px">'+
+      (done ? ('راجعت '+arNum(todayBox().reviews)+' جلسة اليوم')
+            : (arNum(dl.length)+' مقطع • '+arNum(pg.length)+' وجه'))+'</div>'+
+    (done?'':'<button type="button" class="btn blue big" id="selfRevGo'+sfx+'" '+
+      'style="margin:12px 0 0">☀️ ابدأ مراجعة اليوم — '+arNum(pg.length)+' وجه</button>')+
+  '</div>';
+}
+function selfRevWire(sfx){
+  var b=$('selfRevGo'+sfx); if(!b) return;
+  b.onclick=function(){ beginDueSession(); };
+}
 function bqnRevBanner(sfx){
   var T=bqnToday();
   if(!T || !T.r) return '';
@@ -5370,6 +5608,17 @@ function bqnRevStart(){
 function bqnRevWire(sfx){
   var b=$('bqnRevGo'+sfx); if(!b) return;
   b.onclick=function(){ bqnRevStart(); };
+}
+/* الانتقال إلى يوم الخطة التالي — يُستدعى من المسار ومن شاشة نهاية المقطع */
+function bqnNextDay(){
+  var T=null; try{ T=bqnToday(); }catch(e){}
+  if(!T) return false;
+  if(!(T.hifzDone&&T.revDone) &&
+     !confirm('لم يكتمل مقرَّر اليوم في سجلّك. أتنتقل إلى الغد؟')) return false;
+  T.st.lastDone=todayNum();
+  T.st.day=Math.min(T.st.day+1,T.plan.n); T.st.rp=0; saveDB();
+  openBqn();
+  return true;
 }
 
 /* ---------- وصف المسار النشط: للإعدادات والمعالج ---------- */
@@ -5446,6 +5695,7 @@ function onbBlocked(){
   if(ONB.i===0 && !(profile.name||'').trim()) return '✍️ اكتب اسمك أوّلاً';
   if(ONB.i===1){
     if(!curP().planChosen) return '🧭 اختر خطة حفظك أوّلاً — من قسمَي الخطط أعلاه';
+    if(!onPlan() && !selfDirPicked()) return '🧭 وبقيت واحدة: من أين تبدأ — من الناس أم من البقرة؟';
     if(!curP().priorMode)  return '📌 اختر: أبدأ من جديد، أو أسجّل حفظي السابق';
   }
   return '';
@@ -5454,9 +5704,17 @@ function onbBlocked(){
 function onbNudge(msg){
   try{ navToast(msg); }catch(e){ try{ alert(msg); }catch(e2){} }
   var el=(ONB.i===0)?$('onbName')
-        :((!curP().planChosen)?$('onbBody'):$('onbPMode'));
+        :((!curP().planChosen)?$('onbBody')
+        :((!onPlan()&&!selfDirPicked()&&$('onbDirQ'))?$('onbDirQ'):$('onbPMode')));
   try{ if(el&&el.scrollIntoView) el.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
   if(ONB.i===0){ try{ $('onbName').focus(); }catch(e){} }
+}
+/* بعد اختيار المقدار: يُساق بصره إلى السؤال، ولا يُترك ليكتشفه بنفسه */
+function onbAskDir(){
+  if(onPlan() || !curP().planChosen || selfDirPicked()) return;
+  var q=$('onbDirQ'); if(!q) return;
+  try{ q.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
+  try{ navToast('🧭 وبقيت واحدة: من أين تبدأ؟'); }catch(e){}
 }
 function onbGate(){
   var b=$('onbNext'); if(!b) return;
@@ -5733,7 +5991,8 @@ var SELF_SIZES=[['q','🌱','ربع صفحة'],['h','🌿','نصف صفحة'],['
                 ['3','3️⃣','ثلاث آيات'],['4','4️⃣','أربع آيات'],['5','5️⃣','خمس آيات'],['8','8️⃣','ثماني آيات']];
 function renderBqnList(){
   var p=planStore(), id=p.planId, m=segMode(), h='', selfBody='', bqnBody='';
-  selfBody+='<div class="note" style="margin-bottom:10px">تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة.</div>'+
+  selfBody+='<div class="lbl" style="margin-bottom:6px">📏 حجم المقطع</div>'+
+     '<div class="note" style="margin-bottom:10px">تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة.</div>'+
      '<div class="onbopts">';
   SELF_SIZES.forEach(function(z){
     var on=(id==='self' && m===z[0]), dn=doneSegsCountFor(z[0]), tot=khatmaSegs(z[0]);
@@ -5743,6 +6002,9 @@ function renderBqnList(){
        (dn?(' • أتممت '+arNum(dn)+' من '+arNum(tot)+' مقطعاً'):'')+'</i></span></button>';
   });
   selfBody+='</div>';
+  /* السؤال بعد المقدار: اختار كم يحفظ، فيُسأل من أين يبدأ */
+  if(id==='self')
+    selfBody+='<div class="lbl" style="margin:16px 0 6px">🧭 من أين تبدأ؟</div>'+selfDirHTML();
   bqnBody+='<div class="revsum" style="margin:0 0 12px">منقولة عن <b>'+esc(BQN_SRC_T)+'</b><br>'+
      '<small style="font-weight:700;opacity:.85">'+esc(BQN_SRC_S)+'</small></div>'+
      '<div class="onbopts">';
@@ -5762,6 +6024,7 @@ function renderBqnList(){
       foldHTML('fBqn','📅 خطط «بالقرآن نحيا»'+(pn?(' — ✅ '+esc(pn.t)):''),false,bqnBody);
   $('bqnList').innerHTML=h;
   foldBind($('bqnList'));
+  selfDirWire($('bqnList'), function(){ renderBqnList(); });
   var pick=function(el){
     var sid=el.getAttribute('data-self');
     if(sid){ SET.segMode=sid; setPlan('self'); ensureAllSchedules(); }
@@ -6255,8 +6518,14 @@ function readSettings(){
   SET.reps=parseInt($('setReps').value,10)||1;
   SET.font=parseInt($('setFont').value,10)||34;
 
+  var jf=SET.juzFrom, jt=SET.juzTo;
   SET.juzFrom=parseInt($('setJuzFrom').value,10)||1;
   SET.juzTo=parseInt($('setJuzTo').value,10)||30;
+  /* تغيّر النطاق يغيّر طرف المسار — فيُعاد المرساة إلى بدايته ليقع على أوّل ما لم يُحفظ */
+  if(!onPlan() && (jf!==SET.juzFrom || jt!==SET.juzTo)){
+    var s0=selfStartSurah();
+    if(s0){ curP().last=s0.n; curSurah=s0; }
+  }
   SET.sound=$('setSound').checked;
   SET.glow=$('setGlow').checked;
   SET.cele=$('setCele').checked;
@@ -6326,10 +6595,11 @@ function onbOpts(box,list,get,set,after){
     return '<button type="button" class="onbopt'+(String(get())===String(o.v)?' sel':'')+'" data-v="'+o.v+'">'+
       '<span class="oe">'+o.e+'</span><span class="ot"><b>'+o.t+'</b><i>'+o.d+'</i></span>'+(o.x||'')+'</button>';
   }).join('')+'</div>'+(after||'');
-  var bs=box.querySelectorAll('.onbopt');
+  /* أزرار هذه اللوحة وحدها — لا كل زرّ في الصفحة، فبعضها لغيرها */
+  var bs=box.querySelectorAll('.onbopt[data-v]');
   for(var k=0;k<bs.length;k++) bs[k].onclick=function(){
     set(this.getAttribute('data-v')); saveDB();
-    var all=box.querySelectorAll('.onbopt');
+    var all=box.querySelectorAll('.onbopt[data-v]');
     for(var z=0;z<all.length;z++)
       all[z].className='onbopt'+(String(get())===all[z].getAttribute('data-v')?' sel':'');
   };
@@ -6387,15 +6657,25 @@ function onbShow(i){
       {v:'8', e:'8️⃣', t:'ثماني آيات',      d:kh('8','للآيات القصيرة والسور المكية')}
     ], function(){ return (onPlan()||!curP().planChosen)? '' : String(SET.segMode||'q'); },
        function(v){ SET.segMode=v; setPlan('self'); curP().planChosen=1; ensureAllSchedules();
-                    saveDB(); setTimeout(function(){ onbShow(ONB.i); },0); },
+                    saveDB(); setTimeout(function(){ onbShow(ONB.i); onbAskDir(); },0); },
     '<div class="note">التقدير بمقطع واحد كل يوم، وهو للمصحف كاملاً — ولك أن تبدأ بجزء عمّ وحده.<br>'+
     'ولا تُقسَّم السورة القصيرة أبداً مهما كان الحجم: الناس والإخلاص وأمثالها مقطع واحد.</div>'+
     bqnOnbHTML());
     try{
       foldWrap(B.querySelector('.onbopts'),'fOSelf',
-        '🌙 خطط تطبيق «نور الوحي»'+((!onPlan()&&curP().planChosen)?(' — ✅ '+esc(segModeName())):''), false);
+        '🌙 خطط تطبيق «نور الوحي»'+((!onPlan()&&curP().planChosen)?(' — ✅ '+esc(segModeName())):''),
+        (!onPlan() && !!curP().planChosen));   /* تبقى مفتوحة ليرى السؤال بعد المقدار */
+      /* المقدار أوّلاً، فإذا اختاره سُئل: من أين تبدأ؟ */
+      var fb=$('fold_fOSelf');
+      if(fb){
+        fb.insertAdjacentHTML('afterbegin','<div class="lbl" style="margin-bottom:6px">📏 حجم المقطع</div>');
+        if(!onPlan() && curP().planChosen)
+          fb.insertAdjacentHTML('beforeend',
+            '<div class="lbl" id="onbDirQ" style="margin:16px 0 6px">🧭 من أين تبدأ؟</div>'+selfDirHTML());
+      }
     }catch(e){}
     bqnOnbWire();
+    selfDirWire(B, function(){ onbShow(ONB.i); });
     onbGate();
   }
   else if(st===2){                         /* تسجيل الصوت */
@@ -6464,6 +6744,26 @@ $('mapHome').onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){ e.preventD
 $('btnBackMap').onclick=function(){ if(!openJuz) openJuz=(curSurah?curSurah.juz:Math.max(SET.juzFrom,SET.juzTo)); renderMap(); show('scr-map'); };
 $('btnQuit').onclick=function(){ if(curSurah){ renderPath(); show('scr-path'); } else { renderMap(); show('scr-map'); } };
 $('xQuit').onclick=function(){ $('btnQuit').click(); };
+/* شارتا الفحص ومفاتيحها: Ctrl+Shift+Q يفتح الوضع ويغلقه، ثم «.» يتخطّى و«،» يُنهي */
+$('qaSkip').onclick=function(){ qaSkipRound(); };
+$('qaEnd').onclick =function(){ qaEndStage(); };
+$('qaDayUp').onclick  =function(){ qaDay(1); };
+$('qaDayDn').onclick  =function(){ qaDay(-1); };
+$('qaDayZero').onclick=function(){ qaDay(0); };
+qaSync();
+document.addEventListener('keydown', function(e){
+  if(e.ctrlKey && e.shiftKey && String(e.key).toLowerCase()==='q'){
+    e.preventDefault(); QA=!QA; qaSync();
+    try{ navToast(QA?'⏩ وضع الفحص: مفتوح':'⏩ وضع الفحص: مغلق'); }catch(_){}
+    return;
+  }
+  if(!QA || e.ctrlKey || e.altKey || e.metaKey) return;
+  var el=e.target, tag=(el&&el.tagName||'').toUpperCase();
+  if(tag==='INPUT'||tag==='TEXTAREA'||(el&&el.isContentEditable)) return;   /* لا يسرق حرفاً يكتبه */
+  if(!$('scr-play') || !$('scr-play').classList.contains('active')) return;
+  if(e.key==='.'){ e.preventDefault(); qaSkipRound(); }
+  else if(e.key===','){ e.preventDefault(); qaEndStage(); }
+});
 $('btnCertBack').onclick=function(){
   if(certFrom==='map'){ certFrom=''; renderMap(); show('scr-map'); return; }
   if(curSurah){ renderPath(); show('scr-path'); } else { renderMap(); show('scr-map'); }
@@ -6480,6 +6780,9 @@ $('btnReviewGo').onclick=function(){
   /* على خطة ولم تكتمل مراجعة اليوم؟ فليرَ مقرَّرها أوّلاً */
   var T=null; try{ T=bqnToday(); }catch(e){}
   if(T && T.r && !T.revDone){ startRevPlan(); return; }
+  /* وعلى خطط «نور الوحي» كذلك: ما استحقّ اليوم يُرى قبل المسار الحرّ */
+  var due=0; try{ due=dueSegs().length; }catch(e){}
+  if(due){ startRevPlan(); return; }
   if(curP().rev) beginRevPath(); else startRevPlan();
 };
 $('btnRevHome').onclick=function(){ renderPlayers(); show('scr-start'); };
