@@ -886,6 +886,10 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
 .exrow .btn{font-size:15px;padding:12px 10px}
 .exrow .btn .ico{font-size:1.5em}
 .exnote{font-size:12px;color:var(--mute);margin-top:8px;font-weight:700}
+/* درجةُ الاختبار: الرقمُ هو الخبر، فليكن أكبرَ ما في الشاشة */
+.exscore{font-size:34px;font-weight:900;color:var(--g1);line-height:1.2;margin:2px 0 8px}
+.exscore span{display:block;font-size:16px;color:#8a6100}
+.exscore.big{font-size:42px}
 
 @media print{
   body{background:#fff}
@@ -1045,6 +1049,7 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
     </div>
     <button class="btn primary big" id="btnGoMap">📖 ابدأ الحفظ</button>
     <button class="btn primary big" id="btnReviewGo">☀️ ابدأ المراجعة</button>
+    <button class="btn blue big" id="btnExam">📝 اختبر نفسي</button>
     <div class="row">
       <button class="btn blue" id="btnBuild">🕌 مسجدي</button>
       <button class="btn blue" id="btnShop">💎 متجري</button>
@@ -1147,6 +1152,23 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
       <button class="btn ghost" id="btnRevPlan">⚙️ نطاق المراجعة</button>
       <button class="btn ghost" id="btnRevQuit">🏠 البداية</button>
     </div>
+  </section>
+
+  <section class="screen" id="scr-exam">
+    <h1 id="exTitle">📝 اختبر نفسي</h1>
+    <div class="onbtop">
+      <div class="onbbar"><i id="exFill" style="width:25%"></i></div>
+      <div class="onbnum" id="exCount">1 من 4</div>
+    </div>
+    <p class="sub" id="exSub">—</p>
+    <div id="exBody"></div>
+    <div class="onbnav">
+      <button class="btn ghost" id="exBack" hidden>➡️ السابق</button>
+      <span class="onbgap"></span>
+      <button class="btn primary pulse" id="exNext">⬅️ التالي</button>
+      <button class="btn green big pulse" id="exGo" hidden style="margin:0;flex:1">▶️ ابدأ الاختبار</button>
+    </div>
+    <div class="row"><button class="btn ghost" id="btnExamHome">🏠 خروج</button></div>
   </section>
 
   <section class="screen" id="scr-bqn">
@@ -4504,6 +4526,7 @@ function qaEndStage(){
 }
 function runRound(){
   recReset();
+  if(S) S.e0=S.errors;      /* ليُعرف السؤالُ الذي أُصيب من أوّل محاولة */
   qaSync();
   $('playArea').className='qfill qcenter';
   if(!S) return;
@@ -4514,7 +4537,8 @@ function runRound(){
   $('pSeg').textContent=S.review?('☀️ '+arNum(r.segFrom+1)+'-'+arNum(r.segTo)):segLabel();
   var seghere = S.surah.name+' '+arNum(S.seg[0]+1)+'-'+arNum(S.seg[1]);
   $('stageChip').textContent =
-      S.rev==='quiz' ? ('🧩 أسئلة المراجعة • '+seghere)
+      S.rev==='exam' ? ('📝 اختبار • '+seghere)
+    : S.rev==='quiz' ? ('🧩 أسئلة المراجعة • '+seghere)
     : S.review       ? ('☀️ مراجعة اليوم • '+seghere)
     :                  (STAGES[S.stage].t+' • '+seghere);
   $('pStars').textContent = S.review ? '🔁' : arNum(peek(S.key).stars);
@@ -4529,6 +4553,9 @@ function runRound(){
     revpage:roundRevPage,edge:roundEdge})[r.t](r);
 }
 function nextRound(ok){
+  /* يُحسب قبل الزيادة: نظيفٌ إن لم يُخطئ فيه أصلاً */
+  var clean = (ok!==false) && !!S && (S.errors===S.e0);
+  if(S && S.rev==='exam'){ try{ examNote(S.rounds[S.i], clean); }catch(e){} }
   if(ok===false){
     S.errors++; comboMiss();
     if(S && S.rev==='quiz'){ var rr=S.rounds[S.i]; if(rr) revWeak(rr.page); }
@@ -5435,6 +5462,7 @@ function diffHTML(user,correct){
 
 /* ===== نهاية المرحلة / المقطع ===== */
 function finishStage(){
+  if(S.rev==='exam'){ finishExam(); return; }
   if(S.rev==='quiz'){ finishRevQuiz(); return; }
   if(S.rev==='page'){ finishRevPage(); return; }
   if(S.review){ finishReview(); return; }
@@ -7365,6 +7393,311 @@ function readSettings(){
   saveDB();
 }
 
+/* =========================================================
+   اختبر نفسي
+   ميزانٌ يزنُ به حفظه متى شاء: نطاقٌ يختاره، ونوعُ أسئلةٍ وعدد،
+   ثمّ درجةٌ تُقرأ وتُطبع. ولا يمسّ جدولةَ المراجعة ولا مقرَّرَ اليوم —
+   فالاختبارُ لا ينوب عن التعاهد، وإنّما يدلّ عليه.
+   ========================================================= */
+var EX={ i:0, init:0, fromS:114, fromA:1, toS:114, toA:6, kind:'mix', count:10, log:[], t0:0 };
+var EX_KINDS=[['mix','🎲','منوّعة','ترتيبُ كلماتٍ وكلمةٌ ناقصةٌ وترتيبُ آيات'],
+              ['words','🧩','ترتيب الكلمات','تُبعثر كلماتُ الآية فيعيد بناءها'],
+              ['missing','🔍','الكلمة الناقصة','تسقط كلمةٌ من الآية فيختارها']];
+var EX_COUNTS=[10,20,30,50];
+var EX_STEPS=['range','kind','count','ready'];
+var EX_HEAD={
+  range:['📖 ما نطاق الاختبار؟','من أين إلى أين تختبر نفسك — ولك أن تفتح المصحف'],
+  kind :['🧠 وما نوع الأسئلة؟','منوّعةً، أو نوعاً واحداً تريد تمحيصه'],
+  count:['🔢 وكم سؤالاً؟','كلّما كثرت كان الميزانُ أدقّ'],
+  ready:['✅ راجِعْ ثمّ ابدأ','هذا ما اخترتَه — وهذه حصيلتُه إن أتقنت']
+};
+/* حدّا النطاق مرتَّبان: لا يضرّ أن يقلبهما */
+function examEdges(){
+  var g0=gAt(EX.fromS,EX.fromA), g1=gAt(EX.toS,EX.toA);
+  return g1<g0 ? [g1,g0] : [g0,g1];
+}
+/* كلُّ آيةٍ في النطاق، ومعها حدودُ قطعتها في الوجه — منها تُؤخذ المشتّتات */
+function examItems(){
+  var e=examEdges(), g0=e[0], g1=e[1], out=[], P;
+  var p0=pageOfIdx(g0), p1=pageOfIdx(g1);
+  for(P=p0;P<=p1;P++){
+    pagePieces(P).forEach(function(pc){
+      for(var a=pc.from;a<pc.to;a++){
+        var g=GIDX[pc.s.n-1]+a;
+        if(g<g0||g>g1) continue;
+        out.push({ s:pc.s, a:a, from:pc.from, to:pc.to, P:P });
+      }
+    });
+  }
+  return out;
+}
+function examAyat(){ var e=examEdges(); return e[1]-e[0]+1; }
+function examPagesN(){ var e=examEdges(); return pageOfIdx(e[1])-pageOfIdx(e[0])+1; }
+/* سؤالٌ من آية: نوعُه ما اختاره، فإن تعذّر رجع إلى الناقصة */
+function examQ(it){
+  var t=EX.kind, pool, ch, pick, ws, span, lo;
+  if(t==='mix'){ pool=['missing','words','ayat']; t=pool[Math.floor(Math.random()*pool.length)]; }
+  if(t==='ayat' && (it.to-it.from)<3) t='missing';
+  if(t==='words'){
+    ch=wordChunks(it.s,it.a,WORDS_MIN);
+    if(ch && ch.length){
+      pick=ch[Math.floor(Math.random()*ch.length)];
+      return {t:'words',a:it.a,from:pick[0],to:pick[1],parts:1,part:0,surah:it.s,
+              segFrom:it.from,segTo:it.to,page:it.P};
+    }
+    t='missing';
+  }
+  if(t==='ayat'){
+    span=Math.min(4,it.to-it.from);
+    lo=Math.min(it.a, it.to-span);
+    if(lo<it.from) lo=it.from;
+    return {t:'ayat',from:lo,to:lo+span,surah:it.s,segFrom:it.from,segTo:it.to,page:it.P};
+  }
+  ws=wordsOf(ayahText(it.s,it.a));
+  if(!ws.length) return null;
+  return {t:'missing',a:it.a,wi:Math.floor(Math.random()*ws.length),surah:it.s,
+          segFrom:it.from,segTo:it.to,page:it.P};
+}
+/* بناءُ الأسئلة: لا يتكرّر سؤالٌ ما دام في النطاق سعة
+   — فإن ضاق النطاقُ عن العدد دار عليه من أوّله. */
+function examBuild(){
+  var items=examItems(); if(!items.length) return [];
+  var pool=[], seen={}, i, q, key, tries=Math.max(items.length*3, EX.count*6);
+  for(i=0;i<tries && pool.length<EX.count;i++){
+    q=examQ(items[i%items.length]);
+    if(!q) continue;
+    key=q.t+'|'+q.surah.n+'|'+(q.a!=null?q.a:q.from)+'|'+(q.wi!=null?q.wi:(q.from!=null?q.from:''));
+    if(seen[key]) continue;
+    seen[key]=1; pool.push(q);
+  }
+  pool=shuffle(pool);
+  if(!pool.length) return [];
+  var out=pool.slice(0,EX.count);
+  while(out.length<EX.count) out.push(pool[out.length%pool.length]);
+  return out;
+}
+/* ===== المعالج ===== */
+function examOpen(){
+  if(!EX.init){
+    EX.init=1;
+    /* يبدأ من نطاق مراجعته إن كان له نطاق، فأغلبُ الظنّ أنّه يختبر ما يتعاهده */
+    try{ revLoad(); if(REV.fromS){ EX.fromS=REV.fromS; EX.fromA=REV.fromA; EX.toS=REV.toS; EX.toA=REV.toA; } }catch(e){}
+  }
+  examShow(0); show('scr-exam');
+}
+function examShow(i){
+  var n=EX_STEPS.length;
+  EX.i=Math.max(0,Math.min(n-1,i||0));
+  var k=EX_STEPS[EX.i], hd=EX_HEAD[k];
+  $('exTitle').textContent=hd[0];
+  $('exSub').textContent=hd[1];
+  $('exFill').style.width=Math.round(100*(EX.i+1)/n)+'%';
+  $('exCount').textContent=arNum(EX.i+1)+' من '+arNum(n);
+  $('exBack').hidden=(EX.i===0);
+  var last=(EX.i===n-1);
+  $('exNext').hidden=last;
+  $('exGo').hidden=!last;
+  examBody(k);
+  examGate();
+  window.scrollTo(0,0);
+}
+function examBlocked(){
+  if(examAyat()<1) return '📖 النطاق فارغ — راجع اختيارك';
+  return '';
+}
+function examGate(){
+  var m=examBlocked();
+  [$('exNext'),$('exGo')].forEach(function(b){
+    if(!b) return;
+    b.title=m||'';
+    b.classList[m?'add':'remove']('waiting');
+  });
+}
+function examBody(k){
+  var h='';
+  if(k==='range'){
+    h='<div class="revbox"><div class="rl">من أين يبدأ الاختبار؟</div>'+
+      '<div class="revrow"><select id="exFS">'+revSurahOpts(EX.fromS)+'</select>'+
+      '<select id="exFA">'+revAyahOpts(EX.fromS,EX.fromA)+'</select></div>'+
+      '<div class="rl" style="margin:12px 0 8px">وإلى أين ينتهي؟</div>'+
+      '<div class="revrow"><select id="exTS">'+revSurahOpts(EX.toS)+'</select>'+
+      '<select id="exTA">'+revAyahOpts(EX.toS,EX.toA)+'</select></div>'+
+      '<button type="button" class="btn blue mini" id="exPick" style="width:100%;margin-top:12px">'+
+        '📖 افتح المصحف وحدّد النطاق</button></div>'+
+      '<div class="revsum" id="exRange"></div>';
+  }
+  else if(k==='kind'){
+    h='<div class="onbopts">'+EX_KINDS.map(function(z){
+      var on=(EX.kind===z[0]);
+      return '<button type="button" class="onbopt'+(on?' sel':'')+'" data-exk="'+z[0]+'">'+
+        '<span class="oe">'+(on?'✅':z[1])+'</span>'+
+        '<span class="ot"><b>'+esc(z[2])+'</b><i>'+esc(z[3])+'</i></span></button>';
+    }).join('')+'</div>';
+  }
+  else if(k==='count'){
+    h='<div class="revbox"><div class="rl">كم سؤالاً في الاختبار؟</div><div class="chips">'+
+      EX_COUNTS.map(function(c){
+        return '<button type="button" class="chipsel'+(EX.count===c?' sel':'')+'" data-exc="'+c+'">'+arNum(c)+'</button>';
+      }).join('')+'</div></div>'+
+      '<div class="note">العشرةُ تكفي لجسّ النبض، والخمسون ميزانٌ لا يُجامل.</div>';
+  }
+  else {
+    h=examSummary();
+  }
+  $('exBody').innerHTML=h;
+  examWire(k);
+}
+function examKindName(){
+  for(var i=0;i<EX_KINDS.length;i++) if(EX_KINDS[i][0]===EX.kind) return EX_KINDS[i][2];
+  return '';
+}
+/* حصيلةُ الإتقان: ثلاثُ جواهر عن كلّ صحيحةٍ من أوّل محاولة */
+var EX_GEM=3;
+function examSummary(){
+  var a=surahBy(EX.fromS), b=surahBy(EX.toS), ay=examAyat();
+  if(ay<1) return '<div class="revsum">النطاق فارغ — ارجع وصحّح الاختيار</div>';
+  return '<div class="revsum">من <b>'+esc(a.name)+' '+arNum(EX.fromA)+'</b> إلى <b>'+esc(b.name)+' '+arNum(EX.toA)+'</b><br>'+
+    arCount(ay,C_AYAH)+' • '+arCount(examPagesN(),C_PAGE)+'<br>'+
+    '<b>'+esc(examKindName())+'</b> • '+arCount(EX.count,C_QUES)+
+    '<div class="revtot">🎁 إن أتقنتَ الكلَّ: <b>'+arNum(EX_GEM*EX.count)+' 💎</b>'+
+      ' و '+arNum(Math.max(1,Math.floor(EX.count/4)))+' ⚙️ و 2 🔷</div>'+
+    '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:6px">'+
+      'الاختبارُ لا ينوب عن مراجعتك ولا يغيّر مواعيدها — إنّما يدلّك على موضع الخلل</div></div>';
+}
+function examWire(k){
+  if(k==='range'){
+    var sync=function(){
+      if($('exRange')) $('exRange').innerHTML=examSummary();
+      examGate();
+    };
+    $('exFS').onchange=function(){ EX.fromS=parseInt(this.value,10); EX.fromA=1; examBody('range'); };
+    $('exFA').onchange=function(){ EX.fromA=parseInt(this.value,10); sync(); };
+    $('exTS').onchange=function(){ EX.toS=parseInt(this.value,10); EX.toA=(surahBy(EX.toS)||SURAHS[0]).ayat.length; examBody('range'); };
+    $('exTA').onchange=function(){ EX.toA=parseInt(this.value,10); sync(); };
+    $('exPick').onclick=function(){
+      mfPickRange(gAt(EX.fromS,EX.fromA), function(fs,fa,ts,ta){
+        EX.fromS=fs; EX.fromA=fa; EX.toS=ts; EX.toA=ta;
+        examBody('range');
+        try{ navToast('📖 '+surahBy(fs).name+' '+arNum(fa)+' ← '+surahBy(ts).name+' '+arNum(ta)); }catch(e){}
+      });
+    };
+    sync();
+    return;
+  }
+  if(k==='kind'){
+    var ks=$('exBody').querySelectorAll('[data-exk]'), i;
+    for(i=0;i<ks.length;i++) ks[i].onclick=function(){
+      EX.kind=this.getAttribute('data-exk'); sPick(); examBody('kind');
+    };
+    return;
+  }
+  if(k==='count'){
+    var cs=$('exBody').querySelectorAll('[data-exc]'), j;
+    for(j=0;j<cs.length;j++) cs[j].onclick=function(){
+      EX.count=parseInt(this.getAttribute('data-exc'),10); sPick(); examBody('count');
+    };
+  }
+}
+/* ===== الاختبار نفسه ===== */
+function examBegin(){
+  var rounds=examBuild();
+  if(!rounds.length){ uiAlert('النطاق لا يصلح للاختبار — وسّعه قليلاً','📖'); return; }
+  EX.log=[]; EX.t0=Date.now();
+  var f0=rounds[0];
+  S={ surah:f0.surah, seg:[f0.segFrom,f0.segTo], si:0, key:segKey(f0.surah.n,f0.segFrom),
+      stage:4, review:true, rev:'exam', rounds:rounds, i:0, errors:0, due:[] };
+  show('scr-play'); runRound();
+}
+function examNote(r, ok){
+  if(!r) return;
+  EX.log.push({ t:r.t, s:(r.surah?r.surah.n:0), a:(r.a!=null?r.a:r.from), ok:!!ok });
+}
+var EX_GRADES=[[95,'مُتقِن','🏆'],[85,'ممتاز','🌟'],[70,'جيّد جدّاً','✨'],
+               [55,'جيّد — ويحتاج تثبيتاً','💪'],[0,'يحتاج مراجعةً قبل أن يُختبر','📖']];
+function examGrade(pct){
+  for(var i=0;i<EX_GRADES.length;i++) if(pct>=EX_GRADES[i][0]) return EX_GRADES[i];
+  return EX_GRADES[EX_GRADES.length-1];
+}
+/* أضعفُ المواضع: السورُ التي تكرّر فيها الخطأ، أكثرُها أوّلاً */
+function examWeakest(){
+  var by={}, i, e;
+  for(i=0;i<EX.log.length;i++){
+    e=EX.log[i]; if(e.ok||!e.s) continue;
+    by[e.s]=(by[e.s]||0)+1;
+  }
+  return Object.keys(by).sort(function(x,y){ return by[y]-by[x]; }).slice(0,4)
+    .map(function(sn){ var sx=surahBy(parseInt(sn,10)); return (sx?sx.name:'')+' ('+arNum(by[sn])+')'; });
+}
+var EX_LAST=null;   /* آخرُ نتيجةٍ — لتُطبع بعد قراءتها */
+function finishExam(){
+  var tot=EX.log.length||1, right=0, i;
+  for(i=0;i<EX.log.length;i++) if(EX.log[i].ok) right++;
+  var pct=Math.round(100*right/tot), g=examGrade(pct);
+  var secs=Math.max(1, Math.round((Date.now()-EX.t0)/1000));
+  var gems=EX_GEM*right, iron=Math.max(1,Math.floor(right/4)), glass=(pct>=90?2:0);
+  addGems(gems); addMat('iron',iron);
+  if(glass) addMat('glass',glass);
+  try{ checkBadges(); }catch(e){}
+  var a=surahBy(EX.fromS), b=surahBy(EX.toS);
+  EX_LAST={ right:right, tot:tot, pct:pct, grade:g[1], ic:g[2], secs:secs,
+            kind:examKindName(), from:(a?a.name:'')+' '+arNum(EX.fromA),
+            to:(b?b.name:'')+' '+arNum(EX.toA), weak:examWeakest(),
+            gems:gems, iron:iron, glass:glass, date:greg() };
+  $('playCard').classList.remove('bare');
+  $('mosque').removeAttribute('hidden');
+  $('mosque').innerHTML=mosqueSVG(1);
+  $('stageChip').textContent='📝 انتهى الاختبار';
+  $('barFill').style.width='100%';
+  $('playArea').className='';
+  var weak=EX_LAST.weak;
+  $('playArea').innerHTML=
+    '<div style="text-align:center"><div style="font-size:52px">'+g[2]+'</div>'+
+    '<h2 style="color:var(--g1);margin:6px 0">'+esc(g[1])+'</h2>'+
+    '<div class="exscore">'+arNum(right)+' / '+arNum(tot)+'<span>'+arNum(pct)+'%</span></div>'+
+    '<p style="color:#3d5b7a;font-size:15px;margin:0 0 10px">'+
+      esc(EX_LAST.from)+' ← '+esc(EX_LAST.to)+'<br>'+
+      esc(EX_LAST.kind)+' • '+arCount(tot,C_QUES)+' • ⏱️ '+examDur(secs)+
+      (weak.length? ('<br>راجِع: <b>'+esc(weak.join(' • '))+'</b>') : '<br>لم تُخطئ في موضع 👌')+'</p>'+
+    '<div style="color:#8a6100;font-weight:800;margin-bottom:12px">+'+arNum(gems)+' 💎 و '+arNum(iron)+' ⚙️'+
+      (glass?(' و '+arNum(glass)+' 🔷'):'')+'</div>'+
+    '<button class="btn green big pulse" id="btnExPrint">🖨️ اطبع نتيجتك</button>'+
+    '<button class="btn blue big" id="btnExAgain">🔁 اختبارٌ آخر</button>'+
+    '<button class="btn ghost big" id="btnExHome2" style="margin:0">🏠 البداية</button></div>';
+  $('btnExPrint').onclick=function(){ showExamCert(); };
+  $('btnExAgain').onclick=function(){ examShow(0); show('scr-exam'); };
+  $('btnExHome2').onclick=function(){ renderPlayers(); show('scr-start'); };
+}
+function examDur(s){
+  var m=Math.floor(s/60), r=s%60;
+  return m ? (arNum(m)+' د '+arNum(r)+' ث') : (arNum(r)+' ث');
+}
+/* شهادةُ النتيجة: تُطبع كما تُطبع شهادةُ الحفظ */
+function showExamCert(){
+  if(!EX_LAST) return;
+  var R=EX_LAST;
+  certFrom='exam';
+  $('certWrap').innerHTML=
+    '<div class="cert">'+
+      '<div class="orn">❖ ❖ ❖ ❖ ❖</div>'+
+      '<h2>📝 نتيجة اختبار</h2>'+
+      '<div class="ph" id="certAvatar"></div>'+
+      '<div style="font-size:14px;color:#4a627e">اختبر</div>'+
+      '<div class="who">'+esc(profile.name||'الطالب')+'</div>'+
+      '<div style="font-size:14px;color:#4a627e">نفسَه في</div>'+
+      '<div class="what">'+esc(R.from)+' ← '+esc(R.to)+'</div>'+
+      '<div class="exscore big">'+arNum(R.right)+' / '+arNum(R.tot)+'<span>'+arNum(R.pct)+'%</span></div>'+
+      '<div style="font-weight:900;color:#a1791a;font-size:19px;margin:4px 0 8px">'+R.ic+' '+esc(R.grade)+'</div>'+
+      '<div style="font-size:14px;color:#4a627e">'+esc(R.kind)+' • '+arCount(R.tot,C_QUES)+' • ⏱️ '+examDur(R.secs)+'</div>'+
+      (R.weak.length? ('<div style="font-size:13.5px;color:#4a627e;margin-top:8px">مواضعُ التثبيت: <b>'+esc(R.weak.join(' • '))+'</b></div>') : '')+
+      '<div class="meta2"><span>📅 '+greg()+'</span>'+(hijriDate()?'<span>🌙 '+hijriDate()+'</span>':'')+'</div>'+
+      '<div class="sign"><div>توقيع المعلّم / المستمع</div><div>ختم البيت 🏠</div></div>'+
+      '<div class="waqf">🤲 هذا التطبيق وقف لله تعالى — صدقة جارية عن أمي لمياء قباني</div>'+
+      '<div class="orn">❖ ❖ ❖ ❖ ❖</div>'+
+    '</div>';
+  renderAvatars();
+  show('scr-cert');
+}
+
 /* ===== الترحيب في الشاشة الرئيسية ===== */
 function renderHome(){
   try{ renderKhatma(); }catch(e){}
@@ -7609,11 +7942,25 @@ document.addEventListener('keydown', function(e){
   else if(e.key===','){ e.preventDefault(); qaEndStage(); }
 });
 $('btnCertBack').onclick=function(){
+  if(certFrom==='exam'){ certFrom=''; renderPlayers(); show('scr-start'); return; }
   if(certFrom==='badges'){ certFrom=''; renderBadges(); show('scr-badges'); return; }
   if(certFrom==='map'){ certFrom=''; renderMap(); show('scr-map'); return; }
   if(curSurah){ renderPath(); show('scr-path'); } else { renderMap(); show('scr-map'); }
 };
 $('btnPrint').onclick=function(){ window.print(); };
+$('btnExam').onclick=function(){ examOpen(); };
+$('btnExamHome').onclick=function(){ renderPlayers(); show('scr-start'); };
+$('exBack').onclick=function(){ examShow(EX.i-1); };
+$('exNext').onclick=function(){
+  var m=examBlocked();
+  if(m){ navToast(m); return; }
+  examShow(EX.i+1);
+};
+$('exGo').onclick=function(){
+  var m=examBlocked();
+  if(m){ navToast(m); return; }
+  examBegin();
+};
 $('btnSettings').onclick=$('btnSettings2').onclick=function(){ fillSettings(); show('scr-settings'); };
 $('btnSetBack').onclick=function(){ readSettings(); ensureAllSchedules(); openJuz=0; renderPlayers();
   if(curSurah&&inRange(curSurah)) openSurah(curSurah.n); else openSurah(defaultSurah().n); };
@@ -7843,7 +8190,7 @@ var NAV_BACK={ 'scr-look':'btnLookDone', 'scr-map':'btnBackStart', 'scr-path':'b
   'scr-rev':'btnRevHome', 'scr-revpath':'btnRevQuit', 'scr-build':'btnBuildBack',
   'scr-shop':'btnShopBack', 'scr-board':'btnBoardBack', 'scr-cert':'btnCertBack',
   'scr-badges':'btnBadgesBack', 'scr-bqn':'btnBqnHome',
-  'scr-settings':'btnSetBack' };
+  'scr-settings':'btnSetBack', 'scr-exam':'btnExamHome' };
 function curScreen(){ var e=document.querySelector('.screen.active'); return e?e.id:'scr-start'; }
 /* ===== تنبيهٌ وتأكيدٌ بثيمة التطبيق =====
    نوافذ المتصفّح تقول «This page says» وتقطع جوّ الشاشة، فهذه تخلفها.
@@ -7903,7 +8250,8 @@ function navBack(){
   /* ٣) داخل سؤال: كما لو ضغط ✕ */
   if(scr==='scr-play'){
     if(S && S.rev){
-      if(REV && REV.due){ renderPlayers(); show('scr-start'); }
+      if(S.rev==='exam'){ examShow(EX.i); show('scr-exam'); }
+      else if(REV && REV.due){ renderPlayers(); show('scr-start'); }
       else { renderRevPath(); show('scr-revpath'); }
     } else $('btnQuit').click();
     return true;
