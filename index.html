@@ -420,6 +420,10 @@ body.light .card.bare .diffline{color:var(--on2)}
 .opt.no{background:#ffe9e9;border-color:var(--red);color:#a12b2b}
 .blank{display:inline-block;min-width:90px;border-bottom:4px dotted var(--gold);color:transparent}
 .blank.filled{border-bottom-color:#1faa59;color:#12694a}
+/* الفراغُ الجاري: يُملأ الأوّلُ ثمّ الثاني، فيُضاء موضعُ الدور */
+.blank.cur{background:rgba(242,193,78,.22);border-radius:6px 6px 0 0;
+  border-bottom-color:#f2c14e;box-shadow:0 0 0 2px rgba(242,193,78,.35)}
+.m2note{text-align:center;font-weight:900;font-size:14px;color:var(--gold);margin:8px 0 2px}
 
 .acards{display:flex;flex-direction:column;gap:12px}
 .acard{font-family:"Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif;font-size:23px;background:#fff;
@@ -887,6 +891,58 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
 .exrow .btn .ico{font-size:1.5em}
 .exnote{font-size:12px;color:var(--mute);margin-top:8px;font-weight:700}
 /* درجةُ الاختبار: الرقمُ هو الخبر، فليكن أكبرَ ما في الشاشة */
+/* زرُّ الاختبار: شعلةٌ ثلجيّةٌ لا تُحرق، وإنّما تُشعل الهمّة.
+   الألوانُ صُلبةٌ لا متدرّجةٌ بمعرّفات، فلا تتصادم معرّفاتُ SVG في صفحةٍ واحدة. */
+/* لا إطارَ له ولا صندوق: يقف وحدَه كبصمةِ شاشةِ القفل — هالتان تتّسعان
+   من تحته وشعلةٌ تطفو فوقهما، فيُعرف أنّه بابٌ من نوعٍ آخر. */
+.examfp{display:flex;flex-direction:column;align-items:center;gap:2px;
+  width:100%;background:none;border:0;padding:6px 0 2px;margin:4px 0 16px;
+  cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent}
+.fpwrap{position:relative;display:flex;align-items:center;justify-content:center;
+  width:138px;height:138px;transition:transform .12s}
+.examfp:active .fpwrap{transform:scale(.93)}
+.fpring{position:absolute;inset:0;border-radius:50%;
+  border:2px solid rgba(126,224,255,.55);
+  box-shadow:0 0 30px rgba(126,224,255,.42), inset 0 0 30px rgba(126,224,255,.2);
+  animation:fpring 2.6s ease-out infinite;pointer-events:none}
+.fpring.r2{animation-delay:1.3s}
+@keyframes fpring{
+  0%{transform:scale(.66);opacity:0}
+  22%{opacity:.9}
+  100%{transform:scale(1.1);opacity:0}
+}
+.fplbl{font-size:16.5px;font-weight:900;color:var(--ttl);letter-spacing:.3px;
+  text-shadow:0 0 14px rgba(126,224,255,.55)}
+body.light .fplbl{text-shadow:0 0 10px rgba(31,176,239,.35)}
+.iceflame{flex:0 0 auto;width:76px;height:100px;display:block;position:relative;z-index:1;
+  filter:drop-shadow(0 0 12px rgba(126,224,255,.95))}
+.iceflame svg{width:100%;height:100%;display:block;overflow:visible}
+.iceflame .f1{fill:#cdefff}
+.iceflame .f2{fill:#79d3ff}
+.iceflame .f3{fill:#fff}
+@keyframes icelick{
+  0%,100%{transform:scale(1,1)}
+  30%{transform:scale(.93,1.11)}
+  55%{transform:scale(1.07,.95)}
+  78%{transform:scale(.97,1.04)}
+}
+@keyframes iceglow{
+  0%,100%{filter:drop-shadow(0 0 6px rgba(126,224,255,.8))}
+  50%{filter:drop-shadow(0 0 15px rgba(170,240,255,1))}
+}
+.iceflame{animation:iceglow 2.2s ease-in-out infinite}
+body.glow-off .fpring{animation:none;opacity:.5;transform:scale(.95)}
+@media (prefers-reduced-motion:reduce){
+  body:not(.glow-force) .fpring{animation:none;opacity:.5;transform:scale(.95)}
+}
+.iceflame .f1{transform-origin:50% 92%;animation:icelick 1.6s ease-in-out infinite}
+.iceflame .f2{transform-origin:50% 92%;animation:icelick 1.15s ease-in-out infinite reverse}
+.iceflame .f3{transform-origin:50% 92%;animation:icelick .8s ease-in-out infinite}
+/* من أطفأ الحركة في جهازه أو في اللعبة: شعلةٌ ساكنةٌ لا ترتعش */
+body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
+@media (prefers-reduced-motion:reduce){
+  body:not(.glow-force) .iceflame,body:not(.glow-force) .iceflame path{animation:none}
+}
 .exscore{font-size:34px;font-weight:900;color:var(--g1);line-height:1.2;margin:2px 0 8px}
 .exscore span{display:block;font-size:16px;color:#8a6100}
 .exscore.big{font-size:42px}
@@ -1049,7 +1105,19 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
     </div>
     <button class="btn primary big" id="btnGoMap">📖 ابدأ الحفظ</button>
     <button class="btn primary big" id="btnReviewGo">☀️ ابدأ المراجعة</button>
-    <button class="btn blue big" id="btnExam">📝 اختبر نفسي</button>
+    <button type="button" class="examfp" id="btnExam" aria-label="اختبر نفسي">
+      <span class="fpwrap" aria-hidden="true">
+        <span class="fpring"></span><span class="fpring r2"></span>
+        <span class="iceflame">
+          <svg viewBox="0 0 24 34">
+            <path class="f1" d="M12 1.5 C14.4 8, 20.5 10.5, 20.5 19.5 A8.5 8.5 0 0 1 3.5 19.5 C3.5 12.8, 8.8 10.4, 12 1.5 Z"/>
+            <path class="f2" d="M12 11 C13.4 14.8, 16.2 16.2, 16.2 20.4 A4.2 4.2 0 0 1 7.8 20.4 C7.8 17.2, 10.4 15.2, 12 11 Z"/>
+            <path class="f3" d="M12 17.4 C12.7 19.2, 13.9 19.9, 13.9 21.8 A1.9 1.9 0 0 1 10.1 21.8 C10.1 20.3, 11.3 19.5, 12 17.4 Z"/>
+          </svg>
+        </span>
+      </span>
+      <span class="fplbl">اختبر نفسي</span>
+    </button>
     <div class="row">
       <button class="btn blue" id="btnBuild">🕌 مسجدي</button>
       <button class="btn blue" id="btnShop">💎 متجري</button>
@@ -1163,12 +1231,12 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
     <p class="sub" id="exSub">—</p>
     <div id="exBody"></div>
     <div class="onbnav">
+      <button class="btn ghost" id="btnExamHome">🏠 خروج</button>
       <button class="btn ghost" id="exBack" hidden>➡️ السابق</button>
       <span class="onbgap"></span>
       <button class="btn primary pulse" id="exNext">⬅️ التالي</button>
       <button class="btn green big pulse" id="exGo" hidden style="margin:0;flex:1">▶️ ابدأ الاختبار</button>
     </div>
-    <div class="row"><button class="btn ghost" id="btnExamHome">🏠 خروج</button></div>
   </section>
 
   <section class="screen" id="scr-bqn">
@@ -4550,7 +4618,7 @@ function runRound(){
   $('fb').textContent=''; $('fb').className='fb';
   try{ comboChip(); }catch(e){}
   if(r.t==='edge') $('stageChip').textContent='🎯 بداية ونهاية';
-  ({read:roundRead,words:roundWords,missing:roundMissing,ayat:roundAyat,recite:roundRecite,
+  ({read:roundRead,words:roundWords,missing:roundMissing,miss2:roundMiss2,ayat:roundAyat,recite:roundRecite,
     revpage:roundRevPage,edge:roundEdge})[r.t](r);
 }
 function nextRound(ok){
@@ -4569,11 +4637,13 @@ function nextRound(ok){
 /* ===== سلسلة الإجابات الصحيحة ===== */
 var CELE={ q:[], on:false, tm:0, then:null };
 var CELE_MS=5000;                                   /* مدّة الاحتفال قبل أن يذوب وحده */
-var QTYPES={ words:1, missing:1, ayat:1, edge:1 };   /* ما يُعرف صوابه من خطئه */
+var QTYPES={ words:1, missing:1, miss2:1, ayat:1, edge:1 };   /* ما يُعرف صوابه من خطئه */
 /* التسميع بالصوت يقرّه اللاعب على نفسه، فلا سبيل إلى الحكم عليه:
    لا يزيد السلسلة ولا يقطعها. أمّا تسميع الكتابة فيُقابَل بالنصّ. */
 function comboCounts(r){
   if(!r) return false;
+  /* الاختبارُ خارج السلسلة: لا يزيدها إن أصاب ولا يقطعها إن أخطأ */
+  if(S && S.rev==='exam') return false;
   if(QTYPES[r.t]) return true;
   return r.t==='recite' && SET.level==='hard';
 }
@@ -4607,6 +4677,7 @@ function comboSet(n){
 }
 function comboChip(){
   var e=$('comboChip'); if(!e) return;
+  if(S && S.rev==='exam'){ e.hidden=true; return; }   /* لا تُعرض في الاختبار */
   var c=comboNow();
   if(c<1){ e.hidden=true; return; }   /* تُرى من أوّل إجابةٍ لا بعد الثالثة */
   $('comboN').textContent=arNum(c)+'/'+arNum(comboNext(c));
@@ -4982,7 +5053,9 @@ function roundWords(r){
     '<div class="anslines" id="ansLines"></div>'+
     '<div class="qgap"></div>'+
     '<div class="chips" id="chips">'+pool.map(function(w,i){ return '<button class="chip" data-i="'+i+'">'+esc(w)+'</button>'; }).join('')+'</div>'+
-    '<button class="btn ghost mini" id="btnHintW" style="width:100%;margin-top:14px">💡 تلميح</button>';
+    /* لا تلميحَ في الاختبار: الميزانُ لا يُعان */
+    ((S&&S.rev==='exam') ? '' :
+      '<button class="btn ghost mini" id="btnHintW" style="width:100%;margin-top:14px">💡 تلميح</button>');
   /* كم سطراً تحتاجه الإجابة؟ نحاكيها على سطر مخفيّ بعرض السطر الحقيقي،
      ثم نعرض ثلاثة أسطر على الأقل — فلا يتغيّر الشكل بين آية وأخرى. */
   var lines=$('ansLines');
@@ -5031,7 +5104,7 @@ function roundWords(r){
       }
     };
   }
-  $('btnHintW').onclick=function(){
+  if($('btnHintW')) $('btnHintW').onclick=function(){
     /* أوّلُ تلميحٍ في كل جلسة بيانٌ بلا ثمن: يُعلَم قبل أن يُؤخذ منه شيء،
        ولا تُكشف الكلمة. ومن مَلّ التذكير كتمه بخانته فلا يُعاد عليه أبداً. */
     if(!load(LS.hint,0) && !HINT_SEEN){ HINT_SEEN=true; uiBox('التلميح يدلّك على الكلمة،\nفإن استعنتَ به حُسب خطأً وانقطعت سلسلتُك.\nوهذه لك بلا ثمن — جرّب بنفسك، فإن احتجتَه فاضغطه مرّةً أخرى.','💡','✅ فهمت',null,null,LS.hint); return; }
@@ -5166,22 +5239,32 @@ function roundEdge(r){
   }
 }
 
-function roundMissing(r){
-  var s=S.surah, ws=wordsOf(ayahText(s,r.a));
-  if(r.wi>=ws.length) r.wi=ws.length-1;
-  var correct=ws[r.wi];
-  /* المشتّتات من كلمات المقطع نفسه ثم السورة، بطول متقارب */
+/* المشتّتات من كلمات المقطع نفسه ثم السورة، بطول متقارب.
+   وتُستثنى كلماتٌ بعينها: في الفراغين لا يصحّ أن يكون مشتّتُ أحدهما جوابَ الآخر. */
+function missOptions(s, correct, skip){
   var bank={}, i;
-  for(i=S.seg[0];i<S.seg[1];i++) wordsOf(ayahText(s,i)).forEach(function(w){ if(norm(w)!==norm(correct)) bank[w]=1; });
+  var no=function(w){
+    if(norm(w)===norm(correct)) return true;
+    if(skip){ for(var k=0;k<skip.length;k++) if(norm(w)===norm(skip[k])) return true; }
+    return false;
+  };
+  for(i=S.seg[0];i<S.seg[1];i++) wordsOf(ayahText(s,i)).forEach(function(w){ if(!no(w)) bank[w]=1; });
   if(Object.keys(bank).length<6){
     for(i=0;i<s.ayat.length && Object.keys(bank).length<14;i++)
-      wordsOf(ayahText(s,i)).forEach(function(w){ if(norm(w)!==norm(correct)) bank[w]=1; });
+      wordsOf(ayahText(s,i)).forEach(function(w){ if(!no(w)) bank[w]=1; });
   }
   var cand=Object.keys(bank).sort(function(a,b){
     return Math.abs(a.length-correct.length)-Math.abs(b.length-correct.length);
   }).slice(0,10);
   var nOpts=SET.level==='hard'?4:3;
-  var opts=shuffle(cand).slice(0,nOpts-1); opts.push(correct); shuffle(opts);
+  var opts=shuffle(cand).slice(0,nOpts-1); opts.push(correct);
+  return shuffle(opts);
+}
+function roundMissing(r){
+  var s=S.surah, ws=wordsOf(ayahText(s,r.a));
+  if(r.wi>=ws.length) r.wi=ws.length-1;
+  var correct=ws[r.wi];
+  var opts=missOptions(s, correct, null);
   var html='';
   ws.forEach(function(w,i){ html += (i===r.wi ? '<span class="blank" id="blk">'+esc(w)+'</span>' : esc(w))+' '; });
   $('playArea').innerHTML=
@@ -5201,6 +5284,63 @@ function roundMissing(r){
       }
     };
   }
+}
+
+/* ===== فراغان في آيةٍ واحدة =====
+   احتمالُ إصابتهما بالحدس ينزل من الثلث إلى التسع، فأجرُه ضِعفُ الواحد.
+   ولا يتجاوران لئلّا تنقطع الجملةُ فتصير الآيةُ لغزاً، ويُملآن على
+   الترتيب: الأوّلُ مضاءٌ حتى يُصاب، ثمّ ينتقل الضوءُ إلى الثاني. */
+function roundMiss2(r){
+  var s=S.surah, ws=wordsOf(ayahText(s,r.a));
+  if(ws.length<5){ roundMissing(r); return; }        /* آيةٌ قصيرةٌ لا تحتمل فراغين */
+  var i1=Math.min(r.wi||0, ws.length-1), i2=Math.min(r.wi2==null?0:r.wi2, ws.length-1);
+  if(Math.abs(i1-i2)<2) i2 = (i1+2<ws.length) ? i1+2 : i1-2;
+  if(i2<0) i2=ws.length-1;
+  if(i1>i2){ var t=i1; i1=i2; i2=t; }
+  var w1=ws[i1], w2=ws[i2];
+  var o1=missOptions(s,w1,[w2]), o2=missOptions(s,w2,[w1]);
+  var step=0, answered=false;
+  var html='';
+  ws.forEach(function(w,i){
+    if(i===i1)      html+='<span class="blank" id="blkA">'+esc(w)+'</span> ';
+    else if(i===i2) html+='<span class="blank" id="blkB">'+esc(w)+'</span> ';
+    else            html+=esc(w)+' ';
+  });
+  $('playArea').innerHTML=
+    '<div class="hintline">أكمل الفراغين في الآية '+arNum(r.a+1)+' من '+esc(s.name)+'</div>'+
+    '<div class="ayahbox"><div class="ayah" style="font-size:'+Math.min(SET.font,34)+'px">'+html+'</div></div>'+
+    '<div class="m2note" id="m2Note"></div>'+
+    '<div class="opts" id="opts"></div>';
+  function draw(){
+    var cur=(step===0)?'blkA':'blkB', opts=(step===0)?o1:o2, want=(step===0)?w1:w2;
+    $('blkA').classList[step===0?'add':'remove']('cur');
+    $('blkB').classList[step===1?'add':'remove']('cur');
+    $('m2Note').textContent=(step===0)?'① الفراغ الأوّل':'② الفراغ الثاني';
+    $('opts').innerHTML=opts.map(function(o,i){
+      return '<button class="opt" data-i="'+i+'">'+esc(o)+'</button>';
+    }).join('');
+    var ob=$('opts').querySelectorAll('.opt'), k;
+    for(k=0;k<ob.length;k++) ob[k].onclick=function(){
+      if(answered) return;
+      if(this.textContent!==want){
+        this.classList.add('no'); this.disabled=true; sBad(); S.errors++; comboMiss();
+        $('fb').className='fb bad'; $('fb').textContent='حاول مرة أخرى 💪';
+        return;
+      }
+      this.classList.add('ok');
+      $(cur).classList.add('filled'); $(cur).classList.remove('cur');
+      if(step===0){
+        step=1; sPick();
+        $('fb').className='fb good'; $('fb').textContent='الأوّل صحيح ✅ — وبقي الثاني';
+        setTimeout(draw,320);
+        return;
+      }
+      answered=true;
+      sGood(); $('fb').className='fb good'; $('fb').textContent='أصبتَ الفراغين ✅✅';
+      setTimeout(function(){ nextRound(true); },520);
+    };
+  }
+  draw();
 }
 
 function roundAyat(r){
@@ -6968,7 +7108,7 @@ function revStartPage(){
 function revSkipToQuiz(){ REV.pi=REV.pages.length; revStartPage(); }
 
 function revQuestion(it,P,k){
-  var kinds=['missing','words','ayat','edge'];
+  var kinds=['missing','words','ayat','edge','miss2'];
   var kind=kinds[k%4];
   if(kind==='ayat' && (it.to-it.from)<3) kind='missing';      /* الترتيب يحتاج ثلاث آيات فأكثر */
   if(kind==='edge'){
@@ -6977,6 +7117,16 @@ function revQuestion(it,P,k){
       : null;
     if(eq) return eq;
     kind='missing';                                           /* صفحة لا تصلح: نعود للناقصة */
+  }
+  if(kind==='miss2'){
+    var w2s=wordsOf(ayahText(it.s,it.a));
+    if(w2s.length>=5){
+      var k1=Math.floor(Math.random()*(w2s.length-2));
+      var k2=k1+2+Math.floor(Math.random()*(w2s.length-k1-2));
+      return {t:'miss2',a:it.a,wi:k1,wi2:k2,surah:it.s,
+              segFrom:it.from,segTo:it.to,page:P};
+    }
+    kind='missing';                                         /* آيةٌ لا تحتمل فراغين */
   }
   if(kind==='missing'){
     var ws=wordsOf(ayahText(it.s,it.a));
@@ -7440,7 +7590,9 @@ function readSettings(){
 var EX={ i:0, init:0, fromS:114, fromA:1, toS:114, toA:6, kind:'mix', count:10, log:[], t0:0 };
 var EX_KINDS=[['mix','🎲','منوّعة','ترتيبُ كلماتٍ وكلمةٌ ناقصةٌ وترتيبُ آيات'],
               ['words','🧩','ترتيب الكلمات','تُبعثر كلماتُ الآية فيعيد بناءها'],
-              ['missing','🔍','الكلمة الناقصة','تسقط كلمةٌ من الآية فيختارها']];
+              ['missing','🔍','الكلمة الناقصة','تسقط كلمةٌ من الآية فيختارها'],
+              ['ayat','🔢','ترتيب الآيات','تُبعثر آياتُ المقطع فيعيد ترتيبها'],
+              ['miss2','🔍🔍','فراغان','كلمتان تسقطان من الآية — أجرُهما ضِعف']];
 var EX_COUNTS=[10,20,30,50];
 var EX_STEPS=['range','kind','count','ready'];
 var EX_HEAD={
@@ -7473,8 +7625,8 @@ function examAyat(){ var e=examEdges(); return e[1]-e[0]+1; }
 function examPagesN(){ var e=examEdges(); return pageOfIdx(e[1])-pageOfIdx(e[0])+1; }
 /* سؤالٌ من آية: نوعُه ما اختاره، فإن تعذّر رجع إلى الناقصة */
 function examQ(it){
-  var t=EX.kind, pool, ch, pick, ws, span, lo;
-  if(t==='mix'){ pool=['missing','words','ayat']; t=pool[Math.floor(Math.random()*pool.length)]; }
+  var t=EX.kind, pool, ch, pick, ws, span, lo, j1, j2;
+  if(t==='mix'){ pool=['missing','words','ayat','miss2']; t=pool[Math.floor(Math.random()*pool.length)]; }
   if(t==='ayat' && (it.to-it.from)<3) t='missing';
   if(t==='words'){
     ch=wordChunks(it.s,it.a,WORDS_MIN);
@@ -7493,6 +7645,15 @@ function examQ(it){
   }
   ws=wordsOf(ayahText(it.s,it.a));
   if(!ws.length) return null;
+  if(t==='miss2'){
+    if(ws.length<5) t='missing';                    /* آيةٌ لا تحتمل فراغين */
+    else{
+      j1=Math.floor(Math.random()*(ws.length-2));
+      j2=j1+2+Math.floor(Math.random()*(ws.length-j1-2));
+      return {t:'miss2',a:it.a,wi:j1,wi2:j2,surah:it.s,
+              segFrom:it.from,segTo:it.to,page:it.P};
+    }
+  }
   return {t:'missing',a:it.a,wi:Math.floor(Math.random()*ws.length),surah:it.s,
           segFrom:it.from,segTo:it.to,page:it.P};
 }
@@ -7504,7 +7665,7 @@ function examBuild(){
   for(i=0;i<tries && pool.length<EX.count;i++){
     q=examQ(items[i%items.length]);
     if(!q) continue;
-    key=q.t+'|'+q.surah.n+'|'+(q.a!=null?q.a:q.from)+'|'+(q.wi!=null?q.wi:(q.from!=null?q.from:''));
+    key=q.t+'|'+q.surah.n+'|'+(q.a!=null?q.a:q.from)+'|'+(q.wi!=null?q.wi:(q.from!=null?q.from:''))+'|'+(q.wi2==null?'':q.wi2);
     if(seen[key]) continue;
     seen[key]=1; pool.push(q);
   }
@@ -7532,6 +7693,8 @@ function examShow(i){
   $('exFill').style.width=Math.round(100*(EX.i+1)/n)+'%';
   $('exCount').textContent=arNum(EX.i+1)+' من '+arNum(n);
   $('exBack').hidden=(EX.i===0);
+  /* الخروجُ في الخطوة الأولى وحدَها: بعدها «السابق» يكفي مخرجاً */
+  $('btnExamHome').hidden=(EX.i>0);
   var last=(EX.i===n-1);
   $('exNext').hidden=last;
   $('exGo').hidden=!last;
@@ -7562,7 +7725,7 @@ function examBody(k){
       '<select id="exTA">'+revAyahOpts(EX.toS,EX.toA)+'</select></div>'+
       '<button type="button" class="btn blue mini" id="exPick" style="width:100%;margin-top:12px">'+
         '📖 افتح المصحف وحدّد النطاق</button></div>'+
-      '<div class="revsum" id="exRange"></div>';
+      '<div class="revsum" id="exRange"></div>';   /* مقدارُ النطاق وحدَه */
   }
   else if(k==='kind'){
     h='<div class="onbopts">'+EX_KINDS.map(function(z){
@@ -7573,7 +7736,7 @@ function examBody(k){
     }).join('')+'</div>';
   }
   else if(k==='count'){
-    h='<div class="revbox"><div class="rl">كم سؤالاً في الاختبار؟</div><div class="chips">'+
+    h='<div class="revbox"><div class="rl">كم سؤالاً في الاختبار كلّه؟</div><div class="chips">'+
       EX_COUNTS.map(function(c){
         return '<button type="button" class="chipsel'+(EX.count===c?' sel':'')+'" data-exc="'+c+'">'+arNum(c)+'</button>';
       }).join('')+'</div></div>'+
@@ -7589,15 +7752,24 @@ function examKindName(){
   for(var i=0;i<EX_KINDS.length;i++) if(EX_KINDS[i][0]===EX.kind) return EX_KINDS[i][2];
   return '';
 }
+/* وزنُ السؤال: الفراغان ضِعفُ الواحد، لأنّ احتمال الحدس فيهما التسع لا الثلث */
+function qWeight(t){ return t==='miss2' ? 2 : 1; }
 /* حصيلةُ الإتقان: ثلاثُ جواهر عن كلّ صحيحةٍ من أوّل محاولة */
 var EX_GEM=3;
+/* مقدارُ النطاق وحدَه: يُعرض في خطوة النطاق قبل أن يُختار نوعٌ أو عدد */
+function examRangeLine(){
+  var a=surahBy(EX.fromS), b=surahBy(EX.toS), ay=examAyat();
+  if(ay<1) return '<div class="revsum">النطاق فارغ — صحّح الاختيار</div>';
+  return '<div class="revsum">من <b>'+esc(a.name)+' '+arNum(EX.fromA)+'</b> إلى <b>'+esc(b.name)+' '+arNum(EX.toA)+'</b><br>'+
+    arCount(ay,C_AYAH)+' • '+arCount(examPagesN(),C_PAGE)+'</div>';
+}
 function examSummary(){
   var a=surahBy(EX.fromS), b=surahBy(EX.toS), ay=examAyat();
   if(ay<1) return '<div class="revsum">النطاق فارغ — ارجع وصحّح الاختيار</div>';
   return '<div class="revsum">من <b>'+esc(a.name)+' '+arNum(EX.fromA)+'</b> إلى <b>'+esc(b.name)+' '+arNum(EX.toA)+'</b><br>'+
     arCount(ay,C_AYAH)+' • '+arCount(examPagesN(),C_PAGE)+'<br>'+
-    '<b>'+esc(examKindName())+'</b> • '+arCount(EX.count,C_QUES)+
-    '<div class="revtot">🎁 إن أتقنتَ الكلَّ: <b>'+arNum(EX_GEM*EX.count)+' 💎</b>'+
+    '<b>'+esc(examKindName())+'</b> • '+arCount(EX.count,C_QUES)+' في الاختبار كلّه'+
+    '<div class="revtot">🎁 إن أتقنتَ الكلَّ: <b>'+arNum(EX_GEM*EX.count*qWeight(EX.kind))+' 💎</b>'+
       ' و '+arNum(Math.max(1,Math.floor(EX.count/4)))+' ⚙️ و 2 🔷</div>'+
     '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:6px">'+
       'الاختبارُ لا ينوب عن مراجعتك ولا يغيّر مواعيدها — إنّما يدلّك على موضع الخلل</div></div>';
@@ -7605,7 +7777,7 @@ function examSummary(){
 function examWire(k){
   if(k==='range'){
     var sync=function(){
-      if($('exRange')) $('exRange').innerHTML=examSummary();
+      if($('exRange')) $('exRange').innerHTML=examRangeLine();
       examGate();
     };
     $('exFS').onchange=function(){ EX.fromS=parseInt(this.value,10); EX.fromA=1; examBody('range'); };
@@ -7635,6 +7807,14 @@ function examWire(k){
       EX.count=parseInt(this.getAttribute('data-exc'),10); sPick(); examBody('count');
     };
   }
+}
+/* الخروجُ من الاختبار خسارتُه كلِّه، فلا يُترك لنقرةٍ عابرة */
+function examQuitAsk(){
+  uiBox('إن خرجتَ الآن ضاع اختبارُك كلُّه، وبدأتَه من أوّله.'+
+    String.fromCharCode(10)+'أتخرج؟','⚠️','🚪 نعم، أخرج','↩️ أُكمل الاختبار', function(ok){
+      if(!ok) return;
+      S=null; examShow(EX.i); show('scr-exam');
+    });
 }
 /* ===== الاختبار نفسه ===== */
 function examBegin(){
@@ -7668,14 +7848,15 @@ function examWeakest(){
 }
 var EX_LAST=null;   /* آخرُ نتيجةٍ — لتُطبع بعد قراءتها */
 function finishExam(){
-  var tot=EX.log.length||1, right=0, i;
-  for(i=0;i<EX.log.length;i++) if(EX.log[i].ok) right++;
+  var tot=EX.log.length||1, right=0, wsum=0, i;
+  /* الأجرُ بالوزن لا بالعدد: الفراغان ضِعفٌ */
+  for(i=0;i<EX.log.length;i++) if(EX.log[i].ok){ right++; wsum+=qWeight(EX.log[i].t); }
   var pct=Math.round(100*right/tot), g=examGrade(pct);
   var secs=Math.max(1, Math.round((Date.now()-EX.t0)/1000));
-  var gems=EX_GEM*right, iron=Math.max(1,Math.floor(right/4)), glass=(pct>=90?2:0);
+  var gems=EX_GEM*wsum, iron=Math.max(1,Math.floor(right/4)), glass=(pct>=90?2:0);
   addGems(gems); addMat('iron',iron);
   if(glass) addMat('glass',glass);
-  try{ checkBadges(); }catch(e){}
+  /* ولا شاراتٍ تُفحص هنا: الاختبارُ ميزانٌ لا مرحلةٌ تُحتسب */
   var a=surahBy(EX.fromS), b=surahBy(EX.toS);
   EX_LAST={ right:right, tot:tot, pct:pct, grade:g[1], ic:g[2], secs:secs,
             kind:examKindName(), from:(a?a.name:'')+' '+arNum(EX.fromA),
@@ -7958,7 +8139,10 @@ $('mapHome').onclick=function(){ renderPlayers(); show('scr-start'); };
 $('mapHome').onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); this.onclick(); } };
 $('btnBackMap').onclick=function(){ if(!openJuz) openJuz=(curSurah?curSurah.juz:Math.max(SET.juzFrom,SET.juzTo)); renderMap(); show('scr-map'); };
 $('btnQuit').onclick=function(){ if(curSurah){ renderPath(); show('scr-path'); } else { renderMap(); show('scr-map'); } };
-$('xQuit').onclick=function(){ $('btnQuit').click(); };
+$('xQuit').onclick=function(){
+  if(S && S.rev==='exam'){ examQuitAsk(); return; }
+  $('btnQuit').click();
+};
 /* شارتا الفحص ومفاتيحها: Ctrl+Shift+Q يفتح الوضع ويغلقه، ثم «.» يتخطّى و«،» يُنهي */
 $('qaSkip').onclick=function(){ qaSkipRound(); };
 $('qaEnd').onclick =function(){ qaEndStage(); };
@@ -8288,7 +8472,7 @@ function navBack(){
   /* ٣) داخل سؤال: كما لو ضغط ✕ */
   if(scr==='scr-play'){
     if(S && S.rev){
-      if(S.rev==='exam'){ examShow(EX.i); show('scr-exam'); }
+      if(S.rev==='exam'){ examQuitAsk(); }
       else if(REV && REV.due){ renderPlayers(); show('scr-start'); }
       else { renderRevPath(); show('scr-revpath'); }
     } else $('btnQuit').click();
