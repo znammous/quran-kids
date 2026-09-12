@@ -553,7 +553,8 @@ body.glow-off .cele .spk{display:none}
 #onbBody{margin-bottom:18px}
 .onbnav{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .onbnav .onbgap{flex:1 1 auto}
-.onbnav .btn{flex:0 0 auto;min-width:132px;margin:0;padding:13px 18px;font-size:17px}
+/* width:auto يبطل عرضَ ‎.btn.big‎ الكامل، وإلا ركب زرُّ الحفظ على زرّ السابق */
+.onbnav .btn{flex:0 0 auto;min-width:132px;width:auto;margin:0;padding:13px 18px;font-size:17px}
 .onbnav .btn .ico{font-size:1.15em}
 .onbopt{flex-wrap:wrap}
 .onbsample{flex:1 0 100%;margin-top:10px;padding:10px 8px;background:#f7fbff;border:2px solid #e5ecf6;
@@ -1180,6 +1181,11 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
         </div>
         <div class="note">بقية الأجزاء تظهر مقفلة 🔒 حتى لا يتشتّت الحافظ. الافتراضي: جزء عمّ فقط (٣٠).</div>
       </div>
+      <div class="switchrow"><span>🔓 فتح كل مقاطع السورة (بلا ترتيب)</span><input type="checkbox" id="setFree"></div>
+      <div class="setblock">
+        <label class="lbl">🔁 عدد مرات التكرار في مرحلة القراءة</label>
+        <select id="setReps"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
+      </div>
       </div>
       <div class="setpage" data-setp="mushaf" hidden>
       <div class="setblock">
@@ -1188,10 +1194,6 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
           <option value="0">إملائي واضح (أسهل للقراءة)</option>
           <option value="1">الرسم العثماني (كما في المصحف)</option>
         </select>
-      </div>
-      <div class="setblock">
-        <label class="lbl">🔁 عدد مرات التكرار في مرحلة القراءة</label>
-        <select id="setReps"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
       </div>
       <div class="setblock">
         <label class="lbl">🔎 حجم خط الآية</label>
@@ -1206,8 +1208,6 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
       <div class="switchrow"><span>🌞 الوضع النهاريّ<br><small style="font-weight:700;color:var(--mute)">خلفية فاتحة بدل سماء الليل — لكل لاعب اختياره</small></span><input type="checkbox" id="setLight"></div>
       <div class="switchrow"><span>🎉 احتفالات السلسلة والشارات<br><small style="font-weight:700;color:var(--mute)">إن أطفأتَه بقيت الشارات والجواهر كما هي، ويُعلَن عنها بسطر عابر لا يوقف اللعب</small></span><input type="checkbox" id="setCele"></div>
       <div class="switchrow"><span>✨ توهّج متحرّك على الزر الذي ينتظر الضغط<br><small style="font-weight:700;color:var(--mute)">يعمل حتى لو كان الجهاز يقلّل الحركة</small></span><input type="checkbox" id="setGlow"></div>
-      <div class="switchrow"><span>🔓 فتح كل مقاطع السورة (بلا ترتيب)</span><input type="checkbox" id="setFree"></div>
-      <div class="switchrow"><span>🏠 لوحة البيت بين أفراد الأسرة</span><input type="checkbox" id="setBoard"></div>
       </div>
       <div class="setpage" data-setp="dev" hidden>
       <div class="setblock" style="margin-top:12px">
@@ -1229,6 +1229,7 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
         </div>
         <div class="note">لكل لاعب نجومه ومقاطعه ومواظبته وإعداداته المستقلّة.</div>
       </div>
+      <div class="switchrow"><span>🏠 لوحة البيت بين أفراد الأسرة</span><input type="checkbox" id="setBoard"></div>
       <div class="row" style="margin-top:12px">
         <button class="btn blue" id="btnExport">💾 حفظ التقدّم</button>
         <button class="btn blue" id="btnImport">📂 فتح ملف</button>
@@ -6024,8 +6025,6 @@ function priorPanelHTML(pfx){
   }
   h+='</div></div>';
   h+='<div class="note" id="'+pfx+'Note" style="font-weight:800;color:#1a4f8f;margin-top:10px"></div>';
-  h+='<button type="button" class="btn green mini" id="'+pfx+'Go" style="width:100%;margin-top:8px">'+
-     '✅ اعتمِد ما حفظت</button>';
   return h;
 }
 function priorPanelWire(pfx,after){
@@ -6066,17 +6065,17 @@ function priorPanelWire(pfx,after){
   if($(pfx+'More')) $(pfx+'More').onclick=function(){
     var el=$(pfx+'S'); if(el) el.hidden=!el.hidden;
   };
-  if($(pfx+'Go')) $(pfx+'Go').onclick=function(){
-    var n=priorCount();
-    if(!n){ alert('أشّر ما حفظتَه أوّلاً 💚'); return; }
-    if(!confirm('سيُحسب لك حفظ '+arNum(n)+' آية، وتدخل جدول المراجعة.\nأتؤكّد؟')) return;
+  /* الاعتماد يقع بالانتقال إلى ما بعده، فلا يحتاج زرّاً خاصّاً به */
+  PRIOR_COMMIT=function(){
+    var n=priorCount(); if(!n) return false;
     var added=priorApply();
-    paint();
+    try{ paint(); }catch(e){}
     try{ celeShow({ ic:'📌', kick:'✅ سُجّل حفظك السابق',
       title:'أُضيفت '+arNum(n)+' آية إلى رصيدك',
       sub:'ستدخل المراجعة، وأُعيد حساب الأيام المتبقّية',
       rew:(added?('＋ '+arNum(added)+' مقطعاً جديداً'):'كانت مسجّلة من قبل') }); }catch(e){}
     if(after) after();
+    return true;
   };
   paint();
 }
@@ -6150,11 +6149,13 @@ var SELF_SIZES=[['q','🌱','ربع صفحة'],['h','🌿','نصف صفحة'],['
    الخطوات تتبدّل بحسب جوابه: من اعتمد خطة جاهزة لا يُسأل عن بدايته،
    ومن لا محفوظ له لا يُسأل عن ورده. */
 var BQ={ i:0 };
+var PRIOR_COMMIT=null;      /* تعتمده لوحةُ الحفظ السابق، ويستدعيه زرّ «التالي» */
 function bqnSteps(){
   var out=['plan'], p=curP();
   if(p.planChosen && !onPlan()) out.push('dir');
   out.push('prior');
-  if(wirdAsk()) out.push('wird');
+  /* من بدأ من جديد فلا محفوظ له يُتعاهد — ولا يُسأل عن ورد */
+  if(p.priorMode==='has' && wirdAsk()) out.push('wird');
   return out;
 }
 var BQ_HEAD={
@@ -7124,6 +7125,10 @@ $('btnBqnHome').onclick=function(){
 $('bqnNext').onclick=function(){
   var m=bqnStepBlocked();
   if(m){ try{ navToast(m); }catch(e){} bqnGate(); return; }
+  /* مغادرةُ صفحة الحفظ السابق تعتمد ما أشّره — ولا زرّ يُسأل عنه */
+  if(bqnSteps()[BQ.i]==='prior' && curP().priorMode==='has' && PRIOR_COMMIT){
+    if(PRIOR_COMMIT()) return;              /* الاعتماد يُعيد الرسم ويمضي بنفسه */
+  }
   bqnShow(BQ.i+1);
 };
 $('bqnBack').onclick=function(){ bqnShow(BQ.i-1); };
