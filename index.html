@@ -1888,18 +1888,29 @@ function mfPickEnd(){
    وهي تُنهي الوضع بنفسها، فلا يضرّ أن تُستدعى مرّتين من لمسٍ ونقر. */
 /* أقربُ كلمةٍ أو رقمِ آيةٍ إلى موضع الإصبع — فالمحارف دقيقةٌ لا تُصاب بالضبط،
    ولا يجوز توسيعُها بحشوٍ لأنّ أسطر الوجه مركّبةٌ على عرضها بالضبط. */
+/* الالتقاط على مرحلتين: أقربُ سطرٍ إلى الإصبع رأسيّاً، ثمّ أقربُ كلمةٍ فيه
+   أفقيّاً. فالسطرُ يمتدّ عرضَ الشاشة والوجهُ يمتدّ طولَها، فلا تقع لمسةٌ
+   في فراغ — وكان البحثُ بنصف قطرٍ يُخطئ كلَّ ما خرج عن عمود النصّ. */
 function mfNearest(x,y){
   var box=$('mfBody'); if(!box) return null;
-  var all=box.querySelectorAll('[data-gi]'), best=null, bd=1e9, i, r, cx, cy, d;
-  for(i=0;i<all.length;i++){
-    r=all[i].getBoundingClientRect();
-    if(!r.width && !r.height) continue;
-    cx=Math.max(r.left,Math.min(x,r.right));
-    cy=Math.max(r.top,Math.min(y,r.bottom));
-    d=(cx-x)*(cx-x)+(cy-y)*(cy-y);
-    if(d<bd){ bd=d; best=all[i]; }
+  var lines=box.querySelectorAll('.mline'), bl=null, bd=1e9, i, r, d;
+  for(i=0;i<lines.length;i++){
+    if(!lines[i].querySelector('[data-gi]')) continue;      /* سطرٌ بلا كلمات */
+    r=lines[i].getBoundingClientRect();
+    if(!r.height) continue;
+    d=(y<r.top) ? (r.top-y) : (y>r.bottom ? (y-r.bottom) : 0);
+    if(d<bd){ bd=d; bl=lines[i]; }
   }
-  return (bd<=200*200) ? best : null;          /* ما خرج عن الوجه لا يُلتقط */
+  if(!bl) return null;
+  var ws=bl.querySelectorAll('[data-gi]'), best=null, bx=1e9, cx;
+  for(i=0;i<ws.length;i++){
+    r=ws[i].getBoundingClientRect();
+    if(!r.width) continue;
+    cx=Math.max(r.left,Math.min(x,r.right));
+    d=Math.abs(cx-x);
+    if(d<bx){ bx=d; best=ws[i]; }
+  }
+  return best;
 }
 /* يُفكّ الحظر بعد ثلث ثانية، فلا تلتقط الوجهَ نقرةٌ خلّفها إغلاق الصندوق */
 function mfUnbusy(){ setTimeout(function(){ if(MF_PICK) MF_PICK.busy=false; }, 340); }
@@ -4183,7 +4194,7 @@ $('mfNext').onclick=function(){ if(MF_PICK && MF_PICK.page<604){ MF_PICK.page++;
     /* سحبٌ أفقيّ في وضع التحديد: يقلّب الوجه كما يُقلَّب في المصحف.
        سحبٌ إلى اليسار يمضي، وإلى اليمين يرجع — كاتّجاه السهمين. */
     var dx=e.clientX-sx, dy=e.clientY-sy, ax=Math.abs(dx), ay=Math.abs(dy);
-    if(MF_PICK && !MF_PICK.busy && ax>=30 && ax>ay){
+    if(MF_PICK && !MF_PICK.busy && ax>=50 && ax>ay*1.5){   /* سحبٌ أفقيٌّ مقصود */
       if(dx<0 && MF_PICK.page<604){ MF_PICK.page++; sPage(); mfPickDraw(); }
       else if(dx>0 && MF_PICK.page>1){ MF_PICK.page--; sPage(); mfPickDraw(); }
       return;
@@ -7791,7 +7802,7 @@ function uiBox(msg,ic,yes,no,cb,muteKey){
   $('askIc').textContent=ic||'💚';
   /* يُهرَّب كلُّ شيءٍ إلا <b> — فبعض الرسائل تُبرز اسماً أو عدداً */
   $('askMsg').innerHTML=String(msg).replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/&lt;(\/?b)&gt;/g,'<$1>').replace(/\n/g,'<br>');
+    .replace(/&lt;(\/?b)>/g,'<$1>').replace(/\n/g,'<br>');
   var y=$('askYes'), n=$('askNo');
   y.textContent=yes||'✅ حسناً';
   n.hidden=!no; if(no) n.textContent=no;
