@@ -234,7 +234,10 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfsheet{position:fixed;inset:0;z-index:120;background:#fffdf5;display:flex;flex-direction:column}
 .mfhead{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 12px;
   background:#fdf6e4;border-bottom:2px solid #e8dcc0}
-.mftitle{flex:1;min-width:0;font-family:"IBM Plex Sans Arabic","Segoe UI",sans-serif;font-size:14px;
+.mfttl{flex:1;min-width:0}
+.mfhint{font-family:"IBM Plex Sans Arabic","Segoe UI",sans-serif;font-size:11px;font-weight:700;
+  color:#b6a077;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mftitle{min-width:0;font-family:"IBM Plex Sans Arabic","Segoe UI",sans-serif;font-size:14px;
   font-weight:800;color:#8a6b2a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* زرّ الإنهاء: علامة صحّ رمادية، فالإغلاق هنا إتمامٌ لا إلغاء */
 .mfhead .xbtn{position:static;flex:0 0 auto;width:38px;height:38px;font-size:19px;
@@ -844,7 +847,10 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
 
 <div class="mfsheet" id="mfSheet" hidden>
   <div class="mfhead">
-    <div class="mftitle" id="mfTitle"></div>
+    <div class="mfttl">
+      <div class="mftitle" id="mfTitle"></div>
+      <div class="mfhint">اضغط على الوجه لإغلاقه</div>
+    </div>
     <button class="xbtn mfx" id="mfClose" aria-label="تمّ، أغلِق وجه المصحف">✓</button>
   </div>
   <div class="mfbody" id="mfBody"></div>
@@ -3417,6 +3423,26 @@ function closeModal(id){
   if(id==='adab') pendingStart=null;
 }
 $('mfClose').onclick=mushafClose;
+/* نقرةٌ على الوجه تغلقه — أيسر للطفل من قصد الزرّ. ونميّز النقرة من
+   التمرير بالمسافة والزمن، وإلّا أغلقه كلُّ سحبٍ للصفحة. */
+(function(){
+  var b=$('mfBody'), down=false, sx=0, sy=0, st=0, moved=false;
+  if(!b || !window.PointerEvent) return;
+  b.addEventListener('pointerdown', function(e){
+    down=true; moved=false; sx=e.clientX; sy=e.clientY; st=Date.now();
+  });
+  b.addEventListener('pointermove', function(e){
+    if(!down) return;
+    if(Math.abs(e.clientX-sx)>10 || Math.abs(e.clientY-sy)>10) moved=true;
+  });
+  b.addEventListener('pointercancel', function(){ down=false; });
+  b.addEventListener('pointerup', function(){
+    if(!down) return;
+    down=false;
+    if(moved || Date.now()-st>600) return;              /* سحبٌ أو ضغطة طويلة */
+    mushafClose();
+  });
+})();
 ['help','adab'].forEach(function(id){
   $(id).addEventListener('click', function(e){ if(e.target===this) closeModal(id); });
 });
@@ -4086,7 +4112,7 @@ function roundWords(r){
   var seg=all.slice(Math.min(r.from,Math.max(0,all.length-1)), Math.min(r.to,all.length));
   if(!seg.length) seg=all.slice(0,1);
   var pool=shuffle(seg.slice()), need=seg.length, placed=0;
-  var partTxt = r.parts>1 ? ' (جزء '+arNum(r.part+1)+' من '+arNum(r.parts)+')' : '';
+  var partTxt = r.parts>1 ? ' \u2068(جزء '+arNum(r.part+1)+' من '+arNum(r.parts)+')\u2069' : '';
   $('playArea').className='qfill';                 /* توزيع خاص: أسطر ثم كلمات في الأسفل */
   $('playArea').innerHTML=
     '<div class="hintline">الآية '+arNum(r.a+1)+' من '+esc(s.name)+partTxt+' — اضغط الكلمات بالترتيب الصحيح</div>'+
@@ -4343,7 +4369,7 @@ function roundRevPage(r){
   var names=pcs.map(function(p){ return esc(p.s.name)+' '+arNum(p.from+1)+'-'+arNum(p.to); }).join(' • ');
   var full=pcs.map(function(p){
     var out=[];
-    for(var a=p.from;a<p.to;a++) out.push(ayahText(p.s,a)+' ('+arNum(a+1)+')');
+    for(var a=p.from;a<p.to;a++) out.push(ayahText(p.s,a)+' \u2066('+arNum(a+1)+')\u2069');
     return out.join(' ');
   }).join(' ');
   recReset();
@@ -4429,7 +4455,7 @@ function roundRecite(r){
   var part=portionOf(s,r.a,pi,np);
   var txt=part.join(' ');
   var hint=part.slice(0,1).join(' ')+' …';
-  var where='الآية '+arNum(r.a+1)+' من '+esc(s.name)+(np>1?(' (جزء '+arNum(pi+1)+' من '+arNum(np)+')'):'');
+  var where='الآية '+arNum(r.a+1)+' من '+esc(s.name)+(np>1?(' \u2068(جزء '+arNum(pi+1)+' من '+arNum(np)+')\u2069'):'');
   if(SET.level==='hard'){
     $('playArea').innerHTML=
       '<div class="hintline">اكتب '+where+' عن ظهر قلب (التشكيل غير مطلوب)</div>'+
@@ -4609,7 +4635,7 @@ function finishStage(){
   $('playArea').innerHTML=
     '<div style="text-align:center"><div style="font-size:52px">🌟</div>'+
     '<h2 style="color:var(--g1);margin:6px 0">أنجزت المرحلة!</h2>'+
-    '<p style="color:#3d5b7a;font-size:16px;margin:0 0 12px">النجمة '+arNum(p.stars)+' من ٥ في '+esc(S.surah.name)+' ('+arNum(S.seg[0]+1)+'-'+arNum(S.seg[1])+')</p>'+
+    '<p style="color:#3d5b7a;font-size:16px;margin:0 0 12px">النجمة '+arNum(p.stars)+' من ٥ في '+esc(S.surah.name)+' \u2066('+arNum(S.seg[0]+1)+'-'+arNum(S.seg[1])+')\u2069</p>'+
     '<div style="font-size:28px;letter-spacing:4px;color:#d9b400;margin-bottom:12px">'+stars5(p.stars)+'</div>'+
     '<button class="btn primary big pulse" id="btnNextStage">⬅️ المرحلة التالية: '+nx.t+'</button>'+
     '<button class="btn ghost big" id="btnSegsNow" style="margin:0">🗺️ المسار</button></div>';
