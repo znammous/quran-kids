@@ -149,10 +149,12 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .sw-row{display:flex;gap:8px;flex-wrap:wrap}
 .swatch{width:36px;height:36px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px #d7e2f0;cursor:pointer}
 .swatch.sel{box-shadow:0 0 0 3px var(--g2)}
-.chipsel{border:2px solid #d7e2f0;background:#fff;border-radius:11px;padding:7px 11px;font-family:inherit;
-  font-size:14px;font-weight:800;color:#3d5b7a;cursor:pointer;touch-action:manipulation}
-.chipsel.sel{border-color:var(--g2);background:#e2f1ff;color:var(--g1)}
-.chipsel:active{transform:translateY(1px)}
+.chipsel{border:2px solid var(--pb);background:var(--pnl3);border-radius:11px;padding:7px 11px;
+  font-family:inherit;font-size:14px;font-weight:800;color:var(--on2);cursor:pointer;
+  touch-action:manipulation;box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.chipsel.sel{border-color:var(--gold);background:var(--psel);color:var(--ttl);
+  box-shadow:0 2px 0 rgba(161,121,26,.35)}
+.chipsel:active{box-shadow:none;transform:translateY(1px)}
 
 .topbar{background:var(--pnl);color:var(--gink);border:3px solid var(--pb);border-radius:14px;
   padding:9px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;
@@ -700,9 +702,10 @@ body.glow-off .cele .spk{display:none}
 #revScope .onbopt .oe{font-size:22px}
 #revScope .onbopt .ot b{font-size:15px}
 #revScope{margin-bottom:22px}
+/* خلفيّةٌ من متغيّرات الثيم لا كحليّةٌ ثابتة — كانت تبقى داكنةً في وضح النهار */
 .revbox{border:3px solid var(--pb);border-radius:14px;padding:14px;margin:22px 0;
-  background:rgba(8,38,82,.55)}
-.revbox .rl{font-weight:900;color:#eaf3fd;font-size:15px;margin-bottom:9px}
+  background:var(--pnl2)}
+.revbox .rl{font-weight:900;color:var(--ttl);font-size:15px;margin-bottom:9px}
 .revsum{border:3px solid var(--gold);border-radius:14px;padding:12px;margin:22px 0 14px;
   color:var(--warm);font-weight:800;font-size:15px;text-align:center;line-height:1.7}
 .revsum b{color:var(--ttl);font-size:17px}
