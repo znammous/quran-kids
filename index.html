@@ -5576,14 +5576,14 @@ function finishStage(){
 /* ===== المراجعة بالصفحات ===== */
 var REV={ fromS:1, fromA:1, toS:114, toA:6, size:3, per:5, done:0, weak:{},
           pages:[], si:0, pi:0, due:false, view:0,
-          wird:true, dir:-1, day:null, on:null, cyc:0, wdone:0, wsize:3, mode:null };
+          wird:true, dir:-1, fdir:-1, day:null, on:null, cyc:0, wdone:0, wsize:3, mode:null };
 var REV_SIZES=[1,2,3,5,10];
 
 /* الخطة والتقدّم يُحفظان مع اللاعب، فيمشي على المسار يوماً بعد يوم */
 function revSave(){
   curP().rev={ fromS:REV.fromS, fromA:REV.fromA, toS:REV.toS, toA:REV.toA,
                size:REV.size, per:REV.per, done:REV.done, weak:REV.weak,
-               wird:REV.wird, dir:REV.dir, day:REV.day, on:REV.on, cyc:REV.cyc,
+               wird:REV.wird, dir:REV.dir, fdir:REV.fdir, day:REV.day, on:REV.on, cyc:REV.cyc,
                wdone:REV.wdone, wsize:REV.wsize };
   saveDB();
 }
@@ -5597,6 +5597,8 @@ function revLoad(){
   /* الورد هو الأصل، والنطاق الحرّ خيارٌ يختاره بنفسه */
   REV.wird=(r.wird===false)?false:true;
   REV.dir =(r.dir===-1)?-1:(r.dir===1?1:(selfFrom()==='baqarah'?1:-1));
+  /* اتّجاه المسار الحرّ مستقلٌّ عن اتّجاه الورد، ويرث اتّجاهَه أوّلَ مرّة */
+  REV.fdir=(r.fdir===-1)?-1:(r.fdir===1?1:REV.dir);
   REV.day =(typeof r.day==='number')?r.day:null;
   REV.on  =(r.on===false)?false:(r.on===true?true:null);   /* null: لم يُسأل بعد */
   REV.cyc =r.cyc||0;                                       /* كم دورةً أتمّ على محفوظه */
@@ -5642,7 +5644,11 @@ function wirdPages(){
   for(i=0;i<all.length;i++) if(!fresh[all[i]]) out.push(all[i]);
   return out;
 }
-function revDir(){ return REV.dir<0 ? -1 : 1; }
+/* لكلّ بابٍ اتّجاهُه: الوردُ يمشي في محفوظه، والمسارُ الحرّ في نطاقه */
+function revDir(m){
+  var d = (revMode(m)==='wird') ? REV.dir : REV.fdir;
+  return d<0 ? -1 : 1;
+}
 function revIsWird(){ return REV.wird!==false; }
 /* البابان مستقلّان: للوردِ صفحاتُه وجلساتُه وعدّادُه، وللمسار الحرّ مثلُها.
    وكانا يتقاسمان حالةً واحدة، فاختيارُ أحدهما يمحو تقدّم الآخر. */
@@ -5656,7 +5662,7 @@ function revAllPages(m){
     var p2=pageOfIdx(GIDX[REV.toS-1]+(REV.toA-1));
     out=[]; for(P=p1;P<=p2;P++) out.push(P);
   }
-  if(revDir()<0) out=out.slice().reverse();
+  if(revDir(m)<0) out=out.slice().reverse();
   return out;
 }
 /* حجمُ الجلسة: للورد حجمُه وللمسار حجمُه */
@@ -5771,6 +5777,10 @@ function renderRevPlan(){
       '<select id="revTA">'+revAyahOpts(REV.toS,REV.toA)+'</select></div>'+
       '<button type="button" class="btn blue mini" id="revPickR" style="width:100%;margin-top:12px">'+
         '📖 افتح المصحف وحدّد النطاق</button></div>'+
+    '<div class="revbox"><div class="rl">ومن أيّ الطرفين تمشي؟</div><div class="chips">'+
+      '<button type="button" class="chipsel'+(revDir('free')<0?' sel':'')+'" data-rd="-1">🌙 من جهة الناس</button>'+
+      '<button type="button" class="chipsel'+(revDir('free')>0?' sel':'')+'" data-rd="1">📖 من جهة البقرة</button>'+
+      '</div><div class="note" style="margin-top:8px">النطاقُ واحدٌ، وإنّما يتبدّل أوّلُ ما تراجع</div></div>'+
     '<div class="revbox"><div class="rl">كم صفحةً في الجلسة الواحدة؟</div><div class="chips">'+chips(REV_SIZES,REV.size,'rs')+'</div></div>'+
     '<div class="revbox"><div class="rl">كم سؤالاً لكل صفحة؟</div><div class="chips">'+chips(REV_PER_CHOICES,revPer(),'rp')+'</div></div>'+
     '<div id="revSum"></div></div>';
@@ -5792,6 +5802,11 @@ function renderRevPlan(){
   $('revTA').onchange=function(){ REV.toA=parseInt(this.value,10); reset(); };
   var rs=$('revPlan').querySelectorAll('[data-rs]');
   for(var i=0;i<rs.length;i++) rs[i].onclick=function(){ REV.size=parseInt(this.getAttribute('data-rs'),10); reset(); };
+  /* تبديلُ الاتّجاه يقلب ترتيبَ الجلسات، فيُستأنف العدُّ من أوّله */
+  var rd=$('revPlan').querySelectorAll('[data-rd]');
+  for(var q=0;q<rd.length;q++) rd[q].onclick=function(){
+    REV.fdir=parseInt(this.getAttribute('data-rd'),10); reset();
+  };
   var rp=$('revPlan').querySelectorAll('[data-rp]');
   for(var j=0;j<rp.length;j++) rp[j].onclick=function(){ REV.per=parseInt(this.getAttribute('data-rp'),10); revSave(); renderRevPlan(); };
   bqnRevWire('P');
@@ -6766,11 +6781,11 @@ function wirdBody(){
   });
   h+='</div>';
   h+='<div class="lbl" style="margin:16px 0 6px">🧭 من أين يمشي الورد؟</div><div class="onbopts">'+
-     '<button type="button" class="onbopt'+(revDir()<0?' sel':'')+'" data-wdir="-1">'+
-       '<span class="oe">'+(revDir()<0?'✅':'🌙')+'</span>'+
+     '<button type="button" class="onbopt'+(revDir('wird')<0?' sel':'')+'" data-wdir="-1">'+
+       '<span class="oe">'+(revDir('wird')<0?'✅':'🌙')+'</span>'+
        '<span class="ot"><b>من جهة الناس</b><i>من آخر المصحف إلى أوّله</i></span></button>'+
-     '<button type="button" class="onbopt'+(revDir()>0?' sel':'')+'" data-wdir="1">'+
-       '<span class="oe">'+(revDir()>0?'✅':'📖')+'</span>'+
+     '<button type="button" class="onbopt'+(revDir('wird')>0?' sel':'')+'" data-wdir="1">'+
+       '<span class="oe">'+(revDir('wird')>0?'✅':'📖')+'</span>'+
        '<span class="ot"><b>من جهة البقرة</b><i>على ترتيب المصحف</i></span></button>'+
      '</div>';
   var c=wirdCalc(revSize('wird'));
