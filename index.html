@@ -1821,7 +1821,12 @@ function mushafPageHTML(P, hlGi, glyphs){
         out+='<span class="manum'+(on?' hl':'')+'" data-gi="'+gi+'">'+(GC?String.fromCharCode(GC[u]):arNum(loc[1]))+'</span>';
         u++; gi++; wi=0; continue;
       }
-      out+='<span class="mw'+(on?' hl':'')+'" data-gi="'+gi+'">'+(GC?String.fromCharCode(GC[u]):esc(ws[wi]))+'</span>';
+      /* علامةُ الحزب ۞ تُدمَج مع كلمتها في رمزٍ واحد عندنا، والخطّ يجعلهما
+         محرفين متتاليين — فيُرسم المحرفان معاً ويُعدّان واحداً. ولولا هذا
+         ضاعت الكلمةُ وحلّت العلامةُ محلّها في مئةٍ وتسعةٍ وتسعين موضعاً. */
+      var wtx=ws[wi], rub=(GC && wtx.indexOf('۞')>=0);
+      out+='<span class="mw'+(on?' hl':'')+'" data-gi="'+gi+'">'+
+        (GC ? (String.fromCharCode(GC[u])+(rub?String.fromCharCode(GC[u]+1):'')) : esc(wtx))+'</span>';
       u++; wi++;
     }
     html+='<div class="mline'+(hasHl?' hasHl':'')+'"><span class="mtxt">'+out+'</span></div>';
