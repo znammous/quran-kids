@@ -516,10 +516,10 @@ body.glow-off .cele .spk{display:none}
 .noprint{margin-top:18px}
 .cert .waqf{margin-top:10px;font-size:12.5px;font-weight:800;color:#8a6a1e;line-height:1.9}
 /* الوقف واسم المطوّر في الإعدادات */
-.waqfbox{text-align:center;background:#f7fbff;border:2px dashed #cfe0f5;border-radius:14px;padding:12px;margin:14px 0 18px}
-.waqfbox .w1{font-weight:900;color:#8a6100;font-size:15px}
-.waqfbox .w2{font-weight:800;color:#3d5b7a;font-size:13.5px;margin-top:4px;line-height:1.9}
-.waqfbox .w3{font-weight:700;color:var(--mute);font-size:12.5px;margin-top:6px}
+.waqfbox{text-align:center;margin:14px 0 18px;font-size:11px;font-weight:700;color:var(--ttl2);
+  line-height:1.8}
+.waqfbox b{font-weight:800;color:var(--ttl)}
+.waqfbox .w1,.waqfbox .w2,.waqfbox .w3{display:inline;font:inherit;color:inherit}
 /* زر شهادة السورة في الفهرس */
 .certbtn{border:2px solid #e8c76a;background:#fff8e3;border-radius:12px;padding:6px 9px;font-size:17px;
   cursor:pointer;flex:0 0 auto;margin-inline-start:6px;line-height:1}
@@ -851,7 +851,6 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
   body.hastabs #btnShop,
   body.hastabs #btnSettings,
   body.hastabs #btnRevHome,
-  body.hastabs #btnBqnHome,
   body.hastabs #btnRevQuit{display:none}
   /* أهداف لمس مريحة */
   .btn{min-height:52px}
@@ -1069,7 +1068,8 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
     <h1>🧭 خطة الحفظ</h1>
     <p class="sub">مسار واحد تسير عليه — اختر ما يناسب همّتك، وتقدّم كل مسار محفوظ</p>
     <div id="bqnList"></div>
-    <div class="row"><button class="btn ghost" id="btnBqnHome">🏠 البداية</button></div>
+    <button class="btn primary big" id="btnBqnDone" style="margin:18px 0 12px">✅ حفظ ورجوع</button>
+    <div class="row"><button class="btn ghost" id="btnBqnHome">➡️ رجوع خطوة</button></div>
   </section>
 
   <section class="screen" id="scr-build">
@@ -1162,14 +1162,6 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
           واعتماد خطة جاهزة يفتح الأجزاء الثلاثين، لأن جداولها تمشي على المصحف كلّه.</div>
       </div>
       <div class="setblock">
-        <label class="lbl">📌 ما حفظتَه قبل التطبيق</label>
-        <div id="priorMode"></div>
-        <div id="priorBox" style="margin-top:12px"></div>
-        <div class="note">أشّر الأجزاء التي تحفظها — ولو كانت متفرّقة كآخر خمسة أجزاء وأوّل جزأين —
-          أو اختر سوراً بعينها. تُحسب محفوظةً بخمس نجوم، وتدخل جدول المراجعة،
-          ويُعاد حساب الأيام المتبقّية وموضعك في الخطة.</div>
-      </div>
-      <div class="setblock">
         <label class="lbl">🔓 الأجزاء المتاحة</label>
         <div class="row">
           <select id="setJuzFrom"></select>
@@ -1228,12 +1220,10 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
       <button class="btn red big" id="btnReset" style="margin-top:10px">🗑️ تصفير التقدّم</button>
     </div>
       <button class="btn blue big" id="btnHelp" style="margin-bottom:12px">❓ كيف ألعب</button>
-      <div class="waqfbox">
-        <div class="w1">🤲 وقف لله تعالى</div>
-        <div class="w2">هذا التطبيق صدقة جارية عن أمي <b>لمياء قباني</b></div>
-        <div class="w3">تطوير: زهير النموس</div>
-      </div>
     <button class="btn primary big" id="btnSetBack" style="margin:0">✅ حفظ ورجوع</button>
+    <div class="waqfbox">
+      وقف لله تعالى — صدقة جارية عن أمي <b>لمياء قباني</b> · تطوير: زهير النموس
+    </div>
   </section>
 
 </div>
@@ -1971,10 +1961,14 @@ function getP(key){
 function peek(key){ return prog[key] || {stars:0,stage:0,done:false,box:0,due:null}; }
 function saveProg(){ saveDB(); }
 var INTERVALS=[1,3,7,14,30];
+/* بلغ أعلى السلّم؟ تخرّج من الجدول بالمواعيد إلى الورد الدوريّ — علامتُه due=null */
 function scheduleNext(key,ok){
   var p=getP(key);
-  if(ok){ p.box=Math.min((p.box||0)+1,INTERVALS.length-1); p.due=todayNum()+INTERVALS[p.box]; }
-  else { p.box=Math.max((p.box||0)-1,0); p.due=todayNum()+1; }
+  if(ok){
+    p.box=Math.min((p.box||0)+1,INTERVALS.length-1);
+    p.due=(p.box>=INTERVALS.length-1) ? null : (todayNum()+INTERVALS[p.box]);
+  }
+  else { p.box=Math.max((p.box||0)-1,0); p.due=todayNum()+1; }   /* ضعُف فيه: يعود غداً */
 }
 /* السورة متاحة إذا مرّت بأي جزء داخل النطاق المسموح (سورة طويلة تمتد لعدة أجزاء) */
 function inRange(s){
@@ -5856,6 +5850,14 @@ function renderPriorMode(){
     curP().priorMode=this.getAttribute('data-pmode'); saveDB(); renderPriorMode();
   };
   priorPanelWire('pS',function(){ try{ fillBqnSelect(); }catch(e){} });
+  priorFoldHead();
+}
+/* علامة الطيّة تُحدّث مكانها، فلا يُعاد رسم القائمة فتنطبق تحت يده */
+function priorFoldHead(){
+  var hd=document.querySelector('[data-fold="fPrior"] span'); if(!hd) return;
+  var pm=curP().priorMode||'';
+  hd.textContent='📌 ما حفظتَه قبل التطبيق'+
+    (pm==='new'?' — ✅ أبدأ من جديد':(pm==='has'?' — ✅ مُسجّل':''));
 }
 function priorPanelHTML(pfx){
   var p=priorSel(), h='', j, i2;
@@ -5962,6 +5964,17 @@ function foldHTML(id,title,open,body){
            '<span>'+title+'</span><span class="fi">'+(open?'▴ اطوِ':'▾ افتح')+'</span></button>'+
          '<div class="foldb" id="fold_'+id+'"'+(open?'':' hidden')+'>'+body+'</div>';
 }
+/* عند إعادة الرسم تبقى الطيّة المفتوحة مفتوحة، فلا تنطبق تحت يده */
+function foldIsOpen(id){ var b=document.getElementById('fold_'+id); return !!(b && !b.hidden); }
+/* طيٌّ أو فتحٌ بأمرنا لا بضغطة منه، فيُساق في خطٍّ واحد */
+function foldSet(id,open){
+  var b=document.getElementById('fold_'+id),
+      hd=document.querySelector('[data-fold="'+id+'"]');
+  if(!b||!hd) return;
+  b.hidden=!open;
+  hd.className='foldh'+(open?' open':'');
+  var fi=hd.querySelector('.fi'); if(fi) fi.textContent=open?'▴ اطوِ':'▾ افتح';
+}
 function foldBind(root){
   if(!root) return;
   var hs=root.querySelectorAll('[data-fold]'), i;
@@ -6020,23 +6033,67 @@ function renderBqnList(){
   }
   bqnBody+='</div>';
   var onSelf=(id==='self'), pn=onSelf?null:bqnPlan(id);
-  h = foldHTML('fSelf','🧭 خطط تطبيق «نور الوحي»'+(onSelf?(' — ✅ '+esc(segModeName())):''),false,selfBody)+
-      foldHTML('fBqn','📅 خطط «بالقرآن نحيا»'+(pn?(' — ✅ '+esc(pn.t)):''),false,bqnBody);
+  /* وأين هو من الحفظ الآن؟ سؤالٌ مكانُه مع الخطة لا مع الإعدادات */
+  var pm=curP().priorMode||'';
+  var priorBody='<div id="priorMode"></div>'+
+     '<div id="priorBox" style="margin-top:12px"></div>'+
+     '<div class="note">أشّر الأجزاء التي تحفظها — ولو كانت متفرّقة كآخر خمسة أجزاء وأوّل جزأين — '+
+     'أو اختر سوراً بعينها. تُحسب محفوظةً بخمس نجوم، وتدخل جدول المراجعة، '+
+     'ويُعاد حساب الأيام المتبقّية وموضعك في الخطة.</div>';
+  h = foldHTML('fSelf','🧭 خطط تطبيق «نور الوحي»'+(onSelf?(' — ✅ '+esc(segModeName())):''),foldIsOpen('fSelf'),selfBody)+
+      foldHTML('fBqn','📅 خطط «بالقرآن نحيا»'+(pn?(' — ✅ '+esc(pn.t)):''),foldIsOpen('fBqn'),bqnBody)+
+      foldHTML('fPrior','📌 ما حفظتَه قبل التطبيق'+
+        (pm==='new'?' — ✅ أبدأ من جديد':(pm==='has'?' — ✅ مُسجّل':'')),foldIsOpen('fPrior'),priorBody);
   $('bqnList').innerHTML=h;
   foldBind($('bqnList'));
-  selfDirWire($('bqnList'), function(){ renderBqnList(); });
+  try{ renderPriorMode(); }catch(e){}
+  selfDirWire($('bqnList'), function(){ renderBqnList(); if(bqnPlanDone()) bqnStepPrior(1); });
+  /* لا نخرجه بمجرّد اختيار الخطة، لأنّ تحتها سؤالاً بقي */
   var pick=function(el){
     var sid=el.getAttribute('data-self');
     if(sid){ SET.segMode=sid; setPlan('self'); ensureAllSchedules(); }
     else setPlan(el.getAttribute('data-bqn'));
     curP().planChosen=1; saveDB();
-    bqnReturn();
+    renderBqnList();
+    if(bqnPlanDone()) bqnStepPrior(1);
+    else try{ navToast('🧭 وبقيت واحدة: من أين تبدأ — من الناس أم من البقرة؟'); }catch(e){}
   };
   var bs=$('bqnList').querySelectorAll('[data-self],[data-bqn]');
   for(var k=0;k<bs.length;k++) bs[k].onclick=function(){ pick(this); };
 }
+/* الشاشة خطوتان: اختر خطّتك، ثمّ قل أين أنت منها */
+function bqnPlanDone(){ return !!curP().planChosen && (onPlan() || selfDirPicked()); }
+function bqnStepPlan(){
+  foldSet('fPrior',false);
+  foldSet(onPlan()?'fBqn':'fSelf',true);
+  bqnScrollTo(onPlan()?'fBqn':'fSelf');
+}
+function bqnStepPrior(say){
+  foldSet('fSelf',false); foldSet('fBqn',false); foldSet('fPrior',true);
+  bqnScrollTo('fPrior');
+  /* لا يُبشّر باعتماد الخطة إلاّ من اعتمدها الآن */
+  if(say && !curP().priorMode)
+    try{ navToast('✅ اعتُمدت الخطة — وبقيت واحدة: ما حفظتَه قبل التطبيق'); }catch(e){}
+}
+function bqnScrollTo(id){
+  var hd=document.querySelector('[data-fold="'+id+'"]'); if(!hd) return;
+  try{ hd.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
+}
+/* ما الذي يمنع الخروج من هذه الشاشة؟ */
+function bqnBlocked(){
+  if(!curP().planChosen) return {m:'🧭 اختر خطّة حفظك أوّلاً',go:bqnStepPlan};
+  if(!onPlan() && !selfDirPicked())
+    return {m:'🧭 وبقيت واحدة: من أين تبدأ — من الناس أم من البقرة؟',go:bqnStepPlan};
+  if(!curP().priorMode)
+    return {m:'📌 اختر أوّلاً: أبدأ من جديد، أم أسجّل حفظي السابق',go:bqnStepPrior};
+  return null;
+}
 var BQN_BACK='';            /* من أين جئنا إلى شاشة الاختيار: '' أو 'onb' أو 'set' */
-function startBqn(from){ BQN_BACK=from||''; renderBqnList(); show('scr-bqn'); }
+function startBqn(from){
+  BQN_BACK=from||''; renderBqnList(); show('scr-bqn');
+  /* يَرد الشاشة فيجد الخطوة الناقصة مفتوحة، لا يبحث عنها */
+  var b=bqnBlocked(); if(b) b.go();
+}
 function bqnReturn(){
   var b=BQN_BACK; BQN_BACK='';
   if(b==='onb'){ onbShow(ONB.i); return; }
@@ -6789,8 +6846,15 @@ $('btnRevHome').onclick=function(){ renderPlayers(); show('scr-start'); };
 $('btnRevQuit').onclick=function(){ renderPlayers(); show('scr-start'); };
 /* خطط «بالقرآن نحيا» الجاهزة */
 $('btnBqnHome').onclick=function(){
+  /* خطوةٌ واحدة للوراء: إن كان عند سؤال الحفظ السابق ردّه إلى اختيار الخطة */
+  if(foldIsOpen('fPrior') && curP().planChosen){ bqnStepPlan(); return; }
   if(BQN_BACK){ bqnReturn(); return; }
   renderPlayers(); show('scr-start');
+};
+$('btnBqnDone').onclick=function(){
+  var b=bqnBlocked();
+  if(b){ try{ navToast(b.m); }catch(e){} b.go(); return; }
+  bqnReturn();
 };
 $('btnBadges').onclick=function(){ renderBadges(); show('scr-badges'); };
 $('homeAvaBtn').onclick=function(){ renderBadges(); show('scr-badges'); };
@@ -6975,7 +7039,7 @@ var NAV={ ok:false, guard:false, exit:0, tEl:null, tT:0 };
 var NAV_BACK={ 'scr-look':'btnLookDone', 'scr-map':'btnBackStart', 'scr-path':'btnBackMap',
   'scr-rev':'btnRevHome', 'scr-revpath':'btnRevQuit', 'scr-build':'btnBuildBack',
   'scr-shop':'btnShopBack', 'scr-board':'btnBoardBack', 'scr-cert':'btnCertBack',
-  'scr-badges':'btnBadgesBack',
+  'scr-badges':'btnBadgesBack', 'scr-bqn':'btnBqnHome',
   'scr-settings':'btnSetBack' };
 function curScreen(){ var e=document.querySelector('.screen.active'); return e?e.id:'scr-start'; }
 function navToast(msg){
