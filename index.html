@@ -551,7 +551,8 @@ body.glow-off .cele .spk{display:none}
 .onbopt .ot b{font-size:16px;color:#102b4a}
 .onbopt .ot i{font-style:normal;font-size:12.5px;font-weight:700;color:var(--mute)}
 #onbBody{margin-bottom:18px}
-.onbnav{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+/* فُسحةٌ تحت الشريط: توهّجُ الزرّ النابض يمتدّ فيركب ما تحته إن ضاقت */
+.onbnav{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 .onbnav .onbgap{flex:1 1 auto}
 /* width:auto يبطل عرضَ ‎.btn.big‎ الكامل، وإلا ركب زرُّ الحفظ على زرّ السابق */
 .onbnav .btn{flex:0 0 auto;min-width:132px;width:auto;margin:0;padding:13px 18px;font-size:17px}
@@ -1181,7 +1182,7 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
         </div>
         <div class="note">بقية الأجزاء تظهر مقفلة 🔒 حتى لا يتشتّت الحافظ. الافتراضي: جزء عمّ فقط (٣٠).</div>
       </div>
-      <div class="switchrow"><span>🔓 فتح كل مقاطع السورة (بلا ترتيب)</span><input type="checkbox" id="setFree"></div>
+      <div class="switchrow"><span>🔀 القفز بين مقاطع السورة<br><small style="font-weight:700;color:var(--mute)">داخل السور المتاحة أعلاه: يبدأ بأيّ مقطع دون إتمام ما قبله — ولا يفتح جزءاً خارج نطاقك</small></span><input type="checkbox" id="setFree"></div>
       <div class="setblock">
         <label class="lbl">🔁 عدد مرات التكرار في مرحلة القراءة</label>
         <select id="setReps"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
@@ -1208,6 +1209,7 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
       <div class="switchrow"><span>🌞 الوضع النهاريّ<br><small style="font-weight:700;color:var(--mute)">خلفية فاتحة بدل سماء الليل — لكل لاعب اختياره</small></span><input type="checkbox" id="setLight"></div>
       <div class="switchrow"><span>🎉 احتفالات السلسلة والشارات<br><small style="font-weight:700;color:var(--mute)">إن أطفأتَه بقيت الشارات والجواهر كما هي، ويُعلَن عنها بسطر عابر لا يوقف اللعب</small></span><input type="checkbox" id="setCele"></div>
       <div class="switchrow"><span>✨ توهّج متحرّك على الزر الذي ينتظر الضغط<br><small style="font-weight:700;color:var(--mute)">يعمل حتى لو كان الجهاز يقلّل الحركة</small></span><input type="checkbox" id="setGlow"></div>
+      <button class="btn blue big" id="btnHelp" style="margin:14px 0 0">❓ كيف ألعب</button>
       </div>
       <div class="setpage" data-setp="dev" hidden>
       <div class="setblock" style="margin-top:12px">
@@ -1238,7 +1240,6 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
       <button class="btn red big" id="btnReset" style="margin-top:10px">🗑️ تصفير التقدّم</button>
       </div>
     </div>
-      <button class="btn blue big" id="btnHelp" style="margin-bottom:12px">❓ كيف ألعب</button>
     <button class="btn primary big" id="btnSetBack" style="margin:0">✅ حفظ ورجوع</button>
     <div class="waqfbox">
       وقف لله تعالى — صدقة جارية عن أمي <b>لمياء قباني</b> · تطوير: زهير النموس
@@ -2259,7 +2260,7 @@ function renderHUD(){
     }).join(' • ');
     var rest = due>2 ? (' و'+arNum(due-2)+' غيرها') : '';
     var wp=false; try{ wp=wirdPending(); }catch(e){}
-    var revTxt = wp ? 'وردُ اليوم: <b>'+arNum(REV.size)+' وجه</b> من محفوظك'
+    var revTxt = wp ? 'ورد المراجعة اليوم: <b>'+arNum(REV.size)+' وجه</b> من محفوظك'
                : due===0 ? 'لا مراجعة متبقية اليوم'
                : mR ? ('أتممت مراجعة اليوم — وبقي '+arNum(due)+' مقطعاً إن أردت الزيادة')
                     : ('راجع: <b>'+names+'</b>'+rest);
@@ -5687,13 +5688,13 @@ function wirdBanner(sfx){
       'background:linear-gradient(180deg,#34c47c,#147c40);color:#fff;border:2px solid #0b2a46;'+
       'border-radius:50%;width:30px;height:30px;line-height:26px;text-align:center;'+
       'font-size:16px;font-weight:900;box-shadow:0 4px 10px rgba(0,0,0,.35)">✓</span>':'')+
-    '<div style="font-size:15px">📖 <b>وردُ اليوم</b> — من محفوظك</div>'+
+    '<div style="font-size:15px">📖 <b>ورد المراجعة اليوم</b> — من محفوظك</div>'+
     '<div style="font-size:18px;font-weight:900;margin-top:6px">'+
       nm+' — '+(cur.length>1?('أوجه '+lbl):('وجه '+lbl))+'</div>'+
     '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:4px">'+
       'الجلسة '+arNum(i+1)+' من '+arNum(n)+' • تتمّ الدورة في '+arNum(n)+' يوماً</div>'+
     '<button type="button" class="btn '+(done?'ghost':'blue')+' big" id="wirdGo'+sfx+'" '+
-      'style="margin:12px 0 0">'+(done?'📖 زِد على وردك':'📖 ابدأ وردَ اليوم')+'</button>'+
+      'style="margin:12px 0 0">'+(done?'📖 زِد على وردك':'📖 ابدأ ورد المراجعة')+'</button>'+
   '</div>';
 }
 function wirdWire(sfx){
@@ -5796,12 +5797,33 @@ function bqnOnbHTML(){
   h+='<div class="lbl steplb" style="margin-top:22px">📌 وأين أنت من الحفظ الآن؟ <b style="color:var(--gold)">(لازم)</b></div>'+
      '<div class="note" style="margin-bottom:10px">اختر واحداً لنعرف من أين نبدأ بك.</div>'+
      priorModeHTML()+
-     '<div id="pOWrap"'+(pm==='has'?'':' hidden')+' style="margin-top:12px">'+priorPanelHTML('pO')+'</div>';
+     '<div id="pOWrap"'+(pm==='has'?'':' hidden')+' style="margin-top:12px">'+priorPanelHTML('pO')+'</div>'+
+     '<div id="pOWird" style="margin-top:22px"></div>';
   return h;
+}
+/* ورد المراجعة في معالج اللاعب كذلك — لمن سجّل حفظاً سابقاً */
+function wirdOnbSync(){
+  var box=$('pOWird'); if(!box) return;
+  if(curP().priorMode!=='has' || !wirdAsk()){ box.innerHTML=''; return; }
+  box.innerHTML='<div class="lbl steplb">📖 ورد المراجعة اليوميّ <b style="color:var(--gold)">(لازم)</b></div>'+
+                wirdBody();
+  var bs=box.querySelectorAll('[data-wird],[data-wsize],[data-wdir]'), i;
+  var hit=function(){
+    var v=this.getAttribute('data-wird');
+    if(v!=null){ REV.on=(v==='1'); if(REV.on) REV.wird=true; }
+    var sz=this.getAttribute('data-wsize');
+    if(sz!=null){ REV.size=parseInt(sz,10); REV.done=0; }
+    var dr=this.getAttribute('data-wdir');
+    if(dr!=null){ REV.dir=parseInt(dr,10); REV.done=0; }
+    revSave(); wirdOnbSync();
+    try{ onbGate(); }catch(e){}
+  };
+  for(i=0;i<bs.length;i++) bs[i].onclick=hit;
 }
 function bqnOnbWire(){
   try{ foldBind($('onbBody')); }catch(e){}
-  try{ priorPanelWire('pO',function(){ onbGate(); }); }catch(e){}
+  try{ priorPanelWire('pO',function(){ wirdOnbSync(); onbGate(); }); }catch(e){}
+  try{ wirdOnbSync(); }catch(e){}
   var mb=$('onbPMode');
   if(mb){
     var ms=mb.querySelectorAll('[data-pmode]'), z;
@@ -5812,6 +5834,7 @@ function bqnOnbWire(){
       for(y=0;y<a.length;y++)
         a[y].className='onbopt'+(a[y].getAttribute('data-pmode')===v?' sel':'');
       if($('pOWrap')) $('pOWrap').hidden=(v!=='has');
+      try{ wirdOnbSync(); }catch(e){}
       onbGate();
     };
   }
@@ -5832,6 +5855,8 @@ function onbBlocked(){
     if(!curP().planChosen) return '🧭 اختر خطة حفظك أوّلاً — من قسمَي الخطط أعلاه';
     if(!onPlan() && !selfDirPicked()) return '🧭 وبقيت واحدة: من أين تبدأ — من الناس أم من البقرة؟';
     if(!curP().priorMode)  return '📌 اختر: أبدأ من جديد، أو أسجّل حفظي السابق';
+    if(curP().priorMode==='has' && wirdAsk() && REV.on==null)
+      return '📖 وبقيت واحدة: أتريد ورد مراجعةٍ يوميّاً لمحفوظك؟';
   }
   return '';
 }
@@ -6186,7 +6211,7 @@ function bqnStepBlocked(){
   if(k==='plan' && !p.planChosen) return '🧭 اختر خطّة حفظك أوّلاً';
   if(k==='dir'  && !selfDirPicked()) return '🧭 من أين تبدأ — من الناس أم من البقرة؟';
   if(k==='prior'&& !p.priorMode) return '📌 اختر: أبدأ من جديد، أم أسجّل حفظي السابق';
-  if(k==='wird' && REV.on==null) return '📖 أتريد ورداً يوميّاً لمراجعة محفوظك؟';
+  if(k==='wird' && REV.on==null) return '📖 أتريد ورد مراجعةٍ يوميّاً لمحفوظك؟';
   return '';
 }
 function bqnGate(){
@@ -6277,7 +6302,7 @@ function wirdBody(){
      '<div class="onbopts">'+
      '<button type="button" class="onbopt'+(on===true?' sel':'')+'" data-wird="1">'+
        '<span class="oe">'+(on===true?'✅':'📖')+'</span>'+
-       '<span class="ot"><b>نعم، أُريد ورداً يوميّاً</b><i>جلسةٌ كل يوم من محفوظك</i></span></button>'+
+       '<span class="ot"><b>نعم، أُريد ورد مراجعةٍ يوميّاً</b><i>جلسةٌ كل يوم من محفوظك</i></span></button>'+
      '<button type="button" class="onbopt'+(on===false?' sel':'')+'" data-wird="0">'+
        '<span class="oe">'+(on===false?'✅':'🚫')+'</span>'+
        '<span class="ot"><b>لا، الحفظ الجديد يكفيني</b><i>تبقى مراجعة ما تحفظه في التطبيق وحدها</i></span></button>'+
@@ -6302,7 +6327,7 @@ function wirdBody(){
      '</div>';
   var c=wirdCalc(REV.size);
   h+='<div class="revsum" style="margin:16px 0 0;text-align:right">'+
-     '<div style="font-size:15px">🧮 <b>حسبة وردك</b></div>'+
+     '<div style="font-size:15px">🧮 <b>حسبة ورد مراجعتك</b></div>'+
      '<div style="font-size:17px;font-weight:900;margin-top:6px">'+
        arNum(c.pages)+' وجهاً محفوظاً • دورةٌ في '+arNum(c.days)+' يوماً</div>'+
      '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:6px">'+
@@ -6333,7 +6358,7 @@ function bqnBlocked(){
     if(k==='plan' && !p.planChosen) m='🧭 اختر خطّة حفظك أوّلاً';
     else if(k==='dir' && !selfDirPicked()) m='🧭 وبقيت واحدة: من أين تبدأ — من الناس أم من البقرة؟';
     else if(k==='prior' && !p.priorMode) m='📌 اختر أوّلاً: أبدأ من جديد، أم أسجّل حفظي السابق';
-    else if(k==='wird' && REV.on==null) m='📖 وبقيت واحدة: أتريد ورداً يوميّاً لمراجعة محفوظك؟';
+    else if(k==='wird' && REV.on==null) m='📖 وبقيت واحدة: أتريد ورد مراجعةٍ يوميّاً لمحفوظك؟';
     if(m) return { m:m, i:i, go:(function(x){ return function(){ bqnShow(x); }; })(i) };
   }
   return null;
@@ -6879,7 +6904,7 @@ function renderHome(){
   $('homeHi').innerHTML = n ? ('السلام عليكم يا <b>'+esc(n)+'</b> 👋') : 'السلام عليكم 👋';
   var due=dueSegs().length, tb=todayBox(), w=false;
   try{ revLoad(); w=wirdPending(); }catch(e){}
-  $('homeHi2').textContent = w ? 'وردُ اليوم ينتظرك 📖'
+  $('homeHi2').textContent = w ? 'ورد المراجعة ينتظرك 📖'
     : due ? ('عندك '+arNum(due)+' مقطع يحتاج مراجعة اليوم ☀️')
     : (tb.stages>0 ? ('أنجزت '+arNum(tb.stages)+' مراحل اليوم — أحسنت 🌟')
                    : 'مستعدّ لحفظ جديد اليوم؟');
