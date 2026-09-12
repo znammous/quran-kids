@@ -276,8 +276,8 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfsheet.picking .mw,.mfsheet.picking .manum{cursor:pointer;border-radius:4px}
 .mfsheet.picking .mw:active,.mfsheet.picking .manum:active{background:#ffe9a8}
 /* الكلمةُ التي وقع عليها الاختيار تبقى مضاءةً حتى يُقرّها أو يعدل */
-.mushaf .mpick{background:linear-gradient(180deg,#ffe08a,#f6c445);color:#3b2a00;
-  border-radius:5px;box-shadow:0 0 0 2px rgba(161,121,26,.55)}
+.mushaf .mpick{background:#ffe08a;color:#3b2a00;box-shadow:0 0 0 1px #ffe08a}
+.mushaf .mpick:first-of-type{border-start-start-radius:6px;border-end-start-radius:6px}
 .mfhead .xbtn{position:static;flex:0 0 auto;width:38px;height:38px;font-size:19px;
   background:linear-gradient(180deg,#c6ccd4,#939ca8);box-shadow:0 4px 0 rgba(0,0,0,.16)}
 .mfhead .xbtn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.16)}
@@ -1855,6 +1855,7 @@ function mfPickDraw(){
   if(a) a.disabled=(P<=1);
   if(b) b.disabled=(P>=604);
   if($('mfBar')) $('mfBar').hidden=false;
+  MF_GLOW=null;
   if($('mfPg')) $('mfPg').value=P;
   mfIdxFill(P);
 }
@@ -1877,6 +1878,7 @@ function mfIdxFill(P){
 function mfPickEnd(){
   MF_PICK=null;
   $('mfSheet').classList.remove('picking');
+  MF_GLOW=null;
   if($('mfBar')) $('mfBar').hidden=true;
   if($('mfStep')) $('mfStep').hidden=true;
   var hint=document.querySelector('.mfhint');
@@ -1897,10 +1899,23 @@ function mfNearest(x,y){
     d=(cx-x)*(cx-x)+(cy-y)*(cy-y);
     if(d<bd){ bd=d; best=all[i]; }
   }
-  return (bd<=70*70) ? best : null;            /* البعيدُ لا يُلتقط */
+  return (bd<=200*200) ? best : null;          /* ما خرج عن الوجه لا يُلتقط */
 }
 /* يُفكّ الحظر بعد ثلث ثانية، فلا تلتقط الوجهَ نقرةٌ خلّفها إغلاق الصندوق */
 function mfUnbusy(){ setTimeout(function(){ if(MF_PICK) MF_PICK.busy=false; }, 340); }
+/* تُضاء الآيةُ التي تحت الإصبع وهو يتحرّك، فيرى ما سيختار قبل أن يرفع */
+function mfGlow(x,y){
+  var el=mfNearest(x,y), box=$('mfBody'); if(!box) return;
+  var gi=el?el.getAttribute('data-gi'):null;
+  if(gi===MF_GLOW) return;                 /* هي نفسها، فلا نُعيد الرسم */
+  MF_GLOW=gi;
+  var old=box.querySelectorAll('.mpick'), z;
+  for(z=0;z<old.length;z++) old[z].classList.remove('mpick');
+  if(!gi) return;
+  var same=box.querySelectorAll('[data-gi="'+gi+'"]');
+  for(z=0;z<same.length;z++) same[z].classList.add('mpick');
+}
+var MF_GLOW=null;
 function mfPickAt(t,x,y){
   if(!MF_PICK || MF_PICK.busy) return false;
   var el=(t && t.closest) ? t.closest('[data-gi]') : null;
@@ -1910,15 +1925,15 @@ function mfPickAt(t,x,y){
   if(isNaN(gi)) return false;
   var loc=mLoc(gi), sn=loc[0], an=loc[1], sx=surahBy(sn);
   try{ sPick(); }catch(e){}
-  /* تُضاء الكلمة الملموسة، فيرى أنّ لمسته وقعت موقعها */
+  /* تُضاء الآيةُ كلّها لا الكلمةُ وحدها: هدفٌ واسعٌ يُصاب، ويرى ما اختار */
   try{
-    var old=$('mfBody').querySelectorAll('.mpick'), z;
+    var box=$('mfBody'), old=box.querySelectorAll('.mpick'), z;
     for(z=0;z<old.length;z++) old[z].classList.remove('mpick');
-    el.classList.add('mpick');
+    var same=box.querySelectorAll('[data-gi="'+gi+'"]');
+    for(z=0;z<same.length;z++) same[z].classList.add('mpick');
   }catch(e){}
   MF_PICK.busy=true;                      /* لمسةٌ ونقرةٌ قد تجتمعان، فتُمنع الثانية */
-  uiBox('حدّدتَ: '+(sx?sx.name:'')+' — الآية '+arNum(an)+'\n'+
-        (MF_PICK.stage==='from'?'أهذه بدايةُ نطاقك؟':'أهذه نهايةُ نطاقك؟'),
+  uiBox('<b>'+(sx?sx.name:'')+' — الآية '+arNum(an)+'</b>\n'+(MF_PICK.stage==='from'?'أمِن هنا تبدأ مراجعتُك؟':'أوعندها تنتهي مراجعتُك؟'),
     '📖','✅ موافق','↺ أعد التحديد', function(ok){
       if(!MF_PICK) return;
       if(!ok){
@@ -4152,10 +4167,14 @@ $('mfNext').onclick=function(){ if(MF_PICK && MF_PICK.page<604){ MF_PICK.page++;
   if(!b || !window.PointerEvent) return;
   b.addEventListener('pointerdown', function(e){
     down=true; moved=false; sx=e.clientX; sy=e.clientY; st=Date.now();
+    if(MF_PICK && !MF_PICK.busy) mfGlow(e.clientX,e.clientY);
   });
   b.addEventListener('pointermove', function(e){
     if(!down) return;
-    if(Math.abs(e.clientX-sx)>10 || Math.abs(e.clientY-sy)>10) moved=true;
+    var mx=Math.abs(e.clientX-sx), my=Math.abs(e.clientY-sy);
+    if(mx>10 || my>10) moved=true;
+    /* ما دام لم يتحوّل إلى سحبٍ أفقيّ، تتبع الإضاءةُ إصبعه */
+    if(MF_PICK && !MF_PICK.busy && !(mx>=30 && mx>my)) mfGlow(e.clientX,e.clientY);
   });
   b.addEventListener('pointercancel', function(){ down=false; });
   b.addEventListener('pointerup', function(e){
@@ -4164,14 +4183,14 @@ $('mfNext').onclick=function(){ if(MF_PICK && MF_PICK.page<604){ MF_PICK.page++;
     /* سحبٌ أفقيّ في وضع التحديد: يقلّب الوجه كما يُقلَّب في المصحف.
        سحبٌ إلى اليسار يمضي، وإلى اليمين يرجع — كاتّجاه السهمين. */
     var dx=e.clientX-sx, dy=e.clientY-sy, ax=Math.abs(dx), ay=Math.abs(dy);
-    if(MF_PICK && !MF_PICK.busy && ax>45 && ax>ay*1.2){
+    if(MF_PICK && !MF_PICK.busy && ax>=30 && ax>ay){
       if(dx<0 && MF_PICK.page<604){ MF_PICK.page++; sPage(); mfPickDraw(); }
       else if(dx>0 && MF_PICK.page>1){ MF_PICK.page--; sPage(); mfPickDraw(); }
       return;
     }
     if(Date.now()-st>600) return;                       /* ضغطةٌ طويلة */
-    /* في التحديد نتسامح مع درجان الإصبع: ما دون خمسةٍ وعشرين لمسةٌ لا سحب */
-    if(MF_PICK ? (ax>25 || ay>25) : moved) return;
+    /* لا منطقةَ ميّتة: ما لم يكن سحباً أفقيّاً فهو لمسة، ما دام الإصبع لم يجُل بعيداً */
+    if(MF_PICK ? (ax>60 || ay>60) : moved) return;
     if(e.cancelable) e.preventDefault();
     if(MF_PICK){ mfPickAt(e.target, e.clientX, e.clientY); return; }
     mushafClose(); mushafEatGhost();
@@ -7770,7 +7789,9 @@ function uiBox(msg,ic,yes,no,cb,muteKey){
   var cw=$('askChkWrap'), ck=$('askChk');
   if(cw){ cw.hidden=!muteKey; if(ck) ck.checked=false; }
   $('askIc').textContent=ic||'💚';
-  $('askMsg').innerHTML=String(msg).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>');
+  /* يُهرَّب كلُّ شيءٍ إلا <b> — فبعض الرسائل تُبرز اسماً أو عدداً */
+  $('askMsg').innerHTML=String(msg).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/&lt;(\/?b)&gt;/g,'<$1>').replace(/\n/g,'<br>');
   var y=$('askYes'), n=$('askNo');
   y.textContent=yes||'✅ حسناً';
   n.hidden=!no; if(no) n.textContent=no;
