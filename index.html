@@ -454,7 +454,8 @@ body.glow-off .cele .spk{display:none}
 .bfam{background:var(--pnl);border:2px solid var(--pb);border-radius:16px;padding:12px;margin-bottom:11px}
 /* صفّ التاج: أرفع الشارات، فله إطارٌ ذهبيّ يميّزه */
 .bfam.crownfam{border-color:var(--gold);box-shadow:0 0 0 2px rgba(242,194,48,.25) inset}
-.crownrow{display:flex;align-items:center;gap:12px;margin:8px 0 10px}
+/* التاج يأخذ كلّ الارتفاع، والنصّ ينزاح عنه */
+.crownrow{display:flex;align-items:stretch;gap:18px;margin:10px 0 12px;min-height:104px}
 /* مقطع تاج الوقار في شهادة الختم */
 .cert .crowncert{margin:14px 0;padding:18px 14px 16px;border:3px solid #d9b45a;border-radius:18px;
   background:radial-gradient(ellipse at 50% 22%,#fff8e2,#fffaf0 62%);text-align:center;
@@ -465,12 +466,13 @@ body.glow-off .cele .spk{display:none}
 .cert .crowncert p{margin:0;font-size:15px;font-weight:800;color:#6b4e00;line-height:2.2}
 .cert .crowncert b{color:#8a6100}
 .cert .crowncert small{display:block;margin-top:8px;font-size:12px;font-weight:700;color:#8a7a55;line-height:1.9}
-.crownpic{flex:0 0 auto;width:74px;height:56px;border-radius:14px;display:grid;place-items:center;
-  background:#0d2f5e;border:2px solid var(--pb);opacity:.45;filter:grayscale(1)}
+.crownpic{flex:0 0 auto;width:124px;align-self:stretch;border-radius:16px;display:grid;place-items:center;
+  padding:8px;background:#0d2f5e;border:2px solid var(--pb);opacity:.45;filter:grayscale(1)}
 .crownpic.on{opacity:1;filter:none;background:radial-gradient(circle at 50% 60%,#4a3a00,#0d2f5e);
   border-color:var(--gold);box-shadow:0 0 14px rgba(242,194,48,.45)}
-.crownpic svg{width:66px;height:48px}
-.crowntx{flex:1 1 auto;min-width:0}
+.crownpic svg{width:100%;height:100%;max-height:92px}
+.crowntx{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;justify-content:center;
+  padding-inline-start:4px}
 .crowntx b{display:block;font-size:14.5px;font-weight:900;color:var(--ttl);line-height:1.7}
 .crowntx i{display:block;font-style:normal;font-size:12px;font-weight:700;color:var(--mute);line-height:1.7;margin-top:2px}
 
@@ -2769,44 +2771,70 @@ function decorSVG(){
    الكود يحمل ٤٨ بتاً في عشرة محارف: النوع(2) والقيمة(16) ورقم فريد(16)
    ورقم تحقّق(14) — فلا يُقبل كودٌ مخترَع. وبحسابٍ عشريّ لا BigInt، فيعمل
    على المتصفّحات القديمة. والمُهدي يُخصم منه، فتكون هديّةً لا زرَّ ربح. */
-var GFT_A32='23456789ABCDEFGHJKLMNPQRSTUVWXYZ';     /* بلا 0 1 I O U فلا يلتبس على طفل */
-var GFT_P2=[]; (function(){ for(var i=0;i<=48;i++) GFT_P2[i]=Math.pow(2,i); })();
+/* ===== كود الهديّة: أربعة أرقام =====
+   لا خادمَ يتحقّق، فالكود يحمل نفسه. والفضاء ضيّق — عشرة آلاف — فحُصر ما
+   يُهدى في جدولٍ معلوم، وأُعطي كلُّ صنفٍ أرقاماً عشوائيّة تميّز نسخته، ثمّ
+   خُلطت المواضع بضربٍ دوريّ فلا تتجاور الأكواد الصحيحة. وما بقي من ثغرة
+   التخمين يسدّه سقفُ المحاولات اليوميّ. */
+var GFT_M=10000, GFT_A=3571, GFT_AI=8331;      /* الخلط ومعكوسه */
+var GFT_GEMS=[10,50,100,250,500,1000];         /* سلّم الجواهر التي تُهدى */
+var GFT_MATN=[1,5];                            /* أعداد المواد */
+var GFT_IDS=[16,16,4];                         /* أرقام كلّ صنف: جواهر، مادّة، غرض */
+var GFT_CAT=null;
+function gftCat(){
+  if(GFT_CAT) return GFT_CAT;
+  var out=[], base=0, i, j, all;
+  GFT_GEMS.forEach(function(g){ out.push({type:0,val:g,ids:GFT_IDS[0],base:base}); base+=GFT_IDS[0]; });
+  for(i=0;i<MATS.length;i++) for(j=0;j<GFT_MATN.length;j++){
+    out.push({type:1,val:i*4096+GFT_MATN[j],ids:GFT_IDS[1],base:base}); base+=GFT_IDS[1];
+  }
+  all=shopEvery();
+  for(i=0;i<all.length;i++){ out.push({type:2,val:i,key:all[i].k,ids:GFT_IDS[2],base:base}); base+=GFT_IDS[2]; }
+  GFT_CAT={ rows:out, span:base };
+  return GFT_CAT;
+}
+function gftFind(type,val){
+  var c=gftCat().rows, i;
+  for(i=0;i<c.length;i++) if(c[i].type===type && c[i].val===val) return c[i];
+  return null;
+}
 function gftFnv(s,seed){
   var h=seed>>>0;
   for(var i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619)>>>0; }
   return h>>>0;
 }
-function gftCrc(type,val,id){ return gftFnv('nur:'+type+':'+val+':'+id, 0x2f1c7a3b) & 0x3FFF; }
 function gftEnc(type,val,id){
-  var num=type*GFT_P2[46]+val*GFT_P2[30]+id*GFT_P2[14]+gftCrc(type,val,id), s='', i;
-  for(i=9;i>=0;i--) s+=GFT_A32.charAt(Math.floor(num/GFT_P2[i*5])%32);
-  return s.slice(0,5)+'-'+s.slice(5);
+  var r=gftFind(type,val); if(!r) return null;
+  var raw=r.base+(id%r.ids);
+  var n=(raw*GFT_A+7919)%GFT_M;
+  return ('000'+n).slice(-4);
 }
-function gftNorm(str){ return String(str||'').toUpperCase().replace(/[^0-9A-Z]/g,''); }
+function gftNorm(str){ return String(str||'').replace(/[^0-9]/g,''); }
 function gftDec(str){
-  var s=gftNorm(str), num=0, i, k;
-  if(s.length!==10) return null;
-  for(i=0;i<10;i++){ k=GFT_A32.indexOf(s.charAt(i)); if(k<0) return null; num=num*32+k; }
-  var crc=num%GFT_P2[14],
-      id=Math.floor(num/GFT_P2[14])%GFT_P2[16],
-      val=Math.floor(num/GFT_P2[30])%GFT_P2[16],
-      type=Math.floor(num/GFT_P2[46])%4;
-  if(gftCrc(type,val,id)!==crc) return null;
-  return { type:type, val:val, id:id };
-}
-/* أكواد المنح الثابتة — مُلبَّدة فلا تظهر بقراءة المصدر عَرَضاً */
-var GFT_PROMO={ '4136466022':100, '3596891331':500, '1870205958':1000 };
-function gftPromoValue(raw){
-  var v=GFT_PROMO[String(gftFnv('promo:'+gftNorm(raw), 0x5bf03a71))];
-  return v||0;
-}
-/* الأصناف: 0 جواهر، 1 مادّة، 2 غرض، 3 منحة */
-function gftItemHash(k){ return gftFnv('itm:'+k, 0x811c9dc5) & 0xFFFF; }
-function gftItemByHash(h){
-  var all=shopEvery(), i;
-  for(i=0;i<all.length;i++) if(gftItemHash(all[i].k)===h) return all[i];
+  var s=gftNorm(str); if(s.length!==4) return null;
+  var n=parseInt(s,10);
+  var raw=(((n-7919)%GFT_M+GFT_M)*GFT_AI)%GFT_M;
+  var c=gftCat(); if(raw>=c.span) return null;
+  var rows=c.rows, i;
+  for(i=0;i<rows.length;i++) if(raw>=rows[i].base && raw<rows[i].base+rows[i].ids)
+    return { type:rows[i].type, val:rows[i].val, id:raw-rows[i].base };
   return null;
 }
+/* سقفُ المحاولات الخاطئة في اليوم — بابُ التخمين يُغلق بعد خمس */
+var GFT_TRIES=5;
+function gftGate(){
+  var p=curP(), t=todayNum();
+  if(!p.gtry || p.gtry.d!==t) p.gtry={d:t,n:0};
+  return p.gtry;
+}
+function gftMiss(){ var g=gftGate(); g.n++; saveDB(); }
+/* أكواد المنح الثابتة — مُلبَّدة فلا تظهر بقراءة المصدر عَرَضاً */
+var GFT_PROMO={ '2847':100, '5391':500, '7620':1000 };
+function gftPromoValue(raw){ return GFT_PROMO[gftNorm(raw)]||0; }
+/* الأصناف: 0 جواهر، 1 مادّة، 2 غرض، 3 منحة */
+/* الغرض يُعرَف بفهرسه في جدول الهدايا، فالفضاء لا يحتمل بصمةً طويلة */
+function gftItemHash(k){ var a=shopEvery(), i; for(i=0;i<a.length;i++) if(a[i].k===k) return i; return -1; }
+function gftItemByHash(h){ var a=shopEvery(); return (h>=0 && h<a.length) ? a[h] : null; }
 function gftMatIdx(k){ for(var i=0;i<MATS.length;i++) if(MATS[i].k===k) return i; return -1; }
 /* وصف الهديّة كما تُقرأ */
 function gftDesc(d){
@@ -2824,13 +2852,15 @@ function gftMinted(){ var p=curP(); if(!p.minted) p.minted={}; return p.minted; 
 function gftRedeem(raw){
   var s=gftNorm(raw);
   if(!s) return { ok:false, msg:'اكتب الكود أوّلاً' };
+  if(gftGate().n>=GFT_TRIES)
+    return { ok:false, msg:'جرّبتَ خمسة أكواد خاطئة اليوم — عُد غداً 💚' };
   if(gftUsed()[s]) return { ok:false, msg:'هذا الكود مصروفٌ من قبل — لكلٍّ كودُه مرّة واحدة' };
   if(gftMinted()[s]) return { ok:false, msg:'هذا كودٌ أنشأتَه أنت لأخيك — أرسله إليه 🤍' };
   var promo=gftPromoValue(s);
   var d = promo ? { type:3, val:promo, id:0 } : gftDec(s);
-  if(!d) return { ok:false, msg:'لم أعرف هذا الكود — راجع حروفه' };
+  if(!d){ gftMiss(); return { ok:false, msg:'لم أعرف هذا الكود — راجع أرقامه' }; }
   var txt=gftDesc(d);
-  if(!txt) return { ok:false, msg:'هذا الكود لا يطابق شيئاً في هذه النسخة' };
+  if(!txt){ gftMiss(); return { ok:false, msg:'هذا الكود لا يطابق شيئاً في هذه النسخة' }; }
   var p=curP();
   if(d.type===0 || d.type===3) addGems(d.val);
   else if(d.type===1){ var m=MATS[Math.floor(d.val/4096)]; addMat(m.k, d.val%4096); }
@@ -2856,8 +2886,10 @@ function gftMake(type, val){
     if((p.gems||0)<it.p) return { ok:false, msg:'ثمنه '+arNum(it.p)+' جوهرة، ورصيدك '+arNum(p.gems||0) };
     p.gems-=it.p;                                  /* تشتريه له، ولا تفقد نسختك */
   } else return { ok:false, msg:'صنفٌ غير معروف' };
-  var id=Math.floor(Math.random()*65536);
-  var code=gftEnc(type, val, id);
+  var row=gftFind(type,val);
+  if(!row) return { ok:false, msg:'هذه الهديّة لا يحملها الكود — اختر غيرها' };
+  var code=gftEnc(type, val, Math.floor(Math.random()*row.ids));
+  if(!code) return { ok:false, msg:'تعذّر توليد الكود' };
   gftMinted()[gftNorm(code)]=1; saveDB();
   return { ok:true, code:code, txt:gftDesc({type:type,val:val}) };
 }
@@ -2883,8 +2915,10 @@ var GFT_CARD='';
 function gftFormHTML(){
   var p=curP(), i, o;
   if(GFT_T===0){
-    return '<div class="gftrow"><label>عدد الجواهر</label>'+
-      '<input type="number" id="gftN" min="1" step="1" value="100" inputmode="numeric"></div>'+
+    o='';
+    for(i=0;i<GFT_GEMS.length;i++)
+      o+='<option value="'+GFT_GEMS[i]+'"'+(GFT_GEMS[i]===100?' selected':'')+'>💎 '+arNum(GFT_GEMS[i])+' جوهرة</option>';
+    return '<div class="gftrow"><label>عدد الجواهر</label><select id="gftN">'+o+'</select></div>'+
       '<div class="note">رصيدك 💎 '+arNum(p.gems||0)+' جوهرة — ويُخصم منك ما تُهديه.</div>';
   }
   if(GFT_T===1){
@@ -2892,8 +2926,9 @@ function gftFormHTML(){
     for(i=0;i<MATS.length;i++)
       o+='<option value="'+i+'">'+MATS[i].ic+' '+esc(MATS[i].n)+' — عندك '+arNum(mats()[MATS[i].k]||0)+'</option>';
     return '<div class="gftrow"><label>المادّة</label><select id="gftM">'+o+'</select></div>'+
-      '<div class="gftrow"><label>العدد</label>'+
-      '<input type="number" id="gftN" min="1" step="1" value="5" inputmode="numeric"></div>'+
+      '<div class="gftrow"><label>العدد</label><select id="gftN">'+
+      GFT_MATN.map(function(n){ return '<option value="'+n+'"'+(n===5?' selected':'')+'>'+arNum(n)+'</option>'; }).join('')+
+      '</select></div>'+
       '<div class="note">يُخصم من مخزونك أنت.</div>';
   }
   var all=shopEvery(); o='';
@@ -4492,11 +4527,13 @@ function crownRowHTML(){
       '<div class="crownpic'+(on?' on':'')+'">'+
         '<svg viewBox="24 14 52 36" aria-hidden="true">'+crownSVG()+'</svg></div>'+
       '<div class="crowntx">'+(on
-        ? '<b>تُوِّجتَ حافظاً لكتاب الله</b><i>لا يفارق التاجُ رأسك — ودُم على تعاهده</i>'+
-          '<button type="button" class="btn green mini" id="btnQCert" style="margin:8px 0 0">📜 شهادة ختم القرآن</button>'
+        ? '<b>تُوِّجتَ حافظاً لكتاب الله</b><i>لا يفارق التاجُ رأسك — ودُم على تعاهده</i>'
         : '<b>إن شاء الله ستلبس التاج عند إتمامك حفظ القرآن</b><i>وهو أرفع ما في هذه الصفحة، لا يُنال إلا بتمام المصحف</i>')+
       '</div></div>'+
-    '<div class="bbar"><i style="width:'+pct+'%"></i></div></div>';
+    '<div class="bbar"><i style="width:'+pct+'%"></i></div>'+
+    (on?'<button type="button" class="btn green" id="btnQCert" style="width:100%;margin:12px 0 0">'+
+        '📜 شهادة ختم القرآن</button>':'')+
+    '</div>';
 }
 function renderBadges(){
   var p=curP(), h=crownRowHTML();
