@@ -638,6 +638,15 @@ body.glow-off .cele .spk{display:none}
 .pnode .lbl.wide{max-width:250px;line-height:1.5}
 
 /* هدف اليوم: بطاقة فاتحة كما كان */
+/* بابا «تهادوا تحابّوا»: استقبال أو إرسال */
+.gftpick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gftpk{font-family:inherit;background:#fff;border:3px solid #e5ecf6;border-radius:16px;
+  padding:20px 8px;cursor:pointer;text-align:center;touch-action:manipulation;transition:.12s;
+  box-shadow:0 4px 0 rgba(0,0,0,.06)}
+.gftpk:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.06)}
+.gftpk .pi{font-size:42px;line-height:1.15}
+.gftpk .pn{font-weight:900;color:var(--g1);font-size:16px;margin-top:8px}
+.gftpk .pd{font-size:12px;font-weight:700;color:#4a627e;margin-top:5px;line-height:1.6}
 /* 🎁 تهادوا تحابّوا */
 .gftbox{background:#fff;border:3px solid #e5ecf6;border-radius:14px;padding:12px;margin-bottom:12px;text-align:right}
 .gftbox .gfth{font-weight:900;color:var(--g1);font-size:15px;margin-bottom:8px}
@@ -2695,6 +2704,7 @@ function gftCard(code, txt, note){
 }
 
 /* ===== واجهة «تهادوا تحابّوا» ===== */
+var GFT_V='';                                      /* '' اختيار، in استقبال، out إرسال */
 var GFT_T=0;                                       /* 0 جواهر، 1 مادّة، 2 غرض */
 var GFT_CARD='';
 function gftFormHTML(){
@@ -2720,13 +2730,29 @@ function gftFormHTML(){
 }
 
 function gftPanelHTML(){
-  return '<button class="btn ghost mini" id="btnShopCats" style="width:100%;margin-bottom:10px">➡️ كل الأقسام</button>'+
-    '<div class="gftbox">'+
-      '<div class="gfth">🎁 وصلتك هديّة؟ اصرف كودها</div>'+
-      '<div class="row"><input type="text" id="gftIn" placeholder="اكتب الكود" autocomplete="off" spellcheck="false">'+
-      '<button class="btn green" id="gftUse">✅ اصرف</button></div>'+
-      '<div class="note" id="gftMsg">لكل كودٍ صرفٌ واحد.</div>'+
-    '</div>'+
+  var cats='<button class="btn ghost mini" id="btnShopCats" style="width:100%;margin-bottom:10px">➡️ كل الأقسام</button>';
+  if(!GFT_V){                                      /* الاختيار أوّلاً: بابان لا غير */
+    return cats+
+      '<div class="gftpick">'+
+        '<button type="button" class="gftpk" data-gv="in">'+
+          '<div class="pi">🎁</div><div class="pn">استقبل هديّة</div>'+
+          '<div class="pd">وصلك كود؟ اصرفه هنا</div></button>'+
+        '<button type="button" class="gftpk" data-gv="out">'+
+          '<div class="pi">🤍</div><div class="pn">أرسل هديّة</div>'+
+          '<div class="pd">أهدِ أخاك ممّا تحبّ</div></button>'+
+      '</div>';
+  }
+  var back='<button class="btn ghost mini" id="gftBack" style="width:100%;margin-bottom:10px">➡️ رجوع</button>';
+  if(GFT_V==='in'){
+    return back+
+      '<div class="gftbox">'+
+        '<div class="gfth">🎁 اصرف كود الهديّة</div>'+
+        '<div class="row"><input type="text" id="gftIn" placeholder="اكتب الكود" autocomplete="off" spellcheck="false">'+
+        '<button class="btn green" id="gftUse">✅ اصرف</button></div>'+
+        '<div class="note" id="gftMsg">لكل كودٍ صرفٌ واحد.</div>'+
+      '</div>';
+  }
+  return back+
     '<div class="gftbox">'+
       '<div class="gfth">🤍 أهدِ أخاك ممّا تحبّ</div>'+
       '<div class="gftt">'+
@@ -2748,18 +2774,7 @@ function gftPanelHTML(){
       '</div>'+
     '</div>';
 }
-function gftMsg(s,bad){
-  var e=$('gftMsg'); if(!e) return;
-  e.textContent=s; e.style.color=bad?'#c0392b':'#1a7a4a'; e.style.fontWeight='800';
-}
-
-function gftBind(){
-  var i, ts=$('shopBody').querySelectorAll('[data-gt]');
-  for(i=0;i<ts.length;i++) ts[i].onclick=function(){
-    GFT_T=parseInt(this.getAttribute('data-gt'),10)||0;
-    renderShop();
-  };
-  $('btnShopCats').onclick=function(){ shopCat=''; renderShop(); window.scrollTo(0,0); };
+function gftBindIn(){
   $('gftUse').onclick=function(){
     var raw=$('gftIn').value;
     /* أداة المنح للوالد أو المعلّم: تُنشئ كوداً بأيّ عدد بلا خصم */
@@ -2782,6 +2797,8 @@ function gftBind(){
     renderShop();
   };
   $('gftIn').onkeydown=function(e){ if(e.key==='Enter') $('gftUse').click(); };
+}
+function gftBindOut(){
   $('gftGo').onclick=function(){
     var type=GFT_T, val=0;
     if(type===0) val=parseInt($('gftN').value,10)||0;
@@ -2801,6 +2818,27 @@ function gftBind(){
     catch(e){ try{ navToast('انسخ الرسالة من الصندوق أعلاه'); }catch(e2){} }
   };
   $('gftShare').onclick=function(){ try{ doShare(GFT_CARD); }catch(e){} };
+}
+function gftMsg(s,bad){
+  var e=$('gftMsg'); if(!e) return;
+  e.textContent=s; e.style.color=bad?'#c0392b':'#1a7a4a'; e.style.fontWeight='800';
+}
+
+function gftBind(){
+  var i, el;
+  el=$('btnShopCats'); if(el) el.onclick=function(){ shopCat=''; GFT_V=''; renderShop(); window.scrollTo(0,0); };
+  el=$('gftBack');     if(el) el.onclick=function(){ GFT_V=''; renderShop(); window.scrollTo(0,0); };
+  var pk=$('shopBody').querySelectorAll('[data-gv]');
+  for(i=0;i<pk.length;i++) pk[i].onclick=function(){
+    GFT_V=this.getAttribute('data-gv'); renderShop(); window.scrollTo(0,0);
+  };
+  var ts=$('shopBody').querySelectorAll('[data-gt]');
+  for(i=0;i<ts.length;i++) ts[i].onclick=function(){
+    GFT_T=parseInt(this.getAttribute('data-gt'),10)||0;
+    renderShop();
+  };
+  if($('gftUse')) gftBindIn();
+  if($('gftGo'))  gftBindOut();
 }
 
 function renderShop(){
@@ -2832,7 +2870,7 @@ function renderShop(){
       }).join('')+'</div>';
     var cs=$('shopBody').querySelectorAll('[data-cat]');
     for(i=0;i<cs.length;i++) cs[i].onclick=function(){
-      shopCat=this.getAttribute('data-cat'); renderShop(); window.scrollTo(0,0);
+      shopCat=this.getAttribute('data-cat'); GFT_V=''; renderShop(); window.scrollTo(0,0);
     };
     return;
   }
