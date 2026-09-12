@@ -1041,8 +1041,8 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
       <button type="button" id="btnOpenLook">🎨</button>
       <button type="button" id="btnRandomLook2">🎲</button>
     </div>
-    <button class="btn primary big pulse" id="btnGoMap">📖 ابدأ الحفظ</button>
-    <button class="btn blue big" id="btnReviewGo">☀️ ابدأ المراجعة</button>
+    <button class="btn primary big" id="btnGoMap">📖 ابدأ الحفظ</button>
+    <button class="btn primary big" id="btnReviewGo">☀️ ابدأ المراجعة</button>
     <div class="row">
       <button class="btn blue" id="btnBuild">🕌 مسجدي</button>
       <button class="btn blue" id="btnShop">💎 متجري</button>
@@ -7354,6 +7354,12 @@ function renderHome(){
   try{ pwaSync(); }catch(e){}
   var n=(profile.name||'').trim();
   $('homeHi').innerHTML = n ? ('السلام عليكم يا <b>'+esc(n)+'</b> 👋') : 'السلام عليكم 👋';
+  /* النبضُ على ما بقي من شطرَي اليوم، فلا يبرق زرٌّ قُضي أمرُه */
+  try{
+    var pH=goalHifzMet(), pR=goalRevMet();
+    $('btnGoMap').classList[pH?'remove':'add']('pulse');
+    $('btnReviewGo').classList[pR?'remove':'add']('pulse');
+  }catch(e){}
   var due=dueSegs().length, tb=todayBox(), w=false;
   try{ revLoad(); w=wirdPending(); }catch(e){}
   $('homeHi2').textContent = w ? 'ورد المراجعة ينتظرك 📖'
