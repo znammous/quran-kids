@@ -244,6 +244,13 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mftitle{min-width:0;font-family:"IBM Plex Sans Arabic","Segoe UI",sans-serif;font-size:14px;
   font-weight:800;color:#8a6b2a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* زرّ الإنهاء: علامة صحّ رمادية، فالإغلاق هنا إتمامٌ لا إلغاء */
+/* تصفّح الأوجه في وضع تحديد النطاق */
+.mfnav{flex:0 0 auto;width:38px;height:38px;border-radius:50%;border:2px solid #d9c9a0;
+  background:#fff8e6;color:#6b4e00;font-size:17px;font-weight:900;font-family:inherit;cursor:pointer}
+.mfnav:disabled{opacity:.35;cursor:default}
+.mfnav:active{transform:scale(.92)}
+.mfsheet.picking .mw,.mfsheet.picking .manum{cursor:pointer;border-radius:4px}
+.mfsheet.picking .mw:active,.mfsheet.picking .manum:active{background:#ffe9a8}
 .mfhead .xbtn{position:static;flex:0 0 auto;width:38px;height:38px;font-size:19px;
   background:linear-gradient(180deg,#c6ccd4,#939ca8);box-shadow:0 4px 0 rgba(0,0,0,.16)}
 .mfhead .xbtn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.16)}
@@ -948,6 +955,8 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
       <div class="mftitle" id="mfTitle"></div>
       <div class="mfhint">اضغط على الوجه لإغلاقه</div>
     </div>
+    <button class="mfnav" id="mfPrev" aria-label="الوجه السابق" hidden>▶</button>
+    <button class="mfnav" id="mfNext" aria-label="الوجه التالي" hidden>◀</button>
     <button class="xbtn mfx" id="mfClose" aria-label="تمّ، أغلِق وجه المصحف">✓</button>
   </div>
   <div class="mfbody" id="mfBody"></div>
@@ -1769,15 +1778,59 @@ function mushafPageHTML(P, hlGi, glyphs){
       var loc=mLoc(gi), ws=mushafWords(loc[0],loc[1]), on=(gi===hlGi);
       if(on) hasHl=true;
       if(wi>=ws.length){
-        out+='<span class="manum'+(on?' hl':'')+'">'+(GC?String.fromCharCode(GC[u]):arNum(loc[1]))+'</span>';
+        out+='<span class="manum'+(on?' hl':'')+'" data-gi="'+gi+'">'+(GC?String.fromCharCode(GC[u]):arNum(loc[1]))+'</span>';
         u++; gi++; wi=0; continue;
       }
-      out+='<span class="mw'+(on?' hl':'')+'">'+(GC?String.fromCharCode(GC[u]):esc(ws[wi]))+'</span>';
+      out+='<span class="mw'+(on?' hl':'')+'" data-gi="'+gi+'">'+(GC?String.fromCharCode(GC[u]):esc(ws[wi]))+'</span>';
       u++; wi++;
     }
     html+='<div class="mline'+(hasHl?' hasHl':'')+'"><span class="mtxt">'+out+'</span></div>';
   }
   return html;
+}
+/* ===== تحديد نطاق المراجعة من المصحف نفسه =====
+   القوائم تسأل عن سورةٍ وآيةٍ بأرقامها، والإنسان إنّما يفتح المصحف لينظر
+   أين يقف بصرُه. فهذا وضعٌ يُفتح فيه الوجه، يتصفّحه، ثمّ يلمس الكلمة
+   فيصير موضعها حدَّ نطاقه. */
+var MF_PICK=null;        /* {page, which:'from'|'to', done:fn} */
+function mfPickOpen(which, startGi, done){
+  MF_PICK={ page:pageOfIdx(startGi), which:which, done:done };
+  $('mfSheet').classList.add('picking');
+  mfPickDraw();
+}
+function mfPickDraw(){
+  if(!MF_PICK) return;
+  var P=MF_PICK.page, pcs=pagePieces(P), nm=pcs.length?pcs[0].s.name:'';
+  mushafOpenPage(P, -1, (MF_PICK.which==='from'?'📖 من أين تبدأ؟':'📖 وإلى أين تنتهي؟')+
+    ' — صفحة '+arNum(P)+(nm?(' • '+nm):''));
+  var h=$('mfhint'); if(h) h.textContent='اضغط الكلمة التي تريد';
+  var hint=document.querySelector('.mfhint');
+  if(hint) hint.textContent='اضغط على الكلمة التي تريدها حدّاً لنطاقك';
+  var a=$('mfPrev'), b=$('mfNext');
+  if(a){ a.hidden=false; a.disabled=(P<=1); }
+  if(b){ b.hidden=false; b.disabled=(P>=604); }
+}
+function mfPickEnd(){
+  MF_PICK=null;
+  $('mfSheet').classList.remove('picking');
+  var a=$('mfPrev'), b=$('mfNext');
+  if(a) a.hidden=true;
+  if(b) b.hidden=true;
+  var hint=document.querySelector('.mfhint');
+  if(hint) hint.textContent='اضغط على الوجه لإغلاقه';
+}
+/* لمسةٌ على كلمةٍ أو رقم آية: تُقرأ سورتها وآيتها من موضعها العامّ.
+   وهي تُنهي الوضع بنفسها، فلا يضرّ أن تُستدعى مرّتين من لمسٍ ونقر. */
+function mfPickAt(t){
+  if(!MF_PICK) return false;
+  var el=(t && t.closest) ? t.closest('[data-gi]') : null;
+  if(!el) return false;
+  var gi=parseInt(el.getAttribute('data-gi'),10);
+  if(isNaN(gi)) return false;
+  var loc=mLoc(gi), fn=MF_PICK.done;
+  mfPickEnd(); mushafClose(); mushafEatGhost();
+  if(fn) fn(loc[0], loc[1]);            /* [رقم السورة, رقم الآية] */
+  return true;
 }
 /* وجه المصحف ملء الشاشة: يُفتح عند الطلب ولا يزاحم القراءة */
 var MFSEQ=0;
@@ -3969,7 +4022,9 @@ function closeModal(id){
   $(id).hidden=true;
   if(id==='adab') pendingStart=null;
 }
-$('mfClose').onclick=function(){ mushafClose(); mushafEatGhost(); };
+$('mfClose').onclick=function(){ mfPickEnd(); mushafClose(); mushafEatGhost(); };
+$('mfPrev').onclick=function(){ if(MF_PICK && MF_PICK.page>1){ MF_PICK.page--; mfPickDraw(); } };
+$('mfNext').onclick=function(){ if(MF_PICK && MF_PICK.page<604){ MF_PICK.page++; mfPickDraw(); } };
 /* نقرةٌ على الوجه تغلقه — أيسر للطفل من قصد الزرّ. ونميّز النقرة من
    التمرير بالمسافة والزمن، وإلّا أغلقه كلُّ سحبٍ للصفحة. */
 (function(){
@@ -3988,15 +4043,17 @@ $('mfClose').onclick=function(){ mushafClose(); mushafEatGhost(); };
     down=false;
     if(moved || Date.now()-st>600) return;              /* سحبٌ أو ضغطة طويلة */
     if(e.cancelable) e.preventDefault();
+    if(MF_PICK){ mfPickAt(e.target); return; }   /* في وضع الاختيار يلتقط لا يغلق */
     mushafClose(); mushafEatGhost();
   });
+  b.addEventListener('click', function(e){ if(MF_PICK) mfPickAt(e.target); });
 })();
 ['help','adab'].forEach(function(id){
   $(id).addEventListener('click', function(e){ if(e.target===this) closeModal(id); });
 });
 document.addEventListener('keydown', function(e){
   if(e.key!=='Escape') return;
-  if($('mfSheet') && !$('mfSheet').hidden){ mushafClose(); return; }
+  if($('mfSheet') && !$('mfSheet').hidden){ mfPickEnd(); mushafClose(); return; }
   if(!$('adab').hidden) closeModal('adab');
   else if(!$('help').hidden) closeModal('help');
 });
@@ -5472,15 +5529,32 @@ function renderRevPlan(){
     '<div class="revbox"><div class="rl">من أين تبدأ المراجعة؟</div>'+
       '<div class="revrow"><select id="revFS">'+revSurahOpts(REV.fromS)+'</select>'+
       '<select id="revFA">'+revAyahOpts(REV.fromS,REV.fromA)+'</select></div>'+
+      '<button type="button" class="btn ghost mini" id="revPickF" style="width:100%;margin-top:8px">'+
+        '📖 افتح المصحف واختر البداية</button>'+
       '<div class="rl" style="margin:12px 0 8px">وإلى أين تنتهي؟</div>'+
       '<div class="revrow"><select id="revTS">'+revSurahOpts(REV.toS)+'</select>'+
-      '<select id="revTA">'+revAyahOpts(REV.toS,REV.toA)+'</select></div></div>'+
+      '<select id="revTA">'+revAyahOpts(REV.toS,REV.toA)+'</select></div>'+
+      '<button type="button" class="btn ghost mini" id="revPickT" style="width:100%;margin-top:8px">'+
+        '📖 افتح المصحف واختر النهاية</button></div>'+
     '<div class="revbox"><div class="rl">كم صفحةً في الجلسة الواحدة؟</div><div class="chips">'+chips(REV_SIZES,REV.size,'rs')+'</div></div>'+
     '<div class="revbox"><div class="rl">كم سؤالاً لكل صفحة؟</div><div class="chips">'+chips(REV_PER_CHOICES,revPer(),'rp')+'</div></div>'+
     '<div id="revSum"></div></div>';
 
   /* ضبطُ نطاقٍ بيده خروجٌ من الورد إلى المسار الحرّ، بإرادته لا سهواً */
   var reset=function(){ REV.wird=false; REV.done=0; REV.weak={}; revSave(); renderRevPlan(); };
+  /* الاختيار من المصحف: يفتح الوجه عند موضعه الحاليّ، فيتصفّح ويلمس */
+  if($('revPickF')) $('revPickF').onclick=function(){
+    mfPickOpen('from', GIDX[REV.fromS-1]+(REV.fromA-1), function(sn,an){
+      REV.fromS=sn; REV.fromA=an; reset();
+      try{ navToast('📖 البداية: '+surahBy(sn).name+' '+arNum(an)); }catch(e){}
+    });
+  };
+  if($('revPickT')) $('revPickT').onclick=function(){
+    mfPickOpen('to', GIDX[REV.toS-1]+(REV.toA-1), function(sn,an){
+      REV.toS=sn; REV.toA=an; reset();
+      try{ navToast('📖 النهاية: '+surahBy(sn).name+' '+arNum(an)); }catch(e){}
+    });
+  };
   $('revFS').onchange=function(){ REV.fromS=parseInt(this.value,10); REV.fromA=1; reset(); };
   $('revFA').onchange=function(){ REV.fromA=parseInt(this.value,10); reset(); };
   $('revTS').onchange=function(){ REV.toS=parseInt(this.value,10); REV.toA=(surahBy(REV.toS)||SURAHS[0]).ayat.length; reset(); };
@@ -7611,7 +7685,7 @@ function navToast(msg){
 }
 function navBack(){
   /* وجه المصحف مفتوح: يُغلق أوّلاً */
-  if($('mfSheet') && !$('mfSheet').hidden){ mushafClose(); return true; }
+  if($('mfSheet') && !$('mfSheet').hidden){ mfPickEnd(); mushafClose(); return true; }
   /* ٠) احتفال قائم: يُطوى أوّلاً */
   if($('cele') && !$('cele').hidden){ celeDone(); return true; }
   /* ١) نافذة مفتوحة: تُغلق أوّلاً */
