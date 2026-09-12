@@ -1894,6 +1894,8 @@ function mfNearest(x,y){
   }
   return (bd<=70*70) ? best : null;            /* البعيدُ لا يُلتقط */
 }
+/* يُفكّ الحظر بعد ثلث ثانية، فلا تلتقط الوجهَ نقرةٌ خلّفها إغلاق الصندوق */
+function mfUnbusy(){ setTimeout(function(){ if(MF_PICK) MF_PICK.busy=false; }, 340); }
 function mfPickAt(t,x,y){
   if(!MF_PICK || MF_PICK.busy) return false;
   var el=(t && t.closest) ? t.closest('[data-gi]') : null;
@@ -1914,15 +1916,21 @@ function mfPickAt(t,x,y){
         (MF_PICK.stage==='from'?'أهذه بدايةُ نطاقك؟':'أهذه نهايةُ نطاقك؟'),
     '📖','✅ موافق','↺ أعد التحديد', function(ok){
       if(!MF_PICK) return;
+      if(!ok){
+        /* عدل عنها: تُطفأ إضاءتُها، ويُفكّ الحظر بعد لحظةٍ تبتلع نقرةَ الصندوق
+           الشبحيّة — وإلّا التقطت هي الكلمةَ التالية بدلاً عنه. */
+        try{ el.classList.remove('mpick'); }catch(e){}
+        mfUnbusy();
+        return;
+      }
       MF_PICK.busy=false;
-      if(!ok) return;                     /* يبقى في الوجه ليختار غيرها */
       if(MF_PICK.stage==='from'){
         MF_PICK.fromS=sn; MF_PICK.fromA=an; MF_PICK.stage='to';
         mfPickDraw();                     /* يبقى في الصفحة نفسها غالباً */
         MF_PICK.busy=true;                /* لا يلتقط شيئاً حتى يقرأ ويقرّ */
         uiBox('✅ ضُبطت البداية عند '+(sx?sx.name:'')+' — الآية '+arNum(an)+'.\n\n'+
               'والآن اضغط على الكلمة التي تنتهي عندها مراجعتُك.',
-          '②','✅ فهمت، أُحدّد النهاية',null,function(){ if(MF_PICK) MF_PICK.busy=false; });
+          '②','✅ فهمت، أُحدّد النهاية',null,mfUnbusy);
         return;
       }
       var f=MF_PICK, fn=f.done;
@@ -7525,19 +7533,12 @@ $('btnHelp').onclick=function(){ $('help').hidden=false; };
 $('btnIndex').onclick=function(){ if(!openJuz) openJuz=(curSurah?curSurah.juz:Math.max(SET.juzFrom,SET.juzTo)); renderMap(); show('scr-map'); };
 $('btnShop').onclick=function(){ shopFrom(''); shopCat=''; renderShop(); show('scr-shop'); };
 /* من الرئيسية: مَن له خطّة محفوظة يذهب إلى مساره، ومَن لا فإلى شاشة الخطة */
-$('btnReviewGo').onclick=function(){
-  /* على خطة ولم تكتمل مراجعة اليوم؟ فليرَ مقرَّرها أوّلاً */
-  var T=null; try{ T=bqnToday(); }catch(e){}
-  if(T && T.r && !T.revDone){ startRevPlan(); return; }
-  /* وكذلك وردُ اليوم وما استحقّ: يُرى قبل المسار الحرّ */
-  var due=0, w=false;
-  try{ due=dueSegs().length; }catch(e){}
-  try{ revLoad(); w=wirdPending(); }catch(e){}
-  if(due || w){ startRevPlan(); return; }
-  if(curP().rev) beginRevPath(); else startRevPlan();
-};
+/* شاشةُ المراجعة واحدة لا غير: فيها مقرَّر الخطة، ووردُ المراجعة،
+   وما استحقّ، والمسار الحرّ — ومنها يختار. وكان مَن ضبط نطاقاً حرّاً
+   يُقذف إليه رأساً فلا يرى بقيّة أبوابه. */
+$('btnReviewGo').onclick=function(){ startRevPlan(); };
 $('btnRevHome').onclick=function(){ renderPlayers(); show('scr-start'); };
-$('btnRevQuit').onclick=function(){ renderPlayers(); show('scr-start'); };
+$('btnRevQuit').onclick=function(){ startRevPlan(); };   /* إلى شاشة المراجعة، فهي بابُه */
 /* خطط «بالقرآن نحيا» الجاهزة */
 $('btnBqnHome').onclick=function(){
   if(BQN_BACK){ bqnReturn(); return; }
