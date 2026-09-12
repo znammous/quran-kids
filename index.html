@@ -2087,11 +2087,21 @@ function renderHUD(){
       (T.r?('<div class="gline"><span class="tick'+(okR?' on':'')+'">'+(okR?'✓':'☀️')+'</span> '+
         'راجع: '+bqnLabel(T.r)+(T.rp>0&&!okR?(' — بقي '+arNum(T.pages.length-T.rp)+' وجه'):'')+'</div>'):'');
   }else{
+    /* المسار الحرّ: يُقال للطفل ما يحفظ وما يراجع بالاسم والآيات، لا «ثلاث مراحل» */
+    var nx=null; try{ nx=selfNext(); }catch(e){}
+    var dl=dueSegs();
     pct=Math.min(100, Math.round(100*Math.min(t.stages,GOAL_STAGES)/GOAL_STAGES));
     head=met?'تمّ ✅':arNum(Math.min(t.stages,GOAL_STAGES))+'/'+arNum(GOAL_STAGES);
-    lines='<div class="gline"><span class="tick'+(t.stages>=GOAL_STAGES?' on':'')+'">'+(t.stages>=GOAL_STAGES?'✓':arNum(GOAL_STAGES))+'</span> أنجز '+arNum(GOAL_STAGES)+' مراحل اليوم</div>'+
+    var hifz = nx ? ('احفظ: <b>'+esc(nx.s.name)+' '+arNum(nx.g[0]+1)+' — '+arNum(nx.g[1])+'</b>')
+                  : 'أتممت كلّ ما في نطاقك — وسّع الأجزاء من الإعدادات';
+    var names = dl.slice(0,2).map(function(d){
+      return esc(d.s.name)+' '+arNum(d.from+1)+' — '+arNum(d.to);
+    }).join(' • ');
+    var rest = due>2 ? (' و'+arNum(due-2)+' غيرها') : '';
+    lines='<div class="gline"><span class="tick'+(t.stages>=GOAL_STAGES?' on':'')+'">'+
+        (t.stages>=GOAL_STAGES?'✓':'📖')+'</span> '+hifz+'</div>'+
       '<div class="gline"><span class="tick'+(due===0?' on':'')+'">'+(due===0?'✓':'☀️')+'</span> '+
-        (due===0?'لا مراجعة متبقية اليوم':('راجع '+arNum(due)+' مقطعاً'))+'</div>';
+        (due===0?'لا مراجعة متبقية اليوم':('راجع: <b>'+names+'</b>'+rest))+'</div>';
   }
   $('goalWrap').innerHTML='<div class="goalbox">'+
     '<div class="gt"><span>'+(T?'📅 مقرَّر اليوم':'🎯 هدف اليوم')+'</span><span>'+(met?'تمّ ✅':head)+'</span></div>'+
