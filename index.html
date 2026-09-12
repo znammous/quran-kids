@@ -551,11 +551,11 @@ body.glow-off .cele .spk{display:none}
 .onbopt .ot b{font-size:16px;color:#102b4a}
 .onbopt .ot i{font-style:normal;font-size:12.5px;font-weight:700;color:var(--mute)}
 #onbBody{margin-bottom:18px}
-/* فُسحةٌ تحت الشريط: توهّجُ الزرّ النابض يمتدّ فيركب ما تحته إن ضاقت */
-.onbnav{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+/* فُسحةٌ حول الشريط: توهّجُ الزرّ النابض يمتدّ، والأزرار تحتاج متنفّساً */
+.onbnav{display:flex;align-items:center;gap:14px;margin:26px 0 20px}
 .onbnav .onbgap{flex:1 1 auto}
 /* width:auto يبطل عرضَ ‎.btn.big‎ الكامل، وإلا ركب زرُّ الحفظ على زرّ السابق */
-.onbnav .btn{flex:0 0 auto;min-width:132px;width:auto;margin:0;padding:13px 18px;font-size:17px}
+.onbnav .btn{flex:0 0 auto;min-width:142px;width:auto;margin:0;padding:16px 22px;font-size:17px}
 .onbnav .btn .ico{font-size:1.15em}
 .onbopt{flex-wrap:wrap}
 .onbsample{flex:1 0 100%;margin-top:10px;padding:10px 8px;background:#f7fbff;border:2px solid #e5ecf6;
@@ -873,6 +873,17 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
 <body>
 <div class="bg" id="bg"><div class="moon">🌙</div></div>
 
+<!-- صندوق التنبيه والتأكيد بثيمة التطبيق — يخلف نوافذ المتصفّح الباردة -->
+<div class="modal-bg" id="ask" hidden>
+  <div class="modal" style="max-width:400px;text-align:center">
+    <div id="askIc" style="font-size:46px;line-height:1;margin-bottom:6px">💚</div>
+    <div id="askMsg" style="font-size:17px;font-weight:800;line-height:1.9;color:var(--ttl)"></div>
+    <div class="row" style="margin-top:18px;justify-content:center">
+      <button class="btn ghost" id="askNo" hidden>لا</button>
+      <button class="btn primary pulse" id="askYes">✅ حسناً</button>
+    </div>
+  </div>
+</div>
 <div class="modal-bg" id="help" hidden>
   <div class="modal">
     <button class="xbtn" id="xHelp" aria-label="إغلاق">✕</button>
@@ -3021,7 +3032,7 @@ function renderShop(){
       var it=shopEvery().filter(function(x2){ return x2.k===k; })[0];
       var pp=curP();
       if(!it) return;
-      if((pp.gems||0)<it.p){ alert('تحتاج '+arNum(it.p-(pp.gems||0))+' جوهرة إضافية — احفظ مقطعاً أو راجع 💚'); return; }
+      if((pp.gems||0)<it.p){ uiAlert('تحتاج '+arNum(it.p-(pp.gems||0))+' جوهرة إضافية — احفظ مقطعاً أو راجع','💎'); return; }
       pp.gems-=it.p; pp.owned[k]=true; saveDB(); sWin();
       checkBadges();
       renderShop();
@@ -3036,7 +3047,7 @@ function renderShop(){
       var it=shopEvery().filter(function(x2){ return x2.k===k; })[0];
       var pp=curP();
       if(!it) return;
-      if((pp.gems||0)<it.p){ alert('تحتاج '+arNum(it.p-(pp.gems||0))+' جوهرة إضافية — احفظ مقطعاً أو راجع 💚'); return; }
+      if((pp.gems||0)<it.p){ uiAlert('تحتاج '+arNum(it.p-(pp.gems||0))+' جوهرة إضافية — احفظ مقطعاً أو راجع','💎'); return; }
       pp.gems-=it.p;
       var S3=sad(); S3[k]=(S3[k]||0)+1;
       saveDB(); sWin();
@@ -3120,8 +3131,10 @@ function buildShort(i){
   if(buy.length) msg+='🛒 '+buy.join('  و')+'\nتشتريه من 💎 متجري ← 🧱 مواد البناء، ثم تعود فتبني.\n\n';
   if(earn.length) msg+='📖 '+earn.join('\n📖 ')+'\n';
   if(buy.length){
-    if(confirm(msg+'\nنذهب إلى متجر المواد الآن؟')){ shopCat='mats'; renderShop(); show('scr-shop'); }
-  } else alert(msg);
+    uiAsk(msg+'\nنذهب إلى متجر المواد الآن؟',function(ok){
+      if(ok){ shopCat='mats'; renderShop(); show('scr-shop'); }
+    },'🧱');
+  } else uiAlert(msg,'🧱');
 }
 function doBuild(i){
   var it=BUILD[i];
@@ -3139,7 +3152,7 @@ function doBuild(i){
 }
 function buyMat(k){
   var price=EXCHANGE[k]; if(!price) return;
-  if((curP().gems||0)<price){ alert('تحتاج '+arNum(price-(curP().gems||0))+' جوهرة إضافية 💚'); return; }
+  if((curP().gems||0)<price){ uiAlert('تحتاج '+arNum(price-(curP().gems||0))+' جوهرة إضافية','💎'); return; }
   curP().gems-=price; addMat(k,1); beep([700,900],0.05);
   if(curScreen()==='scr-shop') renderShop(); else renderBuild();
 }
@@ -3829,11 +3842,11 @@ function renderPath(){
       if(act==='cert'){ showCert(curSurah); return; }
       if(act==='juz'){
         var jp=juzProgress(curSurah.juz);
-        if(!jp.ready){ alert('أتمم سور الجزء أولاً — أنجزت '+arNum(jp.done)+' من '+arNum(jp.total)+' 💚'); return; }
+        if(!jp.ready){ uiAlert('أتمم سور الجزء أوّلاً — أنجزت '+arNum(jp.done)+' من '+arNum(jp.total),'🏰'); return; }
         startJuzTest(curSurah.juz); return;
       }
       if(this.className.indexOf('locked')>=0 && !act){
-        alert('أتمم المقطع الذي قبله أولاً 💚\n(يمكن فتح كل المقاطع من ⚙️ الإعدادات)'); return;
+        uiAlert('أتمم المقطع الذي قبله أوّلاً\nويمكن فتح كل المقاطع من ⚙️ الإعدادات','🔒'); return;
       }
       startSeg(curSurah, parseInt(this.getAttribute('data-i'),10));
     };
@@ -5412,7 +5425,10 @@ function renderRevSum(){
           arCount(all.length,C_PAGE)+' • <b>'+arCount(ss.length,C_SESS)+'</b> • '+
           arCount(REV.size,C_PAGE)+' في الجلسة<br>'+
           '<small style="font-weight:700;opacity:.85">الجلسة: تسميع صفحاتها ثم '+arCount(perS,C_QUES)+' منها</small>'+
-          '<div class="revtot">🧮 المجموع: <b>'+arCount(tot,C_QUES)+'</b> في المسار كلّه</div></div>';
+          '<div class="revtot">🧮 المجموع: <b>'+arCount(tot,C_QUES)+'</b> في المسار كلّه</div>'+
+          '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:6px">'+
+            'وفي المسار كلّه: 💎 '+arNum(25*all.length)+' جوهرة • 🔩 '+arNum(2*all.length)+' حديد'+
+            ' • 🔷 '+arNum(2*all.length)+' زجاج إن أتقنت</div></div>';
       })()
     : '<div class="revsum">النطاق فارغ — راجع الاختيار</div>';
   $('btnRevGo').disabled=!all.length;
@@ -5749,11 +5765,13 @@ function bqnRevWire(sfx){
 function bqnNextDay(){
   var T=null; try{ T=bqnToday(); }catch(e){}
   if(!T) return false;
-  if(!(T.hifzDone&&T.revDone) &&
-     !confirm('لم يكتمل مقرَّر اليوم في سجلّك. أتنتقل إلى الغد؟')) return false;
-  T.st.lastDone=todayNum();
-  T.st.day=Math.min(T.st.day+1,T.plan.n); T.st.rp=0; saveDB();
-  openBqn();
+  var go=function(){
+    T.st.lastDone=todayNum();
+    T.st.day=Math.min(T.st.day+1,T.plan.n); T.st.rp=0; saveDB();
+    openBqn();
+  };
+  if(T.hifzDone && T.revDone){ go(); return true; }
+  uiAsk('لم يكتمل مقرَّر اليوم في سجلّك.\nأتنتقل إلى الغد؟',function(ok){ if(ok) go(); },'📅');
   return true;
 }
 
@@ -6579,7 +6597,7 @@ function beginReview(j){
   var rounds=[], due=[];
   if(j){
     rounds=buildJuzTest(j);
-    if(!rounds.length){ alert('لا توجد مقاطع محفوظة في هذا الجزء بعد 💚'); renderPath(); show('scr-path'); return; }
+    if(!rounds.length){ uiAlert('لا توجد مقاطع محفوظة في هذا الجزء بعد','📖'); renderPath(); show('scr-path'); return; }
   } else {
     due=dueSegs();
     if(!due.length){ renderPath(); show('scr-path'); return; }
@@ -7191,17 +7209,22 @@ if($('btnInstall2')) $('btnInstall2').onclick=function(){
 };
 pwaSync();
 $('btnDelPlayer').onclick=function(){
-  if(DB.players.length<2){ alert('لا يمكن حذف اللاعب الوحيد'); return; }
-  if(!confirm('حذف اللاعب «'+(profile.name||'بلا اسم')+'» وكل نجومه؟')) return;
-  DB.players.splice(DB.cur,1); DB.cur=0; saveDB(); bindPlayer();
-  $('pname').value=profile.name||''; fillSettings(); renderPlayers(); renderAvatars();
+  if(DB.players.length<2){ uiAlert('لا يمكن حذف اللاعب الوحيد','👤'); return; }
+  uiAsk('حذف اللاعب «'+(profile.name||'بلا اسم')+'» وكلّ نجومه؟',function(ok){
+    if(!ok) return;
+    DB.players.splice(DB.cur,1); DB.cur=0; saveDB(); bindPlayer();
+    $('pname').value=profile.name||''; fillSettings(); renderPlayers(); renderAvatars();
+  },'🗑️');
 };
 $('btnHelpOk').onclick=function(){ $('help').hidden=true; if($('chkNoHelp').checked) save(LS.help,1); };
 $('q').oninput=function(){ renderMap(); };
 $('btnReset').onclick=function(){
-  if(confirm('هل تريد مسح كل التقدّم والنجوم؟ لا يمكن التراجع.')){ curP().prog={}; curP().mem={}; curP().gems=0; curP().owned={}; curP().badges={}; curP().built={}; curP().mat={};
+  uiAsk('هل تريد مسح كلّ التقدّم والنجوم؟\nلا يمكن التراجع عن هذا.',function(ok){
+    if(!ok) return;
+    curP().prog={}; curP().mem={}; curP().gems=0; curP().owned={}; curP().badges={}; curP().built={}; curP().mat={};
     curP().streak={count:0,last:null,freezes:0}; curP().today={d:null,stages:0,segs:0,reviews:0};
-    bindPlayer(); saveDB(); renderMap(); show('scr-map'); }
+    bindPlayer(); saveDB(); renderMap(); show('scr-map');
+  },'🗑️');
 };
 $('btnExport').onclick=function(){
   var data={ app:'nur-alhifz', v:3, db:DB };
@@ -7232,8 +7255,8 @@ $('fileInput').onchange=function(){
       bindPlayer(); ensureAllSchedules(); saveDB();
       $("pname").value=profile.name||"";
       fillSettings(); renderPlayers(); renderAvatars(); renderMap(); show("scr-map");
-      alert("تم فتح الملف ✅");
-    }catch(e){ alert('الملف غير صالح'); }
+      uiAlert('تمّ فتح الملفّ','✅');
+    }catch(e){ uiAlert('الملفّ غير صالح','⚠️'); }
   };
   rd.readAsText(f); this.value='';
 };
@@ -7348,6 +7371,24 @@ var NAV_BACK={ 'scr-look':'btnLookDone', 'scr-map':'btnBackStart', 'scr-path':'b
   'scr-badges':'btnBadgesBack', 'scr-bqn':'btnBqnHome',
   'scr-settings':'btnSetBack' };
 function curScreen(){ var e=document.querySelector('.screen.active'); return e?e.id:'scr-start'; }
+/* ===== تنبيهٌ وتأكيدٌ بثيمة التطبيق =====
+   نوافذ المتصفّح تقول «This page says» وتقطع جوّ الشاشة، فهذه تخلفها.
+   uiAlert(نصّ) — خبرٌ يُقرأ ثم يُغلق.  uiAsk(نصّ, دالّة) — نعم أو لا. */
+function uiBox(msg,ic,yes,no,cb){
+  var bg=$('ask'); if(!bg){ if(cb) cb(!!no?false:true); return; }
+  $('askIc').textContent=ic||'💚';
+  $('askMsg').innerHTML=String(msg).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>');
+  var y=$('askYes'), n=$('askNo');
+  y.textContent=yes||'✅ حسناً';
+  n.hidden=!no; if(no) n.textContent=no;
+  var done=function(v){ bg.hidden=true; y.onclick=null; n.onclick=null; bg.onclick=null; if(cb) cb(v); };
+  y.onclick=function(){ done(true); };
+  n.onclick=function(){ done(false); };
+  bg.onclick=function(e){ if(e.target===bg) done(false); };   /* الضغط خارجه إلغاء */
+  bg.hidden=false;
+}
+function uiAlert(msg,ic){ uiBox(msg,ic||'💚',null,null,null); }
+function uiAsk(msg,cb,ic){ uiBox(msg,ic||'🤔','✅ نعم','لا',cb); }
 function navToast(msg){
   if(!NAV.tEl){ NAV.tEl=document.createElement('div'); NAV.tEl.className='toast'; document.body.appendChild(NAV.tEl); }
   var el=NAV.tEl;
