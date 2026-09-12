@@ -5368,6 +5368,7 @@ function renderRevPlan(){
   }
   $('revPlan').innerHTML=
     bqnRevBanner('P')+
+    wirdSetupBanner()+
     wirdBanner('P')+
     selfRevBanner('P')+
     contHTML+
@@ -5399,6 +5400,7 @@ function renderRevPlan(){
   var rp=$('revPlan').querySelectorAll('[data-rp]');
   for(var j=0;j<rp.length;j++) rp[j].onclick=function(){ REV.per=parseInt(this.getAttribute('data-rp'),10); revSave(); renderRevPlan(); };
   bqnRevWire('P');
+  wirdSetupWire();
   wirdWire('P');
   selfRevWire('P');
   if($('btnBackWird')) $('btnBackWird').onclick=function(){
@@ -5692,6 +5694,43 @@ function selfRevBanner(sfx){
   '</div>';
 }
 /* صندوق الورد: مقرَّرٌ يوميّ مرتّب من محفوظه الراسخ — جلسةٌ في اليوم */
+/* له محفوظٌ ولم يضع له ورداً بعد — فيُسأل هنا، في موضع المراجعة نفسه */
+function wirdSetupBanner(){
+  if(REV.on!=null || onPlan()) return '';
+  var n=0; try{ n=wirdPages().length; }catch(e){}
+  if(!n) return '';
+  var h='<div class="revsum" style="margin:0 0 16px;text-align:right">'+
+    '<div style="font-size:15px">📖 <b>كيف تراجع ما حفظت؟</b></div>'+
+    '<div style="font-size:17px;font-weight:900;margin-top:6px">'+
+      'عندك '+arNum(n)+' وجهاً محفوظاً بلا وردِ مراجعة</div>'+
+    '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin:4px 0 12px">'+
+      'الورد يمشي في محفوظك وجهاً وجهاً ثم يعود من أوّله — اختر مقداره وجهته.</div>'+
+    '<div class="onbopts">';
+  REV_SIZES.forEach(function(z){
+    var c=wirdCalc(z);
+    h+='<button type="button" class="onbopt" data-wsize="'+z+'">'+
+       '<span class="oe">'+arNum(z)+'</span><span class="ot">'+
+       '<b>'+(z===1?'وجه واحد':(z===2?'وجهان':arNum(z)+' أوجه'))+' في اليوم</b>'+
+       '<i>تُتمّ محفوظك في '+arNum(c.days)+' يوماً</i></span></button>';
+  });
+  h+='</div><button type="button" class="btn ghost" id="wirdSkip" style="width:100%;margin:12px 0 0">'+
+     '🚫 لا أريد ورداً — يكفيني ما استحقّ</button></div>';
+  return h;
+}
+function wirdSetupWire(){
+  var box=$('revPlan'); if(!box) return;
+  var bs=box.querySelectorAll('[data-wsize]'), i;
+  for(i=0;i<bs.length;i++) bs[i].onclick=function(){
+    REV.size=parseInt(this.getAttribute('data-wsize'),10);
+    REV.on=true; REV.wird=true; REV.done=0;
+    if(REV.dir!==1 && REV.dir!==-1) REV.dir=(selfFrom()==='baqarah'?1:-1);
+    revSave(); renderRevPlan();
+    try{ navToast('📖 بدأ وردك — '+arNum(REV.size)+' وجه في اليوم'); }catch(e){}
+  };
+  if($('wirdSkip')) $('wirdSkip').onclick=function(){
+    REV.on=false; revSave(); renderRevPlan();
+  };
+}
 function wirdBanner(sfx){
   if(!wirdOn()) return '';
   var ss=[]; try{ ss=revSessions(); }catch(e){}
@@ -6113,10 +6152,12 @@ function priorPanelWire(pfx,after){
     var n=priorCount(); if(!n) return false;
     var added=priorApply();
     try{ paint(); }catch(e){}
+    /* لم يُضف جديداً؟ فهو مسجَّلٌ من قبل — ولا يُحبس في هذه الصفحة */
+    if(!added) return false;
     try{ celeShow({ ic:'📌', kick:'✅ سُجّل حفظك السابق',
       title:'أُضيفت '+arNum(n)+' آية إلى رصيدك',
       sub:'ستدخل المراجعة، وأُعيد حساب الأيام المتبقّية',
-      rew:(added?('＋ '+arNum(added)+' مقطعاً جديداً'):'كانت مسجّلة من قبل') }); }catch(e){}
+      rew:'＋ '+arNum(added)+' مقطعاً جديداً' }); }catch(e){}
     if(after) after();
     return true;
   };
@@ -7176,6 +7217,10 @@ $('bqnNext').onclick=function(){
 };
 $('bqnBack').onclick=function(){ bqnShow(BQ.i-1); };
 $('btnBqnDone').onclick=function(){
+  /* آخر خطوةٍ وفيها حفظٌ أُشّر ولم يُعتمد؟ يُعتمد الآن، وقد يفتح سؤال الورد بعده */
+  if(bqnSteps()[BQ.i]==='prior' && curP().priorMode==='has' && PRIOR_COMMIT){
+    if(PRIOR_COMMIT()) return;
+  }
   var b=bqnBlocked();
   if(b){ try{ navToast(b.m); }catch(e){} b.go(); return; }
   bqnReturn();
