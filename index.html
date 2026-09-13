@@ -4421,6 +4421,17 @@ function renderPath(){
        '<div class="lbl">مراجعة اليوم ('+arNum(due.length)+')</div></div>';
   }
 
+  /* إن كانت سورتُه التي فُتحت آخرَ مرّةٍ تامّةً فالمقصودُ في غيرها —
+     قد يكون بعدها بسورٍ، فلا تُرسم ولا يراها. فتتوسّطُ النافذةُ المقصودَ.
+     وأمّا من فتح سورةً فيها عملٌ فلا يُنقل عنها، فقصدُه ظاهر. */
+  if(!SC){
+    var vv=scopedSegs(s), allDone=(vv.length>0), z;
+    for(z=0;z<vv.length;z++) if(!segDone(s,vv[z].g)){ allDone=false; break; }
+    if(allDone){
+      var tgt=null; try{ tgt=selfNext(); }catch(e){}
+      if(tgt && tgt.s) for(z=0;z<list.length;z++) if(list[z].n===tgt.s.n){ pos=z; break; }
+    }
+  }
   /* النافذة: ما قبله بسورةٍ وما بعده بعدّة — ولا تتجاوز سقفَ العقد */
   var from=Math.max(0,pos-1), to=Math.min(list.length-1, pos+PATH_WIN);
   for(i=from;i<=to;i++){
@@ -4509,10 +4520,18 @@ function renderPath(){
       startSeg(sx, parseInt(this.getAttribute('data-i'),10));
     };
   }
-  /* يقع نظرُه على موضعه لا على أوّل الخطّة */
+  /* يقع نظرُه على موضعه لا على أوّل الخطّة. ويُؤجَّل إلى ما بعد الرسم
+     لأنّ show تُرجع التمرير إلى أعلى بعدها، فتُلغي ما فعلناه. */
+  setTimeout(pathFocus,0);
+}
+/* التمريرُ إلى المقطع المقصود: ما هو فيه الآن، وإلّا فقسمُه، وإلّا فما استحقّ */
+function pathFocus(){
   try{
-    var cur=$('path').querySelector('.pnode.now') || $('path').querySelector('.pathsec.here');
-    if(cur && cur.scrollIntoView) cur.scrollIntoView({block:'center'});
+    var box=$('path'); if(!box) return;
+    var el=box.querySelector('.pnode.now') ||
+             box.querySelector('.pathsec.here') ||
+             box.querySelector('.pnode.due');
+    if(el && el.scrollIntoView) el.scrollIntoView({block:'center'});
   }catch(e){}
 }
 
