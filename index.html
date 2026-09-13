@@ -6495,13 +6495,18 @@ function renderRevPlan(){
     if($('btnRevGo')) $('btnRevGo').hidden=true;
     return;
   }
+  /* من له مسارٌ: صندوقُه أوّلاً كصندوق الورد، وتحته زرُّ تعديل النطاق
+     مطويّاً. ومن لا مسارَ له فقد جاء من دائرة الإضافة، فتُفتح له اللوحةُ
+     مباشرةً ولا يُعرض عليه زرٌّ يفتح ما هو مفتوح. */
+  var panelOpen = savedFree ? freeOpen : true;
   $('revPlan').innerHTML=
     contHTML+
 
-    '<button type="button" class="btn '+(freeOpen?'blue':'ghost')+' big" id="btnFreeRev" style="margin-top:6px">'+
-      '🎛️ '+(savedFree?'عدّل نطاق المراجعة الحرّة':'مراجعة حرّة — اختر نطاقاً بنفسك')+
-      (freeOpen?' ▴':'')+'</button>'+
-    '<div id="revFree"'+(freeOpen?'':' hidden')+'>'+
+    (savedFree
+      ? ('<button type="button" class="btn '+(freeOpen?'blue':'ghost')+' big" id="btnFreeRev" '+
+         'style="margin-top:6px">✏️ تعديل النطاق'+(freeOpen?' ▴':' ▾')+'</button>')
+      : '')+
+    '<div id="revFree"'+(panelOpen?'':' hidden')+'>'+
     '<div class="revbox"><div class="rl">من أين تبدأ المراجعة؟</div>'+
       '<div class="revrow"><select id="revFS">'+revSurahOpts(REV.fromS)+'</select>'+
       '<select id="revFA">'+revAyahOpts(REV.fromS,REV.fromA)+'</select></div>'+
@@ -6543,7 +6548,7 @@ function renderRevPlan(){
   };
   var rp=$('revPlan').querySelectorAll('[data-rp]');
   for(var j=0;j<rp.length;j++) rp[j].onclick=function(){ REV.per=parseInt(this.getAttribute('data-rp'),10); revSave(); renderRevPlan(); };
-  $('btnFreeRev').onclick=function(){
+  if($('btnFreeRev')) $('btnFreeRev').onclick=function(){
     curP().freeRev=!curP().freeRev; saveDB(); renderRevPlan();
   };
   if($('btnRevCont')) $('btnRevCont').onclick=function(){
@@ -6551,7 +6556,8 @@ function renderRevPlan(){
     if(REV.done>=revSessions('free').length){ REV.done=0; REV.weak={}; }
     revSave(); beginRevPath();
   };
-  if($('btnRevGo')) $('btnRevGo').hidden=!freeOpen;
+  /* زرُّ البدء يتبع اللوحةَ المفتوحة: من طوى اللوحةَ فصندوقُه يكفيه */
+  if($('btnRevGo')) $('btnRevGo').hidden=!panelOpen;
   renderRevSum();
 }
 function renderRevSum(){
