@@ -834,6 +834,33 @@ body.glow-off .cele .spk{display:none}
 .pathhead .nav[disabled]{opacity:.35}
 .pathhead .ttl{flex:1;text-align:center;font-weight:900;color:var(--ttl);font-size:19px;line-height:1.3}
 .pathhead .ttl span{display:block;font-size:12px;color:var(--on1);font-weight:700}
+/* ===== رأسُ القسم في المسار المتّصل =====
+   المسارُ خطٌّ واحدٌ من أوّل الخطّة إلى آخرها، ولكلّ سورةٍ رأسُ قسمٍ
+   يفصلها عمّا قبلها — فيرى الطفلُ رحلتَه كلَّها لا شاشةً منفردة. */
+.pathsec{display:flex;align-items:center;gap:11px;margin:22px 0 16px;
+  background:linear-gradient(180deg,var(--pnl),var(--pnl2));
+  border:3px solid var(--pb);border-radius:15px;padding:11px 14px;
+  box-shadow:0 4px 0 rgba(0,0,0,.14)}
+.pathsec:first-child{margin-top:4px}
+.pathsec .psi{flex:0 0 auto;width:42px;height:42px;border-radius:12px;
+  background:var(--pnl3);border:2px solid var(--pb2);color:var(--ttl);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:900;line-height:1}
+.pathsec .pst{flex:1;min-width:0}
+.pathsec .pst b{display:block;font-size:17.5px;font-weight:900;color:var(--ttl);line-height:1.45}
+.pathsec .pst i{display:block;font-style:normal;font-size:12px;font-weight:800;
+  color:var(--on1);margin-top:1px}
+/* القسمُ التامّ يُعلَّم، فيُعرف ما وراءه بلمحة */
+.pathsec.done{border-color:#9fdcb8}
+.pathsec.done .psi{background:#e8f8ee;border-color:#9fdcb8;color:#12694a}
+.pathsec.here{border-color:var(--gold)}
+.pathsec.here .psi{background:var(--psel);border-color:var(--gold)}
+/* زرُّ التوسعة: لا يُرسم المصحفُ كلُّه دفعةً */
+.pathmore{display:block;width:100%;margin:6px 0 4px;padding:13px;
+  background:var(--pnl2);border:3px dashed var(--pb3);border-radius:14px;
+  color:var(--ttl);font-family:inherit;font-size:15px;font-weight:900;cursor:pointer;
+  -webkit-tap-highlight-color:transparent}
+.pathmore:active{transform:translateY(2px)}
 .path{position:relative;padding:6px 0 10px}
 .path::before{content:"";position:absolute;top:0;bottom:0;right:50%;width:0;
   border-right:5px dashed #dde6f1;transform:translateX(2.5px)}
@@ -958,16 +985,29 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
    من تحته وشعلةٌ تطفو فوقهما، فيُعرف أنّه بابٌ من نوعٍ آخر. */
 /* زرُّ الاختبار: أيقونةٌ عائمةٌ في ركن الصفحة، والاسمُ إلى جنبها —
    فلا يزاحم بطاقتي اليوم وهو بابٌ من نوعٍ آخر. */
-.examfp{position:fixed;left:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:35;
-  display:flex;align-items:center;gap:11px;width:auto;
-  background:none;border:0;padding:0;margin:0;
-  cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent}
+/* الأيقونةُ والاسمُ جسمٌ واحد: يضيء وينطفئ معاً، فلا يتفرّق نظرُه بينهما */
+.examfp{position:fixed;left:10px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:35;
+  display:flex;flex-direction:row-reverse;align-items:center;gap:8px;width:auto;
+  background:var(--pnl);border:2px solid var(--pb3);border-radius:999px;
+  padding:7px 15px 7px 8px;margin:0;
+  cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;
+  animation:exbreath 2.8s ease-in-out infinite}
+.examfp:active{transform:scale(.95)}
+@keyframes exbreath{
+  0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.18), 0 0 0 0 rgba(126,224,255,0)}
+  50%{box-shadow:0 4px 0 rgba(0,0,0,.18), 0 0 22px 5px rgba(126,224,255,.6)}
+}
+body.light .examfp{animation:exbreathd 2.8s ease-in-out infinite}
+@keyframes exbreathd{
+  0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.14), 0 0 0 0 rgba(24,130,190,0)}
+  50%{box-shadow:0 4px 0 rgba(0,0,0,.14), 0 0 20px 4px rgba(24,130,190,.42)}
+}
 @media(max-width:820px){
   /* فوق شريط التنقّل السفليّ لا تحته */
   .examfp{bottom:calc(72px + env(safe-area-inset-bottom))}
 }
 .fpwrap{position:relative;display:flex;align-items:center;justify-content:center;
-  width:66px;height:66px;transition:transform .12s}
+  width:42px;height:42px;transition:transform .12s}
 .examfp:active .fpwrap{transform:scale(.93)}
 .fpring{position:absolute;inset:0;border-radius:50%;
   border:2px solid rgba(126,224,255,.55);
@@ -979,12 +1019,11 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
   22%{opacity:.9}
   100%{transform:scale(1.1);opacity:0}
 }
-/* الاسمُ إلى جنب الأيقونة في لوحٍ صغيرٍ يقرؤه الطفل بلا تأمّل */
+/* الاسمُ داخل الجسم لا في لوحٍ مستقلّ */
 .fplbl{font-size:14.5px;font-weight:900;color:var(--ttl);letter-spacing:.2px;
-  background:var(--pnl);border:2px solid var(--pb);border-radius:999px;
-  padding:7px 14px;box-shadow:0 3px 0 rgba(0,0,0,.16);white-space:nowrap}
+  white-space:nowrap}
 body.light .fplbl{color:#062a48}
-.iceflame{flex:0 0 auto;width:36px;height:47px;display:block;position:relative;z-index:1;
+.iceflame{flex:0 0 auto;width:25px;height:33px;display:block;position:relative;z-index:1;
   filter:drop-shadow(0 0 12px rgba(126,224,255,.95))}
 .iceflame svg{width:100%;height:100%;display:block;overflow:visible}
 .iceflame .f1{fill:#cdefff}
@@ -1017,11 +1056,13 @@ body.light .fpring{border-width:3px;border-color:#0a4d7a;
   0%,100%{filter:drop-shadow(0 0 6px rgba(126,224,255,.8))}
   50%{filter:drop-shadow(0 0 15px rgba(170,240,255,1))}
 }
-.iceflame{animation:iceglow 2.2s ease-in-out infinite}
+.iceflame{animation:iceglow 2.8s ease-in-out infinite}
 body.glow-off .fpring{animation:none;opacity:.5;transform:scale(.95)}
 @media (prefers-reduced-motion:reduce){
   body:not(.glow-force) .fpring{animation:none;opacity:.5;transform:scale(.95)}
+  body:not(.glow-force) .examfp{animation:none;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 }
+body.glow-off .examfp{animation:none;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 .iceflame .f1{transform-origin:50% 92%;animation:icelick 1.6s ease-in-out infinite}
 .iceflame .f2{transform-origin:50% 92%;animation:icelick 1.15s ease-in-out infinite reverse}
 .iceflame .f3{transform-origin:50% 92%;animation:icelick .8s ease-in-out infinite}
@@ -1313,9 +1354,12 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
     <div id="goalWrap"></div>
     <div class="card bare">
       <div class="pathhead">
-        <button class="nav" id="prevSurah" title="السورة السابقة">▶</button>
         <div class="ttl" id="pathTitle">—<span id="pathMeta">—</span></div>
-        <button class="nav" id="nextSurah" title="السورة التالية">◀</button>
+      </div>
+      <!-- يبقيان مخفيّين: المسارُ صار متّصلاً فلا سهمَين -->
+      <div hidden aria-hidden="true">
+        <button type="button" id="prevSurah">▶</button>
+        <button type="button" id="nextSurah">◀</button>
       </div>
       <div class="path" id="path"></div>
     </div>
@@ -4319,32 +4363,51 @@ function openSurah(n){
   curSurah=s; curP().last=n; saveDB();
   renderPath(); show('scr-path');
 }
+/* ===== المسارُ المتّصل =====
+   كانت كلُّ سورةٍ شاشةً على حدة يتنقّل بينها بسهمين، فلا يرى رحلتَه.
+   فصار خطّاً واحداً من أوّل الخطّة إلى آخرها، ولكلّ سورةٍ رأسُ قسمٍ
+   يفصلها عمّا قبلها. ولا يُرسم المصحفُ كلُّه دفعةً: نافذةٌ حول موضعه
+   تتّسع بزرٍّ كلّما بلغ آخرَها. */
+var PATH_WIN=2;                    /* كم سورةً تُرسم بعد موضعه */
+var PATH_WIN_STEP=3, PATH_NODE_CAP=240;
+function pathSurahList(){
+  var SC=PATH_SCOPE;
+  var list=SC ? SC.surahs.map(surahBy).filter(Boolean) : allowedSurahs();
+  if(planDir()<0) list=list.slice().reverse();
+  return list;
+}
+/* رأسُ قسمٍ لسورة: اسمُها وما أنجزه فيها */
+function pathSecHTML(sx,view,here){
+  var dn=0, k;
+  for(k=0;k<view.length;k++) if(segDone(sx,view[k].g)) dn++;
+  var all=(view.length>0 && dn>=view.length);
+  return '<div class="pathsec'+(all?' done':(here?' here':''))+'">'+
+    '<span class="psi">'+(all?'✓':arNum(sx.n))+'</span>'+
+    '<span class="pst"><b>سورة '+esc(sx.name)+'</b>'+
+      '<i>'+arCount(sx.count,C_AYAH)+' • '+juzLabel(sx)+' • '+
+        arNum(dn)+'/'+arNum(view.length)+' مقطع</i></span></div>';
+}
 function renderPath(){
   var s=curSurah; if(!s) return;
-  ensureSchedule(s);
   renderHUD();
-  var t=surahStats(s), tn=todayNum(), segs=segsOf(s), i;
-  var SC=PATH_SCOPE, view=scopedSegs(s);
-  var vdone=0;
-  for(i=0;i<view.length;i++) if(segDone(s,view[i].g)) vdone++;
-  $('pathTitle').innerHTML=(SC?('📅 '+esc(SC.label)+' — سورة '+esc(s.name)):('سورة '+esc(s.name)))+
-    '<span>'+(SC
-      ? (arNum(vdone)+'/'+arNum(view.length)+' مقطع من مقرَّر اليوم'+
-         (SC.surahs.length>1?(' • '+arNum(SC.surahs.length)+' سور'):''))
-      : (arNum(s.count)+' آية • '+juzLabel(s)+' • '+arNum(t.done)+'/'+arNum(t.segs)+' مقطع'))+'</span>';
-
-  var list=SC ? SC.surahs.map(surahBy).filter(Boolean) : allowedSurahs();
-  if(planDir()<0) list=list.slice().reverse();   /* فيصير زرّ اليسار «التالية» على ترتيب الخطة */
-  var pos=-1;
+  var SC=PATH_SCOPE, list=pathSurahList(), i, pos=-1;
   for(i=0;i<list.length;i++) if(list[i].n===s.n) pos=i;
-  $('prevSurah').disabled = !(pos>0);
-  $('nextSurah').disabled = !(pos>=0 && pos<list.length-1);
-  var hop=function(n){ curSurah=surahBy(n); curP().last=n; saveDB(); renderPath(); show('scr-path'); };
-  $('prevSurah').onclick=function(){ if(pos>0) (SC?hop(list[pos-1].n):openSurah(list[pos-1].n)); };
-  $('nextSurah').onclick=function(){ if(pos>=0&&pos<list.length-1) (SC?hop(list[pos+1].n):openSurah(list[pos+1].n)); };
+  if(pos<0) pos=0;
 
-  var offs=['off2','off1','off2','','off3','off4','off3',''];
-  var h='', nowUsed=false;
+  /* الترويسةُ تصف الخطّةَ كلَّها، فالمسارُ لم يعد سورةً واحدة */
+  var tot=0, dnAll=0;
+  for(i=0;i<list.length;i++){
+    var vv=scopedSegs(list[i]), z;
+    tot+=vv.length;
+    for(z=0;z<vv.length;z++) if(segDone(list[i],vv[z].g)) dnAll++;
+  }
+  $('pathTitle').innerHTML=(SC?('📅 '+esc(SC.label)):'🗺️ مسارك')+
+    '<span>'+arNum(dnAll)+'/'+arNum(tot)+' مقطع • '+arCount(list.length,C_SURAH)+'</span>';
+
+  var tn=todayNum(), offs=['off2','off1','off2','','off3','off4','off3',''];
+  var h='', nowUsed=false, nodes=0;
+
+  /* مراجعةُ اليوم تتصدّر المسار */
   var due=dueSegs(), PT=null;
   try{ PT=bqnToday(); }catch(e){}
   if(PT && PT.r){
@@ -4357,64 +4420,100 @@ function renderPath(){
     h+='<div class="pnode review due" data-act="review"><div class="dot">☀️</div>'+
        '<div class="lbl">مراجعة اليوم ('+arNum(due.length)+')</div></div>';
   }
-  view.forEach(function(x,k){
-    var g=x.g, p=peek(segKey(s.n,g[0]));
-    var fin=segDone(s,g);
-    var isDue=fin && p.due!=null && p.due<=tn;
-    /* داخل النطاق: يُفتح أوّل مقاطع المقرَّر ولو لم يُتمّ ما قبله في السورة */
-    var prevDone = (k===0) || segDone(s, view[k-1].g);
-    var locked = !SET.free && !fin && !prevDone;
-    var cls='pnode '+offs[k%offs.length], now=false;
-    if(fin && isDue) cls+=' due';
-    else if(fin) cls+=' done';
-    else if(locked) cls+=' locked';
-    else if(!nowUsed){ cls+=' now'; now=true; nowUsed=true; }
-    h+='<div class="'+cls+'" data-i="'+x.i+'">'+
-       (now?'<span class="bubble">ابدأ</span>':'')+
-       '<div class="dot">'+(fin?(isDue?'🔁':'✓'):(locked?'🔒':arNum(k+1)))+'</div>'+
-       '<div class="lbl">'+arNum(g[0]+1)+'–'+arNum(g[1])+
-         (isPageMode()?'<br><span style="opacity:.6;font-size:10px">'+segPageLabel(s,g)+'</span>':'')+'</div>'+
-       ((fin||p.stars)?'<div class="st">'+stars5(fin?stagesN():p.stars)+'</div>':'')+
-       '</div>';
-  });
-  if(t.full && !SC){
-    h+='<div class="pnode" data-act="cert"><div class="dot" style="background:linear-gradient(180deg,#ffd75e,#eab308);'+
-       'border-color:#a1791a;color:#4a3600">📜</div><div class="lbl">شهادة السورة</div></div>';
+
+  /* النافذة: ما قبله بسورةٍ وما بعده بعدّة — ولا تتجاوز سقفَ العقد */
+  var from=Math.max(0,pos-1), to=Math.min(list.length-1, pos+PATH_WIN);
+  for(i=from;i<=to;i++){
+    var sx=list[i];
+    ensureSchedule(sx);
+    var view=scopedSegs(sx);
+    if(!view.length) continue;
+    h+=pathSecHTML(sx,view,sx.n===s.n);
+    (function(sx,view){
+      view.forEach(function(x,k){
+        var g=x.g, p=peek(segKey(sx.n,g[0])), fin=segDone(sx,g);
+        var isDue=fin && p.due!=null && p.due<=tn;
+        var prevDone=(k===0) || segDone(sx, view[k-1].g);
+        var locked=!SET.free && !fin && !prevDone;
+        var cls='pnode '+offs[k%offs.length], now=false;
+        if(fin && isDue) cls+=' due';
+        else if(fin) cls+=' done';
+        else if(locked) cls+=' locked';
+        else if(!nowUsed){ cls+=' now'; now=true; nowUsed=true; }
+        h+='<div class="'+cls+'" data-s="'+sx.n+'" data-i="'+x.i+'">'+
+           (now?'<span class="bubble">ابدأ</span>':'')+
+           '<div class="dot">'+(fin?(isDue?'🔁':'✓'):(locked?'🔒':arNum(k+1)))+'</div>'+
+           '<div class="lbl">'+arNum(g[0]+1)+'–'+arNum(g[1])+
+             (isPageMode()?'<br><span style="opacity:.6;font-size:10px">'+segPageLabel(sx,g)+'</span>':'')+'</div>'+
+           ((fin||p.stars)?'<div class="st">'+stars5(fin?stagesN():p.stars)+'</div>':'')+
+           '</div>';
+        nodes++;
+      });
+    })(sx,view);
+
+    /* شهادةُ السورة عند تمامها، واختبارُ الجزء عند آخر سوره */
+    var t=surahStats(sx);
+    if(t.full && !SC)
+      h+='<div class="pnode" data-act="cert" data-s="'+sx.n+'"><div class="dot" '+
+         'style="background:linear-gradient(180deg,#ffd75e,#eab308);border-color:#a1791a;color:#4a3600">📜</div>'+
+         '<div class="lbl">شهادة السورة</div></div>';
+    if(!SC && lastSurahOfJuz(sx.juz)===sx.n){
+      var jp=juzProgress(sx.juz);
+      h+='<div class="pnode castle'+(jp.ready?'':' locked')+'" data-act="juz" data-s="'+sx.n+'">'+
+         '<div class="dot">🏰</div><div class="lbl">اختبار الجزء '+arNum(sx.juz)+
+         (jp.ready?(jp.passed?' ✅':''):(' — '+arNum(jp.done)+'/'+arNum(jp.total)+' سورة'))+
+         '</div></div>';
+    }
+    if(nodes>=PATH_NODE_CAP){ to=i; break; }
   }
-  if(SC && pos>=list.length-1 && PT){
-    var okAll = PT.hifzDone && PT.revDone;
+
+  /* مقرَّرُ اليوم: عقدةُ الغد في آخره */
+  if(SC && to>=list.length-1 && PT){
+    var okAll=PT.hifzDone && PT.revDone;
     h+='<div class="pnode'+(okAll?' done':' locked')+'" data-act="nextday"><div class="dot">'+
        (okAll?'🎉':'📅')+'</div><div class="lbl">'+
        (okAll?'تمّ مقرَّر اليوم — إلى الغد ←'
             :('بقي '+(PT.hifzDone?'':'الحفظ')+(!PT.hifzDone&&!PT.revDone?' و':'')+(PT.revDone?'':'المراجعة')))+
        '</div></div>';
   }
-  if(!SC && lastSurahOfJuz(s.juz)===s.n){
-    var jp=juzProgress(s.juz);
-    h+='<div class="pnode castle'+(jp.ready?'':' locked')+'" data-act="juz"><div class="dot">🏰</div>'+
-       '<div class="lbl">اختبار الجزء '+arNum(s.juz)+
-       (jp.ready?(jp.passed?' ✅':''):(' — '+arNum(jp.done)+'/'+arNum(jp.total)+' سورة'))+'</div></div>';
-  }
+  /* وما بقي من الخطّة يُطلب بزرّ، فلا تُرسم ألفا عقدةٍ على هاتف طفل */
+  if(to<list.length-1)
+    h+='<button type="button" class="pathmore" id="pathMore">▼ تابع المسار — '+
+       esc(list[to+1].name)+' وما بعدها</button>';
+
   $('path').innerHTML=h;
-  var nodes=$('path').querySelectorAll('.pnode');
-  for(i=0;i<nodes.length;i++){
-    nodes[i].onclick=function(){
+  if($('pathMore')) $('pathMore').onclick=function(){
+    PATH_WIN+=PATH_WIN_STEP; renderPath();
+  };
+  var ns=$('path').querySelectorAll('.pnode'), z;
+  for(z=0;z<ns.length;z++){
+    ns[z].onclick=function(){
       var act=this.getAttribute('data-act');
+      var sn=parseInt(this.getAttribute('data-s'),10);
+      var sx=sn?surahBy(sn):curSurah;
       if(act==='planrev'){ bqnRevStart(); return; }
       if(act==='nextday'){ bqnNextDay(); return; }
       if(act==='review'){ startReview(); return; }
-      if(act==='cert'){ showCert(curSurah); return; }
+      if(act==='cert'){ showCert(sx); return; }
       if(act==='juz'){
-        var jp=juzProgress(curSurah.juz);
+        var jp=juzProgress(sx.juz);
         if(!jp.ready){ uiAlert('أتمم سور الجزء أوّلاً — أنجزت '+arNum(jp.done)+' من '+arNum(jp.total),'🏰'); return; }
-        startJuzTest(curSurah.juz); return;
+        startJuzTest(sx.juz); return;
       }
       if(this.className.indexOf('locked')>=0 && !act){
-        uiAlert('أتمم المقطع الذي قبله أوّلاً\nويمكن فتح كل المقاطع من ⚙️ الإعدادات','🔒'); return;
+        uiAlert('أتمم المقطع الذي قبله أوّلاً' + String.fromCharCode(10) +
+                'ويمكن فتح كل المقاطع من ⚙️ الإعدادات','🔒'); return;
       }
-      startSeg(curSurah, parseInt(this.getAttribute('data-i'),10));
+      /* السورةُ تتبع العقدةَ لا الشاشةَ: المسارُ فيه سورٌ شتّى */
+      if(sx && sx.n!==curSurah.n){ curSurah=sx; curP().last=sx.n; saveDB(); }
+      startSeg(sx, parseInt(this.getAttribute('data-i'),10));
     };
   }
+  /* يقع نظرُه على موضعه لا على أوّل الخطّة */
+  try{
+    var cur=$('path').querySelector('.pnode.now') || $('path').querySelector('.pathsec.here');
+    if(cur && cur.scrollIntoView) cur.scrollIntoView({block:'center'});
+  }catch(e){}
 }
 
 /* =========================================================
@@ -4810,6 +4909,7 @@ var C_PAGE=['صفحة واحدة','صفحتان','صفحات','صفحة'];
 var C_SESS=['جلسة واحدة','جلستان','جلسات','جلسة'];
 var C_QUES=['سؤال واحد','سؤالان','أسئلة','سؤالاً'];
 var C_AYAH=['آية واحدة','آيتان','آيات','آية'];
+var C_SURAH=['سورة واحدة','سورتان','سور','سورة'];
 /* تمييز العدد: مرّة، مرّتين، ثلاث مرّات… */
 function marra(n){
   n=n||1;
