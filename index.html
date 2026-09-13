@@ -4894,7 +4894,8 @@ function runRound(){
   try{ comboChip(); }catch(e){}
   if(r.t==='edge') $('stageChip').textContent='🎯 بداية ونهاية';
   /* الكلمتان تردان داخل مرحلة «الكلمة الناقصة»، فتُسمّي الشارةُ ما هو أمامه */
-  if(r.rq) $('stageChip').textContent='🔁 ما أخطأتَ فيه • '+seghere;
+  /* «تثبيت» لا «ما أخطأتَ فيه»: الطابورُ تدبيرٌ داخليّ لا يُعيَّر به */
+  if(r.rq) $('stageChip').textContent='🔁 تثبيت • '+seghere;
   else if(r.t==='miss2') $('stageChip').textContent='🔍 الكلمتان الناقصتان • '+seghere;
   else if(r.t==='aedge') $('stageChip').textContent=(r.which==='first'?'🚩 مطلعُ الآية • ':'🏁 خاتمةُ الآية • ')+seghere;
   else if(r.t==='eorder') $('stageChip').textContent=(r.which==='first'?'🚩 مطالعُ الآيات • ':'🏁 خواتمُ الآيات • ')+seghere;
@@ -4935,14 +4936,14 @@ function hifzMiss(r, reveal){
       for(k in r) if(Object.prototype.hasOwnProperty.call(r,k)) c[k]=r[k];
       c.rq=r.rq+1;
       S.rounds.push(c);
-      $('fb').className='fb bad'; $('fb').textContent='إجابة خاطئة — وستعود إليك';
+      $('fb').className='fb bad'; $('fb').textContent='إجابة خاطئة';
     } else {
       if(reveal){ try{ reveal(); }catch(e){} }
-      $('fb').className='fb bad'; $('fb').textContent='وهذا هو الصواب — تأمّله';
+      $('fb').className='fb bad'; $('fb').textContent='وهذا هو الصواب';
     }
   } else {
     missqAdd(r);
-    $('fb').className='fb bad'; $('fb').textContent='إجابة خاطئة — وستعود إليك قبل التسميع';
+    $('fb').className='fb bad'; $('fb').textContent='إجابة خاطئة';
   }
   setTimeout(function(){ nextRound('miss'); }, 1100);
 }
