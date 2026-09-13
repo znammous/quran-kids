@@ -4625,7 +4625,8 @@ function pathSecHTML(sx,view,here){
   var dn=0, k;
   for(k=0;k<view.length;k++) if(segDone(sx,view[k].g)) dn++;
   var all=(view.length>0 && dn>=view.length);
-  return '<div class="pathsec'+(all?' done':(here?' here':''))+'">'+
+  /* data-s: يُعرف به رأسُ السورة وإن كانت تامّة — فالتامّةُ تُعلَّم done لا here */
+  return '<div class="pathsec'+(all?' done':(here?' here':''))+'" data-s="'+sx.n+'">'+
     '<span class="psi">'+(all?'✓':arNum(sx.n))+'</span>'+
     '<span class="pst"><b>سورة '+esc(sx.name)+'</b>'+
       '<i>'+arCount(sx.count,C_AYAH)+' • '+juzLabel(sx)+' • '+
@@ -4778,7 +4779,8 @@ function pathFocus(){
     var box=$('path'); if(!box) return;
     /* المختارةُ من الفهرس: يقع نظرُه عليها — على «ابدأ» فيها، وإلّا فعلى رأسها */
     var pk=(!PATH_SCOPE && curSurah && PATH_PICK===curSurah.n)
-      ? (box.querySelector('.pnode.now[data-s="'+PATH_PICK+'"]') || box.querySelector('.pathsec.here'))
+      ? (box.querySelector('.pnode.now[data-s="'+PATH_PICK+'"]') ||
+         box.querySelector('.pathsec[data-s="'+PATH_PICK+'"]'))   /* تامّةٌ لا «ابدأ» فيها: رأسُها */
       : null;
     var el=pk || box.querySelector('.pnode.now') ||
              box.querySelector('.pathsec.here') ||
