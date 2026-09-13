@@ -718,6 +718,26 @@ body.glow-off .cele .spk{display:none}
 /* الزرّ في مجرى الصفحة تحت الملخّص مباشرة، فلا يغطّي شيئاً */
 #revSum{margin-bottom:14px}
 .btn.revcta{box-shadow:0 6px 18px rgba(0,0,0,.35)}
+/* ===== بابٌ خالٍ =====
+   لا يُترك القسمُ فارغاً بلا بيان: أيقونةٌ في وسطه تدعو إلى ملئه،
+   وسطرٌ يقول ما هو ولمن هو. */
+.emptybox{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:30px 14px 22px;min-height:46vh}
+.emptybox .eic{font-size:54px;line-height:1;margin-bottom:14px;opacity:.9}
+.emptybox .eh{font-size:18px;font-weight:900;color:var(--ttl);margin-bottom:9px}
+.emptybox .ed{font-size:13.5px;font-weight:700;color:var(--mute);line-height:2;
+  max-width:330px;margin:0 auto 18px}
+.emptybox .btn{width:auto;min-width:min(240px,72vw)}
+/* زرُّ الإضافة: دائرةٌ كبيرةٌ تُنادي على الفراغ */
+.addcircle{width:104px;height:104px;border-radius:50%;border:3px dashed var(--pb3);
+  background:var(--pnl2);color:var(--ttl);font-size:46px;font-weight:300;line-height:1;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  font-family:inherit;margin-bottom:16px;transition:.14s;
+  -webkit-tap-highlight-color:transparent}
+.addcircle:hover{border-color:var(--gold);background:var(--psel)}
+.addcircle:active{transform:scale(.93)}
+/* شريطُ تبويبات المراجعة يتنفّس فوق العنوان */
+#revTabs{margin:2px 0 10px}
 /* بطاقات الخيارات أقصر قليلاً حتى تقلّ الحاجة للتمرير */
 #revScope .onbopt{padding:10px 12px}
 #revScope .onbopt .oe{font-size:22px}
@@ -1296,7 +1316,8 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
 
   <section class="screen" id="scr-rev">
     <h1>☀️ المراجعة</h1>
-    <p class="sub">مقرَّر اليوم أوّلاً — ولك أن تحدّد نطاقاً آخر تمشي عليه جلسةً جلسة</p>
+    <div class="onbtabs" id="revTabs"></div>
+    <p class="sub" id="revSub">—</p>
     <div id="revPlan"></div>
     <button class="btn primary big pulse revcta" id="btnRevGo">🗺️ ابدأ المسار</button>
     <div class="row"><button class="btn ghost" id="btnRevHome">🏠 البداية</button></div>
@@ -6381,6 +6402,47 @@ function revAyahOpts(n,sel){
   for(var a=1;a<=s.ayat.length;a++) o+='<option value="'+a+'"'+(a===sel?' selected':'')+'>'+arNum(a)+'</option>';
   return o;
 }
+/* ===== أبوابُ المراجعة الثلاثة =====
+   كانت الصناديقُ تتوالى في صفحةٍ واحدةٍ فيطول النظرُ ويلتبس المقرَّرُ
+   بالحرّ بالمحفوظ. فصارت ثلاثةَ أبوابٍ يُختار منها واحد. */
+var REV_TABS=[['due','📅 المقرَّر اليوميّ'],
+              ['free','🎛️ مراجعة حرّة'],
+              ['mine','📖 محفوظاتي']];
+var REV_SUB={ due:'ما استحقّ اليوم من خطّتك ومن محفوظك',
+              free:'نطاقٌ تختاره بنفسك وتمشي عليه جلسةً جلسة',
+              mine:'ما حفظتَه قبل التطبيق — يمشي وردُك فيه وجهاً وجهاً' };
+var REV_TAB='';
+/* يُفتح على البابِ الذي فيه عملُ اليوم، لا على الأوّل دائماً */
+function revTabDefault(){
+  try{ var T=bqnToday(); if(T && T.r) return 'due'; }catch(e){}
+  try{ if(dueSegs().length) return 'due'; }catch(e){}
+  try{ if(wirdOn() && revSessions('wird').length) return 'mine'; }catch(e){}
+  try{ if(curP().rev && !revIsWird()) return 'free'; }catch(e){}
+  return 'due';
+}
+function renderRevTabs(){
+  var bar=$('revTabs'); if(!bar) return;
+  bar.innerHTML=REV_TABS.map(function(z){
+    return '<button type="button" class="onbtab'+(REV_TAB===z[0]?' sel':'')+'" '+
+      'data-rt="'+z[0]+'">'+z[1]+'</button>';
+  }).join('');
+  var bs=bar.querySelectorAll('.onbtab'), i;
+  for(i=0;i<bs.length;i++) bs[i].onclick=function(){
+    REV_TAB=this.getAttribute('data-rt');
+    try{ sPick(); }catch(e){}
+    renderRevPlan();
+  };
+  try{ bar.querySelector('.onbtab.sel').scrollIntoView({block:'nearest',inline:'center'}); }catch(e){}
+}
+function emptyBox(ic,head,desc,btnId,btnTxt,circle){
+  return '<div class="emptybox">'+
+    (circle ? ('<button type="button" class="addcircle" id="'+btnId+'">＋</button>')
+            : ('<div class="eic">'+ic+'</div>'))+
+    '<div class="eh">'+esc(head)+'</div>'+
+    '<div class="ed">'+esc(desc)+'</div>'+
+    (circle ? '' : ('<button type="button" class="btn blue big" id="'+btnId+'">'+btnTxt+'</button>'))+
+  '</div>';
+}
 function renderRevPlan(){
   var chips=function(list,cur,attr){
     return list.map(function(c){
@@ -6408,11 +6470,52 @@ function renderRevPlan(){
                     : ('🗺️ ابدأ المسار — '+arNum(nS)+' جلسة')))+
       '</button></div>';
   }
+  if(!REV_TAB) REV_TAB=revTabDefault();
+  renderRevTabs();
+  if($('revSub')) $('revSub').textContent=REV_SUB[REV_TAB]||'';
+
+  /* ١) المقرَّر اليوميّ: مقرَّرُ الخطّة وما استحقّ من محفوظه */
+  if(REV_TAB==='due'){
+    var dueH=bqnRevBanner('P')+selfRevBanner('P');
+    $('revPlan').innerHTML = dueH || emptyBox('🌙','لا مراجعةَ مستحقّةً اليوم',
+      'كلُّ ما حلّ موعدُه قد رُوجع. ولك أن تزيد من بابِ المراجعة الحرّة، '+
+      'أو تمشي في ورد محفوظاتك.','btnRevToFree','🎛️ مراجعة حرّة');
+    bqnRevWire('P'); selfRevWire('P');
+    if($('btnRevToFree')) $('btnRevToFree').onclick=function(){ REV_TAB='free'; renderRevPlan(); };
+    if($('btnRevGo')) $('btnRevGo').hidden=true;
+    return;
+  }
+
+  /* ٢) محفوظاتي: وردُ ما حُفظ قبل التطبيق */
+  if(REV_TAB==='mine'){
+    var setupH=wirdSetupBanner(), wirdH=wirdBanner('P');
+    if(setupH || wirdH){
+      $('revPlan').innerHTML=setupH+wirdH;
+      wirdSetupWire(); wirdWire('P');
+    } else {
+      $('revPlan').innerHTML=emptyBox('📖','لم تسجّل حفظاً سابقاً بعد',
+        'هذا البابُ لمن حفظ شيئاً من كتاب الله قبل أن يستعمل التطبيق، '+
+        'وأراد أن يتعاهده مع خطّته الجارية. سجّل ما تحفظه — أجزاءً أو سوراً — '+
+        'فيمشي فيه وردٌ يوميٌّ وجهاً وجهاً ثمّ يعود من أوّله.',
+        'btnRevPrior','📌 سجّل حفظي السابق');
+      if($('btnRevPrior')) $('btnRevPrior').onclick=function(){ startBqn('rev'); };
+    }
+    if($('btnRevGo')) $('btnRevGo').hidden=true;
+    return;
+  }
+
+  /* ٣) المراجعة الحرّة: نطاقٌ يختاره — وإن لم يكن فدائرةٌ تدعوه */
+  if(!savedFree && !freeOpen){
+    $('revPlan').innerHTML=emptyBox('','لم تحدّد نطاقاً بعد',
+      'اختر من أين تبدأ وإلى أين تنتهي، وكم وجهاً في الجلسة — '+
+      'ثمّ امشِ عليه جلسةً جلسة.','btnFreeAdd','',true);
+    if($('btnFreeAdd')) $('btnFreeAdd').onclick=function(){
+      curP().freeRev=true; saveDB(); renderRevPlan();
+    };
+    if($('btnRevGo')) $('btnRevGo').hidden=true;
+    return;
+  }
   $('revPlan').innerHTML=
-    bqnRevBanner('P')+
-    wirdSetupBanner()+
-    wirdBanner('P')+
-    selfRevBanner('P')+
     contHTML+
 
     '<button type="button" class="btn '+(freeOpen?'blue':'ghost')+' big" id="btnFreeRev" style="margin-top:6px">'+
@@ -6460,10 +6563,6 @@ function renderRevPlan(){
   };
   var rp=$('revPlan').querySelectorAll('[data-rp]');
   for(var j=0;j<rp.length;j++) rp[j].onclick=function(){ REV.per=parseInt(this.getAttribute('data-rp'),10); revSave(); renderRevPlan(); };
-  bqnRevWire('P');
-  wirdSetupWire();
-  wirdWire('P');
-  selfRevWire('P');
   $('btnFreeRev').onclick=function(){
     curP().freeRev=!curP().freeRev; saveDB(); renderRevPlan();
   };
@@ -7198,6 +7297,10 @@ function priorPanelWire(pfx,after){
     for(i=0;i<b.length;i++)
       b[i].className='chipsel'+(p.priorS[b[i].getAttribute('data-ps')]?' sel':'');
     note();
+    /* التأشيرُ يفتح خطوةَ الورد أو يُغلقها، فيُحدَّث العدّادُ والأزرار
+       دون إعادة رسم اللوحة تحت إصبعه */
+    try{ if($('scr-bqn') && $('scr-bqn').classList.contains('active')) bqnChrome(); }catch(e){}
+    try{ if($('scr-onb') && $('scr-onb').classList.contains('active')) onbGate(); }catch(e){}
   };
   var js=box.querySelectorAll('[data-pj]'), i;
   for(i=0;i<js.length;i++) js[i].onclick=function(){
@@ -7341,24 +7444,29 @@ var BQ_HEAD={
   prior: ['📌 وأين أنت من الحفظ الآن؟','لنعرف من أين نبدأ بك — ولا يضيع ما حفظتَه قبلُ'],
   wird : ['📖 وردُ المراجعة','ما حفظتَه يحتاج تعاهداً — ولك أن تقسّمه كما تطيق']
 };
+/* شارةُ الخطوات وأزرارُها وحدَها — تُستدعى إذا تبدّل ما يُحسب به عددُ
+   الخطوات واللوحةُ بين يديه، فلا يُعاد رسمُ اللوحةِ تحت إصبعه. */
+function bqnChrome(){
+  var steps=bqnSteps(), n=steps.length;
+  if(BQ.i>n-1) BQ.i=n-1;
+  $('bqnFill').style.width=Math.round(100*(BQ.i+1)/n)+'%';
+  $('bqnCount').textContent=arNum(BQ.i+1)+' من '+arNum(n);
+  $('bqnBack').hidden=(BQ.i===0);
+  /* الخروجُ في الخطوة الأولى وحدَها: بعدها «السابق» يكفي مخرجاً */
+  $('btnBqnHome').hidden=(BQ.i>0);
+  var last=(BQ.i===n-1);
+  $('bqnNext').hidden=last;
+  $('btnBqnDone').hidden=!last;
+  bqnGate();
+}
 function bqnShow(i){
   var steps=bqnSteps(), n=steps.length;
   BQ.i=Math.max(0,Math.min(n-1,i||0));
   var k=steps[BQ.i], hd=BQ_HEAD[k]||['',''];
   $('bqnTitle').textContent=hd[0];
   $('bqnSub').textContent=hd[1];
-  $('bqnFill').style.width=Math.round(100*(BQ.i+1)/n)+'%';
-  $('bqnCount').textContent=arNum(BQ.i+1)+' من '+arNum(n);
-  $('bqnBack').hidden=(BQ.i===0);
-  /* الخروجُ في الخطوة الأولى وحدَها: بعدها «السابق» يكفي مخرجاً */
-  $('btnBqnHome').hidden=(BQ.i>0);
-  /* صفحةُ الحفظ السابق قد يتبعها سؤالُ الورد بعد اعتماد ما أُشّر،
-     فلا يُقال «حفظ» وبين يديه خطوةٌ أخرى */
-  var last=(BQ.i===n-1);
-  $('bqnNext').hidden=last;
-  $('btnBqnDone').hidden=!last;
+  bqnChrome();
   renderBqnList();
-  bqnGate();
   window.scrollTo(0,0);
 }
 /* ما ينقص هذه الخطوة بعينها */
@@ -7426,10 +7534,11 @@ function renderBqnList(){
   }
   bqnBody+='</div>';
   var onSelf=(id==='self'), pn=onSelf?null:bqnPlan(id);
+  /* الطيّاتُ مطويّةٌ عند الفتح، لا تُنشر إلّا بيده — وما نشره يبقى منشوراً */
   h = foldHTML('fSelf','🧭 خطط تطبيق «نور الوحي»'+(onSelf?(' — ✅ '+esc(segModeName())):''),
-        foldIsOpen('fSelf')||!p.planChosen||onSelf, selfBody)+
+        foldIsOpen('fSelf'), selfBody)+
       foldHTML('fBqn','📅 خطط «بالقرآن نحيا»'+(pn?(' — ✅ '+esc(pn.t)):''),
-        foldIsOpen('fBqn')||(!!p.planChosen&&!onSelf), bqnBody);
+        foldIsOpen('fBqn'), bqnBody);
   $('bqnList').innerHTML=h;
   foldBind($('bqnList'));
   /* اختيارٌ واحد يكفي هذه الصفحة، ثم يمضي إلى التي بعدها */
@@ -7532,6 +7641,7 @@ function bqnReturn(){
   var b=BQN_BACK; BQN_BACK='';
   if(b==='onb'){ onbShow(ONB.i); return; }
   if(b==='set'){ fillSettings(); show('scr-settings'); return; }
+  if(b==='rev'){ REV_TAB='mine'; renderRevPlan(); show('scr-rev'); return; }
   openBqn();
 }
 /* لا شاشة وسيطة: «اليوم» يفتح المسار نفسه، مقصوراً على مقرَّر الخطة إن كانت معتمدة */
