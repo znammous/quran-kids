@@ -4901,7 +4901,8 @@ function examShowRight(box,sel,txt,cls){
 function examMiss(reveal){
   sBad();
   $('fb').className='fb bad';
-  $('fb').textContent='ليست هي — وهذا الصواب 👇';
+  /* الخياراتُ فوق سطر التنبيه لا تحته، فالسهمُ إلى أعلى */
+  $('fb').textContent='ليست هي — والصوابُ مُضاءٌ في الأعلى 👆';
   if(reveal){ try{ reveal(); }catch(e){} }
   setTimeout(function(){ nextRound(false); }, 1200);
 }
@@ -8068,14 +8069,22 @@ function readSettings(){
    ثمّ درجةٌ تُقرأ وتُطبع. ولا يمسّ جدولةَ المراجعة ولا مقرَّرَ اليوم —
    فالاختبارُ لا ينوب عن التعاهد، وإنّما يدلّ عليه.
    ========================================================= */
-var EX={ i:0, init:0, fromS:114, fromA:1, toS:114, toA:6, kind:'mix', count:10, log:[], t0:0 };
-var EX_KINDS=[['mix','🎲','منوّعة','ترتيبُ كلماتٍ وكلمةٌ ناقصةٌ وترتيبُ آيات'],
-              ['words','🧩','ترتيب الكلمات','تُبعثر كلماتُ الآية فيعيد بناءها'],
+/* picks: الأنواعُ المختارة — أكثرُ من واحدٍ يجوز، والكلُّ هو الأصل.
+   وكان نوعاً واحداً لا غير، فمن أراد نوعين لم يجد إلى ذلك سبيلاً. */
+var EX={ i:0, init:0, fromS:114, fromA:1, toS:114, toA:6, picks:null, count:10, log:[], t0:0 };
+var EX_KINDS=[['words','🧩','ترتيب الكلمات','تُبعثر كلماتُ الآية فيعيد بناءها'],
               ['missing','🔍','الكلمة الناقصة','تسقط كلمةٌ من الآية فيختارها'],
+              ['miss2','🔎','الكلمتان الناقصتان','تسقط كلمتان من الآية فيختارهما تِباعاً'],
               ['ayat','🔢','ترتيب الآيات','تُبعثر آياتُ المقطع فيعيد ترتيبها'],
-              ['miss2','🔍','الكلمتان الناقصتان','تسقط كلمتان من الآية فيختارهما تِباعاً'],
               ['aedge','🚩','مطلعُ الآية وخاتمتُها','يُعطى شطرَ الآية فيذكر طرفَها الغائب'],
-              ['eorder','🔢','رصُّ المطالع والخواتم','يرتّب أوائلَ الآيات أو أواخرَها']];
+              ['eorder','🏁','رصُّ المطالع والخواتم','يرتّب أوائلَ الآيات أو أواخرَها']];
+function exKindKeys(){ return EX_KINDS.map(function(z){ return z[0]; }); }
+/* المختارةُ الآن — وإن لم يُختر شيءٌ فالكلُّ */
+function examPicks(){
+  var p=EX.picks;
+  return (p && p.length) ? p : exKindKeys();
+}
+function examAllOn(){ return examPicks().length===EX_KINDS.length; }
 var EX_COUNTS=[10,20,30,50];
 var EX_STEPS=['range','kind','count','ready'];
 var EX_HEAD={
@@ -8108,9 +8117,8 @@ function examAyat(){ var e=examEdges(); return e[1]-e[0]+1; }
 function examPagesN(){ var e=examEdges(); return pageOfIdx(e[1])-pageOfIdx(e[0])+1; }
 /* سؤالٌ من آية: نوعُه ما اختاره، فإن تعذّر رجع إلى الناقصة */
 function examQ(it){
-  var t=EX.kind, pool, ch, pick, ws, span, lo, j1, j2;
-  if(t==='mix'){ pool=['missing','words','ayat','miss2','aedge','eorder'];
-    t=pool[Math.floor(Math.random()*pool.length)]; }
+  var pool=examPicks(), ch, pick, ws, span, lo, j1, j2;
+  var t=pool[Math.floor(Math.random()*pool.length)];
   if(t==='ayat' && (it.to-it.from)<3) t='missing';
   if(t==='words'){
     ch=(ayahWords(it.s,it.a)>=ORDER_MIN) ? wordChunks(it.s,it.a,WORDS_MIN) : null;
@@ -8200,6 +8208,7 @@ function examShow(i){
 }
 function examBlocked(){
   if(examAyat()<1) return '📖 النطاق فارغ — راجع اختيارك';
+  if(EX.picks && !EX.picks.length) return '🧠 اختر نوعَ أسئلةٍ واحداً على الأقلّ';
   return '';
 }
 function examGate(){
@@ -8224,12 +8233,20 @@ function examBody(k){
       '<div class="revsum" id="exRange"></div>';   /* مقدارُ النطاق وحدَه */
   }
   else if(k==='kind'){
-    h='<div class="onbopts">'+EX_KINDS.map(function(z){
-      var on=(EX.kind===z[0]);
-      return '<button type="button" class="onbopt'+(on?' sel':'')+'" data-exk="'+z[0]+'">'+
-        '<span class="oe">'+(on?'✅':z[1])+'</span>'+
-        '<span class="ot"><b>'+esc(z[2])+'</b><i>'+esc(z[3])+'</i></span></button>';
-    }).join('')+'</div>';
+    var picked=examPicks(), allOn=examAllOn();
+    var every=EX_KINDS.map(function(z){ return z[2]; }).join('، ');
+    h='<div class="onbopts">'+
+      '<button type="button" class="onbopt'+(allOn?' sel':'')+'" data-exall="1">'+
+        '<span class="oe">'+(allOn?'✅':'🎲')+'</span>'+
+        '<span class="ot"><b>منوّعة — كلُّ الأنواع</b><i>'+esc(every)+'</i></span></button>'+
+      EX_KINDS.map(function(z){
+        var on=picked.indexOf(z[0])>=0;
+        return '<button type="button" class="onbopt'+(on?' sel':'')+'" data-exk="'+z[0]+'">'+
+          '<span class="oe">'+(on?'✅':z[1])+'</span>'+
+          '<span class="ot"><b>'+esc(z[2])+'</b><i>'+esc(z[3])+'</i></span></button>';
+      }).join('')+'</div>'+
+      '<div class="note">حدّد ما شئت من الأنواع — أو «منوّعة» فتشملها جميعاً.'+
+        ' وما لا تحتمله آيةٌ يُبدَّل بما تحتمله.</div>';
   }
   else if(k==='count'){
     h='<div class="revbox"><div class="rl">كم سؤالاً في الاختبار كلّه؟</div><div class="chips">'+
@@ -8245,8 +8262,11 @@ function examBody(k){
   examWire(k);
 }
 function examKindName(){
-  for(var i=0;i<EX_KINDS.length;i++) if(EX_KINDS[i][0]===EX.kind) return EX_KINDS[i][2];
-  return '';
+  var p=examPicks(), i, j, out=[];
+  if(examAllOn()) return 'منوّعة — كلُّ الأنواع';
+  for(i=0;i<EX_KINDS.length;i++)
+    for(j=0;j<p.length;j++) if(EX_KINDS[i][0]===p[j]) out.push(EX_KINDS[i][2]);
+  return out.join(' • ');
 }
 /* حصيلةُ الإتقان: ثلاثُ جواهر عن كلّ صحيحةٍ من أوّل محاولة */
 var EX_GEM=3;
@@ -8289,9 +8309,14 @@ function examWire(k){
     return;
   }
   if(k==='kind'){
-    var ks=$('exBody').querySelectorAll('[data-exk]'), i;
+    var as=$('exBody').querySelectorAll('[data-exall]'), ks=$('exBody').querySelectorAll('[data-exk]'), i;
+    for(i=0;i<as.length;i++) as[i].onclick=function(){
+      EX.picks=exKindKeys(); sPick(); examBody('kind'); examGate();
+    };
     for(i=0;i<ks.length;i++) ks[i].onclick=function(){
-      EX.kind=this.getAttribute('data-exk'); sPick(); examBody('kind');
+      var key=this.getAttribute('data-exk'), cur=examPicks().slice(), at=cur.indexOf(key);
+      if(at>=0) cur.splice(at,1); else cur.push(key);
+      EX.picks=cur; sPick(); examBody('kind'); examGate();
     };
     return;
   }
