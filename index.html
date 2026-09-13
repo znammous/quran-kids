@@ -559,6 +559,8 @@ body.glow-off .cele .spk{display:none}
 .modal ol{padding-right:20px;line-height:1.9;font-size:15px;color:var(--on2)}
 .modal ol b{color:var(--ttl)}
 .modal p,.modal .sub{color:var(--on1)}
+/* كان لونُها مكتوباً في السطر: أزرقُ شاحبٌ يصلح لليل ويغيب في النهار */
+.modal .adabsay{text-align:center;color:var(--ttl2);font-size:15px;margin:0}
 .modal .adab{text-align:center;font-family:"Traditional Arabic","Amiri","IBM Plex Sans Arabic","Segoe UI",serif;
   font-size:30px;color:var(--adab);margin:12px 0;text-shadow:0 1px 0 rgba(0,0,0,.35)}
 .modal .note{background:var(--mnote);border-color:var(--pb3);color:var(--on2)}
@@ -1283,9 +1285,9 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
   <div class="modal">
     <button class="xbtn" id="xAdab" aria-label="إغلاق">✕</button>
     <h2>قبل أن نبدأ 🤲</h2>
-    <p style="text-align:center;color:#bcdcf5;font-size:15px;margin:0">قل معي:</p>
+    <p class="adabsay">قل معي:</p>
     <div class="adab">أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ</div>
-    <div class="adab">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+    <div class="adab" id="adabBsm">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
     <button class="btn primary big pulse" id="btnAdabOk" style="margin:6px 0 0">✅ قلتُها، لنبدأ</button>
   </div>
 </div>
@@ -4253,7 +4255,9 @@ function mosqueSVG(p){
 /* ===== شريط التنقّل السفلي (يظهر على الشاشات الضيّقة) ===== */
 var TABS=[
   {id:'scr-start',    ic:'🏠', n:'الرئيسية',  go:function(){ renderPlayers(); show('scr-start'); }},
-  {id:'scr-path',     ic:'📖', n:'اليوم',     go:function(){ openBqn(); }, also:['scr-map','scr-bqn']},
+  /* «اليومُ» يُبلَغ من بطاقتَي الشاشة الرئيسة، والشريطُ أولى به الفهرسُ
+     الذي لا مدخلَ له سواه */
+  {id:'scr-map',      ic:'📑', n:'الفهرس',    go:function(){ $('btnIndex').click(); }, also:['scr-path','scr-bqn']},
   {id:'scr-build',    ic:'🕌', n:'مسجدي',    go:function(){ $('btnBuild').click(); }},
   {id:'scr-shop',     ic:'💎', n:'متجري',    go:function(){ $('btnShop').click(); }},
   {id:'scr-settings', ic:'⚙️', n:'الإعدادات', go:function(){ $('btnSettings').click(); }}
@@ -4638,14 +4642,40 @@ var S=null, pendingStart=null;
 var HINT_SEEN=false;
 var REVIEW_CAP=8;
 
+/* ===== أدبُ الابتداء =====
+   الاستعاذةُ عند كلّ ابتداء، والبسملةُ إن ابتدأ من أوّل السورة — فمن
+   ابتدأ من وسطها استعاذ ولم يُبسمل. وبراءةُ وحدَها لا يُبسمل في أوّلها
+   ولو ابتدأ منه. ومن ابتدأ بما لا يُعرف أوّلُه اقتُصر على الاستعاذة. */
+function adabOpen(o){
+  if(!o) return null;
+  if(o.s && o.seg) return { s:o.s, a:o.seg[0] };
+  if(o.rev==='session'){
+    var pg=(revSessions()||[])[o.idx], pcs;
+    if(pg && pg.length){
+      pcs=pageScopePieces(pg[0]);
+      if(pcs.length) return { s:pcs[0].s, a:pcs[0].from };
+    }
+  }
+  return null;
+}
+function adabBasmala(o){
+  var op=adabOpen(o);
+  return !!op && op.a===0 && op.s.n!==9;
+}
+/* يُفتح الصندوقُ من هنا وحدَه، فلا يُنسى ضبطُ البسملة في موضعٍ منها */
+function adabAsk(o){
+  pendingStart=o;
+  var e=$('adabBsm');
+  if(e) e.hidden=!adabBasmala(o);
+  $('adab').hidden=false;
+}
 function startSeg(s,i){
   var g=segsOf(s)[i]; if(!g) return;
   var key=segKey(s.n,g[0]), p=getP(key);
   var stage = p.done ? 0 : Math.min(p.stage, stagesN()-1);
-  pendingStart={ s:s, seg:g, si:i, key:key, stage:stage, review:false };
-  $('adab').hidden=false;
+  adabAsk({ s:s, seg:g, si:i, key:key, stage:stage, review:false });
 }
-function startReview(){ pendingStart={ review:true }; $('adab').hidden=false; }
+function startReview(){ adabAsk({ review:true }); }
 /* الضغط خارج الصندوق يلغي الضغطة التي فتحته، وكذلك مفتاح Escape */
 function closeModal(id){
   $(id).hidden=true;
@@ -7971,7 +8001,7 @@ function renderRevPath(){
   for(var z=0;z<ns.length;z++) ns[z].onclick=function(){
     var k=parseInt(this.getAttribute('data-revs'),10);
     if(k!==revDone(md)) return;                   /* الجلسة الحالية وحدها */
-    pendingStart={ rev:'session', idx:k }; $('adab').hidden=false;
+    adabAsk({ rev:'session', idx:k });
   };
 }
 /* التنقّل بين سور النطاق */
@@ -8175,7 +8205,7 @@ function finishRevQuiz(){
 function revWeak(P){ if(P) REV.weak[P]=true; }
 
 /* ===== المراجعة واختبار الجزء ===== */
-function startJuzTest(j){ pendingStart={ review:true, juz:j }; $('adab').hidden=false; }
+function startJuzTest(j){ adabAsk({ review:true, juz:j }); }
 function beginReview(j){
   var rounds=[], due=[];
   if(j){
