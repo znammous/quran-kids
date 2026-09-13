@@ -1677,7 +1677,7 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
       <div class="setblock" style="margin-top:12px">
         <label class="lbl">👧👦 اللاعبون في هذا الجهاز</label>
         <div class="row">
-          <button class="btn blue" id="btnAddPlayer">➕ لاعب جديد</button>
+          <button class="btn blue" id="btnAddPlayer">➕ مستخدم جديد</button>
           <button class="btn red" id="btnDelPlayer">🗑️ حذف اللاعب الحالي</button>
         </div>
         <div class="note">لكل لاعب نجومه ومقاطعه ومواظبته وإعداداته المستقلّة.</div>
@@ -4167,7 +4167,7 @@ function renderPlayers(){
     return '<button class="pchip'+(i===DB.cur?' sel':'')+'" data-p="'+i+'">'+
       esc(p.name||('لاعب '+arNum(i+1)))+'</button>';
   }).join('');
-  h+='<button class="pchip" data-p="new">➕ لاعب جديد</button>';
+  h+='<button class="pchip" data-p="new">➕ مستخدم جديد</button>';
   $('players').innerHTML=h;
   applyTheme();                                  /* الأيقونة تصف الوضع فور رسمها */
   var cs=$('players').querySelectorAll('[data-p]');
