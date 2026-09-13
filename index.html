@@ -1229,6 +1229,10 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
   body.resfit #playArea .btn.big{flex:1 1 calc(50% - 4px);width:auto;min-width:0;min-height:50px;
     margin:0 0 8px!important;padding:12px 8px;font-size:16px;line-height:1.35}
   body.resfit #playArea .btn.big.pulse{flex-basis:100%}
+  /* ما لا شريطَ فيه لا يُحجز له مكان: كان الدرسُ يُمرَّر ٩٢px فارغة */
+  body.hastabs.tabsgone .wrap{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+  /* السؤالُ على قدر الشاشة (qScreenFit): لا تمرير */
+  body.qlock{overflow:hidden}
 }
 @media(max-width:520px){
   h1{font-size:25px}
@@ -4461,6 +4465,7 @@ function buildTabs(){
 function syncTabs(id){
   var bar=$('tabbar'); if(!bar) return;
   if(TABS_HIDE[id]) bar.classList.add('gone'); else bar.classList.remove('gone');
+  document.body.classList.toggle('tabsgone', !!TABS_HIDE[id]);   /* فلا يُحجز له هامش */
   var bs=bar.querySelectorAll('[data-tab]');
   for(var i=0;i<bs.length;i++){
     var tab=TABS[i], on=(tab.id===id)||(tab.also && tab.also.indexOf(id)>=0);
@@ -4480,6 +4485,7 @@ function show(id){
      بعد لحظةٍ لما تأخّر: صورةُ الطالب والخطوط */
   try{ certFit(); if(id==='scr-cert') setTimeout(certFit, 450); }catch(e){}
   try{ playFit(); }catch(e){}                           /* الخروجُ من النتيجة يفكّ ضبطَها */
+  try{ qScreenFit(true); }catch(e){}                    /* والخروجُ من الدرس يفكّ ضبطَ السؤال */
 }
 
 /* ===== الخريطة: أجزاء ← سور ===== */
@@ -5563,6 +5569,7 @@ function runRound(){
   ({read:roundRead,words:roundWords,missing:roundMissing,miss2:roundMiss2,ayat:roundAyat,recite:roundRecite,
     aedge:roundAEdge,eorder:roundEOrder,
     revpage:roundRevPage,edge:roundEdge})[r.t](r);
+  try{ qScreenFit(true); }catch(e){}             /* سؤالٌ جديد: يُضبط على الشاشة من جديد */
 }
 /* ===== الخطأُ في الاختبار يمضي ولا يُعاد =====
    في الحفظ والمراجعة يُعاد السؤالُ حتى يُصيب، فذاك تمرينٌ يُراد به
@@ -9400,7 +9407,7 @@ function certFit(){
   wrap.style.height=Math.ceil(H*k)+'px';
   wrap.classList.add('fit');
 }
-window.addEventListener('resize', function(){ try{ certFit(); playFit(); }catch(e){} });
+window.addEventListener('resize', function(){ try{ certFit(); playFit(); qScreenFit(true); }catch(e){} });
 /* ===== شاشاتُ النتيجة على قدر الجوال =====
    شاشةُ اللعب واحدة: أسئلةٌ ثمّ نتيجةٌ بمسجدٍ وأزرار، والنتيجةُ أطولُ من
    الهاتف. فإذا ظهر المسجدُ (علامةُ النتيجة) رُتّبت الأزرارُ عمودين، ثمّ
@@ -9431,9 +9438,53 @@ function playFit(){
 (function(){
   var mq=$('mosque'); if(!mq || !window.MutationObserver) return;
   new MutationObserver(function(){
+    try{ qScreenFit(true); }catch(e){}           /* النتيجةُ ليست سؤالاً: يُفكّ ضبطُه أوّلاً */
     try{ playFit(); }catch(e){}
     setTimeout(function(){ try{ playFit(); }catch(e){} }, 350);   /* بعد الخطوط والرموز */
   }).observe(mq, {attributes:true, attributeFilter:['hidden']});
+})();
+/* ===== شاشةُ السؤال على قدر الجوال =====
+   كان ارتفاعُ السؤال الأدنى تقديراً (100dvh - 170px) فيزيد على الشاشة
+   فيُمرَّر فراغاً، وبعضُ الأسئلة أطولُ منها حقّاً على الهاتف الصغير.
+   فتُحسب المساحةُ الباقيةُ للسؤال ممّا حوله فعلاً، ويُجعل ارتفاعُه عليها،
+   فإن زاد المحتوى صُغّر بـ zoom (مواضعُ اللمس صحيحة) حتّى ٧٢٪.
+   وفي أوّل السؤال يُحسب من جديد، وفي أثنائه لا يُصغَّر إلّا نقصاً —
+   فلا تقفز الكلماتُ تحت إصبع الطفل وهو يجيب. */
+var QZ=1;
+function qScreenFit(fresh){
+  var pa=$('playArea'), mq=$('mosque'), scr=$('scr-play'), B=document.body, W=document.querySelector('.wrap');
+  if(!pa) return;
+  var inQ=!!(scr && scr.classList.contains('active') && mq && mq.hasAttribute('hidden') &&
+             pa.classList.contains('qfill') && W &&
+             window.matchMedia && window.matchMedia('(max-width:820px)').matches);
+  if(!inQ){
+    if(pa.style.zoom || pa.style.minHeight){ pa.style.zoom=''; pa.style.minHeight=''; }
+    B.classList.remove('qlock'); QZ=1;
+    return;
+  }
+  /* ما حولَ السؤال: الشريطُ العلويّ والشارةُ ورسالةُ التصحيح والهوامش */
+  pa.style.zoom=''; pa.style.minHeight='0px';
+  var need=pa.offsetHeight;
+  var rest=(W.offsetTop+W.offsetHeight)-need;
+  var avail=window.innerHeight-rest-2;
+  if(avail<160 || !need){ pa.style.minHeight=''; B.classList.remove('qlock'); return; }
+  var k=Math.min(1, avail/need);
+  if(!fresh) k=Math.min(k, QZ);
+  k=Math.max(0.72, k);
+  QZ=k;
+  if(k<1) pa.style.zoom=k.toFixed(4);
+  pa.style.minHeight=(avail/k).toFixed(1)+'px';          /* zoom يصغّر الارتفاعَ الأدنى معه */
+  B.classList.toggle('qlock', need*k<=avail+1);           /* ما لم يسعه ٧٢٪ يُترك يُمرَّر */
+}
+(function(){
+  var pa=$('playArea'), fb=$('fb'), t=0;
+  if(!pa || !window.MutationObserver) return;
+  var mo=new MutationObserver(function(){
+    cancelAnimationFrame(t);
+    t=requestAnimationFrame(function(){ try{ qScreenFit(false); }catch(e){} });
+  });
+  mo.observe(pa, {childList:true, subtree:true, characterData:true});
+  if(fb) mo.observe(fb, {childList:true, subtree:true, characterData:true});
 })();
 
 /* ===== بطاقتا هدف اليوم في الرئيسيّة =====
