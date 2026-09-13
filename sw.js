@@ -2,7 +2,7 @@
    الصفحة: الشبكة أوّلاً ثم المخزَّن — فلا يعلق أحدٌ على نسخة قديمة، ويعمل دون إنترنت.
    الخطوط والأيقونات: المخزَّن أوّلاً — لا تتغيّر أبداً، وتُخزَّن عند أوّل استعمال فقط
    فلا نُنزّل ستّة وأربعين ميجابايت دفعةً واحدة. */
-var VER   = 'v1';
+var VER   = 'v2';
 var SHELL = 'nur-shell-' + VER;   /* الصفحة وما يتبعها — يُمسح مع كل إصدار */
 var ASSET = 'nur-assets';         /* خطوط لا تتغيّر — يبقى عبر الإصدارات */
 
@@ -49,8 +49,12 @@ self.addEventListener('fetch', function(e){
     return;
   }
 
+  /* «الشبكة أوّلاً» لا تعني شيئاً إن أجاب مخزنُ المتصفّح دونها:
+     GitHub Pages يرسل max-age=600، فتبقى الصفحةُ القديمةَ عشرَ دقائق
+     وإن رُفع الجديدُ. فيُطلب تجاوزُ مخزنه لهذه الطلبة وحدَها — والخطوطُ
+     والأيقوناتُ فوق، لا تمرّ من هنا. */
   e.respondWith(
-    fetch(req).then(function(res){
+    fetch(url.href, { cache:'reload', credentials:'same-origin' }).then(function(res){
       if(res && res.ok && res.type==='basic'){
         var cp=res.clone();
         caches.open(SHELL).then(function(c){ c.put(req, cp); });
