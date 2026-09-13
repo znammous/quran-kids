@@ -393,20 +393,22 @@ body.light .card.bare .diffline{color:var(--on2)}
 /* السطرُ بارتفاعٍ ثابتٍ على قدر الكلمة الموضوعة، يُحسب من مقاس خطّها لا
    بقياسها — فالخطُّ يُحمَّل متأخّراً ويتغيّر ارتفاعُه، فكان السطرُ يكبر بأوّل
    كلمة وتنزل الكلماتُ تحته، أو يُقاس قبل الخطّ فيُقصّ رأسُها. وfont-size هنا
-   مقاسُ الكلمة نفسُه: ‎2.1em‎ سطرُها، و‎22px‎ حشوُها (4) وإطارُها (6) وحشوُ
-   السطر وخطُّه (8) وفسحةٌ لتقريب التصغير (4). */
-.ansrow{font-size:27px;height:calc(2.1em + 22px);display:flex;flex-wrap:nowrap;gap:8px;align-items:flex-end;
+   مقاسُ الكلمة نفسُه: ‎1.6em‎ سطرُها و‎1.02em‎ حشوُها (‎.17 + .85‎)، و‎18px‎
+   إطارُها (6) وحشوُ السطر وخطُّه (8) وفسحةٌ لتقريب التصغير (4). */
+.ansrow{font-size:27px;height:calc(2.62em + 18px);display:flex;flex-wrap:nowrap;gap:8px;align-items:flex-end;
   padding-bottom:6px;overflow:hidden;border-bottom:2px solid rgba(150,195,240,.45)}
 @media(max-width:520px){ .ansrow{font-size:23px} }
 .ansrow .chip{box-shadow:none}
 /* زرّ سرعة الاستماع: ضيّق بجانب زرّ التشغيل */
 .btn.spd{flex:0 0 auto;min-width:62px;padding-inline:10px;font-variant-numeric:tabular-nums}
 .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
-/* خطُّ المصحف يحجز تحت الحروف مسافةً واسعةً لعلامات الضبط، فبارتفاع سطرٍ
-   ضيّقٍ (1.6) تنزل الكلمةُ وتخرج من صندوقها. و2.1 يوسّطها بصرياً وارتفاعُه
-   ثابتٌ لا يتبدّل بتحميل الخطّ — فيُحسب عليه سطرُ الإجابة */
+/* حبرُ خطّ المصحف يقع في أسفل مساحته: قيس في «مستقيم» و«الرحيم» و«إذا»
+   وأمثالها فكان ما تحت الحرف أقلَّ ممّا فوقه بـ‎11.6px‎ وسطاً، ويدخل ضبطُ
+   «مستقيمٍ» في الإطار. فسطرٌ ثابتٌ (1.6) وحشوٌ سفليٌّ أكبرُ من العلويّ يرفع
+   الحرفَ إلى الوسط، والصندوقُ أطولُ قليلاً لأنّ «مستقيم» لا يسعها دونه.
+   والحشوُ بـ em ليبقى على نسبة الخطّ في الحاسوب والجوال */
 .chip{font-family:"Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif;font-size:27px;background:#fff;
-  line-height:2.1;border:3px solid #d7e2f0;border-radius:12px;padding:0 14px 4px;   /* يُرفع الحرفُ قليلاً عن قاعدة الخطّ فيتوسّط */cursor:pointer;font-weight:600;
+  line-height:1.6;border:3px solid #d7e2f0;border-radius:12px;padding:.17em 14px .85em;cursor:pointer;font-weight:600;
   color:#102b4a;box-shadow:0 3px 0 rgba(0,0,0,.12);transition:.1s;touch-action:manipulation}
 .chip:active{transform:translateY(2px)}
 .chip.placed{background:#e2f1ff;border-color:#9fdcb8;color:#12694a;box-shadow:none;cursor:default}
