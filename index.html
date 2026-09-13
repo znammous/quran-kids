@@ -9466,21 +9466,42 @@ function homeFit(){
   setZ(''); B.classList.remove('homelock');
   if(!s.classList.contains('active')) return;
   if(!(window.matchMedia && window.matchMedia('(max-width:820px)').matches)) return;
-  var vh=window.innerHeight, over=D.scrollHeight-vh;
-  if(over<=0){ B.classList.add('homelock'); return; }
+  var vh=window.innerHeight, ex=$('btnExam');
+  /* «يسع» أمران: لا تمرير، ولا يقع آخرُ ما في الرئيسيّة تحت زرّ «اختبر نفسي»
+     العائم — فالصفحةُ قد تسع الشاشةَ والزرُّ يغطّي أسفلَ بطاقة المراجعة */
+  function fits(){
+    if(D.scrollHeight>vh+1) return false;
+    if(!ex || !ex.offsetHeight) return true;
+    var top=ex.getBoundingClientRect().top, low=0, j;
+    for(j=0;j<kids.length;j++){
+      if(!kids[j].offsetHeight) continue;
+      low=Math.max(low, kids[j].getBoundingClientRect().bottom);
+    }
+    return low<=top-8;
+  }
+  var over=Math.max(D.scrollHeight-vh, 0);
+  if(fits()){ B.classList.add('homelock'); return; }
+  if(ex && ex.offsetHeight){
+    var lowest=0, top0=ex.getBoundingClientRect().top;
+    for(i=0;i<kids.length;i++) if(kids[i].offsetHeight) lowest=Math.max(lowest, kids[i].getBoundingClientRect().bottom);
+    over=Math.max(over, lowest-(top0-8));             /* ما تحت الزرّ زيادةٌ كالتمرير */
+  }
   var ch=0;
   for(i=0;i<kids.length;i++){
     var cs=getComputedStyle(kids[i]);
     ch+=kids[i].offsetHeight+(parseFloat(cs.marginTop)||0)+(parseFloat(cs.marginBottom)||0);
   }
   if(!ch) return;
-  var k=(ch-over-4)/ch;
-  if(k<0.8) return;
-  /* تُكتب على كلّ عنصرٍ مباشرةً كما في شاشتَي النتيجة والسؤال — فالمتغيّرُ
-     في zoom لم يُطبَّق */
-  setZ(k.toFixed(4));
-  if(D.scrollHeight<=vh+1) B.classList.add('homelock');
-  else setZ('');
+  /* تُكتب على كلّ عنصرٍ مباشرةً كما في شاشتَي النتيجة والسؤال. والنسبةُ
+     المحسوبةُ تقريب: بطاقتا اليوم لا تصغران معها، فيُنقص منها قليلاً قليلاً
+     حتى تسع الشاشة، ولا يُنزل دون ٨٠٪ */
+  var k=Math.min(0.99, (ch-over-4)/ch);
+  while(k>=0.8){
+    setZ(k.toFixed(4));
+    if(fits()){ B.classList.add('homelock'); return; }
+    k-=0.03;
+  }
+  setZ('');                                         /* لا يسعه ما يُقرأ: يُترك يُمرَّر */
 }
 /* ===== شاشاتُ النتيجة على قدر الجوال =====
    شاشةُ اللعب واحدة: أسئلةٌ ثمّ نتيجةٌ بمسجدٍ وأزرار، والنتيجةُ أطولُ من
