@@ -6498,7 +6498,7 @@ function renderRevPlan(){
         'وأراد أن يتعاهده مع خطّته الجارية. سجّل ما تحفظه — أجزاءً أو سوراً — '+
         'فيمشي فيه وردٌ يوميٌّ وجهاً وجهاً ثمّ يعود من أوّله.',
         'btnRevPrior','📌 سجّل حفظي السابق');
-      if($('btnRevPrior')) $('btnRevPrior').onclick=function(){ startBqn('rev'); };
+      if($('btnRevPrior')) $('btnRevPrior').onclick=function(){ startBqn('rev','prior'); };
     }
     if($('btnRevGo')) $('btnRevGo').hidden=true;
     return;
@@ -7245,10 +7245,13 @@ function renderPriorMode(){
   for(z=0;z<ms.length;z++) ms[z].onclick=function(){
     curP().priorMode=this.getAttribute('data-pmode'); saveDB(); renderPriorMode();
   };
-  /* سجّل حفظه فصار له محفوظ — فيُسأل الآن عن ورد مراجعته */
+  /* سجّل حفظه فصار له محفوظ — فيُسأل الآن عن ورد مراجعته.
+     والانتقالُ إلى الخطوة التالية شأنُ أزرار المعالج لا شأنُ الرسم:
+     كان يُنقل هنا ثمّ يُنقل بالزرّ، فتُتخطّى خطوةُ الورد ويُظنّ أنّه تمّ. */
   priorPanelWire('pS',function(){
     try{ fillBqnSelect(); }catch(e){}
-    try{ revLoad(); bqnShow(BQ.i+1); }catch(e){}
+    try{ revLoad(); }catch(e){}
+    try{ if($('scr-bqn') && $('scr-bqn').classList.contains('active')) bqnChrome(); }catch(e){}
   });
   priorFoldHead();
 }
@@ -7629,10 +7632,16 @@ function bqnBlocked(){
   return null;
 }
 var BQN_BACK='';            /* من أين جئنا إلى شاشة الاختيار: '' أو 'onb' أو 'set' */
-function startBqn(from){
+/* يُفتح على خطوةٍ بعينها متى عُرف المقصود — فمن جاء يسجّل حفظَه السابق
+   لا يُستأنف به المعالجُ من أوّله ولا يُسأل عن خطّةٍ قد اختارها. */
+function startBqn(from, step){
   BQN_BACK=from||'';
   show('scr-bqn');
-  /* يَرد الشاشة فيقف عند أوّل سؤالٍ لم يُجب عنه، لا يبحث عنه */
+  if(step){
+    var at=bqnSteps().indexOf(step);
+    if(at>=0){ bqnShow(at); return; }
+  }
+  /* وإلّا يَرد الشاشة فيقف عند أوّل سؤالٍ لم يُجب عنه، لا يبحث عنه */
   var b=bqnBlocked();
   bqnShow(b?b.i:0);
 }
