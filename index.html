@@ -901,6 +901,10 @@ body.light .sp-lit{fill:#1f92d4}
 /* الخطُّ خلفَ ما في المسار كلِّه: رأسُ السورة وزرُّ التوسعة لا يتموضعان
    فيعلوهما الخطُّ المُطلَق — فتُرفع أبناءُ المسار فوقه، في الحفظ والمراجعة معاً */
 .path>*{position:relative;z-index:1}
+/* الخطُّ المتعرّج: منحنى يمرّ بمراكز العقد حيث زيحت، يرسمه pathWire.
+   فإن رُسم أُطفئ الخطُّ المستقيم، ويبقى هو لمن لم يُرسم له بعد. */
+.path>svg.pwire{position:absolute;top:0;left:0;z-index:0;pointer-events:none;overflow:visible}
+.path.wired::before{display:none}
 .pnode{position:relative;display:flex;flex-direction:column;align-items:center;margin:0 0 20px}
 .pnode .dot{position:relative;z-index:1;width:74px;height:74px;border-radius:50%;background:#fff;border:5px solid #dde6f1;color:#9db2c9;
   display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;cursor:pointer;
@@ -4679,6 +4683,7 @@ function renderPath(){
   /* يقع نظرُه على موضعه لا على أوّل الخطّة. ويُؤجَّل إلى ما بعد الرسم
      لأنّ show تُرجع التمرير إلى أعلى بعدها، فتُلغي ما فعلناه. */
   setTimeout(pathFocus,0);
+  pathWireOn($('path'));
 }
 /* التمريرُ إلى المقطع المقصود: ما هو فيه الآن، وإلّا فقسمُه، وإلّا فما استحقّ */
 function pathFocus(){
@@ -4689,6 +4694,62 @@ function pathFocus(){
              box.querySelector('.pnode.due');
     if(el && el.scrollIntoView) el.scrollIntoView({block:'center'});
   }catch(e){}
+}
+/* ===== الخطُّ المتعرّج =====
+   كان الخطُّ عموداً في الوسط والعقدُ تُزاح عنه يميناً ويساراً، فبدا
+   مستقيماً لا يصل بينها. فصار منحنىً يمرّ بمركز كلِّ عقدة، ويعود إلى
+   الوسط عند رأس السورة وزرِّ التوسعة — وهما يسترانه. يُقاس من offsetTop
+   لا من getBoundingClientRect، فقفزُ العقدة الحاليّة لا يهزّ الخطّ.
+   ويُعاد رسمُه كلّما تغيّر حجمُ المسار: أوّلَ ظهور الشاشة، وتدويرَ الهاتف،
+   وتحميلَ الخطوط. يخدم مسارَي الحفظ والمراجعة. */
+function pathWire(box){
+  try{
+    if(!box) return;
+    var W=box.clientWidth, H=box.scrollHeight;
+    var old=box.querySelector('svg.pwire');
+    if(!W){ return; }                           /* الشاشةُ مخفيّة: يُرسم عند ظهورها */
+    var pts=[], kids=box.children, k;
+    for(k=0;k<kids.length;k++){
+      var c=kids[k];
+      if(c===old) continue;
+      var d=c.classList.contains('pnode') ? c.querySelector('.dot') : null;
+      if(d) pts.push([c.offsetLeft+d.offsetLeft+d.offsetWidth/2, c.offsetTop+d.offsetTop+d.offsetHeight/2]);
+      else pts.push([W/2, c.offsetTop+c.offsetHeight/2]);
+    }
+    if(pts.length<2){ if(old) old.remove(); box.classList.remove('wired'); return; }
+    /* منحنى بزاويتين عموديّتين بين كلّ عقدتين: ينزل من هذه ويدخل تلك نزولاً */
+    var p='M'+pts[0][0].toFixed(1)+' '+pts[0][1].toFixed(1);
+    for(k=1;k<pts.length;k++){
+      var a=pts[k-1], b=pts[k], my=((a[1]+b[1])/2).toFixed(1);
+      p+=' C'+a[0].toFixed(1)+' '+my+' '+b[0].toFixed(1)+' '+my+' '+b[0].toFixed(1)+' '+b[1].toFixed(1);
+    }
+    var svg=old;
+    if(!svg){
+      svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('class','pwire'); svg.setAttribute('aria-hidden','true');
+      svg.innerHTML='<path fill="none" stroke="#dde6f1" stroke-width="5" stroke-dasharray="12 9" stroke-linecap="round"/>';
+      box.insertBefore(svg, box.firstChild);
+    }
+    svg.setAttribute('width',W); svg.setAttribute('height',H);
+    svg.firstChild.setAttribute('d',p);
+    box.classList.add('wired');
+  }catch(e){}
+}
+/* يُرسم الآن، ثمّ يُتابَع الحجمُ مرّةً لكلّ مسار */
+function pathWireOn(box){
+  if(!box) return;
+  pathWire(box);
+  if(box._wireRO) return;
+  if(window.ResizeObserver){
+    var t=0;
+    box._wireRO=new ResizeObserver(function(){
+      cancelAnimationFrame(t); t=requestAnimationFrame(function(){ pathWire(box); });
+    });
+    box._wireRO.observe(box);
+  }else{
+    box._wireRO=true;
+    window.addEventListener('resize', function(){ pathWire(box); });
+  }
 }
 
 /* =========================================================
@@ -8135,6 +8196,7 @@ function renderRevPath(){
   /* يقع نظرُه على جلسته لا على أوّل النطاق — ويُؤجَّل لأنّ show تُرجع
      التمرير إلى أعلى بعد الرسم فتُلغي ما فعلناه. */
   setTimeout(revPathFocus,0);
+  pathWireOn($('revPath'));
 }
 function revPathFocus(){
   try{
