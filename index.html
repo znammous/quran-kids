@@ -898,16 +898,7 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
 .pchip{display:flex;align-items:center;gap:6px;border:3px solid #e5ecf6;background:#fff;border-radius:14px;
   padding:6px 10px;font-family:inherit;font-weight:800;color:#3d5b7a;font-size:15px;cursor:pointer}
 .pchip.sel{border-color:var(--g2);background:#e2f1ff;color:var(--g1)}
-/* شارةُ السلسلة: في صندوق الترحيب وفي هدف اليوم، لا في صفّ الأسماء
-   ([hidden] يحتاج تصريحاً لأنّ القاعدة تجعلها inline-flex) */
-.combopill{display:inline-flex;align-items:center;gap:6px;margin-top:9px;
-  border:2px solid #ffb877;background:linear-gradient(180deg,#f97f31,#b8440a);
-  color:#fff;font-weight:900;font-size:13.5px;border-radius:999px;padding:4px 12px;
-  box-shadow:0 2px 0 rgba(0,0,0,.18)}
-.combopill b{color:#fff;font-weight:900}
-.combopill i{font-style:normal;font-weight:800;opacity:.92;font-size:12px}
-.combopill[hidden]{display:none}
-/* وفي هدف اليوم تلبس زيّ السطر لا زيّ الشارة */
+/* شارةُ السلسلة موضعُها هدفُ اليوم وحدَه: في الترحيب زحمةٌ لا تُفيد */
 .goalbox .tick.fire{background:#fff1e3;border-color:#f97f31;color:#b8440a}
 .pchip .ph{width:28px;height:34px;border-width:2px;border-radius:7px;margin:0}
 
@@ -1207,8 +1198,6 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
       <div class="hellotxt">
         <div class="hi" id="homeHi">السلام عليكم 👋</div>
         <div class="hi2" id="homeHi2">مستعدّ لحفظ جديد اليوم؟</div>
-        <span class="combopill" id="homeCombo" hidden title="إجاباتٌ صحيحةٌ متتالية">
-          <span class="ico">🔥</span><b id="homeComboN"></b> <i>سلسلة</i></span>
         <button type="button" class="khatma" id="homeKhatma" hidden></button>
       </div>
     </div>
@@ -1335,7 +1324,7 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
       <div class="path" id="revPath"></div>
     </div>
     <div class="row">
-      <button class="btn ghost" id="btnRevPlan">⚙️ نطاق المراجعة</button>
+      <button class="btn ghost" id="btnRevPlan">➡️ السابق</button>
       <button class="btn ghost" id="btnRevQuit">🏠 البداية</button>
     </div>
   </section>
@@ -3943,7 +3932,6 @@ function renderPlayers(){
     };
   }
   $('btnBoard').hidden = !(DB.app.board && DB.players.length>1);
-  try{ homeComboChip(); }catch(e){}
 }
 function addPlayer(){
   DB.players.push(newPlayer('','f'));      /* الاسم يُسأل عنه في المعالج لا في نافذة المتصفح */
@@ -5045,14 +5033,6 @@ function comboChip(){
   $('comboN').textContent=arNum(c)+'/'+arNum(comboNext(c));
   e.hidden=false; e.classList.add('pop');
   setTimeout(function(){ e.classList.remove('pop'); },240);
-}
-/* الشارةُ نفسُها في الرئيسية: موضعُه من السلسلة قبل أن يبدأ */
-function homeComboChip(){
-  var e=$('homeCombo'); if(!e) return;
-  var c=comboNow();
-  if(c<1){ e.hidden=true; return; }
-  $('homeComboN').textContent=arNum(c)+'/'+arNum(comboNext(c));
-  e.hidden=false;
 }
 function comboMiss(){
   if(S && S.rounds && !comboCounts(S.rounds[S.i])) return;   /* ما لا يُحتسب لا يقطع */
@@ -8641,7 +8621,6 @@ function showExamCert(){
 /* ===== الترحيب في الشاشة الرئيسية ===== */
 function renderHome(){
   try{ renderKhatma(); }catch(e){}
-  try{ homeComboChip(); }catch(e){}
   try{
     var tb=topBadge(), el=$('homeTopBadge');
     if(el){
