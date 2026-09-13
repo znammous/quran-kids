@@ -375,6 +375,9 @@ body.light .card.bare .diffline{color:var(--on2)}
 .chip.gone{visibility:hidden}
 .chip.bad{animation:shake .35s;border-color:var(--red);background:#ffe9e9}
 .chip.hintme{border-color:var(--gold);background:#fff6dc}
+/* الذهبيُّ تلميحٌ، والأخضرُ جوابٌ كُشف — فلا يختلطان */
+.chip.rightone,.acard.rightone{border-color:#12a35c;background:#b6f0cc;color:#08512d;
+  box-shadow:0 0 0 3px rgba(18,163,92,.28)}
 /* وميض لطيف على الزر الذي ينتظر الضغطة التالية */
 @keyframes glow{
   0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.2), 0 0 0 0 rgba(255,255,255,0), 0 0 0 0 rgba(var(--glow),0)}
@@ -416,7 +419,10 @@ body.light .card.bare .diffline{color:var(--on2)}
 .opt{font-family:"Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif;font-size:28px;background:#fff;border:3px solid #d7e2f0;
   border-radius:14px;padding:10px;cursor:pointer;color:#102b4a;font-weight:600;touch-action:manipulation}
 .opt:active{transform:scale(.98)}
-.opt.ok{background:#e2f1ff;border-color:#1faa59;color:#12694a}
+/* كانت الخلفيّةُ زرقاءَ والأخضرُ في الحدّ وحدَه، فلا تُقرأ صواباً.
+   صارت خضراءَ صريحة: تباينُ نصِّها ٧٫٣ وحولها طَوقٌ يُبرزها. */
+.opt.ok{background:#b6f0cc;border-color:#12a35c;color:#08512d;
+  box-shadow:0 0 0 3px rgba(18,163,92,.28)}
 .opt.no{background:#ffe9e9;border-color:var(--red);color:#a12b2b}
 .blank{display:inline-block;min-width:90px;border-bottom:4px dotted var(--gold);color:transparent}
 .blank.filled{border-bottom-color:#1faa59;color:#12694a}
@@ -4485,8 +4491,15 @@ $('btnAdabOk').onclick=function(){
 };
 
 function beginStage(o){
+  if(MISSQ.key!==o.key) missqReset(o.key);      /* مقطعٌ جديد: طابورٌ جديد */
+  var rr=buildRounds(o.s,o.seg,o.stage);
+  /* المرحلةُ الأخيرة هي التسميع: يتقدّمها ما أخطأ فيه في المراحل قبلها */
+  if(o.stage===STAGES.length-1 && MISSQ.list.length){
+    rr=MISSQ.list.concat(rr);
+    MISSQ.list=[];
+  }
   S={ surah:o.s, seg:o.seg, si:o.si, key:o.key, stage:o.stage, review:false,
-      rounds:buildRounds(o.s,o.seg,o.stage), i:0, errors:0 };
+      rounds:rr, i:0, errors:0 };
   show('scr-play');
   runRound();
 }
@@ -4881,9 +4894,10 @@ function runRound(){
   try{ comboChip(); }catch(e){}
   if(r.t==='edge') $('stageChip').textContent='🎯 بداية ونهاية';
   /* الكلمتان تردان داخل مرحلة «الكلمة الناقصة»، فتُسمّي الشارةُ ما هو أمامه */
-  if(r.t==='miss2') $('stageChip').textContent='🔍 الكلمتان الناقصتان • '+seghere;
-  if(r.t==='aedge') $('stageChip').textContent=(r.which==='first'?'🚩 مطلعُ الآية • ':'🏁 خاتمةُ الآية • ')+seghere;
-  if(r.t==='eorder') $('stageChip').textContent=(r.which==='first'?'🚩 مطالعُ الآيات • ':'🏁 خواتمُ الآيات • ')+seghere;
+  if(r.rq) $('stageChip').textContent='🔁 ما أخطأتَ فيه • '+seghere;
+  else if(r.t==='miss2') $('stageChip').textContent='🔍 الكلمتان الناقصتان • '+seghere;
+  else if(r.t==='aedge') $('stageChip').textContent=(r.which==='first'?'🚩 مطلعُ الآية • ':'🏁 خاتمةُ الآية • ')+seghere;
+  else if(r.t==='eorder') $('stageChip').textContent=(r.which==='first'?'🚩 مطالعُ الآيات • ':'🏁 خواتمُ الآيات • ')+seghere;
   ({read:roundRead,words:roundWords,missing:roundMissing,miss2:roundMiss2,ayat:roundAyat,recite:roundRecite,
     aedge:roundAEdge,eorder:roundEOrder,
     revpage:roundRevPage,edge:roundEdge})[r.t](r);
@@ -4893,6 +4907,45 @@ function runRound(){
    التثبيت. وأمّا الاختبارُ فميزان: خطأٌ واحدٌ يُثبَّت ويمضي، وإلّا
    لم يكن اختباراً. ويُكشف الصوابُ لحظةً قبل المضيّ فيتعلّم من خطئه. */
 function examMode(){ return !!(S && S.rev==='exam'); }
+/* ===== ما أخطأ فيه في الحفظ يُعاد قبل التسميع =====
+   الخطأُ لا يُعاد على صاحبه وجوابُه بين يديه، فيحفظ صورةَ الجواب لا
+   معناه. بل يمضي بلا خصمٍ ولا كشف، ويُجمع؛ فإذا بلغ التسميعَ أُعيد
+   عليه ما أخطأ فيه وقد نسيه قليلاً — والاسترجاعُ بعد نسيةٍ أثبتُ في
+   الذهن من الإعادة على الأثر. */
+var MISSQ={ key:'', list:[] };
+var MISSQ_CAP=24;      /* سقفٌ لئلّا يطول الطابورُ على طفل */
+var MISSQ_TRIES=3;     /* بعدها يُكشف الجوابُ ويمضي، فلا يُحبس في سؤال */
+function missqReset(key){ MISSQ={ key:key||'', list:[] }; }
+/* الحفظُ وحدَه: لا المراجعةُ ولا الاختبار */
+function hifzMode(){ return !!(S && !S.rev && !S.review); }
+function missqAdd(r){
+  if(!hifzMode() || !r) return;
+  var c={}, k;
+  for(k in r) if(Object.prototype.hasOwnProperty.call(r,k)) c[k]=r[k];
+  c.rq=1;
+  if(MISSQ.list.length<MISSQ_CAP) MISSQ.list.push(c);
+}
+/* خطأٌ في الحفظ: يُجمع ويمضي بلا خصم. وفي الإعادة يعود إلى آخر
+   الطابور حتى يُصاب — فإن عاند ثلاثاً كُشف له ومضى. */
+function hifzMiss(r, reveal){
+  sBad();
+  if(r && r.rq){
+    if(r.rq<MISSQ_TRIES){
+      var c={}, k;
+      for(k in r) if(Object.prototype.hasOwnProperty.call(r,k)) c[k]=r[k];
+      c.rq=r.rq+1;
+      S.rounds.push(c);
+      $('fb').className='fb bad'; $('fb').textContent='إجابة خاطئة — وستعود إليك';
+    } else {
+      if(reveal){ try{ reveal(); }catch(e){} }
+      $('fb').className='fb bad'; $('fb').textContent='وهذا هو الصواب — تأمّله';
+    }
+  } else {
+    missqAdd(r);
+    $('fb').className='fb bad'; $('fb').textContent='إجابة خاطئة — وستعود إليك قبل التسميع';
+  }
+  setTimeout(function(){ nextRound('miss'); }, 1100);
+}
 function examShowRight(box,sel,txt,cls){
   var c=$(box); if(!c) return;
   var els=c.querySelectorAll(sel), i;
@@ -4901,16 +4954,18 @@ function examShowRight(box,sel,txt,cls){
 function examMiss(reveal){
   sBad();
   $('fb').className='fb bad';
-  /* الخياراتُ فوق سطر التنبيه لا تحته، فالسهمُ إلى أعلى */
-  $('fb').textContent='ليست هي — والصوابُ مُضاءٌ في الأعلى 👆';
+  $('fb').textContent='إجابة خاطئة';
   if(reveal){ try{ reveal(); }catch(e){} }
   setTimeout(function(){ nextRound(false); }, 1200);
 }
 function nextRound(ok){
+  /* 'miss': يمضي بلا خصم — خطأُ الحفظ يُجمع ولا يُنقص نجمة */
+  var miss=(ok==='miss');
   /* يُحسب قبل الزيادة: نظيفٌ إن لم يُخطئ فيه أصلاً */
-  var clean = (ok!==false) && !!S && (S.errors===S.e0);
+  var clean = (ok===true) && !!S && (S.errors===S.e0);
   if(S && S.rev==='exam'){ try{ examNote(S.rounds[S.i], clean); }catch(e){} }
-  if(ok===false){
+  if(miss){ comboMiss(); S.miss=(S.miss||0)+1; }   /* تنقطع السلسلةُ ويُعلَم، ولا يُخصم */
+  else if(ok===false){
     S.errors++; comboMiss();
     if(S && S.rev==='quiz'){ var rr=S.rounds[S.i]; if(rr) revWeak(rr.page); }
   } else comboHit();
@@ -5451,7 +5506,8 @@ function roundWords(r){
         if(placed>=need){ sGood(); $('fb').className='fb good'; $('fb').textContent='ممتاز! ✅'; nextRound(true); }
       } else {
         var el=this, pl0=placed; el.classList.add('bad');
-        if(examMode()){ placed=seg.length; examMiss(function(){ examShowRight('chips','.chip',seg[pl0],'hintme'); }); return; }
+        if(examMode()){ placed=seg.length; examMiss(function(){ examShowRight('chips','.chip',seg[pl0],'rightone'); }); return; }
+        if(hifzMode()){ placed=seg.length; hifzMiss(r,function(){ examShowRight('chips','.chip',seg[pl0],'rightone'); }); return; }
         sBad(); S.errors++; comboMiss();
         setTimeout(function(){ el.classList.remove('bad'); },380);
       }
@@ -5587,6 +5643,7 @@ function roundEdge(r){
       } else {
         this.classList.add('no'); this.disabled=true;
         if(examMode()){ answered=true; examMiss(function(){ examShowRight('opts','.opt',correct); }); return; }
+        if(hifzMode()){ answered=true; hifzMiss(r,function(){ examShowRight('opts','.opt',correct); }); return; }
         sBad(); S.errors++; comboMiss();
         $('fb').className='fb bad'; $('fb').textContent='حاول مرة أخرى 💪';
       }
@@ -5636,6 +5693,7 @@ function roundMissing(r){
       } else {
         this.classList.add('no'); this.disabled=true;
         if(examMode()){ answered=true; examMiss(function(){ examShowRight('opts','.opt',correct); }); return; }
+        if(hifzMode()){ answered=true; hifzMiss(r,function(){ examShowRight('opts','.opt',correct); }); return; }
         sBad(); S.errors++; comboMiss();
         $('fb').className='fb bad'; $('fb').textContent='حاول مرة أخرى 💪';
       }
@@ -5682,6 +5740,7 @@ function roundMiss2(r){
       if(this.textContent!==want){
         this.classList.add('no'); this.disabled=true;
         if(examMode()){ answered=true; examMiss(function(){ examShowRight('opts','.opt',want); }); return; }
+        if(hifzMode()){ answered=true; hifzMiss(r,function(){ examShowRight('opts','.opt',want); }); return; }
         sBad(); S.errors++; comboMiss();
         $('fb').className='fb bad'; $('fb').textContent='حاول مرة أخرى 💪';
         return;
@@ -5730,6 +5789,7 @@ function roundAEdge(r){
       } else {
         this.classList.add('no'); this.disabled=true;
         if(examMode()){ answered=true; examMiss(function(){ examShowRight('opts','.opt',correct); }); return; }
+        if(hifzMode()){ answered=true; hifzMiss(r,function(){ examShowRight('opts','.opt',correct); }); return; }
         sBad(); S.errors++; comboMiss();
         $('fb').className='fb bad'; $('fb').textContent='حاول مرة أخرى 💪';
       }
@@ -5761,7 +5821,8 @@ function roundEOrder(r){
       if(this.textContent!==seq[placed]){
         var el=this, pl0=placed;
         el.classList.add('bad');
-        if(examMode()){ placed=seq.length; examMiss(function(){ examShowRight('chips','.chip',seq[pl0],'hintme'); }); return; }
+        if(examMode()){ placed=seq.length; examMiss(function(){ examShowRight('chips','.chip',seq[pl0],'rightone'); }); return; }
+        if(hifzMode()){ placed=seq.length; hifzMiss(r,function(){ examShowRight('chips','.chip',seq[pl0],'rightone'); }); return; }
         sBad(); S.errors++; comboMiss();
         setTimeout(function(){ el.classList.remove('bad'); },380);
         return;
@@ -5803,15 +5864,13 @@ function roundAyat(r){
         if(placed>=idx.length){ sGood(); $('fb').className='fb good'; $('fb').textContent='ترتيب صحيح 🌟'; nextRound(true); }
       } else {
         var el=this, pl0=placed; el.classList.add('bad');
-        if(examMode()){
-          placed=idx.length;
-          examMiss(function(){
-            var cs=$('acards').querySelectorAll('.acard'), z;
-            for(z=0;z<cs.length;z++)
-              if(parseInt(cs[z].getAttribute('data-a'),10)===idx[pl0]){ cs[z].classList.add('hintme'); return; }
-          });
-          return;
-        }
+        var showAyat=function(){
+          var cs=$('acards').querySelectorAll('.acard'), z;
+          for(z=0;z<cs.length;z++)
+            if(parseInt(cs[z].getAttribute('data-a'),10)===idx[pl0]){ cs[z].classList.add('rightone'); return; }
+        };
+        if(examMode()){ placed=idx.length; examMiss(showAyat); return; }
+        if(hifzMode()){ placed=idx.length; hifzMiss(r,showAyat); return; }
         sBad(); S.errors++; comboMiss();
         setTimeout(function(){ el.classList.remove('bad'); },380);
       }
@@ -6060,7 +6119,7 @@ function finishStage(){
   if(S.stage+1>p.stars) p.stars=S.stage+1;
   p.stage=Math.min(S.stage+1, stagesN());
   sWin();
-  if(!S.errors) tal().perfect++;                      /* مرحلة بلا خطأ واحد */
+  if(!S.errors && !S.miss) tal().perfect++;           /* مرحلة بلا خطأ واحد */
   if(first) noteStage();                              /* التثبيت لا يُكسب جواهر مكرّرة */
   if(last){
     p.done=true;
