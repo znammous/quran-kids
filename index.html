@@ -9176,7 +9176,12 @@ $('exGo').onclick=function(){
   examBegin();
 };
 $('btnSettings').onclick=$('btnSettings2').onclick=function(){ fillSettings(); show('scr-settings'); };
-$('btnSetBack').onclick=function(){ readSettings(); ensureAllSchedules(); openJuz=0; renderPlayers();
+/* أشّر حفظاً سابقاً في الإعدادات ولم يُعتمد؟ يُعتمد عند الحفظ.
+   وكان المعالجُ وحدَه يعتمده، فمن أشّر هنا ضاع تأشيرُه. */
+$('btnSetBack').onclick=function(){
+  if(curP().priorMode==='has' && PRIOR_COMMIT){ try{ PRIOR_COMMIT(); }catch(e){} }
+  try{ priorCeleFlush(); }catch(e){}
+  readSettings(); ensureAllSchedules(); openJuz=0; renderPlayers();
   if(curSurah&&inRange(curSurah)) openSurah(curSurah.n); else openSurah(defaultSurah().n); };
 $('btnHelp').onclick=function(){ $('help').hidden=false; };
 $('btnIndex').onclick=function(){ if(!openJuz) openJuz=(curSurah?curSurah.juz:Math.max(SET.juzFrom,SET.juzTo)); renderMap(); show('scr-map'); };
