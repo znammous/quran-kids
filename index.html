@@ -1570,9 +1570,11 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
       <div class="setblock">
         <label class="lbl">🎚️ المستوى</label>
         <select id="setLevel">
-          <option value="easy">سهل — ضغط واختيار بلا كتابة</option>
-          <option value="hard">متقدّم — يشمل كتابة الآية والتسميع كتابةً</option>
+          <option value="easy">سهل — ضغطٌ واختيارٌ بلا كتابة</option>
+          <option value="mid">متوسّط — يزيد مطالعَ الآيات وخواتمَها ورصَّها</option>
+          <option value="hard">متقدّم — يزيد كتابةَ الكلمات والتسميعَ كتابةً</option>
         </select>
+        <div class="note" id="lvNote"></div>
       </div>
       <div class="setblock">
         <label class="lbl">🧭 خطة الحفظ</label>
@@ -1701,7 +1703,25 @@ function todayNum(){ var d=new Date(); return Math.floor(new Date(d.getFullYear(
 function arNum(n){ return String(n); }
 
 /* ===== اللاعبون: لكل لاعب تقدّمه ومواظبته وجواهره وإعداداته ===== */
-function defSet(){ return { level:'easy', script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false }; }
+/* ===== درجاتُ الصعوبة الثلاث =====
+   سهل   : كلُّ الأنواع إلّا مطالعَ الآيات ورصَّ المطالع والخواتم
+   متوسّط: كلُّ الأنواع بالضغط والاختيار
+   متقدّم: المتوسّطُ وزيادةً كتابةُ الكلمات والتسميعُ كتابةً
+   والحجبُ يُذكر هنا مرّةً واحدة، فمن زاد نوعاً لم يلزمه أن يطوف على
+   مولِّدات الأسئلة الثلاثة يستثنيه في كلٍّ منها. */
+var LEVELS=['easy','mid','hard'];
+var LV_HIDE={ easy:{ aedge:1, eorder:1 } };
+function kindAllowed(t){
+  var h=LV_HIDE[SET&&SET.level];
+  return !(h&&h[t]);
+}
+/* شرحُ كلّ درجةٍ كما يُقرأ في الإعدادات */
+var LV_TXT={
+  easy:'ترتيبُ الكلمات، والكلمةُ الناقصة، والكلمتان الناقصتان، وترتيبُ الآيات، وحافّتا الوجه، والتسميعُ بالصوت.',
+  mid :'كلُّ ما في السهل، ويُزاد مطلعُ الآية وخاتمتُها ورصُّ المطالع والخواتم.',
+  hard:'كلُّ ما في المتوسّط، ويُزاد كتابةُ الكلمات والتسميعُ كتابةً لا بالصوت.'
+};
+function defSet(){ return { level:'easy', lv3:true, script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false }; }
 /* ثلاث درجات للخطّ لا خمس — ويُردّ القديم إلى أقربها */
 var FONTS=[{v:20,n:'صغير'},{v:24,n:'متوسط'},{v:30,n:'كبير'}];
 function normFont(f){ f=parseInt(f,10)||24; return f<=22?20:(f<=27?24:30); }
@@ -1761,7 +1781,15 @@ function bindPlayer(){
   if(typeof p.gems!=='number') p.gems=0;
   SET=p.set; prog=p.prog; profile=p; look=p.look; gender=p.gender;
   try{ SET.font=normFont(SET.font); }catch(e){}
-  if(SET.level!=='easy'&&SET.level!=='hard') SET.level='easy';
+  /* كانت الدرجتان «سهلاً» و«متقدّماً»، و«السهلُ» يشمل كلَّ الأنواع.
+     فلمّا صارت ثلاثاً وانتُقص من السهل نوعان، رُحّل من كان عليه إلى
+     «المتوسّط» — وهو سلوكُه بعينه — مرّةً واحدة، فلا يُنقَص أحدٌ ممّا
+     كان يُسأل عنه وهو لا يدري. وlv3 علامةُ أنّ الترحيل قد تمّ. */
+  if(!SET.lv3){
+    if(SET.level==='easy') SET.level='mid';
+    SET.lv3=true;
+  }
+  if(LEVELS.indexOf(SET.level)<0) SET.level='easy';
   if(typeof SET.glow!=='boolean') SET.glow=true;
   if(typeof SET.cele!=='boolean') SET.cele=true;
   if(typeof SET.light!=='boolean') SET.light=false;
@@ -4819,6 +4847,12 @@ function missPick(s,from,to,need){
 /* شبكةُ أمانٍ أخيرة: سؤالٌ لا تحتمله آيتُه يُبدَّل قبل أن يُرسم،
    فلا يقع الطفلُ على سؤالٍ لا جوابَ له مهما تغيّرت مصادرُ الأسئلة. */
 function qFit(r){
+  /* نوعٌ حجبته درجةُ اللاعب: يُبدَّل بأقربِ ما يقوم مقامه — فلو تسرّب
+     من مصدرٍ لم يُصفَّ، أو هبط اللاعبُ درجتَه وفي يده أسئلةٌ مبنيّة. */
+  if(r && !kindAllowed(r.t)){
+    if(r.t==='eorder') r.t='ayat';
+    else if(r.t==='aedge'){ r.t='missing'; r.wi=0; }
+  }
   /* آيةٌ لا تبلغ سطراً لا تُشطر: يُبدَّل سؤالُها بفراغٍ أو بقراءة */
   if(r && r.t==='aedge'){
     var sa=r.surah||S.surah;
@@ -4942,14 +4976,18 @@ function buildRounds(s,seg,stage){
       if(e2) r.push(e2);
     }
     /* مطلعُ آيةٍ وخاتمةُ أخرى: يُثبّتان طرفَي الآية في الذهن */
-    var a1=aedgeRound(s,from,to,'first'), a2=aedgeRound(s,from,to,'last');
-    if(a1) r.push(a1);
-    if(a2) r.push(a2);
+    if(kindAllowed('aedge')){
+      var a1=aedgeRound(s,from,to,'first'), a2=aedgeRound(s,from,to,'last');
+      if(a1) r.push(a1);
+      if(a2) r.push(a2);
+    }
     /* ورصُّ المطالع والخواتم: يكفي أربعُ آياتٍ ولو دون وجه، فالمقصودُ
        أن تترسّخ الكلماتُ لا أن يُشترط الوجه */
-    var o1=eorderRound(s,from,to,'first'), o2=eorderRound(s,from,to,'last');
-    if(o1) r.push(o1);
-    if(o2) r.push(o2);
+    if(kindAllowed('eorder')){
+      var o1=eorderRound(s,from,to,'first'), o2=eorderRound(s,from,to,'last');
+      if(o1) r.push(o1);
+      if(o2) r.push(o2);
+    }
     if(to-from>=2) r.push({t:'ayat',from:from,to:to});
     else {
       /* مقطع من آية واحدة: نرتّب كلماتها كاملة بدل ترتيب الآيات */
@@ -7977,16 +8015,23 @@ var REV_KINDS=['missing','words','ayat','edge','miss2','aedge','eorder'];
 /* تسلسلُ أنواع أسئلة الصفحة: يُخلط ترتيبُها ويُعاد الخلطُ كلّما دارت.
    وكان النوعُ يُؤخذ بحاصل قسمة العدّاد، فمن اختار ثلاثةَ أسئلةٍ للصفحة
    لم يبلغه النوعان الأخيران أبداً — يُكتبان ولا يُرَيان. */
+/* المأذونُ منها في درجة اللاعب — وإن حُجبت كلُّها بقيت على أصلها */
+function revKinds(){
+  var out=[], i;
+  for(i=0;i<REV_KINDS.length;i++) if(kindAllowed(REV_KINDS[i])) out.push(i);
+  return out.length ? out : [0];
+}
 function revKindOrder(cnt){
-  var out=[], pool=[], i;
+  var out=[], pool=[], ks=revKinds(), i;
   while(out.length<cnt){
-    if(!pool.length){ for(i=0;i<REV_KINDS.length;i++) pool.push(i); shuffle(pool); }
+    if(!pool.length){ for(i=0;i<ks.length;i++) pool.push(ks[i]); shuffle(pool); }
     out.push(pool.pop());
   }
   return out;
 }
 function revQuestion(it,P,k){
   var kind=REV_KINDS[k%REV_KINDS.length];
+  if(!kindAllowed(kind)) kind='missing';
   if(kind==='ayat' && (it.to-it.from)<3) kind='missing';      /* الترتيب يحتاج ثلاث آيات فأكثر */
   if(kind==='edge'){
     var eq = edgeOK(P,!revFree())
@@ -8408,6 +8453,8 @@ function fillSettings(){
   if(vs) vs.textContent='build '+String(document.lastModified||'').slice(0,17);
 }catch(e){}
   $('setLevel').value=SET.level;
+  $('setLevel').onchange=lvNoteSync;
+  lvNoteSync();
   $('setScript').value=String(SET.script);
   $('setReps').value=String(SET.reps);
   $('setFont').value=String(SET.font);
@@ -8461,8 +8508,16 @@ function renderSetTabs(){
   var ps=document.querySelectorAll('#scr-settings .setpage');
   for(i=0;i<ps.length;i++) ps[i].hidden=(ps[i].getAttribute('data-setp')!==setTab);
 }
+/* الشرحُ يتبع الاختيارَ قبل أن يُحفظ، فيرى ما يصير إليه قبل أن يصير */
+function lvNoteSync(){
+  var e=$('lvNote'), v=$('setLevel');
+  if(!e||!v) return;
+  e.textContent=LV_TXT[v.value]||'';
+}
 function readSettings(){
   SET.level=$('setLevel').value;
+  if(LEVELS.indexOf(SET.level)<0) SET.level='easy';
+  SET.lv3=true;
   SET.script=parseInt($('setScript').value,10)||0;
   SET.reps=parseInt($('setReps').value,10)||1;
   SET.font=parseInt($('setFont').value,10)||34;
@@ -8502,13 +8557,17 @@ var EX_KINDS=[['words','🧩','ترتيب الكلمات','تُبعثر كلما
               ['ayat','🔢','ترتيب الآيات','تُبعثر آياتُ المقطع فيعيد ترتيبها'],
               ['aedge','🚩','مطلعُ الآية وخاتمتُها','يُعطى شطرَ الآية فيذكر طرفَها الغائب'],
               ['eorder','🏁','رصُّ المطالع والخواتم','يرتّب أوائلَ الآيات أو أواخرَها']];
-function exKindKeys(){ return EX_KINDS.map(function(z){ return z[0]; }); }
+/* أنواعُ الاختبار المأذونُ فيها بدرجة اللاعب */
+function exKinds(){ return EX_KINDS.filter(function(z){ return kindAllowed(z[0]); }); }
+function exKindKeys(){ return exKinds().map(function(z){ return z[0]; }); }
 /* المختارةُ الآن — وإن لم يُختر شيءٌ فالكلُّ */
 function examPicks(){
   var p=EX.picks;
+  /* ما حُجب بعد اختياره يسقط — كمن اختار ثمّ هبط بدرجته */
+  if(p&&p.length) p=p.filter(function(t){ return kindAllowed(t); });
   return (p && p.length) ? p : exKindKeys();
 }
-function examAllOn(){ return examPicks().length===EX_KINDS.length; }
+function examAllOn(){ return examPicks().length===exKinds().length; }
 var EX_COUNTS=[10,20,30,50];
 var EX_STEPS=['range','kind','count','ready'];
 var EX_HEAD={
@@ -8657,13 +8716,13 @@ function examBody(k){
       '<div class="revsum" id="exRange"></div>';   /* مقدارُ النطاق وحدَه */
   }
   else if(k==='kind'){
-    var picked=examPicks(), allOn=examAllOn();
-    var every=EX_KINDS.map(function(z){ return z[2]; }).join('، ');
+    var picked=examPicks(), allOn=examAllOn(), kinds=exKinds();
+    var every=kinds.map(function(z){ return z[2]; }).join('، ');
     h='<div class="onbopts">'+
       '<button type="button" class="onbopt'+(allOn?' sel':'')+'" data-exall="1">'+
         '<span class="oe">'+(allOn?'✅':'🎲')+'</span>'+
         '<span class="ot"><b>منوّعة — كلُّ الأنواع</b><i>'+esc(every)+'</i></span></button>'+
-      EX_KINDS.map(function(z){
+      kinds.map(function(z){
         var on=picked.indexOf(z[0])>=0;
         return '<button type="button" class="onbopt'+(on?' sel':'')+'" data-exk="'+z[0]+'">'+
           '<span class="oe">'+(on?'✅':z[1])+'</span>'+
@@ -8686,10 +8745,10 @@ function examBody(k){
   examWire(k);
 }
 function examKindName(){
-  var p=examPicks(), i, j, out=[];
+  var p=examPicks(), ks=exKinds(), i, j, out=[];
   if(examAllOn()) return 'منوّعة — كلُّ الأنواع';
-  for(i=0;i<EX_KINDS.length;i++)
-    for(j=0;j<p.length;j++) if(EX_KINDS[i][0]===p[j]) out.push(EX_KINDS[i][2]);
+  for(i=0;i<ks.length;i++)
+    for(j=0;j<p.length;j++) if(ks[i][0]===p[j]) out.push(ks[i][2]);
   return out.join(' • ');
 }
 /* حصيلةُ الإتقان: ثلاثُ جواهر عن كلّ صحيحةٍ من أوّل محاولة */
