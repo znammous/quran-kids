@@ -588,6 +588,8 @@ body.glow-off .cele .spk{display:none}
 .waqfbox{text-align:center;margin:14px 0 18px;font-size:11px;font-weight:700;color:var(--ttl2);
   line-height:1.8}
 .waqfbox b{font-weight:800;color:var(--ttl)}
+/* ختمُ النسخة: يُعرف به أيُّ إصدارٍ يعمل، فلا يُتخبَّط مع المخزَّن القديم */
+.vstamp{margin-top:6px;font-size:10px;font-weight:800;opacity:.6;direction:ltr}
 .waqfbox .w1,.waqfbox .w2,.waqfbox .w3{display:inline;font:inherit;color:inherit}
 /* زر شهادة السورة في الفهرس */
 .certbtn{border:2px solid #e8c76a;background:#fff8e3;border-radius:12px;padding:6px 9px;font-size:17px;
@@ -1196,14 +1198,18 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
   <div class="splogo">
     <!-- هلالٌ ونجمةٌ: منقولان عن أيقونة التطبيق بالقياس لا بالتقدير -->
     <svg class="sp-pale" viewBox="0 0 100 100" aria-hidden="true">
-      <path fill-rule="evenodd" d="M50.6 50.8 m-28.1 0 a28.1 28.1 0 1 0 56.2 0 a28.1 28.1 0 1 0 -56.2 0
-                                   M60 46.8 m-25.2 0 a25.2 25.2 0 1 0 50.4 0 a25.2 25.2 0 1 0 -50.4 0"/>
+      <!-- الهلالُ قوسان لا دائرتان: دائرتان بـevenodd تملآن ما برز من
+           القاطعة خارج الكبرى، فيظهر هلالٌ صغيرٌ مقابلَ الكبير -->
+      <path d="M72.081 68.915 A28.1 28.1 0 1 1 52.441 22.76
+               A25.2 25.2 0 1 0 72.081 68.915 Z"/>
       <path d="M65.7 28 L67.6 33.8 L73.7 33.8 L68.7 37.4 L70.6 43.2
                L65.7 39.6 L60.8 43.2 L62.7 37.4 L57.7 33.8 L63.8 33.8 Z"/>
     </svg>
     <svg class="sp-lit" viewBox="0 0 100 100" aria-hidden="true">
-      <path fill-rule="evenodd" d="M50.6 50.8 m-28.1 0 a28.1 28.1 0 1 0 56.2 0 a28.1 28.1 0 1 0 -56.2 0
-                                   M60 46.8 m-25.2 0 a25.2 25.2 0 1 0 50.4 0 a25.2 25.2 0 1 0 -50.4 0"/>
+      <!-- الهلالُ قوسان لا دائرتان: دائرتان بـevenodd تملآن ما برز من
+           القاطعة خارج الكبرى، فيظهر هلالٌ صغيرٌ مقابلَ الكبير -->
+      <path d="M72.081 68.915 A28.1 28.1 0 1 1 52.441 22.76
+               A25.2 25.2 0 1 0 72.081 68.915 Z"/>
       <path d="M65.7 28 L67.6 33.8 L73.7 33.8 L68.7 37.4 L70.6 43.2
                L65.7 39.6 L60.8 43.2 L62.7 37.4 L57.7 33.8 L63.8 33.8 Z"/>
     </svg>
@@ -1647,6 +1653,7 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
     <button class="btn primary big" id="btnSetBack" style="margin:0">✅ حفظ</button>
     <div class="waqfbox">
       وقف لله تعالى — صدقة جارية عن أمي <b>لمياء قباني</b> · تطوير: زهير النموس
+      <div class="vstamp" id="vStamp"></div>
     </div>
   </section>
 
@@ -8395,6 +8402,11 @@ function offlineDownload(){
 
 /* ===== الإعدادات ===== */
 function fillSettings(){
+  try{
+  var vs=$('vStamp');
+  /* تاريخُ الملفّ نفسِه لا رقمٌ يُكتب باليد، فلا يتخلّف عن الحقيقة */
+  if(vs) vs.textContent='build '+String(document.lastModified||'').slice(0,17);
+}catch(e){}
   $('setLevel').value=SET.level;
   $('setScript').value=String(SET.script);
   $('setReps').value=String(SET.reps);
