@@ -58,6 +58,13 @@ body.light .modal,body.light .hudtip{box-shadow:0 3px 12px rgba(16,58,110,.10)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 html,body{margin:0;padding:0}
+/* يُعامَل كتطبيقٍ لا كصفحة: لا تحديدَ للنصّ، ولا قائمةَ ضغطةٍ طويلة، ولا
+   سحبَ للصور — إلّا حيث يُكتب (الحقول) أو يُنسخ (رمز الهدية) */
+html,body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+img,svg{-webkit-user-drag:none;user-drag:none}
+input,textarea,select,[contenteditable]:not([contenteditable="false"]){
+  -webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+.gftcode{-webkit-touch-callout:default}
 body{
   font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,system-ui,-apple-system,sans-serif;color:var(--ink);
   background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 40%,var(--bg3) 75%,var(--bg4) 100%);
@@ -1236,6 +1243,18 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
 </style>
 </head>
 <body>
+<script>
+/* كتطبيق: لا قائمةَ للزرّ الأيمن أو للضغطة الطويلة، ولا يبدأ تحديدٌ ولا سحب —
+   إلّا في حقول الكتابة ورمز الهدية، ففيهما يُكتب ويُلصق ويُنسخ */
+(function(){
+  function free(t){
+    return !!(t && t.closest && t.closest('input,textarea,select,[contenteditable]:not([contenteditable="false"]),.gftcode'));
+  }
+  ['contextmenu','selectstart','dragstart'].forEach(function(ev){
+    document.addEventListener(ev, function(e){ if(!free(e.target)) e.preventDefault(); }, true);
+  });
+})();
+</script>
 <script>
 /* الثيمُ يُطبَّق قبل أن يُرسم شيء: وإلّا ومضت الشاشةُ ليلاً ثمّ صارت نهاراً.
    ويُقرأ من مخزن اللاعب نفسِه، فلا مصدرَ ثانٍ يتخلّف عنه. */
