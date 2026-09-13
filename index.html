@@ -5925,7 +5925,6 @@ function roundAEdge(r){
   opts.push(correct); shuffle(opts);
   var shown=ayahEdgeShown(s,r.a,which);
   $('playArea').innerHTML=
-    '<div class="hintline">'+(which==='first'?'🚩 مطلعُ الآية':'🏁 خاتمةُ الآية')+'</div>'+
     '<div class="ayahbox"><div class="ayah" style="font-size:'+Math.min(SET.font,30)+'px">'+esc(shown)+
       '<span class="anum">'+arNum(r.a+1)+'</span></div></div>'+
     '<div class="qtitle">'+(which==='first'
@@ -5957,8 +5956,8 @@ function roundEOrder(r){
   var pool=shuffle(seq.slice()), placed=0;
   $('playArea').className='qfill';
   $('playArea').innerHTML=
-    '<div class="hintline">'+(which==='first'?'🚩 مطالعُ الآيات':'🏁 خواتمُ الآيات')+' • '+
-      esc(s.name)+' '+arNum(r.from+1)+'-'+arNum(r.to)+'</div>'+
+    /* العنوانُ في شارة المرحلة أعلاه: هنا موضعُ الآيات لا اسمُ السؤال */
+    '<div class="hintline">'+esc(s.name)+' '+arNum(r.from+1)+'-'+arNum(r.to)+'</div>'+
     '<div class="qtitle">'+(which==='first'
       ? 'رتّب أوّلَ كلمةٍ من كلّ آية، على ترتيب الآيات'
       : 'رتّب آخرَ كلمةٍ من كلّ آية، على ترتيب الآيات')+'</div>'+
