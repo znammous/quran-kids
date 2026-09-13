@@ -1242,7 +1242,7 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
       <button class="btn ghost" id="onbBack" hidden>➡️ السابق</button>
       <span class="onbgap"></span>
       <button class="btn primary pulse" id="onbNext">⬅️ التالي</button>
-      <button class="btn green big pulse" id="onbSave" hidden style="margin:0;flex:1">✅ حفظ ورجوع</button>
+      <button class="btn primary pulse" id="onbSave" hidden>✅ حفظ</button>
     </div>
   </section>
 
@@ -1256,7 +1256,7 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
       </div>
       <div class="lookpanel" id="lookPanel"></div>
     </div>
-    <button class="btn primary big" id="btnLookDone" style="margin:0">✅ حفظ ورجوع</button>
+    <button class="btn primary big" id="btnLookDone" style="margin:0">✅ حفظ</button>
   </section>
 
   <section class="screen" id="scr-map">
@@ -1345,12 +1345,12 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
     <p class="sub" id="bqnSub">مسار واحد تسير عليه — اختر ما يناسب همّتك</p>
     <div id="bqnList"></div>
     <div class="onbnav">
+      <button class="btn ghost" id="btnBqnHome">🏠 خروج</button>
       <button class="btn ghost" id="bqnBack" hidden>➡️ السابق</button>
       <span class="onbgap"></span>
       <button class="btn primary pulse" id="bqnNext">⬅️ التالي</button>
-      <button class="btn green big pulse fill" id="btnBqnDone" hidden style="margin:0">✅ حفظ ورجوع</button>
+      <button class="btn primary pulse" id="btnBqnDone" hidden>✅ حفظ</button>
     </div>
-    <div class="row"><button class="btn ghost" id="btnBqnHome">🏠 خروج</button></div>
   </section>
 
   <section class="screen" id="scr-build">
@@ -1508,7 +1508,7 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
       <button class="btn red big" id="btnReset" style="margin-top:10px">🗑️ تصفير التقدّم</button>
       </div>
     </div>
-    <button class="btn primary big" id="btnSetBack" style="margin:0">✅ حفظ ورجوع</button>
+    <button class="btn primary big" id="btnSetBack" style="margin:0">✅ حفظ</button>
     <div class="waqfbox">
       وقف لله تعالى — صدقة جارية عن أمي <b>لمياء قباني</b> · تطوير: زهير النموس
     </div>
@@ -7222,16 +7222,15 @@ function priorPanelWire(pfx,after){
     var el=$(pfx+'S'); if(el) el.hidden=!el.hidden;
   };
   /* الاعتماد يقع بالانتقال إلى ما بعده، فلا يحتاج زرّاً خاصّاً به */
+  /* الاعتمادُ يقع ولا يُحتفل به هنا: المعالجُ لم يُتمّ بعد، والاحتفالُ
+     في وسطه يُوهم أنّ الخطّة ثُبّتت. فتُخزَّن البشارةُ وتُعرض عند تمامه. */
   PRIOR_COMMIT=function(){
     var n=priorCount(); if(!n) return false;
     var added=priorApply();
     try{ paint(); }catch(e){}
-    /* لم يُضف جديداً؟ فهو مسجَّلٌ من قبل — ولا يُحبس في هذه الصفحة */
+    /* لم يُضف جديداً؟ فهو مسجَّلٌ من قبل */
     if(!added) return false;
-    try{ celeShow({ ic:'📌', kick:'✅ سُجّل حفظك السابق',
-      title:'أُضيفت '+arNum(n)+' آية إلى رصيدك',
-      sub:'ستدخل المراجعة، وأُعيد حساب الأيام المتبقّية',
-      rew:'＋ '+arNum(added)+' مقطعاً جديداً' }); }catch(e){}
+    PRIOR_CELE={ n:n, added:added };
     if(after) after();
     return true;
   };
@@ -7308,12 +7307,32 @@ var SELF_SIZES=[['q','🌱','ربع صفحة'],['h','🌿','نصف صفحة'],['
    ومن لا محفوظ له لا يُسأل عن ورده. */
 var BQ={ i:0 };
 var PRIOR_COMMIT=null;      /* تعتمده لوحةُ الحفظ السابق، ويستدعيه زرّ «التالي» */
+/* بشارةُ ما سُجّل من حفظٍ سابق: تنتظر تمامَ الخطّة ثمّ تُعرض مرّةً واحدة */
+var PRIOR_CELE=null;
+function priorCeleFlush(){
+  if(!PRIOR_CELE) return;
+  var c=PRIOR_CELE; PRIOR_CELE=null;
+  try{ celeShow({ ic:'📌', kick:'✅ سُجّل حفظك السابق',
+    title:'أُضيفت '+arNum(c.n)+' آية إلى رصيدك',
+    sub:'ستدخل المراجعة، وأُعيد حساب الأيام المتبقّية',
+    rew:'＋ '+arNum(c.added)+' مقطعاً جديداً' }); }catch(e){}
+}
+/* هل أشّر شيئاً من حفظه السابق؟ الأمرُ يُحفظ مع كلّ نقرةٍ لا عند الاعتماد،
+   فيُعرف ما نواه قبل أن يُعتمد. */
+function priorPicked(){
+  var p=curP(), k;
+  for(k in (p.priorJ||{})) if(p.priorJ[k]) return true;
+  for(k in (p.priorS||{})) if(p.priorS[k]) return true;
+  return false;
+}
 function bqnSteps(){
   var out=['plan'], p=curP();
   if(p.planChosen && !onPlan()) out.push('dir');
   out.push('prior');
-  /* من بدأ من جديد فلا محفوظ له يُتعاهد — ولا يُسأل عن ورد */
-  if(p.priorMode==='has' && wirdAsk()) out.push('wird');
+  /* من بدأ من جديد فلا محفوظ له يُتعاهد — ولا يُسأل عن ورد.
+     ومن سجّل حفظاً سابقاً تُحسب له خطوةُ الورد في العدّاد قبل الاعتماد،
+     فلا يُفاجأ بشاشةٍ لم يُنبَّه إليها. */
+  if(p.priorMode==='has' && (wirdAsk() || priorPicked())) out.push('wird');
   return out;
 }
 var BQ_HEAD={
@@ -7331,6 +7350,10 @@ function bqnShow(i){
   $('bqnFill').style.width=Math.round(100*(BQ.i+1)/n)+'%';
   $('bqnCount').textContent=arNum(BQ.i+1)+' من '+arNum(n);
   $('bqnBack').hidden=(BQ.i===0);
+  /* الخروجُ في الخطوة الأولى وحدَها: بعدها «السابق» يكفي مخرجاً */
+  $('btnBqnHome').hidden=(BQ.i>0);
+  /* صفحةُ الحفظ السابق قد يتبعها سؤالُ الورد بعد اعتماد ما أُشّر،
+     فلا يُقال «حفظ» وبين يديه خطوةٌ أخرى */
   var last=(BQ.i===n-1);
   $('bqnNext').hidden=last;
   $('btnBqnDone').hidden=!last;
@@ -7505,6 +7528,7 @@ function startBqn(from){
   bqnShow(b?b.i:0);
 }
 function bqnReturn(){
+  priorCeleFlush();            /* الآن تمّت الخطّة، فتُقال البشارة */
   var b=BQN_BACK; BQN_BACK='';
   if(b==='onb'){ onbShow(ONB.i); return; }
   if(b==='set'){ fillSettings(); show('scr-settings'); return; }
@@ -8544,8 +8568,9 @@ function onbTabs(){
 function onbEditDone(){
   /* وفي التعديل كذلك: لا يخرج وقد أشّر حفظاً لم يُعتمد */
   if(ONB.i===1 && curP().priorMode==='has' && PRIOR_COMMIT){
-    if(PRIOR_COMMIT()){ try{ wirdOnbSync(); onbGate(); }catch(e){} return; }
+    try{ PRIOR_COMMIT(); wirdOnbSync(); onbGate(); }catch(e){}
   }
+  priorCeleFlush();            /* خرج من الإعداد، فتُقال البشارة */
   ONB.edit=false;
   if(!(profile.name||'').trim()) profile.name='صديقي';
   $('pname').value=profile.name;
@@ -8682,6 +8707,7 @@ function onbShow(i){
   show('scr-onb');
 }
 function onbFinish(){
+  priorCeleFlush();            /* تمّ الإعداد، فتُقال بشارةُ ما سُجّل */
   if(!(profile.name||'').trim()) profile.name='صديقي';
   $('pname').value=profile.name;
   lookHome();
@@ -8700,9 +8726,10 @@ $('btnRandomLook2').onclick=randomLook;
 $('btnOpenLook').onclick=function(){ renderAvatars(); show('scr-look'); };
 $('btnLookDone').onclick=function(){ show('scr-start'); };
 $('onbNext').onclick=function(){
-  /* خطوة الخطة: مغادرتها تعتمد ما أشّره من حفظٍ سابق، ثم يُسأل عن ورده */
+  /* خطوة الخطة: مغادرتها تعتمد ما أشّره من حفظٍ سابق، ثم يُسأل عن ورده —
+     ويمضي بعد الاعتماد ولا يقف، والبشارةُ تنتظر تمامَ الإعداد */
   if(ONB.i===1 && curP().priorMode==='has' && PRIOR_COMMIT){
-    if(PRIOR_COMMIT()){ try{ wirdOnbSync(); onbGate(); }catch(e){} return; }
+    try{ PRIOR_COMMIT(); wirdOnbSync(); onbGate(); }catch(e){}
   }
   var m=onbBlocked();
   if(m){ onbNudge(m); return; }
@@ -8782,17 +8809,21 @@ $('btnBqnHome').onclick=function(){
 $('bqnNext').onclick=function(){
   var m=bqnStepBlocked();
   if(m){ try{ navToast(m); }catch(e){} bqnGate(); return; }
-  /* مغادرةُ صفحة الحفظ السابق تعتمد ما أشّره — ولا زرّ يُسأل عنه */
+  /* مغادرةُ صفحة الحفظ السابق تعتمد ما أشّره — ولا زرّ يُسأل عنه،
+     ولا يقف عندها بعد الاعتماد بل يمضي إلى ما بعدها */
   if(bqnSteps()[BQ.i]==='prior' && curP().priorMode==='has' && PRIOR_COMMIT){
-    if(PRIOR_COMMIT()) return;              /* الاعتماد يُعيد الرسم ويمضي بنفسه */
+    try{ PRIOR_COMMIT(); }catch(e){}
   }
+  /* لم تُفتح خطوةٌ جديدة؟ فهذا آخرُه: يُحفظ ويُرجع */
+  if(BQ.i+1>=bqnSteps().length){ $('btnBqnDone').onclick(); return; }
   bqnShow(BQ.i+1);
 };
 $('bqnBack').onclick=function(){ bqnShow(BQ.i-1); };
 $('btnBqnDone').onclick=function(){
   /* آخر خطوةٍ وفيها حفظٌ أُشّر ولم يُعتمد؟ يُعتمد الآن، وقد يفتح سؤال الورد بعده */
   if(bqnSteps()[BQ.i]==='prior' && curP().priorMode==='has' && PRIOR_COMMIT){
-    if(PRIOR_COMMIT()) return;
+    try{ PRIOR_COMMIT(); }catch(e){}
+    if(BQ.i+1<bqnSteps().length){ bqnShow(BQ.i+1); return; }   /* فُتحت خطوةٌ بعده */
   }
   var b=bqnBlocked();
   if(b){ try{ navToast(b.m); }catch(e){} b.go(); return; }
@@ -9042,6 +9073,9 @@ function navBack(){
   if($('help') && !$('help').hidden){ closeModal('help'); return true; }
   var scr=curScreen();
   /* ٢) شاشة التعريف: في التعديل تُحفظ وتُغلق، وفي المعالج خطوة إلى الوراء */
+  /* معالجا الخطّة والاختبار: الرجوعُ خطوةٌ لا خروجٌ ما دام له سابق */
+  if(scr==='scr-bqn' && $('bqnBack') && !$('bqnBack').hidden){ $('bqnBack').click(); return true; }
+  if(scr==='scr-exam' && $('exBack') && !$('exBack').hidden){ $('exBack').click(); return true; }
   if(scr==='scr-onb'){
     if(ONB.edit){ onbEditDone(); return true; }
     if($('onbBack') && !$('onbBack').hidden){ $('onbBack').click(); return true; }
