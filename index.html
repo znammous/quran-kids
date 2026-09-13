@@ -2198,7 +2198,17 @@ function mushafFont(P){
                  return mushafFace(fam,cdn);
                });
   else pr=mushafFace(fam,cdn);
+  /* ما حُمّل يُعلَّم، فيُرسم به الوجهُ في الحال بلا انتظار وعدٍ ولو محلول */
+  pr=pr.then(function(f){ MFREADY[P]=f; return f; });
   return (MFONT[P]=pr);
+}
+var MFREADY={};
+/* خطّا الوجهين المجاورين يُحمَّلان مسبقاً، فيكون التقليبُ التالي فوريّاً */
+function mfPreload(P){
+  [1,-1,2].forEach(function(d){
+    var q=P+d;
+    if(q>=1 && q<=604 && !MFONT[q]) mushafFont(q)['catch'](function(){});
+  });
 }
 function mushafPageHTML(P, hlGi, glyphs){
   mushafInit();
@@ -2412,25 +2422,49 @@ function mushafOpenPage(P, hlGi, title){
   /* فتحٌ جديدٌ يبدأ نظرةً عابرة. أمّا تقليبُ الوجه والوجهُ مفتوحٌ فلا
      يُخرج القارئَ من تلاوته إلى النظرة، وإلّا أغلقته أوّلُ لمسةٍ بعد
      أن قلّب صفحة. */
-  if($('mfSheet') && $('mfSheet').hidden) MF_READ=false;
+  var sh=$('mfSheet'), wasHidden=sh.hidden;
+  if(wasHidden) MF_READ=false;
   var seq=++MFSEQ;
-  if(title) $('mfSheet').setAttribute('aria-label', title);
+  if(title) sh.setAttribute('aria-label', title);
   mfBarSync(P, hlGi);
-  /* عرضٌ فوريّ بالرسم النصّيّ، ثم ترقية إلى خطّ الصفحة متى وصل — فلا انتظار ولا شاشة فارغة */
-  $('mfBody').innerHTML='<div class="mushaf">'+mushafPageHTML(P, hlGi, false)+'</div>';
-  $('mfSheet').hidden=false;
-  mushafScroll($('mfBody'));
-  mushafFont(P).then(function(fam){
-    if(seq!==MFSEQ) return;                      /* فُتحت صفحة أخرى في الأثناء */
+  function paintQcf(fam){
     var box=$('mfBody');
     var d=document.createElement('div');
     d.className='mushaf qcf';
     d.style.fontFamily=fam;
     d.innerHTML=mushafPageHTML(P, hlGi, true);
     box.innerHTML=''; box.appendChild(d);
+    sh.hidden=false;                              /* قبل الضبط: يقيس ما يُرى */
     mushafFit(box);
     mushafScroll(box);
-  })['catch'](function(){});                     /* تعذّر الخطّ: يبقى العرض النصّيّ */
+  }
+  function paintText(){
+    var box=$('mfBody');
+    box.innerHTML='<div class="mushaf">'+mushafPageHTML(P, hlGi, false)+'</div>';
+    sh.hidden=false;
+    mushafScroll(box);
+  }
+  mfPreload(P);
+  /* كان يُرسم بالخطّ النصّيّ أوّلاً ثمّ يُرقّى، والوعدُ لا يُحلّ في الحال
+     ولو كان الخطُّ منزَّلاً — فيومض الوجهُ بخطٍّ أصغر عند كلّ تقليب.
+     فما حُمّل خطُّه يُرسم به فوراً. */
+  if(MFREADY[P]){ paintQcf(MFREADY[P]); return; }
+  /* وما لم يُحمَّل يُمهَل قليلاً والوجهُ السابقُ باقٍ: المنزَّلُ يصل في
+     أثنائها فلا يُرى النصّيّ، وما طال (شبكةٌ بطيئة) يُعرض نصّيّاً ثمّ يُرقّى. */
+  var shown=false;
+  if(wasHidden){ $('mfBody').innerHTML=''; sh.hidden=false; }   /* لا يُرى وجهٌ قديم */
+  var t=setTimeout(function(){
+    if(seq!==MFSEQ || shown) return;
+    shown=true; paintText();
+  }, 300);
+  mushafFont(P).then(function(fam){
+    if(seq!==MFSEQ) return;                      /* فُتحت صفحة أخرى في الأثناء */
+    clearTimeout(t); shown=true; paintQcf(fam);
+  })['catch'](function(){                        /* تعذّر الخطّ: يبقى العرض النصّيّ */
+    if(seq!==MFSEQ) return;
+    clearTimeout(t);
+    if(!shown){ shown=true; paintText(); }
+  });
 }
 function mushafOpen(s, ai){
   var gi=GIDX[s.n-1]+ai, P=pageOfIdx(gi);
