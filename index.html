@@ -283,6 +283,10 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 /* position:relative لأنّ التمرير إلى الآية يقيس بالنسبة لهذا الإطار */
 .mfbody{flex:1;position:relative;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 12px 34px;
   touch-action:pan-y}
+/* الوجهُ المجاور وهو يُسحب: طبقةٌ فوق الوجه بمقاسه، تتبع الإصبعَ معه —
+   التالي يدخل من اليسار والسابق من اليمين، كما يُقلَّب المصحف. */
+.mfbody.mfpeek{position:absolute;left:0;right:0;z-index:2;overflow:hidden;pointer-events:none;
+  background:var(--paper);box-shadow:0 0 22px rgba(0,0,0,.2)}
 .mfbody .mushaf{font-size:clamp(16px,4.6vw,25px)}
 /* خطّا المصحف المساعدان: أسماء السور المزخرفة، ورسم عثمان طه للبسملة والعرض البديل */
 @font-face{font-family:'SuraNames';src:url(fonts/sura_names.woff2) format('woff2');font-display:swap}
@@ -2418,12 +2422,24 @@ function mushafRead(P, title){
   mushafOpenPage(P, -1, title);
   MF_READ=true;                    /* بعد الفتح، فالفتحُ يُطفئه */
 }
+/* يُنادى بعد رسم الوجه مرّةً واحدة: به تُرفع طبقةُ السحب حين يحلّ الوجهُ محلّها */
+var MF_ONPAINT=null;
+function mfAfterPaint(){
+  var f=MF_ONPAINT; MF_ONPAINT=null;
+  if(f){ try{ f(); }catch(e){} }
+}
 function mushafOpenPage(P, hlGi, title){
   /* فتحٌ جديدٌ يبدأ نظرةً عابرة. أمّا تقليبُ الوجه والوجهُ مفتوحٌ فلا
      يُخرج القارئَ من تلاوته إلى النظرة، وإلّا أغلقته أوّلُ لمسةٍ بعد
      أن قلّب صفحة. */
   var sh=$('mfSheet'), wasHidden=sh.hidden;
-  if(wasHidden) MF_READ=false;
+  if(wasHidden){
+    MF_READ=false;
+    /* أُغلق الوجهُ في أثناء سحبٍ: لا تبقى طبقتُه ولا إزاحتُه للفتح التالي */
+    var ol=sh.querySelectorAll('.mfpeek'), z;
+    for(z=0;z<ol.length;z++) ol[z].remove();
+    $('mfBody').style.transition=''; $('mfBody').style.transform='';
+  }
   var seq=++MFSEQ;
   if(title) sh.setAttribute('aria-label', title);
   mfBarSync(P, hlGi);
@@ -2437,12 +2453,14 @@ function mushafOpenPage(P, hlGi, title){
     sh.hidden=false;                              /* قبل الضبط: يقيس ما يُرى */
     mushafFit(box);
     mushafScroll(box);
+    mfAfterPaint();
   }
   function paintText(){
     var box=$('mfBody');
     box.innerHTML='<div class="mushaf">'+mushafPageHTML(P, hlGi, false)+'</div>';
     sh.hidden=false;
     mushafScroll(box);
+    mfAfterPaint();
   }
   mfPreload(P);
   /* كان يُرسم بالخطّ النصّيّ أوّلاً ثمّ يُرقّى، والوعدُ لا يُحلّ في الحال
@@ -4869,9 +4887,68 @@ $('mfNext').onclick=function(){ mfGoto(mfPage()+1); };
     mfGoto(mfPage()+d);
     return true;
   }
+  /* ===== التقليبُ بالسحب، كتطبيقات المصحف =====
+     ما دام الإصبعُ على الشاشة يتبعه الوجهُ، ويظهر المجاورُ من جهة السحب:
+     إلى اليمين يدخل التالي من اليسار، وإلى اليسار يدخل السابق من اليمين.
+     فإذا رُفع: مضى إلى المجاور إن جاوز خُمسَ العرض أو قُذف قذفاً، وإلّا
+     عاد إلى موضعه. والوجهُ الحاليُّ باقٍ في mfBody، فلا يتغيّر الالتقاطُ
+     ولا الإضاءة — والمجاورُ طبقةٌ مؤقّتة تُرفع حين يحلّ الوجهُ الجديدُ محلّها. */
+  var axis='', pk=null, pkDir=0, W=0, vx=0, lt=0, lxPrev=0, anim=false, dragged=false;
+  function peekKill(){ if(pk){ pk.remove(); pk=null; } pkDir=0; }
+  function peekBuild(d){
+    if(pk && pkDir===d) return true;
+    peekKill();
+    var Q=mfPage()+d;
+    if(Q<1 || Q>604) return false;               /* طرفُ المصحف: لا وجهَ وراءه */
+    pk=document.createElement('div');
+    pk.className='mfbody mfpeek'; pk.setAttribute('aria-hidden','true');
+    pk.style.top=b.offsetTop+'px'; pk.style.height=b.offsetHeight+'px';
+    var fam=MFREADY[Q];
+    if(fam){
+      var m=document.createElement('div');
+      m.className='mushaf qcf'; m.style.fontFamily=fam;
+      m.innerHTML=mushafPageHTML(Q,-1,true);
+      pk.appendChild(m);
+    }else pk.innerHTML='<div class="mushaf">'+mushafPageHTML(Q,-1,false)+'</div>';
+    b.parentNode.appendChild(pk);
+    if(fam) mushafFit(pk);
+    pkDir=d;
+    return true;
+  }
+  function place(dx, animate){
+    var t=animate ? 'transform .24s cubic-bezier(.2,.7,.3,1)' : 'none';
+    b.style.transition=t; b.style.transform=dx ? 'translateX('+dx+'px)' : '';
+    if(pk){ pk.style.transition=t; pk.style.transform='translateX('+(dx-pkDir*W)+'px)'; }
+  }
+  function dragEnd(dx){
+    axis=''; dragged=true;
+    var d=dx>0 ? 1 : -1;
+    var fast=Math.abs(vx)>0.45 && (vx>0)===(dx>0) && Math.abs(dx)>24;
+    var go=!!pk && pkDir===d && (Math.abs(dx)>W*0.22 || fast) && !(MF_PICK && MF_PICK.busy);
+    anim=true;
+    if(!go){
+      place(0,true);
+      setTimeout(function(){ b.style.transition=''; b.style.transform=''; peekKill(); anim=false; }, 260);
+      return;
+    }
+    place(d*W,true);
+    setTimeout(function(){
+      /* المجاورُ صار في موضع الوجه ويستره: يُعاد الوجهُ إلى مكانه ويُرسم فيه
+         الجديد، ثمّ تُرفع الطبقة — فلا يُرى فراغٌ ولا الوجهُ القديم */
+      var keep=pk, gone=false;
+      pk=null; pkDir=0;
+      b.style.transition='none'; b.style.transform='';
+      function drop(){ if(gone) return; gone=true; if(keep) keep.remove(); anim=false; }
+      MF_ONPAINT=drop;
+      mfGoto(mfPage()+d);
+      setTimeout(drop, 1500);                    /* تعذّر الرسم: لا تبقى الطبقة */
+    }, 250);
+  }
   b.addEventListener('pointerdown', function(e){
-    down=true; moved=false; sx=e.clientX; sy=e.clientY; st=Date.now();
-    lx=0; ly=0;
+    if(anim){ down=false; return; }              /* يُكمل تقليبَه أوّلاً */
+    down=true; moved=false; dragged=false; sx=e.clientX; sy=e.clientY; st=Date.now();
+    lx=0; ly=0; axis=''; vx=0; lt=st; lxPrev=0;
+    W=b.offsetWidth;                             /* بشريط التمرير، فيلتقي الوجهان بلا تداخل */
     if(MF_PICK && !MF_PICK.busy) mfGlow(e.clientX,e.clientY);
   });
   b.addEventListener('pointermove', function(e){
@@ -4879,23 +4956,40 @@ $('mfNext').onclick=function(){ mfGoto(mfPage()+1); };
     lx=e.clientX-sx; ly=e.clientY-sy;   /* آخرُ ما بلغته الإيماءة قبل أن تُلغى */
     var mx=Math.abs(lx), my=Math.abs(ly);
     if(mx>10 || my>10) moved=true;
+    /* أوّلُ حركةٍ تحسم المحور: أفقيٌّ يقلّب، ورأسيٌّ يُترك لتمرير الوجه */
+    if(!axis && (mx>10 || my>10))
+      axis=(mx>my*1.2 && !(MF_PICK && MF_PICK.busy)) ? 'h' : 'v';
+    if(axis==='h'){
+      var now=Date.now();
+      if(now>lt) vx=0.6*((lx-lxPrev)/(now-lt)) + 0.4*vx;
+      lxPrev=lx; lt=now;
+      try{ b.setPointerCapture(e.pointerId); }catch(er){}
+      if(MF_PICK) mfGlowOff();
+      var d=lx>0 ? 1 : -1;
+      place(peekBuild(d) ? lx : lx*0.25, false); /* طرفُ المصحف: يقاوم ويعود */
+      return;
+    }
     /* ما دام لم يتحوّل إلى سحبٍ أفقيّ، تتبع الإضاءةُ إصبعه */
-    if(MF_PICK && !MF_PICK.busy && !(mx>=30 && mx>my)) mfGlow(e.clientX,e.clientY);
+    if(MF_PICK && !MF_PICK.busy) mfGlow(e.clientX,e.clientY);
   });
   b.addEventListener('pointercancel', function(){
     var was=down;
     down=false;
     if(MF_PICK) mfGlowOff();                 /* أُلغيت اللمسة: تُطفأ الإضاءة */
+    if(!was) return;
+    if(axis==='h'){ dragEnd(lx); return; }   /* أُلغي في أثناء السحب: يُحسم من آخر موضع */
     /* متصفّحٌ لا يُعمِل pan-y: يُلغي الإيماءةَ فلا يصل الرفع. فيُقلَّب من
        آخر ما بلغته، ولا يُغلق الوجهُ هنا — الإلغاءُ ليس نقرة. */
-    if(was) mfSwipe(lx,ly);
+    axis='';
+    mfSwipe(lx,ly);
   });
   b.addEventListener('pointerup', function(e){
     if(!down) return;
     down=false;
-    /* سحبٌ أفقيّ: يقلّب الوجه كما يُقلَّب في المصحف — يُسحب الوجهُ الأيسر
-       إلى اليمين فيمضي، وإلى اليسار يرجع، في الوضعين جميعاً. */
-    if(mfSwipe(e.clientX-sx, e.clientY-sy)) return;   /* سحبٌ أفقيٌّ مقصود */
+    if(axis==='h'){ dragEnd(e.clientX-sx); return; }   /* سحبٌ أفقيّ: يحسمه الإفلات */
+    axis='';
+    /* احتياطٌ لسحبٍ لم يُحسم محورُه أفقيّاً: يقلّب بلا حركة كما كان */
+    if(mfSwipe(e.clientX-sx, e.clientY-sy)) return;
     /* في وضع التحديد لا نلتقط من رفع الإصبع: بعضُ الأجهزة يُلغي المؤشّر
        أو يبتلع رفعَه عند حواف المنطقة القابلة للتمرير، فتضيع اللمسة.
        ونتركها لحدث النقر، فهو لا يُولَّد إلا من لمسةٍ حقيقيّة — ولا
@@ -4919,6 +5013,7 @@ $('mfNext').onclick=function(){ mfGoto(mfPage()+1); };
   /* النقرُ هو بابُ الالتقاط: يصل في كلّ موضعٍ من الوجه، ولا يُولَّد من سحب */
   b.addEventListener('click', function(e){
     if(!MF_PICK || MF_PICK.busy) return;
+    if(dragged) return;                        /* نقرةٌ خلّفها سحبُ الفأرة: ليست اختياراً */
     mfPickAt(null, e.clientX, e.clientY);
   });
 })();
