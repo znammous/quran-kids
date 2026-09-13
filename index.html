@@ -5597,7 +5597,10 @@ function runRound(){
   if(r.rq) $('stageChip').textContent='🔁 تثبيت • '+seghere;
   else if(r.t==='miss2') $('stageChip').textContent='🔍 الكلمتان الناقصتان • '+seghere;
   else if(r.t==='aedge') $('stageChip').textContent=(r.which==='first'?'🚩 مطلعُ الآية • ':'🏁 خاتمةُ الآية • ')+seghere;
-  else if(r.t==='eorder') $('stageChip').textContent=(r.which==='first'?'🚩 مطالعُ الآيات • ':'🏁 خواتمُ الآيات • ')+seghere;
+  /* الشارةُ بآيات السؤال نفسِها لا بالمقطع كلِّه: السؤالُ يأخذ من المقطع ٤–٧ آياتٍ
+     فقط، فكانت الشارةُ «٦-١٦» والمطلوبُ «من ٧ إلى ١٣» */
+  else if(r.t==='eorder') $('stageChip').textContent=(r.which==='first'?'🚩 مطالعُ الآيات • ':'🏁 خواتمُ الآيات • ')+
+    (r.surah||S.surah).name+' '+arNum(r.from+1)+'-'+arNum(r.to);
   ({read:roundRead,words:roundWords,missing:roundMissing,miss2:roundMiss2,ayat:roundAyat,recite:roundRecite,
     aedge:roundAEdge,eorder:roundEOrder,
     revpage:roundRevPage,edge:roundEdge})[r.t](r);
@@ -6532,13 +6535,11 @@ function roundEOrder(r){
   $('playArea').className='qfill';
   $('playArea').innerHTML=
     /* العنوانُ في شارة المرحلة أعلاه: هنا موضعُ الآيات لا اسمُ السؤال */
-    /* السؤالُ ثلاثةُ أسطر: أين (السورةُ والآيات)، وبمَ يُعرف الموضع (مقطعٌ منها)،
-       وما المطلوب (أوّلُ كلمةٍ أو آخرُها من كلّ آية، من أولاها إلى آخرتها).
-       والنطاقُ آياتٌ متتالية لا صفحةٌ كاملة، فلا يُقال «الصفحة» */
+    /* السؤالُ: بمَ يُعرف الموضع (مقطعٌ منها)، وما المطلوب (أوّلُ كلمةٍ أو آخرُها
+       من كلّ آية، من أولاها إلى آخرتها). والموضعُ في الشارة أعلاه بآيات السؤال
+       نفسِها، فلا يُكرَّر هنا. والنطاقُ آياتٌ متتالية لا صفحةٌ، فلا يُقال «الصفحة» */
     (function(){
-      var an=eorderAnchor(s,r.from,r.to), n=r.to-r.from;
-      var where='<div class="hintline">سورة '+esc(s.name)+' — الآيات '+arNum(r.from+1)+' إلى '+arNum(r.to)+
-                ' ('+arCount(n,C_AYAH)+')</div>';
+      var an=eorderAnchor(s,r.from,r.to);
       var hint=an
         ? '<div class="hintline" style="font-size:14px;margin:8px 0 4px">من هذه الآيات قولُه تعالى:</div>'+
           '<div class="ayahbox"><div class="ayah" style="font-size:'+Math.min(SET.font,22)+'px">'+
@@ -6546,7 +6547,7 @@ function roundEOrder(r){
         : '';
       var ask='<div class="qtitle">رتّب '+(which==='first'?'أوّلَ':'آخرَ')+' كلمةٍ من كلّ آيةٍ '+
               (an?'منها':'من هذه الآيات')+'، من الآية '+arNum(r.from+1)+' إلى الآية '+arNum(r.to)+'</div>';
-      return where+hint+ask;
+      return hint+ask;
     })()+
     '<div class="qgap"></div>'+
     '<div class="anslines" id="ansLines"><div class="ansrow"></div>'+
