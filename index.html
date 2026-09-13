@@ -4556,8 +4556,12 @@ function defaultSurah(){
   if(p.last){ var s=surahBy(p.last); if(s&&inRange(s)) return s; }
   return selfStartSurah() || list[0] || SURAHS[SURAHS.length-1];
 }
-function openSurah(n){
+/* سورةٌ اختارها بعينها من الفهرس: يُفتح المسارُ عندها هي، لا عند موضع تقدّمه.
+   ويُمسح بكلّ فتحٍ آخر للمسار، فيعود إلى سيره المعتاد. */
+var PATH_PICK=0;
+function openSurah(n, picked){
   var s=surahBy(n); if(!s) return;
+  PATH_PICK=picked ? s.n : 0;
   clearScope();
   curSurah=s; curP().last=n; saveDB();
   renderPath(); show('scr-path');
@@ -4623,7 +4627,9 @@ function renderPath(){
   /* إن كانت سورتُه التي فُتحت آخرَ مرّةٍ تامّةً فالمقصودُ في غيرها —
      قد يكون بعدها بسورٍ، فلا تُرسم ولا يراها. فتتوسّطُ النافذةُ المقصودَ.
      وأمّا من فتح سورةً فيها عملٌ فلا يُنقل عنها، فقصدُه ظاهر. */
-  if(!SC){
+  /* إلّا أن يكون اختارها بعينها من الفهرس: فقصدُه ظاهرٌ ولو كانت تامّة */
+  var picked=(!SC && PATH_PICK===s.n);
+  if(!SC && !picked){
     var vv=scopedSegs(s), allDone=(vv.length>0), z;
     for(z=0;z<vv.length;z++) if(!segDone(s,vv[z].g)){ allDone=false; break; }
     if(allDone){
@@ -4649,7 +4655,8 @@ function renderPath(){
         if(fin && isDue) cls+=' due';
         else if(fin) cls+=' done';
         else if(locked) cls+=' locked';
-        else if(!nowUsed){ cls+=' now'; now=true; nowUsed=true; }
+        /* «ابدأ» في السورة المختارة من الفهرس، لا فيما قبلها من النافذة */
+        else if(!nowUsed && (!picked || sx.n===s.n)){ cls+=' now'; now=true; nowUsed=true; }
         h+='<div class="'+cls+'" data-s="'+sx.n+'" data-i="'+x.i+'">'+
            (now?'<span class="bubble">ابدأ</span>':'')+
            '<div class="dot">'+(fin?(isDue?'🔁':'✓'):(locked?'🔒':arNum(k+1)))+'</div>'+
@@ -4728,7 +4735,11 @@ function renderPath(){
 function pathFocus(){
   try{
     var box=$('path'); if(!box) return;
-    var el=box.querySelector('.pnode.now') ||
+    /* المختارةُ من الفهرس: يقع نظرُه عليها — على «ابدأ» فيها، وإلّا فعلى رأسها */
+    var pk=(!PATH_SCOPE && curSurah && PATH_PICK===curSurah.n)
+      ? (box.querySelector('.pnode.now[data-s="'+PATH_PICK+'"]') || box.querySelector('.pathsec.here'))
+      : null;
+    var el=pk || box.querySelector('.pnode.now') ||
              box.querySelector('.pathsec.here') ||
              box.querySelector('.pnode.due');
     if(el && el.scrollIntoView) el.scrollIntoView({block:'center'});
@@ -4923,7 +4934,7 @@ document.addEventListener('keydown', function(e){
 });
 $('xAdab').onclick=function(){ closeModal('adab'); };
 $('xSrPick').onclick=function(){ closeModal('srPick'); };
-$('srGoPath').onclick=function(){ $('srPick').hidden=true; openSurah(SRPICK); };
+$('srGoPath').onclick=function(){ $('srPick').hidden=true; openSurah(SRPICK, true); };
 $('srGoRead').onclick=function(){
   var sx=surahBy(SRPICK); if(!sx) return;
   $('srPick').hidden=true;
