@@ -276,7 +276,8 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfx2:active{transform:scale(.92)}
 .mfsheet.picking .mfx2{display:none}
 /* position:relative لأنّ التمرير إلى الآية يقيس بالنسبة لهذا الإطار */
-.mfbody{flex:1;position:relative;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 12px 34px}
+.mfbody{flex:1;position:relative;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 12px 34px;
+  touch-action:pan-y}
 .mfbody .mushaf{font-size:clamp(16px,4.6vw,25px)}
 /* خطّا المصحف المساعدان: أسماء السور المزخرفة، ورسم عثمان طه للبسملة والعرض البديل */
 @font-face{font-family:'SuraNames';src:url(fonts/sura_names.woff2) format('woff2');font-display:swap}
@@ -2273,6 +2274,14 @@ function mfBarSync(P, hlGi){
   mfIdxFill(P, sn);
 }
 function mfPage(){ return MF_PICK ? MF_PICK.page : MF_PAGE; }
+/* اتّجاهُ التقليب من إزاحة الإصبع: إلى اليسار يمضي وإلى اليمين يرجع،
+   وصفرٌ إن لم تكن الإيماءةُ أفقيّةً مقصودة — فالتمريرُ الرأسيُّ لا يقلّب،
+   ولا تقلّب رجفةُ إصبعٍ على الوجه. */
+function mfSwipeDir(dx,dy){
+  var ax=Math.abs(dx), ay=Math.abs(dy);
+  if(ax<50 || ax<=ay*1.5) return 0;
+  return dx<0 ? 1 : -1;
+}
 function mfGoto(P){
   P=Math.max(1,Math.min(604,parseInt(P,10)||1));
   if(P===mfPage()) return;
@@ -4735,33 +4744,43 @@ $('mfNext').onclick=function(){ mfGoto(mfPage()+1); };
 /* نقرةٌ على الوجه تغلقه — أيسر للطفل من قصد الزرّ. ونميّز النقرة من
    التمرير بالمسافة والزمن، وإلّا أغلقه كلُّ سحبٍ للصفحة. */
 (function(){
-  var b=$('mfBody'), down=false, sx=0, sy=0, st=0, moved=false;
+  var b=$('mfBody'), down=false, sx=0, sy=0, st=0, moved=false, lx=0, ly=0;
   if(!b || !window.PointerEvent) return;
+  /* التقليبُ الأفقيّ: يُستدعى من رفع الإصبع ومن إلغاء الإيماءة جميعاً */
+  function mfSwipe(dx,dy){
+    var d=mfSwipeDir(dx,dy);
+    if(!d) return false;
+    if(MF_PICK && MF_PICK.busy) return false;
+    mfGoto(mfPage()+d);
+    return true;
+  }
   b.addEventListener('pointerdown', function(e){
     down=true; moved=false; sx=e.clientX; sy=e.clientY; st=Date.now();
+    lx=0; ly=0;
     if(MF_PICK && !MF_PICK.busy) mfGlow(e.clientX,e.clientY);
   });
   b.addEventListener('pointermove', function(e){
     if(!down) return;
-    var mx=Math.abs(e.clientX-sx), my=Math.abs(e.clientY-sy);
+    lx=e.clientX-sx; ly=e.clientY-sy;   /* آخرُ ما بلغته الإيماءة قبل أن تُلغى */
+    var mx=Math.abs(lx), my=Math.abs(ly);
     if(mx>10 || my>10) moved=true;
     /* ما دام لم يتحوّل إلى سحبٍ أفقيّ، تتبع الإضاءةُ إصبعه */
     if(MF_PICK && !MF_PICK.busy && !(mx>=30 && mx>my)) mfGlow(e.clientX,e.clientY);
   });
   b.addEventListener('pointercancel', function(){
+    var was=down;
     down=false;
     if(MF_PICK) mfGlowOff();                 /* أُلغيت اللمسة: تُطفأ الإضاءة */
+    /* متصفّحٌ لا يُعمِل pan-y: يُلغي الإيماءةَ فلا يصل الرفع. فيُقلَّب من
+       آخر ما بلغته، ولا يُغلق الوجهُ هنا — الإلغاءُ ليس نقرة. */
+    if(was) mfSwipe(lx,ly);
   });
   b.addEventListener('pointerup', function(e){
     if(!down) return;
     down=false;
     /* سحبٌ أفقيّ: يقلّب الوجه كما يُقلَّب في المصحف — إلى اليسار يمضي
        وإلى اليمين يرجع، كاتّجاه السهمين، في الوضعين جميعاً. */
-    var dx=e.clientX-sx, dy=e.clientY-sy, ax=Math.abs(dx), ay=Math.abs(dy);
-    if(ax>=50 && ax>ay*1.5 && !(MF_PICK && MF_PICK.busy)){   /* سحبٌ أفقيٌّ مقصود */
-      mfGoto(mfPage() + (dx<0 ? 1 : -1));
-      return;
-    }
+    if(mfSwipe(e.clientX-sx, e.clientY-sy)) return;   /* سحبٌ أفقيٌّ مقصود */
     /* في وضع التحديد لا نلتقط من رفع الإصبع: بعضُ الأجهزة يُلغي المؤشّر
        أو يبتلع رفعَه عند حواف المنطقة القابلة للتمرير، فتضيع اللمسة.
        ونتركها لحدث النقر، فهو لا يُولَّد إلا من لمسةٍ حقيقيّة — ولا
