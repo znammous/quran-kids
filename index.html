@@ -738,6 +738,9 @@ body.glow-off .cele .spk{display:none}
 .goalcard .gctx i{display:block;font-style:normal;font-size:13.5px;font-weight:800;
   color:var(--on2);line-height:1.7;margin-top:2px}
 .goalcard .gcgo{flex:0 0 auto;font-size:20px;color:var(--on3);opacity:.7}
+/* بطاقةٌ لا عملَ وراءها: تُخبر ولا تُضغط، فلا تُغري بمؤشّرٍ ولا تنخفض */
+.goalcard.flat{cursor:default}
+.goalcard.flat:active{transform:none;box-shadow:0 5px 0 rgba(0,0,0,.16)}
 /* تمّت؟ فحدٌّ أخضرُ وأيقونةٌ تُطمئنه */
 .goalcard.done{border-color:#9fdcb8}
 .goalcard.done .gcic{background:#e8f8ee;border-color:#9fdcb8}
@@ -6882,7 +6885,9 @@ function renderRevPlanBody(){
       '</div><div class="note" style="margin-top:8px">النطاقُ واحدٌ، وإنّما يتبدّل أوّلُ ما تراجع</div></div>'+
     '<div class="revbox"><div class="rl">كم صفحةً في الجلسة الواحدة؟</div><div class="chips">'+chips(REV_SIZES,REV.size,'rs')+'</div></div>'+
     '<div class="revbox"><div class="rl">كم سؤالاً لكل صفحة؟</div><div class="chips">'+chips(REV_PER_CHOICES,revPer(),'rp')+'</div></div>'+
-    '<div id="revSum"></div></div>';
+    '<div id="revSum"></div>'+
+    '<button type="button" class="btn green big" id="btnFreeFix" '+
+      'style="margin:2px 0 0">✅ ثبّت هذا المسار</button></div>';
 
   /* ضبطُ نطاقٍ بيده خروجٌ من الورد إلى المسار الحرّ، بإرادته لا سهواً */
   /* يمسّ عدّادَ المسار الحرّ وحده — والوردُ باقٍ بعدّاده وحجمه */
@@ -6916,6 +6921,16 @@ function renderRevPlanBody(){
     if(REV.done>=revSessions('free').length){ REV.done=0; REV.weak={}; }
     revSave(); beginRevPath();
   };
+  /* التثبيتُ اعتمادٌ لا بدء: يُثبت النطاقَ ويطوي اللوحة، والبطاقةُ
+     هي التي تمضي به بعد ذلك. ويُصرّح بالخروج من الورد هنا لمن ضبط
+     نطاقَه ولم يغيّر فيه شيئاً، فلم يمرّ على reset. */
+  if($('btnFreeFix')) $('btnFreeFix').onclick=function(){
+    REV.wird=false; REV.mode='free';
+    revSave();
+    curP().freeRev=false; saveDB();
+    renderRevPlan();
+    try{ navToast('✅ ثُبّت مسارُك — '+arCount(revSessions('free').length,C_SESS)); }catch(e){}
+  };
   renderRevSum();
 }
 function renderRevSum(){
@@ -6935,6 +6950,7 @@ function renderRevSum(){
       })()
     : '<div class="revsum">النطاق فارغ — راجع الاختيار</div>';
   $('btnRevGo').disabled=!all.length;
+  if($('btnFreeFix')) $('btnFreeFix').disabled=!all.length;   /* نطاقٌ فارغٌ لا يُثبَّت */
 }
 var REV_PER_DEFAULT=5;                   /* الافتراضي: خمسة أسئلة لكل صفحة */
 var REV_PER_CHOICES=[3,5,8,10];
@@ -7187,6 +7203,21 @@ function bqnToday(){
 /* لافتة «مراجعة اليوم من خطتك» — تظهر قبل اختيار نطاق منفصل */
 /* مقرَّر مراجعة اليوم في خطط «نور الوحي»: ما استحقّ من محفوظه بالمواعيد —
    صندوقٌ كصندوق خطط «بالقرآن نحيا» سواء، فلا يُحرم أهلُ المسار الأوّل بيانَ يومهم. */
+/* ===== بطاقاتُ شاشة المراجعة =====
+   كانت صناديقَ يصف كلٌّ منها حالَه ثمّ يحمل في ذيله زرّاً أزرقَ عريضاً.
+   فصارت بطاقاتٍ كبطاقات الشاشة الرئيسة: أيقونةٌ وعنوانٌ وسطرُ حالٍ
+   وسهم — والبطاقةُ نفسُها هي الزرّ، فلا زرَّ داخلها. وما لا عملَ وراءه
+   يُرسم لوحاً لا يُضغط. */
+function revCard(o){
+  var t = o.id ? 'button' : 'div';
+  return '<'+t+(o.id?(' type="button" id="'+o.id+'"'):'')+
+    ' class="goalcard '+(o.done?'done':'now')+(o.id?'':' flat')+'" '+
+    'style="margin:0 0 16px">'+
+    '<span class="gcic">'+o.ic+'</span>'+
+    '<span class="gctx"><b>'+o.head+'</b><i>'+o.sub+'</i></span>'+
+    (o.id?'<span class="gcgo">❮</span>':'')+
+  '</'+t+'>';
+}
 function selfRevBanner(sfx){
   var dl=[], pg=[];
   try{ dl=dueSegs(); pg=duePages(); }catch(e){}
@@ -7196,22 +7227,18 @@ function selfRevBanner(sfx){
     return esc(d.s.name)+' '+arNum(d.from+1)+'—'+arNum(d.to);
   }).join(' • ');
   var more=dl.length>3 ? (' و'+arNum(dl.length-3)+' غيرها') : '';
-  return '<div class="revsum" style="margin:0 0 16px;text-align:right;position:relative">'+
-    (done?'<span title="تمّت مراجعة اليوم" style="position:absolute;top:-11px;left:-9px;'+
-      'background:linear-gradient(180deg,#34c47c,#147c40);color:#fff;border:2px solid #0b2a46;'+
-      'border-radius:50%;width:30px;height:30px;line-height:26px;text-align:center;'+
-      'font-size:16px;font-weight:900;box-shadow:0 4px 10px rgba(0,0,0,.35)">✓</span>':'')+
-    '<div style="font-size:15px">'+(onPlan()
-      ? '☀️ <b>وما استحقّ من محفوظك</b> — خارج مقرَّر خطتك'
-      : '☀️ <b>مراجعة اليوم</b> من خطط «نور الوحي»')+'</div>'+
-    '<div style="font-size:18px;font-weight:900;margin-top:6px">'+
-      (done ? 'أتممت مراجعة اليوم — أحسنت' : (names+more))+'</div>'+
-    '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:4px">'+
-      (done ? ('راجعت '+arNum(todayBox().reviews)+' جلسة اليوم')
-            : (arNum(dl.length)+' مقطع • '+arNum(pg.length)+' وجه'))+'</div>'+
-    (done?'':'<button type="button" class="btn blue big" id="selfRevGo'+sfx+'" '+
-      'style="margin:12px 0 0">☀️ ابدأ مراجعة اليوم — '+arNum(pg.length)+' وجه</button>')+
-  '</div>';
+  /* من لا مستحقَّ عنده فليس وراء بطاقته عمل: تُخبره وتُطمئنه */
+  if(done) return revCard({
+    done:true, ic:'✅',
+    head:'أتممتَ مراجعة اليوم — أحسنت',
+    sub:'راجعتَ '+arCount(todayBox().reviews,C_SESS)+' اليوم'
+  });
+  return revCard({
+    id:'selfRevGo'+sfx, ic:'☀️',
+    head:'ابدأ مراجعة اليوم — '+arCount(pg.length,C_PAGE),
+    sub:(onPlan()?'خارج مقرَّر خطتك • ':'من خطط «نور الوحي» • ')+
+        names+more+' • '+arNum(dl.length)+' مقطع'
+  });
 }
 /* صندوق الورد: مقرَّرٌ يوميّ مرتّب من محفوظه الراسخ — جلسةٌ في اليوم */
 /* له محفوظٌ ولم يضع له ورداً بعد — فيُسأل هنا، في موضع المراجعة نفسه */
@@ -7258,20 +7285,14 @@ function wirdBanner(sfx){
   var n=ss.length, i=(REV.wdone||0)%n, cur=ss[i], done=wirdDoneToday();
   var lbl=cur.map(function(P){ return arNum(P); }).join('، ');
   var pcs=pagePieces(cur[0]), nm=pcs.length?esc(pcs[0].s.name):'';
-  return '<div class="revsum" style="margin:0 0 16px;text-align:right;position:relative">'+
-    (done?'<span title="أُدّي وردُ اليوم" style="position:absolute;top:-11px;left:-9px;'+
-      'background:linear-gradient(180deg,#34c47c,#147c40);color:#fff;border:2px solid #0b2a46;'+
-      'border-radius:50%;width:30px;height:30px;line-height:26px;text-align:center;'+
-      'font-size:16px;font-weight:900;box-shadow:0 4px 10px rgba(0,0,0,.35)">✓</span>':'')+
-    '<div style="font-size:15px">📖 <b>ورد المراجعة اليوم</b> — من محفوظك</div>'+
-    '<div style="font-size:18px;font-weight:900;margin-top:6px">'+
-      nm+' — '+(cur.length>1?('أوجه '+lbl):('وجه '+lbl))+'</div>'+
-    '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:4px">'+
-      'الجلسة '+arNum(i+1)+' من '+arNum(n)+' • تتمّ الدورة في '+arNum(n)+' يوماً'+
-      ((REV.cyc||0)? (' • 🏅 أتممت '+arNum(REV.cyc)+(REV.cyc===1?' دورة':' دورات')) : '')+'</div>'+
-    '<button type="button" class="btn '+(done?'ghost':'blue')+' big" id="wirdGo'+sfx+'" '+
-      'style="margin:12px 0 0">🗺️ '+(done?'زِد على وردك':'ابدأ مسار المراجعة')+'</button>'+
-  '</div>';
+  return revCard({
+    id:'wirdGo'+sfx, done:done, ic:(done?'✅':'📖'),
+    head:(done?'زِدْ على وردك — ':'وردُ اليوم — ')+nm+' '+
+         (cur.length>1?('أوجه '+lbl):('وجه '+lbl)),
+    sub:'من محفوظك • الجلسة '+arNum(i+1)+' من '+arNum(n)+
+        ' • تتمّ الدورة في '+arNum(n)+' يوماً'+
+        ((REV.cyc||0)? (' • 🏅 أتممتَ '+arNum(REV.cyc)+(REV.cyc===1?' دورة':' دورات')) : '')
+  });
 }
 function wirdWire(sfx){
   var b=$('wirdGo'+sfx); if(!b) return;
@@ -7286,21 +7307,16 @@ function bqnRevBanner(sfx){
   var T=bqnToday();
   if(!T || !T.r) return '';
   var rest=T.pages.length-T.rp;
-  return '<div class="revsum" style="margin:0 0 16px;text-align:right;position:relative">'+
-    (T.revDone?'<span title="تمّت مراجعة اليوم" style="position:absolute;top:-11px;left:-9px;'+
-      'background:linear-gradient(180deg,#34c47c,#147c40);color:#fff;border:2px solid #0b2a46;'+
-      'border-radius:50%;width:30px;height:30px;line-height:26px;text-align:center;'+
-      'font-size:16px;font-weight:900;box-shadow:0 4px 10px rgba(0,0,0,.35)">✓</span>':'')+
-    '<div style="font-size:15px">'+(T.dayDone
-      ? ('✅ <b>أتممت مقرَّر اليوم</b> — وهذا مقرَّر الغد من خطة «'+esc(T.plan.t)+'»')
-      : ('📅 <b>مقرَّر المراجعة اليوم</b> من خطة «'+esc(T.plan.t)+'»'))+'</div>'+
-    '<div style="font-size:18px;font-weight:900;margin-top:6px">'+bqnLabel(T.r)+'</div>'+
-    '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:4px">'+
-      arNum(T.pages.length)+' وجه'+(T.rp>0?(' • أنجزت '+arNum(T.rp)+' منها'):'')+
-      (T.h?(' &nbsp;•&nbsp; '+(T.dayDone?'وحفظ الغد: ':'وحفظ اليوم: ')+bqnLabel(T.h)):'')+'</div>'+
-    '<button type="button" class="btn blue big" id="bqnRevGo'+sfx+'" style="margin:12px 0 0">'+
-      (T.revDone?'☀️ أعد مراجعة اليوم':(T.rp>0?('☀️ تابع المراجعة — بقي '+arNum(rest)+' وجه'):'☀️ ابدأ مراجعة اليوم'))+
-    '</button></div>';
+  return revCard({
+    id:'bqnRevGo'+sfx, done:!!T.revDone, ic:(T.revDone?'✅':'📅'),
+    head:(T.revDone ? ('أعِدْ مراجعة اليوم — '+bqnLabel(T.r))
+         : (T.rp>0 ? ('تابع المراجعة — بقي '+arCount(rest,C_PAGE))
+                   : ('ابدأ مراجعة اليوم — '+bqnLabel(T.r)))),
+    sub:(T.dayDone?'مقرَّر الغد • ':'')+'خطة «'+esc(T.plan.t)+'» • '+
+        arCount(T.pages.length,C_PAGE)+
+        (T.rp>0?(' • أنجزتَ '+arNum(T.rp)+' منها'):'')+
+        (T.h?(' • '+(T.dayDone?'وحفظ الغد: ':'وحفظ اليوم: ')+bqnLabel(T.h)):'')
+  });
 }
 function bqnRevStart(){
   var T=bqnToday(); if(!T||!T.r) return false;
