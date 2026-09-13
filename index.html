@@ -1451,9 +1451,12 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
     <div id="revBqn"></div>
     <div class="card bare" id="revPathCard">
       <div class="pathhead">
-        <button class="nav" id="revPrev" title="السورة السابقة">▶</button>
         <div class="ttl" id="revTitle">—<span id="revMeta">—</span></div>
-        <button class="nav" id="revNext" title="السورة التالية">◀</button>
+      </div>
+      <!-- يبقيان مخفيّين: مسارُ المراجعة صار متّصلاً فلا سهمَين -->
+      <div hidden aria-hidden="true">
+        <button type="button" class="nav" id="revPrev">▶</button>
+        <button type="button" class="nav" id="revNext">◀</button>
       </div>
       <div class="path" id="revPath"></div>
     </div>
@@ -7955,65 +7958,100 @@ function openBqn(){
 function startRevPlan(){ revLoad(); renderRevPlan(); show('scr-rev'); }
 function beginRevPath(){ revLoad(); renderRevPath(); show('scr-revpath'); }
 
+/* ===== مسارُ المراجعة: خطٌّ واحدٌ من أوّل النطاق إلى آخره =====
+   كان يُعرض سورةً سورةً وبينهما سهمان، فلا يرى الطفلُ طولَ الطريق ولا
+   أين هو منه. فصار خطّاً متّصلاً كمسار الحفظ: كلُّ سورةٍ قسمٌ برأسه،
+   والجلساتُ تحته عُقَداً، وما بعدَ النافذةِ يُطلب بزرّ لئلّا تُرسم مئاتُ
+   العقد على هاتف طفل. */
+var RPATH_WIN=2, RPATH_WIN_STEP=3, RPATH_NODE_CAP=240;
+function revSecHTML(sn,cnt,dn,here){
+  var sx=surahBy(sn), all=(cnt>0 && dn>=cnt);
+  return '<div class="pathsec'+(all?' done':(here?' here':''))+'">'+
+    '<span class="psi">'+(all?'✓':arNum(sx.n))+'</span>'+
+    '<span class="pst"><b>سورة '+esc(sx.name)+'</b>'+
+      '<i>'+juzLabel(sx)+' • '+arNum(dn)+'/'+arCount(cnt,C_SESS)+'</i></span></div>';
+}
 function renderRevPath(){
   renderHUDInto('revHud');
   if($('revBqn')) $('revBqn').innerHTML='';   /* اختار المسار الحرّ، فلا يزاحمه صندوق الخطة */
-  var md=revMode(), ss=revSessions(md), list=revSurahList(md);
+  var md=revMode(), ss=revSessions(md), list=revSurahList(md), i;
   if(!ss.length){ $('revPath').innerHTML=''; $('revTitle').textContent='النطاق فارغ'; return; }
 
-  /* افتح على سورة الجلسة الحالية ما لم يكن اللاعب قد تنقّل */
-  if(list.indexOf(REV.view)<0){
-    var cur=ss[Math.min(revDone(md), ss.length-1)];
-    REV.view = cur ? revSessionSurah(cur) : list[0];
-  }
-  var vi=list.indexOf(REV.view), sv=surahBy(REV.view);
-  var mine=[];
-  ss.forEach(function(pg,i){ if(revSessionSurah(pg)===REV.view) mine.push({pg:pg,i:i}); });
-  var doneHere=0;
-  mine.forEach(function(x){ if(x.i<revDone(md)) doneHere++; });
+  var done=revDone(md), at=Math.min(done, ss.length-1);
+  var here=revSessionSurah(ss[at]);           /* سورةُ الجلسة التي هو عليها الآن */
+  var pos=list.indexOf(here); if(pos<0) pos=0;
+  REV.view=here;                              /* لمن يسأل عن موضعه من خارج الرسم */
 
-  var a=surahBy(REV.fromS), b=surahBy(REV.toS);
-  var wird=(md==='wird');
-  $('revTitle').innerHTML='<small style="display:block;font-size:12px;opacity:.75;font-weight:800">'+
-      (wird?'📖 مسار ورد المراجعة':'🎛️ مسار المراجعة الحرّة')+'</small>'+esc(sv?sv.name:'—')+
-    '<span>'+arNum(doneHere)+' من '+arCount(mine.length,C_SESS)+' هنا • '+
-    'المسار: '+arNum(Math.min(revDone(md),ss.length))+'/'+arNum(ss.length)+' • '+
+  /* الجلساتُ مقسومةٌ على سورها، ورقمُها في المسار محفوظٌ معها */
+  var by={};
+  ss.forEach(function(pg,k){
+    var sn=revSessionSurah(pg);
+    if(!by[sn]) by[sn]=[];
+    by[sn].push({pg:pg,i:k});
+  });
+
+  /* الترويسةُ تصف المسارَ كلَّه، فلم يعد سورةً واحدة */
+  var a=surahBy(REV.fromS), b=surahBy(REV.toS), wird=(md==='wird');
+  $('revTitle').innerHTML=(wird?'📖 مسار ورد المراجعة':'🎛️ مسار المراجعة الحرّة')+
+    '<span>'+arNum(Math.min(done,ss.length))+'/'+arNum(ss.length)+' جلسة • '+
+    arCount(list.length,C_SURAH)+' • '+
     (wird ? ('كلّ محفوظك'+((REV.cyc||0)?(' • 🏅 '+arNum(REV.cyc)+' دورة'):''))
           : (esc(a.name)+' '+arNum(REV.fromA)+' ← '+esc(b.name)+' '+arNum(REV.toA)))+'</span>';
-  $('revPrev').disabled = vi<=0;
-  $('revNext').disabled = vi>=list.length-1;
 
-  var h='';
-  mine.forEach(function(x){
-    var st = x.i<revDone(md) ? 'done' : (x.i===revDone(md) ? 'now' : 'locked');
-    var weak=false;
-    for(var k=0;k<x.pg.length;k++) if(REV.weak[x.pg[k]]) weak=true;
-    h+='<div class="pnode '+st+'" data-revs="'+x.i+'">'+
-       (st==='now'?'<span class="bubble">ابدأ</span>':'')+
-       '<button class="dot">'+(st==='done'?'✓':arNum(x.i+1))+'</button>'+
-       '<div class="lbl wide">'+esc(revSessionLabel(x.pg))+(weak?' 🔁':'')+'</div></div>';
-  });
-  if(revDone(md)>=ss.length && vi===list.length-1)
-    h+='<div class="pnode done"><button class="dot">🏁</button><div class="lbl">تمّت مراجعة النطاق كله</div></div>';
+  var offs=['off2','off1','off2','','off3','off4','off3',''];
+  var h='', nodes=0;
+  var from=Math.max(0,pos-1), to=Math.min(list.length-1, pos+RPATH_WIN);
+  for(i=from;i<=to;i++){
+    var sn=list[i], mine=by[sn]||[], dn=0, k;
+    if(!mine.length) continue;
+    for(k=0;k<mine.length;k++) if(mine[k].i<done) dn++;
+    h+=revSecHTML(sn,mine.length,dn,sn===here);
+    for(k=0;k<mine.length;k++){
+      var x=mine[k];
+      var st = x.i<done ? 'done' : (x.i===done ? 'now' : 'locked');
+      var weak=false, z;
+      for(z=0;z<x.pg.length;z++) if(REV.weak[x.pg[z]]) weak=true;
+      h+='<div class="pnode '+st+' '+offs[k%offs.length]+'" data-revs="'+x.i+'">'+
+         (st==='now'?'<span class="bubble">ابدأ</span>':'')+
+         '<div class="dot">'+(st==='done'?'✓':(st==='locked'?'🔒':arNum(x.i+1)))+'</div>'+
+         '<div class="lbl wide">'+esc(revSessionLabel(x.pg))+(weak?' 🔁':'')+'</div></div>';
+      nodes++;
+    }
+    if(nodes>=RPATH_NODE_CAP){ to=i; break; }
+  }
+  if(done>=ss.length && to>=list.length-1)
+    h+='<div class="pnode done"><div class="dot">🏁</div>'+
+       '<div class="lbl">تمّت مراجعة النطاق كلّه</div></div>';
+  if(to<list.length-1)
+    h+='<button type="button" class="pathmore" id="revMore">▼ تابع المسار — '+
+       esc(surahBy(list[to+1]).name)+' وما بعدها</button>';
+
   $('revPath').innerHTML=h;
-
-  var ns=$('revPath').querySelectorAll('[data-revs]');
-  for(var z=0;z<ns.length;z++) ns[z].onclick=function(){
+  if($('revMore')) $('revMore').onclick=function(){
+    RPATH_WIN+=RPATH_WIN_STEP; renderRevPath();
+  };
+  var ns=$('revPath').querySelectorAll('[data-revs]'), y;
+  for(y=0;y<ns.length;y++) ns[y].onclick=function(){
     var k=parseInt(this.getAttribute('data-revs'),10);
     if(k!==revDone(md)) return;                   /* الجلسة الحالية وحدها */
     adabAsk({ rev:'session', idx:k });
   };
+  /* يقع نظرُه على جلسته لا على أوّل النطاق — ويُؤجَّل لأنّ show تُرجع
+     التمرير إلى أعلى بعد الرسم فتُلغي ما فعلناه. */
+  setTimeout(revPathFocus,0);
 }
-/* التنقّل بين سور النطاق */
-function revGoSurah(step){
-  var list=revSurahList(), vi=list.indexOf(REV.view);
-  if(vi<0) vi=0;
-  var ni=vi+step;
-  if(ni<0||ni>=list.length) return;
-  REV.view=list[ni];
-  renderRevPath();
-  window.scrollTo(0,0);
+function revPathFocus(){
+  try{
+    var box=$('revPath'); if(!box) return;
+    var el=box.querySelector('.pnode.now') ||
+             box.querySelector('.pathsec.here') ||
+             box.querySelector('.pnode.done');
+    if(el && el.scrollIntoView) el.scrollIntoView({block:'center'});
+  }catch(e){}
 }
+/* بقيّةُ التنقّل بالسهمين: المسارُ صار متّصلاً فلا سورةَ تُفتح وحدَها،
+   وتُبقى الدالّةُ لأنّ السهمين المطويّين ما زالا مربوطَين بها. */
+function revGoSurah(step){ revPathFocus(); }
 /* جلسة من المسار */
 function beginRevSession(i){
   var ss=revSessions(), pg=ss[i];
