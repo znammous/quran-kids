@@ -1657,7 +1657,7 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
       <div class="setpage" data-setp="play" hidden>
       <div class="switchrow"><span>🔔 أصوات التشجيع (نغمات فقط)</span><input type="checkbox" id="setSound"></div>
       <div class="switchrow"><span>🎤 تسجيل الصوت في القراءة والتسميع<br><small style="font-weight:700;color:var(--mute)">يستمع لنفسه بعد التسجيل — ومع التسميع يظهر النص للمقارنة</small></span><input type="checkbox" id="setRec"></div>
-      <div class="switchrow"><span>🌞 الوضع النهاريّ<br><small style="font-weight:700;color:var(--mute)">خلفية فاتحة بدل سماء الليل — لكل لاعب اختياره</small></span><input type="checkbox" id="setLight"></div>
+      <div class="switchrow"><span>🌞 الوضع النهاريّ<br><small style="font-weight:700;color:var(--mute)">خلفية فاتحة بدل سماء الليل — لكل مستخدم اختياره</small></span><input type="checkbox" id="setLight"></div>
       <div class="switchrow"><span>🎉 احتفالات السلسلة والشارات<br><small style="font-weight:700;color:var(--mute)">إن أطفأتَه بقيت الشارات والجواهر كما هي، ويُعلَن عنها بسطر عابر لا يوقف اللعب</small></span><input type="checkbox" id="setCele"></div>
       <div class="switchrow"><span>✨ توهّج متحرّك على الزر الذي ينتظر الضغط<br><small style="font-weight:700;color:var(--mute)">يعمل حتى لو كان الجهاز يقلّل الحركة</small></span><input type="checkbox" id="setGlow"></div>
       <button class="btn blue big" id="btnHelp" style="margin:14px 0 0">❓ كيف ألعب</button>
@@ -1675,12 +1675,12 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
         <div class="note" id="offNote">تُحفظ أوجه المصحف في جهازك، فيعمل العرض كاملاً بلا شبكة.</div>
       </div>
       <div class="setblock" style="margin-top:12px">
-        <label class="lbl">👧👦 اللاعبون في هذا الجهاز</label>
+        <label class="lbl">👧👦 المستخدمون في هذا الجهاز</label>
         <div class="row">
           <button class="btn blue" id="btnAddPlayer">➕ مستخدم جديد</button>
-          <button class="btn red" id="btnDelPlayer">🗑️ حذف اللاعب الحالي</button>
+          <button class="btn red" id="btnDelPlayer">🗑️ حذف المستخدم الحالي</button>
         </div>
-        <div class="note">لكل لاعب نجومه ومقاطعه ومواظبته وإعداداته المستقلّة.</div>
+        <div class="note">لكل مستخدم نجومه ومقاطعه ومواظبته وإعداداته المستقلّة.</div>
       </div>
       <div class="switchrow"><span>🏠 لوحة البيت بين أفراد الأسرة</span><input type="checkbox" id="setBoard"></div>
       <div class="row" style="margin-top:12px">
@@ -4152,7 +4152,7 @@ function playerTotals(p){
 function renderBoard(){
   var rows=DB.players.map(function(p,i){
     var t=playerTotals(p);
-    return { i:i, name:p.name||('لاعب '+arNum(i+1)), stars:t.stars, done:t.done, ayat:t.ayat, streak:t.streak };
+    return { i:i, name:p.name||('مستخدم '+arNum(i+1)), stars:t.stars, done:t.done, ayat:t.ayat, streak:t.streak };
   }).sort(function(a,b){ return b.ayat-a.ayat || b.stars-a.stars; });
   var medals=['🥇','🥈','🥉'];
   $('boardList').innerHTML = rows.map(function(r,k){
@@ -4160,12 +4160,12 @@ function renderBoard(){
       '<span class="rank">'+(medals[k]||arNum(k+1))+'</span>'+
       '<span class="who2">'+esc(r.name)+'</span>'+
       '<span class="num2">📖 '+arNum(r.ayat)+' آية<br>⭐ '+arNum(r.stars)+' • 🏮 '+arNum(r.streak)+'</span></div>';
-  }).join('') || '<div class="hintline">لا يوجد لاعبون</div>';
+  }).join('') || '<div class="hintline">لا يوجد مستخدمون</div>';
 }
 function renderPlayers(){
   var h=DB.players.map(function(p,i){
     return '<button class="pchip'+(i===DB.cur?' sel':'')+'" data-p="'+i+'">'+
-      esc(p.name||('لاعب '+arNum(i+1)))+'</button>';
+      esc(p.name||('مستخدم '+arNum(i+1)))+'</button>';
   }).join('');
   h+='<button class="pchip" data-p="new">➕ مستخدم جديد</button>';
   $('players').innerHTML=h;
@@ -9584,8 +9584,8 @@ if($('btnInstall2')) $('btnInstall2').onclick=function(){
 };
 pwaSync();
 $('btnDelPlayer').onclick=function(){
-  if(DB.players.length<2){ uiAlert('لا يمكن حذف اللاعب الوحيد','👤'); return; }
-  uiAsk('حذف اللاعب «'+(profile.name||'بلا اسم')+'» وكلّ نجومه؟',function(ok){
+  if(DB.players.length<2){ uiAlert('لا يمكن حذف المستخدم الوحيد','👤'); return; }
+  uiAsk('حذف المستخدم «'+(profile.name||'بلا اسم')+'» وكلّ نجومه؟',function(ok){
     if(!ok) return;
     DB.players.splice(DB.cur,1); DB.cur=0; saveDB(); bindPlayer();
     $('pname').value=profile.name||''; fillSettings(); renderPlayers(); renderAvatars();
