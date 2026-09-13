@@ -740,6 +740,27 @@ body.glow-off .cele .spk{display:none}
 /* والتي لم تتمّ تنبض، فيقع النظرُ عليها أوّلاً */
 .goalcard.now{border-color:var(--gold)}
 .goalcard.now .gcic{background:var(--psel);border-color:var(--gold)}
+/* ===== ستارُ التحميل =====
+   شعارُ المسجد باهتاً، يمتلئ نوراً من أسفله إلى أعلاه ثمّ يخبو —
+   فيُعلم أنّ شيئاً يجري، ولا يُرى بعثرةُ العناصر قبل أن تستقرّ. */
+.splash{position:fixed;inset:0;z-index:9000;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:18px;
+  background:linear-gradient(180deg,var(--bg1),var(--bg3));
+  transition:opacity .38s ease}
+.splash.gone{opacity:0;pointer-events:none}
+.splogo{width:min(148px,42vw);height:auto;display:block}
+.sp-pale{fill:var(--pb3);opacity:.32}
+.sp-lit{fill:var(--gold)}
+body.light .sp-lit{fill:#1f92d4}
+#spFill{transform:translateY(96px);animation:spRise 1.9s ease-in-out infinite}
+@keyframes spRise{
+  0%,100%{transform:translateY(96px)}
+  50%{transform:translateY(0)}
+}
+.sptxt{font-size:19px;font-weight:900;color:var(--ttl);letter-spacing:.5px;opacity:.85}
+@media (prefers-reduced-motion:reduce){
+  #spFill{animation:none;transform:translateY(0)}
+}
 .btn.revcta{box-shadow:0 6px 18px rgba(0,0,0,.35)}
 /* ===== بابٌ خالٍ =====
    لا يُترك القسمُ فارغاً بلا بيان: أيقونةٌ في وسطه تدعو إلى ملئه،
@@ -1151,6 +1172,43 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
 </style>
 </head>
 <body>
+<script>
+/* الثيمُ يُطبَّق قبل أن يُرسم شيء: وإلّا ومضت الشاشةُ ليلاً ثمّ صارت نهاراً.
+   ويُقرأ من مخزن اللاعب نفسِه، فلا مصدرَ ثانٍ يتخلّف عنه. */
+(function(){
+  try{
+    var d=JSON.parse(localStorage.getItem("nur_db")||"null");
+    var p=d&&d.players&&d.players[d.cur||0];
+    if(p&&p.set&&p.set.light) document.body.className="light";
+  }catch(e){}
+})();
+</script>
+
+<!-- ستارُ التحميل: الصفحةُ ثقيلةٌ فتُرسم عناصرُها قبل أن تستقرّ،
+     فيرى الطفلُ لقطةً مبعثرة. فيُسدل عليها ستارٌ حتى تستوي. -->
+<div class="splash" id="splash">
+  <svg class="splogo" viewBox="0 0 120 96" aria-hidden="true">
+    <defs>
+      <g id="spM">
+        <path d="M60 9 v6"/>
+        <circle cx="60" cy="7" r="3"/>
+        <path d="M60 16 C45 16 37 30 37 43 L83 43 C83 30 75 16 60 16 Z"/>
+        <path d="M30 43 H90 V88 H30 Z"/>
+        <path d="M52 88 V69 a8 8 0 0 1 16 0 V88 Z" fill-opacity="0"/>
+        <circle cx="19" cy="30" r="4"/>
+        <path d="M15 34 h8 v54 h-8 z"/>
+        <circle cx="101" cy="30" r="4"/>
+        <path d="M97 34 h8 v54 h-8 z"/>
+        <path d="M8 88 H112 v5 H8 Z"/>
+      </g>
+      <clipPath id="spClip"><rect id="spFill" x="0" y="0" width="120" height="96"/></clipPath>
+    </defs>
+    <use href="#spM" class="sp-pale"/>
+    <g clip-path="url(#spClip)"><use href="#spM" class="sp-lit"/></g>
+  </svg>
+  <div class="sptxt">نور الوحي</div>
+</div>
+
 <div class="bg" id="bg"><div class="moon">🌙</div></div>
 
 <!-- صندوق التنبيه والتأكيد بثيمة التطبيق — يخلف نوافذ المتصفّح الباردة -->
@@ -9443,6 +9501,19 @@ try{ crownCheck(); }catch(e){}
 try{ checkBadges(true); }catch(e){}      /* ما استُحقّ قبل النظام يُمنح صامتاً */
 if(onbNeeded()){ ONB.edit=false; onbShow(0); }     /* أول مرة: المعالج */
 else{ renderHome(); if(!load(LS.help,0)) $('help').hidden=false; }
+
+/* استوت الشاشةُ فيُرفع الستار. وللاحتياط: عند تمام التحميل، وبعد مهلةٍ
+   لئلّا يبقى مسدلاً إن تعثّر شيءٌ قبله. */
+function splashOff(){
+  var el=document.getElementById('splash');
+  if(!el || el.__off) return;
+  el.__off=1;
+  el.className='splash gone';
+  setTimeout(function(){ try{ el.parentNode.removeChild(el); }catch(e){} }, 420);
+}
+requestAnimationFrame(function(){ requestAnimationFrame(splashOff); });
+window.addEventListener('load', splashOff);
+setTimeout(splashOff, 8000);
 </script>
 </body>
 </html>
