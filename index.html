@@ -410,7 +410,9 @@ body.light .card.bare .diffline{color:var(--on2)}
   color:#102b4a;box-shadow:0 3px 0 rgba(0,0,0,.12);transition:.1s;touch-action:manipulation}
 .chip:active{transform:translateY(2px)}
 .chip.placed{background:#e2f1ff;border-color:#9fdcb8;color:#12694a;box-shadow:none;cursor:default}
-.chip.gone{visibility:hidden}
+/* تختفي الكلمةُ في لحظة اختيارها: كان انتقالُ ‎.1s‎ يشمل visibility فتبقى ظاهرةً
+   قابلةً للّمس في موضعها وقد وُضعت في سطر الإجابة، فيراها الطفلُ في مكانين */
+.chip.gone{visibility:hidden;transition:none;pointer-events:none}
 .chip.bad{animation:shake .35s;border-color:var(--red);background:#ffe9e9}
 .chip.hintme{border-color:var(--gold);background:#fff6dc}
 /* الذهبيُّ تلميحٌ، والأخضرُ جوابٌ كُشف — فلا يختلطان */
