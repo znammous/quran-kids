@@ -1281,6 +1281,21 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
   <div class="mfbody" id="mfBody"></div>
 </div>
 
+<div class="modal-bg" id="srPick" hidden>
+  <div class="modal">
+    <button class="xbtn" id="xSrPick" aria-label="إغلاق">✕</button>
+    <h2 id="srPickName">—</h2>
+    <div class="onbopts">
+      <button type="button" class="onbopt" id="srGoPath">
+        <span class="oe">🗺️</span>
+        <span class="ot"><b>مسارُ الحفظ</b><i>امشِ في مقاطعها مقطعاً مقطعاً</i></span></button>
+      <button type="button" class="onbopt" id="srGoRead">
+        <span class="oe">📖</span>
+        <span class="ot"><b>اقرأ من المصحف</b><i>يُفتح وجهُها فتتلو منه مباشرةً</i></span></button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-bg" id="adab" hidden>
   <div class="modal">
     <button class="xbtn" id="xAdab" aria-label="إغلاق">✕</button>
@@ -1442,7 +1457,10 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
     <div class="onbtabs" id="revTabs"></div>
     <p class="sub" id="revSub">—</p>
     <div id="revPlan"></div>
-    <button class="btn primary big pulse revcta" id="btnRevGo">🗺️ ابدأ المسار</button>
+    <!-- يبقى مخفيّاً: صارت البطاقةُ نفسُها هي الزرَّ، وبقيّةُ الشيفرة تضبطه -->
+    <div hidden aria-hidden="true">
+      <button type="button" id="btnRevGo">🗺️ ابدأ المسار</button>
+    </div>
     <div class="row"><button class="btn ghost" id="btnRevHome">🏠 البداية</button></div>
   </section>
 
@@ -2360,7 +2378,16 @@ function mfPickAt(t,x,y){
 /* وجه المصحف ملء الشاشة: يُفتح عند الطلب ولا يزاحم القراءة */
 var MFSEQ=0;
 /* فتح الوجه بصفحته: تُستعمل في التسميع ومراجعة الصفحة حيث لا آية بعينها */
+var MF_READ=false;                 /* فُتح للتلاوة لا لنظرةٍ عابرة */
+function mushafRead(P, title){
+  mushafOpenPage(P, -1, title);
+  MF_READ=true;                    /* بعد الفتح، فالفتحُ يُطفئه */
+}
 function mushafOpenPage(P, hlGi, title){
+  /* فتحٌ جديدٌ يبدأ نظرةً عابرة. أمّا تقليبُ الوجه والوجهُ مفتوحٌ فلا
+     يُخرج القارئَ من تلاوته إلى النظرة، وإلّا أغلقته أوّلُ لمسةٍ بعد
+     أن قلّب صفحة. */
+  if($('mfSheet') && $('mfSheet').hidden) MF_READ=false;
   var seq=++MFSEQ;
   if(title) $('mfSheet').setAttribute('aria-label', title);
   mfBarSync(P, hlGi);
@@ -2407,7 +2434,7 @@ window.addEventListener('resize', function(){
   var sh=$('mfSheet');
   if(sh && !sh.hidden) mushafFit($('mfBody'));
 });
-function mushafClose(){ if($('mfSheet')) $('mfSheet').hidden=true; }
+function mushafClose(){ MF_READ=false; if($('mfSheet')) $('mfSheet').hidden=true; }
 /* شاشة اللمس تُولّد نقرةً تابعة بعد رفع الإصبع، وتُختبَر إصابتها بعد إخفاء
    الوجه — فتقع على الزرّ الذي كان خلفه. فيبتلعها حارسٌ لحظيّ. */
 function mushafEatGhost(){
@@ -4343,7 +4370,7 @@ function bindSurahRows(root){
   var rows=root.querySelectorAll('.srow');
   for(var i=0;i<rows.length;i++){
     if(rows[i].classList.contains('locked')) continue;
-    rows[i].onclick=function(){ openSurah(parseInt(this.getAttribute('data-n'),10)); };
+    rows[i].onclick=function(){ srPickOpen(parseInt(this.getAttribute('data-n'),10)); };
   }
   /* 📜 يفتح الشهادة مباشرة دون فتح السورة */
   var cbs=root.querySelectorAll('.certbtn');
@@ -4356,6 +4383,17 @@ function bindSurahRows(root){
       certFrom='map';                 /* بعد showCert لأنها تصفّره */
     };
   }
+}
+/* ===== بابا السورة من الفهرس =====
+   كانت الضغطةُ تمضي إلى المسار لا غير، ومن أراد أن يقرأ السورةَ تلاوةً
+   لم يجد إليها سبيلاً من هنا. فصارت تسأل: أتمشي في مسارها أم تفتح
+   وجهَها فتتلو؟ */
+var SRPICK=0;
+function srPickOpen(n){
+  var sx=surahBy(n); if(!sx) return;
+  SRPICK=n;
+  $('srPickName').textContent='سورة '+sx.name;
+  $('srPick').hidden=false;
 }
 var certFrom='';
 function renderMap(){
@@ -4726,32 +4764,50 @@ $('mfNext').onclick=function(){ mfGoto(mfPage()+1); };
        ونتركها لحدث النقر، فهو لا يُولَّد إلا من لمسةٍ حقيقيّة — ولا
        نمنع السلوك الأصليّ لئلّا يُمنع النقر معه. */
     if(MF_PICK) return;
+    if(MF_READ) return;                                 /* يقرأ: لمستُه ليست خروجاً */
     if(Date.now()-st>600) return;                       /* ضغطةٌ طويلة: لا تُغلق الوجه */
     if(moved) return;
     if(e.cancelable) e.preventDefault();
     mushafClose(); mushafEatGhost();
   });
+  var wq=0;
+  b.addEventListener('wheel', function(e){
+    if(Math.abs(e.deltaX)<=Math.abs(e.deltaY)) return;   /* رأسيٌّ: يُترك لتمرير الوجه */
+    if(Math.abs(e.deltaX)<8) return;                     /* رجفةٌ لا قصدَ فيها */
+    if(Date.now()-wq<450) return;
+    wq=Date.now();
+    if(e.cancelable) e.preventDefault();
+    mfGoto(mfPage() + (e.deltaX>0 ? 1 : -1));
+  }, {passive:false});
   /* النقرُ هو بابُ الالتقاط: يصل في كلّ موضعٍ من الوجه، ولا يُولَّد من سحب */
   b.addEventListener('click', function(e){
     if(!MF_PICK || MF_PICK.busy) return;
     mfPickAt(null, e.clientX, e.clientY);
   });
 })();
-['help','adab'].forEach(function(id){
+['help','adab','srPick'].forEach(function(id){
   $(id).addEventListener('click', function(e){ if(e.target===this) closeModal(id); });
 });
 document.addEventListener('keydown', function(e){
   if(e.key!=='Escape') return;
   if($('mfSheet') && !$('mfSheet').hidden){ mfPickEnd(); mushafClose(); return; }
-  if(!$('adab').hidden) closeModal('adab');
+  if(!$('srPick').hidden) closeModal('srPick');
+  else if(!$('adab').hidden) closeModal('adab');
   else if(!$('help').hidden) closeModal('help');
 });
 $('xAdab').onclick=function(){ closeModal('adab'); };
+$('xSrPick').onclick=function(){ closeModal('srPick'); };
+$('srGoPath').onclick=function(){ $('srPick').hidden=true; openSurah(SRPICK); };
+$('srGoRead').onclick=function(){
+  var sx=surahBy(SRPICK); if(!sx) return;
+  $('srPick').hidden=true;
+  mushafRead(mfSuraPage(SRPICK), 'سورة '+sx.name);
+};
 /* نافذة مفتوحة = خطوة رجوع مستقلّة */
 (function(){
   var mo=window.MutationObserver;
   if(!mo) return;
-  ['help','adab'].forEach(function(id){
+  ['help','adab','srPick'].forEach(function(id){
     var e=$(id); if(!e) return;
     new mo(function(){ if(!e.hidden){ try{ navGuard(); }catch(x){} } })
       .observe(e,{attributes:true,attributeFilter:['hidden']});
@@ -6734,22 +6790,25 @@ function renderRevPlanBody(){
   /* نطاق حرّ سبق ضبطه؟ فالأوْلى أن يُكمل مساره لا أن يُعيد التحديد */
   /* في الورد لا يُعرض صندوق النطاق الحرّ، فلا يزاحم مقرَّرَ اليوم صندوقان */
   /* يُعرض المسار الحرّ متى ضُبط نطاقُه، ولو كان الوردُ معتمداً معه */
-  var savedFree=(!!curP().rev && !revIsWird()), ss0=savedFree?revSessions('free'):[], nS=ss0.length;
+  /* ===== بطاقةُ المسار الحرّ =====
+     كان الصندوقُ يصف النطاق ثمّ يُعرض تحت الشاشة زرٌّ ثانٍ للبدء، فبابان
+     إلى مقصدٍ واحد. فصارت البطاقةُ نفسُها هي الزرَّ — على هيئة بطاقتَي
+     الشاشة الرئيسة: أيقونةٌ وعنوانٌ وسطرُ حالٍ وسهم. */
+  var savedFree=(!!curP().rev && !revIsWird()), ss0=revSessions('free'), nS=ss0.length;
   var doneS=Math.min(REV.done||0, nS), contHTML='';
-  if(savedFree && nS){
+  if(nS){
     var aa=surahBy(REV.fromS), bb=surahBy(REV.toS);
-    contHTML='<div class="revsum" style="margin:0 0 14px;text-align:right">'+
-      '<div style="font-size:15px">🎛️ <b>مسار المراجعة الحرّة</b></div>'+
-      '<div style="font-size:17px;font-weight:900;margin-top:5px">'+
-        esc(aa.name)+' '+arNum(REV.fromA)+' ← '+esc(bb.name)+' '+arNum(REV.toA)+'</div>'+
-      '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:4px">'+
-        arNum(doneS)+' من '+arNum(nS)+' جلسة • '+arNum(REV.size)+' صفحة في الجلسة</div>'+
-      '<button type="button" class="btn '+(doneS>0?'primary big pulse':'blue big')+'" id="btnRevCont" '+
-        'style="margin:12px 0 0">'+
-        (doneS>=nS ? '🎉 أتممت المسار — أعِده من أوّله'
-         : (doneS>0 ? ('▶️ أكمل المسار — الجلسة '+arNum(doneS+1)+' من '+arNum(nS))
-                    : ('🗺️ ابدأ المسار — '+arNum(nS)+' جلسة')))+
-      '</button></div>';
+    var full=(doneS>=nS);
+    contHTML='<button type="button" class="goalcard '+(full?'done':'now')+'" id="btnRevCont" '+
+        'style="margin:0 0 14px">'+
+      '<span class="gcic">'+(full?'🎉':(doneS>0?'▶️':'🎛️'))+'</span>'+
+      '<span class="gctx"><b>'+
+        (full ? 'أتممتَ المسار — أعِدْه من أوّله'
+              : (doneS>0 ? ('أكمل المسار — الجلسة '+arNum(doneS+1)+' من '+arNum(nS))
+                         : ('ابدأ المسار — '+arCount(nS,C_SESS))))+'</b>'+
+        '<i>'+esc(aa.name)+' '+arNum(REV.fromA)+' ← '+esc(bb.name)+' '+arNum(REV.toA)+
+          ' • '+arCount(REV.size,C_PAGE)+' في الجلسة</i></span>'+
+      '<span class="gcgo">❮</span></button>';
   }
   if(!REV_TAB) REV_TAB=revTabDefault();
   renderRevTabs();
@@ -6857,8 +6916,6 @@ function renderRevPlanBody(){
     if(REV.done>=revSessions('free').length){ REV.done=0; REV.weak={}; }
     revSave(); beginRevPath();
   };
-  /* زرُّ البدء يتبع اللوحةَ المفتوحة: من طوى اللوحةَ فصندوقُه يكفيه */
-  if($('btnRevGo')) $('btnRevGo').hidden=!panelOpen;
   renderRevSum();
 }
 function renderRevSum(){
@@ -9595,6 +9652,7 @@ function navBack(){
   /* ٠) احتفال قائم: يُطوى أوّلاً */
   if($('cele') && !$('cele').hidden){ celeDone(); return true; }
   /* ١) نافذة مفتوحة: تُغلق أوّلاً */
+  if($('srPick') && !$('srPick').hidden){ closeModal('srPick'); return true; }
   if($('adab') && !$('adab').hidden){ closeModal('adab'); return true; }
   if($('help') && !$('help').hidden){ closeModal('help'); return true; }
   var scr=curScreen();
