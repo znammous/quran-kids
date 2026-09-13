@@ -1169,6 +1169,10 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
   .exscore{font-size:26px;margin:2px 0 6px}
   .exscore.big{font-size:32px}
   .exscore span{font-size:13px}
+  /* ما صُغّر ليسع شاشةَ الجوال يُطبع بمقاسه، والصفحةُ لا تُقفل في الورق */
+  #certWrap .cert{transform:none!important}
+  #certWrap{height:auto!important}
+  body.certfit{overflow:visible!important}
   /* ألوانُ الشهادة تُطبع كما هي، فلا تخرج بيضاءَ باهتة */
   .cert,.cert *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
@@ -1199,6 +1203,25 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
   /* أهداف لمس مريحة */
   .btn{min-height:52px}
   .pchip{min-height:44px}
+  /* شاشةُ الشهادة ثابتةٌ في الجوال: الشهادةُ تُصغَّر لتسعها (certFit)
+     والزرّان صفٌّ واحدٌ تحتها، فيُرى كلُّ شيءٍ بلا تمرير */
+  #scr-cert .noprint{display:flex;gap:8px;margin-top:10px}
+  #scr-cert .noprint .btn{flex:1 1 0;min-width:0;margin:0;font-size:14.5px;
+    padding:10px 8px;line-height:1.35}
+  #certWrap.fit{overflow:hidden}
+  #certWrap.fit .cert{transform-origin:top center}
+  body.certfit{overflow:hidden}
+  body.certfit .wrap{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+  /* شاشاتُ النتيجة (مقطع، مرحلة، مراجعة، اختبار) ثابتةٌ في الجوال كذلك:
+     الزرُّ الأوّلُ بعرضه وما بعده عمودان، ويُصغَّر المسجدُ على قدر الشاشة (playFit) */
+  body.resfit .wrap{padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+  body.resfit.fitlock{overflow:hidden}
+  body.resfit #playArea>div{display:flex;flex-wrap:wrap;justify-content:center;column-gap:8px}
+  body.resfit #playArea>div>:not(.btn){flex:0 0 100%}
+  body.resfit #playArea>div>div[style*="font-size:52px"]{font-size:38px!important}
+  body.resfit #playArea .btn.big{flex:1 1 calc(50% - 4px);width:auto;min-width:0;min-height:50px;
+    margin:0 0 8px!important;padding:12px 8px;font-size:16px;line-height:1.35}
+  body.resfit #playArea .btn.big.pulse{flex-basis:100%}
 }
 @media(max-width:520px){
   h1{font-size:25px}
@@ -4434,6 +4457,10 @@ function show(id){
   try{ syncTabs(id); }catch(e){}
   try{ if(id!=='scr-start') navGuard(); }catch(e){}   /* رجوع الهاتف يبقى داخل اللعبة */
   window.scrollTo(0,0);
+  /* الشهادةُ تُضبط على الشاشة، وكلُّ انتقالٍ آخر يفكّ قفلَ الصفحة. ويُعاد الضبطُ
+     بعد لحظةٍ لما تأخّر: صورةُ الطالب والخطوط */
+  try{ certFit(); if(id==='scr-cert') setTimeout(certFit, 450); }catch(e){}
+  try{ playFit(); }catch(e){}                           /* الخروجُ من النتيجة يفكّ ضبطَها */
 }
 
 /* ===== الخريطة: أجزاء ← سور ===== */
@@ -9326,6 +9353,69 @@ function showExamCert(){
   renderAvatars();
   show('scr-cert');
 }
+/* ===== الشهادةُ على قدر شاشة الجوال =====
+   الشهادةُ ورقةٌ للطباعة أطولُ من الهاتف، فكان يُمرَّر إليها ليُرى زرّاها.
+   فتُصغَّر كلُّها بنسبةٍ واحدةٍ لتسع ما بين أعلاها والزرّين — تبقى هي هي
+   كما تُطبع — وتُقفل الصفحة. ويُقاس بـ offsetTop لا بالمستطيل، فحركةُ دخول
+   الشاشة لا تُفسد الحساب. وإن لزم تصغيرٌ لا يُقرأ معه تُركت كما هي تُمرَّر. */
+function certFit(){
+  var wrap=$('certWrap'), scr=$('scr-cert'); if(!wrap || !scr) return;
+  var c=wrap.querySelector('.cert');
+  if(c) c.style.transform='';
+  wrap.style.height=''; wrap.classList.remove('fit');
+  document.body.classList.remove('certfit');
+  if(!c || !scr.classList.contains('active')) return;
+  if(!(window.matchMedia && window.matchMedia('(max-width:820px)').matches)) return;
+  document.body.classList.add('certfit');          /* قبل القياس: يُضيّق هامشَ الأسفل */
+  var top=0, e;
+  for(e=wrap; e; e=e.offsetParent) top+=e.offsetTop;
+  var acts=scr.querySelector('.noprint');
+  var aH=acts ? acts.offsetHeight+(parseFloat(getComputedStyle(acts).marginTop)||0) : 0;
+  var W=document.querySelector('.wrap');
+  var padB=W ? (parseFloat(getComputedStyle(W).paddingBottom)||0) : 0;
+  var H=c.offsetHeight;
+  var avail=window.innerHeight-top-aH-padB-12;     /* فسحةٌ فلا يلامس الزرّان الحافّة */
+  var k=Math.min(1, avail/H);
+  if(!H || k<0.45){ document.body.classList.remove('certfit'); return; }
+  c.style.transform=(k<1)?('scale('+k.toFixed(4)+')'):'';
+  wrap.style.height=Math.ceil(H*k)+'px';
+  wrap.classList.add('fit');
+}
+window.addEventListener('resize', function(){ try{ certFit(); playFit(); }catch(e){} });
+/* ===== شاشاتُ النتيجة على قدر الجوال =====
+   شاشةُ اللعب واحدة: أسئلةٌ ثمّ نتيجةٌ بمسجدٍ وأزرار، والنتيجةُ أطولُ من
+   الهاتف. فإذا ظهر المسجدُ (علامةُ النتيجة) رُتّبت الأزرارُ عمودين، ثمّ
+   صُغّر المسجدُ بقدر ما زاد، ثمّ البطاقةُ كلُّها بـ zoom — وهو يُصغّر
+   التخطيطَ نفسَه فتبقى مواضعُ اللمس صحيحة. وما لم يسعه ذلك تُرك يُمرَّر. */
+function playFit(){
+  var card=$('playCard'), mq=$('mosque'), scr=$('scr-play'), B=document.body;
+  B.classList.remove('resfit'); B.classList.remove('fitlock');
+  if(card) card.style.zoom='';
+  if(mq) mq.style.height='';
+  if(!card || !mq || !scr || !scr.classList.contains('active') || mq.hasAttribute('hidden')) return;
+  if(!(window.matchMedia && window.matchMedia('(max-width:820px)').matches)) return;
+  B.classList.add('resfit');
+  var vh=window.innerHeight, D=document.documentElement;
+  var over=D.scrollHeight-vh;
+  if(over>0){
+    var mh=mq.getBoundingClientRect().height;
+    mq.style.height=Math.max(64, mh-over)+'px';
+    over=D.scrollHeight-vh;
+  }
+  if(over>0){
+    var ch=card.offsetHeight, k=(ch-over)/ch;
+    if(k>=0.78){ card.style.zoom=k.toFixed(4); over=D.scrollHeight-vh; }
+  }
+  if(over<=1) B.classList.add('fitlock');
+}
+/* ظهورُ المسجد واختفاؤه هو دخولُ النتيجة والخروجُ منها: فيُضبط أو يُفكّ */
+(function(){
+  var mq=$('mosque'); if(!mq || !window.MutationObserver) return;
+  new MutationObserver(function(){
+    try{ playFit(); }catch(e){}
+    setTimeout(function(){ try{ playFit(); }catch(e){} }, 350);   /* بعد الخطوط والرموز */
+  }).observe(mq, {attributes:true, attributeFilter:['hidden']});
+})();
 
 /* ===== بطاقتا هدف اليوم في الرئيسيّة =====
    تقولان ما هو مقرَّرُ يومه بالاسم، وهما بابُه إليه — فلا يضغط زرّاً
