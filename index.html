@@ -289,6 +289,14 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfbody>.mushaf{flex:0 0 auto;margin-block:auto}
 /* القراءةُ من الفهرس: وجهٌ نظيفٌ بلا شريط، ولمسةٌ تُظهره وأخرى تُخفيه */
 .mfsheet.clean .mfbar{display:none}
+/* رقمُ الوجه أسفلَه حين يُخفى الشريط، كهامش المصحف — لا يلتقط اللمس
+   فلا يعطّل السحبَ ولا لمسةَ إظهار الشريط */
+.mffoot{display:none}
+.mfsheet.clean .mffoot{display:block;position:absolute;left:50%;transform:translateX(-50%);
+  bottom:calc(8px + env(safe-area-inset-bottom));z-index:2;pointer-events:none;
+  font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;font-size:13px;font-weight:800;
+  color:#8a6b2a;background:rgba(253,246,228,.85);border:1px solid #e0cfa4;border-radius:999px;
+  padding:1px 12px;line-height:1.6}
 /* الوجهُ المجاور وهو يُسحب: طبقةٌ فوق الوجه بمقاسه، تتبع الإصبعَ معه —
    التالي يدخل من اليسار والسابق من اليمين، كما يُقلَّب المصحف. */
 .mfbody.mfpeek{position:absolute;left:0;right:0;z-index:2;overflow:hidden;pointer-events:none;
@@ -1305,6 +1313,7 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
   </div>
   <span class="mfstep" id="mfStep" hidden></span>
   <div class="mfbody" id="mfBody"></div>
+  <span class="mffoot" id="mfFoot" aria-hidden="true"></span>
 </div>
 
 <div class="modal-bg" id="srPick" hidden>
@@ -2307,6 +2316,7 @@ function mfBarSync(P, hlGi){
   if(a) a.disabled=(P<=1);
   if(b) b.disabled=(P>=604);
   if(f && document.activeElement!==f) f.value=P;
+  if($('mfFoot')) $('mfFoot').textContent=arNum(P);   /* يظهر حين يُخفى الشريط */
   if(hlGi!=null && hlGi>=0){ try{ sn=mLoc(hlGi)[0]; }catch(e){} }
   mfIdxFill(P, sn);
 }
