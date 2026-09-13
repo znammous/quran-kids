@@ -1237,11 +1237,13 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
 @media(max-width:520px){
   h1{font-size:25px}
   .ayah{font-size:29px}
-  .chip{font-size:24px}
-  .opt{font-size:25px}
+  /* صناديقُ الأسئلة بخطٍّ واحدٍ في الجوال: كلمةً كانت أو عبارةً أو آية،
+     فلا تكبر مرّةً وتصغر أخرى بين سؤالٍ وسؤال */
+  .chip{font-size:23px}
+  .opt{font-size:23px}
   .qtitle{font-size:19px}
-  .opt.phrase{font-size:20px}
-  .acard{font-size:20px}
+  .opt.phrase{font-size:23px}
+  .acard{font-size:23px}
   .cert h2{font-size:29px}
 }
 </style>
@@ -6118,6 +6120,25 @@ function roundRead(r){
   }
 }
 
+/* أسطرُ الإجابة بارتفاعٍ ثابتٍ على قدر الكلمة الموضوعة: كان ارتفاعُها أدنى
+   (46px) والكلمةُ أطول، فيكبر السطرُ بأوّل كلمة فتنزل الكلماتُ تحته — والطفلُ
+   يضغط مسرعاً فيقع إصبعُه على غير ما قصد. فيُقاس محرفٌ موضوعٌ ويُثبَّت عليه. */
+function ansRowsLock(lines){
+  if(!lines || !lines.children.length) return;
+  var row=lines.children[0];
+  var sp=document.createElement('span');
+  sp.className='chip placed'; sp.textContent='ٱلْكِتَـٰبُ';
+  sp.style.visibility='hidden';
+  row.appendChild(sp);
+  var cs=getComputedStyle(row);
+  var h=sp.offsetHeight+(parseFloat(cs.paddingBottom)||0)+(parseFloat(cs.borderBottomWidth)||0);
+  row.removeChild(sp);
+  if(!h) return;
+  for(var i=0;i<lines.children.length;i++){
+    lines.children[i].style.height=h+'px';
+    lines.children[i].style.minHeight='0';
+  }
+}
 function roundWords(r){
   var s=S.surah, all=wordsOf(ayahText(s,r.a));
   var seg=all.slice(Math.min(r.from,Math.max(0,all.length-1)), Math.min(r.to,all.length));
@@ -6155,6 +6176,7 @@ function roundWords(r){
   var rowHTML='';
   for(var rn=0;rn<Math.max(3,rowsNeeded);rn++) rowHTML+='<div class="ansrow"></div>';
   lines.innerHTML=rowHTML;
+  ansRowsLock(lines);                              /* لا يكبر سطرٌ بكلمته فتتحرّك الكلمات */
   var curRow=0;
   function placeWord(w){
     var rows=lines.children;
@@ -6485,6 +6507,7 @@ function roundEOrder(r){
     '<div class="chips" id="chips">'+pool.map(function(w,k){
       return '<button class="chip" data-i="'+k+'">'+esc(w)+'</button>'; }).join('')+'</div>';
   var lines=$('ansLines'), curRow=0;
+  ansRowsLock(lines);                              /* لا يكبر سطرٌ بكلمته فتتحرّك الكلمات */
   var btns=$('chips').querySelectorAll('.chip'), k;
   for(k=0;k<btns.length;k++){
     btns[k].onclick=function(){
@@ -9450,8 +9473,12 @@ function playFit(){
    فإن زاد المحتوى صُغّر بـ zoom (مواضعُ اللمس صحيحة) حتّى ٧٢٪.
    وفي أوّل السؤال يُحسب من جديد، وفي أثنائه لا يُصغَّر إلّا نقصاً —
    فلا تقفز الكلماتُ تحت إصبع الطفل وهو يجيب. */
-var QZ=1;
+var QZ=1, QT0=0;
 function qScreenFit(fresh){
+  /* يُضبط السؤالُ ما دام يُرسم (أوّلَ ٦٠٠ مث)، ثمّ يُجمَّد حتى السؤال التالي:
+     لا يتغيّر مقاسٌ ولا موضعٌ والطفلُ يجيب، مهما تغيّر ما في السؤال */
+  if(fresh) QT0=Date.now();
+  else if(Date.now()-QT0>600) return;
   var pa=$('playArea'), mq=$('mosque'), scr=$('scr-play'), B=document.body, W=document.querySelector('.wrap');
   if(!pa) return;
   var inQ=!!(scr && scr.classList.contains('active') && mq && mq.hasAttribute('hidden') &&
@@ -9468,7 +9495,10 @@ function qScreenFit(fresh){
   var rest=(W.offsetTop+W.offsetHeight)-need;
   var avail=window.innerHeight-rest-2;
   if(avail<160 || !need){ pa.style.minHeight=''; B.classList.remove('qlock'); return; }
-  var k=Math.min(1, avail/need);
+  /* مقاسٌ واحدٌ للجهاز من ارتفاع شاشته، لا لكلّ سؤالٍ مقاسُه — فلا تكبر
+     الصناديقُ مرّةً وتصغر أخرى. ولا يُصغَّر دونه إلّا سؤالٌ لا يسعه */
+  var dev=Math.max(0.72, Math.min(1, window.innerHeight/800));
+  var k=Math.min(dev, avail/need);
   if(!fresh) k=Math.min(k, QZ);
   k=Math.max(0.72, k);
   QZ=k;
