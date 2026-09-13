@@ -36,6 +36,7 @@
   --tabbg:rgba(4,23,58,.97); --tabfg:#8fb6e8; --startxt:#cdf3ff;
   --selbg:#eaf6ff; --selsh:#bcdcf5;
   --mute:#4d6782; --rew:#ffe9a8; --warm:#ffe9b0; --warm2:var(--gold);
+  --wire:#dde6f1;                     /* خطُّ المسار المتقطّع */
 }
 /* ===== الوضع النهاريّ ===== */
 body.light{
@@ -49,6 +50,8 @@ body.light{
   --tabbg:rgba(255,255,255,.97); --tabfg:#3d5b7a; --startxt:#9ec8ef;
   --selbg:#dbecfd; --selsh:#9dc4e8;
   --mute:#4d6782; --rew:#7a5600; --warm:#494d54; --warm2:#6b4e00;
+  /* خطُّ المسار: الفاتحُ يذوب في سماء النهار، فأزرقُ أعمقُ من حدود البطاقات */
+  --wire:#7aa6d6;
 }
 body.light h1{text-shadow:none}
 body.light .star,body.light .bok{display:none}      /* لا نجوم في وضح النهار */
@@ -941,13 +944,14 @@ body.light .sp-lit{fill:#1f92d4}
 .pathmore:active{transform:translateY(2px)}
 .path{position:relative;padding:6px 0 10px}
 .path::before{content:"";position:absolute;top:0;bottom:0;right:50%;width:0;z-index:0;
-  border-right:5px dashed #dde6f1;transform:translateX(2.5px)}
+  border-right:5px dashed var(--wire);transform:translateX(2.5px)}
 /* الخطُّ خلفَ ما في المسار كلِّه: رأسُ السورة وزرُّ التوسعة لا يتموضعان
    فيعلوهما الخطُّ المُطلَق — فتُرفع أبناءُ المسار فوقه، في الحفظ والمراجعة معاً */
 .path>*{position:relative;z-index:1}
 /* الخطُّ المتعرّج: منحنى يمرّ بمراكز العقد حيث زيحت، يرسمه pathWire.
    فإن رُسم أُطفئ الخطُّ المستقيم، ويبقى هو لمن لم يُرسم له بعد. */
 .path>svg.pwire{position:absolute;top:0;left:0;z-index:0;pointer-events:none;overflow:visible}
+.path>svg.pwire path{stroke:var(--wire)}     /* يغلب لونَ الوسم، فيتبع الثيم */
 .path.wired::before{display:none}
 .pnode{position:relative;display:flex;flex-direction:column;align-items:center;margin:0 0 20px}
 .pnode .dot{position:relative;z-index:1;width:74px;height:74px;border-radius:50%;background:#fff;border:5px solid #dde6f1;color:#9db2c9;
