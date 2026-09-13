@@ -4888,6 +4888,23 @@ function runRound(){
     aedge:roundAEdge,eorder:roundEOrder,
     revpage:roundRevPage,edge:roundEdge})[r.t](r);
 }
+/* ===== الخطأُ في الاختبار يمضي ولا يُعاد =====
+   في الحفظ والمراجعة يُعاد السؤالُ حتى يُصيب، فذاك تمرينٌ يُراد به
+   التثبيت. وأمّا الاختبارُ فميزان: خطأٌ واحدٌ يُثبَّت ويمضي، وإلّا
+   لم يكن اختباراً. ويُكشف الصوابُ لحظةً قبل المضيّ فيتعلّم من خطئه. */
+function examMode(){ return !!(S && S.rev==='exam'); }
+function examShowRight(box,sel,txt,cls){
+  var c=$(box); if(!c) return;
+  var els=c.querySelectorAll(sel), i;
+  for(i=0;i<els.length;i++) if(els[i].textContent===txt){ els[i].classList.add(cls||'ok'); return; }
+}
+function examMiss(reveal){
+  sBad();
+  $('fb').className='fb bad';
+  $('fb').textContent='ليست هي — وهذا الصواب 👇';
+  if(reveal){ try{ reveal(); }catch(e){} }
+  setTimeout(function(){ nextRound(false); }, 1200);
+}
 function nextRound(ok){
   /* يُحسب قبل الزيادة: نظيفٌ إن لم يُخطئ فيه أصلاً */
   var clean = (ok!==false) && !!S && (S.errors===S.e0);
@@ -5432,7 +5449,9 @@ function roundWords(r){
         this.classList.add('gone'); placed++; beep([620+placed*60],0.05);
         if(placed>=need){ sGood(); $('fb').className='fb good'; $('fb').textContent='ممتاز! ✅'; nextRound(true); }
       } else {
-        var el=this; el.classList.add('bad'); sBad(); S.errors++; comboMiss();
+        var el=this, pl0=placed; el.classList.add('bad');
+        if(examMode()){ placed=seg.length; examMiss(function(){ examShowRight('chips','.chip',seg[pl0],'hintme'); }); return; }
+        sBad(); S.errors++; comboMiss();
         setTimeout(function(){ el.classList.remove('bad'); },380);
       }
     };
@@ -5565,7 +5584,9 @@ function roundEdge(r){
         $('fb').textContent='صحيح ✅ — صفحة '+arNum(P)+' • '+nm;    /* الآن يُكشف رقمها */
         setTimeout(function(){ nextRound(true); },800);             /* مهلة تكفي لقراءتها */
       } else {
-        this.classList.add('no'); this.disabled=true; sBad(); S.errors++; comboMiss();
+        this.classList.add('no'); this.disabled=true;
+        if(examMode()){ answered=true; examMiss(function(){ examShowRight('opts','.opt',correct); }); return; }
+        sBad(); S.errors++; comboMiss();
         $('fb').className='fb bad'; $('fb').textContent='حاول مرة أخرى 💪';
       }
     };
@@ -5612,7 +5633,9 @@ function roundMissing(r){
         answered=true; this.classList.add('ok'); $('blk').classList.add('filled');
         sGood(); $('fb').className='fb good'; $('fb').textContent='صحيح ✅'; nextRound(true);
       } else {
-        this.classList.add('no'); this.disabled=true; sBad(); S.errors++; comboMiss();
+        this.classList.add('no'); this.disabled=true;
+        if(examMode()){ answered=true; examMiss(function(){ examShowRight('opts','.opt',correct); }); return; }
+        sBad(); S.errors++; comboMiss();
         $('fb').className='fb bad'; $('fb').textContent='حاول مرة أخرى 💪';
       }
     };
@@ -5656,7 +5679,9 @@ function roundMiss2(r){
     for(k=0;k<ob.length;k++) ob[k].onclick=function(){
       if(answered) return;
       if(this.textContent!==want){
-        this.classList.add('no'); this.disabled=true; sBad(); S.errors++; comboMiss();
+        this.classList.add('no'); this.disabled=true;
+        if(examMode()){ answered=true; examMiss(function(){ examShowRight('opts','.opt',want); }); return; }
+        sBad(); S.errors++; comboMiss();
         $('fb').className='fb bad'; $('fb').textContent='حاول مرة أخرى 💪';
         return;
       }
@@ -5702,7 +5727,9 @@ function roundAEdge(r){
         sGood(); $('fb').className='fb good'; $('fb').textContent='صحيح ✅';
         setTimeout(function(){ nextRound(true); },600);
       } else {
-        this.classList.add('no'); this.disabled=true; sBad(); S.errors++; comboMiss();
+        this.classList.add('no'); this.disabled=true;
+        if(examMode()){ answered=true; examMiss(function(){ examShowRight('opts','.opt',correct); }); return; }
+        sBad(); S.errors++; comboMiss();
         $('fb').className='fb bad'; $('fb').textContent='حاول مرة أخرى 💪';
       }
     };
@@ -5731,7 +5758,10 @@ function roundEOrder(r){
     btns[k].onclick=function(){
       if(this.classList.contains('gone')) return;
       if(this.textContent!==seq[placed]){
-        var el=this; el.classList.add('bad'); sBad(); S.errors++; comboMiss();
+        var el=this, pl0=placed;
+        el.classList.add('bad');
+        if(examMode()){ placed=seq.length; examMiss(function(){ examShowRight('chips','.chip',seq[pl0],'hintme'); }); return; }
+        sBad(); S.errors++; comboMiss();
         setTimeout(function(){ el.classList.remove('bad'); },380);
         return;
       }
@@ -5771,7 +5801,17 @@ function roundAyat(r){
         placed++; beep([620+placed*50],0.05);
         if(placed>=idx.length){ sGood(); $('fb').className='fb good'; $('fb').textContent='ترتيب صحيح 🌟'; nextRound(true); }
       } else {
-        var el=this; el.classList.add('bad'); sBad(); S.errors++; comboMiss();
+        var el=this, pl0=placed; el.classList.add('bad');
+        if(examMode()){
+          placed=idx.length;
+          examMiss(function(){
+            var cs=$('acards').querySelectorAll('.acard'), z;
+            for(z=0;z<cs.length;z++)
+              if(parseInt(cs[z].getAttribute('data-a'),10)===idx[pl0]){ cs[z].classList.add('hintme'); return; }
+          });
+          return;
+        }
+        sBad(); S.errors++; comboMiss();
         setTimeout(function(){ el.classList.remove('bad'); },380);
       }
     };
