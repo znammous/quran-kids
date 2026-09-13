@@ -4642,9 +4642,10 @@ $('btnAdabOk').onclick=function(){
 function beginStage(o){
   if(MISSQ.key!==o.key) missqReset(o.key);      /* مقطعٌ جديد: طابورٌ جديد */
   var rr=buildRounds(o.s,o.seg,o.stage);
-  /* المرحلةُ الأخيرة هي التسميع: يتقدّمها ما أخطأ فيه في المراحل قبلها */
-  if(o.stage===STAGES.length-1 && MISSQ.list.length){
-    rr=MISSQ.list.concat(rr);
+  /* ما أخطأ فيه يُختم به ذيلُ المرحلة التي قبل التسميع — لا يُفتتح به
+     التسميعُ: يفرغ من مراجعة خطئه ثمّ يدخل التسميعَ على بيّنة. */
+  if(o.stage===missqStage() && MISSQ.list.length){
+    rr=rr.concat(MISSQ.list);
     MISSQ.list=[];
   }
   S={ surah:o.s, seg:o.seg, si:o.si, key:o.key, stage:o.stage, review:false,
@@ -5067,6 +5068,16 @@ var MISSQ={ key:'', list:[] };
 var MISSQ_CAP=24;      /* سقفٌ لئلّا يطول الطابورُ على طفل */
 var MISSQ_TRIES=3;     /* بعدها يُكشف الجوابُ ويمضي، فلا يُحبس في سؤال */
 function missqReset(key){ MISSQ={ key:key||'', list:[] }; }
+/* الطابورُ يُختم به آخرُ مرحلةٍ قبل التسميع، لا يُفتتح به التسميع:
+   فالتسميعُ بابٌ قائمٌ بنفسه، ومن دخله فقد فرغ ممّا قبله. */
+function missqStage(){ return Math.max(0, STAGES.length-2); }
+/* نسخةٌ من الجولة: الأصلُ يبقى في مكانه ولا يُمسّ */
+function roundCopy(r,rq){
+  var c={}, k;
+  for(k in r) if(Object.prototype.hasOwnProperty.call(r,k)) c[k]=r[k];
+  c.rq=rq;
+  return c;
+}
 /* الحفظُ وحدَه: لا المراجعةُ ولا الاختبار */
 function hifzMode(){ return !!(S && !S.rev && !S.review); }
 function missqAdd(r){
@@ -5080,20 +5091,21 @@ function missqAdd(r){
    الطابور حتى يُصاب — فإن عاند ثلاثاً كُشف له ومضى. */
 function hifzMiss(r, reveal){
   sBad();
+  $('fb').className='fb bad'; $('fb').textContent='إجابة خاطئة';
   if(r && r.rq){
-    if(r.rq<MISSQ_TRIES){
-      var c={}, k;
-      for(k in r) if(Object.prototype.hasOwnProperty.call(r,k)) c[k]=r[k];
-      c.rq=r.rq+1;
-      S.rounds.push(c);
-      $('fb').className='fb bad'; $('fb').textContent='إجابة خاطئة';
-    } else {
+    /* مُعادٌ أخطأ فيه ثانيةً: يعود إلى آخر الطابور حتى يُصيب،
+       فإن عاند ثلاثاً كُشف له ومضى ولم يُحبس فيه. */
+    if(r.rq<MISSQ_TRIES) S.rounds.push(roundCopy(r, r.rq+1));
+    else {
       if(reveal){ try{ reveal(); }catch(e){} }
-      $('fb').className='fb bad'; $('fb').textContent='وهذا هو الصواب';
+      $('fb').textContent='وهذا هو الصواب';
     }
+  } else if(S && S.stage===missqStage()){
+    /* نحن في المرحلة التي تُختم بالطابور: يعود فيها من ساعته إلى ذيلها */
+    S.rounds.push(roundCopy(r,1));
   } else {
+    /* وما قبلها: يُجمع ليُختم به ذيلُ تلك المرحلة */
     missqAdd(r);
-    $('fb').className='fb bad'; $('fb').textContent='إجابة خاطئة';
   }
   setTimeout(function(){ nextRound('miss'); }, 1100);
 }
