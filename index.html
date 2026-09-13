@@ -283,6 +283,12 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 /* position:relative لأنّ التمرير إلى الآية يقيس بالنسبة لهذا الإطار */
 .mfbody{flex:1;position:relative;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 12px 34px;
   touch-action:pan-y}
+/* الوجهُ في وسط الإطار رأسيّاً: الهامشُ التلقائيّ لا يقصّ أعلاه إن طال عن
+   الشاشة، بخلاف justify-content:center */
+.mfbody{display:flex;flex-direction:column}
+.mfbody>.mushaf{flex:0 0 auto;margin-block:auto}
+/* القراءةُ من الفهرس: وجهٌ نظيفٌ بلا شريط، ولمسةٌ تُظهره وأخرى تُخفيه */
+.mfsheet.clean .mfbar{display:none}
 /* الوجهُ المجاور وهو يُسحب: طبقةٌ فوق الوجه بمقاسه، تتبع الإصبعَ معه —
    التالي يدخل من اليسار والسابق من اليمين، كما يُقلَّب المصحف. */
 .mfbody.mfpeek{position:absolute;left:0;right:0;z-index:2;overflow:hidden;pointer-events:none;
@@ -2224,7 +2230,12 @@ function mushafPageHTML(P, hlGi, glyphs){
       /* لوحة اسم السورة محرفٌ مزخرف: U+E000 + رقم السورة مقروءاً ستّ‑عشرياً */
       if(k===1) body='<span class="msura">'+String.fromCharCode(0xE000+parseInt(String(MHS[i]),16))+'</span>';
       else if(k===2) body='<span class="mbas">بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ</span>';
-      else body='<span class="mblank"></span>';
+      else{
+        /* الفاتحةُ وأوّلُ البقرة ثمانيةُ أسطرٍ وسبعةٌ فارغة: تُحذف الفارغة
+           فيقعان في وسط الوجه كما في المصحف، لا في أعلاه */
+        if(P<=2) continue;
+        body='<span class="mblank"></span>';
+      }
       html+='<div class="mline">'+body+'</div>';
       continue;
     }
@@ -2435,6 +2446,7 @@ function mushafOpenPage(P, hlGi, title){
   var sh=$('mfSheet'), wasHidden=sh.hidden;
   if(wasHidden){
     MF_READ=false;
+    sh.classList.remove('clean');                /* كلُّ فتحٍ يبدأ بشريطه، إلّا ما طلب النظافة */
     /* أُغلق الوجهُ في أثناء سحبٍ: لا تبقى طبقتُه ولا إزاحتُه للفتح التالي */
     var ol=sh.querySelectorAll('.mfpeek'), z;
     for(z=0;z<ol.length;z++) ol[z].remove();
@@ -2511,6 +2523,17 @@ window.addEventListener('resize', function(){
   var sh=$('mfSheet');
   if(sh && !sh.hidden) mushafFit($('mfBody'));
 });
+/* وارتفاعُ الإطار يتغيّر دون الشاشة حين يظهر الشريطُ أو يختفي: يُعاد الضبطُ
+   فتتّسع الأسطرُ لما صار لها. والضبطُ لا يغيّر مقاسَ الإطار، فلا دوران. */
+(function(){
+  var b=$('mfBody'), h=0;
+  if(!b || !window.ResizeObserver) return;
+  new ResizeObserver(function(){
+    if(b.clientHeight===h) return;
+    h=b.clientHeight;
+    if(!$('mfSheet').hidden) mushafFit(b);
+  }).observe(b);
+})();
 function mushafClose(){ MF_READ=false; if($('mfSheet')) $('mfSheet').hidden=true; }
 /* شاشة اللمس تُولّد نقرةً تابعة بعد رفع الإصبع، وتُختبَر إصابتها بعد إخفاء
    الوجه — فتقع على الزرّ الذي كان خلفه. فيبتلعها حارسٌ لحظيّ. */
@@ -4995,7 +5018,11 @@ $('mfNext').onclick=function(){ mfGoto(mfPage()+1); };
        ونتركها لحدث النقر، فهو لا يُولَّد إلا من لمسةٍ حقيقيّة — ولا
        نمنع السلوك الأصليّ لئلّا يُمنع النقر معه. */
     if(MF_PICK) return;
-    if(MF_READ) return;                                 /* يقرأ: لمستُه ليست خروجاً */
+    /* يقرأ: لمستُه ليست خروجاً، بل تُظهر الشريطَ أو تُخفيه كتطبيقات المصحف */
+    if(MF_READ){
+      if(!moved && Date.now()-st<=600) $('mfSheet').classList.toggle('clean');
+      return;
+    }
     if(Date.now()-st>600) return;                       /* ضغطةٌ طويلة: لا تُغلق الوجه */
     if(moved) return;
     if(e.cancelable) e.preventDefault();
@@ -5034,6 +5061,7 @@ $('srGoRead').onclick=function(){
   var sx=surahBy(SRPICK); if(!sx) return;
   $('srPick').hidden=true;
   mushafRead(mfSuraPage(SRPICK), 'سورة '+sx.name);
+  $('mfSheet').classList.add('clean');           /* من الفهرس: وجهٌ نظيف، واللمسةُ تُظهر الشريط */
 };
 /* نافذة مفتوحة = خطوة رجوع مستقلّة */
 (function(){
