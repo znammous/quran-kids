@@ -6564,7 +6564,18 @@ function emptyBox(ic,head,desc,btnId,btnTxt,circle){
     (circle ? '' : ('<button type="button" class="btn blue big" id="'+btnId+'">'+btnTxt+'</button>'))+
   '</div>';
 }
-function renderRevPlan(){
+/* إعادةُ الرسم تُفرغ الصندوقَ فينكمش ارتفاعُ الصفحة، فيقفز التمريرُ إلى
+   أعلى تحت إصبعه — وهو يبدّل عددَ الصفحات أو الأسئلة. فيُحفظ موضعُه
+   ويُردُّ بعد الرسم، فلا يُزعزَع ما تحت يده. */
+function keepScroll(fn){
+  var y=0;
+  try{ y=window.scrollY||window.pageYOffset||0; }catch(e){}
+  fn();
+  if(!y) return;
+  try{ window.scrollTo(0,y); }catch(e){}
+}
+function renderRevPlan(){ keepScroll(renderRevPlanBody); }
+function renderRevPlanBody(){
   var chips=function(list,cur,attr){
     return list.map(function(c){
       return '<button type="button" class="chipsel'+(cur===c?' sel':'')+'" data-'+attr+'="'+c+'">'+arNum(c)+'</button>';
