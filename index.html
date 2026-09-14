@@ -678,6 +678,11 @@ body.glow-off .cele .spk{display:none}
   cursor:pointer;white-space:nowrap;transition:.12s;touch-action:manipulation}
 .onbtab:active{transform:scale(.96)}
 .onbtab.sel{background:var(--psel);border-color:var(--gold);color:var(--ttl)}
+/* التبويبُ المسحوبُ إليه يدخل من جهته */
+.tabin-next{animation:tabInNext .22s ease-out}
+.tabin-prev{animation:tabInPrev .22s ease-out}
+@keyframes tabInNext{from{opacity:.35;transform:translateX(-32px)}to{opacity:1;transform:none}}
+@keyframes tabInPrev{from{opacity:.35;transform:translateX(32px)}to{opacity:1;transform:none}}
 .onbtop{display:flex;align-items:center;gap:10px;margin:12px 0 14px}
 .onbbar{flex:1;height:14px;background:#0a2d5e;border:2px solid var(--pb);border-radius:99px;overflow:hidden}
 .onbbar i{display:block;height:100%;background:linear-gradient(90deg,#37c2f0,#7ef0d5);
@@ -10298,6 +10303,52 @@ if($('cardRev')) $('cardRev').onclick=function(){
 };
 $('btnRevHome').onclick=function(){ renderPlayers(); show('scr-start'); };
 $('btnRevQuit').onclick=function(){ startRevPlan(); };   /* إلى شاشة المراجعة، فهي بابُه */
+/* ===== التبويباتُ تُسحب لا تُنقر وحدَها =====
+   كان التبويبُ لا يتبدّل إلا بالنقر على عنوانه في أعلى الشاشة، فيمدّ
+   إصبعَه إليه كلّ مرّة. فصار السحبُ الأفقيُّ على المحتوى يمضي إلى
+   التبويب المجاور، بالنقر على زرّه نفسِه فلا يفترق السلوكان.
+   والصفحةُ من اليمين: التالي إلى يسار الشريط، فيُسحب إليه يميناً. */
+function tabSwipe(scrId, barId, boxOf){
+  var scr=$(scrId), x0=0, y0=0, t0=0, on=false;
+  if(!scr) return;
+  /* ما يُمرَّر أفقيّاً بنفسه أو يُكتب فيه لا يُنتزع منه السحب */
+  var ownsX=function(el){
+    for(; el && el!==scr; el=el.parentNode){
+      if(el.nodeType!==1) continue;
+      if(/^(INPUT|SELECT|TEXTAREA)$/.test(el.tagName)) return true;
+      if(el.scrollWidth>el.clientWidth+2){
+        var ox=''; try{ ox=getComputedStyle(el).overflowX; }catch(e){}
+        if(ox==='auto'||ox==='scroll') return true;
+      }
+    }
+    return false;
+  };
+  scr.addEventListener('touchstart', function(e){
+    var bar=$(barId);
+    on=false;
+    if(e.touches.length!==1 || !scr.classList.contains('active') || !bar || bar.hidden) return;
+    if(ownsX(e.target)) return;
+    x0=e.touches[0].clientX; y0=e.touches[0].clientY; t0=Date.now(); on=true;
+  }, {passive:true});
+  scr.addEventListener('touchcancel', function(){ on=false; }, {passive:true});
+  scr.addEventListener('touchend', function(e){
+    if(!on) return; on=false;
+    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0;
+    if(Math.abs(dx)<60 || Math.abs(dx)<Math.abs(dy)*1.8 || Date.now()-t0>900) return;
+    var bs=$(barId).querySelectorAll('.onbtab'), i, cur=-1;
+    for(i=0;i<bs.length;i++) if(bs[i].classList.contains('sel')) cur=i;
+    var nx=dx>0, j=cur+(nx?1:-1);
+    if(cur<0 || j<0 || j>=bs.length) return;
+    bs[j].click();
+    var box=boxOf(); if(!box) return;
+    box.classList.remove('tabin-next','tabin-prev');
+    void box.offsetWidth;                       /* يُعاد الحركةُ ولو تكرّر الاتّجاه */
+    box.classList.add(nx?'tabin-next':'tabin-prev');
+  }, {passive:true});
+}
+tabSwipe('scr-rev', 'revTabs', function(){ return $('revPlan'); });
+tabSwipe('scr-settings', 'setTabs', function(){ return document.querySelector('#scr-settings .card'); });
+tabSwipe('scr-onb', 'onbTabs', function(){ return $('onbBody'); });
 /* خطط «بالقرآن نحيا» الجاهزة */
 $('btnBqnHome').onclick=function(){
   if(BQN_BACK){ bqnReturn(); return; }
