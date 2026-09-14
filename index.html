@@ -1390,6 +1390,38 @@ body.glow-off .dfpic{animation:none}
   /* ألوانُ الشهادة تُطبع كما هي، فلا تخرج بيضاءَ باهتة */
   .cert,.cert *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+/* ===== الألعاب: «عدّاء الآيات» ===== */
+.gmlist .goalcard{margin-bottom:12px}
+.gmnote{text-align:center;color:var(--on3);font-size:13.5px;font-weight:700;margin:2px 0 14px;line-height:1.7}
+.runtop{display:flex;align-items:center;gap:10px;margin:4px 0 8px}
+.runx{flex:0 0 auto;width:42px;height:42px;border-radius:12px;border:2px solid var(--pb);background:var(--pnl);
+  color:var(--ttl);font-size:18px;font-weight:900;font-family:inherit;cursor:pointer;touch-action:manipulation}
+.runhearts{flex:1;min-width:0;font-size:19px;letter-spacing:1px;white-space:nowrap;overflow:hidden}
+.runscore{flex:0 0 auto;font-weight:900;font-size:17px;color:var(--ttl);background:var(--pnl);
+  border:2px solid var(--pb);border-radius:999px;padding:4px 14px;font-variant-numeric:tabular-nums}
+.runayah{background:var(--pnl);border:2px solid var(--pb);border-radius:16px;padding:6px 12px 8px;margin-bottom:8px;text-align:center}
+.runref{font-size:12.5px;font-weight:800;color:var(--on3)}
+.runline{font-family:"Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif;font-size:23px;line-height:1.85;color:var(--ttl);min-height:3.7em;
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:center;align-content:center}
+.runline{column-gap:8px}
+.runline .rw{display:inline-block}
+.runline .ctx{opacity:.45}
+.runline .todo{opacity:.35}
+.runline .next{min-width:1.9em;padding:0 6px;font-family:"IBM Plex Sans Arabic",sans-serif;font-size:.8em;font-weight:900;border:2px dashed var(--gold);border-radius:10px;color:var(--gold);
+  animation:runnext 1s ease-in-out infinite}
+.runline.done .got{color:var(--green)}
+@keyframes runnext{50%{transform:scale(1.08)}}
+.runstage{position:relative;border-radius:14px;overflow:hidden;border:3px solid var(--pb);touch-action:none;cursor:pointer}
+#runCv{display:block;width:100%;image-rendering:pixelated}
+.runovl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  padding:10px;background:rgba(1,10,26,.58);color:#fff;text-align:center}
+.runovl[hidden]{display:none}
+.runovl .ot{font-size:22px;font-weight:900}
+.runovl p{margin:0;font-size:14.5px;font-weight:700;line-height:1.75}
+.runovl .btn{margin:0;min-height:44px;padding:10px 18px;font-size:16px}
+.runovl .runbtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.runtip{text-align:center;color:var(--on3);font-size:13px;font-weight:700;margin-top:6px}
+
 /* ===== قشرة الجوّال: شريط تنقّل سفلي ===== */
 .tabbar{display:none}
 @media(max-width:820px){
@@ -1411,6 +1443,7 @@ body.glow-off .dfpic{animation:none}
   /* ما صار في الشريط السفلي لا يتكرّر في الرئيسية */
   body.hastabs #btnBuild,
   body.hastabs #btnShop,
+  body.hastabs #btnGames,
   body.hastabs #btnSettings,
   body.hastabs #btnRevHome,
   body.hastabs #btnRevQuit{display:none}
@@ -1716,6 +1749,7 @@ body.glow-off .dfpic{animation:none}
     <div class="row">
       <button class="btn blue" id="btnBuild">🕌 مسجدي</button>
       <button class="btn blue" id="btnShop">💎 متجري</button>
+      <button class="btn blue" id="btnGames">🎮 الألعاب</button>
     </div>
     <div class="row">
       <button class="btn ghost" id="btnSettings">⚙️ الإعدادات</button>
@@ -1897,6 +1931,24 @@ body.glow-off .dfpic{animation:none}
     <p class="sub">تشجيع بين الإخوة — لا منافسة مع أحد خارج البيت</p>
     <div class="card"><div id="boardList"></div></div>
     <button class="btn primary big" id="btnBoardBack" style="margin:0">➡️ رجوع</button>
+  </section>
+
+  <section class="screen" id="scr-games">
+    <h1>🎮 الألعاب</h1>
+    <p class="sub">العبْ وراجِعْ — كلماتُ الألعاب من آياتِ محفوظك</p>
+    <div class="gmlist" id="gamesBody"></div>
+    <button class="btn primary big" id="btnGamesBack" style="margin:0">➡️ رجوع</button>
+  </section>
+
+  <section class="screen" id="scr-runner">
+    <div class="runtop">
+      <button type="button" class="runx" id="btnRunQuit" aria-label="خروج">✕</button>
+      <div class="runhearts" id="runHearts"></div>
+      <div class="runscore" id="runScore">⭐ 0</div>
+    </div>
+    <div class="runayah"><div class="runref" id="runRef">—</div><div class="runline" id="runLine"></div></div>
+    <div class="runstage" id="runStage"><canvas id="runCv"></canvas><div class="runovl" id="runOvl" hidden></div></div>
+    <div class="runtip">اضغط في أيّ مكانٍ للقفز — أو زرّ المسافة</div>
   </section>
 
   <section class="screen" id="scr-play">
@@ -5047,12 +5099,13 @@ var TABS=[
   {id:'scr-start',    ic:'🏠', n:'الرئيسية',  go:function(){ renderPlayers(); show('scr-start'); }},
   /* المصحفُ يُفتح على آخر وجهٍ قُرئ منه — وفهرسُ السور والأجزاء في شريطه السفليّ */
   {id:'mushaf',       ic:'📖', n:'المصحف',    go:function(){ mushafReader(); }},
+  {id:'scr-games',    ic:'🎮', n:'الألعاب',   go:function(){ gamesOpen(); }},
   {id:'scr-build',    ic:'🕌', n:'مسجدي',    go:function(){ $('btnBuild').click(); }},
   {id:'scr-shop',     ic:'💎', n:'متجري',    go:function(){ $('btnShop').click(); }},
   {id:'scr-settings', ic:'⚙️', n:'الإعدادات', go:function(){ $('btnSettings').click(); }}
 ];
 /* تختفي أثناء الدرس والشهادة والمعالج، كما تفعل دولينجو داخل الدرس */
-var TABS_HIDE={'scr-onb':1,'scr-look':1,'scr-play':1,'scr-cert':1};
+var TABS_HIDE={'scr-onb':1,'scr-look':1,'scr-play':1,'scr-cert':1,'scr-runner':1};
 function buildTabs(){
   if($('tabbar')) return;
   var bar=document.createElement('nav');
@@ -11095,6 +11148,435 @@ $('btnShopBack').onclick=function(){
 };
 $('btnBoard').onclick=function(){ renderBoard(); show('scr-board'); };
 $('btnBoardBack').onclick=function(){ show('scr-start'); };
+
+/* =========================================================
+   🎮 الألعاب — «عدّاء الآيات»
+   تجري شخصيّةُ اللاعب — مرسومةً بكسلاً بألوانه — نحو اليسار كما تُقرأ العربية،
+   وتأتيها كلماتُ آيةٍ من محفوظه معلّقةً كالفوانيس: يقفز فيلتقط الكلمةَ التالية
+   بالترتيب، ويدع ما سواها، ويقفز فوق العوائق. خمسةُ قلوبٍ تُنقصها الكلمةُ الخطأ
+   والعائق؛ والكلمةُ الصحيحةُ إن فاتته عادت إليه بلا عقوبة.
+   ========================================================= */
+var RUN_PX=3, RUN_G=1500, RUN_V0=Math.sqrt(2*1500*110), RUN_V_MIN=165, RUN_V_MAX=300;
+var RUN_CHUNK=6, RUN_HEARTS=5, RUN_CX=76;
+var RUN_FALLBACK=[1,108,109,110,111,112,113,114];      /* لمن لم يُسجَّل له محفوظٌ بعد */
+/* خطُّ كلمات «رتّب الكلمات» نفسه: العثمانيّ هنا يُظهر الصفرَ المستدير (۟) دائرةً منفصلة */
+var RUN_FONT='24px "Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif';
+var RUN={ state:'idle', raf:0, spr:{}, items:[], parts:[], W:0, H:240, k:1, ground:212 };
+var RUN_STARS=(function(){ var a=[], i; for(i=0;i<28;i++) a.push([Math.random()*480, .02+Math.random()*.62, Math.random()<.25?3:2]); return a; })();
+
+/* القالبُ ينظر إلى اليسار. H شعرٌ (أو غطاءُ الرأس)، h طرفُ الشماغ، J حجاب، S بشرة، s ظلُّها،
+   E عين، C ملابس، c ظلُّها، w ياقةُ الثوب، B حذاء. ويُحاط كلُّه بإطارٍ داكنٍ تلقائياً */
+var PX_HEAD_M=['....HHHH....','..HHHHHHHH..','.HHHHHHHHHH.','.HSSSSSHHHH.','.SSSSSSSHHH.',
+               '.SESSSSsSHH.','SSSSSSSSSHHh','.SSSSSSSSHhh','..SSSSSS.hhh','....ss...hh.'];
+var PX_HEAD_F=['....JJJJ....','..JJJJJJJJ..','.JJJJJJJJJJ.','.JSSSSSJJJJ.','.SSSSSSJJJJ.',
+               '.SESSSSJJJJ.','SSSSSSJJJJJ.','.SSSSSJJJJJ.','.JJJJJJJJJJ.','..JJJJJJJJ..'];
+var PX_BODY=['..CwCCCC....','.CCCCCCCC...','.CCCCCCCCc..','.SCCCCCCcc..','..CCCCCCc...','..CCCCCCc...'];
+var PX_LEGS={ a:['..cc...cc...','.cc.....cc..','.cc......cc.','BB.......BB.'],
+              b:['...cccc.....','...cc.cc....','...cc..cc...','..BB...BB...'],
+              j:['..cc..cc....','.cc....cc...','BB......cc..','.........BB.'] };
+var PX_DRESS=['.CCCCCCCc...','CCCCCCCCcc..'];
+var PX_ROCK=['...GGGG...','..GLLGGG..','.GLGGGGGg.','.GGGGGGGgg','GGGGGGGggg','GGGGGGgggg','gggggggggg'];
+var PX_CRATE=['oooooooo','ooOOOOoo','oOoOOoOo','oOOooOOo','oOOooOOo','oOoOOoOo','ooOOOOoo','oooooooo'];
+var PX_OBS_COL={ G:'#9a9ca6', g:'#6b6e7a', L:'#c9ccd4', O:'#cf9152', o:'#8d5a2b' };
+
+/* يرسم القالبَ على لوحةٍ صغيرة بكسلاً ببكسل، ثمّ تُكبَّر بلا تنعيم */
+function pxImg(rows, colorOf){
+  var h=rows.length, w=0, x, y, grid=[];
+  rows.forEach(function(r){ w=Math.max(w,r.length); });
+  for(y=0;y<h;y++){ grid[y]=[];
+    for(x=0;x<w;x++){ var ch=rows[y].charAt(x); grid[y][x]=(ch && ch!=='.') ? colorOf(ch,x,y) : null; } }
+  function at(x,y){ return y>=0 && y<h && x>=0 && x<w && grid[y][x]; }
+  var cv=document.createElement('canvas'); cv.width=w+2; cv.height=h+2;
+  var c=cv.getContext('2d');
+  c.fillStyle='#141a2b';
+  for(y=-1;y<=h;y++) for(x=-1;x<=w;x++)
+    if(!at(x,y) && (at(x-1,y)||at(x+1,y)||at(x,y-1)||at(x,y+1))) c.fillRect(x+1,y+1,1,1);
+  for(y=0;y<h;y++) for(x=0;x<w;x++) if(grid[y][x]){ c.fillStyle=grid[y][x]; c.fillRect(x+1,y+1,1,1); }
+  return cv;
+}
+function runCharImg(fr){
+  var key=gender+'|'+JSON.stringify(look)+'|'+fr;
+  if(RUN.spr[key]) return RUN.spr[key];
+  var f=(gender!=='m'), legs=PX_LEGS[fr];
+  var rows=(f?PX_HEAD_F:PX_HEAD_M).concat(PX_BODY, f?PX_DRESS.concat(legs.slice(2)):legs);
+  var skin=PAL.skin[look.skin]||PAL.skin[0], eye=(PAL.eyes[look.eyes]||PAL.eyes[0]).c,
+      hair=(PAL.hair[look.hair]||PAL.hair[0]).c, cloth=(PAL.cloth[look.cloth]||PAL.cloth[0]).c,
+      hij=(PAL.hijab[look.hijab]||PAL.hijab[0]).c;
+  var hw=f?0:(look.head||0), veil=f && (look.veil||0)===1;
+  var img=pxImg(rows, function(ch,x,y){
+    switch(ch){
+      case 'H':
+        if(hw>=3){ if(y===2) return '#1c1c1c';                         /* العقال */
+          if(hw===3) return ((x+y)%3===0)?'#ffffff':'#d94b3d'; return '#fdfdfd'; }
+        if(hw===1 && y<=2) return '#fbfbfb';                           /* طاقية بيضاء */
+        if(hw===2 && y<=2) return cloth;                               /* طاقية ملوّنة */
+        return hair;
+      case 'h': return hw>=3 ? ((hw===3 && (x+y)%3===0)?'#ffffff':(hw===3?'#d94b3d':'#fdfdfd')) : null;
+      case 'J': return hij;
+      case 'S': return (veil && y>=6 && y<=7) ? hij : skin.f;           /* النقاب */
+      case 's': return skin.s;
+      case 'E': return eye;
+      case 'C': return cloth;
+      case 'c': return darken(cloth,0.72);
+      case 'w': return f ? cloth : '#ffffff';
+      case 'B': return '#3b2a20';
+    }
+    return null;
+  });
+  RUN.spr[key]=img;
+  return img;
+}
+function runObsImg(t){
+  var key='obs|'+t;
+  if(RUN.spr[key]) return RUN.spr[key];
+  var rows = t==='crate' ? PX_CRATE : t==='rock2' ? PX_ROCK.map(function(r){ return r+r; }) : PX_ROCK;
+  return (RUN.spr[key]=pxImg(rows, function(ch){ return PX_OBS_COL[ch]||null; }));
+}
+
+function runStats(){
+  var p=curP(); if(!p.games) p.games={};
+  if(!p.games.runner) p.games.runner={ best:0, plays:0, ayat:0 };
+  return p.games.runner;
+}
+/* الآياتُ المتاحة: من المحفوظ، وإلّا فمن الفاتحة وقصار السور */
+function runPool(){
+  var m=memAll(), out=[], n, r, i, a, s;
+  for(n in m){
+    s=surahBy(parseInt(n,10)); if(!s) continue; r=m[n]||[];
+    for(i=0;i<r.length;i++) for(a=r[i][0];a<r[i][1] && a<s.ayat.length;a++) out.push({ s:s, a:a });
+  }
+  if(out.length) return { items:out, mem:true };
+  RUN_FALLBACK.forEach(function(k){ var s2=surahBy(k); if(s2) for(var j=0;j<s2.ayat.length;j++) out.push({ s:s2, a:j }); });
+  return { items:out, mem:false };
+}
+/* مقطعٌ من آية: الآيةُ القصيرة كلُّها، والطويلةُ ستُّ كلماتٍ متتالية يسبقها طرفٌ ممّا قبلها */
+function runPickAyah(){
+  var P=RUN.pool.items, it, ws, tries=0, k;
+  do{ it=P[Math.floor(Math.random()*P.length)]; ws=wordsOf(ayahText(it.s,it.a)); tries++; }
+  while(tries<30 && (ws.length<2 || (RUN.last && P.length>1 && RUN.last.s===it.s && RUN.last.a===it.a)));
+  RUN.last=it;
+  var from=0, to=ws.length;
+  if(ws.length>RUN_CHUNK+2){ from=Math.floor(Math.random()*(ws.length-RUN_CHUNK+1)); to=from+RUN_CHUNK; }
+  RUN.ay={ s:it.s, a:it.a, ws:ws, from:from, to:to, i:from };
+  /* المشتّتات: من الآيات المجاورة وبقيّة الآية، ولا تشبه كلمةً من المقطع */
+  var seen={}, pool=[], s=it.s;
+  function add(w){ var n2=norm(w); if(n2 && !seen[n2]){ seen[n2]=1; pool.push(w); } }
+  for(k=from;k<to;k++) seen[norm(ws[k])]=1;
+  for(k=0;k<ws.length;k++) if(k<from || k>=to) add(ws[k]);
+  for(k=Math.max(0,it.a-3);k<=Math.min(s.ayat.length-1,it.a+3);k++) if(k!==it.a) wordsOf(ayahText(s,k)).forEach(add);
+  for(k=0;k<40 && pool.length<8;k++){ var o=P[Math.floor(Math.random()*P.length)]; wordsOf(ayahText(o.s,o.a)).forEach(add); }
+  RUN.decoys=shuffle(pool); RUN.di=0;
+  RUN.decoySince=9;                                   /* تأتي الكلمةُ الأولى سريعاً */
+  RUN.dist=0; RUN.gap=RUN.speed*0.9;
+  runHud();
+}
+function runHud(){
+  var h='', i, ay=RUN.ay;
+  for(i=0;i<RUN_HEARTS;i++) h+=(i<RUN.hearts)?'❤️':'🤍';
+  $('runHearts').textContent=h;
+  $('runScore').textContent='⭐ '+arNum(RUN.score);
+  if(!ay) return;
+  $('runRef').textContent=ay.s.name+' • الآية '+arNum(ay.a+1)+(RUN.pool.mem?'':' • من قصار السور');
+  var L='';
+  if(ay.from>0) L+='<span class="rw ctx">'+(ay.from>2?'… ':'')+esc(ay.ws.slice(Math.max(0,ay.from-2),ay.from).join(' '))+'</span> ';
+  for(i=ay.from;i<ay.to;i++){
+    if(i<ay.i) L+='<span class="rw got">'+esc(ay.ws[i])+'</span> ';
+    else if(i===ay.i) L+='<span class="rw next">؟</span> ';
+    else L+='<span class="rw todo">ـــ</span> ';
+  }
+  var ln=$('runLine'); ln.innerHTML=L; ln.classList.toggle('done', ay.i>=ay.to);
+}
+
+/* اللوحةُ تملأ ما بقي من الشاشة: عرضُها المنطقيّ لا ينقص عن ٣٨٠ حتى يرى الكلمةَ قادمةً
+   من بعيد، وما زاد من الطول سماءٌ فوقه */
+function runSize(){
+  var cv=$('runCv'), st=$('runStage'); if(!cv || !st) return;
+  var cw=st.clientWidth||360;
+  var top=st.getBoundingClientRect().top+(window.scrollY||0);
+  var ch=Math.round(Math.max(200, Math.min(window.innerHeight-top-56, cw*0.95, 520)));
+  var dpr=Math.min(window.devicePixelRatio||1, 2.5), k=Math.min(cw/380, ch/240);
+  cv.style.height=ch+'px';
+  cv.width=Math.round(cw*dpr); cv.height=Math.round(ch*dpr);
+  RUN.W=Math.round(cw/k); RUN.H=Math.round(ch/k); RUN.ground=RUN.H-28; RUN.k=cv.height/RUN.H;
+}
+function runReset(){
+  RUN.hearts=RUN_HEARTS; RUN.score=0; RUN.done=0; RUN.words=0; RUN.items=[]; RUN.parts=[];
+  RUN.speed=RUN_V_MIN; RUN.jy=0; RUN.vy=0; RUN.buf=0; RUN.inv=0; RUN.shake=0; RUN.rest=0;
+  RUN.t=0; RUN.off=0; RUN.toast=''; RUN.toastT=0; RUN.flashT=0; RUN.lastKind=''; RUN.last=null;
+  runPickAyah(); RUN.gap=RUN.speed*1.6;
+}
+function gamesOpen(){
+  var st=runStats(), pool=runPool();
+  $('gamesBody').innerHTML=
+    '<button type="button" class="goalcard now" id="gmRunner"><span class="gcic">🏃</span>'+
+      '<span class="gctx"><b>عدّاء الآيات</b><i>اقفزْ والتقطْ كلماتِ الآية بالترتيب'+
+      (st.best?' • أفضلُ نتيجة ⭐ '+arNum(st.best):'')+'</i></span><span class="gcgo">❮</span></button>'+
+    (pool.mem?'':'<p class="gmnote">لم يُسجَّل لك محفوظٌ بعد، فتأتيك الآياتُ من الفاتحة وقصار السور</p>');
+  $('gmRunner').onclick=runOpen;
+  show('scr-games');
+}
+function runOpen(){
+  RUN.pool=runPool();
+  show('scr-runner');
+  runSize(); runReset(); runOverlay('ready'); runDraw();
+  try{ document.fonts.load(RUN_FONT).then(function(){ if(RUN.state!=='run') runDraw(); }); }catch(e){}
+}
+function runOverlay(kind, nb){
+  var ov=$('runOvl'), st=runStats(), h;
+  RUN.state=(kind==='over')?'over':(kind==='pause'?'pause':'ready');
+  if(kind==='ready')
+    h='<div class="ot">🏃 عدّاء الآيات</div><p>اقفزْ لتلتقطَ كلماتِ الآية بالترتيب<br>ودَعِ الكلمةَ الخطأ، واقفزْ فوق العوائق<br>لك ❤️ خمسةُ قلوب</p>'+
+      '<button type="button" class="btn primary" id="runStart">▶️ ابدأ</button>';
+  else if(kind==='pause')
+    h='<div class="ot">⏸️ توقّفتِ اللعبة</div><button type="button" class="btn primary" id="runStart">▶️ تابِعْ</button>';
+  else
+    h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+arNum(RUN.score)+' نقطة • 📜 '+arNum(RUN.done)+' مقطع • 🧩 '+arNum(RUN.words)+' كلمة<br>'+
+      (nb?'🏆 أفضلُ نتيجةٍ لك حتى الآن!':'أفضلُ نتيجةٍ لك: ⭐ '+arNum(st.best||0))+'</p>'+
+      '<div class="runbtns"><button type="button" class="btn primary" id="runAgain">🔁 مرّةً أخرى</button>'+
+      '<button type="button" class="btn ghost" id="runBack">🎮 الألعاب</button></div>';
+  ov.innerHTML=h; ov.hidden=false;
+  if($('runStart')) $('runStart').onclick=runGo;
+  if($('runAgain')) $('runAgain').onclick=function(){ runReset(); runGo(); };
+  if($('runBack')) $('runBack').onclick=function(){ $('btnRunQuit').click(); };
+}
+function runGo(){
+  $('runOvl').hidden=true;
+  RUN.state='run'; RUN.prev=0;
+  cancelAnimationFrame(RUN.raf); RUN.raf=requestAnimationFrame(runFrame);
+}
+function runPause(){
+  if(RUN.state!=='run') return;
+  cancelAnimationFrame(RUN.raf); runOverlay('pause');
+}
+function runOver(){
+  cancelAnimationFrame(RUN.raf);
+  var st=runStats(), nb=RUN.score>(st.best||0);
+  st.plays=(st.plays||0)+1; st.ayat=(st.ayat||0)+RUN.done;
+  if(nb) st.best=RUN.score;
+  saveDB();
+  runOverlay('over', nb); runDraw();
+}
+function runFrame(ts){
+  if(RUN.state!=='run') return;
+  if(!$('scr-runner').classList.contains('active')){ runPause(); return; }   /* غادر الشاشة */
+  var dt=Math.min(0.05, Math.max(0, (ts-(RUN.prev||ts))/1000)); RUN.prev=ts;
+  runUpdate(dt);
+  if(RUN.state!=='run') return;
+  runDraw();
+  RUN.raf=requestAnimationFrame(runFrame);
+}
+function runJump(){
+  if(RUN.jy===0 && RUN.vy===0){ RUN.vy=RUN_V0; RUN.jy=0.01; beep([520,760],0.035); }
+  else RUN.buf=0.14;                                  /* ضغطةٌ قبيل الهبوط تُحفظ له */
+}
+function runTap(e){
+  if(e && e.target && e.target.closest && e.target.closest('button')) return;
+  if(RUN.state==='ready' || RUN.state==='pause'){ runGo(); return; }
+  if(RUN.state!=='run') return;
+  if(e && e.preventDefault) e.preventDefault();
+  runJump();
+}
+
+function runCharBox(){
+  var x=RUN.W-RUN_CX, b=RUN.ground-RUN.jy;
+  return { x0:x+3*RUN_PX, x1:x+11*RUN_PX, y0:b-54, y1:b };
+}
+function runPillY(o){ return RUN.ground-118+Math.round(Math.sin(RUN.t*3+o.ph)*3); }
+function runBox(o){
+  if(o.kind==='obs') return { x0:o.x+2*RUN_PX, x1:o.x+o.w-2*RUN_PX, y0:RUN.ground-o.h+3*RUN_PX, y1:RUN.ground };
+  var cy=runPillY(o);
+  return { x0:o.x+4, x1:o.x+o.w-4, y0:cy-15, y1:cy+15 };
+}
+function runBurst(x,y,col,n){
+  for(var i=0;i<n;i++) RUN.parts.push({ x:x, y:y, vx:(Math.random()-.5)*260, vy:-60-Math.random()*200, l:.5+Math.random()*.3, c:col });
+}
+function runSay(t){ RUN.toast=t; RUN.toastT=1.6; }
+function runHurt(){
+  RUN.hearts--; RUN.shake=.3; sBad(); runHud();
+  if(RUN.hearts<=0) runOver();
+}
+function runTouch(o){
+  var ay=RUN.ay;
+  if(o.kind==='obs'){
+    if(RUN.inv>0 || o.hit) return;
+    o.hit=true; RUN.inv=1.2;
+    runBurst(RUN.W-RUN_CX+20, RUN.ground-RUN.jy-20, '#e04b4b', 10);
+    runHurt(); return;
+  }
+  o.dead=true;
+  var cx=o.x+o.w/2, cy=runPillY(o);
+  if(o.good){
+    ay.i++; RUN.score++; RUN.words++;
+    runBurst(cx,cy,'#f2c14e',16);
+    if(ay.i>=ay.to){                                   /* تمّ المقطع */
+      RUN.score+=5; RUN.done++; sWin();
+      RUN.flashT=1.3; RUN.rest=1.4;
+      RUN.items.forEach(function(it){ if(it.kind==='word' && !it.dead){ it.dead=true; runBurst(it.x+it.w/2, runPillY(it), '#ffffff', 6); } });
+      RUN.speed=Math.min(RUN_V_MAX, RUN.speed*1.07);
+      runHud();
+    } else { sPick(); runHud(); }
+  } else {
+    runBurst(cx,cy,'#e04b4b',12);
+    runSay('ليست هذه الكلمةَ التالية');
+    runHurt();
+  }
+}
+function runSpawn(){
+  var ay=RUN.ay, sp=RUN.speed, o, w, i, goodOn=false;
+  if(!ay || ay.i>=ay.to) return;
+  for(i=0;i<RUN.items.length;i++) if(RUN.items[i].kind==='word' && RUN.items[i].good && !RUN.items[i].dead) goodOn=true;
+  var kind=(RUN.lastKind!=='obs' && Math.random()<0.33) ? 'obs' : 'word';
+  if(kind==='word' && goodOn && !RUN.decoys.length) kind='obs';
+  if(kind==='obs'){
+    var t=(sp>200 && Math.random()<0.3) ? 'rock2' : (Math.random()<0.5 ? 'rock' : 'crate');
+    var im=runObsImg(t);
+    w=im.width*RUN_PX;
+    o={ kind:'obs', img:im, x:-w-4, w:w, h:im.height*RUN_PX };
+  } else {
+    var good=!goodOn && (RUN.decoySince>=1 || !RUN.decoys.length || Math.random()<0.4);
+    var txt=good ? ay.ws[ay.i] : RUN.decoys[(RUN.di++)%RUN.decoys.length];
+    var c=$('runCv').getContext('2d');
+    c.font=RUN_FONT;
+    w=Math.max(58, Math.ceil(c.measureText(txt).width)+28);
+    o={ kind:'word', good:good, t:txt, x:-w-4, w:w, ph:Math.random()*6 };
+    RUN.decoySince=good ? 0 : RUN.decoySince+1;
+  }
+  RUN.items.push(o); RUN.lastKind=kind;
+  RUN.dist=0; RUN.gap=w+sp*(1.05+Math.random()*0.6);
+}
+function runUpdate(dt){
+  var sp=RUN.speed, i, o, p, cb, b;
+  RUN.t+=dt; RUN.off+=sp*dt;
+  if(RUN.buf>0) RUN.buf-=dt;
+  if(RUN.jy>0 || RUN.vy>0){
+    RUN.vy-=RUN_G*dt; RUN.jy+=RUN.vy*dt;
+    if(RUN.jy<=0){ RUN.jy=0; RUN.vy=0; if(RUN.buf>0){ RUN.buf=0; runJump(); } }
+  }
+  if(RUN.inv>0) RUN.inv-=dt;
+  if(RUN.shake>0) RUN.shake-=dt;
+  if(RUN.toastT>0) RUN.toastT-=dt;
+  if(RUN.flashT>0) RUN.flashT-=dt;
+  if(RUN.rest>0){ RUN.rest-=dt; if(RUN.rest<=0){ RUN.rest=0; runPickAyah(); } }
+  else { RUN.dist+=sp*dt; if(RUN.dist>=RUN.gap) runSpawn(); }
+  cb=runCharBox();
+  for(i=RUN.items.length-1;i>=0;i--){
+    o=RUN.items[i]; o.x+=sp*dt;
+    if(!o.dead){
+      b=runBox(o);
+      if(b.x0<cb.x1 && b.x1>cb.x0 && b.y0<cb.y1 && b.y1>cb.y0){ runTouch(o); if(RUN.state!=='run') return; }
+    }
+    if(o.x>RUN.W+20){
+      if(o.kind==='word' && o.good && !o.dead){ RUN.decoySince=9; runSay('فاتتك «'+o.t+'» — ستعود'); }
+      RUN.items.splice(i,1);
+    } else if(o.dead) RUN.items.splice(i,1);
+  }
+  for(i=RUN.parts.length-1;i>=0;i--){
+    p=RUN.parts[i]; p.l-=dt;
+    if(p.l<=0){ RUN.parts.splice(i,1); continue; }
+    p.vy+=520*dt; p.x+=p.vx*dt; p.y+=p.vy*dt;
+  }
+}
+
+/* ===== الرسم ===== */
+function runWrap(b,o,tile){ return ((b+o)%tile+tile)%tile; }
+function runTiles(x0,tile,W,fn){ for(var x=x0-tile;x<W+tile;x+=tile) fn(x); }
+function runDisc(c,cx,cy,r){
+  for(var dy=-r;dy<=r;dy+=3){ var w=Math.floor(Math.sqrt(r*r-dy*dy)/3)*3; c.fillRect(cx-w,cy+dy,2*w,3); }
+}
+function runMosque(c,x,base){
+  c.fillRect(x,base-18,42,18);
+  c.fillRect(x+9,base-27,24,9); c.fillRect(x+12,base-33,18,6); c.fillRect(x+17,base-37,8,4); c.fillRect(x+20,base-43,2,6);
+  c.fillRect(x+48,base-48,7,48); c.fillRect(x+45,base-36,13,3); c.fillRect(x+49,base-54,5,6); c.fillRect(x+51,base-58,1,4);
+}
+function runDraw(){
+  var cv=$('runCv'); if(!cv || !RUN.W) return;
+  var c=cv.getContext('2d'), W=RUN.W, H=RUN.H, G=RUN.ground, off=RUN.off||0, i, o, x,
+      L=document.body.classList.contains('light');
+  c.setTransform(RUN.k,0,0,RUN.k,0,0);
+  c.imageSmoothingEnabled=false;
+  if(RUN.shake>0) c.translate(Math.round((Math.random()-.5)*8), Math.round((Math.random()-.5)*5));
+  /* السماء */
+  var g=c.createLinearGradient(0,0,0,G);
+  g.addColorStop(0, L?'#8ccbff':'#020b20'); g.addColorStop(1, L?'#e4f4ff':'#0b3470');
+  c.fillStyle=g; c.fillRect(-8,-8,W+16,G+8);
+  if(L){
+    c.fillStyle='#ffd966'; runDisc(c,40,36,14);
+    c.fillStyle='#ffffff';
+    for(i=0;i<4;i++) runTiles(runWrap(i*125+30, off*.06, 500), 500, W, function(xx){
+      var y=24+(i*23)%60; c.fillRect(xx,y,33,6); c.fillRect(xx+6,y-6,18,6); c.fillRect(xx+3,y+6,24,3);
+    });
+  } else {
+    c.fillStyle='#fff3c4';
+    RUN_STARS.forEach(function(s){ runTiles(runWrap(s[0], off*.04, 480), 480, W, function(xx){ c.fillRect(Math.round(xx),Math.round(s[1]*(G-60)),s[2],s[2]); }); });
+    runDisc(c,40,36,13); c.fillStyle=g; runDisc(c,47,31,12);            /* هلال */
+  }
+  /* الكثبان ومساجدُ بعيدة */
+  var base=off*.3;
+  c.fillStyle=L?'#e7c98f':'#0b2248';
+  runTiles(runWrap(150, base, 560), 560, W, function(xx){ runMosque(c, Math.round(xx), G-12); });
+  c.fillStyle=L?'#f2d9a4':'#0f2c58';
+  for(x=0;x<W+6;x+=6){
+    var t=x-base, hh=Math.round((16+9*Math.sin(t/47)+5*Math.sin(t/19))/3)*3;
+    c.fillRect(x,G-hh,6,hh);
+  }
+  /* الأرض */
+  c.fillStyle=L?'#e7c07a':'#1d3157'; c.fillRect(-8,G,W+16,H-G+8);
+  c.fillStyle=L?'#b5873d':'#46659a'; c.fillRect(-8,G,W+16,3);
+  c.fillStyle=L?'#c99f58':'#152747';
+  runTiles(runWrap(0, off, 240), 240, W, function(xx){
+    xx=Math.round(xx);
+    c.fillRect(xx+12,G+9,6,3); c.fillRect(xx+70,G+17,3,3); c.fillRect(xx+121,G+8,9,3); c.fillRect(xx+180,G+20,6,3); c.fillRect(xx+214,G+12,3,3);
+  });
+  /* العوائق والكلمات */
+  for(i=0;i<RUN.items.length;i++){
+    o=RUN.items[i]; x=Math.round(o.x);
+    if(o.kind==='obs'){ c.drawImage(o.img, x, G-o.h+RUN_PX, o.w, o.h); continue; }
+    var cy=runPillY(o), y=cy-19, w=o.w, mid=x+Math.floor(w/2);
+    c.fillStyle='#8a6a2a'; c.fillRect(mid-1,y-14,3,14);
+    c.fillStyle='#e0b44a'; c.fillRect(mid-4,y-18,9,5);
+    c.fillStyle='#9c6f12'; c.fillRect(x+3,y,w-6,38); c.fillRect(x,y+3,w,32);
+    c.fillStyle='#fff4d6'; c.fillRect(x+3,y+3,w-6,32);
+    c.fillStyle='#ffe7a3'; c.fillRect(x+3,y+29,w-6,6);
+    c.fillStyle='#3b2a12'; c.font=RUN_FONT; c.textAlign='center'; c.textBaseline='middle'; c.direction='rtl';
+    c.fillText(o.t, x+w/2, cy+2);
+  }
+  /* الشخصيّة وظلُّها */
+  var sw=Math.max(12, 30-RUN.jy/6);
+  c.fillStyle='rgba(0,0,0,.2)'; c.fillRect(Math.round(W-RUN_CX+21-sw/2), G+1, Math.round(sw), 3);
+  if(!(RUN.inv>0 && Math.floor(RUN.inv*14)%2)){
+    var fr=RUN.jy>0 ? 'j' : (RUN.state==='run' ? (Math.floor(RUN.t*9)%2 ? 'a' : 'b') : 'b');
+    var im=runCharImg(fr);
+    c.drawImage(im, W-RUN_CX, Math.round(G-RUN.jy-im.height*RUN_PX+RUN_PX), im.width*RUN_PX, im.height*RUN_PX);
+  }
+  for(i=0;i<RUN.parts.length;i++){ var p=RUN.parts[i]; c.fillStyle=p.c; c.fillRect(Math.round(p.x),Math.round(p.y),3,3); }
+  /* رسائل */
+  c.textAlign='center'; c.textBaseline='middle'; c.direction='rtl';
+  if(RUN.flashT>0){
+    c.font='900 28px "IBM Plex Sans Arabic",sans-serif';
+    c.lineWidth=6; c.strokeStyle='#0a2a5e'; c.strokeText('أحسنت! 🌟', W/2, 64);
+    c.fillStyle='#ffe27a'; c.fillText('أحسنت! 🌟', W/2, 64);
+  }
+  if(RUN.toastT>0 && RUN.toast){
+    c.font='700 14px "IBM Plex Sans Arabic",sans-serif';
+    var tw=c.measureText(RUN.toast).width+24;
+    c.fillStyle='rgba(0,0,0,.55)'; c.fillRect(Math.round(W/2-tw/2), 8, Math.round(tw), 26);
+    c.fillStyle='#ffffff'; c.fillText(RUN.toast, W/2, 22);
+  }
+}
+
+$('btnGames').onclick=gamesOpen;
+$('btnGamesBack').onclick=function(){ show('scr-start'); };
+$('btnRunQuit').onclick=function(){ cancelAnimationFrame(RUN.raf); RUN.state='idle'; gamesOpen(); };
+$('scr-runner').addEventListener('pointerdown', runTap);
+document.addEventListener('keydown', function(e){
+  if(curScreen()!=='scr-runner') return;
+  if(e.code==='Space' || e.key==='ArrowUp'){ e.preventDefault(); runTap(); }
+});
+document.addEventListener('visibilitychange', function(){ if(document.hidden) runPause(); });
+window.addEventListener('resize', function(){
+  if(curScreen()!=='scr-runner') return;
+  runSize(); if(RUN.state!=='run') runDraw();
+});
 $('btnPathHome').onclick=function(){ renderPlayers(); show('scr-start'); };
 $('btnAddPlayer').onclick=function(){ ONB.edit=false; addPlayer(); onbShow(0); };
 if($('btnOffline')) $('btnOffline').onclick=offlineDownload;
@@ -11267,6 +11749,7 @@ var NAV_BACK={ 'scr-look':'btnLookDone', 'scr-map':'btnBackStart', 'scr-path':'b
   'scr-rev':'btnRevHome', 'scr-revpath':'btnRevQuit', 'scr-build':'btnBuildBack',
   'scr-shop':'btnShopBack', 'scr-board':'btnBoardBack', 'scr-cert':'btnCertBack',
   'scr-badges':'btnBadgesBack', 'scr-bqn':'btnBqnHome',
+  'scr-games':'btnGamesBack', 'scr-runner':'btnRunQuit',
   'scr-settings':'btnSetBack', 'scr-exam':'btnExamHome' };
 function curScreen(){ var e=document.querySelector('.screen.active'); return e?e.id:'scr-start'; }
 /* ===== تنبيهٌ وتأكيدٌ بثيمة التطبيق =====
