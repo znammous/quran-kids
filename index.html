@@ -343,19 +343,28 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .manum{font-family:"IBM Plex Sans Arabic","Segoe UI",sans-serif;font-size:.42em;font-weight:800;
   color:#b9a67d;border:1.5px solid #ddc99b;border-radius:50%;padding:.15em .45em;margin:0 .12em;
   vertical-align:.35em;white-space:nowrap}
-/* عرضُ المقطع قبل البدء: ما حوله باهت، ومتشابهاتُه مظلّلة —
-   المشتركُ بظلٍّ خفيف، والكلمةُ الفارقةُ بلونٍ أوضح وخطٍّ تحتها */
+/* المتشابهاتُ في الوجه: لكلّ مجموعةٍ لونٌ واحد. وفي عرض المقطع ما حوله باهت */
 .mushaf .mout{opacity:.35}
-.mushaf .msim{background:rgba(255,214,102,.34);border-radius:4px}
-.mushaf .mdif,.mushaf.qcf .mdif{background:rgba(255,146,43,.42);color:#4a2300;border-radius:4px;
-  box-shadow:inset 0 -2px 0 rgba(214,110,0,.85)}
+.mushaf .mg0,.mushaf .mg1,.mushaf .mg2,.mushaf .mg3,.mushaf .mg4,.mushaf .mg5{border-radius:4px}
+.mushaf .mg0{background:rgba(255,193,7,.32)}
+.mushaf .mg1{background:rgba(66,153,255,.26)}
+.mushaf .mg2{background:rgba(46,196,96,.26)}
+.mushaf .mg3{background:rgba(255,92,158,.24)}
+.mushaf .mg4{background:rgba(155,100,255,.25)}
+.mushaf .mg5{background:rgba(255,128,32,.28)}
 .mfgo{flex:0 0 auto;display:flex;flex-direction:column;align-items:stretch;gap:8px;
   padding:10px 14px calc(12px + env(safe-area-inset-bottom,0px));background:var(--pnl);border-top:2px solid var(--pb)}
 .mfgo[hidden]{display:none!important}
 .mfgo .btn{margin:0}
 .mfgonote{font-weight:800;font-size:14px;line-height:1.8;color:var(--ttl);text-align:center}
 .mfq{font-family:"UthmanicHafs","Amiri Quran",serif;font-size:1.2em;font-weight:400;padding:0 .25em;
-  border-radius:6px;background:rgba(255,146,43,.28)}
+  border-radius:6px;background:rgba(255,255,255,.12)}
+.mfq.mg0{background:rgba(255,193,7,.45)}
+.mfq.mg1{background:rgba(66,153,255,.45)}
+.mfq.mg2{background:rgba(46,196,96,.45)}
+.mfq.mg3{background:rgba(255,92,158,.42)}
+.mfq.mg4{background:rgba(155,100,255,.45)}
+.mfq.mg5{background:rgba(255,128,32,.45)}
 .manum.hl{color:#8a6b2a;border-color:#c8a84f}
 .ayahbox{background:#f2f9ff;border:3px dashed #a6cdf2;border-radius:16px;padding:10px;margin-bottom:12px;
   min-height:110px;max-height:46vh;overflow-y:auto;display:flex;justify-content:center;
@@ -1371,7 +1380,7 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
       <li>كل مرحلة = ⭐ نجمة، ومعها 💎 جواهر و🪵 خشب — والمقطع يعطي 🪨 حجراً، والمراجعة ⚙️ حديداً و🔷 زجاجاً</li>
       <li>في 🕌 «مسجدي» تبني بها مسجدك الكبير قطعةً قطعة، ولا تكتمل أعمدته ونوافذه إلا بالمراجعة</li>
       <li>إذا أتممت كل مقاطع السورة تُطبع <b>شهادة الحفظ</b> 📜</li>
-      <li>قبل كل مقطع يُعرض <b>وجهُه من المصحف</b>، ويُظلَّل فيه ما تشابه من آياته — والكلمةُ الفارقة بلونٍ أوضح</li>
+      <li>قبل كل مقطع يُعرض <b>وجهُه من المصحف</b>، وفي كل وجهٍ يُلوَّن ما تشابه أو تكرّر — <b>لكل مجموعةٍ لون</b></li>
       <li>كل مقطع تُتمّه يعود في <b>☀️ مراجعة اليوم</b> غداً، ثم بعد ٣ أيام، فأسبوع، فأسبوعين، فشهر</li>
     </ol>
     <div class="note">
@@ -1762,7 +1771,7 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
           <option value="1">الرسم العثماني (كما في المصحف)</option>
         </select>
       </div>
-      <div class="switchrow"><span>✨ تظليل المتشابهات<br><small style="font-weight:700;color:var(--mute)">في وجه المقطع قبل البدء: ما تشابه من آياته بظلٍّ خفيف، والكلمةُ الفارقة بلونٍ أوضح</small></span><input type="checkbox" id="setSimHl"></div>
+      <div class="switchrow"><span>✨ تظليل المتشابهات<br><small style="font-weight:700;color:var(--mute)">في كل وجهٍ من المصحف: ما تشابه أو تكرّر من العبارات والكلمات، لكل مجموعةٍ لونٌ واحد</small></span><input type="checkbox" id="setSimHl"></div>
       <div class="setblock">
         <label class="lbl">🔎 حجم خط الآية</label>
         <select id="setFont">
@@ -2327,14 +2336,14 @@ function mfPreload(P){
     if(q>=1 && q<=604 && !MFONT[q]) mushafFont(q)['catch'](function(){});
   });
 }
-/* ===== المتشابهات داخل المقطع =====
-   آيتان تشتركان في جملةٍ ثمّ تفترقان — «قل أرأيتم» و«قل أرأيتكم» — هما موضعُ
-   الالتباس في الحفظ. فيُقارَن كلُّ زوجٍ من آيات المقطع على كلّ إزاحةٍ بينهما:
-   كلمةٌ مطابقة، أو قريبةٌ منها بحرفٍ أو حرفين، ويُحتمل بينها فارقٌ واحد.
-   فإن بلغ الاشتراكُ حدَّه عُلّم المشتركُ ('s') والفارقُ ('d') — والفارقُ
-   أيضاً الكلمةُ التي تفترق عندها الآيتان، والتي قبل التقائهما.
-   ولا يُعلَّم ما لا فارقَ فيه (آيةٌ تتكرّر بعينها كـ«فبأيّ آلاء ربكما تكذبان»)،
-   ولا خاتمةٌ شائعةٌ تتكرّر بلا فارقٍ داخلها، ولا مطلعٌ قصيرٌ كـ«يا أيها الذين آمنوا». */
+/* ===== المتشابهات في الصفحة =====
+   ما تشابه أو تكرّر في الوجه الواحد — «قل أرأيتم» و«قل أرأيتكم»، و«لا أقول لكم»
+   مرّتين في آيةٍ واحدة، و«قل» تتكرّر — هو موضعُ الالتباس في الحفظ. فتُقارَن كلُّ
+   آيتين في الوجه، والآيةُ بنفسها، على كلّ إزاحةٍ بينهما: كلمةٌ مطابقة، أو قريبةٌ
+   منها بحرفٍ أو حرفين أو بواوٍ وفاءٍ في أوّلها، ويُحتمل بينها فارقٌ واحد.
+   فما بلغ حدَّه صار عبارةً متشابهة، وتُجمع العباراتُ المتقاطعة مجموعةً واحدة.
+   ثمّ الكلمةُ المفردة تتكرّر خارج العبارات — إلّا الشائعةَ كـ«الله» و«من» —
+   مجموعةٌ أيضاً. ولكلّ مجموعةٍ لونٌ واحد. */
 function simLev(a,b){
   var la=a.length, lb=b.length, prev=[], cur, i, j;
   for(j=0;j<=lb;j++) prev[j]=j;
@@ -2346,25 +2355,43 @@ function simLev(a,b){
   }
   return prev[lb];
 }
-/* 2 مطابقة، 1 قريبة (أرأيتم/أرأيتكم، يعلمون/يعقلون)، 0 مختلفة */
+/* 2 مطابقة، 1 قريبة (أرأيتم/أرأيتكم، لا/ولا)، 0 مختلفة */
 function simNear(a,b){
   if(a===b) return 2;
   var la=a.length, lb=b.length;
+  if(la===lb+1 && /^[وف]/.test(a) && a.slice(1)===b) return 1;
+  if(lb===la+1 && /^[وف]/.test(b) && b.slice(1)===a) return 1;
   if(Math.min(la,lb)<3 || Math.abs(la-lb)>2) return 0;
   return simLev(a,b)<=Math.max(1,Math.round(Math.max(la,lb)/3)) ? 1 : 0;
 }
-/* toks[k] كلماتُ الآية k مطبّعة. الناتج mk[k][wi] = {t:'s'|'d', o:[k2,wi2], n:قريبة} */
+/* الشائعُ الذي لا يُلوَّن وحدَه — يُطبَّع بـnorm عند أوّل استعمال، فـ«على» تصير «علي» كالنصّ */
+var SIM_STOP=' لك لي بي بك ها ذا من في على الى الي عن بما لما مما عما كما انما اما بعد قبل عند اليه اليهم لدى اولئك هؤلاء ما لا ان او ام ثم قد لم لن بل هل يا اذ اذا لو كل الله هم هو هي هما'+
+  ' انا نحن انت انتم كم كان كانت كانوا الذي الذين التي هذا هذه ذلك تلك له لها لهم لكم به بها بهم'+
+  ' فيه فيها عليه عليها عليهم عليكم منه منها منهم منكم الا انه انهم لكن حتي اني ';
+/* القصيرُ ليس شائعاً لقصره: «قل» تُلوَّن، و«من» في القائمة */
+var SIM_STOPN=null;
+function simStop(w){
+  if(!SIM_STOPN) SIM_STOPN=' '+SIM_STOP.trim().split(/\s+/).map(norm).join(' ')+' ';
+  if(w.length<2 || SIM_STOPN.indexOf(' '+w+' ')>=0) return true;
+  if(w.length>2 && /^[وف]/.test(w)){ var r=w.slice(1); return SIM_STOPN.indexOf(' '+r+' ')>=0; }
+  return false;
+}
+/* «وقالوا» و«قالوا» كلمةٌ واحدة في عدّ التكرار */
+function simBase(w){ return (w.length>=4 && /^[وف]/.test(w)) ? w.slice(1) : w; }
+/* toks[k] كلماتُ القطعة k مطبّعة. الناتج:
+   mk[k][wi] = {t:'s'|'d', o:[k2,wi2], n:قريبة} — للفراغ وخياراته
+   links     = [[k,wi,k2,wi2]…] كلُّ كلمتين تقابلتا في عبارةٍ متشابهة — ومنها المجموعات */
 function simScan(toks){
-  var n=toks.length, mk=[], i, j;
+  var n=toks.length, mk=[], links=[], i, j;
   for(i=0;i<n;i++) mk[i]={};
   function put(k,w,t,k2,w2,nr){
     var c=mk[k][w];
     if(c && (c.t==='d' || t==='s')) return;       /* الفارقُ لا يمحوه اشتراكٌ من زوجٍ آخر */
     mk[k][w]={t:t, o:[k2,w2], n:nr};
   }
-  for(i=0;i<n;i++) for(j=i+1;j<n;j++){
-    var A=toks[i], B=toks[j], la=A.length, lb=B.length, d;
-    for(d=1-la; d<lb; d++){                        /* كلمةُ A رقم x تقابل كلمةَ B رقم x+d */
+  for(i=0;i<n;i++) for(j=i;j<n;j++){
+    var A=toks[i], B=toks[j], la=A.length, lb=B.length, self=(i===j), d;
+    for(d=self?1:1-la; d<lb; d++){                 /* كلمةُ A رقم x تقابل كلمةَ B رقم x+d */
       var x0=Math.max(0,-d), v=[], x;
       for(x=x0; x<la && x+d<lb; x++) v.push(simNear(A[x],B[x+d]));
       var L=v.length, p=0;
@@ -2372,43 +2399,116 @@ function simScan(toks){
         if(!v[p]){ p++; continue; }
         var s=p, e=p, q=p+1, t;
         while(q<L && (v[q] || (q+1<L && v[q+1]))){ if(v[q]) e=q; q++; }
-        var S=0, N=0, G=0;
-        for(t=s;t<=e;t++){ if(v[t]===2) S++; else if(v[t]===1) N++; else G++; }
-        var xs=x0+s, xe=x0+e, ys=xs+d, ye=xe+d, ok;
-        if(N+G) ok = S>=2 && S+N>=3;
-        else ok = S>=4 && !(xe===la-1 && ye===lb-1) && (!(xs===0 && ys===0) || S>=5);
-        var before=s>0, after=e+1<L;
-        if(ok && (N+G || before || after)){
+        var S=0, N=0, G=0, NS=0;
+        for(t=s;t<=e;t++){
+          if(v[t]===2) S++; else if(v[t]===1) N++; else G++;
+          if(v[t] && !simStop(A[x0+t])) NS++;
+        }
+        var ok = (N+G) ? (S>=2 && S+N>=3) : (S>=2 && NS>=2);
+        if(self && e-s+1>d) ok=false;              /* عبارةٌ لا تقابل نفسها متداخلة */
+        if(ok){
           for(t=s;t<=e;t++){
+            links.push([i,x0+t,j,x0+t+d], [i,x0+s,i,x0+t]);   /* والعبارةُ كلُّها مجموعةٌ واحدة */
             var tp=(v[t]===2)?'s':'d';
             put(i,x0+t,tp,j,x0+t+d,v[t]===1);
             put(j,x0+t+d,tp,i,x0+t,v[t]===1);
           }
-          if(after){ put(i,xe+1,'d',j,ye+1,false); put(j,ye+1,'d',i,xe+1,false); }
-          if(before){ put(i,xs-1,'d',j,ys-1,false); put(j,ys-1,'d',i,xs-1,false); }
+          var xs=x0+s, xe=x0+e;
+          if(e+1<L){ put(i,xe+1,'d',j,xe+1+d,false); put(j,xe+1+d,'d',i,xe+1,false); }
+          if(s>0){ put(i,xs-1,'d',j,xs-1+d,false); put(j,xs-1+d,'d',i,xs-1,false); }
         }
         p=e+1;
       }
     }
   }
-  return mk;
+  return {mk:mk, links:links};
 }
-var SIMC={};
-/* kind: 'm' كلماتُ وجه المصحف، 'g' كلماتُ الأسئلة بالرسم المختار */
-function simFor(s,from,to,kind){
-  var key=kind+(kind==='g'?SET.script:'')+':'+s.n+':'+from+':'+to;
-  if(SIMC[key]) return SIMC[key];
-  var toks=[], a;
-  for(a=from;a<to;a++)
-    toks.push((kind==='m' ? mushafWords(s.n,a+1) : wordsOf(ayahText(s,a))).map(norm));
-  return (SIMC[key]=simScan(toks));
-}
-/* الإعدادُ يُطفئ التظليلَ والتنبيه وحدَهما — الفراغُ على الفارق باقٍ */
+/* الإعدادُ يُطفئ التلوينَ والتنبيه وحدَهما — الفراغُ على الفارق باقٍ */
 function simOn(){ return !(SET && SET.simHl===false); }
-/* الكلماتُ الفارقة في الآية a: القريبةُ أوّلاً، ثمّ مواضعُ الافتراق */
+
+/* ---------- وجهُ المصحف: مجموعاتٌ ملوّنة ---------- */
+var SIM_NCOL=6, SIMP={};
+/* كلماتُ الوجه P الظاهرةُ فيه آيةً آية: [{gi, w0, toks}] — فآيةٌ تبدأ في وجهٍ
+   وتتمّ في تاليه لا يُحسب منها إلّا ما يُرى */
+function simPageItems(P){
+  mushafInit();
+  var base=(P-1)*15, st=null, en=null, i, out=[], gi;
+  for(i=base;i<base+15 && i<ML.length;i++) if(ML[i]){ st=ML[i]; break; }
+  for(i=base+15;i<ML.length;i++) if(ML[i]){ en=ML[i]; break; }
+  if(!st) return out;
+  for(gi=st[0]; gi<QURAN_AYAT && (!en || gi<=en[0]); gi++){
+    var loc=mLoc(gi), ws=mushafWords(loc[0],loc[1]);
+    var w0=(gi===st[0])?st[1]:0, w1=(en && gi===en[0])?Math.min(en[1],ws.length):ws.length;
+    if(w1>w0) out.push({gi:gi, w0:w0, toks:ws.slice(w0,w1).map(norm)});
+  }
+  return out;
+}
+/* {mk:{'gi:wi':لون}, notes:[[{gi,w},{gi,w}]…]} */
+function simPage(P){
+  if(SIMP[P]) return SIMP[P];
+  var it=simPageItems(P), sc=simScan(it.map(function(x){ return x.toks; })), par={};
+  function key(k,w){ return it[k].gi+':'+(it[k].w0+w); }
+  function find(x){ while(par[x]!==x){ par[x]=par[par[x]]; x=par[x]; } return x; }
+  function uni(a,b){
+    if(!(a in par)) par[a]=a;
+    if(!(b in par)) par[b]=b;
+    a=find(a); b=find(b); if(a!==b) par[b]=a;
+  }
+  sc.links.forEach(function(l){ uni(key(l[0],l[1]), key(l[2],l[3])); });
+  /* الكلمةُ المفردة: ما تكرّر خارج العبارات — والعبارةُ أولى بكلمتها */
+  var byW={}, b;
+  it.forEach(function(x,k){ x.toks.forEach(function(w,wi){
+    var kk=key(k,wi);
+    if((kk in par) || simStop(w)) return;
+    b=simBase(w); (byW[b]=byW[b]||[]).push(kk);
+  }); });
+  for(b in byW) if(byW[b].length>1) for(var z=0;z<byW[b].length;z++) uni(byW[b][0], byW[b][z]);
+  /* ألوانُ المجموعات بترتيب أوّل ظهورها في الوجه */
+  var mk={}, col={}, nc=0;
+  it.forEach(function(x,k){ x.toks.forEach(function(w,wi){
+    var kk=key(k,wi); if(!(kk in par)) return;
+    var r=find(kk); if(!(r in col)) col[r]=(nc++)%SIM_NCOL;
+    mk[kk]=col[r];
+  }); });
+  /* أزواجُ التنبيه: كلمتان قريبتان في عبارتين متشابهتين (أرأيتم/أرأيتكم) */
+  var notes=[], seen={};
+  sc.mk.forEach(function(m,k){
+    for(var w in m){
+      var c=m[w]; if(c.t!=='d' || !c.n) continue;
+      /* «لا» و«ولا»: فرقُ واوٍ لا يُنبَّه عليه */
+      if(it[k].toks[+w].replace(/^[وف]/,'')===it[c.o[0]].toks[c.o[1]].replace(/^[وف]/,'')) continue;
+      var one={gi:it[k].gi, w:it[k].w0+(+w)}, two={gi:it[c.o[0]].gi, w:it[c.o[0]].w0+c.o[1]};
+      var pk=[one.gi+':'+one.w, two.gi+':'+two.w].sort().join('|');
+      if(seen[pk]) continue;
+      seen[pk]=1;
+      notes.push(one.gi<=two.gi ? [one,two] : [two,one]);
+    }
+  });
+  return (SIMP[P]={mk:mk, notes:notes});
+}
+
+/* ---------- الأسئلة: الفارقُ وشبيهُه في وجه الآية ---------- */
+var SIMG={};
+/* كلماتُ الأسئلة بالرسم المختار لآيات الوجه P (ما بدأ فيه) */
+function simPageG(P){
+  var key=SET.script+':'+P;
+  if(SIMG[key]) return SIMG[key];
+  var a=PAGE_STARTS[P-1], e=(P<PAGE_STARTS.length)?PAGE_STARTS[P]:QURAN_AYAT, gis=[], toks=[], gi, l;
+  for(gi=a;gi<e;gi++){
+    l=mLoc(gi); gis.push(gi);
+    toks.push(wordsOf(ayahText(SURAHS[l[0]-1],l[1]-1)).map(norm));
+  }
+  return (SIMG[key]={a:a, gis:gis, mk:simScan(toks).mk});
+}
+function simAt(s,a){
+  var gi=GIDX[s.n-1]+a, pg=simPageG(pageOfIdx(gi));
+  return {pg:pg, m:pg.mk[gi-pg.a]||{}};
+}
+/* الكلماتُ الفارقة في الآية a: القريبةُ أوّلاً (أرأيتم/أرأيتكم)، ثمّ مواضعُ الافتراق.
+   from وto للتوافق مع مواضع النداء — والنطاقُ وجهُ الآية كلُّه */
 function simDiffs(s,from,to,a){
-  if(!s || a<from || a>=to) return [];
-  var m=simFor(s,from,to,'g')[a-from]||{}, near=[], far=[], w;
+  if(!s || a<0 || a>=s.ayat.length) return [];
+  var m=simAt(s,a).m, near=[], far=[], w;
   for(w in m) if(m[w].t==='d') (m[w].n?near:far).push(+w);
   return near.length ? near : far;
 }
@@ -2420,18 +2520,19 @@ function simWi(s,from,to,a,n){
   var b=simBlank(s,from,to,a);
   return b>=0 ? b : Math.floor(Math.random()*n);
 }
-/* آيةٌ من المقطع لها شبيهةٌ فيه وتحتمل الفراغ، وإلّا -1 */
+/* آيةٌ من المقطع لها شبيهةٌ في وجهها وتحتمل الفراغ، وإلّا -1 */
 function simAyah(s,from,to){
   var pool=[], a;
   for(a=from;a<to;a++) if(ayahWords(s,a)>=MISS_MIN && simDiffs(s,from,to,a).length) pool.push(a);
   return pool.length ? pool[Math.floor(Math.random()*pool.length)] : -1;
 }
-/* الكلمةُ المقابلة في الآية الشبيهة — تُجعل بين خيارات الفراغ */
+/* الكلمةُ المقابلة في الآية الشبيهة — تُجعل بين خيارات الفراغ، ولو كانت خارج المقطع */
 function simTwin(s,from,to,a,wi){
-  if(!s || a<from || a>=to) return null;
-  var c=(simFor(s,from,to,'g')[a-from]||{})[wi];
+  if(!s || a<0 || a>=s.ayat.length) return null;
+  var x=simAt(s,a), c=x.m[wi];
   if(!c || c.t!=='d') return null;
-  return wordsOf(ayahText(s,from+c.o[0]))[c.o[1]]||null;
+  var l=mLoc(x.pg.gis[c.o[0]]);
+  return wordsOf(ayahText(SURAHS[l[0]-1],l[1]-1))[c.o[1]]||null;
 }
 /* موضعا الفراغين في آيةٍ من n كلمات، لا يتجاوران — وأحدُهما d إن كان */
 function missPair(n,d){
@@ -2446,59 +2547,56 @@ function missPair(n,d){
 }
 
 /* ===== عرضُ المقطع في وجهه قبل البدء ===== */
-var MF_MARK=null;   /* {rg:[[gi0,gi1]…], mk:{'gi:wi':'s'|'d'}} — نطاقُ المقطع ومتشابهاتُه في الوجه */
+var MF_MARK=null;   /* {rg:[[gi0,gi1]…]} — نطاقُ المقطع، وما خارجه باهت */
 var MF_PV=null;     /* عرضٌ ينتظر زرَّ البدء: {go} */
 function mfInRg(M,gi){
   for(var i=0;i<M.rg.length;i++) if(gi>=M.rg[i][0] && gi<M.rg[i][1]) return true;
   return false;
 }
-function mfMarkCls(M,inr,gi,wi){
-  if(!M) return '';
-  if(!inr) return ' mout';
-  var t=M.mk[gi+':'+wi];
-  return t==='d' ? ' mdif' : (t==='s' ? ' msim' : '');
+function mfMarkCls(M,PM,inr,gi,wi){
+  var c=PM ? PM.mk[gi+':'+wi] : null;
+  return (c!=null ? ' mg'+c : '')+(M && !inr ? ' mout' : '');
 }
 /* كلمةُ الوجه بلا علامات وقفها، لسطر التنبيه */
-function simWord(sn,an,wi){
-  return (mushafWords(sn,an)[wi]||'').split(/\s+/).filter(function(x){ return MLET.test(x); }).join(' ');
+function simWord(gi,wi){
+  var l=mLoc(gi);
+  return (mushafWords(l[0],l[1])[wi]||'').split(/\s+/).filter(function(x){ return MLET.test(x); }).join(' ');
 }
-/* يضبط نطاقَ الوجه وتظليلَه من قطع المقطع [{s,from,to}]، ويعيد أزواجَ التنبيه */
+/* يضبط نطاقَ المقطع من قطعه [{s,from,to}] */
 function mfMarkSet(pieces){
-  var rg=[], mk={}, notes=[], seen={};
+  var rg=[];
   (pieces||[]).forEach(function(p){
     var base=GIDX[p.s.n-1];
     rg.push([base+p.from, base+p.to]);
-    if(!simOn()) return;
-    simFor(p.s,p.from,p.to,'m').forEach(function(m,k){
-      var w, best=null;
-      for(w in m){
-        mk[(base+p.from+k)+':'+w]=m[w].t;
-        if(m[w].t==='d' && (!best || (m[w].n && !best.c.n))) best={w:+w, c:m[w]};
-      }
-      if(!best) return;
-      var k2=best.c.o[0], pk=p.s.n+':'+Math.min(k,k2)+':'+Math.max(k,k2);
-      if(seen[pk]) return;                         /* الزوجُ يُذكر مرّةً واحدة */
-      seen[pk]=1;
-      var one={s:p.s, a:p.from+k, w:best.w}, two={s:p.s, a:p.from+k2, w:best.c.o[1]};
-      notes.push(one.a<two.a ? [one,two] : [two,one]);
-    });
   });
-  MF_MARK={rg:rg, mk:mk};
-  return notes;
+  MF_MARK={rg:rg};
+  return MF_MARK;
 }
 function segPreview(pieces, title, btn, go){
-  var notes=mfMarkSet(pieces), M=MF_MARK;
+  var M=mfMarkSet(pieces);
   if(!M.rg.length){ MF_MARK=null; if(go) go(); return; }
-  var P=pageOfIdx(M.rg[0][0]), P2=pageOfIdx(M.rg[M.rg.length-1][1]-1);
+  var P=pageOfIdx(M.rg[0][0]), P2=pageOfIdx(M.rg[M.rg.length-1][1]-1), q;
   var html='<b>📖 هذا مقطعك في المصحف</b> — تأمّله قبل أن تبدأ';
   if(P2>P) html+='<br>↔️ يكمل في الصفحة '+arNum(P2)+' — اسحب الوجه لتراه';
-  if(notes.length){
-    html+='<br>🔎 انتبه للمتشابه: '+notes.slice(0,3).map(function(pr){
-      return pr.map(function(x){
-        return 'الآية '+arNum(x.a+1)+' <span class="mfq">'+esc(simWord(x.s.n,x.a+1,x.w))+'</span>';
-      }).join(' و');
-    }).join(' • ');
-    if(notes.length>3) html+=' • وغيرُها مظلّلٌ في الوجه';
+  if(simOn()){
+    var mine=[], rest=[], any=false;
+    for(q=P;q<=P2;q++){
+      var PM=simPage(q);
+      for(var kk in PM.mk){ any=true; break; }
+      PM.notes.forEach(function(pr){
+        pr.c=PM.mk[pr[0].gi+':'+pr[0].w];
+        (mfInRg(M,pr[0].gi)||mfInRg(M,pr[1].gi) ? mine : rest).push(pr);
+      });
+    }
+    var notes=mine.concat(rest);
+    if(any) html+='<br>🎨 كلُّ لونٍ يجمع ما تشابه أو تكرّر في الصفحة';
+    if(notes.length){
+      html+='<br>🔎 انتبه: '+notes.slice(0,3).map(function(pr){
+        return pr.map(function(x){
+          return 'الآية '+arNum(mLoc(x.gi)[1])+' <span class="mfq'+(pr.c!=null?' mg'+pr.c:'')+'">'+esc(simWord(x.gi,x.w))+'</span>';
+        }).join(' و');
+      }).join(' • ');
+    }
   }
   $('mfGoNote').innerHTML=html;
   $('mfGoBtn').textContent=btn;
@@ -2508,7 +2606,7 @@ function segPreview(pieces, title, btn, go){
 }
 function mushafPageHTML(P, hlGi, glyphs){
   mushafInit();
-  var base=(P-1)*15, html='', l, u=0, GC=glyphs?mushafCodes(P):null, M=MF_MARK;
+  var base=(P-1)*15, html='', l, u=0, GC=glyphs?mushafCodes(P):null, M=MF_MARK, PM=simOn()?simPage(P):null;
   for(l=0;l<15;l++){
     var i=base+l;
     if(ML[i]==null){
@@ -2543,7 +2641,7 @@ function mushafPageHTML(P, hlGi, glyphs){
          محرفين متتاليين — فيُرسم المحرفان معاً ويُعدّان واحداً. ولولا هذا
          ضاعت الكلمةُ وحلّت العلامةُ محلّها في مئةٍ وتسعةٍ وتسعين موضعاً. */
       var wtx=ws[wi], rub=(GC && wtx.indexOf('۞')>=0);
-      out+='<span class="mw'+(on?' hl':'')+mfMarkCls(M,inr,gi,wi)+'" data-gi="'+gi+'">'+
+      out+='<span class="mw'+(on?' hl':'')+mfMarkCls(M,PM,inr,gi,wi)+'" data-gi="'+gi+'">'+
         (GC ? (String.fromCharCode(GC[u])+(rub?String.fromCharCode(GC[u]+1):'')) : esc(wtx))+'</span>';
       u++; wi++;
     }
