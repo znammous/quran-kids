@@ -406,13 +406,14 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .msura{align-self:stretch;position:relative;display:flex;align-items:center;justify-content:center;
   min-height:1.25em}
 .mushaf.qcf .msura{line-height:1}
-/* سطرُ العنوان له هامشٌ أعلاه وأسفله يُقتطع من ارتفاع الوجه قبل قسمته على
-   الأسطر: فلا يلاصق الإطارُ البسملةَ ولا ما فوقه ولو ضاق الوجه — كما في معاينة
-   المقطع قبل الأسئلة، حيث الشريطُ وزرُّ البدء يأخذان من ارتفاعه */
-.mline.mhead{margin-block:var(--mhgap,.2em)}
-.msura::before{content:'';position:absolute;inset:4% 0;pointer-events:none;
+/* في معاينة المقطع قبل الأسئلة والمسار يضيق الوجهُ — الشريطُ وزرُّ البدء
+   يأخذان من ارتفاعه — فتتلاصق الأسطرُ ويلاصق الإطارُ البسملة. فلسطر العنوان
+   هناك وحدَها هامشٌ أعلاه وأسفله يُقتطع من الارتفاع قبل قسمته على الأسطر.
+   والمصحفُ العاديُّ على حاله. */
+.mfsheet.pv .mline.mhead{margin-block:var(--mhgap,.2em)}
+.msura::before{content:'';position:absolute;inset:1px 0;pointer-events:none;
   border:2px solid #a07a2c;border-radius:4px}
-.msura::after{content:'';position:absolute;top:calc(4% + 4px);bottom:calc(4% + 4px);left:4px;right:4px;pointer-events:none;
+.msura::after{content:'';position:absolute;inset:5px 4px;pointer-events:none;
   border:1px solid #a07a2c;border-radius:2px;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 0l5 5-5 5-5-5z' fill='%23a07a2c'/%3E%3C/svg%3E") left .35em center/.42em .42em no-repeat,
              url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 0l5 5-5 5-5-5z' fill='%23a07a2c'/%3E%3C/svg%3E") right .35em center/.42em .42em no-repeat}
@@ -2707,6 +2708,7 @@ function segPreview(pieces, title, btn, go){
   $('mfGoNote').innerHTML=html;
   $('mfGoBtn').textContent=btn;
   $('mfGo').hidden=false;
+  $('mfSheet').classList.add('pv');
   MF_PV={go:go};
   mushafOpenPage(P, -1, title);
 }
@@ -3025,7 +3027,8 @@ function mushafFit(box){
   var cs=getComputedStyle(box);
   var availH=box.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0);
   /* ولا يزيد على ما يسعه الارتفاع: الوجهُ ثابتٌ لا يُمرَّر، فلا بدّ أن يُرى كلُّه */
-  var heads=m.querySelectorAll('.mline.mhead').length, GAP=0.22;
+  var pv=!!(box.closest && box.closest('.mfsheet.pv'));
+  var heads=pv ? m.querySelectorAll('.mline.mhead').length : 0, GAP=0.22;
   if(availH>0) fs=Math.max(11, Math.min(fs, availH/(15*1.12+1.2+heads*2*GAP)));
   m.style.fontSize=fs+'px';
   var gap=Math.round(fs*GAP);
@@ -3059,7 +3062,7 @@ function mushafClose(){
   MF_READ=false; MF_MARK=null; MF_PV=null;
   if($('mfGo')) $('mfGo').hidden=true;
   try{ mfPanel(null); }catch(e){}
-  if($('mfSheet')){ $('mfSheet').hidden=true; $('mfSheet').classList.remove('reader'); }
+  if($('mfSheet')){ $('mfSheet').hidden=true; $('mfSheet').classList.remove('reader','pv'); }
 }
 /* شاشة اللمس تُولّد نقرةً تابعة بعد رفع الإصبع، وتُختبَر إصابتها بعد إخفاء
    الوجه — فتقع على الزرّ الذي كان خلفه. فيبتلعها حارسٌ لحظيّ. */
