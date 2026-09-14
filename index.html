@@ -1751,17 +1751,11 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
           <option value="mid">متوسّط — يزيد مطالعَ الآيات وخواتمَها ورصَّها</option>
           <option value="hard">متقدّم — يزيد كتابةَ الكلمات والتسميعَ كتابةً</option>
         </select>
-        <div class="note" id="lvNote"></div>
       </div>
       <div class="setblock">
         <label class="lbl">🧭 خطة الحفظ</label>
         <div class="note" id="bqnNote" style="font-weight:800;color:#1a4f8f"></div>
         <button type="button" class="btn blue mini" id="btnBqnOpen" style="width:100%;margin-top:10px">🧭 غيّر خطة الحفظ</button>
-        <div class="note">مسار واحد تسير عليه: <b>مسارك الخاص</b> بحجم المقطع الذي تختاره،
-          أو إحدى خطط <b>برنامج «بالقرآن نحيا» لحفظ القرآن الكريم</b>
-          (إعداد فريق علمي مختص، الإصدار الثالث — Quranlives.com).
-          وتقدّم كل مسار محفوظ، فجرّب وارجع دون أن يضيع شيء.
-          واعتماد خطة جاهزة يفتح الأجزاء الثلاثين، لأن جداولها تمشي على المصحف كلّه.</div>
       </div>
       <div class="setblock">
         <label class="lbl">🔓 الأجزاء المتاحة</label>
@@ -1769,7 +1763,6 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
           <select id="setJuzFrom"></select>
           <select id="setJuzTo"></select>
         </div>
-        <div class="note">بقية الأجزاء تظهر مقفلة 🔒 حتى لا يتشتّت الحافظ. الافتراضي: جزء عمّ فقط (٣٠).</div>
       </div>
       <div class="switchrow"><span>🔀 القفز بين مقاطع السورة<br><small style="font-weight:700;color:var(--mute)">داخل السور المتاحة أعلاه: يبدأ بأيّ مقطع دون إتمام ما قبله — ولا يفتح جزءاً خارج نطاقك</small></span><input type="checkbox" id="setFree"></div>
       <div class="setblock">
@@ -1819,7 +1812,6 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
           <button class="btn blue" id="btnAddPlayer">➕ مستخدم جديد</button>
           <button class="btn red" id="btnDelPlayer">🗑️ حذف المستخدم الحالي</button>
         </div>
-        <div class="note">لكل مستخدم نجومه ومقاطعه ومواظبته وإعداداته المستقلّة.</div>
       </div>
       <div class="switchrow"><span>🏠 لوحة البيت بين أفراد الأسرة</span><input type="checkbox" id="setBoard"></div>
       <div class="row" style="margin-top:12px">
@@ -1893,12 +1885,6 @@ function kindAllowed(t){
   var h=LV_HIDE[SET&&SET.level];
   return !(h&&h[t]);
 }
-/* شرحُ كلّ درجةٍ كما يُقرأ في الإعدادات */
-var LV_TXT={
-  easy:'ترتيبُ الكلمات، والكلمةُ الناقصة، والكلمتان الناقصتان، وترتيبُ الآيات، وحافّتا الوجه، والتسميعُ بالصوت.',
-  mid :'كلُّ ما في السهل، ويُزاد مطلعُ الآية وخاتمتُها ورصُّ المطالع والخواتم.',
-  hard:'كلُّ ما في المتوسّط، ويُزاد كتابةُ الكلمات والتسميعُ كتابةً لا بالصوت.'
-};
 function defSet(){ return { level:'easy', lv3:true, script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false, simHl:true }; }
 /* ثلاث درجات للخطّ لا خمس — ويُردّ القديم إلى أقربها */
 var FONTS=[{v:20,n:'صغير'},{v:24,n:'متوسط'},{v:30,n:'كبير'}];
@@ -9340,8 +9326,6 @@ function fillSettings(){
   if(vs) vs.textContent='build '+String(document.lastModified||'').slice(0,17);
 }catch(e){}
   $('setLevel').value=SET.level;
-  $('setLevel').onchange=lvNoteSync;
-  lvNoteSync();
   $('setScript').value=String(SET.script);
   $('setReps').value=String(SET.reps);
   $('setFont').value=String(SET.font);
@@ -9395,12 +9379,6 @@ function renderSetTabs(){
   };
   var ps=document.querySelectorAll('#scr-settings .setpage');
   for(i=0;i<ps.length;i++) ps[i].hidden=(ps[i].getAttribute('data-setp')!==setTab);
-}
-/* الشرحُ يتبع الاختيارَ قبل أن يُحفظ، فيرى ما يصير إليه قبل أن يصير */
-function lvNoteSync(){
-  var e=$('lvNote'), v=$('setLevel');
-  if(!e||!v) return;
-  e.textContent=LV_TXT[v.value]||'';
 }
 function readSettings(){
   SET.level=$('setLevel').value;
