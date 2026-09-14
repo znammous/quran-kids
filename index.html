@@ -9595,14 +9595,17 @@ function examGate(){
 function examBody(k){
   var h='';
   if(k==='range'){
-    h='<div class="revbox"><div class="rl">من أين يبدأ الاختبار؟</div>'+
+    /* زرُّ المصحف أوّلاً كما في المراجعة الحرّة، لئلّا يُظنّ «موافق» */
+    h='<div class="revbox">'+
+      '<button type="button" class="btn blue mini" id="exPick" style="width:100%;margin:0 0 10px">'+
+        '📖 افتح المصحف وحدّد النطاق</button>'+
+      '<div class="note" style="text-align:center;margin:0 0 10px">— أو اختر بالسورة والآية —</div>'+
+      '<div class="rl">من أين يبدأ الاختبار؟</div>'+
       '<div class="revrow"><select id="exFS">'+revSurahOpts(EX.fromS)+'</select>'+
       '<select id="exFA">'+revAyahOpts(EX.fromS,EX.fromA)+'</select></div>'+
       '<div class="rl" style="margin:12px 0 8px">وإلى أين ينتهي؟</div>'+
       '<div class="revrow"><select id="exTS">'+revSurahOpts(EX.toS)+'</select>'+
-      '<select id="exTA">'+revAyahOpts(EX.toS,EX.toA)+'</select></div>'+
-      '<button type="button" class="btn blue mini" id="exPick" style="width:100%;margin-top:12px">'+
-        '📖 افتح المصحف وحدّد النطاق</button></div>'+
+      '<select id="exTA">'+revAyahOpts(EX.toS,EX.toA)+'</select></div></div>'+
       '<div class="revsum" id="exRange"></div>';   /* مقدارُ النطاق وحدَه */
   }
   else if(k==='kind'){
