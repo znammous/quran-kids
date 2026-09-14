@@ -6170,10 +6170,13 @@ function aedgeRound(s,from,to,which){
    ترتيبها — وهو ميزانُ من حفظ الوجهَ نسقاً لا آياتٍ متفرّقة. */
 var EORDER_MIN=4, EORDER_MAX=7;
 function eorderRound(s,from,to,which){
-  var cnt=to-from, span, lo;
+  var cnt=to-from, span, lo, good=[], i;
   if(cnt<EORDER_MIN) return null;
   span=Math.min(EORDER_MAX,cnt);
-  lo=from+Math.floor(Math.random()*(cnt-span+1));
+  /* يُفضَّل نطاقٌ تحتمل أولى آياته مقطعاً يُعرض، فالمقطعُ منها وحدَها */
+  for(i=from;i<=to-span;i++) if(eorderAnchor(s,i)) good.push(i);
+  lo=good.length ? good[Math.floor(Math.random()*good.length)]
+                 : from+Math.floor(Math.random()*(cnt-span+1));
   return { t:'eorder', which:which||(Math.random()<0.5?'first':'last'),
            from:lo, to:lo+span, surah:s, segFrom:from, segTo:to };
 }
@@ -7330,26 +7333,24 @@ function roundAEdge(r){
    من آيات النطاق — ما بين علامتي وقفٍ إن طالت الآية — ولا يدخله أوّلُ كلمةٍ
    من آيته ولا آخرُها، فهما جوابُ السؤال فلا يُكشفان. */
 var WAQF_RE=/^[ۖ-ۜ]$/;
-function eorderAnchor(s,from,to){
-  var best=null, a;
-  for(a=from;a<to;a++){
-    var toks=String(ayahText(s,a)).split(/\s+/).filter(Boolean);
-    var words=[], marks=[], i;
-    for(i=0;i<toks.length;i++){
-      if(WAQF_RE.test(toks[i])) marks.push(words.length);    /* موضعُ الوقف بعد عددٍ من الكلمات */
-      else words.push(toks[i]);
-    }
-    if(words.length<4) continue;
-    /* أوّلُ مقطعٍ بين وقفين (أو من الثانية إلى وقف) لا يمسّ الطرفين، وإلّا وسطُ الآية */
-    var cuts=[1].concat(marks.filter(function(m){ return m>1 && m<words.length-1; })).concat([words.length-1]);
-    var seg=null, j;
-    for(j=0;j+1<cuts.length;j++){
-      if(cuts[j+1]-cuts[j]>=3){ seg=words.slice(cuts[j], Math.min(cuts[j+1], cuts[j]+6)); break; }
-    }
-    if(!seg) seg=words.slice(1, Math.min(words.length-1, 7));       /* ستُّ كلماتٍ تكفي للتعريف */
-    if(seg.length>=2 && (!best || seg.length>best.seg.length)) best={a:a, seg:seg};
+/* والمقطعُ من أولى آيات النطاق دائماً: فهو يدلّ على الموضع ويدلّ على أين يبدأ
+   الرصّ معاً، ولو أُخذ من آيةٍ وسطى لظنّ الطفلُ أنّ الترتيبَ يبدأ منها. */
+function eorderAnchor(s,a){
+  var toks=String(ayahText(s,a)).split(/\s+/).filter(Boolean);
+  var words=[], marks=[], i;
+  for(i=0;i<toks.length;i++){
+    if(WAQF_RE.test(toks[i])) marks.push(words.length);    /* موضعُ الوقف بعد عددٍ من الكلمات */
+    else words.push(toks[i]);
   }
-  return best ? { a:best.a, text:'… '+best.seg.join(' ')+' …' } : null;
+  if(words.length<4) return null;
+  /* أوّلُ مقطعٍ بين وقفين (أو من الثانية إلى وقف) لا يمسّ الطرفين، وإلّا وسطُ الآية */
+  var cuts=[1].concat(marks.filter(function(m){ return m>1 && m<words.length-1; })).concat([words.length-1]);
+  var seg=null, j;
+  for(j=0;j+1<cuts.length;j++){
+    if(cuts[j+1]-cuts[j]>=3){ seg=words.slice(cuts[j], Math.min(cuts[j+1], cuts[j]+6)); break; }
+  }
+  if(!seg) seg=words.slice(1, Math.min(words.length-1, 7));       /* ستُّ كلماتٍ تكفي للتعريف */
+  return seg.length>=2 ? { a:a, text:'… '+seg.join(' ')+' …' } : null;
 }
 function roundEOrder(r){
   var s=r.surah||S.surah, which=r.which, seq=[], i;
@@ -7362,7 +7363,7 @@ function roundEOrder(r){
        من كلّ آية، من أولاها إلى آخرتها). والموضعُ في الشارة أعلاه بآيات السؤال
        نفسِها، فلا يُكرَّر هنا. والنطاقُ آياتٌ متتالية لا صفحةٌ، فلا يُقال «الصفحة» */
     (function(){
-      var an=eorderAnchor(s,r.from,r.to);
+      var an=eorderAnchor(s,r.from);
       var hint=an
         ? '<div class="hintline" style="font-size:14px;margin:8px 0 4px">من هذه الآيات قولُه تعالى:</div>'+
           '<div class="ayahbox"><div class="ayah" style="font-size:'+Math.min(SET.font,22)+'px">'+
