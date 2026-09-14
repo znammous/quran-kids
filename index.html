@@ -386,22 +386,19 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mushaf.qcf .manum.hl{color:#07162b}
 /* عنوان السورة: لوحة مزخرفة من خط أسماء السور */
 .msura{flex:1;text-align:center;font-family:"SuraNames",serif;font-size:1.35em;line-height:1.35;color:#a07a2c}
-/* إطارُ العنوان المزخرف بلونٍ واحد: خطّان مزدوجان أعلى وأسفل، وطرفان مدبّبان
-   في كلٍّ منهما معيّنٌ صغير — رسمٌ مضمَّنٌ لا ملفَّ له. ويملأ ارتفاعَ سطره
-   نفسَه، فلا يزيد الوجهُ على خمسة عشر سطراً ولا يختلّ ثباتُه. */
+/* إطارُ العنوان المزخرف بلونٍ واحد: مستطيلٌ بخطّين — سميكٌ في الخارج ورفيعٌ
+   في الداخل — بارتفاعٍ واحدٍ من أوّل السطر إلى آخره، وفي طرفيه معيّنان صغيران.
+   وكان طرفاه مدبّبين مرسومين بصورةٍ مطّاطة فيضيقان ويزغللان النظر.
+   ويملأ ارتفاعَ سطره نفسَه، فلا يزيد الوجهُ على خمسة عشر سطراً. */
 .msura{align-self:stretch;position:relative;display:flex;align-items:center;justify-content:center;
-  min-height:1.25em;--cap:1.3em}
+  min-height:1.25em}
 .mushaf.qcf .msura{line-height:1}
-.msura::before{content:'';position:absolute;top:0;bottom:0;left:var(--cap);right:var(--cap);pointer-events:none;
-  background:
-    linear-gradient(#a07a2c,#a07a2c) 0 2.5%/100% 2px no-repeat,
-    linear-gradient(#a07a2c,#a07a2c) 0 14%/100% 1px no-repeat,
-    linear-gradient(#a07a2c,#a07a2c) 0 86%/100% 1px no-repeat,
-    linear-gradient(#a07a2c,#a07a2c) 0 97.5%/100% 2px no-repeat}
-.msura::after{content:'';position:absolute;inset:0;pointer-events:none;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 40' preserveAspectRatio='none'%3E%3Cpath d='M30 1H12L1 20l11 19h18' fill='none' stroke='%23a07a2c' stroke-width='2' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M30 5.5H15L6 20l9 14.5h15' fill='none' stroke='%23a07a2c' stroke-width='1' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M18 14l4 6-4 6-4-6z' fill='%23a07a2c'/%3E%3C/svg%3E") left center/var(--cap) 100% no-repeat,
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 40' preserveAspectRatio='none'%3E%3Cg transform='matrix(-1 0 0 1 30 0)'%3E%3Cpath d='M30 1H12L1 20l11 19h18' fill='none' stroke='%23a07a2c' stroke-width='2' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M30 5.5H15L6 20l9 14.5h15' fill='none' stroke='%23a07a2c' stroke-width='1' vector-effect='non-scaling-stroke'/%3E%3Cpath d='M18 14l4 6-4 6-4-6z' fill='%23a07a2c'/%3E%3C/g%3E%3C/svg%3E") right center/var(--cap) 100% no-repeat}
+.msura::before{content:'';position:absolute;inset:1px 0;pointer-events:none;
+  border:2px solid #a07a2c;border-radius:4px}
+.msura::after{content:'';position:absolute;inset:5px 4px;pointer-events:none;
+  border:1px solid #a07a2c;border-radius:2px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 0l5 5-5 5-5-5z' fill='%23a07a2c'/%3E%3C/svg%3E") left .35em center/.42em .42em no-repeat,
+             url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 0l5 5-5 5-5-5z' fill='%23a07a2c'/%3E%3C/svg%3E") right .35em center/.42em .42em no-repeat}
 .mbas{flex:1;text-align:center;font-family:"UthmanicHafs","Amiri Quran",serif;color:#5b6678;font-size:.86em}
 .mblank{flex:1}
 /* دائرة رقم الآية — للعرض البديل قبل وصول خطّ الصفحة */
