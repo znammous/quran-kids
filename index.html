@@ -368,6 +368,10 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
   font-weight:400;margin-top:2px}
 .mfprow .p{flex:0 0 auto;font-size:12.5px;font-weight:800;color:var(--mute)}
 .mfpmsg{text-align:center;color:var(--mute);font-weight:800;padding:22px 10px}
+.mfphist{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 6px 6px}
+.mfphist b{font-size:13.5px;color:var(--mute);font-weight:800}
+.mfphclr{background:none;border:0;font-family:inherit;font-size:13px;font-weight:800;color:var(--mute);
+  text-decoration:underline;cursor:pointer;padding:4px 6px}
 /* خطّا المصحف المساعدان: أسماء السور المزخرفة، ورسم عثمان طه للبسملة والعرض البديل */
 @font-face{font-family:'SuraNames';src:url(fonts/sura_names.woff2) format('woff2');font-display:swap}
 @font-face{font-family:'UthmanicHafs';src:url(fonts/UthmanicHafs.woff2) format('woff2');font-display:swap}
@@ -5479,9 +5483,30 @@ function mfIdxRender(){
 /* البحثُ في نصّ الآيات بالرسم الإملائيّ مجرّداً من الضبط، فيجد «الرحمن»
    ولو كُتبت بلا تشكيل. والفهرسُ المجرّدُ يُبنى عند أوّل بحثٍ مرّةً واحدة. */
 var MF_NORM=null, MF_FT=0, MF_FIND_CAP=60;
+/* عمليّاتُ البحث السابقة: تُعرض والخانةُ فارغة، فيعود إلى ما بحث عنه بلمسة.
+   ويُحفظ البحثُ متى أفاد — فتح نتيجةً منه، أو أقرّه وله نتائج — لا كلُّ حرفٍ كُتب. */
+var MF_HIST_MAX=8;
+function mfHist(){ var h=load('mfHist',[]); return Array.isArray(h) ? h : []; }
+function mfHistAdd(raw){
+  raw=String(raw||'').trim();
+  var k=norm(raw); if(k.length<2) return;
+  var h=mfHist().filter(function(x){ return norm(x)!==k; });
+  h.unshift(raw);
+  save('mfHist', h.slice(0, MF_HIST_MAX));
+}
+function mfHistHTML(){
+  var h=mfHist();
+  if(!h.length) return '<div class="mfpmsg">اكتب كلمةً أو عبارةً من الآية</div>';
+  return '<div class="mfphist"><b>🕘 عمليّاتُ بحثٍ سابقة</b>'+
+      '<button type="button" class="mfphclr" data-hclr="1">مسح</button></div>'+
+    h.map(function(x,i){
+      return '<button type="button" class="mfprow" data-hq="'+i+'">'+
+        '<span class="n">🔎</span><span class="t"><b>'+esc(x)+'</b></span></button>';
+    }).join('');
+}
 function mfFindRun(){
   var raw=$('mfFindQ').value.trim(), q=norm(raw), box=$('mfFindList');
-  if(q.length<2){ box.innerHTML='<div class="mfpmsg">اكتب كلمةً أو عبارةً من الآية</div>'; return; }
+  if(q.length<2){ box.innerHTML=mfHistHTML(); return; }
   if(!MF_NORM){
     MF_NORM=[];
     SURAHS.forEach(function(s){
@@ -5535,11 +5560,24 @@ $('mfIdxList').onclick=function(e){
   mfPanel(null); mfGoto(parseInt(b.getAttribute('data-pg'),10));
 };
 $('mfFindQ').oninput=function(){ clearTimeout(MF_FT); MF_FT=setTimeout(mfFindRun, 180); };
-$('mfFindQ').onkeydown=function(e){ if(e.key==='Enter'){ clearTimeout(MF_FT); mfFindRun(); this.blur(); } };
-/* نتيجةُ البحث تفتح وجهَها والآيةُ مضاءةٌ فيه */
+$('mfFindQ').onkeydown=function(e){
+  if(e.key!=='Enter') return;
+  clearTimeout(MF_FT); mfFindRun(); this.blur();
+  if($('mfFindList').querySelector('[data-gi]')) mfHistAdd(this.value);
+};
+/* نتيجةُ البحث تفتح وجهَها والآيةُ مضاءةٌ فيه — وبحثٌ سابقٌ يُعاد بلمسة */
 $('mfFindList').onclick=function(e){
-  var b=e.target.closest && e.target.closest('[data-gi]'); if(!b) return;
+  var t=e.target.closest ? e.target : null; if(!t) return;
+  if(t.closest('[data-hclr]')){ save('mfHist', []); mfFindRun(); return; }
+  var hq=t.closest('[data-hq]');
+  if(hq){
+    var x=mfHist()[parseInt(hq.getAttribute('data-hq'),10)];
+    if(x!=null){ $('mfFindQ').value=x; clearTimeout(MF_FT); mfFindRun(); }
+    return;
+  }
+  var b=t.closest('[data-gi]'); if(!b) return;
   var gi=parseInt(b.getAttribute('data-gi'),10);
+  mfHistAdd($('mfFindQ').value);
   mfPanel(null); sPage();
   mushafOpenPage(pageOfIdx(gi), gi, '');
 };
