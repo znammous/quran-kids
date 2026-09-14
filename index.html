@@ -294,7 +294,9 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfx2:active{transform:scale(.92)}
 .mfsheet.picking .mfx2{display:none}
 /* position:relative لأنّ التمرير إلى الآية يقيس بالنسبة لهذا الإطار */
-.mfbody{flex:1;position:relative;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 12px 34px;
+/* الحشوةُ متساويةٌ أعلى وأسفل: كانت السفلى أكبرَ بعشرين نقطة، والوجهُ في وسط
+   ما بينهما فيقع أعلى من وسطه — فيُرى الفراغُ تحته أوسعَ منه فوقه */
+.mfbody{flex:1;position:relative;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 12px;
   touch-action:pan-y}
 /* الوجهُ في وسط الإطار رأسيّاً: الهامشُ التلقائيّ لا يقصّ أعلاه إن طال عن
    الشاشة، بخلاف justify-content:center */
