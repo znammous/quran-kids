@@ -681,8 +681,8 @@ body.glow-off .cele .spk{display:none}
 /* التبويبُ المسحوبُ إليه يدخل من جهته */
 .tabin-next{animation:tabInNext .22s ease-out}
 .tabin-prev{animation:tabInPrev .22s ease-out}
-@keyframes tabInNext{from{opacity:.35;transform:translateX(-32px)}to{opacity:1;transform:none}}
-@keyframes tabInPrev{from{opacity:.35;transform:translateX(32px)}to{opacity:1;transform:none}}
+@keyframes tabInNext{from{opacity:.15;transform:translateX(-32px)}to{opacity:1;transform:none}}
+@keyframes tabInPrev{from{opacity:.15;transform:translateX(32px)}to{opacity:1;transform:none}}
 .onbtop{display:flex;align-items:center;gap:10px;margin:12px 0 14px}
 .onbbar{flex:1;height:14px;background:#0a2d5e;border:2px solid var(--pb);border-radius:99px;overflow:hidden}
 .onbbar i{display:block;height:100%;background:linear-gradient(90deg,#37c2f0,#7ef0d5);
@@ -822,6 +822,15 @@ body.glow-off .cele .spk{display:none}
 /* والتي لم تتمّ تنبض، فيقع النظرُ عليها أوّلاً */
 .goalcard.now{border-color:var(--gold)}
 .goalcard.now .gcic{background:var(--psel);border-color:var(--gold)}
+/* قلمُ التعديل على بطاقة المسار: زرٌّ برأسه في موضع السهم */
+.gcwrap{position:relative;margin:0 0 14px}
+.gcwrap .gcgo{visibility:hidden}
+.gcedit{position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  width:42px;height:42px;border-radius:50%;border:2px solid var(--pb);
+  background:var(--pnl);font-size:19px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center}
+.gcedit:active{transform:translateY(-50%) scale(.92)}
+.gcedit.sel{background:var(--psel);border-color:var(--gold)}
 /* ===== ستارُ التحميل =====
    شعارُ المسجد باهتاً، يمتلئ نوراً من أسفله إلى أعلاه ثمّ يخبو —
    فيُعلم أنّ شيئاً يجري، ولا يُرى بعثرةُ العناصر قبل أن تستقرّ. */
@@ -7533,15 +7542,19 @@ function renderRevPlanBody(){
   var doneS=Math.min(REV.done||0, nS), contHTML='';
   if(nS){
     var aa=surahBy(REV.fromS), bb=surahBy(REV.toS);
-    contHTML='<button type="button" class="goalcard now" id="btnRevCont" '+
-        'style="margin:0 0 14px">'+
+    contHTML='<div'+(savedFree?' class="gcwrap"':'')+'>'+
+      '<button type="button" class="goalcard now" id="btnRevCont"'+
+        (savedFree?'':' style="margin:0 0 14px"')+'>'+
       '<span class="gcic">'+(doneS>0?'▶️':'🎛️')+'</span>'+
       '<span class="gctx"><b>'+
         (doneS>0 ? ('أكمل المسار — الجلسة '+arNum(doneS+1)+' من '+arNum(nS))
                  : ('ابدأ المسار — '+arCount(nS,C_SESS)))+'</b>'+
         '<i>'+esc(aa.name)+' '+arNum(REV.fromA)+' ← '+esc(bb.name)+' '+arNum(REV.toA)+
           ' • '+arCount(REV.size,C_PAGE)+' في الجلسة</i></span>'+
-      '<span class="gcgo">❮</span></button>';
+      '<span class="gcgo">❮</span></button>'+
+      (savedFree ? ('<button type="button" class="gcedit'+(freeOpen?' sel':'')+'" id="btnFreeRev" '+
+                    'aria-label="تعديل النطاق" title="تعديل النطاق">✏️</button>') : '')+
+      '</div>';
   }
   if(!REV_TAB) REV_TAB=revTabDefault();
   renderRevTabs();
@@ -7588,17 +7601,12 @@ function renderRevPlanBody(){
     if($('btnRevGo')) $('btnRevGo').hidden=true;
     return;
   }
-  /* من له مسارٌ: صندوقُه أوّلاً كصندوق الورد، وتحته زرُّ تعديل النطاق
-     مطويّاً. ومن لا مسارَ له فقد جاء من دائرة الإضافة، فتُفتح له اللوحةُ
+  /* من له مسارٌ: صندوقُه أوّلاً كصندوق الورد، وعليه قلمٌ يفتح لوحةَ
+     النطاق ويطويها. ومن لا مسارَ له فقد جاء من دائرة الإضافة، فتُفتح له اللوحةُ
      مباشرةً ولا يُعرض عليه زرٌّ يفتح ما هو مفتوح. */
   var panelOpen = savedFree ? freeOpen : true;
   $('revPlan').innerHTML=
     contHTML+
-
-    (savedFree
-      ? ('<button type="button" class="btn '+(freeOpen?'blue':'ghost')+' big" id="btnFreeRev" '+
-         'style="margin-top:6px">✏️ تعديل النطاق'+(freeOpen?' ▴':' ▾')+'</button>')
-      : '')+
     '<div id="revFree"'+(panelOpen?'':' hidden')+'>'+
     '<div class="revbox"><div class="rl">من أين تبدأ المراجعة؟</div>'+
       '<div class="revrow"><select id="revFS">'+revSurahOpts(REV.fromS)+'</select>'+
@@ -7650,15 +7658,15 @@ function renderRevPlanBody(){
     REV.mode='free';
     revSave(); beginRevPath();
   };
-  /* التثبيتُ اعتمادٌ لا بدء: يُثبت النطاقَ ويطوي اللوحة، والبطاقةُ
-     هي التي تمضي به بعد ذلك. ويُصرّح بالخروج من الورد هنا لمن ضبط
-     نطاقَه ولم يغيّر فيه شيئاً، فلم يمرّ على reset. */
+  /* التثبيتُ اعتمادٌ ثمّ مُضيّ: يُثبت النطاقَ ويطوي اللوحة ويفتح المسارَ
+     نفسَه، فلا يُردّ إلى بطاقةٍ ينقرها ثانيةً. ويُصرّح بالخروج من الورد
+     هنا لمن ضبط نطاقَه ولم يغيّر فيه شيئاً، فلم يمرّ على reset. */
   if($('btnFreeFix')) $('btnFreeFix').onclick=function(){
     REV.wird=false; REV.mode='free';
+    curP().freeRev=false;
     revSave();
-    curP().freeRev=false; saveDB();
-    renderRevPlan();
     try{ navToast('✅ ثُبّت مسارُك — '+arCount(revSessions('free').length,C_SESS)); }catch(e){}
+    beginRevPath();
   };
   renderRevSum();
 }
@@ -10308,12 +10316,28 @@ $('btnRevQuit').onclick=function(){ startRevPlan(); };   /* إلى شاشة ال
    إصبعَه إليه كلّ مرّة. فصار السحبُ الأفقيُّ على المحتوى يمضي إلى
    التبويب المجاور، بالنقر على زرّه نفسِه فلا يفترق السلوكان.
    والصفحةُ من اليمين: التالي إلى يسار الشريط، فيُسحب إليه يميناً. */
+/* ويُسمع السحبُ على المستند كلّه لا على قسم الشاشة: فالقسمُ لا يملأ
+   الشاشةَ طولاً ولا عرضاً، ومن سحب على الخلفية حوله لم يبلغه شيء. */
+/* والمحتوى يتبع الإصبعَ ويخفت بقدر ما سُحب، فإن أفلته قبل الحدّ رجع
+   مكانَه — ولا يُحرَّك إلا transform وopacity فلا يُعاد تخطيطُ الصفحة.
+   والنفضةُ السريعةُ تكفي ولو قصُرت مسافتُها. */
 function tabSwipe(scrId, barId, boxOf){
-  var scr=$(scrId), x0=0, y0=0, t0=0, on=false;
+  var scr=$(scrId), doc=document, g=null;
   if(!scr) return;
+  var tabsNow=function(){
+    var bs=$(barId).querySelectorAll('.onbtab'), i, cur=-1;
+    for(i=0;i<bs.length;i++) if(bs[i].classList.contains('sel')) cur=i;
+    return { bs:bs, cur:cur };
+  };
+  var settle=function(box, back){
+    if(!box) return;
+    box.style.transition = back ? 'transform .18s ease-out, opacity .18s ease-out' : '';
+    box.style.transform=''; box.style.opacity='';
+    if(back) setTimeout(function(){ box.style.transition=''; }, 200);
+  };
   /* ما يُمرَّر أفقيّاً بنفسه أو يُكتب فيه لا يُنتزع منه السحب */
   var ownsX=function(el){
-    for(; el && el!==scr; el=el.parentNode){
+    for(; el && el!==doc.body && el!==doc; el=el.parentNode){
       if(el.nodeType!==1) continue;
       if(/^(INPUT|SELECT|TEXTAREA)$/.test(el.tagName)) return true;
       if(el.scrollWidth>el.clientWidth+2){
@@ -10323,23 +10347,49 @@ function tabSwipe(scrId, barId, boxOf){
     }
     return false;
   };
-  scr.addEventListener('touchstart', function(e){
-    var bar=$(barId);
-    on=false;
+  doc.addEventListener('touchstart', function(e){
+    var bar=$(barId), t=e.target;
+    if(g) settle(g.box, true);
+    g=null;
     if(e.touches.length!==1 || !scr.classList.contains('active') || !bar || bar.hidden) return;
-    if(ownsX(e.target)) return;
-    x0=e.touches[0].clientX; y0=e.touches[0].clientY; t0=Date.now(); on=true;
+    /* على الشاشة أو خلفيّتها — لا في نافذةٍ طافيةٍ فوقها */
+    if(!(scr.contains(t) || t===doc.body || t===doc.documentElement ||
+         (t.classList && t.classList.contains('wrap')))) return;
+    if(ownsX(t)) return;
+    var x=e.touches[0].clientX, now=Date.now();
+    g={ x0:x, y0:e.touches[0].clientY, lock:0, dx:0, box:null, T:null,
+        px:x, pt:now, vx:0 };
   }, {passive:true});
-  scr.addEventListener('touchcancel', function(){ on=false; }, {passive:true});
-  scr.addEventListener('touchend', function(e){
-    if(!on) return; on=false;
-    var t=e.changedTouches[0], dx=t.clientX-x0, dy=t.clientY-y0;
-    if(Math.abs(dx)<60 || Math.abs(dx)<Math.abs(dy)*1.8 || Date.now()-t0>900) return;
-    var bs=$(barId).querySelectorAll('.onbtab'), i, cur=-1;
-    for(i=0;i<bs.length;i++) if(bs[i].classList.contains('sel')) cur=i;
-    var nx=dx>0, j=cur+(nx?1:-1);
-    if(cur<0 || j<0 || j>=bs.length) return;
-    bs[j].click();
+  doc.addEventListener('touchmove', function(e){
+    if(!g || g.lock<0 || e.touches.length!==1) return;
+    var t=e.touches[0], dx=t.clientX-g.x0, dy=t.clientY-g.y0, now=Date.now();
+    if(!g.lock){
+      if(Math.abs(dx)<10 && Math.abs(dy)<10) return;
+      if(Math.abs(dx)<=Math.abs(dy)*1.5){ g.lock=-1; return; }   /* تمريرٌ عموديّ: ليس لنا */
+      g.lock=1; g.box=boxOf(); g.T=tabsNow();
+    }
+    if(now>g.pt) g.vx=(t.clientX-g.px)/(now-g.pt);
+    g.px=t.clientX; g.pt=now; g.dx=dx;
+    var box=g.box; if(!box) return;
+    var j=g.T.cur+(dx>0?1:-1), edge=(g.T.cur<0 || j<0 || j>=g.T.bs.length);
+    var k=Math.min(Math.abs(dx)/(box.offsetWidth||360), 1);
+    box.style.transition='none';
+    /* لا تبويبَ في تلك الجهة: يلين قليلاً ولا يخفت */
+    box.style.transform='translateX('+Math.round(dx*(edge?0.15:0.6))+'px)';
+    box.style.opacity=edge ? '' : String(1-k*0.85);
+  }, {passive:true});
+  doc.addEventListener('touchcancel', function(){ if(g) settle(g.box, true); g=null; }, {passive:true});
+  doc.addEventListener('touchend', function(){
+    var G=g; g=null;
+    if(!G || G.lock!==1) return;
+    var dx=G.dx, vx=(Date.now()-G.pt>90) ? 0 : G.vx;      /* وقف ثمّ رفع: لا نفضة */
+    var fast=Math.abs(vx)>0.45 && Math.abs(dx)>25 && (vx>0)===(dx>0);
+    var nx=dx>0, j=G.T.cur+(nx?1:-1);
+    if(!(Math.abs(dx)>70 || fast) || G.T.cur<0 || j<0 || j>=G.T.bs.length){
+      settle(G.box, true); return;
+    }
+    settle(G.box, false);
+    G.T.bs[j].click();
     var box=boxOf(); if(!box) return;
     box.classList.remove('tabin-next','tabin-prev');
     void box.offsetWidth;                       /* يُعاد الحركةُ ولو تكرّر الاتّجاه */
