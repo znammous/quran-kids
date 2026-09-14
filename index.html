@@ -1409,6 +1409,7 @@ body.glow-off .dfpic{animation:none}
 .runline .todo{opacity:.35}
 .runline .next{min-width:1.9em;padding:0 6px;font-family:"IBM Plex Sans Arabic",sans-serif;font-size:.8em;font-weight:900;border:2px dashed var(--gold);border-radius:10px;color:var(--gold);
   animation:runnext 1s ease-in-out infinite}
+.runline .got{color:var(--gink)}
 .runline.done .got{color:var(--green)}
 @keyframes runnext{50%{transform:scale(1.08)}}
 .runstage{position:relative;border-radius:14px;overflow:hidden;border:3px solid var(--pb);touch-action:none;cursor:pointer}
@@ -11156,8 +11157,9 @@ $('btnBoardBack').onclick=function(){ show('scr-start'); };
    بالترتيب، ويدع ما سواها، ويقفز فوق العوائق. خمسةُ قلوبٍ تُنقصها الكلمةُ الخطأ
    والعائق؛ والكلمةُ الصحيحةُ إن فاتته عادت إليه بلا عقوبة.
    ========================================================= */
-var RUN_PX=3, RUN_G=1500, RUN_V0=Math.sqrt(2*1500*110), RUN_V_MIN=165, RUN_V_MAX=300;
-var RUN_CHUNK=6, RUN_HEARTS=5, RUN_CX=76;
+/* لعبةٌ لا تنتهي إلّا بنفاد القلوب: السرعةُ تزيد مع الطريق نفسه (RUN_ACC كلَّ ثانية) حتى حدِّها */
+var RUN_PX=3, RUN_G=1500, RUN_V0=Math.sqrt(2*1500*110), RUN_V_MIN=165, RUN_V_MAX=400, RUN_ACC=2.2;
+var RUN_START_MAX=4, RUN_HEARTS=5, RUN_CX=76;
 var RUN_FALLBACK=[1,108,109,110,111,112,113,114];      /* لمن لم يُسجَّل له محفوظٌ بعد */
 /* خطُّ كلمات «رتّب الكلمات» نفسه: العثمانيّ هنا يُظهر الصفرَ المستدير (۟) دائرةً منفصلة */
 var RUN_FONT='24px "Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif';
@@ -11249,41 +11251,75 @@ function runPool(){
   RUN_FALLBACK.forEach(function(k){ var s2=surahBy(k); if(s2) for(var j=0;j<s2.ayat.length;j++) out.push({ s:s2, a:j }); });
   return { items:out, mem:false };
 }
-/* مقطعٌ من آية: الآيةُ القصيرة كلُّها، والطويلةُ ستُّ كلماتٍ متتالية يسبقها طرفٌ ممّا قبلها */
+/* سؤالٌ من آية، وأنواعُه ثلاثةٌ لا غير — فالتقاطُ الآية كلِّها كلمةً كلمة كتابةٌ لها:
+     fill1  فراغٌ واحد            fill2  فراغان لا يتجاوران
+     start  ترتيبُ أوّل الآية (حتى أربع كلمات)، ويسبقها طرفُ الآية التي قبلها
+   ولا يُذكر رقمُ الآية: الحافظُ يعرف الآيةَ بلفظها لا بعددها، فالسياقُ هو الدليل.
+   والفراغُ حيث تفترق الآيةُ عن شبيهتها إن كانت، وكلمةُ الشبيهة أوّلُ ما يُعرض خطأً. */
+var RUN_KIND={ fill1:'املأ الفراغ', fill2:'املأ الفراغين', start:'رتّب أوّلَ الآية' };
 function runPickAyah(){
-  var P=RUN.pool.items, it, ws, tries=0, k;
+  var P=RUN.pool.items, it, ws, tries=0, k, n;
   do{ it=P[Math.floor(Math.random()*P.length)]; ws=wordsOf(ayahText(it.s,it.a)); tries++; }
-  while(tries<30 && (ws.length<2 || (RUN.last && P.length>1 && RUN.last.s===it.s && RUN.last.a===it.a)));
-  RUN.last=it;
-  var from=0, to=ws.length;
-  if(ws.length>RUN_CHUNK+2){ from=Math.floor(Math.random()*(ws.length-RUN_CHUNK+1)); to=from+RUN_CHUNK; }
-  RUN.ay={ s:it.s, a:it.a, ws:ws, from:from, to:to, i:from };
-  /* المشتّتات: من الآيات المجاورة وبقيّة الآية، ولا تشبه كلمةً من المقطع */
-  var seen={}, pool=[], s=it.s;
-  function add(w){ var n2=norm(w); if(n2 && !seen[n2]){ seen[n2]=1; pool.push(w); } }
-  for(k=from;k<to;k++) seen[norm(ws[k])]=1;
-  for(k=0;k<ws.length;k++) if(k<from || k>=to) add(ws[k]);
-  for(k=Math.max(0,it.a-3);k<=Math.min(s.ayat.length-1,it.a+3);k++) if(k!==it.a) wordsOf(ayahText(s,k)).forEach(add);
-  for(k=0;k<40 && pool.length<8;k++){ var o=P[Math.floor(Math.random()*P.length)]; wordsOf(ayahText(o.s,o.a)).forEach(add); }
-  RUN.decoys=shuffle(pool); RUN.di=0;
+  while(tries<30 && (ws.length<MISS_MIN || (RUN.last && P.length>1 && RUN.last.s===it.s && RUN.last.a===it.a)));
+  RUN.last=it; n=ws.length;
+  var s=it.s, a=it.a, r=Math.random(), kind, tg=[], d=-1, from=0, to=n;
+  kind=(r<0.3 && n>=2) ? 'start' : (r<0.6 && n>=MISS2_MIN) ? 'fill2' : 'fill1';
+  if(kind!=='start'){ try{ d=simBlank(s,a,a+1,a); }catch(e){ d=-1; } if(!(d>=0 && d<n)) d=-1; }
+  if(kind==='start'){ to=Math.min(n,RUN_START_MAX); for(k=0;k<to;k++) tg.push(k); }
+  else {
+    tg = kind==='fill2' ? missPair(n,d).sort(function(x,y){ return x-y; })
+                        : [ d>=0 ? d : Math.floor(Math.random()*n) ];
+    from=Math.max(0,tg[0]-5); to=Math.min(n,tg[tg.length-1]+4);    /* الآيةُ الطويلة: ما حول الفراغ */
+  }
+  RUN.ay={ s:s, a:a, ws:ws, kind:kind, tg:tg, show:[from,to], i:0, to:tg.length };
+  /* المشتّتات: لا تشبه جواباً، ولا كلمةً ظاهرةً في السؤال فتنكشف */
+  var seen={}, tws=[], rest=[];
+  function add(w,arr){ var m=norm(w); if(m && !seen[m]){ seen[m]=1; arr.push(w); } }
+  tg.forEach(function(i){ seen[norm(ws[i])]=1; });
+  if(kind==='start') for(k=tg.length;k<n;k++) add(ws[k],rest);     /* بقيّةُ الآية تُربك من لم يضبط ترتيبها */
+  else {
+    for(k=from;k<to;k++) seen[norm(ws[k])]=1;
+    tg.forEach(function(i){ try{ var tw=simTwin(s,a,a+1,a,i); if(tw) add(tw,tws); }catch(e){} });
+  }
+  for(k=Math.max(0,a-2);k<=Math.min(s.ayat.length-1,a+2);k++) if(k!==a) wordsOf(ayahText(s,k)).forEach(function(w){ add(w,rest); });
+  for(k=0;k<40 && rest.length<10;k++){ var o=P[Math.floor(Math.random()*P.length)]; wordsOf(ayahText(o.s,o.a)).forEach(function(w){ add(w,rest); }); }
+  RUN.decoys=tws.concat(shuffle(rest)); RUN.nTw=tws.length; RUN.di=0;
   RUN.decoySince=9;                                   /* تأتي الكلمةُ الأولى سريعاً */
   RUN.dist=0; RUN.gap=RUN.speed*0.9;
   runHud();
 }
+/* الكلمةُ الخطأ: الشبيهةُ أوّلاً، ثمّ أقربُ أربعٍ عشوائيّةٍ طولاً إلى الجواب */
+function runDecoy(){
+  var D=RUN.decoys, ay=RUN.ay, want=ay.ws[ay.tg[ay.i]]||'', best=null, k, w;
+  if(RUN.di<RUN.nTw) return D[RUN.di++];
+  if(D.length<=RUN.nTw) return D[Math.floor(Math.random()*D.length)];
+  for(k=0;k<4;k++){
+    w=D[RUN.nTw+Math.floor(Math.random()*(D.length-RUN.nTw))];
+    if(best===null || Math.abs(w.length-want.length)<Math.abs(best.length-want.length)) best=w;
+  }
+  return best;
+}
 function runHud(){
-  var h='', i, ay=RUN.ay;
+  var h='', i, j, ay=RUN.ay;
   for(i=0;i<RUN_HEARTS;i++) h+=(i<RUN.hearts)?'❤️':'🤍';
   $('runHearts').textContent=h;
   $('runScore').textContent='⭐ '+arNum(RUN.score);
   if(!ay) return;
-  $('runRef').textContent=ay.s.name+' • الآية '+arNum(ay.a+1)+(RUN.pool.mem?'':' • من قصار السور');
-  var L='';
-  if(ay.from>0) L+='<span class="rw ctx">'+(ay.from>2?'… ':'')+esc(ay.ws.slice(Math.max(0,ay.from-2),ay.from).join(' '))+'</span> ';
-  for(i=ay.from;i<ay.to;i++){
-    if(i<ay.i) L+='<span class="rw got">'+esc(ay.ws[i])+'</span> ';
-    else if(i===ay.i) L+='<span class="rw next">؟</span> ';
-    else L+='<span class="rw todo">ـــ</span> ';
+  $('runRef').textContent='سورة '+ay.s.name+' • '+RUN_KIND[ay.kind];
+  var L='', sh=ay.show;
+  if(ay.kind==='start'){
+    if(ay.a>0){ var pw=wordsOf(ayahText(ay.s,ay.a-1));
+      L+='<span class="rw ctx">'+(pw.length>3?'… ':'')+esc(pw.slice(-3).join(' '))+'</span>'; }
+    else L+='<span class="rw ctx">أوّلُ السورة:</span>';
+  } else if(sh[0]>0) L+='<span class="rw ctx">…</span>';
+  for(i=sh[0];i<sh[1];i++){
+    j=ay.tg.indexOf(i);
+    if(j<0)            L+='<span class="rw">'+esc(ay.ws[i])+'</span>';
+    else if(j<ay.i)    L+='<span class="rw got">'+esc(ay.ws[i])+'</span>';
+    else if(j===ay.i)  L+='<span class="rw next">؟</span>';
+    else               L+='<span class="rw todo">ـــ</span>';
   }
+  if(ay.kind!=='start' && sh[1]<ay.ws.length) L+='<span class="rw ctx">…</span>';
   var ln=$('runLine'); ln.innerHTML=L; ln.classList.toggle('done', ay.i>=ay.to);
 }
 
@@ -11309,7 +11345,7 @@ function gamesOpen(){
   var st=runStats(), pool=runPool();
   $('gamesBody').innerHTML=
     '<button type="button" class="goalcard now" id="gmRunner"><span class="gcic">🏃</span>'+
-      '<span class="gctx"><b>عدّاء الآيات</b><i>اقفزْ والتقطْ كلماتِ الآية بالترتيب'+
+      '<span class="gctx"><b>عدّاء الآيات</b><i>اقفزْ إلى الكلمة التي تملأ الفراغ'+
       (st.best?' • أفضلُ نتيجة ⭐ '+arNum(st.best):'')+'</i></span><span class="gcgo">❮</span></button>'+
     (pool.mem?'':'<p class="gmnote">لم يُسجَّل لك محفوظٌ بعد، فتأتيك الآياتُ من الفاتحة وقصار السور</p>');
   $('gmRunner').onclick=runOpen;
@@ -11325,12 +11361,12 @@ function runOverlay(kind, nb){
   var ov=$('runOvl'), st=runStats(), h;
   RUN.state=(kind==='over')?'over':(kind==='pause'?'pause':'ready');
   if(kind==='ready')
-    h='<div class="ot">🏃 عدّاء الآيات</div><p>اقفزْ لتلتقطَ كلماتِ الآية بالترتيب<br>ودَعِ الكلمةَ الخطأ، واقفزْ فوق العوائق<br>لك ❤️ خمسةُ قلوب</p>'+
+    h='<div class="ot">🏃 عدّاء الآيات</div><p>اقفزْ إلى الكلمة التي تملأ الفراغ<br>ودَعِ الكلمةَ الخطأ، واقفزْ فوق العوائق<br>لك ❤️ خمسةُ قلوب</p>'+
       '<button type="button" class="btn primary" id="runStart">▶️ ابدأ</button>';
   else if(kind==='pause')
     h='<div class="ot">⏸️ توقّفتِ اللعبة</div><button type="button" class="btn primary" id="runStart">▶️ تابِعْ</button>';
   else
-    h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+arNum(RUN.score)+' نقطة • 📜 '+arNum(RUN.done)+' مقطع • 🧩 '+arNum(RUN.words)+' كلمة<br>'+
+    h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+arNum(RUN.score)+' نقطة • 📜 '+arNum(RUN.done)+' سؤال • 🏁 '+arNum(runMeters())+' م<br>'+
       (nb?'🏆 أفضلُ نتيجةٍ لك حتى الآن!':'أفضلُ نتيجةٍ لك: ⭐ '+arNum(st.best||0))+'</p>'+
       '<div class="runbtns"><button type="button" class="btn primary" id="runAgain">🔁 مرّةً أخرى</button>'+
       '<button type="button" class="btn ghost" id="runBack">🎮 الألعاب</button></div>';
@@ -11391,6 +11427,7 @@ function runBurst(x,y,col,n){
   for(var i=0;i<n;i++) RUN.parts.push({ x:x, y:y, vx:(Math.random()-.5)*260, vy:-60-Math.random()*200, l:.5+Math.random()*.3, c:col });
 }
 function runSay(t){ RUN.toast=t; RUN.toastT=1.6; }
+function runMeters(){ return Math.floor((RUN.off||0)/40); }
 function runHurt(){
   RUN.hearts--; RUN.shake=.3; sBad(); runHud();
   if(RUN.hearts<=0) runOver();
@@ -11400,24 +11437,23 @@ function runTouch(o){
   if(o.kind==='obs'){
     if(RUN.inv>0 || o.hit) return;
     o.hit=true; RUN.inv=1.2;
-    runBurst(RUN.W-RUN_CX+20, RUN.ground-RUN.jy-20, '#e04b4b', 10);
+    runBurst(RUN.W-RUN_CX+20, RUN.ground-RUN.jy-20, '#ffd23f', 10);   /* أصفرُ لا أحمر: لا يوحي بدم */
     runHurt(); return;
   }
   o.dead=true;
   var cx=o.x+o.w/2, cy=runPillY(o);
   if(o.good){
     ay.i++; RUN.score++; RUN.words++;
-    runBurst(cx,cy,'#f2c14e',16);
-    if(ay.i>=ay.to){                                   /* تمّ المقطع */
-      RUN.score+=5; RUN.done++; sWin();
+    runBurst(cx,cy,'#9ff0c0',16);
+    if(ay.i>=ay.to){                                   /* تمّ السؤال */
+      RUN.score+=(ay.kind==='fill1'?3:5); RUN.done++; sWin();
       RUN.flashT=1.3; RUN.rest=1.4;
       RUN.items.forEach(function(it){ if(it.kind==='word' && !it.dead){ it.dead=true; runBurst(it.x+it.w/2, runPillY(it), '#ffffff', 6); } });
-      RUN.speed=Math.min(RUN_V_MAX, RUN.speed*1.07);
       runHud();
     } else { sPick(); runHud(); }
   } else {
-    runBurst(cx,cy,'#e04b4b',12);
-    runSay('ليست هذه الكلمةَ التالية');
+    runBurst(cx,cy,'#ffd23f',12);
+    runSay('ليست هذه الكلمة');
     runHurt();
   }
 }
@@ -11434,7 +11470,7 @@ function runSpawn(){
     o={ kind:'obs', img:im, x:-w-4, w:w, h:im.height*RUN_PX };
   } else {
     var good=!goodOn && (RUN.decoySince>=1 || !RUN.decoys.length || Math.random()<0.4);
-    var txt=good ? ay.ws[ay.i] : RUN.decoys[(RUN.di++)%RUN.decoys.length];
+    var txt=good ? ay.ws[ay.tg[ay.i]] : runDecoy();
     var c=$('runCv').getContext('2d');
     c.font=RUN_FONT;
     w=Math.max(58, Math.ceil(c.measureText(txt).width)+28);
@@ -11445,6 +11481,7 @@ function runSpawn(){
   RUN.dist=0; RUN.gap=w+sp*(1.05+Math.random()*0.6);
 }
 function runUpdate(dt){
+  RUN.speed=Math.min(RUN_V_MAX, RUN.speed+RUN_ACC*dt);
   var sp=RUN.speed, i, o, p, cb, b;
   RUN.t+=dt; RUN.off+=sp*dt;
   if(RUN.buf>0) RUN.buf-=dt;
@@ -11549,8 +11586,12 @@ function runDraw(){
     c.drawImage(im, W-RUN_CX, Math.round(G-RUN.jy-im.height*RUN_PX+RUN_PX), im.width*RUN_PX, im.height*RUN_PX);
   }
   for(i=0;i<RUN.parts.length;i++){ var p=RUN.parts[i]; c.fillStyle=p.c; c.fillRect(Math.round(p.x),Math.round(p.y),3,3); }
-  /* رسائل */
-  c.textAlign='center'; c.textBaseline='middle'; c.direction='rtl';
+  /* رسائل، ومسافةُ الطريق في الركن */
+  c.textBaseline='middle'; c.direction='rtl';
+  c.font='800 13px "IBM Plex Sans Arabic",sans-serif'; c.textAlign='right';
+  c.fillStyle=L?'rgba(10,42,94,.75)':'rgba(255,255,255,.8)';
+  c.fillText('🏁 '+arNum(runMeters())+' م', W-10, 20);
+  c.textAlign='center';
   if(RUN.flashT>0){
     c.font='900 28px "IBM Plex Sans Arabic",sans-serif';
     c.lineWidth=6; c.strokeStyle='#0a2a5e'; c.strokeText('أحسنت! 🌟', W/2, 64);
@@ -11567,7 +11608,8 @@ function runDraw(){
 $('btnGames').onclick=gamesOpen;
 $('btnGamesBack').onclick=function(){ show('scr-start'); };
 $('btnRunQuit').onclick=function(){ cancelAnimationFrame(RUN.raf); RUN.state='idle'; gamesOpen(); };
-$('scr-runner').addEventListener('pointerdown', runTap);
+/* اللمسُ في أيّ موضعٍ من الشاشة يُقفِز — لا في صندوق الركض وحده */
+document.addEventListener('pointerdown', function(e){ if(curScreen()==='scr-runner') runTap(e); }, { passive:false });
 document.addEventListener('keydown', function(e){
   if(curScreen()!=='scr-runner') return;
   if(e.code==='Space' || e.key==='ArrowUp'){ e.preventDefault(); runTap(); }
