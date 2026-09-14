@@ -347,7 +347,10 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfpgo input{flex:1;min-width:0;font-family:inherit;font-size:16px;font-weight:800;color:var(--ttl);
   background:var(--pnl2);border:2px solid var(--pb);border-radius:12px;padding:9px 12px;text-align:center}
 .mfpgo input::-webkit-outer-spin-button,.mfpgo input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.mfpgo .btn{flex:0 0 auto;margin:0;width:auto;padding-inline:16px}
+.mfpgo .btn{flex:0 0 auto;margin:0;width:48px;height:44px;padding:0;
+  display:flex;align-items:center;justify-content:center}
+/* سهمٌ خفيفٌ إلى جهة القراءة (اليسار)، بلا نصٍّ ولا رمزٍ تعبيريّ */
+.mfpgo .btn svg{display:block}
 .mfplist{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 10px 16px}
 .mfprow{display:flex;align-items:center;gap:10px;width:100%;text-align:start;background:none;border:0;
   border-bottom:1px solid var(--pb);padding:11px 6px;font-family:inherit;color:var(--ttl);cursor:pointer}
@@ -1503,7 +1506,10 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
     <div class="mfpgo">
       <input type="number" id="mfGoPg" min="1" max="604" inputmode="numeric" enterkeyhint="go"
         placeholder="رقم الصفحة (١–٦٠٤)" aria-label="رقم الصفحة">
-      <button type="button" class="btn blue mini" id="mfGoPgBtn">↩️ انتقل</button>
+      <button type="button" class="btn blue mini" id="mfGoPgBtn" aria-label="انتقل إلى الصفحة" title="انتقل">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor"
+          stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      </button>
     </div>
     <div class="mfplist" id="mfIdxList"></div>
   </div>
