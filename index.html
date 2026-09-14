@@ -371,15 +371,14 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
   font-weight:400;margin-top:2px}
 .mfprow .p{flex:0 0 auto;font-size:12.5px;font-weight:800;color:var(--mute)}
 .mfpmsg{text-align:center;color:var(--mute);font-weight:800;padding:22px 10px}
-/* لوحةُ المعاني: الكلمةُ بخطّ المصحف، ومعناها تحتها بخطٍّ مقروء */
-.mfmtitle{flex:1;min-width:0;text-align:center;font-size:16px;font-weight:900;color:var(--ttl)}
+/* لوحةُ المعاني: الكلمةُ بخطّ المصحف ومعناها بعدها على سطرها، فتقلّ الحاجةُ إلى التمرير */
+#mfMean .mfplist{padding-top:8px;cursor:pointer}
 .mfmsura{margin:14px 0 2px;padding:6px 10px;border-radius:10px;background:var(--psel);
   text-align:center;font-weight:900;font-size:15px;color:var(--ttl)}
 .mfmayah{display:inline-block;margin:12px 0 2px;padding:2px 12px;border-radius:999px;
   background:var(--pnl2);border:2px solid var(--pb);font-size:12.5px;font-weight:900;color:var(--mute)}
-.mfmrow{padding:8px 4px 10px;border-bottom:1px solid var(--pb)}
-.mfmrow .w{display:block;font-family:"UthmanicHafs","Amiri Quran",serif;font-size:22px;line-height:1.8;color:var(--rew)}
-.mfmrow .m{display:block;font-size:15.5px;font-weight:700;line-height:1.75;color:var(--ttl)}
+.mfmrow{padding:5px 4px;border-bottom:1px solid var(--pb);font-size:15.5px;font-weight:700;line-height:1.9;color:var(--ttl)}
+.mfmrow .w{font-family:"UthmanicHafs","Amiri Quran",serif;font-size:21px;font-weight:400;color:var(--rew)}
 .mfmsrc{margin-top:16px;text-align:center;font-size:11.5px;font-weight:700;color:var(--mute)}
 .mfphist{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 6px 6px}
 .mfphist b{font-size:13.5px;color:var(--mute);font-weight:800}
@@ -1600,12 +1599,6 @@ body.glow-off .dfpic{animation:none}
     <div class="mfplist" id="mfFindList"></div>
   </div>
   <div class="mfpanel" id="mfMean" hidden>
-    <div class="mfphead">
-      <button class="mfnav" id="mfMeanPrev" aria-label="الوجه السابق">▶</button>
-      <b class="mfmtitle" id="mfMeanT"></b>
-      <button class="mfnav" id="mfMeanNext" aria-label="الوجه التالي">◀</button>
-      <button class="mfx2" id="mfMeanX" aria-label="أغلق المعاني">✕</button>
-    </div>
     <div class="mfplist" id="mfMeanList"></div>
   </div>
   <nav class="mfdock" id="mfDock">
@@ -5621,9 +5614,6 @@ function gharibLoad(){
 }
 function mfMeanRender(){
   var P=MF_PAGE, box=$('mfMeanList');
-  $('mfMeanT').textContent='💡 معاني الصفحة '+arNum(P);
-  $('mfMeanPrev').disabled=(P<=1);
-  $('mfMeanNext').disabled=(P>=604);
   if(!GHARIB){
     box.innerHTML='<div class="mfpmsg">جارٍ تحميل المعاني…</div>';
     gharibLoad().then(function(){ if(!$('mfMean').hidden) mfMeanRender(); })['catch'](function(){
@@ -5639,7 +5629,7 @@ function mfMeanRender(){
     if(many && r[0]!==lastS) h+='<div class="mfmsura">سورة '+esc(s ? s.name : '')+'</div>';
     if(r[0]!==lastS || r[1]!==lastA) h+='<div class="mfmayah">الآية '+arNum(r[1])+'</div>';
     lastS=r[0]; lastA=r[1];
-    h+='<div class="mfmrow"><span class="w">'+esc(r[2])+'</span><span class="m">'+esc(r[3])+'</span></div>';
+    h+='<div class="mfmrow"><span class="w">﴿'+esc(r[2])+'﴾</span>: '+esc(r[3])+'</div>';
   }
   if(!rows.length) h='<div class="mfpmsg">لا كلماتٍ غريبةً مشروحةً في هذه الصفحة</div>';
   box.innerHTML=h+'<div class="mfmsrc">المصدر: الميسر في غريب القرآن الكريم — مجمع الملك فهد لطباعة المصحف الشريف</div>';
@@ -5739,10 +5729,13 @@ $('mfDockMean').onclick=function(){
   if(!$('mfMean').hidden){ mfPanel(null); return; }
   mfPanel('mfMean'); mfMeanRender();
 };
-$('mfMeanX').onclick=function(){ mfPanel(null); };
-$('mfMeanPrev').onclick=function(){ mfGoto(MF_PAGE-1); };
-$('mfMeanNext').onclick=function(){ mfGoto(MF_PAGE+1); };
-$('mfDockClose').onclick=function(){ mfPickEnd(); mushafClose(); mushafEatGhost(); };
+/* لمسةٌ على اللوحة تطويها فيعود إلى الوجه — والتمريرُ لا يُعدّ لمسة */
+$('mfMean').onclick=function(){ mfPanel(null); };
+/* والإغلاقُ والمعاني مفتوحةٌ يطويها وحدَها: من قصد الخروجَ منها لا يُخرَج من المصحف */
+$('mfDockClose').onclick=function(){
+  if(!$('mfMean').hidden){ mfPanel(null); return; }
+  mfPickEnd(); mushafClose(); mushafEatGhost();
+};
 $('mfIdxX').onclick=function(){ mfPanel(null); };
 /* رقمُ صفحةٍ يُكتب فيُنتقل إليها */
 function mfGoPgRun(){
