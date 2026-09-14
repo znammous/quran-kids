@@ -313,6 +313,11 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfbody.mfpeek{position:absolute;left:0;right:0;z-index:2;overflow:hidden;pointer-events:none;
   background:var(--paper);box-shadow:0 0 22px rgba(0,0,0,.2)}
 .mfbody .mushaf{font-size:clamp(16px,4.6vw,25px)}
+/* الوجهُ المضبوطُ على إطاره ثابتٌ على الجوال: يسعه الإطارُ فلا يُمرَّر رأسيّاً،
+   ولا ترتدّ الصفحةُ تحت الإصبع — والسحبُ الأفقيُّ للتقليب باقٍ بأحداث المؤشّر */
+@media (pointer:coarse){
+  .mfbody.mffit{overflow-y:hidden;touch-action:none;overscroll-behavior:none}
+}
 /* ===== المصحفُ من شريط التنقّل: قراءةٌ بلا ترويسة، وتحتها شريطٌ للفهرس والبحث =====
    الترويسةُ تُخفى، ورقمُ الوجه تحت آخر سطر كما يُطبع. واللمسةُ تُخفي الشريطَ وتُظهره. */
 .mfdock{display:none}
@@ -337,6 +342,12 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfphead .onbtabs{flex:1;margin:0;padding:0}
 .mfphead input{flex:1;min-width:0;font-family:inherit;font-size:16px;font-weight:800;color:var(--ttl);
   background:var(--pnl2);border:2px solid var(--pb);border-radius:12px;padding:9px 12px}
+/* الذهابُ إلى صفحةٍ برقمها: في رأس الفهرس، فهو بابُ الوصول كلُّه */
+.mfpgo{flex:0 0 auto;display:flex;gap:8px;align-items:center;padding:10px 10px 6px}
+.mfpgo input{flex:1;min-width:0;font-family:inherit;font-size:16px;font-weight:800;color:var(--ttl);
+  background:var(--pnl2);border:2px solid var(--pb);border-radius:12px;padding:9px 12px;text-align:center}
+.mfpgo input::-webkit-outer-spin-button,.mfpgo input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.mfpgo .btn{flex:0 0 auto;margin:0;width:auto;padding-inline:16px}
 .mfplist{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 10px 16px}
 .mfprow{display:flex;align-items:center;gap:10px;width:100%;text-align:start;background:none;border:0;
   border-bottom:1px solid var(--pb);padding:11px 6px;font-family:inherit;color:var(--ttl);cursor:pointer}
@@ -1475,6 +1486,11 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
     <div class="mfphead">
       <div class="onbtabs" id="mfIdxTabs"></div>
       <button class="mfx2" id="mfIdxX" aria-label="أغلق الفهرس">✕</button>
+    </div>
+    <div class="mfpgo">
+      <input type="number" id="mfGoPg" min="1" max="604" inputmode="numeric" enterkeyhint="go"
+        placeholder="رقم الصفحة (١–٦٠٤)" aria-label="رقم الصفحة">
+      <button type="button" class="btn blue mini" id="mfGoPgBtn">↩️ انتقل</button>
     </div>
     <div class="mfplist" id="mfIdxList"></div>
   </div>
@@ -2917,6 +2933,7 @@ function mushafOpenPage(P, hlGi, title){
   function paintText(){
     var box=$('mfBody');
     box.innerHTML='<div class="mushaf">'+mushafPageHTML(P, hlGi, false)+'</div>';
+    box.classList.remove('mffit');               /* النصّيُّ لا يُضبط على الإطار: يبقى قابلاً للتمرير */
     sh.hidden=false;
     mushafScroll(box);
     mfAfterPaint();
@@ -2930,10 +2947,12 @@ function mushafOpenPage(P, hlGi, title){
      أثنائها فلا يُرى النصّيّ، وما طال (شبكةٌ بطيئة) يُعرض نصّيّاً ثمّ يُرقّى. */
   var shown=false;
   if(wasHidden){ $('mfBody').innerHTML=''; sh.hidden=false; }   /* لا يُرى وجهٌ قديم */
+  /* يُمهَل الخطُّ ثانيةً وبعضَ ثانية: كان يُعرض النصّيُّ بعد ثلث ثانيةٍ فيتبدّل
+     الخطُّ والمقاسُ أمام عينه عند كلّ قفزةٍ إلى وجهٍ بعيد */
   var t=setTimeout(function(){
     if(seq!==MFSEQ || shown) return;
     shown=true; paintText();
-  }, 300);
+  }, 1200);
   mushafFont(P).then(function(fam){
     if(seq!==MFSEQ) return;                      /* فُتحت صفحة أخرى في الأثناء */
     clearTimeout(t); shown=true; paintQcf(fam);
@@ -2950,6 +2969,12 @@ function mushafOpen(s, ai){
 /* المقاس من العرض، فمحارف الصفحة مركّبة على عرض سطرها ولا يصحّ العبث به.
    والتباعد من ارتفاع الشاشة، ليقع الوجه كلّه أمام الطفل كما يقع في المصحف —
    بحدّين: أدنى لئلّا تتلاصق علامات الضبط، وأقصى لئلّا تتبعثر على شاشة طويلة. */
+/* مقاسٌ واحدٌ لكلّ الأوجه على العرض الواحد: كان كلُّ وجهٍ يُضبط على أعرض
+   سطرٍ فيه، وأسطرُ الأوجه تتفاوت قليلاً، فيتبدّل المقاسُ مع كلّ تقليب.
+   فيُحفظ المقاسُ لكلّ عرضٍ ويُعاد، ولا ينزل إلا لوجهٍ لا تسعه أسطرُه —
+   ويُبدأ بفسحةٍ يسيرةٍ تستوعب التفاوتَ المعتاد. والفاتحةُ وأوّلُ البقرة
+   أسطرُهما قِصارٌ فلا يُبنى عليهما. */
+var MF_FS=load('mfFs',{})||{};
 function mushafFit(box){
   var m=box.querySelector('.mushaf.qcf'); if(!m) return;
   var rows=m.querySelectorAll('.mtxt'), w=0, i;
@@ -2957,13 +2982,25 @@ function mushafFit(box){
   var availW=m.clientWidth;
   if(!w || !availW) return;
   var cur=parseFloat(getComputedStyle(m).fontSize)||20;
-  var fs=Math.max(11, Math.min(64, cur*(availW/w)*0.99));
-  m.style.fontSize=fs+'px';
+  var own=Math.max(11, Math.min(64, cur*(availW/w)*0.99));
+  var key=String(Math.round(availW)), fs=MF_FS[key];
+  if(rows.length>=8 && (!fs || own<fs)){
+    fs = fs ? own : own*0.97;
+    MF_FS[key]=fs; save('mfFs', MF_FS);
+  }
+  if(!fs) fs=own;
   var cs=getComputedStyle(box);
   var availH=box.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0);
-  var lh=availH/15;                                  /* الوجه خمسة عشر سطراً دائماً */
+  /* ولا يزيد على ما يسعه الارتفاع: الوجهُ ثابتٌ لا يُمرَّر، فلا بدّ أن يُرى كلُّه */
+  if(availH>0) fs=Math.max(11, Math.min(fs, availH/(15*1.12+1.2)));
+  m.style.fontSize=fs+'px';
+  /* ورقمُ الوجه تحته — حين يُعرض — يُقتطع من الارتفاع قبل قسمته على الأسطر */
+  var pg=m.querySelector('.mpgno'), extra=0;
+  if(pg && pg.offsetHeight) extra=pg.offsetHeight+(parseFloat(getComputedStyle(pg).marginTop)||0);
+  var lh=(availH-extra)/15;                          /* الوجه خمسة عشر سطراً دائماً */
   lh=Math.max(fs*1.12, Math.min(fs*1.9, lh));
   m.style.setProperty('--mlh', lh+'px');
+  box.classList.add('mffit');
 }
 /* دوران الجهاز أو تغيّر الشاشة يعيد الضبط ما دام الوجه مفتوحاً */
 window.addEventListener('resize', function(){
@@ -5373,6 +5410,11 @@ function mushafReader(){
   $('mfSheet').classList.add('reader');
   mushafRead(P, '📖 المصحف');
 }
+/* خطُّ آخرِ وجهٍ قُرئ يُحمَّل في الخلفية بعد التشغيل، فيُفتح المصحفُ به في الحال */
+setTimeout(function(){
+  var P=parseInt(load('mfLast',0),10);
+  if(P>=1 && P<=604){ try{ mushafFont(P)['catch'](function(){}); mfPreload(P); }catch(e){} }
+}, 2500);
 /* لوحةٌ واحدةٌ في كلّ مرّة — ولا شيءَ يُطوي الكلّ */
 function mfPanel(id){
   ['mfIdx','mfFind'].forEach(function(k){ if($(k)) $(k).hidden=(k!==id); });
@@ -5452,6 +5494,15 @@ $('mfDockFind').onclick=function(){
 };
 $('mfDockClose').onclick=function(){ mfPickEnd(); mushafClose(); mushafEatGhost(); };
 $('mfIdxX').onclick=function(){ mfPanel(null); };
+/* رقمُ صفحةٍ يُكتب فيُنتقل إليها */
+function mfGoPgRun(){
+  var f=$('mfGoPg'), P=parseInt(f.value,10);
+  if(!(P>=1 && P<=604)){ try{ navToast('اكتب رقم صفحةٍ من ١ إلى ٦٠٤'); }catch(e){} return; }
+  f.value=''; f.blur();
+  mfPanel(null); mfGoto(P);
+}
+$('mfGoPgBtn').onclick=mfGoPgRun;
+$('mfGoPg').onkeydown=function(e){ if(e.key==='Enter') mfGoPgRun(); };
 $('mfFindX').onclick=function(){ mfPanel(null); };
 $('mfIdxTabs').onclick=function(e){
   var b=e.target.closest && e.target.closest('[data-mt]'); if(!b) return;
