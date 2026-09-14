@@ -6170,13 +6170,10 @@ function aedgeRound(s,from,to,which){
    ترتيبها — وهو ميزانُ من حفظ الوجهَ نسقاً لا آياتٍ متفرّقة. */
 var EORDER_MIN=4, EORDER_MAX=7;
 function eorderRound(s,from,to,which){
-  var cnt=to-from, span, lo, good=[], i;
+  var cnt=to-from, span, lo;
   if(cnt<EORDER_MIN) return null;
   span=Math.min(EORDER_MAX,cnt);
-  /* يُفضَّل نطاقٌ تحتمل أولى آياته مقطعاً يُعرض، فالمقطعُ منها وحدَها */
-  for(i=from;i<=to-span;i++) if(eorderAnchor(s,i)) good.push(i);
-  lo=good.length ? good[Math.floor(Math.random()*good.length)]
-                 : from+Math.floor(Math.random()*(cnt-span+1));
+  lo=from+Math.floor(Math.random()*(cnt-span+1));
   return { t:'eorder', which:which||(Math.random()<0.5?'first':'last'),
            from:lo, to:lo+span, surah:s, segFrom:from, segTo:to };
 }
@@ -7342,15 +7339,18 @@ function eorderAnchor(s,a){
     if(WAQF_RE.test(toks[i])) marks.push(words.length);    /* موضعُ الوقف بعد عددٍ من الكلمات */
     else words.push(toks[i]);
   }
-  if(words.length<4) return null;
+  if(!words.length) return null;
   /* أوّلُ مقطعٍ بين وقفين (أو من الثانية إلى وقف) لا يمسّ الطرفين، وإلّا وسطُ الآية */
   var cuts=[1].concat(marks.filter(function(m){ return m>1 && m<words.length-1; })).concat([words.length-1]);
-  var seg=null, j;
+  var lo=1, hi=0, j;
   for(j=0;j+1<cuts.length;j++){
-    if(cuts[j+1]-cuts[j]>=3){ seg=words.slice(cuts[j], Math.min(cuts[j+1], cuts[j]+6)); break; }
+    if(cuts[j+1]-cuts[j]>=3){ lo=cuts[j]; hi=Math.min(cuts[j+1], cuts[j]+6); break; }
   }
-  if(!seg) seg=words.slice(1, Math.min(words.length-1, 7));       /* ستُّ كلماتٍ تكفي للتعريف */
-  return seg.length>=2 ? { a:a, text:'… '+seg.join(' ')+' …' } : null;
+  if(hi<=lo) hi=Math.min(words.length-1, 7);                   /* ستُّ كلماتٍ تكفي للتعريف */
+  /* آيةٌ قصيرةٌ لا يبقى منها مقطعٌ بلا طرفيها: تُعرض كلُّها ولو ظهر طرفاها،
+     فالمقطعُ من أولى الآيات أولى من كتمان الجواب */
+  if(hi-lo<2){ lo=0; hi=Math.min(words.length, 7); }
+  return { a:a, text:(lo>0?'… ':'')+words.slice(lo,hi).join(' ')+(hi<words.length?' …':'') };
 }
 function roundEOrder(r){
   var s=r.surah||S.surah, which=r.which, seq=[], i;
