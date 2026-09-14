@@ -343,12 +343,15 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfphead input{flex:1;min-width:0;font-family:inherit;font-size:16px;font-weight:800;color:var(--ttl);
   background:var(--pnl2);border:2px solid var(--pb);border-radius:12px;padding:9px 12px}
 /* الذهابُ إلى صفحةٍ برقمها: في رأس الفهرس، فهو بابُ الوصول كلُّه */
-.mfpgo{flex:0 0 auto;display:flex;gap:8px;align-items:center;padding:10px 10px 6px}
+.mfpgo{flex:0 0 auto;display:flex;gap:8px;align-items:stretch;padding:10px 10px 6px}
 .mfpgo input{flex:1;min-width:0;font-family:inherit;font-size:16px;font-weight:800;color:var(--ttl);
   background:var(--pnl2);border:2px solid var(--pb);border-radius:12px;padding:9px 12px;text-align:center}
 .mfpgo input::-webkit-outer-spin-button,.mfpgo input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.mfpgo .btn{flex:0 0 auto;margin:0;width:48px;height:44px;padding:0;
-  display:flex;align-items:center;justify-content:center}
+/* الزرُّ بارتفاع الصندوق نفسه: يمتدّ معه، لا ارتفاعَ له من عنده */
+.mfpgo .btn{flex:0 0 auto;margin:0;width:48px;height:auto;min-height:0;padding:0;align-self:stretch;
+  display:flex;align-items:center;justify-content:center;border-radius:12px;
+  box-shadow:none}                                   /* ظلُّ الأزرار يزيده طولاً عن الصندوق */
+.mfpgo .btn:active{transform:scale(.94);box-shadow:none}
 /* سهمٌ خفيفٌ إلى جهة القراءة (اليسار)، بلا نصٍّ ولا رمزٍ تعبيريّ */
 .mfpgo .btn svg{display:block}
 .mfplist{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 10px 16px}
