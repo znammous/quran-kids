@@ -7007,18 +7007,30 @@ function roundWords(r){
     }
   }
 
-  var btns=$('chips').querySelectorAll('.chip');
+  var btns=$('chips').querySelectorAll('.chip'), wrongHere=0;
   for(var i=0;i<btns.length;i++){
     btns[i].onclick=function(){
       if(this.classList.contains('gone')) return;
       var w=this.textContent;
       if(w===seg[placed]){
         placeWord(w);
+        this.classList.remove('hintme'); wrongHere=0;
+        if($('fb').classList.contains('bad')){ $('fb').className='fb'; $('fb').textContent=''; }
         this.classList.add('gone'); placed++; beep([620+placed*60],0.05);
         if(placed>=need){ sGood(); $('fb').className='fb good'; $('fb').textContent='ممتاز! ✅'; nextRound(true); }
       } else {
         var el=this, pl0=placed; el.classList.add('bad');
         if(examMode()){ placed=seg.length; examMiss(function(){ examShowRight('chips','.chip',seg[pl0],'rightone'); }); return; }
+        /* الآيةُ المقسّمة: جزؤها لا يُفهم وحده في آخر الطابور، فيبقى
+           السؤالُ أمامه يُكمله — فإن عاند الكلمةَ ثلاثاً دُلّ عليها */
+        if(hifzMode() && r.parts>1){
+          sBad(); $('fb').className='fb bad'; $('fb').textContent='إجابة خاطئة — حاول مرّةً أخرى';
+          wrongHere++;
+          setTimeout(function(){ el.classList.remove('bad'); },380);
+          if(wrongHere>=3) for(var j=0;j<btns.length;j++)
+            if(!btns[j].classList.contains('gone') && btns[j].textContent===seg[placed]){ btns[j].classList.add('hintme'); break; }
+          return;
+        }
         if(hifzMode()){ placed=seg.length; hifzMiss(r,function(){ examShowRight('chips','.chip',seg[pl0],'rightone'); }); return; }
         sBad(); S.errors++; comboMiss();
         setTimeout(function(){ el.classList.remove('bad'); },380);
