@@ -406,10 +406,13 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .msura{align-self:stretch;position:relative;display:flex;align-items:center;justify-content:center;
   min-height:1.25em}
 .mushaf.qcf .msura{line-height:1}
-/* لا يملأ سطرَه كلَّه: فسحةٌ أعلاه وأسفله، فلا يلاصق البسملةَ ولا السطرَ فوقه */
-.msura::before{content:'';position:absolute;inset:12% 0;pointer-events:none;
+/* سطرُ العنوان له هامشٌ أعلاه وأسفله يُقتطع من ارتفاع الوجه قبل قسمته على
+   الأسطر: فلا يلاصق الإطارُ البسملةَ ولا ما فوقه ولو ضاق الوجه — كما في معاينة
+   المقطع قبل الأسئلة، حيث الشريطُ وزرُّ البدء يأخذان من ارتفاعه */
+.mline.mhead{margin-block:var(--mhgap,.2em)}
+.msura::before{content:'';position:absolute;inset:4% 0;pointer-events:none;
   border:2px solid #a07a2c;border-radius:4px}
-.msura::after{content:'';position:absolute;top:calc(12% + 4px);bottom:calc(12% + 4px);left:4px;right:4px;pointer-events:none;
+.msura::after{content:'';position:absolute;top:calc(4% + 4px);bottom:calc(4% + 4px);left:4px;right:4px;pointer-events:none;
   border:1px solid #a07a2c;border-radius:2px;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 0l5 5-5 5-5-5z' fill='%23a07a2c'/%3E%3C/svg%3E") left .35em center/.42em .42em no-repeat,
              url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 0l5 5-5 5-5-5z' fill='%23a07a2c'/%3E%3C/svg%3E") right .35em center/.42em .42em no-repeat}
@@ -2723,7 +2726,7 @@ function mushafPageHTML(P, hlGi, glyphs){
         if(P<=2) continue;
         body='<span class="mblank"></span>';
       }
-      html+='<div class="mline">'+body+'</div>';
+      html+='<div class="mline'+(k===1?' mhead':'')+'">'+body+'</div>';
       continue;
     }
     var nx=null, j;
@@ -3022,11 +3025,15 @@ function mushafFit(box){
   var cs=getComputedStyle(box);
   var availH=box.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0);
   /* ولا يزيد على ما يسعه الارتفاع: الوجهُ ثابتٌ لا يُمرَّر، فلا بدّ أن يُرى كلُّه */
-  if(availH>0) fs=Math.max(11, Math.min(fs, availH/(15*1.12+1.2)));
+  var heads=m.querySelectorAll('.mline.mhead').length, GAP=0.22;
+  if(availH>0) fs=Math.max(11, Math.min(fs, availH/(15*1.12+1.2+heads*2*GAP)));
   m.style.fontSize=fs+'px';
+  var gap=Math.round(fs*GAP);
+  m.style.setProperty('--mhgap', gap+'px');
   /* ورقمُ الوجه تحته — حين يُعرض — يُقتطع من الارتفاع قبل قسمته على الأسطر */
   var pg=m.querySelector('.mpgno'), extra=0;
   if(pg && pg.offsetHeight) extra=pg.offsetHeight+(parseFloat(getComputedStyle(pg).marginTop)||0);
+  extra+=heads*2*gap;
   var lh=(availH-extra)/15;                          /* الوجه خمسة عشر سطراً دائماً */
   lh=Math.max(fs*1.12, Math.min(fs*1.9, lh));
   m.style.setProperty('--mlh', lh+'px');
