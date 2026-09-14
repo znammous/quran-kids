@@ -114,7 +114,7 @@ body.light .sunny{display:block}
    يصير مرجعَ الثابتِ بدل الشاشة — فكان الزرُّ يظهر في منتصف الصفحة ما دامت
    حركةُ الدخول، ثمّ ينزل إلى مكانه. فتُنقل الحركةُ إلى أبناء الرئيسيّة سواه. */
 #scr-start{animation:none}
-#scr-start>:not(.examfp){animation:pop .35s ease}
+#scr-start>:not(.examfp):not(.dailyfp){animation:pop .35s ease}
 
 h1{font-size:30px;margin:12px 0 4px;color:var(--ttl);text-shadow:0 3px 0 rgba(0,0,0,.25);text-align:center}
 .sub{text-align:center;color:var(--ttl2);margin:0 0 16px;font-size:15px}
@@ -1283,6 +1283,60 @@ body.glow-off .examfp{animation:none;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 .iceflame .f3{transform-origin:50% 92%;animation:icelick .8s ease-in-out infinite}
 /* من أطفأ الحركة في جهازه أو في اللعبة: شعلةٌ ساكنةٌ لا ترتعش */
 body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
+/* زرُّ «تحدّي اليوم»: يقابل «اختبر نفسي» في الركن الأيمن، ملتصقاً بالحافة
+   كلسانٍ يخرج منها. ذهبيُّ الهالة لا ثلجيُّها، فلا يُظنّ أنّه البابُ نفسُه.
+   يظهر من التاسعة صباحاً ويبقى حتى يُتمّ تحدّيه. */
+.dailyfp{position:fixed;right:0;bottom:calc(14px + env(safe-area-inset-bottom));z-index:35;
+  display:flex;flex-direction:row;align-items:center;gap:8px;width:auto;
+  background:var(--pnl);border:2px solid var(--pb3);border-right:0;
+  border-radius:999px 0 0 999px;padding:7px 12px 7px 15px;margin:0;
+  cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;
+  transform-origin:100% 50%;animation:dfpbreath 2.4s ease-in-out infinite}
+.dailyfp:active{transform:scale(.95)}
+@keyframes dfpbreath{
+  0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.18), 0 0 0 0 rgba(255,196,60,0)}
+  50%{box-shadow:0 4px 0 rgba(0,0,0,.18), 0 0 22px 5px rgba(255,196,60,.6)}
+}
+body.light .dailyfp{animation-name:dfpbreathd}
+@keyframes dfpbreathd{
+  0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.14), 0 0 0 0 rgba(170,105,0,0)}
+  50%{box-shadow:0 4px 0 rgba(0,0,0,.14), 0 0 20px 4px rgba(170,105,0,.45)}
+}
+@media(max-width:820px){
+  .dailyfp{bottom:calc(72px + env(safe-area-inset-bottom))}
+}
+.dfpwrap{position:relative;display:flex;align-items:center;justify-content:center;
+  width:42px;height:42px;transition:transform .12s}
+.dailyfp:active .dfpwrap{transform:scale(.93)}
+.dfpring{position:absolute;inset:0;border-radius:50%;
+  border:2px solid rgba(255,196,60,.6);
+  box-shadow:0 0 26px rgba(255,196,60,.38), inset 0 0 22px rgba(255,196,60,.18);
+  animation:fpring 2.6s ease-out infinite;pointer-events:none}
+.dfpring.r2{animation-delay:1.3s}
+body.light .dfpring{border-width:3px;border-color:#8a5a00;
+  box-shadow:0 0 18px rgba(138,90,0,.3), inset 0 0 18px rgba(138,90,0,.12)}
+/* السهمُ يصيب الهدفَ كلَّ حين: يهتزّ الهدفُ ثمّ يسكن */
+.dfpic{position:relative;z-index:1;display:block;font-size:26px;line-height:1;
+  filter:drop-shadow(0 0 8px rgba(255,196,60,.85));
+  animation:dfphit 2.4s ease-in-out infinite}
+body.light .dfpic{filter:drop-shadow(0 3px 5px rgba(90,58,0,.4))}
+@keyframes dfphit{
+  0%,58%,100%{transform:rotate(0) scale(1)}
+  66%{transform:rotate(-14deg) scale(1.16)}
+  74%{transform:rotate(10deg) scale(1.08)}
+  82%{transform:rotate(-6deg) scale(1.12)}
+  90%{transform:rotate(0) scale(1)}
+}
+.dfplbl{font-size:14.5px;font-weight:900;color:var(--ttl);letter-spacing:.2px;white-space:nowrap}
+body.light .dfplbl{color:#4a3000}
+body.glow-off .dailyfp{animation:none;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+body.glow-off .dfpring{animation:none;opacity:.5;transform:scale(.95)}
+body.glow-off .dfpic{animation:none}
+@media (prefers-reduced-motion:reduce){
+  body:not(.glow-force) .dailyfp{animation:none;box-shadow:0 4px 0 rgba(0,0,0,.18)}
+  body:not(.glow-force) .dfpring{animation:none;opacity:.5;transform:scale(.95)}
+  body:not(.glow-force) .dfpic{animation:none}
+}
 @media (prefers-reduced-motion:reduce){
   body:not(.glow-force) .iceflame,body:not(.glow-force) .iceflame path{animation:none}
 }
@@ -1650,6 +1704,13 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
         </span>
       </span>
       <span class="fplbl">اختبر نفسي</span>
+    </button>
+    <button type="button" class="dailyfp" id="btnDaily" aria-label="تحدّي اليوم" hidden>
+      <span class="dfpwrap" aria-hidden="true">
+        <span class="dfpring"></span><span class="dfpring r2"></span>
+        <span class="dfpic">🎯</span>
+      </span>
+      <span class="dfplbl">تحدّي اليوم</span>
     </button>
     <div class="row">
       <button class="btn blue" id="btnBuild">🕌 مسجدي</button>
@@ -6323,7 +6384,7 @@ function runRound(){
   $('pSeg').textContent=S.review?('☀️ '+arNum(r.segFrom+1)+'-'+arNum(r.segTo)):segLabel();
   var seghere = S.surah.name+' '+arNum(S.seg[0]+1)+'-'+arNum(S.seg[1]);
   $('stageChip').textContent =
-      S.rev==='exam' ? ('📝 اختبار • '+seghere)
+      S.rev==='exam' ? ((S.daily?'🎯 تحدّي اليوم • ':'📝 اختبار • ')+seghere)
     : S.rev==='quiz' ? ('🧩 أسئلة المراجعة • '+seghere)
     : S.review       ? ('☀️ مراجعة اليوم • '+seghere)
     :                  (STAGES[S.stage].t+' • '+seghere);
@@ -9968,6 +10029,11 @@ function examQ(it){
   return {t:'missing',a:it.a,wi:Math.floor(Math.random()*ws.length),surah:it.s,
           segFrom:it.from,segTo:it.to,page:it.P};
 }
+/* ما يميّز سؤالاً من سؤال: نوعُه وموضعُه وما حُجب منه */
+function examQKey(q){
+  return q.t+'|'+q.surah.n+'|'+(q.a!=null?q.a:q.from)+'|'+(q.wi!=null?q.wi:(q.from!=null?q.from:''))+'|'+
+         (q.wi2==null?'':q.wi2)+'|'+(q.which||'')+'|'+(q.to==null?'':q.to);
+}
 /* بناءُ الأسئلة: لا يتكرّر سؤالٌ ما دام في النطاق سعة
    — فإن ضاق النطاقُ عن العدد دار عليه من أوّله. */
 function examBuild(){
@@ -9976,8 +10042,7 @@ function examBuild(){
   for(i=0;i<tries && pool.length<EX.count;i++){
     q=examQ(items[i%items.length]);
     if(!q) continue;
-    key=q.t+'|'+q.surah.n+'|'+(q.a!=null?q.a:q.from)+'|'+(q.wi!=null?q.wi:(q.from!=null?q.from:''))+'|'+
-        (q.wi2==null?'':q.wi2)+'|'+(q.which||'')+'|'+(q.to==null?'':q.to);
+    key=examQKey(q);
     if(seen[key]) continue;
     seen[key]=1; pool.push(q);
   }
@@ -10139,7 +10204,8 @@ function examWire(k){
 }
 /* الخروجُ من الاختبار خسارتُه كلِّه، فلا يُترك لنقرةٍ عابرة */
 function examQuitAsk(){
-  uiBox('إن خرجتَ الآن ضاع اختبارُك كلُّه، وبدأتَه من أوّله.'+
+  uiBox((S&&S.daily ? 'إن خرجتَ الآن ضاع ما أجبتَه، ويبقى تحدّي اليوم ينتظرك حتى تُتمّه.'
+                   : 'إن خرجتَ الآن ضاع اختبارُك كلُّه، وبدأتَه من أوّله.')+
     String.fromCharCode(10)+'أتخرج؟','⚠️','🚪 نعم، أخرج','↩️ أُكمل الاختبار', function(ok){
       if(!ok) return;
       S=null; renderPlayers(); show('scr-start');
@@ -10149,10 +10215,14 @@ function examQuitAsk(){
 function examBegin(){
   var rounds=examBuild();
   if(!rounds.length){ uiAlert('النطاق لا يصلح للاختبار — وسّعه قليلاً','📖'); return; }
+  examRun(rounds, false);
+}
+/* daily: تحدّي اليوم — أسئلتُه كالاختبار، وخاتمتُه غيرُ خاتمته */
+function examRun(rounds, daily){
   EX.log=[]; EX.t0=Date.now();
   var f0=rounds[0];
   S={ surah:f0.surah, seg:[f0.segFrom,f0.segTo], si:0, key:segKey(f0.surah.n,f0.segFrom),
-      stage:4, review:true, rev:'exam', rounds:rounds, i:0, errors:0, due:[] };
+      stage:4, review:true, rev:'exam', daily:!!daily, rounds:rounds, i:0, errors:0, due:[] };
   show('scr-play'); runRound();
 }
 function examNote(r, ok){
@@ -10177,6 +10247,7 @@ function examWeakest(){
 }
 var EX_LAST=null;   /* آخرُ نتيجةٍ — لتُطبع بعد قراءتها */
 function finishExam(){
+  if(S && S.daily){ finishDaily(); return; }
   var tot=EX.log.length||1, right=0, i;
   for(i=0;i<EX.log.length;i++) if(EX.log[i].ok) right++;
   var pct=Math.round(100*right/tot), g=examGrade(pct);
@@ -10218,6 +10289,126 @@ function examDur(s){
   var m=Math.floor(s/60), r=s%60;
   return m ? (arNum(m)+' د '+arNum(r)+' ث') : (arNum(r)+' ث');
 }
+/* =========================================================
+   تحدّي اليوم
+   عشرون سؤالاً ممّا حفظ، تظهر كلَّ يومٍ من التاسعة صباحاً وتبقى حتى
+   يُتمّها. ولا تعود آيةٌ سُئل عنها في تحدٍّ سابق حتى يُطاف على محفوظه
+   كلِّه، ثمّ يبدأ الطوافُ من جديد. وجائزتُه كجائزة الاختبار، مرّةً في اليوم.
+   ========================================================= */
+var DAILY_N=20, DAILY_H=9;
+/* done: يومُ آخر تحدٍّ أُتمّ • used: آياتٌ سُئل عنها في هذا الطواف
+   • pick: آياتُ تحدّي اليوم — فمن خرج ثمّ عاد وجد تحدّيه نفسَه */
+function dailyData(){
+  var p=curP();
+  if(!p.daily || typeof p.daily!=='object') p.daily={ done:null, used:{}, pick:null, count:0 };
+  if(!p.daily.used || typeof p.daily.used!=='object') p.daily.used={};
+  return p.daily;
+}
+function dailyKey(it){ return it.s.n+':'+it.a; }
+/* كلُّ آيةٍ محفوظة، ومعها حدودُ ما حُفظ متّصلاً من وجهها — منها المشتّتات */
+function dailyItems(){
+  var out=[];
+  memPages().forEach(function(P){
+    pageMemPieces(P).forEach(function(pc){
+      for(var a=pc.from;a<pc.to;a++) out.push({ s:pc.s, a:a, from:pc.from, to:pc.to, P:P });
+    });
+  });
+  return out;
+}
+/* أهو قائمٌ الآن؟ لم يُتمَّ اليوم، وبلغت الساعةُ التاسعة، وله محفوظ.
+   ووضعُ الفحص لا ينتظر الساعة. */
+function dailyOpen(){
+  if(dailyData().done===todayNum()) return false;
+  if(!QA && new Date().getHours()<DAILY_H) return false;
+  return memPages().length>0;
+}
+function dailyRender(){
+  var b=$('btnDaily'); if(!b) return;
+  var on=false; try{ on=dailyOpen(); }catch(e){}
+  if(b.hidden===!on) return;
+  b.hidden=!on;
+  try{ homeFit(); }catch(e){}
+}
+function dailyRounds(){
+  var D=dailyData(), all=dailyItems(), day=todayNum(), byKey={}, i, j, it, k, q;
+  if(!all.length) return [];
+  for(i=0;i<all.length;i++) byKey[dailyKey(all[i])]=all[i];
+  var saved=(D.pick && D.pick.d===day) ? D.pick.it : [];
+  /* آياتُ اليوم إن بُني من قبل، ثمّ ما لم يُسأل عنه، ثمّ ما سُئل عنه */
+  var fresh=shuffle(all.filter(function(x){ return !D.used[dailyKey(x)]; }));
+  var old=shuffle(all.filter(function(x){ return D.used[dailyKey(x)]; }));
+  var order=saved.map(function(x){ return byKey[x]; }).filter(Boolean).concat(fresh, old);
+  var out=[], picked=[], took={}, seen={}, keep=EX.picks;
+  EX.picks=null;                                   /* كلُّ الأنواع المأذونة بدرجته */
+  try{
+    for(i=0;i<order.length && out.length<DAILY_N;i++){
+      it=order[i]; k=dailyKey(it);
+      if(took[k]) continue;
+      /* النوعُ يُختار عشوائيّاً، وبعضُ الأنواع لا تحتمله آيةٌ قصيرة — فتُعاد المحاولة
+         قبل أن تُترك، لئلّا تتبدّل آياتُ التحدّي إن خرج منه ثمّ عاد */
+      for(q=null,j=0;j<6&&!q;j++) q=examQ(it);
+      if(!q) continue;
+      took[k]=1; seen[examQKey(q)]=1; out.push(q); picked.push(k);
+    }
+    /* محفوظٌ دون العشرين: يُسأل عن آياته ثانيةً بغير ما سُئل */
+    for(i=0;out.length<DAILY_N && picked.length && i<DAILY_N*8;i++){
+      q=examQ(byKey[picked[i%picked.length]]); if(!q) continue;
+      k=examQKey(q);
+      if(seen[k] && i<DAILY_N*4) continue;
+      seen[k]=1; out.push(q);
+    }
+  } finally { EX.picks=keep; }
+  D.pick={ d:day, it:picked }; saveDB();
+  return shuffle(out);
+}
+function dailyBegin(){
+  if(!dailyOpen()){ dailyRender(); return; }
+  var rounds=dailyRounds();
+  if(!rounds.length){ uiAlert('ما حفظتَه لا يكفي لتحدٍّ بعد — احفظ مقطعاً ثمّ عُد','🎯'); return; }
+  examRun(rounds, true);
+}
+function finishDaily(){
+  var D=dailyData(), day=todayNum(), tot=EX.log.length||1, right=0, i;
+  for(i=0;i<EX.log.length;i++) if(EX.log[i].ok) right++;
+  var pct=Math.round(100*right/tot), g=examGrade(pct);
+  var secs=Math.max(1, Math.round((Date.now()-EX.t0)/1000));
+  var first=(D.done!==day), gems=0, iron=0, glass=0;
+  if(first){
+    gems=EX_GEM*right; iron=Math.max(1,Math.floor(right/4)); glass=(pct>=90?2:0);
+    addGems(gems); addMat('iron',iron);
+    if(glass) addMat('glass',glass);
+    /* آياتُه تُقيَّد، فإن لم يبقَ في محفوظه ما لم يُسأل عنه بدأ طوافٌ جديد */
+    var all=dailyItems(), left=0, pk=(D.pick && D.pick.d===day) ? D.pick.it : [];
+    pk.forEach(function(k){ D.used[k]=1; });
+    for(i=0;i<all.length;i++) if(!D.used[dailyKey(all[i])]) left++;
+    if(!left){ D.used={}; pk.forEach(function(k){ D.used[k]=1; }); }
+    D.done=day; D.count=(D.count||0)+1;
+    saveDB();
+  }
+  $('playCard').classList.remove('bare');
+  $('mosque').removeAttribute('hidden');
+  $('mosque').innerHTML=mosqueSVG(1);
+  $('stageChip').textContent='🎯 أتممتَ تحدّي اليوم';
+  $('barFill').style.width='100%';
+  $('playArea').className='';
+  var weak=examWeakest();
+  $('playArea').innerHTML=
+    '<div style="text-align:center"><div style="font-size:52px">'+g[2]+'</div>'+
+    '<h2 style="color:var(--g1);margin:6px 0">'+esc(g[1])+'</h2>'+
+    '<div class="exscore">'+arNum(right)+' / '+arNum(tot)+'<span>'+arNum(pct)+'%</span></div>'+
+    '<p style="color:#3d5b7a;font-size:15px;margin:0 0 10px">'+
+      '🎯 تحدّي اليوم • '+arCount(tot,C_QUES)+' • ⏱️ '+examDur(secs)+
+      (weak.length? ('<br>راجِع: <b>'+esc(weak.join(' • '))+'</b>') : '<br>لم تُخطئ في موضع 👌')+
+      '<br>وتحدٍّ جديدٌ ينتظرك غداً من الساعة '+arNum(DAILY_H)+' صباحاً</p>'+
+    (first ? ('<div style="color:#8a6100;font-weight:800;margin-bottom:12px">+'+arNum(gems)+' 💎 و '+arNum(iron)+' ⚙️'+
+      (glass?(' و '+arNum(glass)+' 🔷'):'')+'</div>') : '')+
+    '<button class="btn green big pulse" id="btnDailyHome" style="margin:0">🏠 البداية</button></div>';
+  $('btnDailyHome').onclick=function(){ S=null; renderPlayers(); show('scr-start'); };
+}
+/* تبلغ الساعةُ التاسعة والرئيسيّةُ مفتوحة: يظهر الزرُّ دون أن يُعاد فتحُها */
+setInterval(function(){
+  try{ if($('scr-start').classList.contains('active')) dailyRender(); }catch(e){}
+}, 60000);
 /* شهادةُ النتيجة: تُطبع كما تُطبع شهادةُ الحفظ */
 function showExamCert(){
   if(!EX_LAST) return;
@@ -10279,7 +10470,7 @@ window.addEventListener('resize', function(){ try{ certFit(); playFit(); qScreen
 function homeFit(){
   var s=$('scr-start'), B=document.body, D=document.documentElement;
   if(!s) return;
-  var kids=[].filter.call(s.children, function(c){ return !c.classList.contains('examfp'); }), i;
+  var kids=[].filter.call(s.children, function(c){ return !c.classList.contains('examfp') && !c.classList.contains('dailyfp'); }), i;
   function setZ(v){ for(i=0;i<kids.length;i++) kids[i].style.zoom=v; }
   setZ(''); B.classList.remove('homelock');
   if(!s.classList.contains('active')) return;
@@ -10461,6 +10652,7 @@ function renderHomeCards(){
 function renderHome(){
   try{ renderKhatma(); }catch(e){}
   try{ renderHomeCards(); }catch(e){}
+  try{ dailyRender(); }catch(e){}
   try{
     var tb=topBadge(), el=$('homeTopBadge');
     if(el){
@@ -10715,6 +10907,7 @@ $('btnCertBack').onclick=function(){
 };
 $('btnPrint').onclick=function(){ window.print(); };
 $('btnExam').onclick=function(){ examOpen(); };
+$('btnDaily').onclick=function(){ dailyBegin(); };
 $('btnExamHome').onclick=function(){ renderPlayers(); show('scr-start'); };
 $('exBack').onclick=function(){ examShow(EX.i-1); };
 $('exNext').onclick=function(){
