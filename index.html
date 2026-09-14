@@ -648,6 +648,7 @@ body.glow-off .cele .spk{display:none}
 /* في الرئيسيّة يعلو الزرّين العائمين («اختبر نفسي» و«تحدّي اليوم») وسطَ الشاشة،
    وكان في ركنها الأيمن فيغطّي «تحدّي اليوم» */
 body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(50%);
+  width:max-content;white-space:nowrap;
   bottom:calc(88px + env(safe-area-inset-bottom))}
 @media(max-width:820px){
   body:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-inset-bottom))}
