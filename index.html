@@ -1290,15 +1290,15 @@ body.glow-off .examfp{animation:none;box-shadow:0 4px 0 rgba(0,0,0,.18)}
 .iceflame .f3{transform-origin:50% 92%;animation:icelick .8s ease-in-out infinite}
 /* من أطفأ الحركة في جهازه أو في اللعبة: شعلةٌ ساكنةٌ لا ترتعش */
 body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
-/* زرُّ «تحدّي اليوم»: يقابل «اختبر نفسي» في الركن الأيمن، ملتصقاً بالحافة
-   كلسانٍ يخرج منها. ذهبيُّ الهالة لا ثلجيُّها، فلا يُظنّ أنّه البابُ نفسُه.
+/* زرُّ «تحدّي اليوم»: صورةُ «اختبر نفسي» في المرآة — مثلُه شكلاً وبُعداً عن
+   الحافة، في الركن الأيمن. ذهبيُّ الهالة لا ثلجيُّها، فلا يُظنّ أنّه البابُ نفسُه.
    يظهر من التاسعة صباحاً ويبقى حتى يُتمّ تحدّيه. */
-.dailyfp{position:fixed;right:0;bottom:calc(14px + env(safe-area-inset-bottom));z-index:35;
+.dailyfp{position:fixed;right:10px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:35;
   display:flex;flex-direction:row;align-items:center;gap:8px;width:auto;
-  background:var(--pnl);border:2px solid var(--pb3);border-right:0;
-  border-radius:999px 0 0 999px;padding:7px 12px 7px 15px;margin:0;
+  background:var(--pnl);border:2px solid var(--pb3);border-radius:999px;
+  padding:7px 8px 7px 15px;margin:0;
   cursor:pointer;font-family:inherit;-webkit-tap-highlight-color:transparent;
-  transform-origin:100% 50%;animation:dfpbreath 2.4s ease-in-out infinite}
+  animation:dfpbreath 2.4s ease-in-out infinite}
 .dailyfp:active{transform:scale(.95)}
 @keyframes dfpbreath{
   0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.18), 0 0 0 0 rgba(255,196,60,0)}
