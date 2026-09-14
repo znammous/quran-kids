@@ -645,6 +645,13 @@ body.glow-off .cele .spk{display:none}
   padding:3px 10px;line-height:1.5}
 #qaBar button:active{transform:scale(.92)}
 #qaBar b{color:#e9d5ff;font-size:13px;font-weight:900;padding:0 4px}
+/* في الرئيسيّة يعلو الزرّين العائمين («اختبر نفسي» و«تحدّي اليوم») وسطَ الشاشة،
+   وكان في ركنها الأيمن فيغطّي «تحدّي اليوم» */
+body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(50%);
+  bottom:calc(88px + env(safe-area-inset-bottom))}
+@media(max-width:820px){
+  body:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-inset-bottom))}
+}
 .pstat.combochip{background:linear-gradient(180deg,#f97f31,#b8440a);border-color:#ffb877;color:#fff}
 .pstat.combochip b{color:#fff}
 .pstat.combochip.pop{transform:scale(1.18);transition:.14s}
