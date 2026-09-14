@@ -7608,15 +7608,19 @@ function renderRevPlanBody(){
   $('revPlan').innerHTML=
     contHTML+
     '<div id="revFree"'+(panelOpen?'':' hidden')+'>'+
-    '<div class="revbox"><div class="rl">من أين تبدأ المراجعة؟</div>'+
+    /* زرُّ المصحف أوّلاً: كان تحت الصناديق فيُظنّ «موافق» فيُنقر بعد
+       الاختيار، ثمّ يُحدَّد النطاقُ من المصحف من جديد */
+    '<div class="revbox">'+
+      '<button type="button" class="btn blue mini" id="revPickR" style="width:100%;margin:0 0 10px">'+
+        '📖 افتح المصحف وحدّد النطاق</button>'+
+      '<div class="note" style="text-align:center;margin:0 0 10px">— أو اختر بالسورة والآية —</div>'+
+      '<div class="rl">من أين تبدأ المراجعة؟</div>'+
       '<div class="revrow"><select id="revFS">'+revSurahOpts(REV.fromS)+'</select>'+
       '<select id="revFA">'+revAyahOpts(REV.fromS,REV.fromA)+'</select></div>'+
 
       '<div class="rl" style="margin:12px 0 8px">وإلى أين تنتهي؟</div>'+
       '<div class="revrow"><select id="revTS">'+revSurahOpts(REV.toS)+'</select>'+
-      '<select id="revTA">'+revAyahOpts(REV.toS,REV.toA)+'</select></div>'+
-      '<button type="button" class="btn blue mini" id="revPickR" style="width:100%;margin-top:12px">'+
-        '📖 افتح المصحف وحدّد النطاق</button></div>'+
+      '<select id="revTA">'+revAyahOpts(REV.toS,REV.toA)+'</select></div></div>'+
     '<div class="revbox"><div class="rl">ومن أيّ الطرفين تمشي؟</div><div class="chips">'+
       '<button type="button" class="chipsel'+(revDir('free')<0?' sel':'')+'" data-rd="-1">🌙 من جهة الناس</button>'+
       '<button type="button" class="chipsel'+(revDir('free')>0?' sel':'')+'" data-rd="1">📖 من جهة البقرة</button>'+
