@@ -406,9 +406,10 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .msura{align-self:stretch;position:relative;display:flex;align-items:center;justify-content:center;
   min-height:1.25em}
 .mushaf.qcf .msura{line-height:1}
-.msura::before{content:'';position:absolute;inset:1px 0;pointer-events:none;
+/* لا يملأ سطرَه كلَّه: فسحةٌ أعلاه وأسفله، فلا يلاصق البسملةَ ولا السطرَ فوقه */
+.msura::before{content:'';position:absolute;inset:12% 0;pointer-events:none;
   border:2px solid #a07a2c;border-radius:4px}
-.msura::after{content:'';position:absolute;inset:5px 4px;pointer-events:none;
+.msura::after{content:'';position:absolute;top:calc(12% + 4px);bottom:calc(12% + 4px);left:4px;right:4px;pointer-events:none;
   border:1px solid #a07a2c;border-radius:2px;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 0l5 5-5 5-5-5z' fill='%23a07a2c'/%3E%3C/svg%3E") left .35em center/.42em .42em no-repeat,
              url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5 0l5 5-5 5-5-5z' fill='%23a07a2c'/%3E%3C/svg%3E") right .35em center/.42em .42em no-repeat}
