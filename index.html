@@ -313,6 +313,44 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfbody.mfpeek{position:absolute;left:0;right:0;z-index:2;overflow:hidden;pointer-events:none;
   background:var(--paper);box-shadow:0 0 22px rgba(0,0,0,.2)}
 .mfbody .mushaf{font-size:clamp(16px,4.6vw,25px)}
+/* ===== المصحفُ من شريط التنقّل: قراءةٌ بلا ترويسة، وتحتها شريطٌ للفهرس والبحث =====
+   الترويسةُ تُخفى، ورقمُ الوجه تحت آخر سطر كما يُطبع. واللمسةُ تُخفي الشريطَ وتُظهره. */
+.mfdock{display:none}
+.mfsheet.reader .mfbar{display:none}
+.mfsheet.reader .mpgno{display:block;text-align:center;line-height:1;margin-top:.6em;
+  font-family:"UthmanicHafs","Amiri Quran",serif;font-size:.6em;color:#9a7b3a}
+.mfsheet.reader .mfdock{flex:0 0 auto;display:flex;gap:2px;background:var(--pnl);border-top:2px solid var(--pb);
+  padding:5px 4px calc(5px + env(safe-area-inset-bottom))}
+.mfsheet.reader.clean .mfdock{display:none}
+.mfdock button{flex:1;min-width:0;background:none;border:0;color:var(--ttl);font-family:inherit;
+  font-size:11px;font-weight:800;line-height:1.2;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  padding:7px 2px;border-radius:12px;min-height:54px;touch-action:manipulation;transition:.12s}
+.mfdock button .tico{font-size:23px;line-height:1}
+.mfdock button.on{background:var(--psel);box-shadow:inset 0 -3px 0 var(--gold)}
+.mfdock button:active{transform:scale(.93)}
+/* لوحتا الفهرس والبحث فوق الوجه، وتقفان عند الشريط السفليّ فيبقى ظاهراً */
+.mfpanel{position:absolute;left:0;right:0;top:0;z-index:6;background:var(--pnl);
+  display:flex;flex-direction:column}
+.mfpanel[hidden]{display:none!important}
+.mfphead{flex:0 0 auto;display:flex;gap:8px;align-items:center;padding:10px;border-bottom:2px solid var(--pb)}
+.mfphead .onbtabs{flex:1;margin:0;padding:0}
+.mfphead input{flex:1;min-width:0;font-family:inherit;font-size:16px;font-weight:800;color:var(--ttl);
+  background:var(--pnl2);border:2px solid var(--pb);border-radius:12px;padding:9px 12px}
+.mfplist{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 10px 16px}
+.mfprow{display:flex;align-items:center;gap:10px;width:100%;text-align:start;background:none;border:0;
+  border-bottom:1px solid var(--pb);padding:11px 6px;font-family:inherit;color:var(--ttl);cursor:pointer}
+.mfprow:active{background:var(--psel)}
+.mfprow.here{background:var(--psel);border-radius:10px}
+.mfprow .n{flex:0 0 36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:var(--pnl2);border:2px solid var(--pb);font-weight:900;font-size:13px}
+.mfprow .t{flex:1;min-width:0}
+.mfprow .t b{display:block;font-size:15.5px}
+.mfprow .t i{display:block;font-style:normal;font-size:12.5px;color:var(--mute);font-weight:700}
+.mfprow .ay{display:block;font-family:"UthmanicHafs","Amiri Quran",serif;font-size:19px;line-height:1.9;
+  font-weight:400;margin-top:2px}
+.mfprow .p{flex:0 0 auto;font-size:12.5px;font-weight:800;color:var(--mute)}
+.mfpmsg{text-align:center;color:var(--mute);font-weight:800;padding:22px 10px}
 /* خطّا المصحف المساعدان: أسماء السور المزخرفة، ورسم عثمان طه للبسملة والعرض البديل */
 @font-face{font-family:'SuraNames';src:url(fonts/sura_names.woff2) format('woff2');font-display:swap}
 @font-face{font-family:'UthmanicHafs';src:url(fonts/UthmanicHafs.woff2) format('woff2');font-display:swap}
@@ -1433,6 +1471,25 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
     <div class="mfgonote" id="mfGoNote"></div>
     <button class="btn green big" id="mfGoBtn">▶️ ابدأ</button>
   </div>
+  <div class="mfpanel" id="mfIdx" hidden>
+    <div class="mfphead">
+      <div class="onbtabs" id="mfIdxTabs"></div>
+      <button class="mfx2" id="mfIdxX" aria-label="أغلق الفهرس">✕</button>
+    </div>
+    <div class="mfplist" id="mfIdxList"></div>
+  </div>
+  <div class="mfpanel" id="mfFind" hidden>
+    <div class="mfphead">
+      <input type="search" id="mfFindQ" placeholder="🔎 ابحث في الآيات…" autocomplete="off" enterkeyhint="search">
+      <button class="mfx2" id="mfFindX" aria-label="أغلق البحث">✕</button>
+    </div>
+    <div class="mfplist" id="mfFindList"></div>
+  </div>
+  <nav class="mfdock" id="mfDock">
+    <button type="button" id="mfDockIdx"><span class="tico">📑</span>الفهرس</button>
+    <button type="button" id="mfDockFind"><span class="tico">🔎</span>البحث</button>
+    <button type="button" id="mfDockClose"><span class="tico">✕</span>إغلاق</button>
+  </nav>
 </div>
 
 <div class="modal-bg" id="srPick" hidden>
@@ -2691,6 +2748,8 @@ function mfIdxFill(P, sn){
 var MF_PAGE=1;
 function mfBarSync(P, hlGi){
   MF_PAGE=P;
+  /* ما فُتح من أيقونة المصحف يُذكر وجهُه، فيُستأنف منه في المرّة التالية */
+  if($('mfSheet').classList.contains('reader')) save('mfLast', P);
   var a=$('mfPrev'), b=$('mfNext'), f=$('mfPg'), sn=0;
   if(a) a.disabled=(P<=1);
   if(b) b.disabled=(P>=604);
@@ -2925,7 +2984,8 @@ window.addEventListener('resize', function(){
 function mushafClose(){
   MF_READ=false; MF_MARK=null; MF_PV=null;
   if($('mfGo')) $('mfGo').hidden=true;
-  if($('mfSheet')) $('mfSheet').hidden=true;
+  try{ mfPanel(null); }catch(e){}
+  if($('mfSheet')){ $('mfSheet').hidden=true; $('mfSheet').classList.remove('reader'); }
 }
 /* شاشة اللمس تُولّد نقرةً تابعة بعد رفع الإصبع، وتُختبَر إصابتها بعد إخفاء
    الوجه — فتقع على الزرّ الذي كان خلفه. فيبتلعها حارسٌ لحظيّ. */
@@ -4777,9 +4837,8 @@ function mosqueSVG(p){
 /* ===== شريط التنقّل السفلي (يظهر على الشاشات الضيّقة) ===== */
 var TABS=[
   {id:'scr-start',    ic:'🏠', n:'الرئيسية',  go:function(){ renderPlayers(); show('scr-start'); }},
-  /* «اليومُ» يُبلَغ من بطاقتَي الشاشة الرئيسة، والشريطُ أولى به الفهرسُ
-     الذي لا مدخلَ له سواه */
-  {id:'scr-map',      ic:'📑', n:'الفهرس',    go:function(){ $('btnIndex').click(); }, also:['scr-path','scr-bqn']},
+  /* المصحفُ يُفتح على آخر وجهٍ قُرئ منه — وفهرسُ السور والأجزاء في شريطه السفليّ */
+  {id:'mushaf',       ic:'📖', n:'المصحف',    go:function(){ mushafReader(); }},
   {id:'scr-build',    ic:'🕌', n:'مسجدي',    go:function(){ $('btnBuild').click(); }},
   {id:'scr-shop',     ic:'💎', n:'متجري',    go:function(){ $('btnShop').click(); }},
   {id:'scr-settings', ic:'⚙️', n:'الإعدادات', go:function(){ $('btnSettings').click(); }}
@@ -5302,6 +5361,115 @@ $('mfSura').onchange=function(){ mfGoto(mfSuraPage(parseInt(this.value,10))); };
 $('mfJuz').onchange =function(){ mfGoto(mfJuzPage(parseInt(this.value,10))); };
 $('mfPrev').onclick=function(){ mfGoto(mfPage()-1); };
 $('mfNext').onclick=function(){ mfGoto(mfPage()+1); };
+/* ===== المصحفُ من شريط التنقّل =====
+   يُفتح على آخر وجهٍ قُرئ منه، وإلّا فعلى سورته الجارية. وترويستُه مخفيّة،
+   وتحته شريطٌ فيه الفهرسُ والبحثُ والإغلاق. */
+function mushafReader(){
+  var P=parseInt(load('mfLast',0),10);
+  if(!(P>=1 && P<=604)){
+    var s0=curSurah||defaultSurah();
+    P=s0 ? mfSuraPage(s0.n) : 1;
+  }
+  $('mfSheet').classList.add('reader');
+  mushafRead(P, '📖 المصحف');
+}
+/* لوحةٌ واحدةٌ في كلّ مرّة — ولا شيءَ يُطوي الكلّ */
+function mfPanel(id){
+  ['mfIdx','mfFind'].forEach(function(k){ if($(k)) $(k).hidden=(k!==id); });
+  if(id){ var d=$('mfDock'); $(id).style.bottom=(d?d.offsetHeight:0)+'px'; }
+  if($('mfDockIdx')) $('mfDockIdx').classList.toggle('on', id==='mfIdx');
+  if($('mfDockFind')) $('mfDockFind').classList.toggle('on', id==='mfFind');
+}
+function mfPanelOpen(){ return !!($('mfIdx') && (!$('mfIdx').hidden || !$('mfFind').hidden)); }
+var MF_IDX_T='s';
+function mfIdxRender(){
+  var P=MF_PAGE, h='', i, curS=1, curJ=1, pcs=[];
+  try{ pcs=pagePieces(P); }catch(e){}
+  if(pcs.length) curS=pcs[0].s.n;
+  for(i=1;i<=30;i++) if(mfJuzPage(i)<=P) curJ=i;
+  $('mfIdxTabs').innerHTML=[['s','📖 السور'],['j','🧩 الأجزاء']].map(function(t){
+    return '<button type="button" class="onbtab'+(MF_IDX_T===t[0]?' sel':'')+'" data-mt="'+t[0]+'">'+t[1]+'</button>';
+  }).join('');
+  if(MF_IDX_T==='s'){
+    for(i=0;i<SURAHS.length;i++){
+      var s=SURAHS[i], sp=mfSuraPage(s.n);
+      h+='<button type="button" class="mfprow'+(s.n===curS?' here':'')+'" data-pg="'+sp+'">'+
+         '<span class="n">'+arNum(s.n)+'</span>'+
+         '<span class="t"><b>سورة '+esc(s.name)+'</b><i>'+juzLabel(s)+' • آياتها '+arNum(s.ayat.length)+'</i></span>'+
+         '<span class="p">ص '+arNum(sp)+'</span></button>';
+    }
+  } else {
+    for(i=1;i<=30;i++){
+      var at=JUZ_AT[i-1], jp=mfJuzPage(i);
+      h+='<button type="button" class="mfprow'+(i===curJ?' here':'')+'" data-pg="'+jp+'">'+
+         '<span class="n">'+arNum(i)+'</span>'+
+         '<span class="t"><b>الجزء '+arNum(i)+'</b><i>'+esc(surahBy(at[0]).name)+' '+arNum(at[1])+'</i></span>'+
+         '<span class="p">ص '+arNum(jp)+'</span></button>';
+    }
+  }
+  var box=$('mfIdxList');
+  box.innerHTML=h;
+  var here=box.querySelector('.here');
+  if(here) setTimeout(function(){ try{ here.scrollIntoView({block:'center'}); }catch(e){} }, 0);
+}
+/* البحثُ في نصّ الآيات بالرسم الإملائيّ مجرّداً من الضبط، فيجد «الرحمن»
+   ولو كُتبت بلا تشكيل. والفهرسُ المجرّدُ يُبنى عند أوّل بحثٍ مرّةً واحدة. */
+var MF_NORM=null, MF_FT=0, MF_FIND_CAP=60;
+function mfFindRun(){
+  var raw=$('mfFindQ').value.trim(), q=norm(raw), box=$('mfFindList');
+  if(q.length<2){ box.innerHTML='<div class="mfpmsg">اكتب كلمةً أو عبارةً من الآية</div>'; return; }
+  if(!MF_NORM){
+    MF_NORM=[];
+    SURAHS.forEach(function(s){
+      for(var a=0;a<s.ayat.length;a++) MF_NORM.push([s, a, norm(ayahTyping(s,a))]);
+    });
+  }
+  var out=[], n=0, i;
+  for(i=0;i<MF_NORM.length;i++){
+    if(MF_NORM[i][2].indexOf(q)<0) continue;
+    n++; if(out.length<MF_FIND_CAP) out.push(MF_NORM[i]);
+  }
+  if(!n){ box.innerHTML='<div class="mfpmsg">لا آيةَ فيها «'+esc(raw)+'»</div>'; return; }
+  box.innerHTML='<div class="mfpmsg" style="padding:8px 4px">'+
+      (n>MF_FIND_CAP ? ('أوّل '+arNum(MF_FIND_CAP)+' من '+arNum(n)+' — زِد في الكلمات لتضييقها')
+                     : ('النتائج: '+arNum(n)))+'</div>'+
+    out.map(function(r){
+      var gi=GIDX[r[0].n-1]+r[1];
+      return '<button type="button" class="mfprow" data-gi="'+gi+'">'+
+        '<span class="t"><b>سورة '+esc(r[0].name)+' • الآية '+arNum(r[1]+1)+'</b>'+
+        '<span class="ay">'+esc(ayahText(r[0],r[1]))+'</span></span>'+
+        '<span class="p">ص '+arNum(pageOfIdx(gi))+'</span></button>';
+    }).join('');
+}
+$('mfDockIdx').onclick=function(){
+  if(!$('mfIdx').hidden){ mfPanel(null); return; }
+  mfPanel('mfIdx'); mfIdxRender();
+};
+$('mfDockFind').onclick=function(){
+  if(!$('mfFind').hidden){ mfPanel(null); return; }
+  mfPanel('mfFind'); mfFindRun();
+  try{ $('mfFindQ').focus(); }catch(e){}
+};
+$('mfDockClose').onclick=function(){ mfPickEnd(); mushafClose(); mushafEatGhost(); };
+$('mfIdxX').onclick=function(){ mfPanel(null); };
+$('mfFindX').onclick=function(){ mfPanel(null); };
+$('mfIdxTabs').onclick=function(e){
+  var b=e.target.closest && e.target.closest('[data-mt]'); if(!b) return;
+  MF_IDX_T=b.getAttribute('data-mt'); mfIdxRender();
+};
+$('mfIdxList').onclick=function(e){
+  var b=e.target.closest && e.target.closest('[data-pg]'); if(!b) return;
+  mfPanel(null); mfGoto(parseInt(b.getAttribute('data-pg'),10));
+};
+$('mfFindQ').oninput=function(){ clearTimeout(MF_FT); MF_FT=setTimeout(mfFindRun, 180); };
+$('mfFindQ').onkeydown=function(e){ if(e.key==='Enter'){ clearTimeout(MF_FT); mfFindRun(); this.blur(); } };
+/* نتيجةُ البحث تفتح وجهَها والآيةُ مضاءةٌ فيه */
+$('mfFindList').onclick=function(e){
+  var b=e.target.closest && e.target.closest('[data-gi]'); if(!b) return;
+  var gi=parseInt(b.getAttribute('data-gi'),10);
+  mfPanel(null); sPage();
+  mushafOpenPage(pageOfIdx(gi), gi, '');
+};
 /* نقرةٌ على الوجه تغلقه — أيسر للطفل من قصد الزرّ. ونميّز النقرة من
    التمرير بالمسافة والزمن، وإلّا أغلقه كلُّ سحبٍ للصفحة. */
 (function(){
@@ -5455,6 +5623,7 @@ $('mfNext').onclick=function(){ mfGoto(mfPage()+1); };
 });
 document.addEventListener('keydown', function(e){
   if(e.key!=='Escape') return;
+  if(mfPanelOpen()){ mfPanel(null); return; }
   if($('mfSheet') && !$('mfSheet').hidden){ mfPickEnd(); mushafClose(); return; }
   if(!$('srPick').hidden) closeModal('srPick');
   else if(!$('adab').hidden) closeModal('adab');
@@ -10645,7 +10814,8 @@ function navToast(msg, ms){
     setTimeout(function(){ el.hidden=true; },300); }, ms||1900);
 }
 function navBack(){
-  /* وجه المصحف مفتوح: يُغلق أوّلاً */
+  /* وجه المصحف مفتوح: تُطوى لوحتُه إن كانت، ثمّ يُغلق */
+  if(mfPanelOpen()){ mfPanel(null); return true; }
   if($('mfSheet') && !$('mfSheet').hidden){ mfPickEnd(); mushafClose(); return true; }
   /* ٠) احتفال قائم: يُطوى أوّلاً */
   if($('cele') && !$('cele').hidden){ celeDone(); return true; }
