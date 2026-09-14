@@ -7387,6 +7387,12 @@ function revSize(m){ return (revMode(m)==='wird') ? (REV.wsize||REV.size||3) : (
 /* وموضعُ الوقوف كذلك */
 function revDone(m){ return (revMode(m)==='wird') ? (REV.wdone||0) : (REV.done||0); }
 function revSetDone(m,v){ if(revMode(m)==='wird') REV.wdone=v; else REV.done=v; }
+/* المسارُ الحرّ إذا تمّ طُوي: لا بطاقةَ تدعوه إلى إعادته، بل يعود البابُ
+   إلى دائرةِ «حدّد نطاقاً» — ويبقى آخرُ نطاقٍ مضبوطاً في اللوحة لمن أراده */
+function revFreeEnd(){
+  REV.wird=true; REV.mode=null; REV.done=0; REV.weak={};
+  curP().freeRev=false;
+}
 function revSessions(m){
   var all=revAllPages(m), n=revSize(m), out=[];
   for(var i=0;i<all.length;i+=n) out.push(all.slice(i,i+n));
@@ -7517,17 +7523,17 @@ function renderRevPlanBody(){
      إلى مقصدٍ واحد. فصارت البطاقةُ نفسُها هي الزرَّ — على هيئة بطاقتَي
      الشاشة الرئيسة: أيقونةٌ وعنوانٌ وسطرُ حالٍ وسهم. */
   var savedFree=(!!curP().rev && !revIsWird()), ss0=revSessions('free'), nS=ss0.length;
+  /* مسارٌ تمّ قبل أن يُطوى عند إتمامه؟ يُطوى الآن */
+  if(savedFree && nS && (REV.done||0)>=nS){ revFreeEnd(); revSave(); savedFree=false; }
   var doneS=Math.min(REV.done||0, nS), contHTML='';
   if(nS){
     var aa=surahBy(REV.fromS), bb=surahBy(REV.toS);
-    var full=(doneS>=nS);
-    contHTML='<button type="button" class="goalcard '+(full?'done':'now')+'" id="btnRevCont" '+
+    contHTML='<button type="button" class="goalcard now" id="btnRevCont" '+
         'style="margin:0 0 14px">'+
-      '<span class="gcic">'+(full?'🎉':(doneS>0?'▶️':'🎛️'))+'</span>'+
+      '<span class="gcic">'+(doneS>0?'▶️':'🎛️')+'</span>'+
       '<span class="gctx"><b>'+
-        (full ? 'أتممتَ المسار — أعِدْه من أوّله'
-              : (doneS>0 ? ('أكمل المسار — الجلسة '+arNum(doneS+1)+' من '+arNum(nS))
-                         : ('ابدأ المسار — '+arCount(nS,C_SESS))))+'</b>'+
+        (doneS>0 ? ('أكمل المسار — الجلسة '+arNum(doneS+1)+' من '+arNum(nS))
+                 : ('ابدأ المسار — '+arCount(nS,C_SESS)))+'</b>'+
         '<i>'+esc(aa.name)+' '+arNum(REV.fromA)+' ← '+esc(bb.name)+' '+arNum(REV.toA)+
           ' • '+arCount(REV.size,C_PAGE)+' في الجلسة</i></span>'+
       '<span class="gcgo">❮</span></button>';
@@ -7637,7 +7643,6 @@ function renderRevPlanBody(){
   };
   if($('btnRevCont')) $('btnRevCont').onclick=function(){
     REV.mode='free';
-    if(REV.done>=revSessions('free').length){ REV.done=0; REV.weak={}; }
     revSave(); beginRevPath();
   };
   /* التثبيتُ اعتمادٌ لا بدء: يُثبت النطاقَ ويطوي اللوحة، والبطاقةُ
@@ -8979,9 +8984,10 @@ function finishRevQuiz(){
     pageSegKeys(P).forEach(function(k){ scheduleNext(k, !bad); });      /* الضعيفة تعود غداً */
   });
   saveProg();
-  var wirdRound=0, md=revMode();
+  var wirdRound=0, md=revMode(), freeEnded=false;
   if(onPath){
     revSetDone(md, Math.max(revDone(md), REV.si+1));
+    if(md==='free' && REV.done>=revSessions('free').length){ freeEnded=true; revFreeEnd(); }
     if(md==='wird'){
       REV.day=todayNum();                    /* أُدّي وردُ اليوم */
       /* أتمّ الدورة على محفوظه كلّه؟ تُطوى وتُستأنف من أوّله */
@@ -9008,7 +9014,7 @@ function finishRevQuiz(){
       rew:'＋ 100 💎 و3 ✨ ذهب' }); }catch(e){}
   }
 
-  var ss=revSessions(md), more = onPath && revDone(md)<ss.length;
+  var ss=revSessions(md), more = onPath && !freeEnded && revDone(md)<ss.length;
   $('playCard').classList.remove('bare');
   $('mosque').removeAttribute('hidden');
   $('mosque').innerHTML=mosqueSVG(1);
@@ -9027,10 +9033,13 @@ function finishRevQuiz(){
     '<div style="color:#8a6100;font-weight:800;margin-bottom:12px">+'+arNum(10*donePages.length)+' 💎 و '+arNum(2*donePages.length)+' ⚙️'+
       (weakList.length?'':' و '+arNum(2*donePages.length)+' 🔷')+'</div>'+
     (more? '<button class="btn primary big pulse" id="btnRevNext">▶️ الجلسة التالية ('+arNum(revDone(md)+1)+' من '+arNum(ss.length)+')</button>' : '')+
-    '<button class="btn '+(more?'ghost big':'primary big pulse')+'" id="btnRevMap">🗺️ مسار المراجعة</button>'+
+    '<button class="btn '+(more?'ghost big':'primary big pulse')+'" id="btnRevMap">'+
+      (freeEnded?'🎛️ حدّد نطاقاً جديداً':'🗺️ مسار المراجعة')+'</button>'+
     '<button class="btn ghost big" id="btnRevHome2" style="margin:0">🏠 البداية</button></div>';
   if($('btnRevNext')) $('btnRevNext').onclick=function(){ beginRevSession(revDone(md)); };
-  $('btnRevMap').onclick=function(){ renderRevPath(); show('scr-revpath'); };
+  $('btnRevMap').onclick=freeEnded
+    ? function(){ REV_TAB='free'; startRevPlan(); }
+    : function(){ renderRevPath(); show('scr-revpath'); };
   $('btnRevHome2').onclick=function(){ renderPlayers(); show('scr-start'); };
 }
 function revWeak(P){ if(P) REV.weak[P]=true; }
