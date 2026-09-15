@@ -2209,7 +2209,9 @@ DB.players=DB.players.filter(function(p){ return p && typeof p==='object' && !Ar
 if(!DB.players.length) DB.players=[newPlayer('','f')];
 if(!(DB.cur>=0 && DB.cur<DB.players.length)) DB.cur=0;
 function curP(){ return DB.players[DB.cur]; }
-function saveDB(){ save('nur_db',DB); }
+/* اليومُ المُزاح في وضع الفحص لا يُكتب في المخزون: كانت تُحفظ تواريخُه (مواعيدُ
+   المراجعة والمواظبة وتحدّي اليوم) فتختلّ بعد إغلاقه. والعودةُ إلى اليوم تُعيد المحفوظ */
+function saveDB(){ if(QA_DAYS!==0) return; save('nur_db',DB); }
 var SET, prog, profile, look, gender;
 /* الوضع النهاريّ: صفّ واحد على <body> يقلب كل المتغيّرات */
 /* مفتاحُ الوضع في ركن العنوان: يُربط مرّةً واحدة لأنّه لا يُعاد رسمُه
@@ -2628,14 +2630,19 @@ function mushafFont(P){
   if(MFONT[P]) return MFONT[P];
   if(typeof FontFace!=='function' || !document.fonts)
     return (MFONT[P]=Promise.reject(new Error('no FontFace')));
-  var fam='QCF'+P, cdn=MFCDN+'p'+P+'.woff2', pr;
-  if(MFLOCAL) pr=mushafFace(fam,'fonts/pages/p'+P+'.woff2')['catch'](function(){
-                 MFLOCAL=false;                    /* غير مرفوعة: لا نعيد المحاولة */
-                 return mushafFace(fam,cdn);
+  var fam='QCF'+P, cdn=MFCDN+'p'+P+'.woff2', local='fonts/pages/p'+P+'.woff2', pr;
+  /* لكلّ وجهٍ محاولتُه: كان أوّلُ خطٍّ محلّيٍّ يتعذّر (وجهٌ لم يُنزَّل والجهازُ بلا
+     إنترنت) يُطفئ المحلّيَّ للجلسة كلّها، فتُعرض حتى الأوجهُ المنزَّلةُ بخطٍّ نصّيّ.
+     فلا يُقدَّم المصدرُ الخارجيُّ إلّا إذا تعذّر المحلّيُّ ونجح هو — أي الخطوطُ غيرُ
+     مرفوعة — ويبقى المحلّيُّ بعده احتياطاً لما نُزِّل. */
+  if(MFLOCAL) pr=mushafFace(fam,local)['catch'](function(){
+                 return mushafFace(fam,cdn).then(function(f){ MFLOCAL=false; return f; });
                });
-  else pr=mushafFace(fam,cdn);
-  /* ما حُمّل يُعلَّم، فيُرسم به الوجهُ في الحال بلا انتظار وعدٍ ولو محلول */
-  pr=pr.then(function(f){ MFREADY[P]=f; return f; });
+  else pr=mushafFace(fam,cdn)['catch'](function(){ return mushafFace(fam,local); });
+  /* ما حُمّل يُعلَّم، فيُرسم به الوجهُ في الحال بلا انتظار وعدٍ ولو محلول.
+     وما تعذّر يُنسى، فيُطلب ثانيةً إذا عاد الاتصال — كان يبقى متعذّراً للجلسة كلّها */
+  pr=pr.then(function(f){ MFREADY[P]=f; return f; },
+             function(er){ if(MFONT[P]===pr) delete MFONT[P]; throw er; });
   return (MFONT[P]=pr);
 }
 var MFREADY={};
@@ -3686,11 +3693,22 @@ function goalMet(){
   }catch(e){}
   return goalHifzMet() && goalRevMet();
 }
+/* المواظبةُ المعروضة: ما دام وصلُها مُدرَكاً — أُنجز اليومُ أو الأمس، أو فات ما تغطّيه
+   أيّامُ الراحة المدّخرة — فهي عددُها، وإلّا فقد انقطعت فتُعرض صفراً. كانت تبقى على
+   آخر عددٍ أسابيعَ حتى يُتمّ يوماً جديداً، ثمّ تهبط إلى واحد فجأة. */
+function streakNow(p){
+  var s=(p && p.streak) || {}, n=s.count||0;
+  if(!n || s.last==null) return 0;
+  return (todayNum()-s.last-1) <= (s.freezes||0) ? n : 0;
+}
 function creditDay(){
   var p=curP(), t=todayNum(), s=p.streak;
   if(!goalMet() || s.last===t) return;
-  if(s.last===t-1) s.count++;
-  else if(s.last!=null && (t-s.last)===2 && s.freezes>0){ s.freezes--; s.count++; }   /* يوم راحة */
+  /* الأيّامُ الفائتةُ بين آخر يومٍ أُنجز واليوم: كلُّ يومٍ منها يغطّيه يومُ راحة.
+     كانت لا تُغطّي إلا يوماً واحداً، فمن ادّخر يومين وفاته يومان انقطعت مواظبتُه */
+  var missed = (s.last==null) ? -1 : (t-s.last-1);
+  if(missed===0) s.count++;
+  else if(missed>0 && missed<=(s.freezes||0)){ s.freezes-=missed; s.count++; }   /* أيّامُ راحة */
   else s.count=1;
   s.last=t;
   if((s.count||0)>(s.best||0)) s.best=s.count;        /* أطول مواظبة بلغها */
@@ -3744,7 +3762,7 @@ function totals(){
 function renderHUDInto(id){ var e=$(id); if(!e) return; renderHUD(); e.innerHTML=$('hud').innerHTML; }
 /* شرح كل عدّاد، يظهر عند الضغط عليه */
 var HUD_TIP={
-  streak:['🏮 المواظبة','أيام متتابعة حقّقت فيها هدف اليوم. ويُمنح «يوم راحة» كل سبعة أيام يغطّي يوماً فائتاً.'],
+  streak:['🏮 المواظبة','أيام متتابعة حقّقت فيها هدف اليوم. ويُمنح «يوم راحة» كل سبعة أيام (يُدَّخر منها يومان)، يغطّي كلٌّ منها يوماً فائتاً تلقائياً.'],
   gems:['💎 الجواهر','تكسبها من كل مرحلة ومقطع ومراجعة، وتنفقها في 💎 متجري و🕌 مسجدي.'],
   stars:['⭐ النجوم','نجمة لكل مرحلة تُنجزها، وخمس نجوم تُتمّ المقطع.'],
   ayat:['📖 الآيات','عدد الآيات التي حفظتها — يبقى محفوظاً مهما غيّرت حجم المقطع.'],
@@ -3773,7 +3791,7 @@ function renderHUD(){
       '<span class="ico">'+ic+'</span><b>'+val+'</b></button>';
   };
   $('hud').innerHTML='<div class="hudrow">'+
-    cell('streak','🏮',arNum(st.count||0))+
+    cell('streak','🏮',arNum(streakNow(p)))+
     cell('gems','💎',arNum(p.gems||0))+
     cell('stars','⭐',arNum(tt.stars))+
     cell('ayat','📖',arNum(tt.ayat))+
@@ -3836,7 +3854,7 @@ function renderHUD(){
     lines+
     '<div class="gbar"><i style="width:'+pct+'%"></i></div>'+
     cLine+
-    ((st.freezes||0)?'<div class="gline" style="margin-top:6px">🛡️ يوم راحة متاح: '+arNum(st.freezes)+' — لا تنقطع مواظبتك إن فاتك يوم</div>':'')+
+    ((st.freezes||0)?'<div class="gline" style="margin-top:6px">🛡️ أيّام راحة مدّخرة: '+arNum(st.freezes)+' — كلٌّ منها يغطّي يوماً يفوتك فلا تنقطع مواظبتك</div>':'')+
   '</div>';
 }
 
@@ -4961,7 +4979,7 @@ function playerTotals(p){
   });
   var ay=0, mm=p.mem||{};
   for(var n in mm) for(var z=0;z<mm[n].length;z++) ay+=mm[n][z][1]-mm[n][z][0];
-  return { stars:stars, done:done, ayat:ay, streak:(p.streak&&p.streak.count)||0 };
+  return { stars:stars, done:done, ayat:ay, streak:streakNow(p) };
 }
 function renderBoard(){
   var rows=DB.players.map(function(p,i){
@@ -6427,7 +6445,8 @@ function stageAyahHTMLs(fontPx, portioned){
    يُفتح بإضافة ‎?qa=1‎ إلى الرابط، أو بـ Ctrl+Shift+Q داخل الصفحة.
    ولا يُحفظ في بيانات اللاعب، فلا يبقى مفتوحاً بعد إغلاق الصفحة.
    ========================================================= */
-var QA=/(^|[?&#])qa\b/.test(String(location.search)+String(location.hash));
+/* «qa» أو «qa=1» وحدهما: كان «qa=0» يفتحه أيضاً */
+var QA=/(^|[?&#])qa(=1)?(?=$|[&#])/.test(String(location.search)+String(location.hash));
 function qaSync(){
   var a=$('qaSkip'), b=$('qaEnd'), bar=$('qaBar'), n=$('qaDayN');
   if(a) a.hidden=!QA;
@@ -6439,14 +6458,24 @@ function qaSync(){
 /* تقديم اليوم يغيّر كل ما بُني عليه: الهدف والمواظبة وما استحقّ من مراجعة */
 function qaDay(n){
   if(!QA) return;
+  var was=QA_DAYS;
   QA_DAYS=(n===0)?0:(QA_DAYS+n);
+  /* رجع إلى اليوم الحقيقيّ: ما جرى في الأيّام المُزاحة تجربةٌ لم تُحفظ، فيُعاد المحفوظ */
+  if(was!==0 && QA_DAYS===0){
+    var d=load('nur_db',null);
+    if(d && typeof d==='object' && Array.isArray(d.players) && d.players.length){
+      DB=d; if(!DB.app || typeof DB.app!=='object') DB.app={ board:false };
+      if(!(DB.cur>=0 && DB.cur<DB.players.length)) DB.cur=0;
+      try{ bindPlayer(); ensureAllSchedules(); }catch(e){}
+    }
+  }
   qaSync();
   try{ renderHUD(); }catch(e){}
   try{ if($('scr-path').classList.contains('active')) renderPath(); }catch(e){}
   try{ if($('scr-start').classList.contains('active')) renderHome(); }catch(e){}
   try{ if($('scr-rev').classList.contains('active')) renderRevPlan(); }catch(e){}
   try{ navToast('🌙 اليوم الوهميّ: '+$('qaDayN').textContent+' • المستحقّ للمراجعة: '+
-                arNum(dueSegs().length)); }catch(e){}
+                arNum(dueSegs().length)+(QA_DAYS!==0?' • تجربةٌ لا تُحفظ':'')); }catch(e){}
 }
 /* يُذهب أيّ احتفالٍ قائم، فلا يحجب الشارة ولا يبتلع النقلة */
 function qaClearCele(){
