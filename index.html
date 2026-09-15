@@ -1434,6 +1434,12 @@ body.glow-off .dfpic{animation:none}
 .runovl p{margin:0;font-size:14.5px;font-weight:700;line-height:1.75}
 .runovl .btn{margin:0;min-height:44px;padding:10px 18px;font-size:16px}
 .runovl .runbtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+/* اختيارُ المستوى: حبّاتٌ ثلاث، والمختارةُ ذهبيّة */
+.runlv{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:2px 0 4px}
+.runlv button{font-family:inherit;font-size:14px;font-weight:900;color:#fff;cursor:pointer;touch-action:manipulation;
+  background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 14px}
+.runlv button.on{background:#ffd23f;border-color:#ffd23f;color:#3b2a00}
+.runlv button:active{transform:scale(.95)}
 .runtip{text-align:center;color:var(--on3);font-size:13px;font-weight:700;margin-top:6px}
 /* ===== مصدرُ الآيات قبل اللعب: من المحفوظ أو من سورةٍ بعينها ===== */
 .gmsrch{text-align:center;font-size:21px;font-weight:900;color:var(--ttl);margin:2px 0 4px}
@@ -11558,6 +11564,28 @@ $('btnBoardBack').onclick=function(){ show('scr-start'); };
 /* لعبةٌ لا تنتهي إلّا بنفاد القلوب: السرعةُ تزيد مع الطريق نفسه (RUN_ACC كلَّ ثانية) حتى حدِّها */
 var RUN_PX=3, RUN_G=1500, RUN_V0=Math.sqrt(2*1500*110), RUN_V_MIN=165, RUN_V_MAX=400, RUN_ACC=2.2;
 var RUN_START_MAX=4, RUN_HEARTS=5, RUN_CX=76;
+/* مستوياتُ «عدّاء الآيات»: تتغيّر السرعةُ وحدها — ابتداؤها وحدُّها وتزايدُها — والقفزُ
+   كما هو. المتوسّطُ سرعةُ اللعبة كما كانت، والصعبُ ضِعفُها. ولكلّ مستوىً أفضلُ نتيجته */
+var RUN_LEVELS={ easy:{ n:'سهل', ic:'🐢', k:0.75 }, mid:{ n:'متوسّط', ic:'🏃', k:1 }, hard:{ n:'صعب', ic:'⚡', k:2 } };
+function runLv(){ var l=runStats().lvl; return RUN_LEVELS[l] ? l : 'mid'; }
+function runK(){ return RUN_LEVELS[runLv()].k; }
+/* أفضلُ النتائج لكلّ مستوى — وما سُجّل قبل المستويات كان بسرعة المتوسّط */
+function runBests(){ var st=runStats(); if(!st.bests) st.bests={ mid:st.best||0 }; return st.bests; }
+function runLvHTML(){
+  var cur=runLv();
+  return '<div class="runlv" role="group" aria-label="المستوى">'+Object.keys(RUN_LEVELS).map(function(k){
+    var L=RUN_LEVELS[k];
+    return '<button type="button" class="'+(k===cur?'on':'')+'" data-lv="'+k+'" aria-pressed="'+(k===cur)+'">'+L.ic+' '+L.n+'</button>';
+  }).join('')+'</div>';
+}
+function runLvWire(kind){
+  var bs=$('runOvl').querySelectorAll('[data-lv]');
+  for(var i=0;i<bs.length;i++) bs[i].onclick=function(){
+    runStats().lvl=this.getAttribute('data-lv'); saveDB();
+    if(kind==='ready'){ RUN.speed=RUN_V_MIN*runK(); RUN.gap=RUN.speed*1.6; }   /* لم يبدأ بعد: يبدأ بسرعة ما اختار */
+    runOverlay(kind, false);
+  };
+}
 var RUN_FALLBACK=[1,108,109,110,111,112,113,114];      /* لمن لم يُسجَّل له محفوظٌ بعد */
 /* خطُّ كلمات «رتّب الكلمات» نفسه: العثمانيّ هنا يُظهر الصفرَ المستدير (۟) دائرةً منفصلة */
 var RUN_FONT='24px "Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif';
@@ -11735,7 +11763,7 @@ function runSize(){
 }
 function runReset(){
   RUN.hearts=RUN_HEARTS; RUN.score=0; RUN.done=0; RUN.words=0; RUN.items=[]; RUN.parts=[];
-  RUN.speed=RUN_V_MIN; RUN.jy=0; RUN.vy=0; RUN.buf=0; RUN.inv=0; RUN.shake=0; RUN.rest=0;
+  RUN.speed=RUN_V_MIN*runK(); RUN.jy=0; RUN.vy=0; RUN.buf=0; RUN.inv=0; RUN.shake=0; RUN.rest=0;
   RUN.t=0; RUN.off=0; RUN.toast=''; RUN.toastT=0; RUN.flashT=0; RUN.lastKind=''; RUN.last=null;
   runPickAyah(); RUN.gap=RUN.speed*1.6;
 }
@@ -11842,18 +11870,21 @@ function runOverlay(kind, nb){
   RUN.state=(kind==='over')?'over':(kind==='pause'?'pause':'ready');
   if(kind==='ready')
     h='<div class="ot">🏃 عدّاء الآيات</div><p>اقفزْ إلى الكلمة التي تملأ الفراغ<br>ودَعِ الكلمةَ الخطأ، واقفزْ فوق العوائق<br>لك ❤️ خمسةُ قلوب</p><p style="opacity:.85">'+esc(gameSrcLabel(RUN.pool))+'</p>'+
-      '<button type="button" class="btn primary" id="runStart">▶️ ابدأ</button>';
+      runLvHTML()+'<button type="button" class="btn primary" id="runStart">▶️ ابدأ</button>';
   else if(kind==='pause')
     h='<div class="ot">⏸️ توقّفتِ اللعبة</div><button type="button" class="btn primary" id="runStart">▶️ تابِعْ</button>';
   else
     h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+arNum(RUN.score)+' نقطة • 📜 '+arNum(RUN.done)+' سؤال • 🏁 '+arNum(runMeters())+' م<br>'+
-      (nb?'🏆 أفضلُ نتيجةٍ لك حتى الآن!':'أفضلُ نتيجةٍ لك: ⭐ '+arNum(st.best||0))+'</p>'+
+      (nb ? '🏆 أفضلُ نتيجةٍ لك في «'+RUN_LEVELS[runLv()].n+'» حتى الآن!'
+          : 'أفضلُ نتيجةٍ لك في «'+RUN_LEVELS[runLv()].n+'»: ⭐ '+arNum(runBests()[runLv()]||0))+'</p>'+
+      runLvHTML()+
       '<div class="runbtns"><button type="button" class="btn primary" id="runAgain">🔁 مرّةً أخرى</button>'+
       '<button type="button" class="btn ghost" id="runBack">🎮 الألعاب</button></div>';
   ov.innerHTML=h; ov.hidden=false;
   if($('runStart')) $('runStart').onclick=runGo;
   if($('runAgain')) $('runAgain').onclick=function(){ runReset(); runGo(); };
   if($('runBack')) $('runBack').onclick=function(){ $('btnRunQuit').click(); };
+  runLvWire(kind);
 }
 function runGo(){
   $('runOvl').hidden=true;
@@ -11866,9 +11897,10 @@ function runPause(){
 }
 function runOver(){
   cancelAnimationFrame(RUN.raf);
-  var st=runStats(), nb=RUN.score>(st.best||0);
+  var st=runStats(), B=runBests(), lv=runLv(), nb=RUN.score>(B[lv]||0);
   st.plays=(st.plays||0)+1; st.ayat=(st.ayat||0)+RUN.done;
-  if(nb) st.best=RUN.score;
+  if(nb) B[lv]=RUN.score;
+  if(RUN.score>(st.best||0)) st.best=RUN.score;          /* أفضلُها في كلّ المستويات، لبطاقة اللعبة */
   saveDB();
   runOverlay('over', nb); runDraw();
 }
@@ -11944,7 +11976,7 @@ function runSpawn(){
   var kind=(RUN.lastKind!=='obs' && Math.random()<0.33) ? 'obs' : 'word';
   if(kind==='word' && goodOn && !RUN.decoys.length) kind='obs';
   if(kind==='obs'){
-    var t=(sp>200 && Math.random()<0.3) ? 'rock2' : (Math.random()<0.5 ? 'rock' : 'crate');
+    var t=(sp>200*runK() && Math.random()<0.3) ? 'rock2' : (Math.random()<0.5 ? 'rock' : 'crate');
     var im=runObsImg(t);
     w=im.width*RUN_PX;
     o={ kind:'obs', img:im, x:-w-4, w:w, h:im.height*RUN_PX };
@@ -11961,7 +11993,8 @@ function runSpawn(){
   RUN.dist=0; RUN.gap=w+sp*(1.05+Math.random()*0.6);
 }
 function runUpdate(dt){
-  RUN.speed=Math.min(RUN_V_MAX, RUN.speed+RUN_ACC*dt);
+  var K=runK();
+  RUN.speed=Math.min(RUN_V_MAX*K, RUN.speed+RUN_ACC*K*dt);
   var sp=RUN.speed, i, o, p, cb, b;
   RUN.t+=dt; RUN.off+=sp*dt;
   if(RUN.buf>0) RUN.buf-=dt;
@@ -12371,6 +12404,8 @@ function shelfPartDone(){
     SH.flash='أحسنت! 🌟 +'+arNum(SHELF_GEMS)+' 💎';
   } else SH.flash='أحسنت — والجزءُ التالي';
   SH.flashT=1.5; SH.rest=1.6; SH.busy=true;
+  /* تعود الشخصيّةُ إلى موضع البداية في الطرف، فلا تقف أمام صناديق الجزء التالي */
+  shelfWalk(SH.W-34, function(){ SH.ch.face=-1; });
   shelfHud(); shelfKick();
 }
 function shelfAfterRest(){
@@ -12443,7 +12478,9 @@ function shelfDraw(){
   c.fillStyle=L?'#b8423a':'#5b1f2a'; c.fillRect(-4, G, W+8, H-G+4);
   c.fillStyle=L?'#d9b45a':'#a8843a'; c.fillRect(-4, G, W+8, 3); c.fillRect(-4, G+11, W+8, 2);
   /* ما على الرفّ والمِقعد */
-  SH.boxes.forEach(function(b){ if(b.st==='bench' || b.st==='placed') shelfBoxDraw(c, b); });
+  /* الشخصيّةُ الواقفةُ لا تحجب صندوقاً: يُرسم المِقعدُ فوقها ما لم تمشِ أو تحمل */
+  var chBusy=!!(SH.ch && (SH.ch.walk || SH.boxes.some(function(b){ return b.st==='lift' || b.st==='carry' || b.st==='raise'; })));
+  SH.boxes.forEach(function(b){ if(b.st==='placed' || (b.st==='bench' && chBusy)) shelfBoxDraw(c, b); });
   /* الشخصيّة: تنظر إلى جهة مشيها، وتهزّ رأسها عند الخطأ */
   if(SH.ch){
     var ch=SH.ch, fr=ch.walk ? (Math.floor(SH.t*8)%2 ? 'a' : 'b') : 'b';
@@ -12455,6 +12492,7 @@ function shelfDraw(){
     else c.drawImage(im, cx, cy, cw, chh);
     c.restore();
   }
+  if(!chBusy) SH.boxes.forEach(function(b){ if(b.st==='bench') shelfBoxDraw(c, b); });
   /* المحمولُ أمام الصدر يُرسم فوق الشخصيّة */
   SH.boxes.forEach(function(b){ if(b.st==='lift' || b.st==='carry' || b.st==='raise') shelfBoxDraw(c, b); });
   for(i=0;i<SH.parts.length;i++){ var p=SH.parts[i]; c.globalAlpha=Math.min(1, p.l*1.6); c.fillStyle=p.c; c.fillRect(Math.round(p.x), Math.round(p.y), 3, 3); }
