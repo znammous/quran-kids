@@ -2157,7 +2157,20 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 /* QA_DAYS إزاحةٌ للفحص وحده — صفرٌ دائماً عند اللاعب، تُحرَّك من شريط وضع الفحص */
 var QA_DAYS=0;
-function todayNum(){ var d=new Date(); return Math.floor(new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime()/86400000)+QA_DAYS; }
+/* رقمُ اليوم من التاريخ المحلّيّ نفسه (سنة/شهر/يوم) لا من لحظة منتصف ليله:
+   كانت اللحظةُ تُقسم على طول اليوم، فإذا تبدّل فرقُ التوقيت عن غرينتش بين يومين
+   (الساعةُ الصيفيّة، ورمضانُ في المغرب) تكرّر رقمٌ أو سقط — فتنقطع المواظبةُ
+   أو تتأخّر المراجعة. والفرقُ بين الحسابين يُحفظ مرّةً عند أوّل فتح، فتبقى
+   الأرقامُ المحفوظةُ من قبل على تسلسلها. */
+var DAY_SHIFT=(function(){
+  var v=load('nur_dayShift',null);
+  if(typeof v==='number' && isFinite(v)) return v;
+  var d=new Date(), y=d.getFullYear(), mo=d.getMonth(), dd=d.getDate();
+  v=Math.floor(new Date(y,mo,dd).getTime()/86400000) - Date.UTC(y,mo,dd)/86400000;
+  save('nur_dayShift', v);
+  return v;
+})();
+function todayNum(){ var d=new Date(); return Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000+DAY_SHIFT+QA_DAYS; }
 /* أرقام لاتينية (23، 123) في كل الواجهة */
 function arNum(n){ return String(n); }
 
@@ -6554,7 +6567,7 @@ function hifzMiss(r, reveal){
     /* وما قبلها: يُجمع ليُختم به ذيلُ تلك المرحلة */
     missqAdd(r);
   }
-  setTimeout(function(){ nextRound('miss'); }, 1100);
+  sLater(function(){ nextRound('miss'); }, 1100);
 }
 function examShowRight(box,sel,txt,cls){
   var c=$(box); if(!c) return;
@@ -6566,7 +6579,17 @@ function examMiss(reveal){
   $('fb').className='fb bad';
   $('fb').textContent='إجابة خاطئة';
   if(reveal){ try{ reveal(); }catch(e){} }
-  setTimeout(function(){ nextRound(false); }, 1200);
+  sLater(function(){ nextRound(false); }, 1200);
+}
+/* مؤقّتاتُ الدرس تمضي بجلستها وحدها: كان الطفلُ إذا خرج بعد جوابه بلحظة
+   مضى الدرسُ في الخلفية — فيُنقل من المسار إلى الشهادة فجأة، أو يُقفز سؤالٌ
+   في درسٍ بدأه بعدها. فلا تمضي إلا والجلسةُ هي هي، وشاشةُ الدرس قائمة. */
+function sLater(fn, ms){
+  var s=S;
+  setTimeout(function(){
+    if(!s || S!==s || curScreen()!=='scr-play') return;
+    fn();
+  }, ms);
 }
 function nextRound(ok){
   /* 'miss': يمضي بلا خصم — خطأُ الحفظ يُجمع ولا يُنقص نجمة */
@@ -6580,8 +6603,11 @@ function nextRound(ok){
     if(S && S.rev==='quiz'){ var rr=S.rounds[S.i]; if(rr) revWeak(rr.page); }
   } else comboHit();
   S.i++;
-  if(CELE.on) CELE.then=runRound;                    /* يمضي فور انتهاء الاحتفال أو تخطّيه */
-  else setTimeout(runRound,300);
+  if(CELE.on){                                       /* يمضي فور انتهاء الاحتفال أو تخطّيه */
+    var s0=S;
+    CELE.then=function(){ if(S===s0 && curScreen()==='scr-play') runRound(); };
+  }
+  else sLater(runRound,300);
 }
 
 /* ===== سلسلة الإجابات الصحيحة ===== */
@@ -7253,7 +7279,7 @@ function roundEdge(r){
         answered=true; this.classList.add('ok');
         sGood(); $('fb').className='fb good';
         $('fb').textContent='صحيح ✅ — صفحة '+arNum(P)+' • '+nm;    /* الآن يُكشف رقمها */
-        setTimeout(function(){ nextRound(true); },800);             /* مهلة تكفي لقراءتها */
+        sLater(function(){ nextRound(true); },800);             /* مهلة تكفي لقراءتها */
       } else {
         this.classList.add('no'); this.disabled=true;
         if(examMode()){ answered=true; examMiss(function(){ examShowRight('opts','.opt',correct); }); return; }
@@ -7375,7 +7401,7 @@ function roundMiss2(r){
       }
       answered=true;
       sGood(); $('fb').className='fb good'; $('fb').textContent='أصبتَ الكلمتين ✅✅';
-      setTimeout(function(){ nextRound(true); },520);
+      sLater(function(){ nextRound(true); },520);
     };
   }
   draw();
@@ -7404,7 +7430,7 @@ function roundAEdge(r){
       if(this.textContent===correct){
         answered=true; this.classList.add('ok');
         sGood(); $('fb').className='fb good'; $('fb').textContent='صحيح ✅';
-        setTimeout(function(){ nextRound(true); },600);
+        sLater(function(){ nextRound(true); },600);
       } else {
         this.classList.add('no'); this.disabled=true;
         if(examMode()){ answered=true; examMiss(function(){ examShowRight('opts','.opt',correct); }); return; }
@@ -7646,7 +7672,7 @@ function roundRecite(r){
         if(tries>=2){
           $('fb').className='fb bad';
           $('fb').innerHTML='الصواب:<div class="diffline">'+diffHTML(v,txt)+'</div>';
-          setTimeout(function(){ nextRound(false); },2800);
+          sLater(function(){ nextRound(false); },2800);
         } else { $('fb').className='fb bad'; $('fb').textContent='قريب! راجعها وحاول مرة أخرى 💪'; }
       }
     };
