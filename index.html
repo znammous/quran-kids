@@ -98,10 +98,15 @@ body.light .cloud{display:block}
 .sunny{position:absolute;display:none;top:-70px;left:-70px;width:280px;height:280px;border-radius:50%;
   background:radial-gradient(circle,rgba(255,241,190,.95),rgba(255,216,120,.45) 45%,rgba(255,214,120,0) 72%)}
 body.light .sunny{display:block}
-.bok{position:absolute;border-radius:50%;filter:blur(6px);
+/* بلا filter:blur: الدائرةُ متدرّجةٌ تذوب حوافُّها من نفسها، والتغبيشُ على أربع عشرة
+   دائرةً تتحرّك يُعاد رسمُه في كلّ إطار فيُثقل الهاتفَ الضعيف */
+.bok{position:absolute;border-radius:50%;
   background:radial-gradient(circle at 35% 35%, rgba(120,220,255,.55), rgba(30,110,200,.16) 60%, rgba(0,0,0,0) 72%);
   animation:drift 9s ease-in-out infinite}
 @keyframes drift{0%,100%{transform:translateY(0) scale(1);opacity:.5}50%{transform:translateY(-14px) scale(1.08);opacity:.85}}
+/* خلفيّةُ النجوم والدوائر والغيوم تسكن خارج الرئيسيّة: تُغطّيها البطاقات، وحركتُها
+   الدائمةُ تُبقي بطاقةَ الرسوم عاملةً في الدرس والمصحف بلا فائدة */
+body.bgrest #bg *{animation-play-state:paused}
 @keyframes tw{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:.8;transform:scale(1.15)}}
 .moon{position:absolute;top:16px;left:18px;font-size:38px;opacity:.75}
 .wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;
@@ -544,10 +549,13 @@ body.light .card.bare .diffline{color:var(--on2)}
 .btn.pulse::after{
   content:"";position:absolute;top:-60%;bottom:-60%;width:46%;left:-70%;
   background:linear-gradient(100deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.98) 50%,rgba(255,255,255,0) 100%);
-  transform:skewX(-18deg);pointer-events:none;
+  transform:skewX(-18deg);pointer-events:none;will-change:transform;
   animation:sweep 2.1s ease-in-out infinite;
 }
-@keyframes sweep{0%{left:-70%}55%,100%{left:135%}}
+/* تُزاح بالتحويل لا بـ left: فالموضعُ يُعيد تخطيطَ الزرّ ورسمَه في كلّ إطار، والتحويلُ
+   يجري على بطاقة الرسوم وحدها. المسافةُ هي هي: من -70٪ إلى 135٪ من عرض الزرّ،
+   أي 205٪ منه، والومضةُ عرضُها 46٪ منه — فتُزاح 205÷46 ≈ 445.65٪ من عرضها */
+@keyframes sweep{0%{transform:translateX(0) skewX(-18deg)}55%,100%{transform:translateX(445.65%) skewX(-18deg)}}
 /* نبضة حجم خفيفة تجعل الحركة مرئية بلا لبس */
 @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
 /* حلقة ضوء تدور حول العقدة الحالية */
@@ -1427,8 +1435,7 @@ body.glow-off .dfpic{animation:none}
     background:var(--tabbg);border-top:2px solid var(--pb);
     padding:5px 4px calc(5px + env(safe-area-inset-bottom));
     box-shadow:0 -8px 24px rgba(0,0,0,.4);
-    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-  .tabbar.gone{display:none}
+    /* بلا تغبيشٍ لما خلفه: الخلفيّةُ معتمةٌ ٩٧٪ فلا يُرى، ويُعاد حسابُه مع كلّ حركةٍ تحته */}  .tabbar.gone{display:none}
   .tabbar button{flex:1;min-width:0;background:none;border:0;color:var(--tabfg);font-family:inherit;
     font-size:11px;font-weight:800;line-height:1.2;cursor:pointer;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
@@ -2211,7 +2218,21 @@ if(!(DB.cur>=0 && DB.cur<DB.players.length)) DB.cur=0;
 function curP(){ return DB.players[DB.cur]; }
 /* اليومُ المُزاح في وضع الفحص لا يُكتب في المخزون: كانت تُحفظ تواريخُه (مواعيدُ
    المراجعة والمواظبة وتحدّي اليوم) فتختلّ بعد إغلاقه. والعودةُ إلى اليوم تُعيد المحفوظ */
-function saveDB(){ if(QA_DAYS!==0) return; save('nur_db',DB); }
+/* ويُجمع الحفظُ في كتابةٍ واحدةٍ كلَّ ثلث ثانية: كانت قاعدةُ اللاعبين كلُّها تُحوَّل
+   نصّاً وتُكتب مع كلّ جوهرةٍ وكلّ جواب، وفي الجواب الواحد كتاباتٌ عدّة. ويُكتب
+   فوراً إذا غاب التطبيقُ عن الشاشة أو أُغلق، فلا يضيع شيء. */
+var DB_T=0;
+function saveDB(){
+  if(QA_DAYS!==0 || DB_T) return;
+  DB_T=setTimeout(saveDBNow, 350);
+}
+function saveDBNow(){
+  if(DB_T){ clearTimeout(DB_T); DB_T=0; }
+  if(QA_DAYS!==0) return;
+  save('nur_db',DB);
+}
+document.addEventListener('visibilitychange', function(){ if(document.hidden) saveDBNow(); });
+window.addEventListener('pagehide', saveDBNow);
 var SET, prog, profile, look, gender;
 /* الوضع النهاريّ: صفّ واحد على <body> يقلب كل المتغيّرات */
 /* مفتاحُ الوضع في ركن العنوان: يُربط مرّةً واحدة لأنّه لا يُعاد رسمُه
@@ -2282,11 +2303,12 @@ function bindPlayer(){
 }
 bindPlayer();
 
-var AC=null;
+var AC=null, AC_T=0;
 function beep(freqs,dur){
   if(!SET.sound) return;
   try{
     AC = AC || new (window.AudioContext||window.webkitAudioContext)();
+    if(AC.state==='suspended' && AC.resume) AC.resume();
     freqs.forEach(function(f,i){
       var o=AC.createOscillator(), g=AC.createGain();
       o.type='sine'; o.frequency.value=f;
@@ -2296,6 +2318,12 @@ function beep(freqs,dur){
       o.connect(g); g.connect(AC.destination);
       o.start(AC.currentTime+i*dur); o.stop(AC.currentTime+(i+1)*dur+0.02);
     });
+    /* يُعلَّق محرّكُ الصوت بعد سكوتٍ قليل: كان مخرجُه يبقى مفتوحاً طوال الجلسة
+       فيستهلك البطارية، ويُستأنف مع أوّل صوتٍ بعده */
+    clearTimeout(AC_T);
+    AC_T=setTimeout(function(){
+      try{ if(AC && AC.state==='running' && AC.suspend) AC.suspend(); }catch(e){}
+    }, 4000 + Math.ceil(freqs.length*dur*1000));
   }catch(e){}
 }
 function sGood(){ beep([660,880,1180],0.11); }
@@ -5216,6 +5244,7 @@ function show(id){
   $(id).classList.add('active');
   if(id==='scr-start'){ try{ renderHome(); }catch(e){} }
   try{ syncTabs(id); }catch(e){}
+  document.body.classList.toggle('bgrest', id!=='scr-start');   /* الخلفيّةُ تتحرّك في الرئيسيّة وحدها */
   try{ if(id!=='scr-start') navGuard(); }catch(e){}   /* رجوع الهاتف يبقى داخل اللعبة */
   window.scrollTo(0,0);
   /* الشهادةُ تُضبط على الشاشة، وكلُّ انتقالٍ آخر يفكّ قفلَ الصفحة. ويُعاد الضبطُ
@@ -6459,6 +6488,7 @@ function qaSync(){
 function qaDay(n){
   if(!QA) return;
   var was=QA_DAYS;
+  if(was===0) saveDBNow();                   /* ما أُنجز في اليوم الحقيقيّ يُكتب قبل أن يُزاح */
   QA_DAYS=(n===0)?0:(QA_DAYS+n);
   /* رجع إلى اليوم الحقيقيّ: ما جرى في الأيّام المُزاحة تجربةٌ لم تُحفظ، فيُعاد المحفوظ */
   if(was!==0 && QA_DAYS===0){
@@ -10622,7 +10652,15 @@ function certFit(){
   wrap.style.height=Math.ceil(H*k)+'px';
   wrap.classList.add('fit');
 }
-window.addEventListener('resize', function(){ try{ certFit(); playFit(); qScreenFit(true); homeFit(); }catch(e){} });
+/* يُضبط مرّةً في الإطار: على أندرويد يُطلق «resize» متتابعاً مع شريط العنوان ولوحة
+   المفاتيح، وكلُّ ضبطٍ يُجبر المتصفّحَ على إعادة حساب الصفحة مرّاتٍ عدّة */
+var FIT_PENDING=false;
+window.addEventListener('resize', function(){
+  if(FIT_PENDING) return;
+  FIT_PENDING=true;
+  var go=function(){ FIT_PENDING=false; try{ certFit(); playFit(); qScreenFit(true); homeFit(); }catch(e){} };
+  if(window.requestAnimationFrame) window.requestAnimationFrame(go); else setTimeout(go,16);
+});
 /* ===== الرئيسيّةُ على قدر الجوال =====
    على الهاتف الصغير تزيد قليلاً (بطاقةٌ ينكسر سطرُها) فتُمرَّر. فتُصغَّر
    عناصرُها بنسبةٍ واحدةٍ على قدر الزيادة وتُقفل، وما احتاج دون ٨٠٪ يُترك يُمرَّر. */
@@ -11865,7 +11903,10 @@ $('fileInput').onchange=function(){
 var ICO_RE=/(?:[\u231A-\u231B\u23E9-\u23FA\u25AA-\u27BF\u2B00-\u2BFF\u2190-\u21FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|\uD83E[\uDD00-\uDFFF])[\uFE0E\uFE0F\u20E3]?/g;
 function decorateIcons(root){
   var sel='.btn, .gbtn, .chipsel, .pchip, .onbtab, .lbl, .juzhead > span:first-child';
-  var list=(root||document).querySelectorAll(sel);
+  /* جذرٌ بعينه: هو نفسُه إن طابق وما تحته — فلا يُمسح المستندُ كلُّه عند كلّ تغيير */
+  var one=!!(root && root.nodeType===1);
+  var list=one ? [].slice.call(root.querySelectorAll(sel)) : document.querySelectorAll(sel);
+  if(one && root.matches && root.matches(sel)) list.unshift(root);
   for(var i=0;i<list.length;i++){
     var el=list[i];
     if(el.getAttribute('data-ico')==='1') continue;
@@ -11880,11 +11921,29 @@ function decorateIcons(root){
   }
 }
 (function(){
-  var pending=null;
-  function run(){ pending=null; try{ decorateIcons(); }catch(e){} }
+  /* كان كلُّ تغييرٍ في الصفحة — ولو عدّادُ التسجيل كلَّ نصف ثانية — يُعيد مسحَ
+     الشاشات كلِّها بما فيها المخفيّة. فيُزيَّن ما أُضيف وحده. */
+  var pending=null, queue=[];
+  function run(){
+    pending=null;
+    var q=queue; queue=[];
+    for(var i=0;i<q.length;i++){
+      if(q[i].isConnected===false) continue;
+      try{ decorateIcons(q[i]); }catch(e){}
+    }
+  }
   try{
-    new MutationObserver(function(){ if(!pending) pending=setTimeout(run,60); })
-      .observe(document.body,{childList:true,subtree:true});
+    new MutationObserver(function(ms){
+      for(var i=0;i<ms.length;i++){
+        var ad=ms[i].addedNodes;
+        for(var j=0;j<ad.length;j++){
+          var n=ad[j];
+          if(n.nodeType===1){ if(!(n.classList && n.classList.contains('ico'))) queue.push(n); }
+          else if(n.nodeType===3 && ms[i].target.nodeType===1) queue.push(ms[i].target);   /* نصٌّ تبدّل: عنصرُه */
+        }
+      }
+      if(queue.length && !pending) pending=setTimeout(run,60);
+    }).observe(document.body,{childList:true,subtree:true});
   }catch(e){}
   decorateIcons();
 })();
