@@ -268,7 +268,7 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
   background:var(--pnl);border-bottom:2px solid var(--pb)}
 .mfmid{flex:0 0 auto;display:flex;align-items:center;gap:6px}
 /* شارةُ الخطوة تطفو على الوجه، فلا تزاحم الشريط */
-.mfstep{position:absolute;top:56px;inset-inline:auto;left:50%;transform:translateX(-50%);z-index:3;
+.mfstep{position:absolute;top:10px;inset-inline:auto;left:50%;transform:translateX(-50%);z-index:3;
   padding:6px 14px;border-radius:99px;white-space:nowrap;
   font-family:"IBM Plex Sans Arabic","Segoe UI",sans-serif;
   background:linear-gradient(180deg,#ffd75e,#eab308);color:#4a3600;border:2px solid #a1791a;
@@ -302,13 +302,13 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
    الشاشة، بخلاف justify-content:center */
 .mfbody{display:flex;flex-direction:column}
 .mfbody>.mushaf{flex:0 0 auto;margin-block:auto}
-/* القراءةُ من الفهرس: وجهٌ نظيفٌ بلا شريط، ولمسةٌ تُظهره وأخرى تُخفيه */
-.mfsheet.clean .mfbar{display:none}
+/* الترويسةُ العلويّة مخفيّةٌ في كلّ مواضع الوجه: التنقّلُ بالسحب وبالفهرس في الشريط السفليّ،
+   والإغلاقُ بزرّه هناك. وتبقى في الصفحة لأنّ ضبطَ الوجه يكتب فيها رقمَه وسورتَه */
+.mfsheet .mfbar{display:none}
 /* رقمُ الوجه تحت آخر سطرٍ منه، كما يُطبع في المصحف: جزءٌ من الوجه
-   لا من الشاشة، فيتحرّك معه في السحب ويظهر على المجاور. ويُرى حين يُخفى
-   الشريطُ وحدَه، ففي الشريط رقمُه. */
-.mpgno{display:none}
-.mfsheet.clean .mpgno{display:block;text-align:center;line-height:1;margin-top:.6em;
+   لا من الشاشة، فيتحرّك معه في السحب ويظهر على المجاور. ويُرى دائماً،
+   فالترويسةُ التي كان فيها رقمُه مخفيّة. */
+.mpgno{display:block;text-align:center;line-height:1;margin-top:.6em;
   font-family:"UthmanicHafs","Amiri Quran",serif;font-size:.6em;color:#9a7b3a}
 /* الوجهُ المجاور وهو يُسحب: طبقةٌ فوق الوجه بمقاسه، تتبع الإصبعَ معه —
    التالي يدخل من اليسار والسابق من اليمين، كما يُقلَّب المصحف. */
@@ -320,15 +320,12 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 @media (pointer:coarse){
   .mfbody.mffit{overflow-y:hidden;touch-action:none;overscroll-behavior:none}
 }
-/* ===== المصحفُ من شريط التنقّل: قراءةٌ بلا ترويسة، وتحتها شريطٌ للفهرس والبحث =====
-   الترويسةُ تُخفى، ورقمُ الوجه تحت آخر سطر كما يُطبع. واللمسةُ تُخفي الشريطَ وتُظهره. */
-.mfdock{display:none}
-.mfsheet.reader .mfbar{display:none}
-.mfsheet.reader .mpgno{display:block;text-align:center;line-height:1;margin-top:.6em;
-  font-family:"UthmanicHafs","Amiri Quran",serif;font-size:.6em;color:#9a7b3a}
-.mfsheet.reader .mfdock{flex:0 0 auto;display:flex;gap:2px;background:var(--pnl);border-top:2px solid var(--pb);
+/* ===== الشريطُ السفليّ مع الوجه في كلّ مواضعه — الحفظ والمراجعة والمصحف: المعاني والفهرسُ والبحثُ والإغلاق =====
+   ثابتٌ لا تُخفيه لمسةٌ على الوجه، ولا تُغلق اللمسةُ الوجه — فالخروجُ بزرّ «إغلاق» وحده. */
+.mfdock{flex:0 0 auto;display:flex;gap:2px;background:var(--pnl);border-top:2px solid var(--pb);
   padding:5px 4px calc(5px + env(safe-area-inset-bottom))}
-.mfsheet.reader.clean .mfdock{display:none}
+/* في تحديد النطاق الإقرارُ هو بابُ الخروج، كما كان زرُّ الإغلاق يُخفى فيه */
+.mfsheet.picking #mfDockClose{display:none}
 .mfdock button{flex:1;min-width:0;background:none;border:0;color:var(--ttl);font-family:inherit;
   font-size:11px;font-weight:800;line-height:1.2;cursor:pointer;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
@@ -442,7 +439,7 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mushaf .mg4{background:rgba(155,100,255,.25)}
 .mushaf .mg5{background:rgba(255,128,32,.28)}
 .mfgo{flex:0 0 auto;display:flex;flex-direction:column;align-items:stretch;gap:8px;
-  padding:10px 14px calc(12px + env(safe-area-inset-bottom,0px));background:var(--pnl);border-top:2px solid var(--pb)}
+  padding:10px 14px 12px;background:var(--pnl);border-top:2px solid var(--pb)}   /* تحته الشريطُ السفليّ، وفيه حاشيةُ الشاشة */
 .mfgo[hidden]{display:none!important}
 .mfgo .btn{margin:0}
 .mfgonote{font-weight:800;font-size:14px;line-height:1.8;color:var(--ttl);text-align:center}
@@ -3064,10 +3061,8 @@ function mfPickAt(t,x,y){
 /* وجه المصحف ملء الشاشة: يُفتح عند الطلب ولا يزاحم القراءة */
 var MFSEQ=0;
 /* فتح الوجه بصفحته: تُستعمل في التسميع ومراجعة الصفحة حيث لا آية بعينها */
-var MF_READ=false;                 /* فُتح للتلاوة لا لنظرةٍ عابرة */
 function mushafRead(P, title){
   mushafOpenPage(P, -1, title);
-  MF_READ=true;                    /* بعد الفتح، فالفتحُ يُطفئه */
 }
 /* يُنادى بعد رسم الوجه مرّةً واحدة: به تُرفع طبقةُ السحب حين يحلّ الوجهُ محلّها */
 var MF_ONPAINT=null;
@@ -3076,13 +3071,8 @@ function mfAfterPaint(){
   if(f){ try{ f(); }catch(e){} }
 }
 function mushafOpenPage(P, hlGi, title){
-  /* فتحٌ جديدٌ يبدأ نظرةً عابرة. أمّا تقليبُ الوجه والوجهُ مفتوحٌ فلا
-     يُخرج القارئَ من تلاوته إلى النظرة، وإلّا أغلقته أوّلُ لمسةٍ بعد
-     أن قلّب صفحة. */
   var sh=$('mfSheet'), wasHidden=sh.hidden;
   if(wasHidden){
-    MF_READ=false;
-    sh.classList.remove('clean');                /* كلُّ فتحٍ يبدأ بشريطه، إلّا ما طلب النظافة */
     /* أُغلق الوجهُ في أثناء سحبٍ: لا تبقى طبقتُه ولا إزاحتُه للفتح التالي */
     var ol=sh.querySelectorAll('.mfpeek'), z;
     for(z=0;z<ol.length;z++) ol[z].remove();
@@ -3197,7 +3187,7 @@ window.addEventListener('resize', function(){
   }).observe(b);
 })();
 function mushafClose(){
-  MF_READ=false; MF_MARK=null; MF_PV=null;
+  MF_MARK=null; MF_PV=null;
   if($('mfGo')) $('mfGo').hidden=true;
   try{ mfPanel(null); }catch(e){}
   if($('mfSheet')){ $('mfSheet').hidden=true; $('mfSheet').classList.remove('reader','pv'); }
@@ -5959,17 +5949,7 @@ $('mfFindList').onclick=function(e){
        أو يبتلع رفعَه عند حواف المنطقة القابلة للتمرير، فتضيع اللمسة.
        ونتركها لحدث النقر، فهو لا يُولَّد إلا من لمسةٍ حقيقيّة — ولا
        نمنع السلوك الأصليّ لئلّا يُمنع النقر معه. */
-    if(MF_PICK) return;
-    /* يقرأ: لمستُه ليست خروجاً، بل تُظهر الشريطَ أو تُخفيه كتطبيقات المصحف */
-    if(MF_PV) return;                    /* عرضُ المقطع: يُبدأ بزرّه، لا تغلقه لمسةٌ عابرة */
-    if(MF_READ){
-      if(!moved && Date.now()-st<=600) $('mfSheet').classList.toggle('clean');
-      return;
-    }
-    if(Date.now()-st>600) return;                       /* ضغطةٌ طويلة: لا تُغلق الوجه */
-    if(moved) return;
-    if(e.cancelable) e.preventDefault();
-    mushafClose(); mushafEatGhost();
+    /* ولمسةٌ على الوجه لا تُغلقه ولا تُخفي شريطَه السفليّ: الخروجُ بزرّ «إغلاق» وحده */
   });
   var wq=0;
   b.addEventListener('wheel', function(e){
@@ -6005,7 +5985,6 @@ $('srGoRead').onclick=function(){
   var sx=surahBy(SRPICK); if(!sx) return;
   $('srPick').hidden=true;
   mushafRead(mfSuraPage(SRPICK), 'سورة '+sx.name);
-  $('mfSheet').classList.add('clean');           /* من الفهرس: وجهٌ نظيف، واللمسةُ تُظهر الشريط */
 };
 /* نافذة مفتوحة = خطوة رجوع مستقلّة */
 (function(){
