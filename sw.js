@@ -1,23 +1,36 @@
 /* ===== عامل خدمة «نور الوحي» =====
    الصفحة: الشبكة أوّلاً ثم المخزَّن — فلا يعلق أحدٌ على نسخة قديمة، ويعمل دون إنترنت.
-   الخطوط والأيقونات: المخزَّن أوّلاً — لا تتغيّر أبداً، وتُخزَّن عند أوّل استعمال فقط
-   فلا نُنزّل ستّة وأربعين ميجابايت دفعةً واحدة.
-   البيانات (data/): المخزَّن أوّلاً في مخزنٍ له رقمُه، يُرفع حين تتغيّر. */
-var VER   = 'v3';
+   الخطوط والأيقونات: المخزَّن أوّلاً — لا تتغيّر أبداً. خطوطُ الواجهة تُخزَّن عند
+   التنصيب، وخطوطُ صفحات المصحف عند أوّل استعمال فقط فلا نُنزّل ستّة وأربعين ميجابايت دفعةً واحدة.
+   البيانات (data/): المخزَّن أوّلاً. ملفّاتُ الآيات والخطط تُطلب برقم إصدارٍ (?v=)
+   فإذا تغيّر ملفٌّ رُفع رقمُه في index.html وفي DATA_FILES هنا، فيُجلب الجديدُ ويُحذف القديم. */
+var VER   = 'v4';
 var SHELL = 'nur-shell-' + VER;   /* الصفحة وما يتبعها — يُمسح مع كل إصدار */
 var ASSET = 'nur-assets';         /* خطوط لا تتغيّر — يبقى عبر الإصدارات */
-var DATA  = 'nur-data-1';         /* معاني الكلمات وأمثالها — يُرفع رقمُه إذا تغيّر ملفٌّ فيها */
+var DATA  = 'nur-data-1';         /* بياناتُ الآيات والخطط والمعاني */
 /* مهلةُ الشبكة للصفحة: كان يُنتظر بلا حدّ، فيعلق التطبيقُ على شبكةٍ ضعيفة
    قبل أن يُلجأ إلى المخزَّن */
 var NET_WAIT = 4000;
 
+/* ما لا تعمل الصفحةُ بدونه: يُخزَّن عند التنصيب، فيفتح التطبيقُ دون إنترنت من ثاني مرّة.
+   (أوّلُ فتحٍ يسبق عاملَ الخدمة، فلا يمرّ ما يُطلب فيه من هنا) */
+var DATA_FILES = ['./data/quran.js?v=1', './data/plans.js?v=1'];
+var UI_FONTS = ['400','600','700'].reduce(function(a,w){
+  return a.concat(['./fonts/ui/plex-arabic-'+w+'-arabic.woff2', './fonts/ui/plex-arabic-'+w+'-latin.woff2']);
+}, ['./fonts/ui/amiri-quran.woff2']);
+
+function fill(name, list){
+  return caches.open(name).then(function(c){ return c.addAll(list); })['catch'](function(){});
+}
+
 self.addEventListener('install', function(e){
   e.waitUntil(
-    caches.open(SHELL).then(function(c){
-      return c.addAll(['./','./index.html','./manifest.webmanifest',
-                       './icons/icon-192.png','./icons/icon-512.png']);
-    })['catch'](function(){})                    /* تعذّر شيء: لا نُفشل التنصيب */
-     .then(function(){ return self.skipWaiting(); })
+    Promise.all([
+      fill(SHELL, ['./','./index.html','./manifest.webmanifest',
+                   './icons/icon-192.png','./icons/icon-512.png']),
+      fill(DATA, DATA_FILES),
+      fill(ASSET, UI_FONTS)
+    ]).then(function(){ return self.skipWaiting(); })  /* تعذّر شيء: لا نُفشل التنصيب */
   );
 });
 
@@ -27,6 +40,16 @@ self.addEventListener('activate', function(e){
       return Promise.all(ks.map(function(k){
         if(k!==SHELL && k!==ASSET && k!==DATA) return caches['delete'](k);
       }));
+    }).then(function(){
+      /* نسخُ البيانات القديمة (رقمُ إصدارٍ سابق) تُحذف، ويبقى ما لا رقمَ له كالمعاني */
+      return caches.open(DATA).then(function(c){
+        return c.keys().then(function(reqs){
+          var keep=DATA_FILES.map(function(u){ return new URL(u, self.location).href; });
+          return Promise.all(reqs.map(function(r){
+            if(r.url.indexOf('v=')>-1 && keep.indexOf(r.url)<0) return c['delete'](r);
+          }));
+        });
+      });
     }).then(function(){ return self.clients.claim(); })
   );
 });
@@ -68,8 +91,8 @@ self.addEventListener('fetch', function(e){
   /* «الشبكة أوّلاً» لا تعني شيئاً إن أجاب مخزنُ المتصفّح دونها:
      GitHub Pages يرسل max-age=600، فتبقى الصفحةُ القديمةَ عشرَ دقائق وإن رُفع
      الجديد. فكان يُطلب تجاوزُ مخزنه كلّياً (reload)، فتُنزَّل الصفحةُ كاملةً
-     (أربعة ميجابايت) عند كلّ فتح. و«no-cache» يسأل الخادمَ أتغيّرت؟ فإن لم
-     تتغيّر جاء الجوابُ بلا جسم، ويبقى الجديدُ يُرى فور رفعه. */
+     عند كلّ فتح. و«no-cache» يسأل الخادمَ أتغيّرت؟ فإن لم تتغيّر جاء الجوابُ
+     بلا جسم، ويبقى الجديدُ يُرى فور رفعه. */
   var net=fetch(url.href, { cache:'no-cache', credentials:'same-origin' }).then(function(res){
     if(res && res.ok && res.type==='basic'){
       var cp=res.clone();
