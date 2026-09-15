@@ -11716,28 +11716,62 @@ $('btnExport').onclick=function(){
   setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },500);
 };
 $('btnImport').onclick=function(){ $('fileInput').click(); };
+/* هيئةُ ملفّ النسخة: كان كلُّ ملفٍّ بلا «db.players» يُعدّ نسخةً قديمةً للاعبٍ واحد —
+   ولو كان «{}» أو ملفَّ لعبةٍ أخرى — فيُستبدل به الجميع. فيُقبل ما يلي وحده:
+   نسخةُ هذا التطبيق بلاعبيها (كائناتٍ لا غير)، أو نسخةٌ قديمةٌ فيها تقدّمٌ أو ملفٌّ شخصيّ. */
+function importShape(d){
+  function obj(x){ return !!x && typeof x==='object' && !Array.isArray(x); }
+  if(!obj(d)) return null;
+  if(d.db!=null){
+    if(d.app!=null && d.app!=='nur-alhifz') return null;
+    var db=d.db;
+    if(!obj(db) || !Array.isArray(db.players) || !db.players.length) return null;
+    for(var i=0;i<db.players.length;i++) if(!obj(db.players[i])) return null;
+    if(!obj(db.app)) db.app={ board:false };
+    db.cur0=(db.cur>=0 && db.cur<db.players.length) ? db.cur : 0;
+    db.cur=db.cur0;
+    return db;
+  }
+  if(d.app!=null) return null;                   /* ملفُّ تطبيقٍ آخر */
+  if(!obj(d.prog) && !obj(d.profile)) return null;
+  /* ملفٌّ من النسخة السابقة (لاعبٌ واحد) */
+  var np=newPlayer((obj(d.profile)&&d.profile.name)||'', d.gender||'f');
+  if(obj(d.look)) np.look=d.look;
+  if(obj(d.set)){ for(var k2 in d.set) np.set[k2]=d.set[k2]; }
+  if(obj(d.prog)) np.prog=d.prog;
+  return { cur:0, cur0:0, players:[np], app:{ board:false } };
+}
 $('fileInput').onchange=function(){
   var f=this.files&&this.files[0]; if(!f) return;
   var rd=new FileReader();
   rd.onload=function(){
-    try{
-      var d=JSON.parse(rd.result);
-      if(d.db && d.db.players && d.db.players.length){
-        DB=d.db; if(!DB.app) DB.app={ board:false };
-      } else {
-        /* ملف من النسخة السابقة (لاعب واحد) */
-        var np=newPlayer((d.profile&&d.profile.name)||"", d.gender||"f");
-        if(d.look) np.look=d.look;
-        if(d.set){ for(var k2 in d.set) np.set[k2]=d.set[k2]; }
-        if(d.prog) np.prog=d.prog;
-        DB={ cur:0, players:[np], app:{ board:false } };
+    var d=null, nd=null;
+    try{ d=JSON.parse(rd.result); }catch(e){}
+    try{ nd=importShape(d); }catch(e){ nd=null; }
+    if(!nd){ uiAlert('هذا الملفّ ليس نسخةً من تقدّم «نور الوحي»،\nفلم يُغيَّر شيء.','⚠️'); return; }
+    var names=nd.players.map(function(p){ return p.name||'بلا اسم'; }).join('، ');
+    /* فتحُ الملفّ يستبدل كلَّ اللاعبين: كان يجري بلا سؤال، فملفٌّ خاطئٌ يمسح تقدّمَ الإخوة جميعاً */
+    uiAsk('فتحُ هذا الملفّ يستبدل كلَّ المستخدمين وتقدّمَهم على هذا الجهاز بما فيه:\n<b>'+names+'</b>\n\nهل تريد المتابعة؟', function(ok){
+      if(!ok) return;
+      var old=DB;
+      /* يُجرَّب ربطُ الجديد قبل حفظه: فإن رمى خطأً عاد القديمُ كما كان، ولا يُكتب في المخزون ما يُعطّل التشغيل */
+      try{
+        DB=nd;
+        for(var i=0;i<DB.players.length;i++){ DB.cur=i; bindPlayer(); }
+        DB.cur=nd.cur0; delete DB.cur0;           /* علامةٌ للفتح وحده، لا تُحفظ */
+        bindPlayer(); ensureAllSchedules();
+      }catch(e){
+        DB=old; try{ bindPlayer(); }catch(e2){}
+        uiAlert('الملفّ غير صالح، فلم يُغيَّر شيء.','⚠️');
+        return;
       }
-      if(!(DB.cur>=0&&DB.cur<DB.players.length)) DB.cur=0;
-      bindPlayer(); ensureAllSchedules(); saveDB();
-      $("pname").value=profile.name||"";
-      fillSettings(); renderPlayers(); renderAvatars(); renderMap(); show("scr-map");
+      saveDB();
+      try{
+        $("pname").value=profile.name||"";
+        fillSettings(); renderPlayers(); renderAvatars(); renderMap(); show("scr-map");
+      }catch(e){}
       uiAlert('تمّ فتح الملفّ','✅');
-    }catch(e){ uiAlert('الملفّ غير صالح','⚠️'); }
+    },'📂');
   };
   rd.readAsText(f); this.value='';
 };
@@ -11894,6 +11928,12 @@ function navToast(msg, ms){
     setTimeout(function(){ el.hidden=true; },300); }, ms||1900);
 }
 function navBack(){
+  /* نافذةُ تأكيدٍ أو تنبيه: الرجوعُ جوابُها «لا» (أو «حسناً» إن لم يكن فيها غيرُه).
+     كانت تبقى ظاهرةً والشاشةُ تتبدّل تحتها، ثمّ يُنفَّذ «نعم» على غير ما سُئل عنه */
+  if($('ask') && !$('ask').hidden){
+    if(!$('askNo').hidden) $('askNo').click(); else $('askYes').click();
+    return true;
+  }
   /* وجه المصحف مفتوح: تُطوى لوحتُه إن كانت، ثمّ يُغلق */
   if(mfPanelOpen()){ mfPanel(null); return true; }
   if($('mfSheet') && !$('mfSheet').hidden){ mfPickEnd(); mushafClose(); return true; }
