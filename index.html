@@ -1465,7 +1465,9 @@ body.glow-off .dfpic{animation:none}
   .pchip{min-height:44px}
   /* شاشةُ الشهادة ثابتةٌ في الجوال: الشهادةُ تُصغَّر لتسعها (certFit)
      والزرّان صفٌّ واحدٌ تحتها، فيُرى كلُّ شيءٍ بلا تمرير */
-  #scr-cert .noprint{display:flex;gap:8px;margin-top:10px}
+  #scr-cert .noprint{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  /* المشاركةُ صورةً صفٌّ وحدَها، والطباعةُ والرجوعُ صفٌّ تحتها */
+  #scr-cert .noprint #btnCertShare{flex-basis:100%}
   #scr-cert .noprint .btn{flex:1 1 0;min-width:0;margin:0;font-size:14.5px;
     padding:10px 8px;line-height:1.35}
   #certWrap.fit{overflow:hidden}
@@ -1997,7 +1999,8 @@ body.glow-off .dfpic{animation:none}
   <section class="screen" id="scr-cert">
     <div id="certWrap"></div>
     <div class="noprint">
-      <button class="btn green big pulse" id="btnPrint">🖨️ طباعة / حفظ الشهادة</button>
+      <button class="btn green big pulse" id="btnCertShare">📤 مشاركة الشهادة صورةً</button>
+      <button class="btn blue big" id="btnPrint">🖨️ طباعة</button>
       <button class="btn ghost big" id="btnCertBack" style="margin:0">🗺️ رجوع للسور</button>
     </div>
   </section>
@@ -5261,6 +5264,8 @@ function show(id){
   /* الشهادةُ تُضبط على الشاشة، وكلُّ انتقالٍ آخر يفكّ قفلَ الصفحة. ويُعاد الضبطُ
      بعد لحظةٍ لما تأخّر: صورةُ الطالب والخطوط */
   try{ certFit(); if(id==='scr-cert') setTimeout(certFit, 450); }catch(e){}
+  /* صورةُ الشهادة تُرسم مسبقاً بعد استواء الخطوط والصورة، فتُشارَك في الضغطة نفسها */
+  if(id==='scr-cert') setTimeout(function(){ try{ certImage()['catch'](function(){}); }catch(e){} }, 1200);
   try{ playFit(); }catch(e){}                           /* الخروجُ من النتيجة يفكّ ضبطَها */
   try{ qScreenFit(true); }catch(e){}                    /* والخروجُ من الدرس يفكّ ضبطَ السؤال */
   try{ homeFit(); if(id==='scr-start') setTimeout(homeFit, 450); }catch(e){}   /* بعد التحيّة والبطاقات */
@@ -11146,6 +11151,208 @@ $('btnCertBack').onclick=function(){
   if(curSurah){ renderPath(); show('scr-path'); } else { renderMap(); show('scr-map'); }
 };
 $('btnPrint').onclick=function(){ window.print(); };
+/* ===== الشهادةُ صورةً تُشارَك =====
+   الطباعةُ لا تعمل في تطبيق الجوّال، وعلى الهاتف يُحبّ الأهلُ أن يُرسلوها. فتُرسم
+   الشهادةُ على لوحة رسمٍ كما تُرى — عنصراً عنصراً من مواضعه الحقيقيّة: الخلفيّاتُ
+   والحدود، ثمّ الصورُ (الشخصيّةُ والمسجد) من رسومها، ثمّ النصُّ كلمةً كلمةً بخطوط
+   الصفحة. فلا تحتاج مكتبةً خارجيّة، ولا تُفسدها قيودُ سفاري على رسم HTML في الصور.
+   وتُرسم مسبقاً حين تُعرض الشهادة، فتُفتح المشاركةُ في الضغطة نفسها (يشترطه سفاري). */
+var CERT_IMG=null;                     /* {el, blob, canvas} صورةُ الشهادة المعروضة */
+function certPx(v){ return parseFloat(v)||0; }
+function certRRect(ctx,x,y,w,h,r){
+  r=Math.max(0,Math.min(r,w/2,h/2));
+  ctx.beginPath(); ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+/* رسمُ SVG صورةً مستقلّة: يحمل معه ألوانَه وشفافيّتَه المحسوبة (أجزاءُ المسجد غيرُ
+   المبنيّة باهتةٌ بقاعدةٍ في الصفحة لا في الرسم)، وما يشير إليه من تدرّجاتٍ معرَّفةٍ خارجه */
+function certSvgUrl(svg, w, h){
+  var XS=new XMLSerializer(), cl=svg.cloneNode(true);
+  var src=svg.querySelectorAll('*'), dst=cl.querySelectorAll('*'), i;
+  var PROPS=['fill','stroke','stroke-width','opacity','fill-opacity','stroke-opacity','display','visibility','stop-color','stop-opacity'];
+  for(i=0;i<src.length && i<dst.length;i++){
+    var cs=getComputedStyle(src[i]), st='';
+    for(var p=0;p<PROPS.length;p++){ var v=cs.getPropertyValue(PROPS[p]); if(v) st+=PROPS[p]+':'+v+';'; }
+    dst[i].setAttribute('style', st+(dst[i].getAttribute('style')||''));
+  }
+  var rs=getComputedStyle(svg);
+  cl.setAttribute('style','opacity:'+rs.opacity);
+  cl.removeAttribute('class');
+  cl.setAttribute('width', w); cl.setAttribute('height', h);
+  if(!cl.getAttribute('xmlns')) cl.setAttribute('xmlns','http://www.w3.org/2000/svg');
+  var s=XS.serializeToString(cl), need={}, defs='';
+  s.replace(/url\(\s*["']?#([^"')\s]+)["']?\s*\)/g, function(_,id){ need[id]=1; return _; });
+  for(var id in need){
+    if(cl.querySelector('[id="'+id+'"]')) continue;
+    var d=document.getElementById(id); if(d) defs+=XS.serializeToString(d);
+  }
+  if(defs) s=s.replace(/^(<svg[^>]*>)/, '$1<defs>'+defs+'</defs>');
+  return URL.createObjectURL(new Blob([s],{type:'image/svg+xml'}));
+}
+/* يُجمع ما يُرسم بترتيب الصفحة، ومواضعُه مقسومةٌ على تصغير الشهادة على الجوّال (certFit) */
+function certWalk(el, C, k, ops){
+  var cs=getComputedStyle(el);
+  if(cs.display==='none' || cs.visibility==='hidden' || cs.opacity==='0') return;
+  var r=el.getBoundingClientRect(), x=(r.left-C.left)/k, y=(r.top-C.top)/k, w=r.width/k, h=r.height/k;
+  var tag=String(el.tagName).toLowerCase();
+  if(tag==='svg'){ if(w && h) ops.push({t:'svg', el:el, x:x, y:y, w:w, h:h}); return; }
+  if(tag==='img'){ if(w && h) ops.push({t:'img', src:el.currentSrc||el.src, x:x, y:y, w:w, h:h}); return; }
+  var bg=cs.backgroundColor, bgi=cs.backgroundImage, rad=certPx(cs.borderTopLeftRadius);
+  if(bgi && bgi!=='none' && /gradient/.test(bgi)){          /* التدرّجُ الخفيفُ يُقارَب بآخر ألوانه */
+    var cols=bgi.match(/rgba?\([^)]*\)|#[0-9a-f]{3,8}\b/gi);
+    if(cols && cols.length) bg=cols[cols.length-1];
+  }
+  if(bg && bg!=='transparent' && !/rgba\([^)]*,\s*0\)$/.test(bg)) ops.push({t:'bg', x:x, y:y, w:w, h:h, r:rad, c:bg});
+  var S=['Top','Right','Bottom','Left'], b=S.map(function(s){
+    return { w:certPx(cs['border'+s+'Width']), s:cs['border'+s+'Style'], c:cs['border'+s+'Color'] };
+  });
+  var same=b.every(function(q){ return q.w===b[0].w && q.s===b[0].s && q.c===b[0].c; });
+  if(same && b[0].w>0 && b[0].s!=='none') ops.push({t:'box', x:x, y:y, w:w, h:h, r:rad, bw:b[0].w, bs:b[0].s, bc:b[0].c});
+  else b.forEach(function(q,i){
+    if(q.w>0 && q.s!=='none') ops.push({t:'line', side:i, x:x, y:y, w:w, h:h, bw:q.w, bs:q.s, bc:q.c});
+  });
+  for(var n=el.firstChild; n; n=n.nextSibling){
+    if(n.nodeType===1) certWalk(n, C, k, ops);
+    else if(n.nodeType===3 && /\S/.test(n.nodeValue)) certWords(n, C, k, ops);
+  }
+}
+/* النصُّ كلمةً كلمة من موضعها: فيبقى التفافُ الأسطر والتوسيطُ كما على الشاشة */
+function certWords(node, C, k, ops){
+  var cs=getComputedStyle(node.parentNode), txt=node.nodeValue, re=/\S+/g, m, rg=document.createRange();
+  while((m=re.exec(txt))){
+    rg.setStart(node, m.index); rg.setEnd(node, m.index+m[0].length);
+    var r=rg.getBoundingClientRect(); if(!r.width) continue;
+    ops.push({ t:'text', s:m[0], x:(r.left-C.left+r.width/2)/k, y:(r.top-C.top)/k, h:r.height/k,
+      font:cs.fontStyle+' '+cs.fontWeight+' '+cs.fontSize+' '+cs.fontFamily, size:certPx(cs.fontSize),
+      color:cs.color, ls:cs.letterSpacing, dir:cs.direction });
+  }
+}
+function certDash(o){ return o.bs==='dotted' ? [o.bw, o.bw*1.6] : (o.bs==='dashed' ? [o.bw*3, o.bw*2] : []); }
+function certDraw(ctx, o){
+  if(o.t==='bg'){ ctx.fillStyle=o.c; certRRect(ctx,o.x,o.y,o.w,o.h,o.r); ctx.fill(); return; }
+  if(o.t==='box'){
+    ctx.strokeStyle=o.bc; ctx.setLineDash(certDash(o));
+    if(o.bs==='double'){                          /* خطّان، كلٌّ منهما ثلثُ العرض */
+      var t=o.bw/3;
+      ctx.lineWidth=t;
+      certRRect(ctx, o.x+t/2, o.y+t/2, o.w-t, o.h-t, o.r-t/2); ctx.stroke();
+      certRRect(ctx, o.x+o.bw-t/2, o.y+o.bw-t/2, o.w-2*o.bw+t, o.h-2*o.bw+t, Math.max(0,o.r-o.bw+t/2)); ctx.stroke();
+    } else {
+      ctx.lineWidth=o.bw;
+      certRRect(ctx, o.x+o.bw/2, o.y+o.bw/2, o.w-o.bw, o.h-o.bw, o.r-o.bw/2); ctx.stroke();
+    }
+    ctx.setLineDash([]); return;
+  }
+  if(o.t==='line'){
+    var q=o.bw/2;
+    ctx.strokeStyle=o.bc; ctx.lineWidth=o.bw; ctx.setLineDash(certDash(o)); ctx.beginPath();
+    if(o.side===0){ ctx.moveTo(o.x, o.y+q); ctx.lineTo(o.x+o.w, o.y+q); }
+    else if(o.side===2){ ctx.moveTo(o.x, o.y+o.h-q); ctx.lineTo(o.x+o.w, o.y+o.h-q); }
+    else if(o.side===1){ ctx.moveTo(o.x+o.w-q, o.y); ctx.lineTo(o.x+o.w-q, o.y+o.h); }
+    else { ctx.moveTo(o.x+q, o.y); ctx.lineTo(o.x+q, o.y+o.h); }
+    ctx.stroke(); ctx.setLineDash([]); return;
+  }
+  if(o.t==='text'){
+    ctx.font=o.font; ctx.fillStyle=o.color; ctx.textAlign='center'; ctx.textBaseline='alphabetic';
+    try{ ctx.direction=o.dir||'rtl'; }catch(e){}
+    if('letterSpacing' in ctx) ctx.letterSpacing=(o.ls && o.ls!=='normal') ? o.ls : '0px';
+    var mt=ctx.measureText(o.s), asc=mt.fontBoundingBoxAscent, des=mt.fontBoundingBoxDescent;
+    if(!(asc>0)){ asc=o.size*0.8; des=o.size*0.25; }
+    ctx.fillText(o.s, o.x, o.y+(o.h-(asc+des))/2+asc);
+  }
+}
+function certLoadImg(url){
+  return new Promise(function(ok){
+    var im=new Image();
+    im.onload=function(){ ok(im); };
+    im.onerror=function(){ ok(null); };            /* صورةٌ تعذّرت: تُترك ولا تُفشل الشهادة */
+    im.src=url;
+  });
+}
+function certImage(){
+  var c=$('certWrap') && $('certWrap').querySelector('.cert');
+  if(!c) return Promise.reject(new Error('no cert'));
+  if(CERT_IMG && CERT_IMG.el===c) return Promise.resolve(CERT_IMG);
+  var ready=(document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
+  return ready.then(function(){
+    var C=c.getBoundingClientRect(), W=c.offsetWidth, H=c.offsetHeight, k=(C.width/W)||1;
+    var ops=[]; certWalk(c, C, k, ops);
+    var P=18, R=Math.max(2, Math.min(4, 1080/(W+2*P)));
+    var cv=document.createElement('canvas');
+    cv.width=Math.round((W+2*P)*R); cv.height=Math.round((H+2*P)*R);
+    var ctx=cv.getContext('2d');
+    ctx.scale(R,R);
+    ctx.fillStyle='#f4ead0'; ctx.fillRect(0,0,W+2*P,H+2*P);   /* حاشيةٌ رمليّة: فلا تسودّ زوايا الإطار المستديرة */
+    ctx.translate(P,P);
+    var i=0;
+    function next(){
+      for(; i<ops.length; i++){
+        var o=ops[i];
+        if(o.t==='svg' || o.t==='img'){
+          i++;
+          var url=(o.t==='svg') ? certSvgUrl(o.el, o.w, o.h) : o.src;
+          return certLoadImg(url).then(function(im){
+            if(im){ try{ ctx.drawImage(im, o.x, o.y, o.w, o.h); }catch(e){} }
+            if(o.t==='svg') URL.revokeObjectURL(url);
+            return next();
+          });
+        }
+        certDraw(ctx, o);
+      }
+      return Promise.resolve();
+    }
+    return next().then(function(){
+      return new Promise(function(ok, no){
+        cv.toBlob(function(bl){ if(bl) ok(bl); else no(new Error('toBlob')); }, 'image/png');
+      });
+    }).then(function(bl){
+      if(c!==($('certWrap') && $('certWrap').querySelector('.cert'))) throw new Error('changed');
+      CERT_IMG={ el:c, blob:bl, canvas:cv };
+      return CERT_IMG;
+    });
+  });
+}
+function certDownload(blob, name){
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=name;
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+}
+function certShare(){
+  var btn=$('btnCertShare');
+  if(btn.disabled) return;
+  var c=$('certWrap').querySelector('.cert'), wasReady=!!(CERT_IMG && CERT_IMG.el===c);
+  var name='شهادة-نور-الوحي.png', title='شهادة من «نور الوحي»';
+  if(!wasReady) btn.disabled=true;
+  certImage().then(function(im){
+    btn.disabled=false;
+    /* في التطبيق: تُكتب الصورةُ في ذاكرته ثمّ تُفتح لها قائمةُ المشاركة */
+    var FS=nativePlugin('Filesystem'), SH=nativePlugin('Share');
+    if(isNative() && FS && SH){
+      return FS.writeFile({ path:'nur-alwahy-certificate.png', data:im.canvas.toDataURL('image/png').split(',')[1], directory:'CACHE' })
+        .then(function(r){ return SH.share({ title:title, dialogTitle:'شارك الشهادة أو احفظها', files:[r.uri] }); });
+    }
+    /* في متصفّح الجوّال: قائمةُ المشاركة (واتساب، الصور…)، وإلّا تُنزَّل الصورة */
+    var file=null;
+    try{ file=new File([im.blob], name, {type:'image/png'}); }catch(e){}
+    if(file && navigator.canShare && navigator.canShare({files:[file]})){
+      return navigator.share({ files:[file], title:title })['catch'](function(e){
+        if(e && e.name==='AbortError') return;                     /* أغلق القائمةَ بنفسه */
+        if(e && e.name==='NotAllowedError' && !wasReady){          /* طال التجهيزُ فانقضت الضغطة */
+          navToast('الصورة جاهزة — اضغط «مشاركة» مرّةً أخرى'); return;
+        }
+        certDownload(im.blob, name);
+      });
+    }
+    certDownload(im.blob, name);
+  })['catch'](function(e){
+    btn.disabled=false;
+    if(/cancel/i.test(String(e && (e.message||e)))) return;
+    uiAlert('تعذّر تجهيز صورة الشهادة، حاول مرّةً أخرى.','⚠️');
+  });
+}
+$('btnCertShare').onclick=certShare;
 $('btnExam').onclick=function(){ examOpen(); };
 $('btnDaily').onclick=function(){ dailyBegin(); };
 $('btnExamHome').onclick=function(){ renderPlayers(); show('scr-start'); };
