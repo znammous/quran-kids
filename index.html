@@ -6720,6 +6720,9 @@ function comboChip(){
   setTimeout(function(){ e.classList.remove('pop'); },240);
 }
 function comboMiss(){
+  /* يُعلَّم السؤالُ الذي أُخطئ فيه: فإن بقي أمامه حتى أكمله لم يُحسب له في السلسلة —
+     كانت تنقطع عند الخطأ ثمّ تعود واحداً بإكماله، فلا يُرى أنّها توقّفت */
+  if(S) S.slipAt=S.i;
   if(S && S.rounds && !comboCounts(S.rounds[S.i])) return;   /* ما لا يُحتسب لا يقطع */
   comboSet(0); comboChip();
 }
@@ -6727,6 +6730,7 @@ function comboHit(){
   if(!S || !S.rounds) return;
   var r=S.rounds[S.i];
   if(!comboCounts(r)) return;                        /* القراءة والترديد والتسميع الصوتيّ */
+  if(S.slipAt===S.i) return;                         /* أخطأ فيه ثمّ أكمله: لا يزيد السلسلة */
   comboSet(comboNow()+1);
   S.combo=comboNow();                                /* للعرض والاختبار */
   comboChip();
@@ -7200,6 +7204,7 @@ function roundWords(r){
            السؤالُ أمامه يُكمله — فإن عاند الكلمةَ ثلاثاً دُلّ عليها */
         if(hifzMode() && r.parts>1){
           sBad(); $('fb').className='fb bad'; $('fb').textContent='إجابة خاطئة — حاول مرّةً أخرى';
+          comboMiss();                           /* يبقى السؤال، وتتوقّف السلسلة — ولا تُخصم نجمة */
           wrongHere++;
           setTimeout(function(){ el.classList.remove('bad'); },380);
           if(wrongHere>=3) for(var j=0;j<btns.length;j++)
