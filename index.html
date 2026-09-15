@@ -2110,9 +2110,50 @@ var SURAH_JUZ = {};
 
 var LS={prof:'nur_prof',look:'nur_look',gender:'nur_gender',set:'nur_set',prog:'nur_prog',help:'nur_help',hint:'nur_hint'};
 function $(id){ return document.getElementById(id); }
-function load(k,d){ try{ var v=localStorage.getItem(k); return v==null?d:JSON.parse(v);}catch(e){ return d; } }
-function save(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function load(k,d){
+  var v;
+  try{ v=localStorage.getItem(k); }catch(e){ return d; }
+  if(v==null) return d;
+  try{ return JSON.parse(v); }
+  catch(e){ stashBad(k,v); return d; }
+}
+/* المحفوظُ التالف لا يُرمى: كان يُقرأ فارغاً ثمّ يُكتب فوقه، فيضيع تقدّمُ كلِّ
+   اللاعبين بصمت. فيُنسخ نصُّه كما هو إلى مفتاحٍ جانبيّ قبل أيّ كتابة، فلعلّه
+   يُستنقذ — ولا تُكتب نسخةٌ فوق سابقتها، فالأولى أنفس. */
+var DB_BAD=false;
+function stashBad(k,v){
+  if(k==='nur_db') DB_BAD=true;
+  try{ if(localStorage.getItem(k+'_bad')==null) localStorage.setItem(k+'_bad', v); }catch(e){}
+}
+function save(k,v){
+  try{ localStorage.setItem(k,JSON.stringify(v)); return true; }
+  catch(e){ saveFailed(); return false; }
+}
+/* الحفظُ يفشل حين تمتلئ ذاكرةُ الجهاز أو يمنعه المتصفّح: كان يُبتلع الخطأ، فيجمع
+   الطفلُ نجومَه ثمّ تذهب كلُّها عند الإغلاق. فيُنبَّه مرّةً في الجلسة. */
+var SAVE_WARNED=false;
+function saveFailed(){
+  if(SAVE_WARNED) return;
+  SAVE_WARNED=true;
+  whenCalm(function(){
+    uiAlert('تعذّر حفظ التقدّم على هذا الجهاز — قد تكون ذاكرتُه ممتلئة، أو الحفظُ ممنوعاً في المتصفّح.\n'+
+            'ما يُنجَز الآن قد يضيع عند إغلاق التطبيق: احفظ نسخةً من «الإعدادات ← 💾 حفظ التقدّم»، ثمّ أفرغ شيئاً من مساحة الجهاز.','⚠️');
+  });
+}
+/* تنبيهٌ لا يُزاحم: ينتظر ارتفاعَ ستار التحميل، ولا يحلّ محلَّ سؤالٍ مفتوح فيضيعَ جوابُه */
+function whenCalm(fn){
+  (function t(){
+    var sp=$('splash'), a=$('ask');
+    if((sp && !sp.__off) || (a && !a.hidden)){ setTimeout(t, 700); return; }
+    setTimeout(function(){
+      if(a && !a.hidden){ t(); return; }
+      try{ fn(); }catch(e){}
+    }, 500);
+  })();
+}
+/* ويُهرَّب الاقتباسُ أيضاً: فالناتجُ يوضع أحياناً داخل خاصيّةٍ بين علامتي اقتباس */
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+                                 .replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 function shuffle(a){ for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
 /* QA_DAYS إزاحةٌ للفحص وحده — صفرٌ دائماً عند اللاعب، تُحرَّك من شريط وضع الفحص */
 var QA_DAYS=0;
@@ -2143,8 +2184,15 @@ function newPlayer(name,g){
            streak:{count:0,last:null,freezes:0}, today:{d:null,stages:0,segs:0,reviews:0} };
 }
 var DB = load('nur_db', null);
+/* نصٌّ سليمٌ بغير هيئة المخزون: كان «DB.players.length» يرمي خطأً يوقف الشيفرةَ
+   كلَّها، فيبقى الستارُ عند كلّ فتح. فيُنسخ جانباً كالتالف، ويُبدأ من جديد */
+if(DB && (typeof DB!=='object' || !Array.isArray(DB.players))){
+  try{ stashBad('nur_db', localStorage.getItem('nur_db')); }catch(e){ DB_BAD=true; }
+  DB=null;
+}
 if(!DB){ DB={ cur:0, players:[newPlayer('','f')], app:{ board:false } }; save('nur_db',DB); }
-if(!DB.app) DB.app={ board:false };
+if(!DB.app || typeof DB.app!=='object') DB.app={ board:false };
+DB.players=DB.players.filter(function(p){ return p && typeof p==='object' && !Array.isArray(p); });
 if(!DB.players.length) DB.players=[newPlayer('','f')];
 if(!(DB.cur>=0 && DB.cur<DB.players.length)) DB.cur=0;
 function curP(){ return DB.players[DB.cur]; }
@@ -11900,6 +11948,11 @@ function navPop(){
 renderAvatars();
 renderPlayers();
 ensureAllSchedules();
+/* تلف التقدّمُ المحفوظ فبدأ التطبيقُ من جديد: يُخبَر بذلك، فنسختُه باقيةٌ جانباً ولعلّ عنده ملفَّه */
+if(DB_BAD) whenCalm(function(){
+  uiAlert('تعذّرت قراءة التقدّم المحفوظ على هذا الجهاز، فبدأ التطبيق من جديد.\n'+
+          'حُفظت نسخةٌ من المحفوظ القديم جانباً ولم تُمسح. وإن كان عندك ملفُّ نسخةٍ احتياطيّة فافتحه من «الإعدادات ← 📂 فتح ملف».','⚠️');
+});
 /* ومن كان محفوظه تامّاً قبل هذه النسخة، يُتوَّج عند أوّل فتحة */
 try{ crownCheck(); }catch(e){}
 try{ checkBadges(true); }catch(e){}      /* ما استُحقّ قبل النظام يُمنح صامتاً */
