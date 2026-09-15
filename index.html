@@ -1435,6 +1435,14 @@ body.glow-off .dfpic{animation:none}
 .runovl .btn{margin:0;min-height:44px;padding:10px 18px;font-size:16px}
 .runovl .runbtns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 .runtip{text-align:center;color:var(--on3);font-size:13px;font-weight:700;margin-top:6px}
+/* ===== مصدرُ الآيات قبل اللعب: من المحفوظ أو من سورةٍ بعينها ===== */
+.gmsrch{text-align:center;font-size:21px;font-weight:900;color:var(--ttl);margin:2px 0 4px}
+.gmsura{cursor:default}
+.gmsura:active{transform:none}
+.gmsura .gctx select{margin-top:6px;padding:9px 10px;font-size:15px;font-weight:800}
+.gmsura .btn{flex:0 0 auto;margin:0;padding:10px 14px;font-size:15px}
+/* ===== «رفّ الآيات» ===== */
+#shelfCv{display:block;width:100%}
 
 /* ===== قشرة الجوّال: شريط تنقّل سفلي ===== */
 .tabbar{display:none}
@@ -1959,7 +1967,7 @@ body.glow-off .dfpic{animation:none}
 
   <section class="screen" id="scr-games">
     <h1>🎮 الألعاب</h1>
-    <p class="sub">العبْ وراجِعْ — كلماتُ الألعاب من آياتِ محفوظك</p>
+    <p class="sub">العبْ وراجِعْ — من آياتِ محفوظك أو من سورةٍ تختارها</p>
     <div class="gmlist" id="gamesBody"></div>
     <button class="btn primary big" id="btnGamesBack" style="margin:0">➡️ رجوع</button>
   </section>
@@ -1973,6 +1981,17 @@ body.glow-off .dfpic{animation:none}
     <div class="runayah"><div class="runref" id="runRef">—</div><div class="runline" id="runLine"></div></div>
     <div class="runstage" id="runStage"><canvas id="runCv"></canvas><div class="runovl" id="runOvl" hidden></div></div>
     <div class="runtip">اضغط في أيّ مكانٍ للقفز — أو زرّ المسافة</div>
+  </section>
+
+  <section class="screen" id="scr-shelf">
+    <div class="runtop">
+      <button type="button" class="runx" id="btnShelfQuit" aria-label="خروج">✕</button>
+      <div class="runhearts" id="shelfHearts"></div>
+      <div class="runscore" id="shelfScore">⭐ 0</div>
+    </div>
+    <div class="runayah"><div class="runref" id="shelfRef">—</div><div class="runline" id="shelfLine"></div></div>
+    <div class="runstage" id="shelfStage"><canvas id="shelfCv"></canvas><div class="runovl" id="shelfOvl" hidden></div></div>
+    <div class="runtip">اضغطْ صندوقَ الكلمة التالية — والآيةُ تُرتَّب من اليمين</div>
   </section>
 
   <section class="screen" id="scr-play">
@@ -5226,7 +5245,7 @@ var TABS=[
   {id:'scr-settings', ic:'⚙️', n:'الإعدادات', go:function(){ $('btnSettings').click(); }}
 ];
 /* تختفي أثناء الدرس والشهادة والمعالج، كما تفعل دولينجو داخل الدرس */
-var TABS_HIDE={'scr-onb':1,'scr-look':1,'scr-play':1,'scr-cert':1,'scr-runner':1};
+var TABS_HIDE={'scr-onb':1,'scr-look':1,'scr-play':1,'scr-cert':1,'scr-runner':1,'scr-shelf':1};
 function buildTabs(){
   if($('tabbar')) return;
   var bar=document.createElement('nav');
@@ -11720,18 +11739,83 @@ function runReset(){
   RUN.t=0; RUN.off=0; RUN.toast=''; RUN.toastT=0; RUN.flashT=0; RUN.lastKind=''; RUN.last=null;
   runPickAyah(); RUN.gap=RUN.speed*1.6;
 }
+/* ===== مصدرُ الآيات في الألعاب =====
+   قبل كلّ لعبةٍ يختار: من محفوظه كلِّه، أو سورةً بعينها (يُراجعها أو يتعرّف عليها).
+   ويُذكر آخرُ ما اختاره لكلّ لعبة، فيجده محدَّداً في المرّة التالية. */
+function gameStats(g){
+  var p=curP(); if(!p.games) p.games={};
+  if(!p.games[g]) p.games[g]={ best:0, plays:0, ayat:0 };
+  return p.games[g];
+}
+function gamePool(src){
+  var n=parseInt(src,10);
+  if(n>=1 && n<=114){
+    var s=surahBy(n), out=[], a;
+    if(s) for(a=0;a<s.ayat.length;a++) out.push({ s:s, a:a });
+    if(out.length) return { items:out, mem:false, sura:s };
+  }
+  var r=runPool(); r.sura=null;
+  return r;
+}
+function gameSrcLabel(pool){
+  if(pool && pool.sura) return '📖 من سورة '+pool.sura.name;
+  return (pool && pool.mem) ? '📚 من محفوظك' : '📚 من الفاتحة وقصار السور';
+}
+var GAMES=[
+  { id:'runner', ic:'🏃', n:'عدّاء الآيات', d:'اقفزْ إلى الكلمة التي تملأ الفراغ',      open:function(src){ runOpen(src); } },
+  { id:'shelf',  ic:'🧺', n:'رفّ الآيات',   d:'رتّبْ صناديقَ كلمات الآية على الرفّ', open:function(src){ shelfOpen(src); } }
+];
+var GAME_PICK=null;                    /* لعبةٌ يُختار لها المصدرُ الآن */
 function gamesOpen(){
-  var st=runStats(), pool=runPool();
-  $('gamesBody').innerHTML=
-    '<button type="button" class="goalcard now" id="gmRunner"><span class="gcic">🏃</span>'+
-      '<span class="gctx"><b>عدّاء الآيات</b><i>اقفزْ إلى الكلمة التي تملأ الفراغ'+
-      (st.best?' • أفضلُ نتيجة ⭐ '+arNum(st.best):'')+'</i></span><span class="gcgo">❮</span></button>'+
-    (pool.mem?'':'<p class="gmnote">لم يُسجَّل لك محفوظٌ بعد، فتأتيك الآياتُ من الفاتحة وقصار السور</p>');
-  $('gmRunner').onclick=runOpen;
+  GAME_PICK=null;
+  var pool=runPool(), h='';
+  GAMES.forEach(function(g){
+    var st=gameStats(g.id);
+    h+='<button type="button" class="goalcard now" data-game="'+g.id+'"><span class="gcic">'+g.ic+'</span>'+
+       '<span class="gctx"><b>'+g.n+'</b><i>'+g.d+(st.best?' • أفضلُ نتيجة ⭐ '+arNum(st.best):'')+'</i></span>'+
+       '<span class="gcgo">❮</span></button>';
+  });
+  if(!pool.mem) h+='<p class="gmnote">لم يُسجَّل لك محفوظٌ بعد — اختر سورةً تلعب بآياتها</p>';
+  var B=$('gamesBody'); B.innerHTML=h;
+  var bs=B.querySelectorAll('[data-game]');
+  for(var i=0;i<bs.length;i++) bs[i].onclick=function(){ gamePick(this.getAttribute('data-game')); };
   show('scr-games');
 }
-function runOpen(){
-  RUN.pool=runPool();
+function gamePick(id){
+  var g=null; GAMES.forEach(function(x){ if(x.id===id) g=x; });
+  if(!g) return;
+  GAME_PICK=id;
+  var st=gameStats(id), pool=runPool(), m=memAll(), memN=pool.mem ? pool.items.length : 0, k;
+  var def=parseInt(st.sura,10);
+  if(!(def>=1 && def<=114)){
+    def=(curSurah && curSurah.n) || 0;
+    if(!def) for(k in m){ if((m[k]||[]).length){ def=parseInt(k,10); break; } }
+    if(!def) def=1;
+  }
+  var opts=SURAHS.map(function(s){
+    var has=(m[s.n]||[]).length>0;
+    return '<option value="'+s.n+'"'+(s.n===def?' selected':'')+'>'+arNum(s.n)+'. '+esc(s.name)+(has?' ✓':'')+'</option>';
+  }).join('');
+  $('gamesBody').innerHTML=
+    '<div class="gmsrch">'+g.ic+' '+g.n+'</div>'+
+    '<p class="gmnote">من أين تأتي الآيات؟</p>'+
+    '<button type="button" class="goalcard'+(st.src!=='sura'?' now':'')+'" id="gsMem"><span class="gcic">📚</span>'+
+      '<span class="gctx"><b>من محفوظي</b><i>'+
+        (memN ? ('آياتٌ من كلّ ما حفظتَ — '+arNum(memN)+' آية') : 'لم يُسجَّل لك محفوظٌ بعد — فمن الفاتحة وقصار السور')+
+      '</i></span><span class="gcgo">❮</span></button>'+
+    '<div class="goalcard gmsura'+(st.src==='sura'?' now':'')+'"><span class="gcic">📖</span>'+
+      '<span class="gctx"><b>سورةٌ أختارها</b><select id="gsSel" aria-label="اختر السورة">'+opts+'</select></span>'+
+      '<button type="button" class="btn primary" id="gsGo">▶️ ابدأ</button></div>'+
+    '<p class="gmnote">علامةُ ✓ بجانب السورة: حفظتَ منها شيئاً</p>';
+  $('gsMem').onclick=function(){ st.src='mem'; saveDB(); g.open('mem'); };
+  $('gsGo').onclick=function(){
+    var n=parseInt($('gsSel').value,10);
+    st.src='sura'; st.sura=n; saveDB(); g.open(n);
+  };
+  window.scrollTo(0,0);
+}
+function runOpen(src){
+  RUN.pool=gamePool(src==null ? 'mem' : src);
   show('scr-runner');
   runSize(); runReset(); runOverlay('ready'); runDraw();
   try{ document.fonts.load(RUN_FONT).then(function(){ if(RUN.state!=='run') runDraw(); }); }catch(e){}
@@ -11740,7 +11824,7 @@ function runOverlay(kind, nb){
   var ov=$('runOvl'), st=runStats(), h;
   RUN.state=(kind==='over')?'over':(kind==='pause'?'pause':'ready');
   if(kind==='ready')
-    h='<div class="ot">🏃 عدّاء الآيات</div><p>اقفزْ إلى الكلمة التي تملأ الفراغ<br>ودَعِ الكلمةَ الخطأ، واقفزْ فوق العوائق<br>لك ❤️ خمسةُ قلوب</p>'+
+    h='<div class="ot">🏃 عدّاء الآيات</div><p>اقفزْ إلى الكلمة التي تملأ الفراغ<br>ودَعِ الكلمةَ الخطأ، واقفزْ فوق العوائق<br>لك ❤️ خمسةُ قلوب</p><p style="opacity:.85">'+esc(gameSrcLabel(RUN.pool))+'</p>'+
       '<button type="button" class="btn primary" id="runStart">▶️ ابدأ</button>';
   else if(kind==='pause')
     h='<div class="ot">⏸️ توقّفتِ اللعبة</div><button type="button" class="btn primary" id="runStart">▶️ تابِعْ</button>';
@@ -11984,8 +12068,404 @@ function runDraw(){
   }
 }
 
+/* =========================================================
+   رفُّ الآيات — لعبةُ ترتيب الصناديق
+   على كلّ صندوقٍ كلمةٌ من الآية، مخلوطةٌ على مِقعدٍ مكسوٍّ بقماشٍ أخضر، وفوقها رفٌّ
+   فيه خاناتٌ فارغة تُملأ من اليمين. يضغط الطفلُ صندوقاً فتمشي إليه شخصيّتُه: إن كان
+   الكلمةَ التالية حملته بيديها إلى الرفّ ورفعته إلى خانته، وإلّا رفعته قليلاً
+   وأعادته إلى موضعه وهزّت رأسها. ثلاثةُ قلوبٍ ولا مؤقّت.
+   وإكراماً للقرآن: لا يلمس صندوقٌ الأرضَ أبداً، ولا يسقط ولا يُرمى ولا يُقفز فوقه،
+   ويُحمل باليدين فوق الخصر، والخطأُ يُعاد إلى مكانه بهدوءٍ لا يُطرح.
+   ========================================================= */
+var SHELF_HEARTS=3, SHELF_PART=5, SHELF_SPEED=210, SHELF_BH=34, SHELF_PX=4, SHELF_DECOY_AFTER=3, SHELF_GEMS=2;
+var SH={ state:'idle', raf:0, W:400, H:330, G:306, k:1, slots:[], boxes:[], anims:[], parts:[], benchX:[] };
+function shelfFont(){ return '19px "Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif'; }
+function shelfCtx(){ var c=$('shelfCv').getContext('2d'); c.font=shelfFont(); return c; }
+function shelfBoxW(t, c){ return Math.max(46, Math.ceil((c||shelfCtx()).measureText(t).width)+22); }
+function shelfEase(u){ return u<0.5 ? 2*u*u : 1-Math.pow(-2*u+2,2)/2; }
+function shelfYShelf(){ return SH.G-150-SHELF_BH; }   /* أعلى الصندوق على الرفّ */
+function shelfYBench(){ return SH.G-50-SHELF_BH; }    /* أعلى الصندوق على المِقعد */
+
+function shelfSize(){
+  var cv=$('shelfCv'), st=$('shelfStage'); if(!cv || !st) return;
+  var cw=st.clientWidth||360;
+  var top=st.getBoundingClientRect().top+(window.scrollY||0);
+  var ch=Math.round(Math.max(260, Math.min(window.innerHeight-top-56, cw, 560)));
+  var dpr=Math.min(window.devicePixelRatio||1, 2.5), k=Math.min(cw/400, ch/330);
+  cv.style.height=ch+'px';
+  cv.width=Math.round(cw*dpr); cv.height=Math.round(ch*dpr);
+  SH.W=Math.round(cw/k); SH.H=Math.round(ch/k); SH.G=SH.H-24; SH.k=cv.height/SH.H;
+  if(SH.ch) SH.ch.x=Math.max(30, Math.min(SH.W-30, SH.ch.x)), SH.ch.tx=Math.max(30, Math.min(SH.W-30, SH.ch.tx));
+  if(SH.slots.length) shelfLayout();
+}
+/* الآيةُ الطويلة أجزاءٌ يسع كلٌّ منها صفّاً واحداً على الرفّ وعلى المِقعد (ومعه الصندوقُ الزائد) */
+function shelfParts(ws, decoyW){
+  var c=shelfCtx(), parts=[], cur=[], sum=0, lim=SH.W-32, i, w, need;
+  for(i=0;i<ws.length;i++){
+    w=shelfBoxW(ws[i], c);
+    need=sum+(cur.length?8:0)+w;
+    if(cur.length && (cur.length>=SHELF_PART || need+(decoyW?decoyW+8:0)>lim)){ parts.push(cur); cur=[]; need=w; }
+    cur.push(i); sum=need;
+  }
+  if(cur.length) parts.push(cur);
+  return parts;
+}
+/* الصندوقُ الزائد: كلمةٌ من الآيات المجاورة لا تُشبه كلمةً من الآية، ولا تزيد عرضاً */
+function shelfDecoy(ay){
+  var seen={}, out=[], k, s=ay.s, a=ay.a, P=SH.pool.items, c=shelfCtx();
+  ay.ws.forEach(function(w){ seen[norm(w)]=1; });
+  function add(w){ var m=norm(w); if(m && !seen[m]){ seen[m]=1; out.push(w); } }
+  for(k=Math.max(0,a-2);k<=Math.min(s.ayat.length-1,a+2);k++) if(k!==a) wordsOf(ayahText(s,k)).forEach(add);
+  for(k=0;k<20 && out.length<6;k++){ var o=P[Math.floor(Math.random()*P.length)]; wordsOf(ayahText(o.s,o.a)).forEach(add); }
+  shuffle(out);
+  for(k=0;k<out.length;k++) if(shelfBoxW(out[k], c)<=90) return out[k];
+  return null;
+}
+/* أوّلُ آيتين قصيرتان إن وُجدتا، ولا تتكرّر الآيةُ نفسُها متتابعة */
+function shelfPickAyah(){
+  var P=SH.pool.items, it, ws, tries=0, maxW=SH.done<2 ? 8 : 999;
+  do{ it=P[Math.floor(Math.random()*P.length)]; ws=wordsOf(ayahText(it.s,it.a)); tries++; }
+  while(tries<40 && (ws.length<3 || ws.length>maxW || (SH.last && P.length>1 && SH.last.s===it.s && SH.last.a===it.a)));
+  SH.last=it;
+  var decoy=SH.done>=SHELF_DECOY_AFTER;
+  SH.ay={ s:it.s, a:it.a, ws:ws, parts:shelfParts(ws, decoy?90:0), p:0, decoy:decoy };
+  shelfPart();
+}
+function shelfPart(){
+  var ay=SH.ay, words=ay.parts[ay.p].map(function(i){ return ay.ws[i]; }), tries=0;
+  SH.target=words; SH.i=0; SH.queue=null;
+  SH.slots=words.map(function(t){ return { t:t, fill:null }; });
+  var boxes=words.map(function(t){ return { t:t, good:true, st:'bench' }; });
+  if(ay.decoy){ var d=shelfDecoy(ay); if(d) boxes.push({ t:d, good:false, st:'bench' }); }
+  /* خلطٌ لا يُبقيها على ترتيبها */
+  do{ shuffle(boxes); tries++; }
+  while(tries<8 && boxes.length>1 && words.every(function(t,j){ return boxes[j].t===t; }));
+  SH.boxes=boxes;
+  shelfLayout(); shelfHud();
+}
+/* الخاناتُ والصناديقُ من اليمين، في وسط العرض */
+function shelfLayout(){
+  var c=shelfCtx(), W=SH.W, gap=8, x, tw=0;
+  SH.slots.forEach(function(s){ s.w=shelfBoxW(s.t, c); tw+=s.w; });
+  tw+=gap*Math.max(0, SH.slots.length-1);
+  x=W/2+tw/2;
+  SH.slots.forEach(function(s){ x-=s.w; s.x=x; x-=gap; });
+  tw=0;
+  SH.boxes.forEach(function(b,i){ b.w=shelfBoxW(b.t, c); b.bi=i; tw+=b.w; });
+  tw+=gap*Math.max(0, SH.boxes.length-1);
+  x=W/2+tw/2; SH.benchX=[];
+  SH.boxes.forEach(function(b,i){ x-=b.w; SH.benchX[i]=x; x-=gap; });
+}
+function shelfHud(){
+  var h='', i, ay=SH.ay;
+  for(i=0;i<SHELF_HEARTS;i++) h+=(i<SH.hearts)?'❤️':'🤍';
+  $('shelfHearts').textContent=h;
+  $('shelfScore').textContent='⭐ '+arNum(SH.score);
+  if(!ay) return;
+  var np=ay.parts.length, done=ay.p>=np;
+  $('shelfRef').textContent='سورة '+ay.s.name+(np>1 && !done ? ' • الجزء '+arNum(ay.p+1)+' من '+arNum(np) : '');
+  var L='';
+  if(ay.a>0){ var pw=wordsOf(ayahText(ay.s,ay.a-1));
+    L+='<span class="rw ctx">'+(pw.length>3?'… ':'')+esc(pw.slice(-3).join(' '))+'</span>'; }
+  else L+='<span class="rw ctx">أوّلُ السورة:</span>';
+  ay.parts.forEach(function(part, pi){
+    if(pi<ay.p) part.forEach(function(i){ L+='<span class="rw got">'+esc(ay.ws[i])+'</span>'; });
+    else if(pi===ay.p) part.forEach(function(i,j){
+      if(j<SH.i)        L+='<span class="rw got">'+esc(ay.ws[i])+'</span>';
+      else if(j===SH.i) L+='<span class="rw next">؟</span>';
+      else              L+='<span class="rw todo">ـــ</span>';
+    });
+    else if(pi===ay.p+1) L+='<span class="rw ctx">…</span>';
+  });
+  var ln=$('shelfLine'); ln.innerHTML=L; ln.classList.toggle('done', done);
+}
+function shelfReset(){
+  SH.hearts=SHELF_HEARTS; SH.score=0; SH.done=0; SH.gems=0; SH.last=null;
+  SH.anims=[]; SH.parts=[]; SH.flashT=0; SH.toastT=0; SH.rest=0; SH.t=0; SH.busy=false; SH.queue=null;
+  SH.ch={ x:SH.W-40, tx:SH.W-40, face:-1, walk:false, cb:null, shake:0 };
+  shelfPickAyah();
+}
+function shelfOpen(src){
+  SH.pool=gamePool(src==null ? 'mem' : src);
+  show('scr-shelf');
+  shelfSize(); shelfReset(); shelfOverlay('ready'); shelfDraw();
+  try{ document.fonts.load(shelfFont()).then(function(){ if(SH.slots.length){ shelfLayout(); shelfDraw(); } }); }catch(e){}
+}
+function shelfOverlay(kind, nb){
+  var ov=$('shelfOvl'), st=gameStats('shelf'), h;
+  SH.state=(kind==='over')?'over':(kind==='pause'?'pause':'ready');
+  if(kind==='ready')
+    h='<div class="ot">🧺 رفّ الآيات</div><p>اضغطْ صندوقَ الكلمة التالية فتحمله شخصيّتُك إلى الرفّ<br>رتّبِ الآيةَ من اليمين — ولك ❤️ ثلاثةُ قلوب</p>'+
+      '<p style="opacity:.85">'+esc(gameSrcLabel(SH.pool))+'</p>'+
+      '<button type="button" class="btn primary" id="shelfStart">▶️ ابدأ</button>';
+  else if(kind==='pause')
+    h='<div class="ot">⏸️ توقّفتِ اللعبة</div><button type="button" class="btn primary" id="shelfStart">▶️ تابِعْ</button>';
+  else
+    h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+arNum(SH.score)+' نقطة • 📜 '+arNum(SH.done)+' آية'+
+      (SH.gems?' • 💎 '+arNum(SH.gems):'')+'<br>'+
+      (nb?'🏆 أفضلُ نتيجةٍ لك حتى الآن!':'أفضلُ نتيجةٍ لك: ⭐ '+arNum(st.best||0))+'</p>'+
+      '<div class="runbtns"><button type="button" class="btn primary" id="shelfAgain">🔁 مرّةً أخرى</button>'+
+      '<button type="button" class="btn ghost" id="shelfBack">🎮 الألعاب</button></div>';
+  ov.innerHTML=h; ov.hidden=false;
+  if($('shelfStart')) $('shelfStart').onclick=shelfGo;
+  if($('shelfAgain')) $('shelfAgain').onclick=function(){ shelfReset(); shelfGo(); };
+  if($('shelfBack')) $('shelfBack').onclick=function(){ $('btnShelfQuit').click(); };
+}
+function shelfGo(){ $('shelfOvl').hidden=true; SH.state='run'; shelfKick(); }
+function shelfPause(){
+  if(SH.state!=='run') return;
+  cancelAnimationFrame(SH.raf); SH.raf=0;
+  shelfOverlay('pause');
+}
+function shelfOver(){
+  cancelAnimationFrame(SH.raf); SH.raf=0;
+  var st=gameStats('shelf'), nb=SH.score>(st.best||0);
+  st.plays=(st.plays||0)+1; st.ayat=(st.ayat||0)+SH.done;
+  if(nb) st.best=SH.score;
+  saveDB();
+  shelfOverlay('over', nb); shelfDraw();
+}
+/* الرسمُ يجري ما دام شيءٌ يتحرّك، ثمّ يسكن — فلا تبقى بطاقةُ الرسوم عاملةً والطفلُ يتأمّل */
+function shelfIdle(){
+  return !SH.ch.walk && !SH.anims.length && !SH.parts.length && SH.flashT<=0 && SH.toastT<=0 && SH.rest<=0;
+}
+function shelfKick(){
+  if(SH.state!=='run'){ shelfDraw(); return; }
+  if(SH.raf) return;
+  SH.prev=0; SH.raf=requestAnimationFrame(shelfFrame);
+}
+function shelfFrame(ts){
+  SH.raf=0;
+  if(SH.state!=='run') return;
+  if(!$('scr-shelf').classList.contains('active')){ shelfPause(); return; }
+  var dt=Math.min(0.05, Math.max(0, (ts-(SH.prev||ts))/1000)); SH.prev=ts;
+  shelfUpdate(dt);
+  shelfDraw();
+  if(SH.state==='run' && !shelfIdle()) SH.raf=requestAnimationFrame(shelfFrame);
+}
+function shelfWalk(x, cb){
+  var ch=SH.ch;
+  ch.tx=Math.max(30, Math.min(SH.W-30, x)); ch.cb=cb;
+  if(Math.abs(ch.tx-ch.x)<1){ ch.walk=false; ch.cb=null; cb(); return; }
+  ch.face=(ch.tx>ch.x)?1:-1; ch.walk=true; shelfKick();
+}
+function shelfAnim(d, step, cb){ SH.anims.push({ t:0, d:d, step:step, cb:cb }); shelfKick(); }
+function shelfSay(t){ SH.toast=t; SH.toastT=1.8; shelfKick(); }
+function shelfSpark(x, y){
+  for(var i=0;i<14;i++) SH.parts.push({ x:x+(Math.random()-.5)*30, y:y, vx:(Math.random()-.5)*60,
+    vy:-40-Math.random()*80, l:.6+Math.random()*.4, c:Math.random()<.5?'#ffe27a':'#ffffff' });
+}
+function shelfUpdate(dt){
+  var ch=SH.ch, i, a, p;
+  SH.t+=dt;
+  if(ch.walk){
+    var dx=ch.tx-ch.x, sv=SHELF_SPEED*dt;
+    if(Math.abs(dx)<=sv){ ch.x=ch.tx; ch.walk=false; var f=ch.cb; ch.cb=null; if(f) f(); }
+    else ch.x+=(dx>0?sv:-sv);
+  }
+  for(i=SH.anims.length-1;i>=0;i--){
+    a=SH.anims[i]; a.t+=dt;
+    var u=Math.min(1, a.t/a.d);
+    if(a.step) a.step(u);
+    if(u>=1){ SH.anims.splice(i,1); if(a.cb) a.cb(); if(SH.state!=='run') return; }
+  }
+  for(i=SH.parts.length-1;i>=0;i--){                /* بريقٌ يصعد ويخبو، لا يسقط */
+    p=SH.parts[i]; p.l-=dt;
+    if(p.l<=0){ SH.parts.splice(i,1); continue; }
+    p.x+=p.vx*dt; p.y+=p.vy*dt; p.vy*=0.97;
+  }
+  if(SH.flashT>0) SH.flashT-=dt;
+  if(SH.toastT>0) SH.toastT-=dt;
+  if(SH.rest>0){ SH.rest-=dt; if(SH.rest<=0){ SH.rest=0; shelfAfterRest(); } }
+}
+/* اللمس: صندوقٌ على المِقعد. وفي أثناء الحمل تُحفظ ضغطةٌ واحدةٌ تالية */
+function shelfTap(e){
+  if(e.target && e.target.closest && e.target.closest('button')) return;
+  if(SH.state==='ready' || SH.state==='pause'){ shelfGo(); return; }
+  if(SH.state!=='run') return;
+  if(e.cancelable) e.preventDefault();
+  var r=$('shelfCv').getBoundingClientRect();
+  var lx=(e.clientX-r.left)*SH.W/r.width, ly=(e.clientY-r.top)*SH.H/r.height, yb=shelfYBench(), i, b, x;
+  for(i=0;i<SH.boxes.length;i++){
+    b=SH.boxes[i]; if(b.st!=='bench' || b.fade) continue;
+    x=SH.benchX[b.bi];
+    if(lx>=x-4 && lx<=x+b.w+4 && ly>=yb-8 && ly<=yb+SHELF_BH+8){ shelfChoose(b); return; }
+  }
+}
+function shelfChoose(b){
+  if(SH.rest>0) return;
+  if(SH.busy){
+    if(SH.queue) SH.queue.q=false;
+    SH.queue=b; b.q=true; shelfKick(); return;
+  }
+  shelfDo(b);
+}
+function shelfNextQueued(){
+  var q=SH.queue; SH.queue=null;
+  if(q){ q.q=false; if(q.st==='bench' && !q.fade && SH.state==='run' && SH.rest<=0) shelfDo(q); }
+}
+function shelfDo(b){
+  SH.busy=true; b.sel=true;
+  shelfWalk(SH.benchX[b.bi]+b.w/2, function(){
+    var want=SH.target[SH.i];
+    if(!(b.good && norm(b.t)===norm(want))){
+      /* ليست التالية: تُرفع قليلاً وتعود إلى موضعها، وتهزّ الشخصيّةُ رأسها */
+      sBad();
+      shelfAnim(0.8, function(u){
+        b.dy=-Math.sin(Math.PI*Math.min(1, u*1.25))*7;
+        SH.ch.shake=Math.round(Math.sin(u*Math.PI*6)*2);
+      }, function(){
+        b.dy=0; SH.ch.shake=0; b.sel=false;
+        SH.hearts--; shelfHud();
+        shelfSay('ليست هذه الكلمة — أُعيدت إلى مكانها');
+        if(SH.hearts<=0){ shelfOver(); return; }
+        SH.busy=false; shelfNextQueued();
+      });
+      return;
+    }
+    sPick();
+    b.st='lift'; b.u=0;
+    shelfAnim(0.28, function(u){ b.u=u; }, function(){
+      b.st='carry';
+      var j=SH.i, s=SH.slots[j];
+      shelfWalk(s.x+s.w/2, function(){
+        b.st='raise'; b.slot=j; b.u=0;
+        shelfAnim(0.42, function(u){ b.u=u; }, function(){
+          b.st='placed'; b.sel=false; s.fill=b;
+          SH.i++; SH.score++;
+          shelfSpark(s.x+s.w/2, shelfYShelf()+SHELF_BH/2);
+          shelfHud();
+          if(SH.i>=SH.target.length) shelfPartDone();
+          else { SH.busy=false; shelfNextQueued(); }
+        });
+      });
+    });
+  });
+}
+function shelfPartDone(){
+  var ay=SH.ay;
+  SH.score+=3; sWin();
+  SH.boxes.forEach(function(b){ if(b.st==='bench'){ b.fade=true; b.q=false; } });   /* الزائدُ يخبو بهدوء */
+  SH.queue=null;
+  ay.p++; SH.i=0;
+  if(ay.p>=ay.parts.length){
+    SH.done++; SH.score+=2;
+    try{ addGems(SHELF_GEMS); SH.gems+=SHELF_GEMS; }catch(e){}
+    SH.flash='أحسنت! 🌟 +'+arNum(SHELF_GEMS)+' 💎';
+  } else SH.flash='أحسنت — والجزءُ التالي';
+  SH.flashT=1.5; SH.rest=1.6; SH.busy=true;
+  shelfHud(); shelfKick();
+}
+function shelfAfterRest(){
+  SH.busy=false;
+  if(SH.ay.p>=SH.ay.parts.length) shelfPickAyah(); else shelfPart();
+}
+/* موضعُ الصندوق: على المِقعد، أو يُرفع إلى اليدين، أو محمولٌ أمام الصدر، أو يُرفع إلى خانته */
+function shelfBoxPos(b){
+  var bx=SH.benchX[b.bi], by=shelfYBench(), hx=SH.ch.x-b.w/2, hy=SH.G-56, s, e;
+  if(b.st==='bench') return { x:bx, y:by+(b.dy||0) };
+  if(b.st==='lift'){ e=shelfEase(b.u); return { x:bx+(hx-bx)*e, y:by+(hy-by)*e }; }
+  if(b.st==='carry') return { x:hx, y:hy };
+  s=SH.slots[b.slot];
+  if(b.st==='raise'){ e=shelfEase(b.u); return { x:hx+(s.x-hx)*e, y:hy+(shelfYShelf()-hy)*e }; }
+  return { x:s.x, y:shelfYShelf() };
+}
+function shelfBoxDraw(c, b){
+  var a=1;
+  if(b.fade){ a=Math.max(0, SH.rest/1.6); if(a<=0.01) return; }
+  var p=shelfBoxPos(b), x=Math.round(p.x), y=Math.round(p.y), w=b.w, h=SHELF_BH, placed=(b.st==='placed');
+  c.globalAlpha=a;
+  if(placed){ c.fillStyle='rgba(255,215,106,.22)'; c.fillRect(x-4, y-4, w+8, h+8); }
+  c.fillStyle=placed ? '#8a6100' : '#0b2f22';                      /* الإطار */
+  c.fillRect(x+2, y, w-4, h); c.fillRect(x, y+2, w, h-4);
+  c.fillStyle='#1f6b4a'; c.fillRect(x+2, y+2, w-4, h-4);           /* القماشُ الأخضر */
+  c.fillStyle=placed ? '#ffd76a' : '#d9b45a';                      /* الحاشيةُ الذهبيّة */
+  c.fillRect(x+2, y+2, w-4, 2); c.fillRect(x+2, y+h-4, w-4, 2);
+  if(b.sel || b.q){ c.strokeStyle='#ffe27a'; c.lineWidth=2; c.strokeRect(x-2, y-2, w+4, h+4); }
+  c.fillStyle='#fff4d6'; c.font=shelfFont(); c.textAlign='center'; c.textBaseline='middle'; c.direction='rtl';
+  c.fillText(b.t, x+w/2, y+h/2+2);
+  c.globalAlpha=1;
+}
+function shelfDraw(){
+  var cv=$('shelfCv'); if(!cv || !SH.W) return;
+  var c=cv.getContext('2d'), W=SH.W, H=SH.H, G=SH.G, L=document.body.classList.contains('light'), i, x;
+  c.setTransform(SH.k,0,0,SH.k,0,0);
+  c.imageSmoothingEnabled=false;
+  /* الجدارُ ونوافذُه المقوّسة وقناديلُه */
+  var g=c.createLinearGradient(0,0,0,G);
+  g.addColorStop(0, L?'#f7ecd6':'#0a1f45'); g.addColorStop(1, L?'#ecd9b0':'#123264');
+  c.fillStyle=g; c.fillRect(-4,-4,W+8,G+4);
+  for(x=30;x<W-20;x+=96){
+    c.fillStyle=L?'#e2c78f':'#0d2a57'; c.fillRect(x, 34, 40, 52); runDisc(c, x+20, 34, 20);
+    c.fillStyle=L?'#f3e3bf':'#163a73'; c.fillRect(x+6, 40, 28, 46);
+    c.fillStyle=L?'#9a7a3a':'#c9a24a'; c.fillRect(x+67, 0, 2, 22);
+    c.fillStyle='#e0b44a'; c.fillRect(x+63, 22, 10, 12); c.fillStyle='#fff1b8'; c.fillRect(x+65, 25, 6, 6);
+  }
+  /* الرفُّ العلويّ بمَساندِه */
+  var ys=G-150;
+  c.fillStyle='#5a3718'; c.fillRect(22, ys+8, 8, 16); c.fillRect(Math.round(W/2)-4, ys+8, 8, 16); c.fillRect(W-30, ys+8, 8, 16);
+  c.fillStyle='#6e4520'; c.fillRect(8, ys, W-16, 9);
+  c.fillStyle='#a06a36'; c.fillRect(8, ys, W-16, 3);
+  /* الخاناتُ الفارغة: التاليةُ ذهبيّة */
+  for(i=0;i<SH.slots.length;i++){
+    var s=SH.slots[i]; if(s.fill || s.x==null) continue;
+    var yy=shelfYShelf(), on=(i===SH.i);
+    c.setLineDash([6,5]); c.lineWidth=on?3:2;
+    c.strokeStyle=on ? '#f2c14e' : (L?'rgba(120,90,30,.45)':'rgba(255,230,160,.35)');
+    c.strokeRect(s.x+1.5, yy+1.5, s.w-3, SHELF_BH-3);
+    c.setLineDash([]);
+  }
+  /* المِقعدُ المكسوّ: قوائمُه على الأرض، والصناديقُ فوق قماشه */
+  var yb=G-50;
+  c.fillStyle='#5a3718';
+  c.fillRect(22, yb+8, 8, G-yb-8); c.fillRect(Math.round(W/2)-4, yb+8, 8, G-yb-8); c.fillRect(W-30, yb+8, 8, G-yb-8);
+  c.fillStyle='#8b5a2b'; c.fillRect(10, yb+2, W-20, 8);
+  c.fillStyle='#1f6b4a'; c.fillRect(10, yb-2, W-20, 6);
+  c.fillStyle='#d9b45a'; c.fillRect(10, yb+4, W-20, 2);
+  /* السجّاد */
+  c.fillStyle=L?'#b8423a':'#5b1f2a'; c.fillRect(-4, G, W+8, H-G+4);
+  c.fillStyle=L?'#d9b45a':'#a8843a'; c.fillRect(-4, G, W+8, 3); c.fillRect(-4, G+11, W+8, 2);
+  /* ما على الرفّ والمِقعد */
+  SH.boxes.forEach(function(b){ if(b.st==='bench' || b.st==='placed') shelfBoxDraw(c, b); });
+  /* الشخصيّة: تنظر إلى جهة مشيها، وتهزّ رأسها عند الخطأ */
+  if(SH.ch){
+    var ch=SH.ch, fr=ch.walk ? (Math.floor(SH.t*8)%2 ? 'a' : 'b') : 'b';
+    var im=runCharImg(fr), cw=im.width*SHELF_PX, chh=im.height*SHELF_PX;
+    var cx=Math.round(ch.x-cw/2+(ch.shake||0)), cy=Math.round(G-chh+SHELF_PX);
+    c.fillStyle='rgba(0,0,0,.2)'; c.fillRect(Math.round(ch.x-18), G+1, 36, 4);
+    c.save();
+    if(ch.face>0){ c.translate(cx+cw, cy); c.scale(-1,1); c.drawImage(im, 0, 0, cw, chh); }
+    else c.drawImage(im, cx, cy, cw, chh);
+    c.restore();
+  }
+  /* المحمولُ أمام الصدر يُرسم فوق الشخصيّة */
+  SH.boxes.forEach(function(b){ if(b.st==='lift' || b.st==='carry' || b.st==='raise') shelfBoxDraw(c, b); });
+  for(i=0;i<SH.parts.length;i++){ var p=SH.parts[i]; c.globalAlpha=Math.min(1, p.l*1.6); c.fillStyle=p.c; c.fillRect(Math.round(p.x), Math.round(p.y), 3, 3); }
+  c.globalAlpha=1;
+  c.textAlign='center'; c.textBaseline='middle'; c.direction='rtl';
+  if(SH.flashT>0 && SH.flash){
+    c.font='900 24px "IBM Plex Sans Arabic",sans-serif';
+    c.lineWidth=6; c.strokeStyle='#0a2a5e'; c.strokeText(SH.flash, W/2, 18);
+    c.fillStyle='#ffe27a'; c.fillText(SH.flash, W/2, 18);
+  }
+  if(SH.toastT>0 && SH.toast){
+    c.font='700 14px "IBM Plex Sans Arabic",sans-serif';
+    var tw=c.measureText(SH.toast).width+24;
+    c.fillStyle='rgba(0,0,0,.6)'; c.fillRect(Math.round(W/2-tw/2), 96, Math.round(tw), 26);
+    c.fillStyle='#ffffff'; c.fillText(SH.toast, W/2, 110);
+  }
+}
+
 $('btnGames').onclick=gamesOpen;
-$('btnGamesBack').onclick=function(){ show('scr-start'); };
+/* رجوعٌ من اختيار المصدر إلى قائمة الألعاب، ومن القائمة إلى الرئيسيّة */
+$('btnGamesBack').onclick=function(){ if(GAME_PICK){ gamesOpen(); return; } show('scr-start'); };
+$('btnShelfQuit').onclick=function(){ cancelAnimationFrame(SH.raf); SH.raf=0; SH.state='idle'; gamesOpen(); };
+$('shelfStage').addEventListener('pointerdown', shelfTap, { passive:false });
+document.addEventListener('visibilitychange', function(){ if(document.hidden) shelfPause(); });
+window.addEventListener('resize', function(){
+  if(curScreen()!=='scr-shelf') return;
+  shelfSize(); shelfDraw();
+});
 $('btnRunQuit').onclick=function(){ cancelAnimationFrame(RUN.raf); RUN.state='idle'; gamesOpen(); };
 /* اللمسُ في أيّ موضعٍ من الشاشة يُقفِز — لا في صندوق الركض وحده */
 document.addEventListener('pointerdown', function(e){ if(curScreen()==='scr-runner') runTap(e); }, { passive:false });
@@ -12295,7 +12775,7 @@ var NAV_BACK={ 'scr-look':'btnLookDone', 'scr-map':'btnBackStart', 'scr-path':'b
   'scr-rev':'btnRevHome', 'scr-revpath':'btnRevQuit', 'scr-build':'btnBuildBack',
   'scr-shop':'btnShopBack', 'scr-board':'btnBoardBack', 'scr-cert':'btnCertBack',
   'scr-badges':'btnBadgesBack', 'scr-bqn':'btnBqnHome',
-  'scr-games':'btnGamesBack', 'scr-runner':'btnRunQuit',
+  'scr-games':'btnGamesBack', 'scr-runner':'btnRunQuit', 'scr-shelf':'btnShelfQuit',
   'scr-settings':'btnSetBack', 'scr-exam':'btnExamHome' };
 function curScreen(){ var e=document.querySelector('.screen.active'); return e?e.id:'scr-start'; }
 /* ===== تنبيهٌ وتأكيدٌ بثيمة التطبيق =====
