@@ -1437,10 +1437,10 @@ body.glow-off .dfpic{animation:none}
 .runtip{text-align:center;color:var(--on3);font-size:13px;font-weight:700;margin-top:6px}
 /* ===== مصدرُ الآيات قبل اللعب: من المحفوظ أو من سورةٍ بعينها ===== */
 .gmsrch{text-align:center;font-size:21px;font-weight:900;color:var(--ttl);margin:2px 0 4px}
-.gmsura{cursor:default}
-.gmsura:active{transform:none}
-.gmsura .gctx select{margin-top:6px;padding:9px 10px;font-size:15px;font-weight:800}
-.gmsura .btn{flex:0 0 auto;margin:0;padding:10px 14px;font-size:15px}
+/* فهرسُ السور على لوحةٍ كفهرس المصحف، تُمرَّر مع الصفحة */
+.gmsuras{background:var(--pnl);border:2px solid var(--pb);border-radius:16px;padding:4px 10px 6px;margin-bottom:14px}
+.gmsuras .mfprow:last-child{border-bottom:0}
+.gmsuras .mfprow .gmhas{color:var(--green);font-size:18px;font-weight:900}
 /* ===== «رفّ الآيات» ===== */
 #shelfCv{display:block;width:100%}
 
@@ -11766,8 +11766,9 @@ var GAMES=[
   { id:'shelf',  ic:'🧺', n:'رفّ الآيات',   d:'رتّبْ صناديقَ كلمات الآية على الرفّ', open:function(src){ shelfOpen(src); } }
 ];
 var GAME_PICK=null;                    /* لعبةٌ يُختار لها المصدرُ الآن */
+var GAME_LIST=false;                   /* وفهرسُ السور مفتوحٌ لها */
 function gamesOpen(){
-  GAME_PICK=null;
+  GAME_PICK=null; GAME_LIST=false;
   var pool=runPool(), h='';
   GAMES.forEach(function(g){
     var st=gameStats(g.id);
@@ -11784,18 +11785,9 @@ function gamesOpen(){
 function gamePick(id){
   var g=null; GAMES.forEach(function(x){ if(x.id===id) g=x; });
   if(!g) return;
-  GAME_PICK=id;
-  var st=gameStats(id), pool=runPool(), m=memAll(), memN=pool.mem ? pool.items.length : 0, k;
-  var def=parseInt(st.sura,10);
-  if(!(def>=1 && def<=114)){
-    def=(curSurah && curSurah.n) || 0;
-    if(!def) for(k in m){ if((m[k]||[]).length){ def=parseInt(k,10); break; } }
-    if(!def) def=1;
-  }
-  var opts=SURAHS.map(function(s){
-    var has=(m[s.n]||[]).length>0;
-    return '<option value="'+s.n+'"'+(s.n===def?' selected':'')+'>'+arNum(s.n)+'. '+esc(s.name)+(has?' ✓':'')+'</option>';
-  }).join('');
+  GAME_PICK=id; GAME_LIST=false;
+  var st=gameStats(id), pool=runPool(), memN=pool.mem ? pool.items.length : 0;
+  var last=surahBy(parseInt(st.sura,10));
   $('gamesBody').innerHTML=
     '<div class="gmsrch">'+g.ic+' '+g.n+'</div>'+
     '<p class="gmnote">من أين تأتي الآيات؟</p>'+
@@ -11803,16 +11795,41 @@ function gamePick(id){
       '<span class="gctx"><b>من محفوظي</b><i>'+
         (memN ? ('آياتٌ من كلّ ما حفظتَ — '+arNum(memN)+' آية') : 'لم يُسجَّل لك محفوظٌ بعد — فمن الفاتحة وقصار السور')+
       '</i></span><span class="gcgo">❮</span></button>'+
-    '<div class="goalcard gmsura'+(st.src==='sura'?' now':'')+'"><span class="gcic">📖</span>'+
-      '<span class="gctx"><b>سورةٌ أختارها</b><select id="gsSel" aria-label="اختر السورة">'+opts+'</select></span>'+
-      '<button type="button" class="btn primary" id="gsGo">▶️ ابدأ</button></div>'+
-    '<p class="gmnote">علامةُ ✓ بجانب السورة: حفظتَ منها شيئاً</p>';
+    '<button type="button" class="goalcard'+(st.src==='sura'?' now':'')+'" id="gsSura"><span class="gcic">📖</span>'+
+      '<span class="gctx"><b>سورةٌ أختارها</b><i>'+
+        (last ? ('آخرُ ما اخترتَ: سورة '+esc(last.name)) : 'من فهرس السور')+
+      '</i></span><span class="gcgo">❮</span></button>';
   $('gsMem').onclick=function(){ st.src='mem'; saveDB(); g.open('mem'); };
-  $('gsGo').onclick=function(){
-    var n=parseInt($('gsSel').value,10);
+  $('gsSura').onclick=function(){ gameSuraList(g); };
+  window.scrollTo(0,0);
+}
+/* فهرسُ السور للّعب: على هيئة فهرس المصحف (رقمُ السورة في دائرة، واسمُها، وجزؤها
+   وعددُ آياتها)، بلا ما لا يلزم هنا — لا تبويبَ الأجزاء، ولا الذهابَ برقم الصفحة،
+   ولا رقمَ الصفحة. وعلامةُ ✓ لما حفظ منها، وآخرُ ما اختاره مُضاءٌ في وسط الشاشة.
+   ولمسةٌ على السورة تبدأ اللعب */
+function gameSuraList(g){
+  var st=gameStats(g.id), m=memAll(), cur=parseInt(st.sura,10)||0, h='';
+  GAME_LIST=true;
+  SURAHS.forEach(function(s){
+    var has=(m[s.n]||[]).length>0;
+    h+='<button type="button" class="mfprow'+(s.n===cur?' here':'')+'" data-sn="'+s.n+'">'+
+         '<span class="n">'+arNum(s.n)+'</span>'+
+         '<span class="t"><b>سورة '+esc(s.name)+'</b><i>'+juzLabel(s)+' • آياتها '+arNum(s.ayat.length)+'</i></span>'+
+         (has ? '<span class="p gmhas" aria-label="حفظتَ منها">✓</span>' : '')+
+       '</button>';
+  });
+  var B=$('gamesBody');
+  B.innerHTML='<div class="gmsrch">'+g.ic+' '+g.n+'</div>'+
+    '<p class="gmnote">📖 اختر السورة — وعلامةُ ✓ لما حفظتَ منها</p>'+
+    '<div class="gmsuras" id="gsList">'+h+'</div>';
+  $('gsList').onclick=function(e){
+    var b=e.target.closest && e.target.closest('[data-sn]'); if(!b) return;
+    var n=parseInt(b.getAttribute('data-sn'),10);
     st.src='sura'; st.sura=n; saveDB(); g.open(n);
   };
-  window.scrollTo(0,0);
+  var here=B.querySelector('.mfprow.here');
+  if(here) setTimeout(function(){ try{ here.scrollIntoView({block:'center'}); }catch(e){} }, 0);
+  else window.scrollTo(0,0);
 }
 function runOpen(src){
   RUN.pool=gamePool(src==null ? 'mem' : src);
@@ -12458,7 +12475,11 @@ function shelfDraw(){
 
 $('btnGames').onclick=gamesOpen;
 /* رجوعٌ من اختيار المصدر إلى قائمة الألعاب، ومن القائمة إلى الرئيسيّة */
-$('btnGamesBack').onclick=function(){ if(GAME_PICK){ gamesOpen(); return; } show('scr-start'); };
+$('btnGamesBack').onclick=function(){
+  if(GAME_LIST && GAME_PICK){ gamePick(GAME_PICK); return; }   /* من الفهرس إلى اختيار المصدر */
+  if(GAME_PICK){ gamesOpen(); return; }                         /* ومنه إلى قائمة الألعاب */
+  show('scr-start');
+};
 $('btnShelfQuit').onclick=function(){ cancelAnimationFrame(SH.raf); SH.raf=0; SH.state='idle'; gamesOpen(); };
 $('shelfStage').addEventListener('pointerdown', shelfTap, { passive:false });
 document.addEventListener('visibilitychange', function(){ if(document.hidden) shelfPause(); });
