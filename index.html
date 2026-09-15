@@ -1474,6 +1474,15 @@ body.glow-off .dfpic{animation:none}
   /* الرئيسيّةُ على قدر الشاشة (homeFit): تُصغَّر عناصرُها بنسبةٍ واحدة إن زادت،
      سوى زرّ الاختبار العائم فهو ثابتٌ في ركنه */
   body.homelock{overflow:hidden}
+  /* الشاشةُ القصيرةُ أو الضيّقة (homeFit): الزرّان العائمان أصغر — فلا يقع طرفُ
+     بطاقة المراجعة خلف «اختبر نفسي»، ولا يتلاصق هو و«تحدّي اليوم» */
+  body.fpsm .examfp{padding:4px 11px 4px 5px;gap:5px}
+  body.fpsm .dailyfp{padding:4px 5px 4px 11px;gap:5px}
+  body.fpsm .fpwrap,body.fpsm .dfpwrap{width:32px;height:32px}
+  body.fpsm .fpwrap::before{inset:10px}
+  body.fpsm .iceflame{width:19px;height:25px}
+  body.fpsm .dfpic{font-size:20px}
+  body.fpsm .fplbl,body.fpsm .dfplbl{font-size:12.5px}
 }
 @media(max-width:520px){
   h1{font-size:25px}
@@ -10515,33 +10524,49 @@ window.addEventListener('resize', function(){ try{ certFit(); playFit(); qScreen
    على الهاتف الصغير تزيد قليلاً (بطاقةٌ ينكسر سطرُها) فتُمرَّر. فتُصغَّر
    عناصرُها بنسبةٍ واحدةٍ على قدر الزيادة وتُقفل، وما احتاج دون ٨٠٪ يُترك يُمرَّر. */
 function homeFit(){
-  var s=$('scr-start'), B=document.body, D=document.documentElement;
+  var s=$('scr-start'), B=document.body, D=document.documentElement, W=s && s.parentNode;
   if(!s) return;
   var kids=[].filter.call(s.children, function(c){ return !c.classList.contains('examfp') && !c.classList.contains('dailyfp'); }), i;
   function setZ(v){ for(i=0;i<kids.length;i++) kids[i].style.zoom=v; }
-  setZ(''); B.classList.remove('homelock');
+  setZ(''); B.classList.remove('homelock'); B.classList.remove('fpsm');
+  if(W) W.style.paddingBottom='';
   if(!s.classList.contains('active')) return;
   if(!(window.matchMedia && window.matchMedia('(max-width:820px)').matches)) return;
-  var vh=window.innerHeight, ex=$('btnExam');
-  /* «يسع» أمران: لا تمرير، ولا يقع آخرُ ما في الرئيسيّة تحت زرّ «اختبر نفسي»
-     العائم — فالصفحةُ قد تسع الشاشةَ والزرُّ يغطّي أسفلَ بطاقة المراجعة */
+  var vh=window.innerHeight, fps=[$('btnExam'), $('btnDaily')];
+  /* أعلى الزرّين العائمين الظاهرَين — «تحدّي اليوم» قد يعلو «اختبر نفسي» بحجمه */
+  function fpTop(){
+    var t=Infinity, j;
+    for(j=0;j<fps.length;j++) if(fps[j] && fps[j].offsetHeight) t=Math.min(t, fps[j].getBoundingClientRect().top);
+    return t;
+  }
+  function lowest(){
+    var low=0, j;
+    for(j=0;j<kids.length;j++) if(kids[j].offsetHeight) low=Math.max(low, kids[j].getBoundingClientRect().bottom);
+    return low;
+  }
+  /* الزرّان في ركنين متقابلين: على الشاشة الضيّقة يتلاصقان أو يتراكبان */
+  function clash(){
+    var a=fps[0], b=fps[1];
+    if(!a || !b || !a.offsetHeight || !b.offsetHeight) return false;
+    var ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect();
+    return ra.right+6>rb.left && rb.right+6>ra.left;
+  }
+  /* «يسع» أمران: لا تمرير، ولا يقع آخرُ ما في الرئيسيّة تحت زرٍّ عائم
+     — فالصفحةُ قد تسع الشاشةَ والزرُّ يغطّي أسفلَ بطاقة المراجعة */
   function fits(){
     if(D.scrollHeight>vh+1) return false;
-    if(!ex || !ex.offsetHeight) return true;
-    var top=ex.getBoundingClientRect().top, low=0, j;
-    for(j=0;j<kids.length;j++){
-      if(!kids[j].offsetHeight) continue;
-      low=Math.max(low, kids[j].getBoundingClientRect().bottom);
-    }
-    return low<=top-8;
+    var t=fpTop();
+    return t===Infinity || lowest()<=t-8;
   }
-  var over=Math.max(D.scrollHeight-vh, 0);
+  if(clash()) B.classList.add('fpsm');
   if(fits()){ B.classList.add('homelock'); return; }
-  if(ex && ex.offsetHeight){
-    var lowest=0, top0=ex.getBoundingClientRect().top;
-    for(i=0;i<kids.length;i++) if(kids[i].offsetHeight) lowest=Math.max(lowest, kids[i].getBoundingClientRect().bottom);
-    over=Math.max(over, lowest-(top0-8));             /* ما تحت الزرّ زيادةٌ كالتمرير */
+  /* أوّلُ العلاج تصغيرُ الزرّين العائمين، فلا يُمسّ ما يُقرأ إن كفى */
+  if(!B.classList.contains('fpsm')){
+    B.classList.add('fpsm');
+    if(fits()){ B.classList.add('homelock'); return; }
   }
+  var over=Math.max(D.scrollHeight-vh, 0), top0=fpTop();
+  if(top0!==Infinity) over=Math.max(over, lowest()-(top0-8));   /* ما تحت الزرّ زيادةٌ كالتمرير */
   var ch=0;
   for(i=0;i<kids.length;i++){
     var cs=getComputedStyle(kids[i]);
@@ -10550,14 +10575,21 @@ function homeFit(){
   if(!ch) return;
   /* تُكتب على كلّ عنصرٍ مباشرةً كما في شاشتَي النتيجة والسؤال. والنسبةُ
      المحسوبةُ تقريب: بطاقتا اليوم لا تصغران معها، فيُنقص منها قليلاً قليلاً
-     حتى تسع الشاشة، ولا يُنزل دون ٨٠٪ */
+     حتى تسع الشاشة، ولا يُنزل دون ٧٥٪ */
   var k=Math.min(0.99, (ch-over-4)/ch);
-  while(k>=0.8){
+  while(k>=0.75){
     setZ(k.toFixed(4));
     if(fits()){ B.classList.add('homelock'); return; }
     k-=0.03;
   }
   setZ('');                                         /* لا يسعه ما يُقرأ: يُترك يُمرَّر */
+  /* ويُمرَّر حتى يعلو آخرُه الزرّين العائمين: كان الهامشُ على قدر شريط التنقّل
+     وحده، فيبقى طرفُ بطاقة المراجعة خلف «اختبر نفسي» ولو مُرِّرت الصفحةُ إلى آخرها */
+  var t=fpTop();
+  if(W && t!==Infinity){
+    var need=Math.ceil(vh-t+8), has=parseFloat(getComputedStyle(W).paddingBottom)||0;
+    if(need>has) W.style.paddingBottom=need+'px';
+  }
 }
 /* ===== شاشاتُ النتيجة على قدر الجوال =====
    شاشةُ اللعب واحدة: أسئلةٌ ثمّ نتيجةٌ بمسجدٍ وأزرار، والنتيجةُ أطولُ من
