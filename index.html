@@ -9702,6 +9702,14 @@ function bqnOnbWire(){
   try{ foldBind($('onbBody')); }catch(e){}
   try{ priorPanelWire('pO',function(){ wirdOnbSync(); onbGate(); }); }catch(e){}
   try{ wirdOnbSync(); }catch(e){}
+  /* اختارها: يُسجَّل محفوظُه كلُّه وتُعدّ خطّتُه مختارة، ثمّ تُعاد اللوحةُ فتُطوى
+     لوحةُ التأشير وتبقى أمامه خطّةُ مراجعته وحدَها */
+  if($('onbHafiz')) $('onbHafiz').onclick=function(){
+    priorModeSet('all');
+    curP().planChosen=1; saveDB();
+    try{ navToast('🏅 سُجّل لك المصحفُ كاملاً — وبقيت خطّةُ مراجعتك'); }catch(e){}
+    onbShow(ONB.i);
+  };
   var mb=$('onbPMode');
   if(mb){
     var ms=mb.querySelectorAll('[data-pmode]'), z;
@@ -9731,7 +9739,9 @@ function onbBlocked(){
   if(ONB.i===0 && !(profile.name||'').trim()) return '✍️ اكتب اسمك أوّلاً';
   if(ONB.i===1){
     if(!curP().planChosen) return '🧭 اختر خطة حفظك أوّلاً — من قسمَي الخطط أعلاه';
-    if(!onPlan() && !selfDirPicked()) return '🧭 وبقيت واحدة: من أين تبدأ — من الناس أم من البقرة؟';
+    /* الحافظُ لا يُسأل من أين يبدأ حفظُه — لا حفظَ أمامه */
+    if(curP().priorMode!=='all' && !onPlan() && !selfDirPicked())
+      return '🧭 وبقيت واحدة: من أين تبدأ — من الناس أم من البقرة؟';
     if(!curP().priorMode)  return '📌 اختر: أبدأ من جديد، أو أسجّل حفظي السابق';
     if(REV.on==null && !revOff())
       return '📖 وبقيت واحدة: ما خطة مراجعتك؟';
@@ -9938,6 +9948,9 @@ function priorModeSet(v){
     for(var j=1;j<=30;j++) p.priorJ[j]=1;
     try{ priorApply(); }catch(e){}
     try{ revLoad(); }catch(e){}
+    /* وحاجةُ الحافظ وردٌ يوميّ يتعاهد به محفوظَه، فهو افتراضُه بعدها —
+       وله أن يبدّله في السؤال نفسِه */
+    try{ REV.on=true; REV.wird=true; p.noRev=false; revSave(); }catch(e){}
   }
   saveDB();
 }
@@ -10375,8 +10388,8 @@ function wirdBody(){
      '<div class="onbopts">'+
      '<button type="button" class="onbopt'+((!off&&on!==true&&revIsWird())?' sel':'')+'" data-wird="0">'+
        '<span class="oe">'+((!off&&on!==true&&revIsWird())?'✅':'☀️')+'</span>'+
-       '<span class="ot"><b>راجِعْ ما أحفظه في التطبيق</b>'+
-       '<i>كلُّ مقطعٍ تحفظه يعود إليك في موعده</i></span></button>';
+       '<span class="ot"><b>راجِعْ جديدَ ما أحفظه من التطبيق</b>'+
+       '<i>كلُّ مقطعٍ تحفظه في التطبيق يعود إليك في موعده</i></span></button>';
   /* الوردُ لا يُعرض إلّا لمن له محفوظٌ سابقٌ يمشي فيه */
   if(has) h+=
      '<button type="button" class="onbopt'+((!off&&on===true)?' sel':'')+'" data-wird="1">'+
@@ -12121,6 +12134,19 @@ function onbShow(i){
           fb.insertAdjacentHTML('beforeend',
             '<div class="lbl" id="onbDirQ" style="margin:16px 0 6px">🧭 من أين تبدأ؟</div>'+selfDirHTML());
       }
+    }catch(e){}
+    /* بطاقةُ الحافظ في رأس الصفحة، بعد لفّ الأحجام في طيّتها لا قبله —
+       وإلّا التُفّت هي في الطيّة مكانَها. ومن أتمّ المصحفَ لا خطّةَ حفظٍ له،
+       فلا يُمرَّر على سؤالٍ لا يعنيه ثمّ يُطلب منه جوابُه */
+    try{
+      var isAllO=(curP().priorMode==='all');
+      B.insertAdjacentHTML('afterbegin',
+        '<div class="onbopts" style="margin-bottom:14px">'+
+          '<button type="button" class="onbopt'+(isAllO?' sel':'')+'" id="onbHafiz">'+
+            '<span class="oe">'+(isAllO?'✅':'🏅')+'</span>'+
+            '<span class="ot"><b>أنا حافظٌ لكتاب الله كاملاً</b>'+
+            '<i>لا خطّةَ حفظٍ لي — يُسجَّل المصحفُ كلُّه محفوظاً، وتُضبط خطّةُ مراجعتك</i>'+
+          '</span></button></div>');
     }catch(e){}
     bqnOnbWire();
     selfDirWire(B, function(){ onbShow(ONB.i); });
