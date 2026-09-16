@@ -943,6 +943,8 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
   display:flex;align-items:center;justify-content:center}
 .gcedit:active{transform:translateY(-50%) scale(.92)}
 .gcedit.sel{background:var(--psel);border-color:var(--gold)}
+/* حذفُ المسار الحرّ: إلى جانب القلم، بلونٍ ينبّه أنّه لا رجعةَ فيه */
+.gcdel{left:60px;border-color:#b3402f;color:#b3402f}
 /* ===== ستارُ التحميل =====
    شعارُ المسجد باهتاً، يمتلئ نوراً من أسفله إلى أعلاه ثمّ يخبو —
    فيُعلم أنّ شيئاً يجري، ولا يُرى بعثرةُ العناصر قبل أن تستقرّ. */
@@ -990,6 +992,10 @@ body.light .sp-lit{fill:#1f92d4}
 .addcircle:active{transform:scale(.93)}
 /* شريطُ تبويبات المراجعة يتنفّس فوق العنوان */
 #revTabs{margin:2px 0 10px}
+/* نقطةُ التنبيه على تبويبٍ وراءه عملٌ لم يتمّ */
+.onbtab{position:relative}
+.tabdot{position:absolute;top:5px;inset-inline-end:7px;width:9px;height:9px;border-radius:50%;
+  background:#e0483a;box-shadow:0 0 0 2px var(--pnl)}
 /* بطاقات الخيارات أقصر قليلاً حتى تقلّ الحاجة للتمرير */
 #revScope .onbopt{padding:10px 12px}
 #revScope .onbopt .oe{font-size:22px}
@@ -3871,7 +3877,12 @@ function celeDay(){
 }
 function addGems(n){ curP().gems=(curP().gems||0)+n; saveDB(); }
 function noteStage(){ todayBox().stages++; addGems(5); addMat("wood",1); creditDay(); checkBadges(); }
-function noteSeg(){ todayBox().segs++; addGems(15); addMat("stone",2); creditDay(); checkBadges(); }
+function noteSeg(){
+  todayBox().segs++; addGems(15); addMat("stone",2); creditDay(); checkBadges();
+  /* إتمامُ حفظ اليوم يُعلَّم ليومه: فإن زاد بعده وفتح مقطعاً جديداً ولم يُتمّه،
+     بقيت علامةُ اليوم خضراءَ كما هي — فالزيادةُ لا تنقض ما تمّ */
+  try{ var T=bqnToday(); if(T ? T.hifzDone : goalHifzMet()) todayBox().hifz=1; }catch(e){}
+}
 /* الأجر بالأوجه المراجَعة لا بعدد الجلسات — فلا يربح من قسّم وردَه قِطعاً صغيرة */
 function noteReview(perfect,pages){
   var n=Math.max(1, pages||1);
@@ -8271,19 +8282,17 @@ var REV_SUB={ due:'ما استحقّ اليوم من خطّتك ومن محفو�
               free:'نطاقٌ تختاره بنفسك وتمشي عليه جلسةً جلسة',
               mine:'ما حفظتَه قبل التطبيق — يمشي وردُك فيه وجهاً وجهاً' };
 var REV_TAB='';
-/* يُفتح على البابِ الذي فيه عملُ اليوم، لا على الأوّل دائماً */
-function revTabDefault(){
-  try{ var T=bqnToday(); if(T && T.r) return 'due'; }catch(e){}
-  try{ if(dueSegs().length) return 'due'; }catch(e){}
-  try{ if(wirdOn() && revSessions('wird').length) return 'mine'; }catch(e){}
-  try{ if(curP().rev && !revIsWird()) return 'free'; }catch(e){}
-  return 'due';
-}
+/* بابُ الدخول دائماً «المقرَّر اليوميّ»: هو موضعُ عمل اليوم، وما سواه يُقصد قصداً */
+function revTabDefault(){ return 'due'; }
 function renderRevTabs(){
   var bar=$('revTabs'); if(!bar) return;
+  /* نقطةٌ حمراءُ على البابِ الذي وراءه عملٌ لم يتمّ، فينتبه إليه قبل أن يدخل */
+  var dot={};
+  try{ dot.mine=wirdPending(); }catch(e){}
   bar.innerHTML=REV_TABS.map(function(z){
     return '<button type="button" class="onbtab'+(REV_TAB===z[0]?' sel':'')+'" '+
-      'data-rt="'+z[0]+'">'+z[1]+'</button>';
+      'data-rt="'+z[0]+'">'+z[1]+
+      (dot[z[0]] ? '<span class="tabdot" aria-label="عندك عملٌ هنا"></span>' : '')+'</button>';
   }).join('');
   var bs=bar.querySelectorAll('.onbtab'), i;
   for(i=0;i<bs.length;i++) bs[i].onclick=function(){
@@ -8344,7 +8353,9 @@ function renderRevPlanBody(){
           ' • '+arCount(REV.size,C_PAGE)+' في الجلسة</i></span>'+
       '<span class="gcgo">❮</span></button>'+
       (savedFree ? ('<button type="button" class="gcedit'+(freeOpen?' sel':'')+'" id="btnFreeRev" '+
-                    'aria-label="تعديل النطاق" title="تعديل النطاق">✏️</button>') : '')+
+                    'aria-label="تعديل النطاق" title="تعديل النطاق">✏️</button>'+
+                    '<button type="button" class="gcedit gcdel" id="btnFreeDel" '+
+                    'aria-label="حذف المسار" title="حذف المسار">🗑️</button>') : '')+
       '</div>';
   }
   if(!REV_TAB) REV_TAB=revTabDefault();
@@ -8447,6 +8458,15 @@ function renderRevPlanBody(){
   for(var j=0;j<rp.length;j++) rp[j].onclick=function(){ REV.per=parseInt(this.getAttribute('data-rp'),10); revSave(); renderRevPlan(); };
   if($('btnFreeRev')) $('btnFreeRev').onclick=function(){
     curP().freeRev=!curP().freeRev; saveDB(); renderRevPlan();
+  };
+  /* حذفُ المسار الحرّ الجاري: نطاقُه وتقدّمُه — ويبقى وردُ محفوظاتك ومقرَّرُ اليوم كما هما */
+  if($('btnFreeDel')) $('btnFreeDel').onclick=function(){
+    uiAsk('حذف مسار المراجعة الحرّة الحاليّ وما مشيتَ فيه؟\nولك أن تضبط نطاقاً جديداً متى شئت.', function(ok){
+      if(!ok) return;
+      revFreeEnd(); revSave();
+      REV_TAB='free'; renderRevPlan();
+      try{ navToast('حُذف مسارُ المراجعة الحرّة'); }catch(e){}
+    },'🗑️');
   };
   if($('btnRevCont')) $('btnRevCont').onclick=function(){
     REV.mode='free';
@@ -9704,6 +9724,8 @@ function beginDueSession(){
 }
 /* تسميع صفحة تلو صفحة، ثم الأسئلة */
 function revStartPage(){
+  /* من أين جاء إلى التسميع؟ يُحفظ ليُردّ إليه عند الخروج بـ✕ لا إلى الفهرس */
+  try{ if(curScreen()!=='scr-play') REV.back=curScreen(); }catch(e){}
   var P=REV.pages[REV.pi];
   if(P==null){ beginRevQuiz(); return; }
   var pcs=pageScopePieces(P);
@@ -10972,19 +10994,21 @@ function renderHomeCards(){
   if(!hc||!rc) return;
   var T=null; try{ T=bqnToday(); }catch(e){}
 
-  /* ١) الحفظ */
-  var hTxt, hDone;
+  /* ١) الحفظ — وما تمّ اليوم يبقى تامّاً ولو زاد بعده وفتح مقطعاً لم يُتمّه */
+  var hTxt, hDone, dayH=false;
+  try{ dayH=(todayBox().hifz===1); }catch(e){}
   if(T){
-    hDone=!!T.hifzDone;
+    hDone=!!T.hifzDone || dayH;
     hTxt = !T.h ? 'لا حفظ جديد اليوم'
-         : hDone ? ('أتممتَه — '+bqnLabel(T.h))
+         : T.hifzDone ? ('أتممتَه — '+bqnLabel(T.h))
+         : dayH ? 'أتممتَ حفظ اليوم — ولك أن تزيد'
          : bqnLabel(T.h);
   } else {
     var nx=null; try{ nx=selfNext(); }catch(e){}
-    hDone=false; try{ hDone=goalHifzMet(); }catch(e){}
+    hDone=dayH; try{ hDone=goalHifzMet()||dayH; }catch(e){}
     hTxt = !nx ? 'أتممتَ كلَّ ما في نطاقك — وسّع الأجزاء من الإعدادات'
          : (esc(nx.s.name)+' '+arNum(nx.g[0]+1)+' — '+arNum(nx.g[1]));
-    if(hDone && nx) hTxt='أتممتَ حفظ اليوم — والتالي: '+esc(nx.s.name)+' '+arNum(nx.g[0]+1)+' — '+arNum(nx.g[1]);
+    if(hDone && nx) hTxt='أتممتَ حفظ اليوم — ولك أن تزيد • التالي: '+esc(nx.s.name)+' '+arNum(nx.g[0]+1)+' — '+arNum(nx.g[1]);
   }
   $('cardHifzTxt').innerHTML=hTxt;
   $('cardHifzIc').textContent=hDone?'✅':'📖';
@@ -11235,7 +11259,16 @@ $('btnBackStart').onclick=function(){ show('scr-start'); };
 $('mapHome').onclick=function(){ renderPlayers(); show('scr-start'); };
 $('mapHome').onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); this.onclick(); } };
 $('btnBackMap').onclick=function(){ if(!openJuz) openJuz=(curSurah?curSurah.juz:Math.max(SET.juzFrom,SET.juzTo)); renderMap(); show('scr-map'); };
-$('btnQuit').onclick=function(){ if(curSurah){ renderPath(); show('scr-path'); } else { renderMap(); show('scr-map'); } };
+/* الخروجُ من جلسة المراجعة يردّه إلى موضعه منها: شاشةُ المراجعة أو مسارُها —
+   كان يردّه إلى فهرس السور أو إلى الرئيسيّة، وليس من حيث جاء */
+function revBackGo(){
+  if(REV && REV.back==='scr-revpath'){ try{ renderRevPath(); }catch(e){} show('scr-revpath'); return; }
+  startRevPlan();
+}
+$('btnQuit').onclick=function(){
+  if(S && S.rev && S.rev!=='exam'){ revBackGo(); return; }
+  if(curSurah){ renderPath(); show('scr-path'); } else { renderMap(); show('scr-map'); }
+};
 $('xQuit').onclick=function(){
   if(S && S.rev==='exam'){ examQuitAsk(); return; }
   $('btnQuit').click();
@@ -13396,9 +13429,8 @@ function navBack(){
   /* ٣) داخل سؤال: كما لو ضغط ✕ */
   if(scr==='scr-play'){
     if(S && S.rev){
-      if(S.rev==='exam'){ examQuitAsk(); }
-      else if(REV && REV.due){ renderPlayers(); show('scr-start'); }
-      else { renderRevPath(); show('scr-revpath'); }
+      if(S.rev==='exam') examQuitAsk();
+      else revBackGo();                       /* إلى موضعه من المراجعة */
     } else $('btnQuit').click();
     return true;
   }
