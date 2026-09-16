@@ -2230,7 +2230,9 @@ body.glow-off .dfpic{animation:none}
       <button class="btn red big" id="btnReset" style="margin-top:10px">🗑️ تصفير التقدّم</button>
       </div>
     </div>
-    <button class="btn primary big" id="btnSetBack" style="margin:0">✅ حفظ</button>
+    <!-- مخفيٌّ: كلُّ إعدادٍ يُحفظ ساعةَ تغييره، والشريطُ السفليّ بابُ الخروج.
+         ويبقى موصولاً ليضغطه زرُّ الرجوع في الجهاز فيُنجز عملَ المغادرة -->
+    <button class="btn primary big" id="btnSetBack" hidden style="margin:0">✅ حفظ</button>
     <div class="waqfbox">
       وقف لله تعالى — صدقة جارية عن أمي <b>لمياء قباني</b> · تطوير: زهير النموس
       <div class="vstamp" id="vStamp"></div>
@@ -5730,9 +5732,12 @@ function syncTabs(id){
 }
 function show(id){
   recReset();
+  var from=curScreen();      /* من أين خرج؟ لتُنجَز أعمالُ المغادرة وإن خرج من الشريط */
   var s=document.querySelectorAll('.screen');
   for(var i=0;i<s.length;i++) s[i].classList.remove('active');
   $(id).classList.add('active');
+  /* غادر الإعدادات: يُعتمد ما أشّره من حفظٍ سابق وتُعاد الجدولة، ولو خرج من الشريط */
+  if(from==='scr-settings' && id!=='scr-settings'){ try{ settingsCommit(); }catch(e){} }
   if(id==='scr-start'){ try{ renderHome(); }catch(e){} }
   try{ syncTabs(id); }catch(e){}
   document.body.classList.toggle('bgrest', id!=='scr-start');   /* الخلفيّةُ تتحرّك في الرئيسيّة وحدها */
@@ -12201,11 +12206,44 @@ $('exGo').onclick=function(){
 $('btnSettings').onclick=$('btnSettings2').onclick=function(){ fillSettings(); show('scr-settings'); };
 /* أشّر حفظاً سابقاً في الإعدادات ولم يُعتمد؟ يُعتمد عند الحفظ.
    وكان المعالجُ وحدَه يعتمده، فمن أشّر هنا ضاع تأشيرُه. */
+/* عملُ المغادرة: يُنجَز أيّاً كان بابُ الخروج — زرُّ الرجوع في الجهاز أو
+   الشريطُ السفليّ — إذ لم يبقَ في الشاشة زرٌّ يُضغط. ولا يُعاد في النداء الواحد */
+/* حارسُ تداخلٍ لا حارسُ وقت: يُرفع في حينه. وكان يُرفع بعد مهلة، فإذا وقع
+   خروجان في نبضةٍ واحدة ابتلع الثانيَ فلم يُعتمد شيء. وإعادةُ العمل مأمونة:
+   المحفوظُ السابق لا يُسجَّل مرّتين، والبشارةُ تُفرَّغ قبل عرضها. */
+var SET_LEAVING=false;
+function settingsCommit(){
+  if(SET_LEAVING) return;
+  SET_LEAVING=true;
+  try{
+    if(curP().priorMode==='has' && PRIOR_COMMIT){ try{ PRIOR_COMMIT(); }catch(e){} }
+    try{ priorCeleFlush(); }catch(e){}
+    readSettings(); ensureAllSchedules(); openJuz=0; renderPlayers();
+  }finally{ SET_LEAVING=false; }
+}
 $('btnSetBack').onclick=function(){
-  if(curP().priorMode==='has' && PRIOR_COMMIT){ try{ PRIOR_COMMIT(); }catch(e){} }
-  try{ priorCeleFlush(); }catch(e){}
-  readSettings(); ensureAllSchedules(); openJuz=0; renderPlayers();
+  settingsCommit();
   if(curSurah&&inRange(curSurah)) openSurah(curSurah.n); else openSurah(defaultSurah().n); };
+/* لا زرَّ حفظٍ في الإعدادات: كلُّ تغييرٍ يُحفظ ساعتَه. والقراءةُ خفيفةٌ تُجرى
+   فوراً، وما يثقل — جدولةُ المراجعة وصفُّ اللاعبين — يُؤجَّل لحظةً فلا يُعاد
+   مع كلّ نقرةٍ في قائمةٍ يُقلّبها */
+var SET_T=0, SET_TOAST=0;
+(function(){
+  var sc=$('scr-settings'); if(!sc) return;
+  sc.addEventListener('change', function(e){
+    var t=e.target;
+    if(!t || !/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName||'')) return;
+    try{ readSettings(); }catch(err){}
+    if(SET_T) clearTimeout(SET_T);
+    SET_T=setTimeout(function(){
+      SET_T=0;
+      try{ ensureAllSchedules(); }catch(err){}
+      try{ openJuz=0; renderPlayers(); }catch(err){}
+    }, 400);
+    var now=Date.now();
+    if(now-SET_TOAST>1200){ SET_TOAST=now; try{ navToast('✅ حُفظ'); }catch(err){} }
+  });
+})();
 $('btnHelp').onclick=function(){ $('help').hidden=false; };
 $('btnIndex').onclick=function(){ if(!openJuz) openJuz=(curSurah?curSurah.juz:Math.max(SET.juzFrom,SET.juzTo)); renderMap(); show('scr-map'); };
 $('btnShop').onclick=function(){ shopFrom(''); shopCat=''; renderShop(); show('scr-shop'); };
