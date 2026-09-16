@@ -3386,29 +3386,52 @@ window.addEventListener('resize', function(){
    الطفلُ يقرأ الوجهَ ولا يلمس الشاشة، فتُطفئها مهلةُ الجهاز في وسط آية. فيُطلب قفلُ
    الشاشة ما دام الوجهُ مفتوحاً، ويُطلق عند إغلاقه فتعود مهلةُ الجهاز كما كانت.
    والنظامُ يُطلق القفلَ إذا غاب التطبيق، فيُعاد طلبُه عند العودة. */
-var WAKE=null;
+var WAKE=null, WAKE_AT=0, WAKE_TIMER=0;
+var WAKE_IDLE_MS=600000;                       /* عشرُ دقائق بلا لمس */
+/* المواضعُ التي تُبقى فيها الشاشةُ مضاءة: وجهُ المصحف، وشاشةُ الدرس */
+function wakeEligible(){
+  try{
+    if($('mfSheet') && !$('mfSheet').hidden) return true;
+    return curScreen()==='scr-play';
+  }catch(e){ return false; }
+}
 function wakeOn(){
   try{
     if(!(navigator.wakeLock && navigator.wakeLock.request)) return;   /* متصفّحٌ لا يدعمه */
+    WAKE_AT=Date.now();
     if(WAKE || (SET && SET.wake===false)) return;
     navigator.wakeLock.request('screen').then(function(s){
-      WAKE=s;
+      WAKE=s; WAKE_AT=Date.now();
       try{ s.addEventListener('release', function(){ WAKE=null; }); }catch(e){}
+      if(!WAKE_TIMER) WAKE_TIMER=setInterval(wakeTick, 30000);
     })['catch'](function(){});                                        /* رُفض الطلب: لا يضرّ */
   }catch(e){}
 }
 function wakeOff(){
   try{
+    if(WAKE_TIMER){ clearInterval(WAKE_TIMER); WAKE_TIMER=0; }
     if(!WAKE) return;
     var s=WAKE; WAKE=null;
     var p=s.release(); if(p && p['catch']) p['catch'](function(){});
   }catch(e){}
 }
+/* نُسي الوجهُ مفتوحاً ومضى صاحبُه: يُطلق القفلُ فتعود مهلةُ الجهاز ولا تُستنزف
+   البطارية، ويعود مع أوّل لمسةٍ ما دام في وجهٍ أو درس */
+function wakeTick(){
+  if(!WAKE) return;
+  if(Date.now()-WAKE_AT < WAKE_IDLE_MS) return;
+  wakeOff();
+  try{ navToast('مضت عشرُ دقائق بلا لمس — عادت مهلةُ شاشتك، والمسها لتبقى مضاءة', 3200); }catch(e){}
+}
+function wakeTouch(){
+  WAKE_AT=Date.now();
+  if(!WAKE && wakeEligible()) wakeOn();
+}
+document.addEventListener('pointerdown', wakeTouch, true);
+document.addEventListener('keydown', wakeTouch, true);
 document.addEventListener('visibilitychange', function(){
   if(document.hidden) return;                                         /* أُطلق عند الغياب */
-  var open=($('mfSheet') && !$('mfSheet').hidden);
-  var inLesson=false; try{ inLesson=(curScreen()==='scr-play'); }catch(e){}
-  if(open || inLesson) wakeOn();
+  if(wakeEligible()) wakeOn();
 });
 function mushafClose(){
   try{ if(curScreen()!=='scr-play') wakeOff(); }catch(e){ wakeOff(); }   /* عاد إلى درسه: القفلُ باقٍ له */
