@@ -11927,7 +11927,14 @@ function renderHomeCards(){
   /* ١) الحفظ — وما تمّ اليوم يبقى تامّاً ولو زاد بعده وفتح مقطعاً لم يُتمّه */
   var hTxt, hDone, dayH=false;
   try{ dayH=(todayBox().hifz===1); }catch(e){}
-  if(T){
+  /* من ختم المصحفَ لا مهمّةَ حفظٍ له: كان يُقال له «أتممتَ ما في نطاقك — وسّع
+     الأجزاء»، وهو كلامٌ لمن ضاق نطاقُه لا لمن تمّ له كتابُ الله */
+  var hafizAll=false; try{ hafizAll=isHafiz(); }catch(e){}
+  if(hafizAll){
+    hTxt='لا مهمّةَ حفظٍ اليوم — هنيئاً لك ختمُ القرآن 👑';
+    hDone=true;
+  }
+  else if(T){
     hDone=!!T.hifzDone || dayH;
     hTxt = !T.h ? 'لا حفظ جديد اليوم'
          : T.hifzDone ? ('أتممتَه — '+bqnLabel(T.h))
@@ -11941,7 +11948,7 @@ function renderHomeCards(){
     if(hDone && nx) hTxt='أتممتَ حفظ اليوم — ولك أن تزيد • التالي: '+esc(nx.s.name)+' '+arNum(nx.g[0]+1)+' — '+arNum(nx.g[1]);
   }
   $('cardHifzTxt').innerHTML=hTxt;
-  $('cardHifzIc').textContent=hDone?'✅':'📖';
+  $('cardHifzIc').textContent=hafizAll?'👑':(hDone?'✅':'📖');
   hc.className='goalcard '+(hDone?'done':'now');
 
   /* ٢) المراجعة — وفيها ثلاثةُ أوجه: مقرَّرُ خطّة، ومستحقٌّ، ووردُ محفوظات */
@@ -12007,11 +12014,15 @@ function renderHome(){
   }catch(e){}
   var due=dueSegs().length, tb=todayBox(), w=false;
   try{ revLoad(); w=wirdPending(); }catch(e){}
-  $('homeHi2').textContent = revOff() ? 'ليس لديك خطة مراجعة مضبوطة — والحفظُ ماضٍ 📖'
+  var hz=false; try{ hz=isHafiz(); }catch(e){}
+  $('homeHi2').textContent = revOff()
+      ? (hz ? 'هنيئاً لك ختمُ القرآن — ولم تضبط خطّةَ مراجعةٍ بعد 👑'
+            : 'ليس لديك خطة مراجعة مضبوطة — والحفظُ ماضٍ 📖')
     : w ? 'ورد المراجعة ينتظرك 📖'
     : due ? ('عندك '+arNum(due)+' مقطع يحتاج مراجعة اليوم ☀️')
     : (tb.stages>0 ? ('أنجزت '+arNum(tb.stages)+' مراحل اليوم — أحسنت 🌟')
-                   : 'مستعدّ لحفظ جديد اليوم؟');
+       : (hz ? 'هنيئاً لك ختمُ القرآن — وتعاهدُه أجملُ ما تصنع 👑'
+             : 'مستعدّ لحفظ جديد اليوم؟'));
 }
 
 /* ===== معالج البداية: سؤال في كل صفحة مع عدّاد ===== */
