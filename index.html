@@ -12632,7 +12632,8 @@ function birdSize(){
   var cv=$('birdCv'), st=$('birdStage'); if(!cv || !st) return;
   var cw=st.clientWidth||360;
   var top=st.getBoundingClientRect().top+(window.scrollY||0);
-  var ch=Math.round(Math.max(240, Math.min(window.innerHeight-top-56, cw*1.05, 560)));
+  /* اللوحةُ تملأ ما بقي من الشاشة: فسحةُ الطيران أوسع، ولا يبقى تحتها فراغٌ ميّت */
+  var ch=Math.round(Math.max(260, Math.min(window.innerHeight-top-52, 620)));
   var dpr=Math.min(window.devicePixelRatio||1, 2.5), k=Math.min(cw/400, ch/300);
   cv.style.height=ch+'px';
   cv.width=Math.round(cw*dpr); cv.height=Math.round(ch*dpr);
@@ -12657,7 +12658,7 @@ function birdOverlay(kind, nb){
   var ov=$('birdOvl'), B=gameBests('bird'), lv=gameLv('bird'), h;
   BD.state=(kind==='over')?'over':(kind==='pause'?'pause':'ready');
   if(kind==='ready')
-    h='<div class="ot">🐦 عصفور الآيات</div><p>اضغطْ ليرفرف العصفور<br>والتقطْ من الغيمة الكلمةَ التي تملأ الفراغ<br>ودَعِ الغيمةَ الخطأ، واحذرِ الأعمدةَ والألواحَ المعلَّقة — ولك ❤️ خمسةُ قلوب</p>'+
+    h='<div class="ot">🐦 عصفور الآيات</div><p>اضغطْ ليرفرف العصفور<br>والتقطْ من الغيمة الكلمةَ التي تملأ الفراغ<br>ودَعِ الغيمةَ الخطأ، واحذرِ الأعمدةَ والألواحَ المعلَّقة<br>ولا تهبطْ إلى الأرض — ولك ❤️ خمسةُ قلوب</p>'+
       '<p style="opacity:.85">'+esc(gameSrcLabel(BD.pool))+'</p>'+
       gameLvHTML('bird')+'<button type="button" class="btn primary" id="birdStart">▶️ ابدأ</button>';
   else if(kind==='pause')
@@ -12779,7 +12780,17 @@ function birdUpdate(dt){
   BD.vy=Math.min(520, BD.vy+BIRD_G*dt);
   BD.y+=BD.vy*dt;
   if(BD.y<birdTop()+14){ BD.y=birdTop()+14; if(BD.vy<0) BD.vy=0; }
-  if(BD.y>BD.G-14){ BD.y=BD.G-14; BD.vy=0; }                 /* لا يسقط: يمشي على الأرض حتى يرفرف */
+  /* بلغ الأرض: ينقص قلبٌ ويرتدّ برفقٍ إلى أعلى — ولا يُستنزف وهو عليها، فالحمايةُ لحظةٌ بعد كلّ إصابة */
+  if(BD.y>BD.G-14){
+    BD.y=BD.G-14; BD.vy=0;
+    if(BD.inv<=0){
+      birdBurst(BD.bx, BD.G-12, '#ffd23f', 8);
+      birdSay('لا تهبطْ إلى الأرض');
+      BD.vy=BIRD_FLAP*0.75;
+      birdHurt();
+      if(BD.state!=='run') return;
+    }
+  }
   if(BD.inv>0) BD.inv-=dt;
   if(BD.shake>0) BD.shake-=dt;
   if(BD.toastT>0) BD.toastT-=dt;
@@ -12897,7 +12908,8 @@ function birdDraw(){
   }
 }
 $('btnBirdQuit').onclick=function(){ cancelAnimationFrame(BD.raf); BD.raf=0; BD.state='idle'; gamesOpen(); };
-$('birdStage').addEventListener('pointerdown', birdTap, { passive:false });
+/* اللمسُ في أيّ موضعٍ من الشاشة يُرفرف — لا في لوحة الطيران وحدها، فكان أسفلُ الشاشة لا يستجيب */
+document.addEventListener('pointerdown', function(e){ if(curScreen()==='scr-bird') birdTap(e); }, { passive:false });
 document.addEventListener('keydown', function(e){
   if(curScreen()!=='scr-bird') return;
   if(e.code==='Space' || e.key==='ArrowUp'){ e.preventDefault(); birdTap(); }
