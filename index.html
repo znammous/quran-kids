@@ -169,6 +169,10 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .ph{width:110px;height:140px;border-radius:12px;overflow:hidden;border:3px solid #d7e2f0;background:#eef5fd;margin:0 auto}
 .ph svg{width:100%;height:100%;display:block}
 .ph.mini{width:54px;height:68px;border-width:2px;border-radius:10px;margin:0}
+/* صورةُ المستخدم أيقونةً لبطاقة «شخصيتي» في الألعاب: الإطارُ الدائريُّ يُطفأ وتحلّ الصورةُ محلَّه */
+.gcavabox{background:none!important;border:0!important;padding:0!important;box-shadow:none!important;
+  display:flex;align-items:center;justify-content:center}
+.gcava{width:38px;height:48px;border-width:2px;border-radius:9px;margin:0;flex:0 0 auto}
 .gbtn{border:2px solid #d7e2f0;background:#fff;border-radius:12px;padding:10px 14px;font-family:inherit;
   font-size:16px;font-weight:800;cursor:pointer;color:#3d5b7a}
 .gbtn.sel{border-color:var(--g2);background:#e2f1ff;color:var(--g1)}
@@ -886,7 +890,12 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
 /* مفتاحُ الوضع: في ركن العنوان لا في صفّ اللاعبين — فليس لاعباً يُختار.
    والركنُ الأيمن هو مبدأُ السطر في العربيّة، فتقع العينُ عليه أوّلاً. */
 .htop{position:relative}
-.htop h1{margin-inline:42px}                 /* فسحةٌ للمفتاح فلا يركب العنوانَ الطويل */
+.htop h1{margin-inline:42px 92px}            /* فسحةٌ للمفتاح يميناً وللتاريخ يساراً فلا يركبان العنوان */
+/* التاريخُ الهجريّ في أعلى يسار الرئيسيّة: لوحٌ صغيرٌ يفصله عن هلال الخلفيّة، وسطرٌ واحد */
+.hijri{position:absolute;left:0;top:50%;transform:translateY(-50%);
+  max-width:104px;font-size:10.5px;font-weight:900;line-height:1.25;
+  color:var(--ttl);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  background:var(--pnl);border:2px solid var(--pb);border-radius:999px;padding:5px 8px}
 .themebtn{position:absolute;top:50%;right:0;transform:translateY(-50%);
   width:42px;height:42px;padding:0;border-radius:50%;line-height:1;font-size:21px;
   border:2px solid var(--pb);background:var(--pnl);cursor:pointer;
@@ -1748,6 +1757,7 @@ body.glow-off .dfpic{animation:none}
   <section class="screen active" id="scr-start">
     <div class="htop">
       <h1>نور الوحي 🕌</h1>
+      <div class="hijri" id="homeHijri" aria-label="التاريخ الهجري"></div>
       <button type="button" class="themebtn" id="btnTheme" title="تبديل الوضع" aria-label="تبديل الوضع">🌤️</button>
     </div>
     <p class="sub">احفظ القرآن مقطعاً مقطعاً — وابنِ مسجدك نجمةً نجمة</p>
@@ -11146,6 +11156,14 @@ function renderHomeCards(){
 }
 /* ===== الترحيب في الشاشة الرئيسية ===== */
 function renderHome(){
+  /* «٥ ربيع الآخر ١٤٤٨ هـ» يطول على سطرٍ واحد، فيُقتصر على اليوم والشهر ويبقى العامُ في التلميح */
+  try{
+    var hj=$('homeHijri'), hd=hijriDate();
+    if(hj){
+      hj.textContent = hd ? ('🌙 '+hd.replace(/\s*هـ\s*$/,'').replace(/\s*\d{4}\s*$/,'').replace(/[٠-٩]{4}\s*$/,'').trim()) : '';
+      hj.title = hd || '';
+    }
+  }catch(e){}
   try{ renderKhatma(); }catch(e){}
   try{ renderHomeCards(); }catch(e){}
   try{ dailyRender(); }catch(e){}
@@ -12063,13 +12081,15 @@ function gamesOpen(){
   });
   /* وبابُ الشخصية: ليس لعبةً ولا مصدرَ آياتٍ له — يفتح محرِّرَ الشخصية نفسَه
      الذي في معالج إنشاء المستخدم، بتبويباته وزرِّ حفظه، فلا شيءَ جديدٌ يُتعلَّم */
-  h+='<button type="button" class="goalcard" id="gmLook"><span class="gcic">🧒</span>'+
+  h+='<button type="button" class="goalcard" id="gmLook"><span class="gcic gcavabox"><span class="ph gcava"></span></span>'+
      '<span class="gctx"><b>شخصيتي</b><i>بدّلْ شكلك وملابسك ولونَ عينيك</i></span>'+
      '<span class="gcgo">❮</span></button>';
   if(!pool.mem) h+='<p class="gmnote">لم يُسجَّل لك محفوظٌ بعد — اختر سورةً تلعب بآياتها</p>';
   var B=$('gamesBody'); B.innerHTML=h;
   var bs=B.querySelectorAll('[data-game]');
   for(var i=0;i<bs.length;i++) bs[i].onclick=function(){ gamePick(this.getAttribute('data-game')); };
+  /* أيقونةُ البطاقة صورةُ المستخدم نفسِه، فيعرف أنّها شخصيّتُه هو */
+  var av=B.querySelector('.gcava'); if(av) av.innerHTML=avatarSVG();
   if($('gmLook')) $('gmLook').onclick=function(){
     LOOK_BACK='scr-games';
     lookHome(); renderAvatars(); show('scr-look');   /* شاشةُ الشخصية نفسُها: اختياراتٌ بلا حقلِ اسمٍ ولا لوحةِ مفاتيح */
