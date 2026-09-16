@@ -3343,6 +3343,25 @@ function mfMarkSet(pieces){
   MF_MARK={rg:rg, pieces:(pieces||[]).slice()};
   return MF_MARK;
 }
+/* علامةٌ على نطاقٍ بالفهرس العامّ — يمتدّ على أوجهٍ وعلى سورٍ، فتُبنى قطعُه
+   سورةً سورة. وبها يُظلَّل نطاقُ المراجعة الحرّة كلُّه لا قطعةُ وجهٍ واحد */
+function mfMarkGi(g0,g1){
+  var a=mLoc(g0), b=mLoc(g1), pcs=[], n, s, from, to;
+  for(n=a[0]; n<=b[0]; n++){
+    s=surahBy(n); if(!s) continue;
+    from=(n===a[0]) ? a[1]-1 : 0;
+    to  =(n===b[0]) ? b[1]   : s.ayat.length;
+    if(to>from) pcs.push({ s:s, from:from, to:to });
+  }
+  return mfMarkSet(pcs);
+}
+/* «نطاقك يمتدّ إلى الصفحة كذا» — يُقال متى جاوز النطاقُ الوجهَ المفتوح */
+function mfSpanNote(lastP, curP_, txt){
+  if(!(lastP>curP_)) return;
+  setTimeout(function(){
+    try{ navToast((txt||'↔️ نطاقك يمتدّ إلى الصفحة ')+arNum(lastP)+' — اسحب الوجه لتراه'); }catch(e){}
+  }, 450);
+}
 function segPreview(pieces, title, btn, go){
   var M=mfMarkSet(pieces);
   if(!M.rg.length){ MF_MARK=null; if(go) go(); return; }
@@ -3434,9 +3453,18 @@ function mushafPageHTML(P, hlGi, glyphs){
    أين يقف بصرُه. فهذا وضعٌ يُفتح فيه الوجه، يتصفّحه، ثمّ يلمس الكلمة
    فيصير موضعها حدَّ نطاقه. */
 var MF_PICK=null;   /* {page, stage:'from'|'to', fromS, fromA, busy, done} */
-function mfPickRange(startGi, done){
+function mfPickRange(startGi, done, rg){
   MF_PICK={ page:pageOfIdx(startGi), stage:'from', busy:false, done:done };
   $('mfSheet').classList.add('picking');
+  /* نطاقُه الحاليُّ مظلَّلٌ أمامه ويُقال له إلى أين يمتدّ، فلا يحسبه وجهاً واحداً
+     وهو يمتدّ على أوجهٍ بعده. ومن لا نطاقَ له (كالاختبار) يُفتح له الوجهُ صافياً */
+  MF_MARK=null;
+  if(rg && rg.length===2 && rg[1]>rg[0]){
+    try{
+      mfMarkGi(rg[0], rg[1]);
+      mfSpanNote(pageOfIdx(rg[1]), MF_PICK.page, '↔️ نطاقك الحاليّ يمتدّ إلى الصفحة ');
+    }catch(e){}
+  }
   mfPickDraw();
 }
 function mfPickDraw(){
@@ -8402,8 +8430,14 @@ function roundRevPage(r){
   $('btnOkR').onclick=function(){ recReset(); sGood(); finishRevPage(); };
   if($('btnSkipQuiz')) $('btnSkipQuiz').onclick=function(){ recReset(); revSkipToQuiz(); };
   $('btnShow').onclick=function(){
-    mfMarkSet(r.pieces);
+    /* المراجعةُ الحرّة نطاقُها يمتدّ على أوجه، فيُظلَّل كلُّه لا قطعةُ هذا الوجه
+       وحدَها، ويُقال له إلى أين يمتدّ — وكان يراه وجهاً واحداً فيظنّه كلَّ نطاقه.
+       وأمّا الوردُ وما استحقّ من محفوظه فنطاقُهما هذا الوجهُ نفسُه */
+    var sc=null;
+    try{ if(revFree() && !revIsWird()) sc=revBounds(); }catch(e){}
+    if(sc) mfMarkGi(sc[0], sc[1]); else mfMarkSet(r.pieces);
     mushafOpenPage(r.page, -1, '📖 صفحة '+arNum(r.page));
+    if(sc){ try{ mfSpanNote(pageOfIdx(sc[1]), r.page); }catch(e){} }
     reveal(true); revWeak(r.page);
   };
   $('btnAgainR').onclick=function(){
@@ -9045,11 +9079,11 @@ function renderRevPlanBody(){
   var reset=function(){ REV.wird=false; REV.mode='free'; REV.done=0; REV.weak={}; revSave(); renderRevPlan(); };
   /* التحديد من المصحف: يفتح الوجه عند بدايته الحاليّة، فيحدّد الطرفين تِباعاً */
   if($('revPickR')) $('revPickR').onclick=function(){
-    mfPickRange(GIDX[REV.fromS-1]+(REV.fromA-1), function(fs,fa,ts,ta){
+    mfPickRange(GIDX[REV.fromS-1]+(REV.fromA-1), function(fs,fa,ts,ta){   /* ونطاقُه الحاليّ مظلَّل */
       REV.fromS=fs; REV.fromA=fa; REV.toS=ts; REV.toA=ta;
       REV.wird=false; REV.mode='free'; REV.done=0; REV.weak={}; revSave(); renderRevPlan();
       try{ navToast('📖 '+surahBy(fs).name+' '+arNum(fa)+' ← '+surahBy(ts).name+' '+arNum(ta)); }catch(e){}
-    });
+    }, (function(){ try{ return revBounds(); }catch(e){ return null; } })());
   };
   $('revFS').onchange=function(){ REV.fromS=parseInt(this.value,10); REV.fromA=1; reset(); };
   $('revFA').onchange=function(){ REV.fromA=parseInt(this.value,10); reset(); };
