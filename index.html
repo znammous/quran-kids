@@ -1684,10 +1684,10 @@ body.glow-off .dfpic{animation:none}
     <div class="mfplist" id="mfMeanList"></div>
   </div>
   <nav class="mfdock" id="mfDock">
-    <button type="button" id="mfDockSim" aria-pressed="true"><span class="tico">🎨</span>التظليل</button>
     <button type="button" id="mfDockMean"><span class="tico">💡</span>المعاني</button>
     <button type="button" id="mfDockIdx"><span class="tico">📑</span>الفهرس</button>
     <button type="button" id="mfDockFind"><span class="tico">🔎</span>البحث</button>
+    <button type="button" id="mfDockSim" aria-pressed="true"><span class="tico">🎨</span>التظليل</button>
     <button type="button" id="mfDockClose"><span class="tico">✕</span>إغلاق</button>
   </nav>
 </div>
@@ -2085,7 +2085,7 @@ body.glow-off .dfpic{animation:none}
         </select>
       </div>
       <div class="switchrow"><span>✨ تظليل المتشابهات<br><small style="font-weight:700;color:var(--mute)">في كل وجهٍ من المصحف: ما تشابه أو تكرّر من العبارات والكلمات، لكل مجموعةٍ لونٌ واحد — ويُبدَّل كذلك من شريط المصحف نفسِه 🎨</small></span><input type="checkbox" id="setSimHl"></div>
-      <div class="switchrow"><span>📖 عرض المقطع في المصحف قبل البدء<br><small style="font-weight:700;color:var(--mute)">يتأمّل موضعَ مقطعه ومتشابهاتِه قبل الحفظ والتسميع — وللطفل أن يوقفه بخانة «لا تعرض هذا مرّة أخرى»</small></span><input type="checkbox" id="setSegPv"></div>
+      <div class="switchrow"><span>📝 شرحُ المقطع مع وجه المصحف<br><small style="font-weight:700;color:var(--mute)">سطورُ البيان فوق الوجه قبل البدء: موضعُ المقطع وألوانُ المتشابهات والتنبيه عليها — ووجهُ المصحف يُعرض على كلّ حال</small></span><input type="checkbox" id="setPvNote"></div>
       <div class="setblock">
         <label class="lbl">🔎 حجم خط الآية</label>
         <select id="setFont">
@@ -2249,7 +2249,7 @@ function kindAllowed(t){
   var h=LV_HIDE[SET&&SET.level];
   return !(h&&h[t]);
 }
-function defSet(){ return { level:'easy', lv3:true, script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false, simHl:true, segPv:true }; }
+function defSet(){ return { level:'easy', lv3:true, script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false, simHl:true, pvNote:true }; }
 /* ثلاث درجات للخطّ لا خمس — ويُردّ القديم إلى أقربها */
 var FONTS=[{v:20,n:'صغير'},{v:24,n:'متوسط'},{v:30,n:'كبير'}];
 function normFont(f){ f=parseInt(f,10)||24; return f<=22?20:(f<=27?24:30); }
@@ -2345,7 +2345,9 @@ function bindPlayer(){
   if(typeof SET.cele!=='boolean') SET.cele=true;
   if(typeof SET.light!=='boolean') SET.light=false;
   if(typeof SET.simHl!=='boolean') SET.simHl=true;   /* مفعَّلٌ افتراضياً */
-  if(typeof SET.segPv!=='boolean') SET.segPv=true;   /* وعرضُ المقطع قبل البدء كذلك */
+  /* كان الخيارُ أوّلَ أمره يُخفي الوجهَ كلَّه، وإنّما المرادُ كتمُ الشرح وحدَه */
+  if(typeof SET.segPv==='boolean' && typeof SET.pvNote!=='boolean'){ SET.pvNote=SET.segPv; delete SET.segPv; }
+  if(typeof SET.pvNote!=='boolean') SET.pvNote=true;   /* شرحُ المقطع مع الوجه، مفعَّلٌ افتراضياً */
   if(typeof SET.rec!=='boolean') SET.rec=false;   /* مطفأ افتراضياً */
   if(!SET.segMode) SET.segMode="q";
   applyGlow();
@@ -2977,9 +2979,6 @@ function mfMarkSet(pieces){
 function segPreview(pieces, title, btn, go){
   var M=mfMarkSet(pieces);
   if(!M.rg.length){ MF_MARK=null; if(go) go(); return; }
-  /* أطفأه من خانة «لا تعرض هذا مرّة أخرى»: يمضي إلى عمله، ويبقى نطاقُ المقطع
-     معلَّماً فيُرى في الوجه متى فُتح في أثناء الدرس */
-  if(SET && SET.segPv===false){ if(go) go(); return; }
   if($('mfGoSkip')) $('mfGoSkip').checked=false;
   var P=pageOfIdx(M.rg[0][0]), P2=pageOfIdx(M.rg[M.rg.length-1][1]-1), q;
   var html='<b>📖 هذا مقطعك في المصحف</b> — تأمّله قبل أن تبدأ';
@@ -3004,7 +3003,12 @@ function segPreview(pieces, title, btn, go){
       }).join(' • ');
     }
   }
-  $('mfGoNote').innerHTML=html;
+  /* الوجهُ يُعرض دائماً كما كان — وإنّما الشرحُ وحدَه هو الذي يُكتم إن طلب ذلك،
+     فيبقى الوجهُ وزرُّ البدء بلا كلامٍ يُقرأ في كلّ مرّة */
+  var note=(SET && SET.pvNote===false);
+  $('mfGoNote').innerHTML=note ? '' : html;
+  $('mfGoNote').hidden=note;
+  if($('mfGoSkip')) $('mfGoSkip').parentNode.hidden=note;
   $('mfGoBtn').textContent=btn;
   $('mfGo').hidden=false;
   $('mfSheet').classList.add('pv');
@@ -5805,8 +5809,9 @@ $('mfGoBtn').onclick=function(){ var pv=MF_PV; mushafClose(); mushafEatGhost(); 
 /* يُحفظ فورَ تعليمه، فيصحّ وإن خرج من الوجه بالإغلاق أو بزرّ الرجوع لا بزرّ البدء.
    ولوليّ الأمر أن يعيده من «الإعدادات ← 📖 عرض المقطع في المصحف قبل البدء» */
 if($('mfGoSkip')) $('mfGoSkip').onchange=function(){
-  SET.segPv=!this.checked; saveDB();
-  try{ navToast(this.checked ? 'لن يُعرض المقطعُ في المصحف قبل البدء — ويُعاد من الإعدادات' : 'سيُعرض المقطعُ قبل البدء'); }catch(e){}
+  SET.pvNote=!this.checked; saveDB();
+  try{ navToast(this.checked ? 'لن يُعرض هذا الشرحُ بعدُ — ويبقى الوجهُ كما هو، ويُعاد الشرحُ من الإعدادات'
+                             : 'سيُعرض الشرحُ مع الوجه'); }catch(e){}
 };
 $('mfPg').onchange=function(){ mfGoto(this.value); };
 $('mfPg').onkeydown=function(e){ if(e.key==='Enter'){ this.blur(); this.onchange(); } };
@@ -10150,7 +10155,7 @@ function fillSettings(){
   $('setCele').checked=(SET.cele!==false);
   $('setLight').checked=!!SET.light;
   $('setSimHl').checked=(SET.simHl!==false);
-  if($('setSegPv')) $('setSegPv').checked=(SET.segPv!==false);
+  if($('setPvNote')) $('setPvNote').checked=(SET.pvNote!==false);
   $('setRec').checked=!!SET.rec;
   $('setFree').checked=!!SET.free;
   $('setBoard').checked=!!DB.app.board;
@@ -10199,7 +10204,7 @@ function readSettings(){
   SET.cele=$('setCele').checked;
   SET.light=$('setLight').checked; applyTheme();
   SET.simHl=$('setSimHl').checked;
-  if($('setSegPv')) SET.segPv=$('setSegPv').checked;
+  if($('setPvNote')) SET.pvNote=$('setPvNote').checked;
   SET.rec=$('setRec').checked;
   if(SET.rec) REC.off=false;                 /* إعادة التفعيل تُلغي إيقاف الجلسة */
   applyGlow();
