@@ -12632,13 +12632,13 @@ function birdSize(){
   var cv=$('birdCv'), st=$('birdStage'); if(!cv || !st) return;
   var cw=st.clientWidth||360;
   var top=st.getBoundingClientRect().top+(window.scrollY||0);
-  /* اللوحةُ تملأ ما بقي من الشاشة: فسحةُ الطيران أوسع، ولا يبقى تحتها فراغٌ ميّت */
-  var ch=Math.round(Math.max(260, Math.min(window.innerHeight-top-52, 620)));
-  var dpr=Math.min(window.devicePixelRatio||1, 2.5), k=Math.min(cw/400, ch/300);
+  /* بمقاسات «عدّاء الآيات» نفسِها: ارتفاعُ اللوحة ونسبتُها والأرضُ وموضعُ الطائر */
+  var ch=Math.round(Math.max(200, Math.min(window.innerHeight-top-56, cw*0.95, 520)));
+  var dpr=Math.min(window.devicePixelRatio||1, 2.5), k=Math.min(cw/380, ch/240);
   cv.style.height=ch+'px';
   cv.width=Math.round(cw*dpr); cv.height=Math.round(ch*dpr);
-  BD.W=Math.round(cw/k); BD.H=Math.round(ch/k); BD.G=BD.H-18; BD.k=cv.height/BD.H;
-  BD.bx=Math.round(BD.W*0.7);
+  BD.W=Math.round(cw/k); BD.H=Math.round(ch/k); BD.G=BD.H-28; BD.k=cv.height/BD.H;
+  BD.bx=BD.W-RUN_CX;
   if(BD.y==null || BD.y>BD.G-14) BD.y=birdMidY();
 }
 function birdReset(){
@@ -12742,7 +12742,7 @@ function birdSpawn(){
   var good=!goodOn && (BD.decoySince>=1 || !BD.decoys.length || Math.random()<0.4);
   var t=good ? want : birdWords(want, 2)[0];
   var w=birdCloudW(t, c), h=52;
-  var y=top+26+Math.random()*Math.max(12, (G-top-78));
+  var y=top+22+Math.random()*Math.max(12, (G-top-56));
   BD.items.push({ kind:'cloud', x:-w-10, w:w, h:h, y:Math.round(y), t:t, good:good, ph:Math.random()*6 });
   BD.decoySince=good ? 0 : BD.decoySince+1;
   BD.lastObs++;
