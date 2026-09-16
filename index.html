@@ -938,12 +938,13 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
 .gcwrap{position:relative;margin:0 0 14px}
 .gcwrap .gcgo{visibility:hidden}
 /* أنعمُ ممّا كانت: أصغرُ وشبهُ شفّافةٍ بحدٍّ خفيف، فلا تحجب ما تحتها من البطاقة */
-.gcedit{position:absolute;left:10px;top:50%;transform:translateY(-50%);
-  width:34px;height:34px;border-radius:50%;border:1px solid rgba(20,40,70,.16);
-  background:rgba(255,255,255,.62);font-size:15px;line-height:1;cursor:pointer;
+/* في مستوى السطر الأوّل من البطاقة لا في وسطها: كانت تغطّي سطرَ الوصف تحتها */
+.gcedit{position:absolute;left:10px;top:10px;
+  width:32px;height:32px;border-radius:50%;border:1px solid rgba(20,40,70,.16);
+  background:rgba(255,255,255,.62);font-size:14px;line-height:1;cursor:pointer;
   opacity:.92;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
   display:flex;align-items:center;justify-content:center}
-.gcedit:active{transform:translateY(-50%) scale(.92)}
+.gcedit:active{transform:scale(.92)}
 .gcedit.sel{background:var(--psel);border-color:var(--gold)}
 /* حذفُ المسار الحرّ: إلى جانب القلم، بلونٍ ينبّه أنّه لا رجعةَ فيه */
 .gcdel{left:50px;border-color:rgba(179,64,47,.35);color:#b3402f}
@@ -1000,8 +1001,14 @@ body.light .sp-lit{fill:#1f92d4}
 #revTabs{margin:2px 0 10px}
 /* نقطةُ التنبيه على تبويبٍ وراءه عملٌ لم يتمّ */
 .onbtab{position:relative}
-.tabdot{position:absolute;top:5px;inset-inline-end:7px;width:9px;height:9px;border-radius:50%;
+.tabdot{position:absolute;top:5px;inset-inline-end:6px;width:9px;height:9px;border-radius:50%;
   background:#e0483a;box-shadow:0 0 0 2px var(--pnl)}
+/* تبويباتُ المراجعة الثلاثة تقتسم عرضَ الشاشة وتصغر لتتّسع، فلا تُسحب أفقيّاً ولا يُقتطع منها */
+#revTabs{overflow-x:visible;gap:5px;padding-bottom:0}
+#revTabs .onbtab{flex:1 1 0;min-width:0;padding:7px 4px;text-align:center;
+  font-size:clamp(9.5px,3vw,14px);letter-spacing:-.2px;
+  /* عند الضيق الشديد يلتفّ العنوانُ سطرين ولا يُقتطع منه حرف */
+  white-space:normal;line-height:1.25;overflow-wrap:anywhere}
 /* بطاقات الخيارات أقصر قليلاً حتى تقلّ الحاجة للتمرير */
 #revScope .onbopt{padding:10px 12px}
 #revScope .onbopt .oe{font-size:22px}
@@ -8354,7 +8361,9 @@ function renderRevPlanBody(){
   /* مسارٌ تمّ قبل أن يُطوى عند إتمامه؟ يُطوى الآن */
   if(savedFree && nS && (REV.done||0)>=nS){ revFreeEnd(); revSave(); savedFree=false; }
   var doneS=Math.min(REV.done||0, nS), contHTML='';
-  if(nS){
+  /* البطاقةُ لمن ثبّت مسارَه: في الإعداد الأوّل لا تظهر حتى يُثبَّت النطاق،
+     ومن ثبّته تظهر له ولو فتح لوحةَ الإعداد ليعدّل فيها */
+  if(nS && savedFree){
     var aa=surahBy(REV.fromS), bb=surahBy(REV.toS);
     contHTML='<div class="gcwrap">'+
       '<button type="button" class="goalcard now" id="btnRevCont">'+
@@ -8923,9 +8932,12 @@ function bqnRevStart(){
   var all=T.pages, t=T.st;
   if((t.rp||0)>=all.length) t.rp=0;
   var take=all.slice(t.rp, t.rp+BQN_CHUNK);
-  t.rp=Math.min((t.rp||0)+BQN_CHUNK, all.length); saveDB();
+  saveDB();
   revLoad();
   REV.si=-1; REV.pages=take; REV.pi=0; REV.due=false; REV.weak=REV.weak||{};
+  /* ما أُخذ من مقرَّر الخطّة يُحتسب عند إتمام الجلسة لا عند فتحها: كان يُزاد بمجرّد
+     الضغط، فتُعدّ الصفحاتُ منجزةً وإن لم يُجب عنها سؤالاً، وتخضرّ علامةُ اليوم */
+  REV.bqnAdd=take.length;
   revStartPage();
   return true;
 }
@@ -9742,6 +9754,7 @@ function beginRevSession(i){
 function beginDueSession(){
   var pg=duePages();
   if(!pg.length) return;
+  REV.bqnAdd=0;                     /* جلسةٌ أخرى: لا يُحتسب لها مقرَّرُ الخطّة */
   REV.si=-1; REV.pages=pg.slice(0,10); REV.pi=0; REV.due=true;
   revStartPage();
 }
@@ -9867,6 +9880,14 @@ function finishRevQuiz(){
     pageSegKeys(P).forEach(function(k){ scheduleNext(k, !bad); });      /* الضعيفة تعود غداً */
   });
   saveProg();
+  /* وهنا يُحتسب مقرَّرُ الخطّة: تمّت الجلسةُ بأسئلتها */
+  if(REV.bqnAdd){
+    try{
+      var TT=bqnToday();
+      if(TT && TT.r) TT.st.rp=Math.min((TT.st.rp||0)+REV.bqnAdd, TT.pages.length);
+    }catch(e){}
+    REV.bqnAdd=0; saveDB();
+  }
   var wirdRound=0, md=revMode(), freeEnded=false;
   if(onPath){
     revSetDone(md, Math.max(revDone(md), REV.si+1));
@@ -11285,6 +11306,7 @@ $('btnBackMap').onclick=function(){ if(!openJuz) openJuz=(curSurah?curSurah.juz:
 /* الخروجُ من جلسة المراجعة يردّه إلى موضعه منها: شاشةُ المراجعة أو مسارُها —
    كان يردّه إلى فهرس السور أو إلى الرئيسيّة، وليس من حيث جاء */
 function revBackGo(){
+  if(REV) REV.bqnAdd=0;              /* خرج قبل الإتمام: لا يُحتسب ما فتحه */
   if(REV && REV.back==='scr-revpath'){ try{ renderRevPath(); }catch(e){} show('scr-revpath'); return; }
   startRevPlan(REV_TAB);              /* يعود إلى البابِ الذي كان فيه، لا إلى غيره */
 }
