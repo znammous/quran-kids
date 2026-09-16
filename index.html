@@ -2653,9 +2653,25 @@ function isHafiz(pl){
   }catch(e){ return false; }
 }
 /* شاشة التتويج: تُعرض مرّةً واحدة حين يكتمل المصحف في سجلّه */
+/* التتويجُ لا يقع في وسط الإعداد: من سجّل محفوظَه كاملاً في المعالج اكتمل
+   مصحفُه، فتنطلق شاشةُ التتويج ثمّ الشهادةُ فتقطع عليه ضبطَ خطّته ولا تردّه
+   إليها. فتُخزَّن البشارةُ وتُقال عند تمام الإعداد — كبشارة الحفظ السابق. */
+var CROWN_WAIT=false;
+function crownPending(){
+  try{
+    return !!($('scr-bqn') && $('scr-bqn').classList.contains('active')) ||
+           !!($('scr-onb') && $('scr-onb').classList.contains('active'));
+  }catch(e){ return false; }
+}
+function crownFlush(){
+  if(!CROWN_WAIT) return;
+  CROWN_WAIT=false;
+  try{ crownCheck(); }catch(e){}
+}
 function crownCheck(){
   var pl=curP();
   if(!isHafiz(pl) || pl.crowned) return false;
+  if(crownPending()){ CROWN_WAIT=true; return false; }   /* في الإعداد: تُؤجَّل */
   pl.crowned=todayNum(); saveDB();
   try{ renderAvatars(); }catch(e){}
   try{ celeShow({ ic:'👑', kick:'🎉 تمّ لك كتاب الله',
@@ -10168,6 +10184,9 @@ function priorPicked(){
 }
 function bqnSteps(){
   var out=['plan'], p=curP();
+  /* الحافظُ لكتاب الله: لا خطّةَ حفظٍ له ولا اتّجاهَ بدايةٍ ولا حفظاً سابقاً
+     يؤشّره — فمعالجُه سؤالان: هذا، ثمّ خطّةُ مراجعته وهي حاجتُه */
+  if(p.priorMode==='all'){ out.push('wird'); return out; }
   if(p.planChosen && !onPlan()) out.push('dir');
   out.push('prior');
   /* من بدأ من جديد فلا محفوظ له يُتعاهد — ولا يُسأل عن ورد.
@@ -10303,12 +10322,31 @@ function renderBqnList(){
   bqnBody+='</div>';
   var onSelf=(id==='self'), pn=onSelf?null:bqnPlan(id);
   /* الطيّاتُ مطويّةٌ عند الفتح، لا تُنشر إلّا بيده — وما نشره يبقى منشوراً */
-  h = foldHTML('fSelf','🧭 خطط تطبيق «نور الوحي»'+(onSelf?(' — ✅ '+esc(segModeName())):''),
+  /* الحافظُ يُسأل أوّلَ ما يُسأل: فبطاقتُه في رأس السؤال الأوّل قبل الخطط،
+     لئلّا يمرّ على اختيار خطّةِ حفظٍ لا يحتاجها فيظنّ أنّ التطبيقَ ليس له */
+  var isAll=(curP().priorMode==='all');
+  h = '<div class="onbopts" style="margin-bottom:14px">'+
+        '<button type="button" class="onbopt'+(isAll?' sel':'')+'" id="bqnHafiz">'+
+          '<span class="oe">'+(isAll?'✅':'🏅')+'</span>'+
+          '<span class="ot"><b>أنا حافظٌ لكتاب الله كاملاً</b>'+
+          '<i>لا خطّةَ حفظٍ لي — يُسجَّل المصحفُ كلُّه محفوظاً، وتُضبط خطّةُ مراجعتك</i>'+
+        '</span></button></div>'+
+      foldHTML('fSelf','🧭 خطط تطبيق «نور الوحي»'+(onSelf?(' — ✅ '+esc(segModeName())):''),
         foldIsOpen('fSelf'), selfBody)+
       foldHTML('fBqn','📅 خطط «بالقرآن نحيا»'+(pn?(' — ✅ '+esc(pn.t)):''),
         foldIsOpen('fBqn'), bqnBody);
   $('bqnList').innerHTML=h;
   foldBind($('bqnList'));
+  /* اختارها: يُسجَّل محفوظُه كلُّه، وتُعدّ الخطّةُ مختارةً فلا يُوقفه سؤالٌ
+     لا يعنيه، ثمّ يمضي إلى خطّة المراجعة رأساً */
+  if($('bqnHafiz')) $('bqnHafiz').onclick=function(){
+    priorModeSet('all');
+    curP().planChosen=1; saveDB();
+    certFrom='bqn';        /* لو ظهرت له شهادةٌ بعدُ، ردَّه زرُّها إلى معالجه */
+    try{ navToast('🏅 سُجّل لك المصحفُ كاملاً — وهذه خطّةُ مراجعتك'); }catch(e){}
+    var w=bqnSteps().indexOf('wird');
+    bqnShow(w>=0?w:BQ.i);
+  };
   /* اختيارٌ واحد يكفي هذه الصفحة، ثم يمضي إلى التي بعدها */
   var pick=function(el){
     var sid=el.getAttribute('data-self');
@@ -10435,6 +10473,7 @@ function startBqn(from, step){
 }
 function bqnReturn(){
   priorCeleFlush();            /* الآن تمّت الخطّة، فتُقال البشارة */
+  setTimeout(crownFlush, 60);  /* وتتويجُ الحافظ إن اكتمل مصحفُه في الإعداد */
   var b=BQN_BACK; BQN_BACK='';
   /* اختار «خطةً حرّة» ولم يضبط نطاقَها بعد: يُساق إلى لوحة النطاق ساعتَه،
      فلا تبقى خطّةٌ مختارةٌ بلا نطاقٍ يمشي فيه */
@@ -11899,22 +11938,26 @@ function renderHomeCards(){
   var rTxt;
   /* اختار «حفظاً بلا مراجعة»: تقول له البطاقةُ ذلك صريحاً، ولا تعِدُه بمهمّة.
      فإن ضبط مساراً حرّاً عادت البطاقةُ تدعوه إليه */
+  /* المسارُ الحرُّ المثبَّتُ وحدَه يُحسب — لا مجرّدُ نطاقٍ افتراضيٍّ موجودٍ لكلّ
+     أحد. والمعيارُ معيارُ شاشة المراجعة نفسِها */
   var freeLeft=0;
-  if(revOff()){
-    try{
-      /* المسارُ الحرُّ المثبَّتُ وحدَه يُعيد المهامّ — لا مجرّدُ نطاقٍ افتراضيٍّ
-         موجودٍ لكلّ أحد. والمعيارُ معيارُ شاشة المراجعة نفسِها */
-      if(!!curP().rev && !revIsWird())
-        freeLeft=Math.max(0, revSessions('free').length-(REV.done||0));
-    }catch(e){}
-  }
+  try{
+    if(!!curP().rev && !revIsWird())
+      freeLeft=Math.max(0, revSessions('free').length-(REV.done||0));
+  }catch(e){}
+  var duty=!!((T && T.r && !T.revDone) || due || wp);
   if(revOff() && !freeLeft) rTxt='ليس لديك خطة مراجعة مضبوطة';
-  else if(revOff()) rTxt='مراجعتك الحرّة: بقيت '+arCount(freeLeft,C_SESS);
+  else if(revOff()) rTxt='مسارك الحرّ مفتوح — بقيت '+arCount(freeLeft,C_SESS);
   else if(T && T.r && !T.revDone) rTxt=bqnLabel(T.r)+' — '+arCount(T.pages.length,C_PAGE);
   else if(due) rTxt=arNum(due)+' مقطعاً حلّ موعدُه';
   else if(wp) rTxt='وردُ اليوم: '+arCount(revSize('wird'),C_PAGE)+' من محفوظك';
+  else if(freeLeft) rTxt='مسارك الحرّ مفتوح — بقيت '+arCount(freeLeft,C_SESS);
   else if(rDone) rTxt='أتممتَ مراجعة اليوم — ولك أن تزيد';
   else rTxt='لا مراجعةَ مستحقّة — تصفّح محفوظاتك';
+  /* اجتمع عليه مقرَّرُ اليوم ومسارٌ حرٌّ؟ يُذكر المسارُ ذيلاً فلا يُنسيه المقرَّرُ
+     أنّ له طريقاً مفتوحاً */
+  if(!revOff() && freeLeft && duty)
+    rTxt+=' • ومسارك الحرّ: بقيت '+arCount(freeLeft,C_SESS);
   $('cardRevTxt').innerHTML=rTxt;
   $('cardRevIc').textContent=rDone?'✅':'☀️';
   rc.className='goalcard '+(rDone?'done':'now');
@@ -12198,6 +12241,8 @@ document.addEventListener('keydown', function(e){
   else if(e.key===','){ e.preventDefault(); qaEndStage(); }
 });
 $('btnCertBack').onclick=function(){
+  /* جاءت الشهادةُ وهو في إعداد خطّته: يُردّ إليها ليُتمّها، لا إلى السور */
+  if(certFrom==='bqn'){ certFrom=''; bqnShow(BQ.i); show('scr-bqn'); return; }
   if(certFrom==='exam'){ certFrom=''; renderPlayers(); show('scr-start'); return; }
   if(certFrom==='badges'){ certFrom=''; renderBadges(); show('scr-badges'); return; }
   if(certFrom==='map'){ certFrom=''; renderMap(); show('scr-map'); return; }
