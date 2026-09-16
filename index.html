@@ -472,6 +472,10 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
   padding:10px 14px 12px;background:var(--pnl);border-top:2px solid var(--pb)}   /* تحته الشريطُ السفليّ، وفيه حاشيةُ الشاشة */
 .mfgo[hidden]{display:none!important}
 .mfgo .btn{margin:0}
+/* صفُّ «استمع» و«ابدأ»: البدءُ أوسعُ فيبقى هو المقصودَ الأوّل */
+.mfgorow{display:flex;gap:8px;align-items:stretch}
+.mfgorow .btn{flex:1 1 0;min-width:0;padding-inline:10px}
+.mfgorow #mfGoBtn{flex:1.7 1 0}
 /* خانةُ «لا تعرض هذا مرّة أخرى» تحت البيان، خفيفةٌ لا تزاحم زرَّ البدء */
 .mfgoskip{justify-content:center;margin:0;font-size:13px;font-weight:800;color:var(--mute)}
 .mfgonote{font-weight:800;font-size:14px;line-height:1.8;color:var(--ttl);text-align:center}
@@ -1660,6 +1664,8 @@ body.glow-off .dfpic{animation:none}
     <div id="askMsg" style="font-size:17px;font-weight:800;line-height:1.9;color:var(--ttl)"></div>
     <!-- حقلُ الاسم: لا يظهر إلّا حين يُطلب اسمٌ (أسماءُ الأهل في «عائلتي») -->
     <input type="text" id="askInp" maxlength="14" hidden autocomplete="off" spellcheck="false" style="margin-top:12px;text-align:center">
+    <!-- خياراتٌ سريعةٌ تُغني عن «نعم/لا» حين يكون الجوابُ عدداً أو اختياراً -->
+    <div class="row" id="askChips" hidden style="flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px"></div>
     <label class="chk" id="askChkWrap" hidden style="margin-top:12px;justify-content:center"><input type="checkbox" id="askChk"> لا تُظهر هذه الرسالة مرّة أخرى</label>
     <div class="row" style="margin-top:18px;justify-content:center">
       <button class="btn ghost" id="askNo" hidden>لا</button>
@@ -1717,7 +1723,12 @@ body.glow-off .dfpic{animation:none}
   <div class="mfgo" id="mfGo" hidden>
     <div class="mfgonote" id="mfGoNote"></div>
     <label class="chk mfgoskip"><input type="checkbox" id="mfGoSkip"> لا تعرض هذا مرّة أخرى</label>
-    <button class="btn green big" id="mfGoBtn">▶️ ابدأ</button>
+    <!-- الاستماعُ بجانب زرّ البدء: الزرُّ الأخضرُ يخطف العين، فلا يُترك السماعُ
+         في شريطٍ صغيرٍ أسفلَ الشاشة لا يُنتبه له -->
+    <div class="mfgorow">
+      <button class="btn blue big" id="mfGoListen">🎧 استمع</button>
+      <button class="btn green big" id="mfGoBtn">▶️ ابدأ</button>
+    </div>
   </div>
   <div class="mfpanel" id="mfIdx" hidden>
     <div class="mfphead">
@@ -6218,6 +6229,11 @@ function closeModal(id){
 }
 $('mfClose').onclick=function(){ mfPickEnd(); mushafClose(); mushafEatGhost(); };
 $('mfGoBtn').onclick=function(){ var pv=MF_PV; mushafClose(); mushafEatGhost(); if(pv && pv.go) pv.go(); };
+/* استماعُ المقطع من صندوق العرض: إن كان معلَّماً تُتلى آياتُه، وإلّا فالوجهُ من أوّله */
+$('mfGoListen').onclick=function(){
+  if(AUD.q.length){ audStop(); return; }
+  audAsk(audQueue());
+};
 /* يُحفظ فورَ تعليمه، فيصحّ وإن خرج من الوجه بالإغلاق أو بزرّ الرجوع لا بزرّ البدء.
    ولوليّ الأمر أن يعيده من «الإعدادات ← 📖 عرض المقطع في المصحف قبل البدء» */
 if($('mfGoSkip')) $('mfGoSkip').onchange=function(){
@@ -6274,7 +6290,9 @@ var QARIS=[
   {f:'Yasser_Ad-Dussary_128kbps', n:'ياسر الدوسري'}
 ];
 var AUD_CACHE='nur-audio';
-var AUD={ el:null, q:[], i:-1, url:'' };
+var AUD={ el:null, q:[], i:-1, url:'', rep:1, left:1 };   /* rep=0 يعني بلا توقّف */
+var AUD_REPS=[{v:1,n:'مرّة'},{v:3,n:'٣ مرّات'},{v:5,n:'٥ مرّات'},
+              {v:7,n:'٧ مرّات'},{v:10,n:'١٠ مرّات'},{v:0,n:'♾️ بلا توقّف'}];
 function qariF(){
   var f=SET.qari, i;
   for(i=0;i<QARIS.length;i++) if(QARIS[i].f===f) return f;
@@ -6316,7 +6334,7 @@ function audFree(){
 }
 function audStop(){
   if(AUD.el){ try{ AUD.el.pause(); }catch(e){} }
-  AUD.q=[]; AUD.i=-1; audFree(); audSync();
+  AUD.q=[]; AUD.i=-1; AUD.rep=1; AUD.left=1; audFree(); audSync();
 }
 function audErr(){
   audStop();
@@ -6324,7 +6342,13 @@ function audErr(){
 }
 function audNext(){
   AUD.i++;
-  if(AUD.i>=AUD.q.length){ audStop(); return; }
+  if(AUD.i>=AUD.q.length){
+    /* تمّ المقطع: يُعاد إن بقي من تكراره شيء، و«بلا توقّف» لا ينقص أبداً */
+    if(AUD.q.length && (AUD.rep===0 || AUD.left>1)){
+      if(AUD.rep!==0) AUD.left--;
+      AUD.i=0;
+    } else { audStop(); return; }
+  }
   var it=AUD.q[AUD.i], want=AUD.i;
   audSync();
   audSrc(audUrl(it[0],it[1])).then(function(src){
@@ -6350,7 +6374,9 @@ function audSync(){
   var on=AUD.q.length>0, t=b.querySelector('.tico'), l=$('mfPlayLbl');
   b.classList.toggle('on', on);
   if(t) t.textContent = on ? '⏹️' : '🎧';
-  if(l) l.textContent = on ? (arNum(AUD.i+1)+'/'+arNum(AUD.q.length)) : 'استمع';
+  /* موضعُه من الآيات، ومعه ما بقي من التكرار إن كان */
+  var rp = (AUD.rep===0) ? ' ♾️' : (AUD.rep>1 ? (' ×'+arNum(AUD.left)) : '');
+  if(l) l.textContent = on ? (arNum(AUD.i+1)+'/'+arNum(AUD.q.length)+rp) : 'استمع';
 }
 /* لوحةٌ واحدةٌ في كلّ مرّة — ولا شيءَ يُطوي الكلّ */
 function mfPanel(id){
@@ -6537,13 +6563,20 @@ $('mfDockMean').onclick=function(){
    والضغطةُ الثانية توقفه — وزرٌّ واحدٌ لا زرّان */
 $('mfDockPlay').onclick=function(){
   if(AUD.q.length){ audStop(); return; }
-  var q=audQueue();
-  if(!q.length){ try{ navToast('لا آياتِ في هذا الوجه لتُتلى'); }catch(e){} return; }
-  audPlay(q);
+  audAsk(audQueue());
 };
-function audPlay(list){
+/* يُسأل عن التكرار أوّلاً: خياراتٌ سريعةٌ تُضغط بإصبعٍ واحد، لا عددٌ يُكتب */
+function audAsk(list){
+  if(!list || !list.length){ try{ navToast('لا آياتِ في هذا الوجه لتُتلى'); }catch(e){} return; }
+  uiPick('كم مرّةً تريد سماعَه؟', AUD_REPS, function(rep){ audPlay(list, rep); }, '🎧');
+}
+function audPlay(list, rep){
   AUD.q=list; AUD.i=-1;
-  try{ navToast('🎧 ' + qariName()); }catch(e){}
+  AUD.rep=(rep==null?1:rep); AUD.left=AUD.rep;
+  try{
+    navToast('🎧 '+qariName()+(AUD.rep===0 ? ' — بلا توقّف'
+             : (AUD.rep>1 ? (' — '+arNum(AUD.rep)+' مرّات') : '')));
+  }catch(e){}
   audNext();
 }
 /* التظليلُ يُبدَّل من شريط المصحف نفسِه، في كلّ موضعٍ يُعرض فيه الوجه: يُحفظ في
@@ -13989,7 +14022,7 @@ function curScreen(){ var e=document.querySelector('.screen.active'); return e?e
 /* ===== تنبيهٌ وتأكيدٌ بثيمة التطبيق =====
    نوافذ المتصفّح تقول «This page says» وتقطع جوّ الشاشة، فهذه تخلفها.
    uiAlert(نصّ) — خبرٌ يُقرأ ثم يُغلق.  uiAsk(نصّ, دالّة) — نعم أو لا. */
-function uiBox(msg,ic,yes,no,cb,muteKey,inp){
+function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
   var bg=$('ask'); if(!bg){ if(cb) cb(!!no?false:true); return; }
   var cw=$('askChkWrap'), ck=$('askChk');
   if(cw){ cw.hidden=!muteKey; if(ck) ck.checked=false; }
@@ -13999,16 +14032,25 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp){
     ip.hidden=!wantInp;
     if(wantInp){ ip.value=String(inp); }
   }
+  /* خياراتٌ سريعة: كلُّ خيارٍ زرٌّ يُنهي السؤالَ بقيمته، فلا «نعم» بعده */
+  var cz=$('askChips');
+  if(cz){
+    cz.hidden=!chips;
+    cz.innerHTML = chips ? chips.map(function(o,i){
+      return '<button type="button" class="chipsel" data-pi="'+i+'">'+esc(o.n)+'</button>';
+    }).join('') : '';
+  }
   $('askIc').textContent=ic||'💚';
   /* يُهرَّب كلُّ شيءٍ إلا <b> — فبعض الرسائل تُبرز اسماً أو عدداً */
   $('askMsg').innerHTML=String(msg).replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/&lt;(\/?b)>/g,'<$1>').replace(/\n/g,'<br>');
   var y=$('askYes'), n=$('askNo');
   y.textContent=yes||'✅ حسناً';
+  y.hidden=!!chips;                                    /* الخياراتُ تُغني عن زرّ الإقرار */
   n.hidden=!no; if(no) n.textContent=no;
-  var done=function(v){
+  var done=function(v,pv){
     if(muteKey && ck && ck.checked) save(muteKey,1);   /* رغبتُه تُحفظ فلا يُكرَّر عليه */
-    var val=(ip && wantInp)?ip.value:undefined;
+    var val=(pv!==undefined)?pv:((ip && wantInp)?ip.value:undefined);
     bg.hidden=true; y.onclick=null; n.onclick=null; bg.onclick=null;
     if(ip) ip.onkeydown=null;
     if(cb) cb(v,val);
@@ -14017,6 +14059,12 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp){
   n.onclick=function(){ done(false); };
   bg.onclick=function(e){ if(e.target===bg) done(false); };   /* الضغط خارجه إلغاء */
   bg.hidden=false;
+  if(cz && chips){
+    var bs=cz.querySelectorAll('[data-pi]'), z;
+    for(z=0;z<bs.length;z++) bs[z].onclick=function(){
+      done(true, chips[parseInt(this.getAttribute('data-pi'),10)].v);
+    };
+  }
   if(ip && wantInp){
     ip.onkeydown=function(e){ if(e.key==='Enter'){ e.preventDefault(); done(true); } };
     setTimeout(function(){ try{ ip.focus(); ip.select(); }catch(e){} }, 40);
@@ -14031,6 +14079,12 @@ function uiOnce(key,msg,ic,btn,cb){
   return true;
 }
 function uiAsk(msg,cb,ic){ uiBox(msg,ic||'🤔','✅ نعم','لا',cb); }
+/* uiPick(نصّ, [{v,n}…], دالّة) — خياراتٌ سريعةٌ تُضغط، ولا تُنادى الدالّةُ إن أُلغي */
+function uiPick(msg,list,cb,ic){
+  uiBox(msg,ic||'❓',null,'إلغاء',function(ok,v){
+    if(ok && cb) cb(v);
+  },null,null,list);
+}
 /* uiPrompt(نصّ, القيمةُ الأولى, دالّة) — اسمٌ يُكتب، ولا تُنادى الدالّةُ إن أُلغي */
 function uiPrompt(msg,val,cb,ic,max){
   var ip=$('askInp'); if(ip) ip.maxLength=max||14;   /* أسماءُ العائلة أقصرُ من اسم صاحب الملفّ */
