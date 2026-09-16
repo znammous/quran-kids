@@ -11749,8 +11749,29 @@ $('btnCertBack').onclick=function(){
   if(certFrom==='map'){ certFrom=''; renderMap(); show('scr-map'); return; }
   if(curSurah){ renderPath(); show('scr-path'); } else { renderMap(); show('scr-map'); }
 };
-$('btnPrint').onclick=function(){ window.print(); };
-$('btnTreePrint').onclick=function(){ window.print(); };
+/* اسمُ ملفّ PDF الذي يقترحه المتصفّحُ هو عنوانُ الصفحة، فكانت الشهادةُ والشجرةُ
+   تُحفظان باسم «نور الوحي — حفظ ومراجعة القرآن الكريم». فيُبدَّل العنوانُ لحظةَ
+   الطباعة ثمّ يُردّ عند انتهائها، ولمن لا يُطلق «afterprint» مهلةٌ يُردّ بعدها. */
+function printAs(name){
+  var old=document.title, done=false;
+  var back=function(){
+    if(done) return; done=true;
+    document.title=old;
+    try{ window.removeEventListener('afterprint', back); }catch(e){}
+  };
+  document.title=name;
+  try{ window.addEventListener('afterprint', back); }catch(e){}
+  setTimeout(back, 60000);
+  try{ window.print(); }catch(e){ back(); }
+}
+$('btnPrint').onclick=function(){
+  var n=(profile.name||'').trim();
+  printAs('شهادة نور الوحي'+(n?(' — '+n):''));
+};
+$('btnTreePrint').onclick=function(){
+  var n=(profile.name||'').trim();
+  printAs(n?('شجرة عائلة '+n):'شجرة عائلتي');
+};
 $('btnTreeBack').onclick=function(){ lookHome(); renderAvatars(); show('scr-look'); };
 $('btnFamTree').onclick=famTreeOpen;
 /* ===== الشهادةُ صورةً تُشارَك =====
