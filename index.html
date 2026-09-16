@@ -1067,6 +1067,9 @@ body.light .sp-lit{fill:#1f92d4}
 .revbox{border:3px solid var(--pb);border-radius:14px;padding:14px;margin:22px 0;
   background:var(--pnl2)}
 .revbox .rl{font-weight:900;color:var(--ttl);font-size:15px;margin-bottom:9px}
+/* سطرُ التحديد واحدٌ واضح، وقائمتاه تحته بخطٍّ يُقرأ بلا تحديق */
+.revbox .rl.rlbig{font-size:17.5px;margin-bottom:11px;white-space:nowrap}
+.revbox .revrow select{font-size:16px;font-weight:800}
 .revsum{border:3px solid var(--gold);border-radius:14px;padding:12px;margin:22px 0 14px;
   color:var(--warm);font-weight:800;font-size:15px;text-align:center;line-height:1.7}
 .revsum b{color:var(--ttl);font-size:17px}
@@ -3598,6 +3601,14 @@ function mfPickAt(t,x,y){
     for(z=0;z<same.length;z++) same[z].classList.add('mpick');
   }catch(e){}
   MF_PICK.busy=true;                      /* لمسةٌ ونقرةٌ قد تجتمعان، فتُمنع الثانية */
+  /* نقطةُ النهاية تُضبط بنقرةٍ واحدة: كان يُسأل عنها بصندوقٍ فتصير نقرتين،
+     والبدايةُ مضبوطةٌ أمامه فلا لبس */
+  if(MF_PICK.stage==='to'){
+    var f0=MF_PICK, fn0=f0.done;
+    mfPickEnd(); mushafClose(); mushafEatGhost();
+    if(fn0) fn0(f0.fromS, f0.fromA, sn, an);
+    return true;
+  }
   uiBox('<b>'+(sx?sx.name:'')+' — الآية '+arNum(an)+'</b>\n'+(MF_PICK.stage==='from'?'أمِن هنا تبدأ مراجعتُك؟':'أوعندها تنتهي مراجعتُك؟'),
     '📖','✅ موافق','↺ أعد التحديد', function(ok){
       if(!MF_PICK) return;
@@ -3612,10 +3623,10 @@ function mfPickAt(t,x,y){
       if(MF_PICK.stage==='from'){
         MF_PICK.fromS=sn; MF_PICK.fromA=an; MF_PICK.stage='to';
         mfPickDraw();                     /* يبقى في الصفحة نفسها غالباً */
-        MF_PICK.busy=true;                /* لا يلتقط شيئاً حتى يقرأ ويقرّ */
-        uiBox('✅ ضُبطت البداية عند '+(sx?sx.name:'')+' — الآية '+arNum(an)+'.\n\n'+
-              'والآن اضغط على الكلمة التي تنتهي عندها مراجعتُك.',
-          '②','✅ فهمت، أُحدّد النهاية',null,mfUnbusy);
+        /* تنبيهٌ عابرٌ لا صندوقٌ يُغلَق: الشريطُ يقول «② اضغط النهاية» فلا يضلّ */
+        try{ navToast('✅ ضُبطت البداية عند '+(sx?sx.name:'')+' — الآية '+arNum(an)+
+                      ' • والآن اضغط موضعَ النهاية'); }catch(e){}
+        mfUnbusy();
         return;
       }
       var f=MF_PICK, fn=f.done;
@@ -9073,11 +9084,11 @@ function renderRevPlanBody(){
     '<div class="revbox">'+
       '<button type="button" class="btn blue mini" id="revPickR" style="width:100%;margin:0 0 10px">'+
         '📖 افتح المصحف وحدّد النطاق</button>'+
-      '<div class="rl">من أين تبدأ المراجعة؟</div>'+
+      '<div class="rl rlbig">حدّد نقطة البداية</div>'+
       '<div class="revrow"><select id="revFS">'+revSurahOpts(REV.fromS)+'</select>'+
-      '<select id="revFA">'+revAyahOpts(REV.fromS,REV.fromA)+'</select></div>'+
-
-      '<div class="rl" style="margin:12px 0 8px">وإلى أين تنتهي؟</div>'+
+      '<select id="revFA">'+revAyahOpts(REV.fromS,REV.fromA)+'</select></div></div>'+
+    '<div class="revbox">'+
+      '<div class="rl rlbig">حدّد نقطة النهاية</div>'+
       '<div class="revrow"><select id="revTS">'+revSurahOpts(REV.toS)+'</select>'+
       '<select id="revTA">'+revAyahOpts(REV.toS,REV.toA)+'</select></div></div>'+
     '<div class="revbox"><div class="rl">ومن أيّ الطرفين تمشي؟</div><div class="chips">'+
@@ -9680,7 +9691,7 @@ function bqnOnbWire(){
     var ms=mb.querySelectorAll('[data-pmode]'), z;
     for(z=0;z<ms.length;z++) ms[z].onclick=function(){
       var v=this.getAttribute('data-pmode');
-      curP().priorMode=v; saveDB();
+      priorModeSet(v);
       var a=$('onbPMode').querySelectorAll('[data-pmode]'), y;
       for(y=0;y<a.length;y++)
         a[y].className='onbopt'+(a[y].getAttribute('data-pmode')===v?' sel':'');
@@ -9895,7 +9906,24 @@ function priorModeHTML(){
       '<i>لم أحفظ شيئاً قبل التطبيق</i></span></button>'+
     '<button type="button" class="onbopt'+(pm==='has'?' sel':'')+'" data-pmode="has">'+
       '<span class="oe">📌</span><span class="ot"><b>أسجّل حفظي السابق</b>'+
-      '<i>أحفظ شيئاً — ولو متفرّقاً — فيُحسب لي</i></span></button></div>';
+      '<i>أحفظ شيئاً — ولو متفرّقاً — فيُحسب لي</i></span></button>'+
+    /* الحافظُ لكتابِ الله لا خطّةَ حفظٍ له، فقد يظنّ أنّ التطبيقَ ليس له —
+       فيُسجَّل محفوظُه كلُّه ويُساق إلى خطّة المراجعة، وهي حاجتُه */
+    '<button type="button" class="onbopt'+(pm==='all'?' sel':'')+'" data-pmode="all">'+
+      '<span class="oe">🏅</span><span class="ot"><b>أنا حافظٌ لكتاب الله كاملاً</b>'+
+      '<i>يُسجَّل المصحفُ كلُّه محفوظاً، وتنتقل إلى خطّة المراجعة</i></span></button></div>';
+}
+/* اختيارُ الحال يُسجَّل في موضعٍ واحد: ومن قال «حافظٌ كاملاً» أُشّر له المصحفُ
+   كلُّه واعتُمد ساعتَه، فلا لوحةَ تأشيرٍ تُعرض عليه ولا شيءَ ينتظر اعتماده */
+function priorModeSet(v){
+  var p=priorSel();
+  p.priorMode=v;
+  if(v==='all'){
+    for(var j=1;j<=30;j++) p.priorJ[j]=1;
+    try{ priorApply(); }catch(e){}
+    try{ revLoad(); }catch(e){}
+  }
+  saveDB();
 }
 /* في الإعدادات: البطاقتان ثم اللوحة تحتهما */
 function renderPriorMode(){
@@ -9907,7 +9935,9 @@ function renderPriorMode(){
   bx.hidden=(pm!=='has');
   var ms=mb.querySelectorAll('[data-pmode]'), z;
   for(z=0;z<ms.length;z++) ms[z].onclick=function(){
-    curP().priorMode=this.getAttribute('data-pmode'); saveDB(); renderPriorMode();
+    priorModeSet(this.getAttribute('data-pmode'));
+    renderPriorMode();
+    try{ fillBqnSelect(); }catch(e){}
   };
   /* سجّل حفظه فصار له محفوظ — فيُسأل الآن عن ورد مراجعته.
      والانتقالُ إلى الخطوة التالية شأنُ أزرار المعالج لا شأنُ الرسم:
@@ -10216,8 +10246,15 @@ function renderBqnList(){
       'ويدخل جدولَ المراجعة، ويُعاد حسابُ أيّامك وموضعِك من الخطة.</div>';
     var ms=$('bqnList').querySelectorAll('[data-pmode]'), z;
     for(z=0;z<ms.length;z++) ms[z].onclick=function(){
-      curP().priorMode=this.getAttribute('data-pmode'); saveDB();
+      var v=this.getAttribute('data-pmode');
+      priorModeSet(v);
       try{ revLoad(); }catch(e){}
+      /* حافظٌ كاملاً: لا شيءَ يؤشّره، فيمضي إلى خطّة المراجعة رأساً */
+      if(v==='all'){
+        var w=bqnSteps().indexOf('wird');
+        try{ navToast('🏅 سُجّل لك المصحفُ كاملاً — وهذه خطّةُ مراجعتك'); }catch(e){}
+        bqnShow(w>=0?w:BQ.i); return;
+      }
       bqnShow(BQ.i);          /* عددُ الخطوات يتبدّل بجوابه، فتُعاد هيئةُ المعالج */
     };
     return;
