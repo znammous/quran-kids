@@ -112,7 +112,9 @@ body.light .sunny{display:block}
    الدائمةُ تُبقي بطاقةَ الرسوم عاملةً في الدرس والمصحف بلا فائدة */
 body.bgrest #bg *{animation-play-state:paused}
 @keyframes tw{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:.8;transform:scale(1.15)}}
-.moon{position:absolute;top:16px;left:18px;font-size:38px;opacity:.75}
+/* الهلالُ زينةٌ في الركن، والتاريخُ الهجريُّ نزل في الركن نفسِه فركبه — فيرتفع
+   الهلالُ قليلاً ويصغر، ليبقى فوق سطر التاريخ لا عليه */
+.moon{position:absolute;top:5px;left:12px;font-size:29px;opacity:.7}
 .wrap{position:relative;z-index:1;max-width:920px;margin:0 auto;
   padding:calc(14px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right))
           calc(40px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left))}
@@ -178,14 +180,12 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .gbtn.sel{border-color:var(--g2);background:#e2f1ff;color:var(--g1)}
 .gbtn.big2{padding:14px 18px;font-size:18px;flex:1}
 .lookpanel{background:#fff;border:2px solid #e5ecf6;border-radius:14px;padding:12px;margin-top:12px}
-/* ===== لعبةُ «أسرتي»: شخصيّاتٌ كاملةُ الجسم ===== */
-.famfig{width:170px;height:330px;margin:0 auto;background:#eef5fd;border:3px solid #d7e2f0;border-radius:16px}
-.famfig svg{width:100%;height:100%;display:block}
-.famkids{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:12px 0 0}
+/* ===== «عائلتي»: كلُّ فردٍ يُرسم بصورة الشخصية نفسِها ===== */
+.famkids{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin:10px 0 0}
 .famkids .chipsel{padding:7px 12px}
 .famkids .famadd{border-style:dashed}
-#famTabs{overflow-x:visible;gap:6px}
-#famTabs .onbtab{flex:1 1 0;min-width:0;padding:8px 6px;text-align:center;font-size:clamp(11px,3.2vw,14px)}
+#lookTabs{overflow-x:visible;gap:6px;margin-bottom:10px}
+#lookTabs .onbtab{flex:1 1 0;min-width:0;padding:8px 6px;text-align:center;font-size:clamp(11px,3.2vw,14px)}
 .lookhead{font-weight:800;color:#3d5b7a;margin-bottom:8px;font-size:14px}
 .pickrow{margin-bottom:10px}
 .pickrow .lb{display:block;font-size:13px;font-weight:800;color:#3d5b7a;margin-bottom:6px}
@@ -1863,28 +1863,18 @@ body.glow-off .dfpic{animation:none}
   </section>
 
   <section class="screen" id="scr-look">
-    <h1>🎨 شخصيتي</h1>
+    <h1>👨‍👩‍👧‍👦 عائلتي</h1>
+    <div class="onbtabs" id="lookTabs" hidden></div>
     <div class="card" id="lookCard">
       <div class="ph" id="bigAvatar" style="width:150px;height:190px"></div>
-      <div class="row" style="margin-top:12px">
+      <div class="row" id="lookGender" style="margin-top:12px">
         <button type="button" class="gbtn big2" id="gFemale2">👧 أنثى</button>
         <button type="button" class="gbtn big2" id="gMale2">👦 ذكر</button>
       </div>
+      <div class="famkids" id="famKids" hidden></div>
       <div class="lookpanel" id="lookPanel"></div>
     </div>
     <button class="btn primary big" id="btnLookDone" style="margin:0">✅ حفظ</button>
-  </section>
-
-  <section class="screen" id="scr-fam">
-    <h1>👨‍👩‍👧‍👦 عائلتي</h1>
-    <p class="sub">العبْ بشخصيّات عائلتك — لكلّ واحدٍ صفحتُه</p>
-    <div class="onbtabs" id="famTabs"></div>
-    <div class="card" id="famCard">
-      <div class="famfig" id="famFig"></div>
-      <div class="famkids" id="famKids"></div>
-      <div class="lookpanel" id="famPanel"></div>
-    </div>
-    <button class="btn primary big" id="btnFamDone" style="margin:0">✅ حفظ</button>
   </section>
 
   <section class="screen" id="scr-map">
@@ -2587,8 +2577,13 @@ function avatarSVG(){
   var skin=PAL.skin[look.skin], eye=PAL.eyes[look.eyes].c, hair=PAL.hair[look.hair].c,
       cloth=PAL.cloth[look.cloth].c, hij=PAL.hijab[look.hijab].c;
   var brow=(gender==='m')?darken(hair,0.85):'#4a3728';
+  /* بنتٌ صغيرةٌ اختير لها «بلا حجاب»: يظهر شعرُها كما يظهر شعرُ الولد.
+     وما عداها فالحجابُ كما كان، وشخصيّةُ المستخدم لا يمسّها هذا البتّة */
   var head=(gender==='m')
     ? maleHead(skin,hair,cloth)
+    : (look.hijOn===0)
+    ? '<ellipse cx="28.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>'+
+      '<ellipse cx="71.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>'+hairSVG(hair)
     : '<path fill-rule="evenodd" fill="'+hij+'" d="M50,13 C75,13 85,33 85,60 C85,81 77,95 67,101 L33,101 C23,95 15,81 15,60 C15,33 25,13 50,13 Z '+
         'M31,58 a19,23 0 1,0 38,0 a19,23 0 1,0 -38,0 Z"/>'+
       '<path d="M50,13 C33,13 22,27 18,46 C24,30 35,20 50,18 Z" fill="#fff" opacity=".22"/>'+
@@ -2613,7 +2608,8 @@ function avatarSVG(){
   var lashes=(gender==='f')
     ? '<path d="M37,55 L34.5,53" stroke="'+brow+'" stroke-width="1.6" stroke-linecap="round"/>'+
       '<path d="M63,55 L65.5,53" stroke="'+brow+'" stroke-width="1.6" stroke-linecap="round"/>' : '';
-  var crown=isHafiz()?crownSVG():'';
+  /* التاجُ للمستخدم وحدَه — لا يلبسه أفرادُ العائلة في اللعبة */
+  var crown=(!AV_PLAIN && isHafiz())?crownSVG():'';
   return '<svg viewBox="0 0 100 128" xmlns="http://www.w3.org/2000/svg" aria-label="شخصيتي">'+
 
     '<rect width="100" height="128" fill="#eaf3fd"/><circle cx="50" cy="62" r="44" fill="#d3e8fb"/>'+
@@ -2636,6 +2632,100 @@ function avatarSVG(){
       '<ellipse cx="36" cy="66" rx="4.6" ry="2.8" fill="#f39ba0" opacity=".45"/>'+
       '<ellipse cx="64" cy="66" rx="4.6" ry="2.8" fill="#f39ba0" opacity=".45"/>')+'</svg>';
 }
+/* ---------- رسمُ فردٍ من العائلة بصورة الشخصية نفسِها ----------
+   نبدّل «look» و«gender» لحظةَ الرسم ثمّ نردُّهما في «finally» فلا يضيعان،
+   فيرسمه المحرّكُ نفسُه — ولا رسمَ ثانٍ يُصان ولا يُحفظ شيءٌ أثناء التبديل */
+var AV_PLAIN=false;
+function lookAs(L,g,fn){
+  var oL=look, oG=gender, oP=AV_PLAIN;
+  look=L; gender=g; AV_PLAIN=true;
+  try{ return fn(); } finally{ look=oL; gender=oG; AV_PLAIN=oP; }
+}
+function famAvatar(m){
+  var K=FAM_KINDS[m.kind]||FAM_KINDS.boy;
+  return lookAs(m.look, K.male?'m':'f', function(){ return avatarSVG(); });
+}
+/* صفوفُ الفرد: صفوفُ الشخصية نفسُها، منقّاةً بحسب ذكورته وكِبَره */
+function famRowsFor(kind, L){
+  var K=FAM_KINDS[kind]||FAM_KINDS.boy,
+      r=[{k:'skin',lb:'🎨 لون البشرة'},{k:'eyes',lb:'👁️ لون العينين'}];
+  if(K.male){
+    r.push({k:'head',lb:'🧢 غطاء الرأس',kind:'choice',opts:HEADWEAR});
+    if((L.head||0)<3){                       /* الشماغُ والغترةُ يغطّيان الشعر */
+      r.push({k:'hairStyle',lb:'✂️ تسريحة الشعر',kind:'choice',opts:HAIRCUTS});
+      r.push({k:'hair',lb:'💇 لون الشعر'});
+    }
+  }else{
+    if(!K.adult) r.push({k:'hijOn',lb:'🧕 الحجاب',kind:'choice',opts:HIJON});
+    if(K.adult || (L.hijOn||0)===1){
+      if(K.adult) r.push({k:'veil',lb:'🧕 النقاب',kind:'choice',opts:VEIL});
+      r.push({k:'hijab',lb:'🧕 لون الحجاب'});
+    }else{
+      r.push({k:'hairStyle',lb:'✂️ تسريحة الشعر',kind:'choice',opts:HAIRCUTS});
+      r.push({k:'hair',lb:'💇 لون الشعر'});
+    }
+  }
+  r.push({k:'cloth',lb:'👕 لون الملابس'});
+  return r;
+}
+/* صفوفُ المستخدم نفسِه، بالتنقية التي كانت */
+function meRows(){
+  var out=[];
+  LOOK_ROWS.forEach(function(r){
+    if(r.k==='hijab'&&gender==='m') return;
+    if(r.f&&gender!=='f') return;
+    if(r.k==='hair'&&gender==='f') return;
+    if(r.m&&gender!=='m') return;
+    if((r.k==='hair'||r.k==='hairStyle')&&gender==='m'&&(look.head||0)>=3) return;
+    out.push(r);
+  });
+  return out;
+}
+/* لوحةُ خياراتٍ واحدةٌ تخدم المستخدمَ وأفرادَ عائلته: L هو المظهرُ المعروض */
+function lookPanelHTML(rows, L, head){
+  var h='<div class="lookhead">'+head+'</div>';
+  rows.forEach(function(r){
+    var open=(LOOK_OPEN===r.k), body='', cur='';
+    if(r.kind==='choice'){
+      var oi=Math.min(L[r.k]||0, r.opts.length-1);
+      cur='<span>'+esc(r.opts[oi].n)+'</span>';
+      r.opts.forEach(function(o,i){
+        body+='<button type="button" class="chipsel'+((L[r.k]||0)===i?' sel':'')+'" '+
+              'data-c="'+r.k+'" data-i="'+i+'">'+o.n+'</button>';
+      });
+    }else{
+      var ci=Math.min(L[r.k]||0, PAL[r.k].length-1), cc=PAL[r.k][ci];
+      cur='<span class="dot" style="background:'+((r.k==='skin')?cc.f:cc.c)+'"></span><span>'+esc(cc.n)+'</span>';
+      PAL[r.k].forEach(function(c,i){
+        var col=(r.k==='skin')?c.f:c.c;
+        body+='<span class="swatch'+((L[r.k]||0)===i?' sel':'')+'" data-k="'+r.k+'" data-i="'+i+
+              '" title="'+c.n+'" style="background:'+col+'"></span>';
+      });
+    }
+    h+='<button type="button" class="pkh'+(open?' open':'')+'" data-pk="'+r.k+'">'+
+         '<span class="lbx">'+r.lb+'</span>'+
+         '<span class="cur">'+cur+'<span style="opacity:.7">'+(open?'▴':'▾')+'</span></span>'+
+       '</button>'+
+       '<div class="pkb"'+(open?'':' hidden')+'><div class="sw-row">'+body+'</div></div>';
+  });
+  return h;
+}
+function lookPanelWire(panel, L){
+  var i;
+  function set(k,v){ L[k]=v; saveDB(); renderAvatars(); beep([700],0.05); }
+  var ch=panel.querySelectorAll('[data-c]');
+  for(i=0;i<ch.length;i++) ch[i].onclick=function(){
+    set(this.getAttribute('data-c'), parseInt(this.getAttribute('data-i'),10)); };
+  var sw=panel.querySelectorAll('[data-k]');
+  for(i=0;i<sw.length;i++) sw[i].onclick=function(){
+    set(this.getAttribute('data-k'), parseInt(this.getAttribute('data-i'),10)); };
+  var pk=panel.querySelectorAll('[data-pk]');
+  for(i=0;i<pk.length;i++) pk[i].onclick=function(){
+    var k=this.getAttribute('data-pk');
+    LOOK_OPEN=(LOOK_OPEN===k)?null:k;      /* واحدةٌ مفتوحة لا غير */
+    renderAvatars();
+  };
+}
 function renderAvatars(){
   var svg=avatarSVG();
   ['homeAvatar','bigAvatar','mapAvatar','certAvatar','onbAvatar'].forEach(function(id){ var e=$(id); if(e) e.innerHTML=svg; });
@@ -2645,78 +2735,101 @@ function renderAvatars(){
     gf.className='gbtn'+big+(gender==='f'?' sel':'');
     gm.className='gbtn'+big+(gender==='m'?' sel':'');
   });
+  /* التبويباتُ لا تظهر إلّا في شاشة «عائلتي»؛ وفي معالج البداية تُنقل بطاقةُ
+     الشخصية إليه، فلا عائلةَ هناك ولا تبويب — «أنا» وحدَها */
+  var inLook=!!($('lookCard') && $('scr-look') && $('lookCard').parentNode===$('scr-look'));
+  if(!inLook) FAM_TAB='me';
+  var tabs=$('lookTabs');
+  if(tabs){ tabs.hidden=!inLook; if(inLook) famTabsRender(tabs); }
+  var gr=$('lookGender'); if(gr) gr.hidden=(FAM_TAB!=='me');   /* الذكرُ والأنثى للمستخدم وحدَه */
+  var kids=$('famKids');
+  if(kids){ kids.hidden=!(inLook && FAM_TAB==='kids'); if(!kids.hidden) famKidsRender(kids); }
+  if(FAM_TAB!=='me'){ famRenderMember(); return; }
   var panel=$('lookPanel');
   if(panel){
-    var h='<div class="lookhead">🎨 اختر شكل شخصيتك</div>';
-    LOOK_ROWS.forEach(function(r){
-      if(r.k==='hijab'&&gender==='m') return;
-      if(r.f&&gender!=='f') return;
-      if(r.k==='hair'&&gender==='f') return;
-      if(r.m&&gender!=='m') return;
-      if((r.k==='hair'||r.k==='hairStyle')&&gender==='m'&&(look.head||0)>=3) return;
-      var open=(LOOK_OPEN===r.k), body='', cur='';
-      if(r.kind==='choice'){
-        var oi=Math.min(look[r.k]||0, r.opts.length-1);
-        cur='<span>'+esc(r.opts[oi].n)+'</span>';
-        r.opts.forEach(function(o,i){
-          body+='<button type="button" class="chipsel'+((look[r.k]||0)===i?' sel':'')+'" '+
-                'data-c="'+r.k+'" data-i="'+i+'">'+o.n+'</button>';
-        });
-      }else{
-        var ci=Math.min(look[r.k]||0, PAL[r.k].length-1), cc=PAL[r.k][ci];
-        cur='<span class="dot" style="background:'+((r.k==='skin')?cc.f:cc.c)+'"></span><span>'+esc(cc.n)+'</span>';
-        PAL[r.k].forEach(function(c,i){
-          var col=(r.k==='skin')?c.f:c.c;
-          body+='<span class="swatch'+(look[r.k]===i?' sel':'')+'" data-k="'+r.k+'" data-i="'+i+
-                '" title="'+c.n+'" style="background:'+col+'"></span>';
-        });
-      }
-      h+='<button type="button" class="pkh'+(open?' open':'')+'" data-pk="'+r.k+'">'+
-           '<span class="lbx">'+r.lb+'</span>'+
-           '<span class="cur">'+cur+'<span style="opacity:.7">'+(open?'▴':'▾')+'</span></span>'+
-         '</button>'+
-         '<div class="pkb"'+(open?'':' hidden')+'><div class="sw-row">'+body+'</div></div>';
-    });
-    h+='<button type="button" class="btn ghost mini" id="btnRandomLook" style="width:100%;margin-top:8px">🎲 مظهر عشوائي</button>';
-    panel.innerHTML=h;
-    var ch=panel.querySelectorAll('[data-c]');
-    for(var c=0;c<ch.length;c++){
-      ch[c].onclick=function(){
-        look[this.getAttribute('data-c')]=parseInt(this.getAttribute('data-i'),10);
-        saveDB(); renderAvatars(); beep([700],0.05);
-      };
-    }
-    var sw=panel.querySelectorAll('[data-k]');
-    for(var i=0;i<sw.length;i++){
-      sw[i].onclick=function(){ look[this.getAttribute('data-k')]=parseInt(this.getAttribute('data-i'),10);
-        saveDB(); renderAvatars(); beep([700],0.05); };
-    }
-    var pk=panel.querySelectorAll('[data-pk]');
-    for(var z=0;z<pk.length;z++) pk[z].onclick=function(){
-      var k=this.getAttribute('data-pk');
-      LOOK_OPEN=(LOOK_OPEN===k)?null:k;      /* واحدةٌ مفتوحة لا غير */
-      renderAvatars();
-    };
+    panel.innerHTML=lookPanelHTML(meRows(), look, '🎨 اختر شكل شخصيتك')+
+      '<button type="button" class="btn ghost mini" id="btnRandomLook" style="width:100%;margin-top:8px">🎲 مظهر عشوائي</button>';
+    lookPanelWire(panel, look);
     var rb=$('btnRandomLook'); if(rb) rb.onclick=randomLook;
   }
 }
+/* تبويباتُ العائلة: أنا وأبي وأمّي وإخوتي */
+function famTabsRender(el){
+  var F=famData(), i;
+  var t=[['me','🧒 أنا'],['dad','👨 أبي'],['mom','👩 أمي'],
+         ['kids','👧 إخوتي'+(F.kids.length?(' ('+arNum(F.kids.length)+')'):'')]];
+  el.innerHTML=t.map(function(x){
+    return '<button type="button" class="onbtab'+(FAM_TAB===x[0]?' sel':'')+'" data-ft="'+x[0]+'">'+x[1]+'</button>';
+  }).join('');
+  var b=el.querySelectorAll('[data-ft]');
+  for(i=0;i<b.length;i++) b[i].onclick=function(){
+    FAM_TAB=this.getAttribute('data-ft'); LOOK_OPEN=null; renderAvatars(); };
+}
+/* شريطُ الإخوة: عددُهم مفتوحٌ يُزاد ويُحذف */
+function famKidsRender(el){
+  var F=famData(), h='', i;
+  F.kids.forEach(function(k,j){
+    h+='<button type="button" class="chipsel'+(j===FAM_KID?' sel':'')+'" data-fk="'+j+'">'+
+       ((k.type==='girl')?'👧':'🧒')+' '+arNum(j+1)+'</button>';
+  });
+  h+='<button type="button" class="chipsel famadd" data-fadd="boy">➕ أخ</button>'+
+     '<button type="button" class="chipsel famadd" data-fadd="girl">➕ أخت</button>';
+  if(F.kids.length) h+='<button type="button" class="chipsel" data-fdel="1">🗑️ احذف</button>';
+  el.innerHTML=h;
+  var kb=el.querySelectorAll('[data-fk]');
+  for(i=0;i<kb.length;i++) kb[i].onclick=function(){
+    FAM_KID=parseInt(this.getAttribute('data-fk'),10); LOOK_OPEN=null; renderAvatars(); };
+  var ab=el.querySelectorAll('[data-fadd]');
+  for(i=0;i<ab.length;i++) ab[i].onclick=function(){
+    var t=this.getAttribute('data-fadd');
+    F.kids.push({ type:t, look:famNew(t) });
+    FAM_KID=F.kids.length-1; LOOK_OPEN=null; saveDB(); beep([680,900],0.05); renderAvatars();
+  };
+  var db=el.querySelector('[data-fdel]');
+  if(db) db.onclick=function(){
+    uiAsk('حذف هذا الفرد من عائلتك في اللعبة؟', function(ok){
+      if(!ok) return;
+      F.kids.splice(FAM_KID,1); FAM_KID=0; saveDB(); renderAvatars();
+    },'🗑️');
+  };
+}
+/* صورةُ الفرد المختار ولوحةُ خياراته */
+function famRenderMember(){
+  var m=famCur(), big=$('bigAvatar'), panel=$('lookPanel');
+  if(!m){
+    if(big) big.innerHTML='';
+    if(panel) panel.innerHTML='<div class="lookhead">🧒 أضِفْ أخاً أو أختاً لتلعب بشخصيّته</div>';
+    return;
+  }
+  if(big) big.innerHTML=famAvatar(m);
+  if(!panel) return;
+  var L=m.look, K=FAM_KINDS[m.kind]||FAM_KINDS.boy;
+  panel.innerHTML=lookPanelHTML(famRowsFor(m.kind,L), L,
+      '🎨 اختر شكل '+esc(K.n)+(FAM_TAB==='kids'?' '+arNum(FAM_KID+1):''))+
+    '<button type="button" class="btn ghost mini" id="btnRandomLook" style="width:100%;margin-top:8px">🎲 مظهر عشوائي</button>';
+  lookPanelWire(panel, L);
+  var rb=$('btnRandomLook');
+  if(rb) rb.onclick=function(){
+    ['skin','eyes','hair','cloth','hijab'].forEach(function(p){ L[p]=Math.floor(Math.random()*PAL[p].length); });
+    L.hairStyle=Math.floor(Math.random()*HAIRCUTS.length);
+    if(K.male) L.head=Math.floor(Math.random()*HEADWEAR.length);
+    saveDB(); beep([700,900],0.05); renderAvatars();
+  };
+}
 /* =========================================================
-   لعبةُ «عائلتي» — شخصيّاتٌ كاملةُ الجسم داخل اللعبة وحدَها
-   أبٌ وأمٌّ وإخوةٌ بعددٍ مفتوح، لكلّ واحدٍ صفحتُه وخياراتُه: البشرةُ والعينان
-   والشعرُ وغطاءُ الرأس واللباسُ والحذاء. والبناتُ الصغيراتُ بلا حجابٍ إلّا أن يُختار.
+   لعبةُ «عائلتي» — أنا وأبي وأمّي وإخوتي في شاشةٍ واحدة
+   أبٌ وأمٌّ وإخوةٌ بعددٍ مفتوح، لكلّ واحدٍ تبويبُه وخياراتُه: البشرةُ والعينان
+   والشعرُ وغطاءُ الرأس والملابس، يُرسم بصورة الشخصية نفسِها لا برسمٍ ثانٍ.
+   والبناتُ الصغيراتُ بلا حجابٍ إلّا أن يُختار.
    ولا صلةَ لها بملفّ المستخدم ولا بتقدّمه — لعبةٌ تُلعب، وصورةُ الملفّ تبقى كما هي.
    ========================================================= */
 var FAM_KINDS={ dad:{n:'أبي',ic:'👨',adult:true,male:true}, mom:{n:'أمي',ic:'👩',adult:true,male:false},
                 boy:{n:'أخي',ic:'🧒',adult:false,male:true}, girl:{n:'أختي',ic:'👧',adult:false,male:false} };
-var DRESSES=[{n:'سادة'},{n:'بكشكشة'},{n:'بحزام'},{n:'منقّط'}];
-var THOBES=[{n:'ثوب'},{n:'قميص وبنطال'},{n:'بشت'}];
-var SHOES=[{n:'رياضي'},{n:'مدرسي'},{n:'صندل'},{n:'بوت'}];
-var BEARDS=[{n:'بلا لحية'},{n:'خفيفة'},{n:'كاملة'}];
 var HIJON=[{n:'بلا حجاب'},{n:'بحجاب'}];
-var FAM_TAB='dad', FAM_KID=0, FAM_OPEN=null;
+var FAM_TAB='me', FAM_KID=0;
 function famNew(kind){
-  return { skin:1, eyes:0, hair:0, hairStyle:0, head:(kind==='dad')?4:0, beard:(kind==='dad')?1:0,
-           cloth:(kind==='mom')?4:(kind==='girl')?5:0, dress:0, thobe:0, shoe:0, shoeC:1,
+  return { skin:1, eyes:0, hair:0, hairStyle:0, head:(kind==='dad')?4:0, veil:0,
+           cloth:(kind==='mom')?4:(kind==='girl')?5:0,
            hijab:(kind==='mom')?1:3, hijOn:(kind==='mom')?1:0 };
 }
 function famData(){
@@ -2737,211 +2850,6 @@ function famCur(){
   var k=F.kids[FAM_KID];
   return { kind:(k.type==='girl')?'girl':'boy', look:k.look };
 }
-/* ---------- الرسم: شخصيّةٌ واقفةٌ كاملة ---------- */
-function famSVG(m){
-  var K=FAM_KINDS[m.kind]||FAM_KINDS.boy, L=m.look||{};
-  function pk(p,i,d){ var a=PAL[p]; return a[(i>=0&&i<a.length)?i:(d||0)]; }
-  var sk=pk('skin',L.skin), eye=pk('eyes',L.eyes).c, hair=pk('hair',L.hair).c,
-      cl=pk('cloth',L.cloth).c, hj=pk('hijab',L.hijab).c, shc=pk('cloth',L.shoeC,1).c;
-  var kid=!K.adult, fem=!K.male, veiled=fem && (K.adult || (L.hijOn||0)===1);
-  var hy=kid?48:38, hr=kid?19:16, sy=kid?70:58, waist=kid?112:112,
-      hem=fem?(kid?150:166):(kid?156:170), ank=kid?170:180, ft=kid?182:192;
-  var dk=darken(cl,0.76), s='<svg viewBox="0 0 100 210" xmlns="http://www.w3.org/2000/svg">';
-  s+='<ellipse cx="50" cy="'+(ft+7)+'" rx="27" ry="5" fill="rgba(0,0,0,.13)"/>';
-  /* الساقان: تظهران تحت الفستان، ويسترهما الثوبُ والبنطال */
-  if(fem || (L.thobe||0)===1){
-    s+='<rect x="41" y="'+(waist+6)+'" width="7" height="'+(ank-waist-6)+'" rx="3.5" fill="'+(fem?sk.f:darken(cl,0.6))+'"/>'+
-       '<rect x="52" y="'+(waist+6)+'" width="7" height="'+(ank-waist-6)+'" rx="3.5" fill="'+(fem?sk.f:darken(cl,0.6))+'"/>';
-  }
-  /* الحذاء */
-  function shoe(x){
-    var st=L.shoe||0, y=ank+2;
-    if(st===2) return '<path d="M'+(x-7)+','+(y+6)+' h14 v4 h-14 Z" fill="'+shc+'"/>'+
-                      '<path d="M'+(x-6)+','+(y+2)+' h12" stroke="'+shc+'" stroke-width="3" stroke-linecap="round"/>';
-    if(st===3) return '<rect x="'+(x-8)+'" y="'+(y-4)+'" width="16" height="14" rx="3" fill="'+shc+'"/>'+
-                      '<rect x="'+(x-8)+'" y="'+(y+7)+'" width="16" height="4" rx="2" fill="'+darken(shc,0.6)+'"/>';
-    if(st===1) return '<path d="M'+(x-8)+','+(y+3)+' q0,-6 8,-6 q8,0 8,7 v4 h-16 Z" fill="'+shc+'"/>'+
-                      '<rect x="'+(x-8)+'" y="'+(y+8)+'" width="16" height="3" rx="1.5" fill="'+darken(shc,0.55)+'"/>';
-    return '<path d="M'+(x-9)+','+(y+4)+' q1,-7 9,-7 q8,0 8,8 v3 h-17 Z" fill="'+shc+'"/>'+
-           '<rect x="'+(x-9)+'" y="'+(y+8)+'" width="17" height="3.5" rx="1.75" fill="#fff" opacity=".75"/>';
-  }
-  s+=shoe(41)+shoe(59);            /* قدمان متباعدتان، فلا تلتصقان ككتلةٍ واحدة */
-  /* اللباس */
-  if(fem){
-    var d=L.dress||0;
-    s+='<path d="M36,'+sy+' q14,-6 28,0 l-2,'+(waist-sy+4)+' q-12,5 -24,0 Z" fill="'+cl+'"/>';       /* الصدر */
-    s+='<path d="M38,'+(waist+2)+' q12,5 24,0 L'+(d===1?72:70)+','+hem+' q-20,7 -'+(d===1?44:40)+',0 Z" fill="'+cl+'"/>';
-    if(d===1) s+='<path d="M30,'+(hem-10)+' q10,7 20,0 q10,7 20,0" stroke="'+dk+'" stroke-width="2.4" fill="none"/>';
-    if(d===2) s+='<rect x="37" y="'+(waist-2)+'" width="26" height="6" rx="3" fill="'+dk+'"/>';
-    if(d===3) s+='<g fill="#fff" opacity=".5"><circle cx="44" cy="'+(waist+18)+'" r="1.8"/><circle cx="56" cy="'+(waist+26)+'" r="1.8"/>'+
-                 '<circle cx="50" cy="'+(waist+38)+'" r="1.8"/><circle cx="60" cy="'+(waist+12)+'" r="1.8"/></g>';
-  } else {
-    var t=L.thobe||0;
-    if(t===1){
-      s+='<path d="M35,'+sy+' q15,-6 30,0 l-1,'+(waist-sy+8)+' h-28 Z" fill="'+cl+'"/>';               /* قميص */
-      s+='<rect x="37" y="'+(waist+4)+'" width="26" height="8" rx="3" fill="'+darken(cl,0.6)+'"/>';
-    } else {
-      s+='<path d="M34,'+sy+' q16,-7 32,0 L70,'+hem+' q-20,6 -40,0 Z" fill="'+cl+'"/>';                /* ثوب */
-      s+='<path d="M50,'+(sy+2)+' v'+(hem-sy-14)+'" stroke="'+dk+'" stroke-width="1.2" opacity=".5"/>';
-      if(t===2) s+='<path d="M33,'+(sy+2)+' q-5,30 -1,'+(hem-sy-6)+' l10,2 L44,'+(sy+4)+' Z" fill="'+darken(cl,0.55)+'"/>'+
-                   '<path d="M67,'+(sy+2)+' q5,30 1,'+(hem-sy-6)+' l-10,2 L56,'+(sy+4)+' Z" fill="'+darken(cl,0.55)+'"/>';
-    }
-  }
-  /* الذراعان واليدان */
-  /* الذراعُ بلون اللباس نفسِه تذوب فيه — فالثوبُ الأبيضُ كان يبتلعها فتبدو الكفُّ
-     نقطةً عائمة. فتُظلَّل قليلاً ليبينَ حدُّها دون أن تصير لوناً آخر */
-  var ax=fem?29:28, aw=8, ay=sy+2, ah=waist-sy+2, acl=darken(cl,0.9);
-  s+='<rect x="'+ax+'" y="'+ay+'" width="'+aw+'" height="'+ah+'" rx="4" fill="'+acl+'"/>'+
-     '<rect x="'+(100-ax-aw)+'" y="'+ay+'" width="'+aw+'" height="'+ah+'" rx="4" fill="'+acl+'"/>'+
-     '<circle cx="'+(ax+aw/2)+'" cy="'+(ay+ah+3)+'" r="4.4" fill="'+sk.f+'"/>'+
-     '<circle cx="'+(100-ax-aw/2)+'" cy="'+(ay+ah+3)+'" r="4.4" fill="'+sk.f+'"/>';
-  /* الرأس */
-  s+='<rect x="46" y="'+(hy+hr-4)+'" width="8" height="10" fill="'+sk.s+'"/>';                          /* العنق */
-  s+='<circle cx="50" cy="'+hy+'" r="'+hr+'" fill="'+sk.f+'"/>';
-  if(veiled){
-    s+='<path d="M50,'+(hy-hr-2)+' c'+hr+',0 '+(hr+4)+','+hr+' '+(hr+2)+','+(hr+6)+
-       ' l2,'+(sy-hy+2)+' h-'+(2*hr+8)+' l2,-'+(sy-hy-2)+' c-2,-8 2,-'+(hr+4)+' '+(hr+2)+',-'+(hr+4)+' Z" fill="'+hj+'"/>'+
-       '<circle cx="50" cy="'+(hy+2)+'" r="'+(hr-2)+'" fill="'+sk.f+'"/>';
-  } else if(fem){
-    s+='<path d="M'+(50-hr-2)+','+(hy+4)+' q2,-'+(hr+6)+' '+(hr+2)+',-'+(hr+6)+' q'+(hr+2)+',0 '+(hr+2)+','+(hr+6)+
-       ' q-4,-6 -'+(hr+2)+',-6 q-'+(hr-2)+',0 -'+(hr+2)+',6 Z" fill="'+hair+'"/>'+
-       '<path d="M'+(50-hr-2)+','+(hy+2)+' q-3,'+(hr+14)+' 3,'+(hr+18)+' l5,-2 q-5,-10 -4,-'+(hr+12)+' Z" fill="'+hair+'"/>'+
-       '<path d="M'+(50+hr+2)+','+(hy+2)+' q3,'+(hr+14)+' -3,'+(hr+18)+' l-5,-2 q5,-10 4,-'+(hr+12)+' Z" fill="'+hair+'"/>';
-  } else {
-    var hw=L.head||0;
-    if(hw>=3){
-      var gcol=(hw===3)?'#d94b3d':'#fdfdfd';
-      s+='<path d="M'+(50-hr-3)+','+(hy+2)+' q0,-'+(hr+8)+' '+(hr+3)+',-'+(hr+8)+' q'+(hr+3)+',0 '+(hr+3)+','+(hr+8)+
-         ' l3,'+(hr+16)+' h-'+(2*hr+12)+' Z" fill="'+gcol+'"/>'+
-         '<rect x="'+(50-hr-2)+'" y="'+(hy-hr-4)+'" width="'+(2*hr+4)+'" height="5" rx="2.5" fill="#1c1c1c"/>';
-    } else {
-      s+='<path d="M'+(50-hr)+','+(hy-2)+' q0,-'+(hr+4)+' '+hr+',-'+(hr+4)+' q'+hr+',0 '+hr+','+(hr+4)+
-         ' q-4,-5 -'+hr+',-5 q-'+(hr-2)+',0 -'+hr+',5 Z" fill="'+hair+'"/>';
-      if(hw===1||hw===2) s+='<path d="M'+(50-hr+1)+','+(hy-hr+4)+' q'+(hr-1)+',-7 '+(2*hr-2)+',0 Z" fill="'+((hw===1)?'#fbfbfb':cl)+'"/>';
-    }
-    if((L.beard||0)>0 && K.adult){
-      var bl=(L.beard===2)?10:6;
-      s+='<path d="M'+(50-hr+3)+','+(hy+4)+' q0,'+(hr+bl)+' '+(hr-3)+','+(hr+bl)+' q'+(hr-3)+',0 '+(hr-3)+',-'+(hr+bl)+' q-'+(hr-3)+',9 -'+(2*hr-6)+',0 Z" fill="'+darken(hair,0.9)+'"/>';
-    }
-  }
-  /* الوجه */
-  var ey=hy+2;
-  s+='<ellipse cx="'+(50-hr/2.4)+'" cy="'+ey+'" rx="2.6" ry="3" fill="#fff"/><circle cx="'+(50-hr/2.4)+'" cy="'+(ey+0.4)+'" r="1.7" fill="'+eye+'"/>'+
-     '<ellipse cx="'+(50+hr/2.4)+'" cy="'+ey+'" rx="2.6" ry="3" fill="#fff"/><circle cx="'+(50+hr/2.4)+'" cy="'+(ey+0.4)+'" r="1.7" fill="'+eye+'"/>'+
-     '<path d="M'+(50-4)+','+(ey+7)+' q4,4 8,0" stroke="#c9635f" stroke-width="1.8" fill="none" stroke-linecap="round"/>'+
-     '<ellipse cx="'+(50-hr+2)+'" cy="'+(ey+5)+'" rx="3" ry="2" fill="#f39ba0" opacity=".4"/>'+
-     '<ellipse cx="'+(50+hr-2)+'" cy="'+(ey+5)+'" rx="3" ry="2" fill="#f39ba0" opacity=".4"/>';
-  return s+'</svg>';
-}
-/* ---------- صفوفُ الخيارات لكلّ نوع ---------- */
-function famRows(kind){
-  var K=FAM_KINDS[kind], r=[{k:'skin',lb:'🎨 لون البشرة',pal:'skin'},{k:'eyes',lb:'👁️ لون العينين',pal:'eyes'}];
-  if(!K.male){
-    if(!K.adult) r.push({k:'hijOn',lb:'🧕 الحجاب',opts:HIJON});
-    if(K.adult || true) r.push({k:'hijab',lb:'🧕 لون الحجاب',pal:'hijab'});
-    r.push({k:'hair',lb:'💇 لون الشعر',pal:'hair'});
-    r.push({k:'dress',lb:'👗 الفستان',opts:DRESSES});
-  } else {
-    if(K.adult) r.push({k:'head',lb:'🧢 غطاء الرأس',opts:HEADWEAR});
-    r.push({k:'hair',lb:'💇 لون الشعر',pal:'hair'});
-    if(K.adult) r.push({k:'beard',lb:'🧔 اللحية',opts:BEARDS});
-    r.push({k:'thobe',lb:'👕 اللباس',opts:THOBES});
-  }
-  r.push({k:'cloth',lb:'🎽 لون اللباس',pal:'cloth'});
-  r.push({k:'shoe',lb:'👟 الحذاء',opts:SHOES});
-  r.push({k:'shoeC',lb:'🥾 لون الحذاء',pal:'cloth'});
-  return r;
-}
-function renderFam(){
-  var F=famData(), m=famCur();
-  /* التبويبات */
-  var tabs=[['dad','👨 أبي'],['mom','👩 أمي'],['kids','🧒 إخوتي'+(F.kids.length?(' ('+arNum(F.kids.length)+')'):'')]];
-  $('famTabs').innerHTML=tabs.map(function(t){
-    return '<button type="button" class="onbtab'+(FAM_TAB===t[0]?' sel':'')+'" data-ft="'+t[0]+'">'+t[1]+'</button>';
-  }).join('');
-  var tb=$('famTabs').querySelectorAll('[data-ft]'), i;
-  for(i=0;i<tb.length;i++) tb[i].onclick=function(){ FAM_TAB=this.getAttribute('data-ft'); FAM_OPEN=null; renderFam(); };
-  /* شريطُ الإخوة */
-  var kh='';
-  if(FAM_TAB==='kids'){
-    F.kids.forEach(function(k,j){
-      kh+='<button type="button" class="chipsel'+(j===FAM_KID?' sel':'')+'" data-fk="'+j+'">'+
-          ((k.type==='girl')?'👧':'🧒')+' '+arNum(j+1)+'</button>';
-    });
-    kh+='<button type="button" class="chipsel famadd" data-fadd="boy">➕ أخ</button>'+
-        '<button type="button" class="chipsel famadd" data-fadd="girl">➕ أخت</button>';
-    if(F.kids.length) kh+='<button type="button" class="chipsel" data-fdel="1">🗑️ احذف</button>';
-  }
-  $('famKids').innerHTML=kh;
-  var kb=$('famKids').querySelectorAll('[data-fk]');
-  for(i=0;i<kb.length;i++) kb[i].onclick=function(){ FAM_KID=parseInt(this.getAttribute('data-fk'),10); FAM_OPEN=null; renderFam(); };
-  var ab=$('famKids').querySelectorAll('[data-fadd]');
-  for(i=0;i<ab.length;i++) ab[i].onclick=function(){
-    var t=this.getAttribute('data-fadd');
-    F.kids.push({ type:t, look:famNew(t) });
-    FAM_KID=F.kids.length-1; saveDB(); beep([680,900],0.05); renderFam();
-  };
-  var db=$('famKids').querySelector('[data-fdel]');
-  if(db) db.onclick=function(){
-    uiAsk('حذف هذا الفرد من عائلتك في اللعبة؟', function(ok){
-      if(!ok) return;
-      F.kids.splice(FAM_KID,1); FAM_KID=0; saveDB(); renderFam();
-    },'🗑️');
-  };
-  /* الشخصيّة واللوحة */
-  if(!m){
-    $('famFig').innerHTML='';
-    $('famPanel').innerHTML='<div class="lookhead">🧒 أضِفْ أخاً أو أختاً لتلعب بشخصيّته</div>';
-    return;
-  }
-  $('famFig').innerHTML=famSVG(m);
-  var L=m.look, h='<div class="lookhead">🎨 اختر شكل '+esc(FAM_KINDS[m.kind].n)+' '+
-                  (FAM_TAB==='kids'?arNum(FAM_KID+1):'')+'</div>';
-  famRows(m.kind).forEach(function(r){
-    if(r.k==='hijab' && !(FAM_KINDS[m.kind].adult || (L.hijOn||0)===1)) return;
-    if(r.k==='hair' && (FAM_KINDS[m.kind].adult && !FAM_KINDS[m.kind].male)) return;
-    if(r.k==='hair' && !FAM_KINDS[m.kind].male && (L.hijOn||0)===1) return;
-    if(r.k==='hair' && FAM_KINDS[m.kind].male && (L.head||0)>=3) return;
-    var open=(FAM_OPEN===r.k), body='', cur='';
-    if(r.opts){
-      var oi=Math.min(L[r.k]||0, r.opts.length-1);
-      cur='<span>'+esc(r.opts[oi].n)+'</span>';
-      r.opts.forEach(function(o,j){
-        body+='<button type="button" class="chipsel'+((L[r.k]||0)===j?' sel':'')+'" data-fo="'+r.k+'" data-i="'+j+'">'+o.n+'</button>';
-      });
-    } else {
-      var ci=Math.min(L[r.k]||0, PAL[r.pal].length-1), cc=PAL[r.pal][ci];
-      cur='<span class="dot" style="background:'+((r.pal==='skin')?cc.f:cc.c)+'"></span><span>'+esc(cc.n)+'</span>';
-      PAL[r.pal].forEach(function(c,j){
-        body+='<span class="swatch'+((L[r.k]||0)===j?' sel':'')+'" data-fs="'+r.k+'" data-i="'+j+
-              '" title="'+c.n+'" style="background:'+((r.pal==='skin')?c.f:c.c)+'"></span>';
-      });
-    }
-    h+='<button type="button" class="pkh'+(open?' open':'')+'" data-fp="'+r.k+'">'+
-         '<span class="lbx">'+r.lb+'</span>'+
-         '<span class="cur">'+cur+'<span style="opacity:.7">'+(open?'▴':'▾')+'</span></span>'+
-       '</button><div class="pkb"'+(open?'':' hidden')+'><div class="sw-row">'+body+'</div></div>';
-  });
-  h+='<button type="button" class="btn ghost mini" id="btnFamRand" style="width:100%;margin-top:8px">🎲 مظهر عشوائي</button>';
-  $('famPanel').innerHTML=h;
-  var P=$('famPanel');
-  function setv(k,v){ L[k]=v; saveDB(); beep([700],0.05); renderFam(); }
-  var oc=P.querySelectorAll('[data-fo]');
-  for(i=0;i<oc.length;i++) oc[i].onclick=function(){ setv(this.getAttribute('data-fo'), parseInt(this.getAttribute('data-i'),10)); };
-  var sc=P.querySelectorAll('[data-fs]');
-  for(i=0;i<sc.length;i++) sc[i].onclick=function(){ setv(this.getAttribute('data-fs'), parseInt(this.getAttribute('data-i'),10)); };
-  var ph=P.querySelectorAll('[data-fp]');
-  for(i=0;i<ph.length;i++) ph[i].onclick=function(){
-    var k=this.getAttribute('data-fp'); FAM_OPEN=(FAM_OPEN===k)?null:k; renderFam();
-  };
-  if($('btnFamRand')) $('btnFamRand').onclick=function(){
-    ['skin','eyes','hair','cloth','hijab','shoeC'].forEach(function(p){ L[p]=Math.floor(Math.random()*PAL[(p==='shoeC')?'cloth':p].length); });
-    L.dress=Math.floor(Math.random()*DRESSES.length); L.thobe=Math.floor(Math.random()*THOBES.length);
-    L.shoe=Math.floor(Math.random()*SHOES.length);
-    saveDB(); beep([700,900],0.05); renderFam();
-  };
-}
-function famOpen(){ FAM_OPEN=null; renderFam(); show('scr-fam'); }
 function randomLook(){ for(var k in PAL) look[k]=Math.floor(Math.random()*PAL[k].length);
   look.head=Math.floor(Math.random()*HEADWEAR.length);
   look.hairStyle=Math.floor(Math.random()*HAIRCUTS.length);
@@ -5635,7 +5543,7 @@ var TABS=[
   {id:'scr-settings', ic:'⚙️', n:'الإعدادات', go:function(){ $('btnSettings').click(); }}
 ];
 /* تختفي أثناء الدرس والشهادة والمعالج، كما تفعل دولينجو داخل الدرس */
-var TABS_HIDE={'scr-onb':1,'scr-look':1,'scr-fam':1,'scr-play':1,'scr-cert':1,'scr-runner':1,'scr-shelf':1,'scr-bird':1};
+var TABS_HIDE={'scr-onb':1,'scr-look':1,'scr-play':1,'scr-cert':1,'scr-runner':1,'scr-shelf':1,'scr-bird':1};
 function buildTabs(){
   if($('tabbar')) return;
   var bar=document.createElement('nav');
@@ -11636,11 +11544,6 @@ $('gFemale').onclick=$('gFemale2').onclick=function(){ gender='f'; curP().gender
 $('gMale').onclick=$('gMale2').onclick=function(){ gender='m'; curP().gender='m'; saveDB(); renderAvatars(); };
 $('btnRandomLook2').onclick=randomLook;
 $('btnOpenLook').onclick=function(){ renderAvatars(); show('scr-look'); };
-$('btnFamDone').onclick=function(){
-  if(LOOK_BACK==='scr-games'){ LOOK_BACK=''; gamesOpen(); return; }   /* يعود من حيث جاء */
-  LOOK_BACK='';
-  show('scr-start');
-};
 $('btnLookDone').onclick=function(){
   if(LOOK_BACK==='scr-games'){ LOOK_BACK=''; gamesOpen(); return; }   /* يعود من حيث جاء */
   LOOK_BACK='';
@@ -12345,25 +12248,21 @@ function gamesOpen(){
        '<span class="gctx"><b>'+g.n+'</b><i>'+g.d+(st.best?' • أفضلُ نتيجة ⭐ '+arNum(st.best):'')+'</i></span>'+
        '<span class="gcgo">❮</span></button>';
   });
-  /* وبابُ الشخصية: ليس لعبةً ولا مصدرَ آياتٍ له — يفتح محرِّرَ الشخصية نفسَه
-     الذي في معالج إنشاء المستخدم، بتبويباته وزرِّ حفظه، فلا شيءَ جديدٌ يُتعلَّم */
-  h+='<button type="button" class="goalcard" id="gmFam"><span class="gcic">👨‍👩‍👧‍👦</span>'+
-     '<span class="gctx"><b>عائلتي</b><i>البسْ أباك وأمَّك وإخوتَك واختر لهم الملابسَ والأحذية</i></span>'+
-     '<span class="gcgo">❮</span></button>';
-  h+='<button type="button" class="goalcard" id="gmLook"><span class="gcic gcavabox"><span class="ph gcava"></span></span>'+
-     '<span class="gctx"><b>شخصيتي</b><i>بدّلْ شكلك وملابسك ولونَ عينيك</i></span>'+
+  /* وبابُ العائلة: ليس لعبةً ولا مصدرَ آياتٍ له — يفتح محرِّرَ الشخصية نفسَه
+     الذي في معالج إنشاء المستخدم، وفيه تبويبٌ لك ولأبيك وأمّك وإخوتك */
+  h+='<button type="button" class="goalcard" id="gmFam"><span class="gcic gcavabox"><span class="ph gcava"></span></span>'+
+     '<span class="gctx"><b>عائلتي</b><i>بدّلْ شكلك وشكلَ أبيك وأمِّك وإخوتِك</i></span>'+
      '<span class="gcgo">❮</span></button>';
   if(!pool.mem) h+='<p class="gmnote">لم يُسجَّل لك محفوظٌ بعد — اختر سورةً تلعب بآياتها</p>';
   var B=$('gamesBody'); B.innerHTML=h;
   var bs=B.querySelectorAll('[data-game]');
   for(var i=0;i<bs.length;i++) bs[i].onclick=function(){ gamePick(this.getAttribute('data-game')); };
-  if($('gmFam')) $('gmFam').onclick=function(){ LOOK_BACK='scr-games'; famOpen(); };
-  /* أيقونةُ البطاقة صورةُ المستخدم نفسِه، فيعرف أنّها شخصيّتُه هو */
-  var av=B.querySelector('.gcava'); if(av) av.innerHTML=avatarSVG();
-  if($('gmLook')) $('gmLook').onclick=function(){
-    LOOK_BACK='scr-games';
+  if($('gmFam')) $('gmFam').onclick=function(){
+    LOOK_BACK='scr-games'; FAM_TAB='me'; LOOK_OPEN=null;
     lookHome(); renderAvatars(); show('scr-look');   /* شاشةُ الشخصية نفسُها: اختياراتٌ بلا حقلِ اسمٍ ولا لوحةِ مفاتيح */
   };
+  /* أيقونةُ البطاقة صورةُ المستخدم نفسِه، فيعرف أنّها شخصيّتُه هو */
+  var av=B.querySelector('.gcava'); if(av) av.innerHTML=avatarSVG();
   show('scr-games');
 }
 function gamePick(id){
@@ -13773,7 +13672,7 @@ try{ syncTabs((document.querySelector('.screen.active')||{}).id||'scr-start'); }
 /* ===== زرّ الرجوع ===== */
 var NAV={ ok:false, guard:false, exit:0, tEl:null, tT:0 };
 /* زرّ الرجوع الموجود أصلاً في كل شاشة — نضغطه نيابةً عن اللاعب */
-var NAV_BACK={ 'scr-look':'btnLookDone', 'scr-fam':'btnFamDone', 'scr-map':'btnBackStart', 'scr-path':'btnBackMap',
+var NAV_BACK={ 'scr-look':'btnLookDone', 'scr-map':'btnBackStart', 'scr-path':'btnBackMap',
   'scr-rev':'btnRevHome', 'scr-revpath':'btnRevQuit', 'scr-build':'btnBuildBack',
   'scr-shop':'btnShopBack', 'scr-board':'btnBoardBack', 'scr-cert':'btnCertBack',
   'scr-badges':'btnBadgesBack', 'scr-bqn':'btnBqnHome',
