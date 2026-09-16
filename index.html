@@ -1749,6 +1749,7 @@ body.glow-off .dfpic{animation:none}
     <button type="button" id="mfDockIdx"><span class="tico">📑</span>الفهرس</button>
     <!-- الطيُّ في الوسط: أقربُ موضعٍ للإبهام، وسهمٌ نازلٌ يعني طيَّ الوجه لا تنزيلَ ملفّ -->
     <button type="button" id="mfDockClose" aria-label="اطوِ وجه المصحف"><span class="tico"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></span>إخفاء</button>
+    <button type="button" id="mfDockPlay"><span class="tico">🎧</span><span id="mfPlayLbl">استمع</span></button>
     <button type="button" id="mfDockSim" aria-pressed="true"><span class="tico">🎨</span>التظليل</button>
     <button type="button" id="mfDockFind"><span class="tico">🔎</span>البحث</button>
   </nav>
@@ -2171,6 +2172,11 @@ body.glow-off .dfpic{animation:none}
       </div>
       </div>
       <div class="setpage" data-setp="play" hidden>
+      <div class="setblock">
+        <label class="lbl">🎧 صوت القارئ</label>
+        <select id="setQari"></select>
+        <div class="note">يُتلى المقطعُ في وجه المصحف بزرّ «استمع». ويُحفظ ما سُمع في الجهاز فيُعاد بلا إنترنت، ولا شيءَ يُنزَّل قبل أن تسمعه.</div>
+      </div>
       <div class="switchrow"><span>🔔 أصوات التشجيع (نغمات فقط)</span><input type="checkbox" id="setSound"></div>
       <div class="switchrow"><span>🎤 تسجيل الصوت في القراءة والتسميع<br><small style="font-weight:700;color:var(--mute)">يستمع لنفسه بعد التسجيل — ومع التسميع يظهر النص للمقارنة</small></span><input type="checkbox" id="setRec"></div>
       <div class="switchrow"><span>🌞 الوضع النهاريّ<br><small style="font-weight:700;color:var(--mute)">خلفية فاتحة بدل سماء الليل — لكل مستخدم اختياره</small></span><input type="checkbox" id="setLight"></div>
@@ -2326,7 +2332,7 @@ function kindAllowed(t){
   var h=LV_HIDE[SET&&SET.level];
   return !(h&&h[t]);
 }
-function defSet(){ return { level:'easy', lv3:true, script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false, simHl:true, pvNote:true, wake:true }; }
+function defSet(){ return { level:'easy', lv3:true, script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false, simHl:true, pvNote:true, wake:true, qari:'Husary_64kbps' }; }
 /* ثلاث درجات للخطّ لا خمس — ويُردّ القديم إلى أقربها */
 var FONTS=[{v:20,n:'صغير'},{v:24,n:'متوسط'},{v:30,n:'كبير'}];
 function normFont(f){ f=parseInt(f,10)||24; return f<=22?20:(f<=27?24:30); }
@@ -3313,7 +3319,8 @@ function mfMarkSet(pieces){
     var base=GIDX[p.s.n-1];
     rg.push([base+p.from, base+p.to]);
   });
-  MF_MARK={rg:rg};
+  /* وتُحفظ قطعُه كما جاءت (سورةٌ ومن آيةٍ إلى آية)، فمنها تُبنى قائمةُ التلاوة */
+  MF_MARK={rg:rg, pieces:(pieces||[]).slice()};
   return MF_MARK;
 }
 function segPreview(pieces, title, btn, go){
@@ -3752,6 +3759,7 @@ document.addEventListener('visibilitychange', function(){
 });
 function mushafClose(){
   try{ if(curScreen()!=='scr-play') wakeOff(); }catch(e){ wakeOff(); }   /* عاد إلى درسه: القفلُ باقٍ له */
+  try{ audStop(); }catch(e){}            /* طُوي الوجهُ: تسكت التلاوة معه */
   MF_MARK=null; MF_PV=null;
   if($('mfGo')) $('mfGo').hidden=true;
   try{ mfPanel(null); }catch(e){}
@@ -6240,6 +6248,110 @@ setTimeout(function(){
   var P=parseInt(load('mfLast',0),10);
   if(P>=1 && P<=604){ try{ mushafFont(P)['catch'](function(){}); mfPreload(P); }catch(e){} }
 }, 2500);
+/* ===== أصواتُ القرّاء =====
+   تُبثّ آيةً آية برابطٍ يُبنى حسابيّاً: مجلّدُ القارئ ثمّ رقمُ السورة ثلاثاً ورقمُ
+   الآية ثلاثاً. ولا يُحزم صوتٌ مع التطبيق بحال — المصحفُ كاملاً بصوت قارئٍ واحد
+   بين ١٫٢ و٢ ج.ب — وإنّما يُخزَّن ما سُمع في مخزنٍ خاصّ فيُعاد بلا إنترنت.
+   والمصدرُ في هذين السطرين وحدَهما، فإن أذن مجمّعُ الملك فهد بُدِّلا. */
+var QARI_BASE='https://everyayah.com/data/';
+var QARIS=[
+  {f:'Husary_64kbps',             n:'محمود خليل الحصري'},
+  {f:'Husary_Muallim_128kbps',    n:'الحصري — المعلِّم (يردّد للأطفال)'},
+  {f:'Husary_Mujawwad_64kbps',    n:'الحصري — مجوَّد'},
+  {f:'Minshawy_Teacher_128kbps',  n:'المنشاوي — المعلِّم (يردّد للأطفال)'},
+  {f:'Minshawy_Murattal_128kbps', n:'محمد صديق المنشاوي'},
+  {f:'Abdul_Basit_Murattal_64kbps', n:'عبد الباسط عبد الصمد'},
+  {f:'Hudhaify_64kbps',           n:'علي الحذيفي'},
+  {f:'Alafasy_64kbps',            n:'مشاري راشد العفاسي'},
+  {f:'Abdurrahmaan_As-Sudais_64kbps', n:'عبد الرحمن السديس'},
+  {f:'Saood_ash-Shuraym_64kbps',  n:'سعود الشريم'},
+  {f:'Maher_AlMuaiqly_64kbps',    n:'ماهر المعيقلي'},
+  {f:'Abu_Bakr_Ash-Shaatree_64kbps', n:'أبو بكر الشاطري'},
+  {f:'Muhammad_Ayyoub_128kbps',   n:'محمد أيوب'},
+  {f:'Mohammad_al_Tablaway_64kbps', n:'محمد الطبلاوي'},
+  {f:'Ghamadi_40kbps',            n:'سعد الغامدي'},
+  {f:'Nasser_Alqatami_128kbps',   n:'ناصر القطامي'},
+  {f:'Yasser_Ad-Dussary_128kbps', n:'ياسر الدوسري'}
+];
+var AUD_CACHE='nur-audio';
+var AUD={ el:null, q:[], i:-1, url:'' };
+function qariF(){
+  var f=SET.qari, i;
+  for(i=0;i<QARIS.length;i++) if(QARIS[i].f===f) return f;
+  return QARIS[0].f;                       /* اختيارٌ قديمٌ أو تالف: يُردّ إلى الأوّل */
+}
+function qariName(){
+  var f=qariF(), i;
+  for(i=0;i<QARIS.length;i++) if(QARIS[i].f===f) return QARIS[i].n;
+  return '';
+}
+function pad3(n){ n=String(n); return n.length>=3 ? n : ('000'+n).slice(-3); }
+function audUrl(sn,ay){ return QARI_BASE+qariF()+'/'+pad3(sn)+pad3(ay)+'.mp3'; }
+/* المخزَّن أوّلاً: ما سُمع مرّةً لا يُنزَّل ثانية. وإن تعذّر المخزنُ بُثَّ من الشبكة */
+function audSrc(url){
+  if(!window.caches) return Promise.resolve(url);
+  return caches.open(AUD_CACHE).then(function(c){
+    return c.match(url).then(function(hit){
+      if(hit) return hit.blob().then(function(b){ return URL.createObjectURL(b); });
+      return fetch(url).then(function(r){
+        if(!r || !r.ok) throw new Error('net');
+        try{ c.put(url, r.clone()); }catch(e){}
+        return r.blob().then(function(b){ return URL.createObjectURL(b); });
+      });
+    });
+  })['catch'](function(){ return url; });
+}
+function audEl(){
+  if(!AUD.el){
+    AUD.el=new Audio();
+    AUD.el.preload='auto';
+    AUD.el.onended=function(){ audNext(); };
+    AUD.el.onerror=function(){ audErr(); };
+  }
+  return AUD.el;
+}
+function audFree(){
+  if(AUD.url && AUD.url.indexOf('blob:')===0){ try{ URL.revokeObjectURL(AUD.url); }catch(e){} }
+  AUD.url='';
+}
+function audStop(){
+  if(AUD.el){ try{ AUD.el.pause(); }catch(e){} }
+  AUD.q=[]; AUD.i=-1; audFree(); audSync();
+}
+function audErr(){
+  audStop();
+  try{ navToast('تعذّر جلبُ التلاوة — تحقّق من اتصالك بالإنترنت'); }catch(e){}
+}
+function audNext(){
+  AUD.i++;
+  if(AUD.i>=AUD.q.length){ audStop(); return; }
+  var it=AUD.q[AUD.i], want=AUD.i;
+  audSync();
+  audSrc(audUrl(it[0],it[1])).then(function(src){
+    if(want!==AUD.i || !AUD.q.length) return;       /* أُوقف أو تغيّر أثناء الجلب */
+    var el=audEl();
+    audFree(); AUD.url=src; el.src=src;
+    var p; try{ p=el.play(); }catch(e){ audErr(); return; }
+    if(p && p['catch']) p['catch'](function(){ audErr(); });
+  })['catch'](function(){ audErr(); });
+}
+/* آياتُ المقطع المعلَّم إن كان، وإلّا آياتُ الوجه المعروض */
+function audQueue(){
+  var out=[], pcs=null;
+  if(MF_MARK && MF_MARK.pieces && MF_MARK.pieces.length) pcs=MF_MARK.pieces;
+  else { try{ pcs=pagePieces(MF_PAGE); }catch(e){ pcs=null; } }
+  (pcs||[]).forEach(function(p){
+    for(var a=p.from; a<p.to; a++) out.push([p.s.n, a+1]);
+  });
+  return out;
+}
+function audSync(){
+  var b=$('mfDockPlay'); if(!b) return;
+  var on=AUD.q.length>0, t=b.querySelector('.tico'), l=$('mfPlayLbl');
+  b.classList.toggle('on', on);
+  if(t) t.textContent = on ? '⏹️' : '🎧';
+  if(l) l.textContent = on ? (arNum(AUD.i+1)+'/'+arNum(AUD.q.length)) : 'استمع';
+}
 /* لوحةٌ واحدةٌ في كلّ مرّة — ولا شيءَ يُطوي الكلّ */
 function mfPanel(id){
   ['mfIdx','mfFind','mfMean'].forEach(function(k){ if($(k)) $(k).hidden=(k!==id); });
@@ -6421,6 +6533,19 @@ $('mfDockMean').onclick=function(){
   if(!$('mfMean').hidden){ mfPanel(null); return; }
   mfPanel('mfMean'); mfMeanRender();
 };
+/* الاستماع: يتلو آياتِ المقطع إن كان معلَّماً، وإلّا آياتِ الوجه كلَّه.
+   والضغطةُ الثانية توقفه — وزرٌّ واحدٌ لا زرّان */
+$('mfDockPlay').onclick=function(){
+  if(AUD.q.length){ audStop(); return; }
+  var q=audQueue();
+  if(!q.length){ try{ navToast('لا آياتِ في هذا الوجه لتُتلى'); }catch(e){} return; }
+  audPlay(q);
+};
+function audPlay(list){
+  AUD.q=list; AUD.i=-1;
+  try{ navToast('🎧 ' + qariName()); }catch(e){}
+  audNext();
+}
 /* التظليلُ يُبدَّل من شريط المصحف نفسِه، في كلّ موضعٍ يُعرض فيه الوجه: يُحفظ في
    إعدادات اللاعب (هو إعدادُ «تظليل المتشابهات» نفسُه)، ويُعاد رسمُ الوجه بحاله */
 function mfSimSync(){
@@ -10651,6 +10776,12 @@ function fillSettings(){
     var n=offlinePages().length, mb=(n*78/1024).toFixed(1);
     offNote('أجزاؤك المختارة '+arNum(n)+' وجهاً (~'+mb+' ميجا) — تُحفظ في جهازك فيعمل المصحف بلا شبكة.');
   })();
+  if($('setQari')){
+    $('setQari').innerHTML=QARIS.map(function(q){
+      return '<option value="'+q.f+'">'+esc(q.n)+'</option>';
+    }).join('');
+    $('setQari').value=qariF();
+  }
   $('setSound').checked=!!SET.sound;
   $('setGlow').checked=!!SET.glow;
   $('setCele').checked=(SET.cele!==false);
@@ -10700,6 +10831,10 @@ function readSettings(){
   if(!onPlan() && (jf!==SET.juzFrom || jt!==SET.juzTo)){
     var s0=selfStartSurah();
     if(s0){ curP().last=s0.n; curSurah=s0; }
+  }
+  if($('setQari') && $('setQari').value!==SET.qari){
+    SET.qari=$('setQari').value;
+    try{ audStop(); }catch(e){}            /* بُدِّل القارئ: تسكت تلاوةُ سابقه */
   }
   SET.sound=$('setSound').checked;
   SET.glow=$('setGlow').checked;
