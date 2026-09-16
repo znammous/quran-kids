@@ -2023,7 +2023,8 @@ body.glow-off .dfpic{animation:none}
       <div style="text-align:center;margin-bottom:12px;font-weight:900;color:var(--g1);font-size:20px" id="shopGems">💎 ٠</div>
       <div id="shopBody"></div>
     </div>
-    <button class="btn primary big" id="btnShopBack" style="margin:0">➡️ رجوع</button>
+    <!-- مخفيٌّ: الشريطُ السفليّ يُغني عنه، ويبقى ليضغطه زرُّ الرجوع في الجهاز -->
+    <button class="btn primary big" id="btnShopBack" hidden style="margin:0">➡️ رجوع</button>
   </section>
 
   <section class="screen" id="scr-badges">
@@ -2044,7 +2045,8 @@ body.glow-off .dfpic{animation:none}
     <h1>🎮 الألعاب</h1>
     <p class="sub">العبْ وراجِعْ — من آياتِ محفوظك أو من سورةٍ تختارها</p>
     <div class="gmlist" id="gamesBody"></div>
-    <button class="btn primary big" id="btnGamesBack" style="margin:0">➡️ رجوع</button>
+    <!-- مخفيٌّ: الشريطُ السفليّ يُغني عنه، ويبقى ليضغطه زرُّ الرجوع في الجهاز -->
+    <button class="btn primary big" id="btnGamesBack" hidden style="margin:0">➡️ رجوع</button>
   </section>
 
   <section class="screen" id="scr-runner">
@@ -12143,6 +12145,8 @@ $('btnBuildBack').onclick=function(){ show('scr-start'); };
 /* من أين جاء إلى المتجر؟ فيُردّ إليه لا إلى البداية */
 var SHOP_BACK='';
 function shopFrom(id){ SHOP_BACK=id||''; }
+/* الزرُّ مخفيٌّ في الشاشة — الشريطُ السفليّ يُغني عنه — ويبقى موصولاً ليضغطه
+   زرُّ الرجوع في الجهاز، فلا يتغيّر شيءٌ ممّا تعلّق به */
 $('btnShopBack').onclick=function(){
   /* جهةُ المجيء أوْلى من «كل الأقسام»: من جاء من مسجده رُدّ إليه من أوّل ضغطة */
   if(SHOP_BACK==='scr-build'){ SHOP_BACK=''; shopCat=''; renderBuild(); show('scr-build'); return; }
@@ -13519,7 +13523,9 @@ window.addEventListener('resize', function(){
 });
 
 $('btnGames').onclick=gamesOpen;
-/* رجوعٌ من اختيار المصدر إلى قائمة الألعاب، ومن القائمة إلى الرئيسيّة */
+/* رجوعٌ من اختيار المصدر إلى قائمة الألعاب، ومن القائمة إلى الرئيسيّة.
+   والزرُّ مخفيٌّ في الشاشة — الشريطُ السفليّ يُغني عنه — ويبقى موصولاً
+   ليضغطه زرُّ الرجوع في الجهاز على درجاته */
 $('btnGamesBack').onclick=function(){
   if(GAME_LIST && GAME_PICK){ gamePick(GAME_PICK); return; }   /* من الفهرس إلى اختيار المصدر */
   if(GAME_PICK){ gamesOpen(); return; }                         /* ومنه إلى قائمة الألعاب */
