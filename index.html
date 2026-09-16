@@ -389,6 +389,10 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
 .mfmayah{display:inline-block;margin:12px 0 2px;padding:2px 12px;border-radius:999px;
   background:var(--pnl2);border:2px solid var(--pb);font-size:12.5px;font-weight:900;color:var(--mute)}
 .mfmrow{padding:5px 4px;border-bottom:1px solid var(--pb);font-size:15.5px;font-weight:700;line-height:1.9;color:var(--ttl)}
+/* تفسيرُ الآية فوق كلماتها الغريبة: لوحٌ هادئٌ يفصله عمّا تحته */
+.mftaf{font-size:14.5px;font-weight:700;line-height:2;color:var(--ttl);
+  background:var(--pnl2);border:1px solid var(--pb);border-radius:12px;
+  padding:9px 11px;margin:4px 0 8px}
 .mfmrow .w{font-family:"UthmanicHafs","Amiri Quran",serif;font-size:21px;font-weight:400;color:var(--rew)}
 .mfmsrc{margin-top:16px;text-align:center;font-size:11.5px;font-weight:700;color:var(--mute)}
 .mfphist{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 6px 6px}
@@ -5944,27 +5948,70 @@ function gharibLoad(){
   }).then(function(d){ GHARIB=d; return d; })['catch'](function(e){ GHARIB_P=null; throw e; });
   return GHARIB_P;
 }
-function mfMeanRender(){
+/* ===== تفسيرُ الآيات: «التفسير الميسر» — مجمع الملك فهد =====
+   مقسَّمٌ ثلاثين ملفاً بعدد الأجزاء في data/tafsir، فلا يُجلب إلا جزءُ الوجه المفتوح
+   (نحو ٨٤ كيلوبايت وسطيّاً)، ويخزّنه عاملُ الخدمة كما يخزّن بقيّة البيانات فيعمل
+   دون إنترنت بعد أوّل فتح. والوجهُ قد يقع بين جزأين فيُجلبان معاً. */
+var TAFS={}, TAFS_P={};
+function tafJuzOf(gi){
+  var j=1;
+  for(var k=0;k<JUZ_AT.length;k++) if(gi>=gAt(JUZ_AT[k][0],JUZ_AT[k][1])) j=k+1;
+  return j;
+}
+function tafPageJuz(P){
+  var out=[], seen={};
+  pagePieces(P).forEach(function(p){
+    [p.from, p.to-1].forEach(function(a){
+      var j=tafJuzOf(gAt(p.s.n, a+1));
+      if(!seen[j]){ seen[j]=1; out.push(j); }
+    });
+  });
+  return out;
+}
+function tafLoad(j){
+  if(TAFS[j]) return Promise.resolve(TAFS[j]);
+  if(!TAFS_P[j]) TAFS_P[j]=fetch('data/tafsir/juz-'+(j<10?'0':'')+j+'.json').then(function(r){
+    if(!r.ok) throw new Error(r.status);
+    return r.json();
+  }).then(function(d){ TAFS[j]=d; return d; })['catch'](function(e){ TAFS_P[j]=null; throw e; });
+  return TAFS_P[j];
+}
+function tafOf(sn,ay){
+  var o=TAFS[tafJuzOf(gAt(sn,ay))];
+  return (o && o[sn+':'+ay]) || '';
+}
+/* لوحةُ الوجه: لكلّ آيةٍ تفسيرُها الميسَّر، وتحته كلماتُها الغريبة */
+function mfMeanRender(after){
   var P=MF_PAGE, box=$('mfMeanList');
-  if(!GHARIB){
-    box.innerHTML='<div class="mfpmsg">جارٍ تحميل المعاني…</div>';
-    gharibLoad().then(function(){ if(!$('mfMean').hidden) mfMeanRender(); })['catch'](function(){
-      if(!$('mfMean').hidden && !GHARIB)
-        box.innerHTML='<div class="mfpmsg">تعذّر تحميل المعاني — تأكّد من الاتصال بالإنترنت وأعد المحاولة</div>';
+  var need=tafPageJuz(P), miss=need.filter(function(j){ return !TAFS[j]; });
+  if(!after && (!GHARIB || miss.length)){
+    box.innerHTML='<div class="mfpmsg">جارٍ تحميل التفسير والمعاني…</div>';
+    var jobs=miss.map(function(j){ return tafLoad(j); });
+    if(!GHARIB) jobs.push(gharibLoad());
+    Promise.all(jobs.map(function(p){ return p['catch'](function(){}); })).then(function(){
+      if(!$('mfMean').hidden) mfMeanRender(true);
     });
     return;
   }
-  var rows=GHARIB[P-1]||[], h='', lastS=0, lastA=0, many=false, i;
-  for(i=1;i<rows.length;i++) if(rows[i][0]!==rows[0][0]){ many=true; break; }
-  for(i=0;i<rows.length;i++){
-    var r=rows[i], s=surahBy(r[0]);
-    if(many && r[0]!==lastS) h+='<div class="mfmsura">سورة '+esc(s ? s.name : '')+'</div>';
-    if(r[0]!==lastS || r[1]!==lastA) h+='<div class="mfmayah">الآية '+arNum(r[1])+'</div>';
-    lastS=r[0]; lastA=r[1];
-    h+='<div class="mfmrow"><span class="w">﴿'+esc(r[2])+'﴾</span>: '+esc(r[3])+'</div>';
+  if(!GHARIB && !need.some(function(j){ return TAFS[j]; })){
+    box.innerHTML='<div class="mfpmsg">تعذّر التحميل — تأكّد من الاتصال بالإنترنت وأعد المحاولة</div>';
+    return;
   }
-  if(!rows.length) h='<div class="mfpmsg">لا كلماتٍ غريبةً مشروحةً في هذه الصفحة</div>';
-  box.innerHTML=h+'<div class="mfmsrc">المصدر: الميسر في غريب القرآن الكريم — مجمع الملك فهد لطباعة المصحف الشريف</div>';
+  var rows=GHARIB ? (GHARIB[P-1]||[]) : [], byAyah={}, i, r, k;
+  for(i=0;i<rows.length;i++){ r=rows[i]; k=r[0]+':'+r[1]; (byAyah[k]=byAyah[k]||[]).push(r); }
+  var pcs=pagePieces(P), many=pcs.length>1, h='';
+  pcs.forEach(function(p){
+    if(many) h+='<div class="mfmsura">سورة '+esc(p.s.name)+'</div>';
+    for(var a=p.from;a<p.to;a++){
+      var t=tafOf(p.s.n,a+1), g=byAyah[p.s.n+':'+(a+1)]||[];
+      if(!t && !g.length) continue;
+      h+='<div class="mfmayah">الآية '+arNum(a+1)+'</div>';
+      if(t) h+='<div class="mftaf">'+esc(t).replace(/\n+/g,'<br>')+'</div>';
+      g.forEach(function(x){ h+='<div class="mfmrow"><span class="w">﴿'+esc(x[2])+'﴾</span>: '+esc(x[3])+'</div>'; });
+    }
+  });
+  if(!h) h='<div class="mfpmsg">لا تفسيرَ ولا كلماتٍ غريبةً مشروحةً لهذه الصفحة</div>';
+  box.innerHTML=h+'<div class="mfmsrc">المصدر: التفسير الميسر، والميسر في غريب القرآن الكريم — مجمع الملك فهد لطباعة المصحف الشريف</div>';
   box.scrollTop=0;
 }
 var MF_IDX_T='s';
