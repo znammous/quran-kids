@@ -937,14 +937,20 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
 /* قلمُ التعديل على بطاقة المسار: زرٌّ برأسه في موضع السهم */
 .gcwrap{position:relative;margin:0 0 14px}
 .gcwrap .gcgo{visibility:hidden}
-.gcedit{position:absolute;left:12px;top:50%;transform:translateY(-50%);
-  width:42px;height:42px;border-radius:50%;border:2px solid var(--pb);
-  background:var(--pnl);font-size:19px;line-height:1;cursor:pointer;
+/* أنعمُ ممّا كانت: أصغرُ وشبهُ شفّافةٍ بحدٍّ خفيف، فلا تحجب ما تحتها من البطاقة */
+.gcedit{position:absolute;left:10px;top:50%;transform:translateY(-50%);
+  width:34px;height:34px;border-radius:50%;border:1px solid rgba(20,40,70,.16);
+  background:rgba(255,255,255,.62);font-size:15px;line-height:1;cursor:pointer;
+  opacity:.92;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
   display:flex;align-items:center;justify-content:center}
 .gcedit:active{transform:translateY(-50%) scale(.92)}
 .gcedit.sel{background:var(--psel);border-color:var(--gold)}
 /* حذفُ المسار الحرّ: إلى جانب القلم، بلونٍ ينبّه أنّه لا رجعةَ فيه */
-.gcdel{left:60px;border-color:#b3402f;color:#b3402f}
+.gcdel{left:50px;border-color:rgba(179,64,47,.35);color:#b3402f}
+/* شارةُ عمر المهمّة على بطاقتها */
+.gcage{display:inline-block;margin-inline-start:8px;padding:2px 8px;border-radius:999px;
+  background:#fdecea;color:#b3402f;border:1px solid #f0b8b0;
+  font-size:11.5px;font-weight:900;vertical-align:middle}
 /* ===== ستارُ التحميل =====
    شعارُ المسجد باهتاً، يمتلئ نوراً من أسفله إلى أعلاه ثمّ يخبو —
    فيُعلم أنّ شيئاً يجري، ولا يُرى بعثرةُ العناصر قبل أن تستقرّ. */
@@ -6564,6 +6570,13 @@ var C_SESS=['جلسة واحدة','جلستان','جلسات','جلسة'];
 var C_QUES=['سؤال واحد','سؤالان','أسئلة','سؤالاً'];
 var C_AYAH=['آية واحدة','آيتان','آيات','آية'];
 var C_SURAH=['سورة واحدة','سورتان','سور','سورة'];
+/* عمرُ المهمّة: منذ متى حلّ موعدُها ولم تُؤدَّ — «منذ يومين» لا «منذ يومان» */
+function agoText(n){
+  n=Math.max(1, n|0);
+  if(n===1) return 'منذ يوم';
+  if(n===2) return 'منذ يومين';
+  return 'منذ '+arNum(n)+(n<=10?' أيام':' يوماً');
+}
 /* تمييز العدد: مرّة، مرّتين، ثلاث مرّات… */
 function marra(n){
   n=n||1;
@@ -8289,6 +8302,7 @@ function renderRevTabs(){
   /* نقطةٌ حمراءُ على البابِ الذي وراءه عملٌ لم يتمّ، فينتبه إليه قبل أن يدخل */
   var dot={};
   try{ dot.mine=wirdPending(); }catch(e){}
+  try{ dot.due=revDueToday(); }catch(e){}
   bar.innerHTML=REV_TABS.map(function(z){
     return '<button type="button" class="onbtab'+(REV_TAB===z[0]?' sel':'')+'" '+
       'data-rt="'+z[0]+'">'+z[1]+
@@ -8342,9 +8356,8 @@ function renderRevPlanBody(){
   var doneS=Math.min(REV.done||0, nS), contHTML='';
   if(nS){
     var aa=surahBy(REV.fromS), bb=surahBy(REV.toS);
-    contHTML='<div'+(savedFree?' class="gcwrap"':'')+'>'+
-      '<button type="button" class="goalcard now" id="btnRevCont"'+
-        (savedFree?'':' style="margin:0 0 14px"')+'>'+
+    contHTML='<div class="gcwrap">'+
+      '<button type="button" class="goalcard now" id="btnRevCont">'+
       '<span class="gcic">'+(doneS>0?'▶️':'🎛️')+'</span>'+
       '<span class="gctx"><b>'+
         (doneS>0 ? ('أكمل المسار — الجلسة '+arNum(doneS+1)+' من '+arNum(nS))
@@ -8352,10 +8365,11 @@ function renderRevPlanBody(){
         '<i>'+esc(aa.name)+' '+arNum(REV.fromA)+' ← '+esc(bb.name)+' '+arNum(REV.toA)+
           ' • '+arCount(REV.size,C_PAGE)+' في الجلسة</i></span>'+
       '<span class="gcgo">❮</span></button>'+
-      (savedFree ? ('<button type="button" class="gcedit'+(freeOpen?' sel':'')+'" id="btnFreeRev" '+
-                    'aria-label="تعديل النطاق" title="تعديل النطاق">✏️</button>'+
-                    '<button type="button" class="gcedit gcdel" id="btnFreeDel" '+
-                    'aria-label="حذف المسار" title="حذف المسار">🗑️</button>') : '')+
+      /* القلمُ والحذفُ مع البطاقة دائماً، ولو كانت لوحةُ الإعداد مفتوحةً لم تُثبَّت بعد */
+      '<button type="button" class="gcedit'+(freeOpen?' sel':'')+'" id="btnFreeRev" '+
+        'aria-label="تعديل النطاق" title="تعديل النطاق">✏️</button>'+
+      '<button type="button" class="gcedit gcdel" id="btnFreeDel" '+
+        'aria-label="حذف المسار" title="حذف المسار">🗑️</button>'+
       '</div>';
   }
   if(!REV_TAB) REV_TAB=revTabDefault();
@@ -8797,7 +8811,7 @@ function revCard(o){
     ' class="goalcard '+(o.done?'done':'now')+(o.id?'':' flat')+'" '+
     'style="margin:0 0 16px">'+
     '<span class="gcic">'+o.ic+'</span>'+
-    '<span class="gctx"><b>'+o.head+'</b><i>'+o.sub+'</i></span>'+
+    '<span class="gctx"><b>'+o.head+(o.badge?('<span class="gcage">⏳ '+o.badge+'</span>'):'')+'</b><i>'+o.sub+'</i></span>'+
     (o.id?'<span class="gcgo">❮</span>':'')+
   '</'+t+'>';
 }
@@ -8816,8 +8830,11 @@ function selfRevBanner(sfx){
     head:'أتممتَ مراجعة اليوم — أحسنت',
     sub:'راجعتَ '+arCount(todayBox().reviews,C_SESS)+' اليوم'
   });
+  /* أقدمُ مقطعٍ حلّ موعدُه: عمرُه شارةٌ على البطاقة، فيعرف ما تأخّر منها */
+  var age=0; try{ age=todayNum()-dl[0].due; }catch(e){}
   return revCard({
     id:'selfRevGo'+sfx, ic:'☀️',
+    badge:(age>=1 ? agoText(age) : ''),
     head:'ابدأ مراجعة اليوم — '+arCount(pg.length,C_PAGE),
     sub:(onPlan()?'خارج مقرَّر خطتك • ':'من خطط «نور الوحي» • ')+
         names+more+' • '+arNum(dl.length)+' مقطع'
@@ -9610,7 +9627,13 @@ function openBqn(){
 }
 
 /* ---------- مسار المراجعة ---------- */
-function startRevPlan(){ revLoad(); renderRevPlan(); show('scr-rev'); }
+/* كلُّ دخولٍ إلى المراجعة يبدأ من «المقرَّر اليوميّ»، إلّا أن يُطلب بابٌ بعينه —
+   كان التبويبُ يبقى على آخر ما اختير في الجلسة كلِّها، فلا يُرى الأثرُ إلّا بعد تحميلٍ جديد */
+function startRevPlan(tab){
+  revLoad();
+  REV_TAB = tab || revTabDefault();
+  renderRevPlan(); show('scr-rev');
+}
 function beginRevPath(){ revLoad(); renderRevPath(); show('scr-revpath'); }
 
 /* ===== مسارُ المراجعة: خطٌّ واحدٌ من أوّل النطاق إلى آخره =====
@@ -9898,7 +9921,7 @@ function finishRevQuiz(){
     '<button class="btn ghost big" id="btnRevHome2" style="margin:0">🏠 البداية</button></div>';
   if($('btnRevNext')) $('btnRevNext').onclick=function(){ beginRevSession(revDone(md)); };
   $('btnRevMap').onclick=freeEnded
-    ? function(){ REV_TAB='free'; startRevPlan(); }
+    ? function(){ startRevPlan('free'); }
     : function(){ renderRevPath(); show('scr-revpath'); };
   $('btnRevHome2').onclick=function(){ renderPlayers(); show('scr-start'); };
 }
@@ -11263,7 +11286,7 @@ $('btnBackMap').onclick=function(){ if(!openJuz) openJuz=(curSurah?curSurah.juz:
    كان يردّه إلى فهرس السور أو إلى الرئيسيّة، وليس من حيث جاء */
 function revBackGo(){
   if(REV && REV.back==='scr-revpath'){ try{ renderRevPath(); }catch(e){} show('scr-revpath'); return; }
-  startRevPlan();
+  startRevPlan(REV_TAB);              /* يعود إلى البابِ الذي كان فيه، لا إلى غيره */
 }
 $('btnQuit').onclick=function(){
   if(S && S.rev && S.rev!=='exam'){ revBackGo(); return; }
