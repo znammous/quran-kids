@@ -11176,6 +11176,7 @@ function renderHome(){
 
 /* ===== معالج البداية: سؤال في كل صفحة مع عدّاد ===== */
 var ONB={ i:0, n:4, edit:false };
+var LOOK_BACK='';                  /* من أين فُتحت شاشةُ الشخصية، ليُردَّ إليها عند الحفظ */
 /* عناوين الأقسام في شريط التبويبات */
 var ONB_TABS=['🧒 شخصيتي','🧭 خطتي','🎤 التسجيل','👨‍👩‍👧 الأسرة'];
 function onbTabs(){
@@ -11356,7 +11357,11 @@ $('gFemale').onclick=$('gFemale2').onclick=function(){ gender='f'; curP().gender
 $('gMale').onclick=$('gMale2').onclick=function(){ gender='m'; curP().gender='m'; saveDB(); renderAvatars(); };
 $('btnRandomLook2').onclick=randomLook;
 $('btnOpenLook').onclick=function(){ renderAvatars(); show('scr-look'); };
-$('btnLookDone').onclick=function(){ show('scr-start'); };
+$('btnLookDone').onclick=function(){
+  if(LOOK_BACK==='scr-games'){ LOOK_BACK=''; gamesOpen(); return; }   /* يعود من حيث جاء */
+  LOOK_BACK='';
+  show('scr-start');
+};
 $('onbNext').onclick=function(){
   /* خطوة الخطة: مغادرتها تعتمد ما أشّره من حفظٍ سابق، ثم يُسأل عن ورده —
      ويمضي بعد الاعتماد ولا يقف، والبشارةُ تنتظر تمامَ الإعداد */
@@ -12056,10 +12061,19 @@ function gamesOpen(){
        '<span class="gctx"><b>'+g.n+'</b><i>'+g.d+(st.best?' • أفضلُ نتيجة ⭐ '+arNum(st.best):'')+'</i></span>'+
        '<span class="gcgo">❮</span></button>';
   });
+  /* وبابُ الشخصية: ليس لعبةً ولا مصدرَ آياتٍ له — يفتح محرِّرَ الشخصية نفسَه
+     الذي في معالج إنشاء المستخدم، بتبويباته وزرِّ حفظه، فلا شيءَ جديدٌ يُتعلَّم */
+  h+='<button type="button" class="goalcard" id="gmLook"><span class="gcic">🧒</span>'+
+     '<span class="gctx"><b>شخصيتي</b><i>بدّلْ شكلك وملابسك ولونَ عينيك</i></span>'+
+     '<span class="gcgo">❮</span></button>';
   if(!pool.mem) h+='<p class="gmnote">لم يُسجَّل لك محفوظٌ بعد — اختر سورةً تلعب بآياتها</p>';
   var B=$('gamesBody'); B.innerHTML=h;
   var bs=B.querySelectorAll('[data-game]');
   for(var i=0;i<bs.length;i++) bs[i].onclick=function(){ gamePick(this.getAttribute('data-game')); };
+  if($('gmLook')) $('gmLook').onclick=function(){
+    LOOK_BACK='scr-games';
+    lookHome(); renderAvatars(); show('scr-look');   /* شاشةُ الشخصية نفسُها: اختياراتٌ بلا حقلِ اسمٍ ولا لوحةِ مفاتيح */
+  };
   show('scr-games');
 }
 function gamePick(id){
