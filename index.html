@@ -9658,6 +9658,9 @@ function wirdOnbSync(){
     if(v!=null){
       curP().noRev=(v==='off');
       REV.on=(v==='1'); if(REV.on) REV.wird=true;
+      /* «خطةٌ حرّة»: يخرج من الورد وتُفتح له لوحةُ النطاق بعد تمام الخطّة */
+      if(v==='free'){ REV.wird=false; curP().freeRev=true; }
+      else if(v==='0'){ REV.wird=true; curP().freeRev=false; }
     }
     var sz=this.getAttribute('data-wsize');
     if(sz!=null){ REV.wsize=parseInt(sz,10); REV.wdone=0; }
@@ -9778,7 +9781,21 @@ function priorSel(){
   var p=curP();
   if(!p.priorJ||typeof p.priorJ!=='object') p.priorJ={};
   if(!p.priorS||typeof p.priorS!=='object') p.priorS={};
+  /* ونطاقاتُ الصفحات: [[من,إلى]…] — لمن حفظ بعضَ سورةٍ لا كلَّها،
+     كأوّل خمس صفحاتٍ من الأنعام، فلا يجد في الأجزاء ولا السور ما يؤشّر به */
+  if(!Array.isArray(p.priorP)) p.priorP=[];
   return p;
+}
+/* آياتُ نطاقِ صفحاتٍ: تُجمع من قطع كلّ وجهٍ فيه */
+function priorPagePieces(){
+  var p=priorSel(), out=[], i, P;
+  for(i=0;i<p.priorP.length;i++){
+    var a=p.priorP[i][0], b=p.priorP[i][1];
+    for(P=a;P<=b;P++){
+      try{ pagePieces(P).forEach(function(z){ out.push(z); }); }catch(e){}
+    }
+  }
+  return out;
 }
 function priorCount(){
   var p=priorSel(), seen={}, j, k, sn;
@@ -9790,6 +9807,11 @@ function priorCount(){
     var n=parseInt(sn,10), a=GIDX[n-1], c=surahBy(n).ayat.length;
     for(k=0;k<c;k++) seen[a+k]=1;
   }
+  /* وصفحاتُه المؤشَّرة — ولا تُحسب آيةٌ مرّتين وإن تداخل نطاقان */
+  priorPagePieces().forEach(function(z){
+    var base=GIDX[z.s.n-1], q;
+    for(q=z.from;q<z.to;q++) seen[base+q]=1;
+  });
   var t=0; for(k in seen) t++;
   return t;
 }
@@ -9800,6 +9822,10 @@ function priorApply(){
     var n=parseInt(sn,10), c=surahBy(n).ayat.length;
     if(!memHas(n,0,c)){ memAdd(n,0,c); added++; }
   }
+  /* وصفحاتُه: تُسجَّل قطعةً قطعة، فالوجهُ قد يجمع آخرَ سورةٍ وأوّلَ أخرى */
+  priorPagePieces().forEach(function(z){
+    if(!memHas(z.s.n, z.from, z.to)){ memAdd(z.s.n, z.from, z.to); added++; }
+  });
   ensureAllSchedules();
   /* وتُفتح الأجزاء التي عيّنها، فلا يُقفل عليه ما يحفظه */
   try{
@@ -9816,6 +9842,14 @@ function priorApply(){
         if(hi===null||js[q]>hi) hi=js[q];
       }
     }
+    /* وأجزاءُ صفحاته كذلك تُفتح، فلا يُقفل عليه ما سجّله */
+    priorPagePieces().forEach(function(z){
+      var jz=SURAH_JUZ[z.s.n]||[], y;
+      for(y=0;y<jz.length;y++){
+        if(lo===null||jz[y]<lo) lo=jz[y];
+        if(hi===null||jz[y]>hi) hi=jz[y];
+      }
+    });
     if(lo!==null){
       SET.juzFrom=Math.min(SET.juzFrom||30, lo);
       SET.juzTo  =Math.max(SET.juzTo  ||30, hi);
@@ -9905,6 +9939,17 @@ function priorPanelHTML(pfx){
      '<button type="button" class="chipsel" data-pq="none">مسح</button></div>';
   h+='<button type="button" class="btn ghost mini" id="'+pfx+'More" style="width:100%;margin-top:10px">'+
      '📖 أو سورٌ بعينها</button>';
+  /* نطاقُ صفحاتٍ: لمن حفظ بعضَ سورةٍ لا كلَّها — كأوّل خمس صفحاتٍ من الأنعام */
+  h+='<button type="button" class="btn ghost mini" id="'+pfx+'PMore" style="width:100%;margin-top:8px">'+
+     '📄 أو صفحاتٌ بعينها — كأوّل خمس صفحاتٍ من سورة</button>'+
+     '<div id="'+pfx+'P" hidden style="margin-top:8px">'+
+       '<div class="row" style="gap:6px;align-items:center">'+
+         '<input type="number" id="'+pfx+'P1" min="1" max="604" inputmode="numeric" placeholder="من صفحة">'+
+         '<input type="number" id="'+pfx+'P2" min="1" max="604" inputmode="numeric" placeholder="إلى صفحة">'+
+         '<button type="button" class="btn blue mini" id="'+pfx+'PAdd" style="margin:0;flex:0 0 auto">➕</button>'+
+       '</div>'+
+       '<div class="chips" id="'+pfx+'PL" style="margin-top:8px;gap:6px"></div>'+
+     '</div>';
   h+='<div id="'+pfx+'S" hidden style="margin-top:8px"><div class="chips" style="gap:6px">';
   for(i2=0;i2<SURAHS.length;i2++){
     var x=SURAHS[i2];
@@ -9917,6 +9962,21 @@ function priorPanelHTML(pfx){
 }
 function priorPanelWire(pfx,after){
   var p=priorSel(), box=$(pfx+'J'); if(!box) return;
+  /* قائمةُ نطاقات الصفحات المؤشَّرة، ولكلٍّ زرُّ حذفه */
+  var rlist=function(){
+    var el=$(pfx+'PL'); if(!el) return;
+    el.innerHTML = p.priorP.length
+      ? p.priorP.map(function(r,z){
+          return '<button type="button" class="chipsel sel" data-prm="'+z+'">'+
+                 'صفحة '+arNum(r[0])+(r[1]>r[0]?(' — '+arNum(r[1])):'')+' ✕</button>';
+        }).join('')
+      : '<div class="note" style="margin:0">لم تُضِف نطاقَ صفحاتٍ بعد</div>';
+    var ds=el.querySelectorAll('[data-prm]'), y;
+    for(y=0;y<ds.length;y++) ds[y].onclick=function(){
+      p.priorP.splice(parseInt(this.getAttribute('data-prm'),10),1);
+      saveDB(); paint();
+    };
+  };
   var note=function(){
     var n=priorCount(), el=$(pfx+'Note'); if(!el) return;
     el.textContent = n ? ('محسوبٌ لك '+arNum(n)+' آية — نحو '+arNum(Math.round(n/6236*604))+' صفحة')
@@ -9929,6 +9989,7 @@ function priorPanelWire(pfx,after){
     var b=$(pfx+'S')?$(pfx+'S').querySelectorAll('[data-ps]'):[];
     for(i=0;i<b.length;i++)
       b[i].className='chipsel'+(p.priorS[b[i].getAttribute('data-ps')]?' sel':'');
+    rlist();
     note();
     /* التأشيرُ يفتح خطوةَ الورد أو يُغلقها، فيُحدَّث العدّادُ والأزرار
        دون إعادة رسم اللوحة تحت إصبعه */
@@ -9956,6 +10017,20 @@ function priorPanelWire(pfx,after){
   };
   if($(pfx+'More')) $(pfx+'More').onclick=function(){
     var el=$(pfx+'S'); if(el) el.hidden=!el.hidden;
+  };
+  if($(pfx+'PMore')) $(pfx+'PMore').onclick=function(){
+    var el=$(pfx+'P'); if(el) el.hidden=!el.hidden;
+  };
+  /* يُضاف النطاقُ ويُرتَّب طرفاه، ومن كتب طرفاً واحداً فصفحةٌ واحدة */
+  if($(pfx+'PAdd')) $(pfx+'PAdd').onclick=function(){
+    var e1=$(pfx+'P1'), e2=$(pfx+'P2');
+    var a=parseInt(e1?e1.value:'',10), b2=parseInt(e2?e2.value:'',10);
+    if(!(a>=1&&a<=604)) return;
+    if(!(b2>=1&&b2<=604)) b2=a;
+    if(b2<a){ var t=a; a=b2; b2=t; }
+    p.priorP.push([a,b2]);
+    if(e1) e1.value=''; if(e2) e2.value='';
+    saveDB(); paint();
   };
   /* الاعتماد يقع بالانتقال إلى ما بعده، فلا يحتاج زرّاً خاصّاً به */
   /* الاعتمادُ يقع ولا يُحتفل به هنا: المعالجُ لم يُتمّ بعد، والاحتفالُ
@@ -10068,6 +10143,9 @@ function bqnSteps(){
   /* من بدأ من جديد فلا محفوظ له يُتعاهد — ولا يُسأل عن ورد.
      ومن سجّل حفظاً سابقاً تُحسب له خطوةُ الورد في العدّاد قبل الاعتماد،
      فلا يُفاجأ بشاشةٍ لم يُنبَّه إليها. */
+  /* من سجّل حفظاً سابقاً فلوحةُ التأشير خطوةٌ برأسها: كانت مع البطاقتين في
+     خطوةٍ واحدة فتطول الصفحةُ ويذهب معنى المعالج — سؤالٌ في كلّ خطوة */
+  if(p.priorMode==='has') out.push('pick');
   /* خطوةُ المراجعة لكلّ أحد: فيها خيارُ «حفظٍ بلا مراجعة» وهو يعني
      صاحبَ الحساب الجديد كما يعني من له محفوظٌ سابق */
   out.push('wird');
@@ -10077,6 +10155,7 @@ var BQ_HEAD={
   plan : ['🧭 ما خطة حفظك؟','مسار واحد تسير عليه — اختر ما يناسب همّتك'],
   dir  : ['🧭 من أين تبدأ؟','من قِصار السور صعوداً، أم على ترتيب المصحف'],
   prior: ['📌 وأين أنت من الحفظ الآن؟','لنعرف من أين نبدأ بك — ولا يضيع ما حفظتَه قبلُ'],
+  pick : ['📌 وما الذي تحفظه؟','أشّر أجزاءك أو سورَك — ولو كانت متفرّقة'],
   wird : ['📖 خطة المراجعة','ما تحفظه يحتاج تعاهداً — ولك أن تحفظ بلا مراجعة إن شئت']
 };
 /* شارةُ الخطوات وأزرارُها وحدَها — تُستدعى إذا تبدّل ما يُحسب به عددُ
@@ -10129,13 +10208,30 @@ function renderBqnList(){
     selfDirWire($('bqnList'), function(){ bqnShow(BQ.i); });
     return;
   }
+  /* خطوةُ الحال: بطاقتان لا غير. وكانت معهما لوحةُ الثلاثين جزءاً ومئةٍ وأربعَ
+     عشرةَ سورةً في مجرًى واحد، فتصير الخطوةُ صفحةً ممتدّةً لا خطوةَ معالج */
   if(step==='prior'){
-    $('bqnList').innerHTML='<div id="priorMode"></div>'+
-      '<div id="priorBox" style="margin-top:12px"></div>'+
-      '<div class="note">أشّر الأجزاء التي تحفظها — ولو كانت متفرّقة كآخر خمسة أجزاء وأوّل جزأين — '+
-      'أو اختر سوراً بعينها. تُحسب محفوظةً بخمس نجوم، وتدخل جدول المراجعة، '+
-      'ويُعاد حساب الأيام المتبقّية وموضعك في الخطة.</div>';
-    try{ renderPriorMode(); }catch(e){}
+    $('bqnList').innerHTML=priorModeHTML()+
+      '<div class="note" style="margin-top:12px">ما حفظتَه قبل التطبيق يُحسب لك، '+
+      'ويدخل جدولَ المراجعة، ويُعاد حسابُ أيّامك وموضعِك من الخطة.</div>';
+    var ms=$('bqnList').querySelectorAll('[data-pmode]'), z;
+    for(z=0;z<ms.length;z++) ms[z].onclick=function(){
+      curP().priorMode=this.getAttribute('data-pmode'); saveDB();
+      try{ revLoad(); }catch(e){}
+      bqnShow(BQ.i);          /* عددُ الخطوات يتبدّل بجوابه، فتُعاد هيئةُ المعالج */
+    };
+    return;
+  }
+  /* وخطوةُ التأشير: اللوحةُ وحدَها، ولا تُعرض إلّا لمن قال «أسجّل حفظي» */
+  if(step==='pick'){
+    $('bqnList').innerHTML='<div id="priorBox">'+priorPanelHTML('pS')+'</div>'+
+      '<div class="note" style="margin-top:12px">أشّر ما تحفظه — أجزاءً أو سوراً، '+
+      'ولو كان متفرّقاً كآخر خمسة أجزاء وأوّل جزأين. تُحسب محفوظةً بخمس نجوم.</div>';
+    priorPanelWire('pS', function(){
+      try{ fillBqnSelect(); }catch(e){}
+      try{ revLoad(); }catch(e){}
+      try{ if($('scr-bqn') && $('scr-bqn').classList.contains('active')) bqnChrome(); }catch(e){}
+    });
     return;
   }
   if(step==='wird'){
@@ -10202,8 +10298,8 @@ function wirdBody(){
      'ما تحفظه في التطبيق يُجدوَل لك فيعود في موعده، '+
      'وما حفظتَه قبلَه يمشي فيه وردٌ يوميّ.</div>'+
      '<div class="onbopts">'+
-     '<button type="button" class="onbopt'+((!off&&on!==true)?' sel':'')+'" data-wird="0">'+
-       '<span class="oe">'+((!off&&on!==true)?'✅':'☀️')+'</span>'+
+     '<button type="button" class="onbopt'+((!off&&on!==true&&revIsWird())?' sel':'')+'" data-wird="0">'+
+       '<span class="oe">'+((!off&&on!==true&&revIsWird())?'✅':'☀️')+'</span>'+
        '<span class="ot"><b>راجِعْ ما أحفظه في التطبيق</b>'+
        '<i>كلُّ مقطعٍ تحفظه يعود إليك في موعده</i></span></button>';
   /* الوردُ لا يُعرض إلّا لمن له محفوظٌ سابقٌ يمشي فيه */
@@ -10212,7 +10308,13 @@ function wirdBody(){
        '<span class="oe">'+((!off&&on===true)?'✅':'📖')+'</span>'+
        '<span class="ot"><b>وزِدْ وِرداً يوميّاً لمحفوظي</b>'+
        '<i>جلسةٌ كلَّ يوم تمشي في محفوظك وجهاً وجهاً</i></span></button>';
-  h+='<button type="button" class="onbopt'+(off?' sel':'')+'" data-wird="off">'+
+  /* خطةٌ حرّة: نطاقٌ يختاره بنفسه — يُثبَّت نطاقُه بعد تمام الخطّة */
+  var freeSel=(!off && on!==true && !revIsWird());
+  h+='<button type="button" class="onbopt'+(freeSel?' sel':'')+'" data-wird="free">'+
+       '<span class="oe">'+(freeSel?'✅':'🎛️')+'</span>'+
+       '<span class="ot"><b>خطةُ مراجعةٍ حرّة</b>'+
+       '<i>نطاقٌ تختاره من آيةٍ إلى آية، تمشي فيه جلسةً جلسة — تضبطه بعد الخطّة</i></span></button>'+
+     '<button type="button" class="onbopt'+(off?' sel':'')+'" data-wird="off">'+
        '<span class="oe">'+(off?'✅':'🚫')+'</span>'+
        '<span class="ot"><b>حفظٌ بلا مراجعة</b>'+
        '<i>لا مقرَّرَ يوميّاً ولا مهامّ — ولك أن تضبط مراجعةً حرّةً متى شئت</i></span></button>'+
@@ -10249,11 +10351,13 @@ function wirdWirePanel(){
   var box=$('bqnList'); if(!box) return;
   var hit=function(){
     var v=this.getAttribute('data-wird');
-    /* «حفظٌ بلا مراجعة» يُسجَّل هنا كما يُسجَّل في المعالج، وإلّا اختاره من
-       الإعدادات فلم يُحفظ له */
+    /* «حفظٌ بلا مراجعة» و«خطةٌ حرّة» يُسجَّلان هنا كما يُسجَّلان في المعالج،
+       وإلّا اختارهما من الإعدادات فلم يُحفظ له */
     if(v!=null){
       curP().noRev=(v==='off');
       REV.on=(v==='1'); if(REV.on) REV.wird=true;
+      if(v==='free'){ REV.wird=false; curP().freeRev=true; }
+      else if(v==='0'){ REV.wird=true; curP().freeRev=false; }
     }
     var sz=this.getAttribute('data-wsize');
     if(sz!=null){ REV.wsize=parseInt(sz,10); REV.wdone=0; }
@@ -10295,6 +10399,13 @@ function startBqn(from, step){
 function bqnReturn(){
   priorCeleFlush();            /* الآن تمّت الخطّة، فتُقال البشارة */
   var b=BQN_BACK; BQN_BACK='';
+  /* اختار «خطةً حرّة» ولم يضبط نطاقَها بعد: يُساق إلى لوحة النطاق ساعتَه،
+     فلا تبقى خطّةٌ مختارةٌ بلا نطاقٍ يمشي فيه */
+  try{
+    if(!revOff() && !revIsWird() && curP().freeRev){
+      REV_TAB='free'; renderRevPlan(); show('scr-rev'); return;
+    }
+  }catch(e){}
   if(b==='onb'){ onbShow(ONB.i); return; }
   if(b==='set'){ fillSettings(); show('scr-settings'); return; }
   if(b==='rev'){ REV_TAB='mine'; renderRevPlan(); show('scr-rev'); return; }
@@ -12452,7 +12563,7 @@ $('bqnNext').onclick=function(){
   if(m){ try{ navToast(m); }catch(e){} bqnGate(); return; }
   /* مغادرةُ صفحة الحفظ السابق تعتمد ما أشّره — ولا زرّ يُسأل عنه،
      ولا يقف عندها بعد الاعتماد بل يمضي إلى ما بعدها */
-  if(bqnSteps()[BQ.i]==='prior' && curP().priorMode==='has' && PRIOR_COMMIT){
+  if(bqnSteps()[BQ.i]==='pick' && curP().priorMode==='has' && PRIOR_COMMIT){
     try{ PRIOR_COMMIT(); }catch(e){}
   }
   /* لم تُفتح خطوةٌ جديدة؟ فهذا آخرُه: يُحفظ ويُرجع */
@@ -12462,7 +12573,7 @@ $('bqnNext').onclick=function(){
 $('bqnBack').onclick=function(){ bqnShow(BQ.i-1); };
 $('btnBqnDone').onclick=function(){
   /* آخر خطوةٍ وفيها حفظٌ أُشّر ولم يُعتمد؟ يُعتمد الآن، وقد يفتح سؤال الورد بعده */
-  if(bqnSteps()[BQ.i]==='prior' && curP().priorMode==='has' && PRIOR_COMMIT){
+  if(bqnSteps()[BQ.i]==='pick' && curP().priorMode==='has' && PRIOR_COMMIT){
     try{ PRIOR_COMMIT(); }catch(e){}
     if(BQ.i+1<bqnSteps().length){ bqnShow(BQ.i+1); return; }   /* فُتحت خطوةٌ بعده */
   }
