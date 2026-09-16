@@ -4108,7 +4108,14 @@ function surahStats(s){
     stars+=fin?stagesN():p.stars; if(fin) done++; });
   return { segs:segs.length, done:done, stars:stars, full:done===segs.length && segs.length>0 };
 }
+/* ===== حفظٌ بلا مراجعة =====
+   عَلَمٌ على اللاعب يختاره في خطّته: يُعطّل مقرَّرَ المراجعة اليوميّ من منابعه
+   الثلاثة — ما استحقّ من محفوظه، ومقرَّرُ الخطّة، ووردُ محفوظاته — فلا يظهر
+   له شيءٌ منها مهمّةً. وما بُني عليها من نقاطٍ حمراءَ وبطاقاتٍ وهدفِ يومٍ
+   يسكت تبعاً لها، فلا موضعَ يُستثنى فيُنسى. ومن ضبط مراجعةً حرّةً رُفع عنه. */
+function revOff(){ try{ return curP().noRev===true; }catch(e){ return false; } }
 function dueSegs(){
+  if(revOff()) return [];
   var t=todayNum(), out=[];
   Object.keys(prog).forEach(function(k){
     var m=/^(\d+)_(\d+)_([a-z\d]+)$/.exec(k); if(!m) return;
@@ -4222,6 +4229,7 @@ function goalHifzPct(){
   return Math.min(t.stages, stagesN())/stagesN();
 }
 function goalRevMet(){
+  if(revOff()) return true;            /* لا مراجعةَ في خطّته، فلا يُعلَّق تمامُ يومه عليها */
   if(todayBox().reviews>=1) return true;
   try{
     if(wirdPending()) return false;               /* ورده لم يُؤدَّ بعد */
@@ -8784,7 +8792,7 @@ function revLoad(){
 function wirdOn(){ return REV.on===true; }      /* لا يُشترط أن يكون هو المعروض */
 function wirdCount(){ try{ return revSessions('wird').length; }catch(e){ return 0; } }
 function wirdDoneToday(){ return REV.day===todayNum(); }
-function wirdPending(){ return wirdOn() && wirdCount()>0 && !wirdDoneToday(); }
+function wirdPending(){ return !revOff() && wirdOn() && wirdCount()>0 && !wirdDoneToday(); }
 /* لا آية خارج سورتها، ولا نهاية تسبق البداية */
 function revClamp(){
   var a=surahBy(REV.fromS)||SURAHS[0], b=surahBy(REV.toS)||SURAHS[SURAHS.length-1];
@@ -9007,10 +9015,18 @@ function renderRevPlanBody(){
   /* ١) المقرَّر اليوميّ: مقرَّرُ الخطّة وما استحقّ من محفوظه */
   if(REV_TAB==='due'){
     var dueH=bqnRevBanner('P')+selfRevBanner('P');
-    $('revPlan').innerHTML = dueH || emptyBox('🌙','لا مراجعةَ مستحقّةً اليوم',
-      'كلُّ ما حلّ موعدُه قد رُوجع. ولك أن تزيد من بابِ المراجعة الحرّة، '+
-      'أو تمشي في ورد محفوظاتك.','btnRevToFree','🎛️ مراجعة حرّة');
+    /* من اختار «حفظاً بلا مراجعة» يُقال له ذلك صريحاً ويُدلّ على بابه،
+       فلا يحسب الفراغَ عطلاً في التطبيق */
+    $('revPlan').innerHTML = dueH || (revOff()
+      ? emptyBox('🚫','ليس لديك خطة مراجعة مضبوطة',
+          'اخترتَ الحفظ بلا مراجعة، فلا مقرَّرَ يوميّاً ولا مهامّ. '+
+          'ولك أن تضبط مراجعةً حرّةً من تبويبها، أو تعيد المراجعة من '+
+          '«الإعدادات ← 🧭 غيّر خطة الحفظ».','btnRevToPlan','🧭 غيّر خطة الحفظ')
+      : emptyBox('🌙','لا مراجعةَ مستحقّةً اليوم',
+          'كلُّ ما حلّ موعدُه قد رُوجع. ولك أن تزيد من بابِ المراجعة الحرّة، '+
+          'أو تمشي في ورد محفوظاتك.','btnRevToFree','🎛️ مراجعة حرّة'));
     bqnRevWire('P'); selfRevWire('P');
+    if($('btnRevToPlan')) $('btnRevToPlan').onclick=function(){ startBqn('set','wird'); };
     if($('btnRevToFree')) $('btnRevToFree').onclick=function(){ REV_TAB='free'; renderRevPlan(); };
     if($('btnRevGo')) $('btnRevGo').hidden=true;
     return;
@@ -9120,6 +9136,7 @@ function renderRevPlanBody(){
   if($('btnFreeFix')) $('btnFreeFix').onclick=function(){
     REV.wird=false; REV.mode='free';
     curP().freeRev=false;
+    curP().noRev=false;        /* ضبط مساراً حرّاً: فله مراجعةٌ بعد اليوم وتعود مهامُّها */
     revSave();
     try{ navToast('✅ ثُبّت مسارُك — '+arCount(revSessions('free').length,C_SESS)); }catch(e){}
     beginRevPath();
@@ -9419,6 +9436,11 @@ function bqnToday(){
   if(!pl || st.day>=pl.n) return null;
   var parts=bqnDayParts(pl,st.day)||{h:null,r:null};
   var pages=parts.r?bqnPages(parts.r):[];
+  /* اختار «حفظاً بلا مراجعة»: يبقى حفظُ الخطّة ويسقط شطرُ مراجعتها، ويُعدّ
+     تامّاً فلا يبقى يومُه معلّقاً على مراجعةٍ لم يطلبها */
+  if(revOff()) return { plan:pl, st:st, day:st.day, h:parts.h, r:null,
+           pages:[], rp:0, hifzDone:bqnHifzDone(parts.h),
+           revDone:true, dayDone:(st.lastDone===todayNum()) };
   return { plan:pl, st:st, day:st.day, h:parts.h, r:parts.r,
            pages:pages, rp:Math.min(st.rp||0,pages.length),
            hifzDone:bqnHifzDone(parts.h),
@@ -9444,6 +9466,7 @@ function revCard(o){
   '</'+t+'>';
 }
 function selfRevBanner(sfx){
+  if(revOff()) return '';                      /* لا مقرَّرَ مراجعةٍ في خطّته */
   var dl=[], pg=[];
   try{ dl=dueSegs(); pg=duePages(); }catch(e){}
   var revd=todayBox().reviews>0, done=(dl.length===0);
@@ -9625,13 +9648,17 @@ function bqnOnbHTML(){
 /* ورد المراجعة في معالج اللاعب كذلك — لمن سجّل حفظاً سابقاً */
 function wirdOnbSync(){
   var box=$('pOWird'); if(!box) return;
-  if(curP().priorMode!=='has' || !wirdAsk()){ box.innerHTML=''; return; }
-  box.innerHTML='<div class="lbl steplb">📖 ورد المراجعة اليوميّ <b style="color:var(--gold)">(لازم)</b></div>'+
+  /* يُعرض لكلّ مستخدم، فخيارُ «حفظٍ بلا مراجعة» يخصّ من لا محفوظَ له كذلك.
+     وكان لا يُعرض إلّا لمن سجّل حفظاً سابقاً، فلا يراه صاحبُ الحساب الجديد */
+  box.innerHTML='<div class="lbl steplb">📖 خطة المراجعة <b style="color:var(--gold)">(لازم)</b></div>'+
                 wirdBody();
   var bs=box.querySelectorAll('[data-wird],[data-wsize],[data-wdir]'), i;
   var hit=function(){
     var v=this.getAttribute('data-wird');
-    if(v!=null){ REV.on=(v==='1'); if(REV.on) REV.wird=true; }
+    if(v!=null){
+      curP().noRev=(v==='off');
+      REV.on=(v==='1'); if(REV.on) REV.wird=true;
+    }
     var sz=this.getAttribute('data-wsize');
     if(sz!=null){ REV.wsize=parseInt(sz,10); REV.wdone=0; }
     var dr=this.getAttribute('data-wdir');
@@ -9676,8 +9703,8 @@ function onbBlocked(){
     if(!curP().planChosen) return '🧭 اختر خطة حفظك أوّلاً — من قسمَي الخطط أعلاه';
     if(!onPlan() && !selfDirPicked()) return '🧭 وبقيت واحدة: من أين تبدأ — من الناس أم من البقرة؟';
     if(!curP().priorMode)  return '📌 اختر: أبدأ من جديد، أو أسجّل حفظي السابق';
-    if(curP().priorMode==='has' && wirdAsk() && REV.on==null)
-      return '📖 وبقيت واحدة: أتريد ورد مراجعةٍ يوميّاً لمحفوظك؟';
+    if(REV.on==null && !revOff())
+      return '📖 وبقيت واحدة: ما خطة مراجعتك؟';
   }
   return '';
 }
@@ -10041,14 +10068,16 @@ function bqnSteps(){
   /* من بدأ من جديد فلا محفوظ له يُتعاهد — ولا يُسأل عن ورد.
      ومن سجّل حفظاً سابقاً تُحسب له خطوةُ الورد في العدّاد قبل الاعتماد،
      فلا يُفاجأ بشاشةٍ لم يُنبَّه إليها. */
-  if(p.priorMode==='has' && (wirdAsk() || priorPicked())) out.push('wird');
+  /* خطوةُ المراجعة لكلّ أحد: فيها خيارُ «حفظٍ بلا مراجعة» وهو يعني
+     صاحبَ الحساب الجديد كما يعني من له محفوظٌ سابق */
+  out.push('wird');
   return out;
 }
 var BQ_HEAD={
   plan : ['🧭 ما خطة حفظك؟','مسار واحد تسير عليه — اختر ما يناسب همّتك'],
   dir  : ['🧭 من أين تبدأ؟','من قِصار السور صعوداً، أم على ترتيب المصحف'],
   prior: ['📌 وأين أنت من الحفظ الآن؟','لنعرف من أين نبدأ بك — ولا يضيع ما حفظتَه قبلُ'],
-  wird : ['📖 وردُ المراجعة','ما حفظتَه يحتاج تعاهداً — ولك أن تقسّمه كما تطيق']
+  wird : ['📖 خطة المراجعة','ما تحفظه يحتاج تعاهداً — ولك أن تحفظ بلا مراجعة إن شئت']
 };
 /* شارةُ الخطوات وأزرارُها وحدَها — تُستدعى إذا تبدّل ما يُحسب به عددُ
    الخطوات واللوحةُ بين يديه، فلا يُعاد رسمُ اللوحةِ تحت إصبعه. */
@@ -10081,7 +10110,7 @@ function bqnStepBlocked(){
   if(k==='plan' && !p.planChosen) return '🧭 اختر خطّة حفظك أوّلاً';
   if(k==='dir'  && !selfDirPicked()) return '🧭 من أين تبدأ — من الناس أم من البقرة؟';
   if(k==='prior'&& !p.priorMode) return '📌 اختر: أبدأ من جديد، أم أسجّل حفظي السابق';
-  if(k==='wird' && REV.on==null) return '📖 أتريد ورد مراجعةٍ يوميّاً لمحفوظك؟';
+  if(k==='wird' && REV.on==null && !revOff()) return '📖 وبقيت واحدة: ما خطة مراجعتك؟';
   return '';
 }
 function bqnGate(){
@@ -10167,18 +10196,28 @@ function wirdCalc(size){
   return { pages:n, days:days, gems:25*n, iron:2*n, glass:2*n };
 }
 function wirdBody(){
-  var on=REV.on, h='';
-  h+='<div class="note" style="margin-bottom:10px">المراجعة تُثبّت ما حفظت، '+
-     'والورد يمشي في محفوظك وجهاً وجهاً ثم يعود من أوّله.</div>'+
+  var on=REV.on, off=revOff(), has=false, h='';
+  try{ has=wirdAsk(); }catch(e){}
+  h+='<div class="note" style="margin-bottom:10px">المراجعة تُثبّت ما حفظت: '+
+     'ما تحفظه في التطبيق يُجدوَل لك فيعود في موعده، '+
+     'وما حفظتَه قبلَه يمشي فيه وردٌ يوميّ.</div>'+
      '<div class="onbopts">'+
-     '<button type="button" class="onbopt'+(on===true?' sel':'')+'" data-wird="1">'+
-       '<span class="oe">'+(on===true?'✅':'📖')+'</span>'+
-       '<span class="ot"><b>نعم، أُريد ورد مراجعةٍ يوميّاً</b><i>جلسةٌ كل يوم من محفوظك</i></span></button>'+
-     '<button type="button" class="onbopt'+(on===false?' sel':'')+'" data-wird="0">'+
-       '<span class="oe">'+(on===false?'✅':'🚫')+'</span>'+
-       '<span class="ot"><b>لا، الحفظ الجديد يكفيني</b><i>تبقى مراجعة ما تحفظه في التطبيق وحدها</i></span></button>'+
+     '<button type="button" class="onbopt'+((!off&&on!==true)?' sel':'')+'" data-wird="0">'+
+       '<span class="oe">'+((!off&&on!==true)?'✅':'☀️')+'</span>'+
+       '<span class="ot"><b>راجِعْ ما أحفظه في التطبيق</b>'+
+       '<i>كلُّ مقطعٍ تحفظه يعود إليك في موعده</i></span></button>';
+  /* الوردُ لا يُعرض إلّا لمن له محفوظٌ سابقٌ يمشي فيه */
+  if(has) h+=
+     '<button type="button" class="onbopt'+((!off&&on===true)?' sel':'')+'" data-wird="1">'+
+       '<span class="oe">'+((!off&&on===true)?'✅':'📖')+'</span>'+
+       '<span class="ot"><b>وزِدْ وِرداً يوميّاً لمحفوظي</b>'+
+       '<i>جلسةٌ كلَّ يوم تمشي في محفوظك وجهاً وجهاً</i></span></button>';
+  h+='<button type="button" class="onbopt'+(off?' sel':'')+'" data-wird="off">'+
+       '<span class="oe">'+(off?'✅':'🚫')+'</span>'+
+       '<span class="ot"><b>حفظٌ بلا مراجعة</b>'+
+       '<i>لا مقرَّرَ يوميّاً ولا مهامّ — ولك أن تضبط مراجعةً حرّةً متى شئت</i></span></button>'+
      '</div>';
-  if(on!==true) return h;
+  if(off || on!==true) return h;
   h+='<div class="lbl" style="margin:16px 0 6px">📏 كم وجهاً في الجلسة؟</div><div class="onbopts">';
   REV_SIZES.forEach(function(z){
     var c=wirdCalc(z), sel=(revSize('wird')===z);
@@ -10210,7 +10249,12 @@ function wirdWirePanel(){
   var box=$('bqnList'); if(!box) return;
   var hit=function(){
     var v=this.getAttribute('data-wird');
-    if(v!=null){ REV.on=(v==='1'); if(REV.on) REV.wird=true; }
+    /* «حفظٌ بلا مراجعة» يُسجَّل هنا كما يُسجَّل في المعالج، وإلّا اختاره من
+       الإعدادات فلم يُحفظ له */
+    if(v!=null){
+      curP().noRev=(v==='off');
+      REV.on=(v==='1'); if(REV.on) REV.wird=true;
+    }
     var sz=this.getAttribute('data-wsize');
     if(sz!=null){ REV.wsize=parseInt(sz,10); REV.wdone=0; }
     var dr=this.getAttribute('data-wdir');
@@ -10229,7 +10273,7 @@ function bqnBlocked(){
     if(k==='plan' && !p.planChosen) m='🧭 اختر خطّة حفظك أوّلاً';
     else if(k==='dir' && !selfDirPicked()) m='🧭 وبقيت واحدة: من أين تبدأ — من الناس أم من البقرة؟';
     else if(k==='prior' && !p.priorMode) m='📌 اختر أوّلاً: أبدأ من جديد، أم أسجّل حفظي السابق';
-    else if(k==='wird' && REV.on==null) m='📖 وبقيت واحدة: أتريد ورد مراجعةٍ يوميّاً لمحفوظك؟';
+    else if(k==='wird' && REV.on==null && !revOff()) m='📖 وبقيت واحدة: ما خطة مراجعتك؟';
     if(m) return { m:m, i:i, go:(function(x){ return function(){ bqnShow(x); }; })(i) };
   }
   return null;
@@ -11670,6 +11714,7 @@ function qScreenFit(fresh){
    لا يدري إلامَ يقوده. */
 /* أثمّةَ مراجعةٌ مستحقّةٌ اليوم؟ مقرَّرُ خطّةٍ أو مقاطعُ حلّ موعدُها */
 function revDueToday(){
+  if(revOff()) return false;
   try{ var T=bqnToday(); if(T && T.r && !T.revDone) return true; }catch(e){}
   try{ if(dueSegs().length) return true; }catch(e){}
   return false;
@@ -11704,7 +11749,20 @@ function renderHomeCards(){
   var due=0; try{ due=dueSegs().length; }catch(e){}
   var rDone=false; try{ rDone=goalRevMet(); }catch(e){}
   var rTxt;
-  if(T && T.r && !T.revDone) rTxt=bqnLabel(T.r)+' — '+arCount(T.pages.length,C_PAGE);
+  /* اختار «حفظاً بلا مراجعة»: تقول له البطاقةُ ذلك صريحاً، ولا تعِدُه بمهمّة.
+     فإن ضبط مساراً حرّاً عادت البطاقةُ تدعوه إليه */
+  var freeLeft=0;
+  if(revOff()){
+    try{
+      /* المسارُ الحرُّ المثبَّتُ وحدَه يُعيد المهامّ — لا مجرّدُ نطاقٍ افتراضيٍّ
+         موجودٍ لكلّ أحد. والمعيارُ معيارُ شاشة المراجعة نفسِها */
+      if(!!curP().rev && !revIsWird())
+        freeLeft=Math.max(0, revSessions('free').length-(REV.done||0));
+    }catch(e){}
+  }
+  if(revOff() && !freeLeft) rTxt='ليس لديك خطة مراجعة مضبوطة';
+  else if(revOff()) rTxt='مراجعتك الحرّة: بقيت '+arCount(freeLeft,C_SESS);
+  else if(T && T.r && !T.revDone) rTxt=bqnLabel(T.r)+' — '+arCount(T.pages.length,C_PAGE);
   else if(due) rTxt=arNum(due)+' مقطعاً حلّ موعدُه';
   else if(wp) rTxt='وردُ اليوم: '+arCount(revSize('wird'),C_PAGE)+' من محفوظك';
   else if(rDone) rTxt='أتممتَ مراجعة اليوم — ولك أن تزيد';
@@ -11745,7 +11803,8 @@ function renderHome(){
   }catch(e){}
   var due=dueSegs().length, tb=todayBox(), w=false;
   try{ revLoad(); w=wirdPending(); }catch(e){}
-  $('homeHi2').textContent = w ? 'ورد المراجعة ينتظرك 📖'
+  $('homeHi2').textContent = revOff() ? 'ليس لديك خطة مراجعة مضبوطة — والحفظُ ماضٍ 📖'
+    : w ? 'ورد المراجعة ينتظرك 📖'
     : due ? ('عندك '+arNum(due)+' مقطع يحتاج مراجعة اليوم ☀️')
     : (tb.stages>0 ? ('أنجزت '+arNum(tb.stages)+' مراحل اليوم — أحسنت 🌟')
                    : 'مستعدّ لحفظ جديد اليوم؟');
