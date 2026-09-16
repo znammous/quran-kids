@@ -8,6 +8,9 @@ var VER   = 'v4';
 var SHELL = 'nur-shell-' + VER;   /* الصفحة وما يتبعها — يُمسح مع كل إصدار */
 var ASSET = 'nur-assets';         /* خطوط لا تتغيّر — يبقى عبر الإصدارات */
 var DATA  = 'nur-data-1';         /* بياناتُ الآيات والخطط والمعاني */
+/* تلاواتُ القرّاء: تُخزَّن من الصفحة لا من هنا (مصدرُها خارجيّ فيمرّ كما هو)،
+   لكنّها تُستثنى من المسح — وإلّا ذهب ما سمعه الطفلُ مع كلّ تحديثٍ للتطبيق */
+var AUDIO = 'nur-audio';
 /* مهلةُ الشبكة للصفحة: كان يُنتظر بلا حدّ، فيعلق التطبيقُ على شبكةٍ ضعيفة
    قبل أن يُلجأ إلى المخزَّن */
 var NET_WAIT = 4000;
@@ -38,7 +41,7 @@ self.addEventListener('activate', function(e){
   e.waitUntil(
     caches.keys().then(function(ks){
       return Promise.all(ks.map(function(k){
-        if(k!==SHELL && k!==ASSET && k!==DATA) return caches['delete'](k);
+        if(k!==SHELL && k!==ASSET && k!==DATA && k!==AUDIO) return caches['delete'](k);
       }));
     }).then(function(){
       /* نسخُ البيانات القديمة (رقمُ إصدارٍ سابق) تُحذف، ويبقى ما لا رقمَ له كالمعاني */
