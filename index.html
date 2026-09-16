@@ -3385,10 +3385,12 @@ function wakeOff(){
 }
 document.addEventListener('visibilitychange', function(){
   if(document.hidden) return;                                         /* أُطلق عند الغياب */
-  if($('mfSheet') && !$('mfSheet').hidden) wakeOn();
+  var open=($('mfSheet') && !$('mfSheet').hidden);
+  var inLesson=false; try{ inLesson=(curScreen()==='scr-play'); }catch(e){}
+  if(open || inLesson) wakeOn();
 });
 function mushafClose(){
-  wakeOff();
+  try{ if(curScreen()!=='scr-play') wakeOff(); }catch(e){ wakeOff(); }   /* عاد إلى درسه: القفلُ باقٍ له */
   MF_MARK=null; MF_PV=null;
   if($('mfGo')) $('mfGo').hidden=true;
   try{ mfPanel(null); }catch(e){}
@@ -5342,6 +5344,12 @@ function show(id){
   if(id==='scr-start'){ try{ renderHome(); }catch(e){} }
   try{ syncTabs(id); }catch(e){}
   document.body.classList.toggle('bgrest', id!=='scr-start');   /* الخلفيّةُ تتحرّك في الرئيسيّة وحدها */
+  /* وفي الدرس كذلك لا تنطفئ الشاشة: يقرأ ويردّد ويسمّع ولا يلمسها.
+     وما دام وجهُ المصحف مفتوحاً فوق الشاشة، فالقفلُ له */
+  try{
+    if(id==='scr-play') wakeOn();
+    else if(!($('mfSheet') && !$('mfSheet').hidden)) wakeOff();
+  }catch(e){}
   try{ if(id!=='scr-start') navGuard(); }catch(e){}   /* رجوع الهاتف يبقى داخل اللعبة */
   window.scrollTo(0,0);
   /* الشهادةُ تُضبط على الشاشة، وكلُّ انتقالٍ آخر يفكّ قفلَ الصفحة. ويُعاد الضبطُ
