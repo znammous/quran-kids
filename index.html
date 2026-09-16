@@ -1639,6 +1639,8 @@ body.glow-off .dfpic{animation:none}
   <div class="modal" style="max-width:400px;text-align:center">
     <div id="askIc" style="font-size:46px;line-height:1;margin-bottom:6px">💚</div>
     <div id="askMsg" style="font-size:17px;font-weight:800;line-height:1.9;color:var(--ttl)"></div>
+    <!-- حقلُ الاسم: لا يظهر إلّا حين يُطلب اسمٌ (أسماءُ الأهل في «عائلتي») -->
+    <input type="text" id="askInp" maxlength="14" hidden autocomplete="off" spellcheck="false" style="margin-top:12px;text-align:center">
     <label class="chk" id="askChkWrap" hidden style="margin-top:12px;justify-content:center"><input type="checkbox" id="askChk"> لا تُظهر هذه الرسالة مرّة أخرى</label>
     <div class="row" style="margin-top:18px;justify-content:center">
       <button class="btn ghost" id="askNo" hidden>لا</button>
@@ -2452,6 +2454,9 @@ var PAL={
 var HAIRCUTS=[{n:'قصير'},{n:'مموّج'},{n:'مجعّد'},{n:'حليق'}];
 var HEADWEAR=[{n:'بلا غطاء'},{n:'طاقية بيضاء'},{n:'طاقية ملوّنة'},{n:'شماغ أحمر'},{n:'غترة بيضاء'}];
 var VEIL=[{n:'بلا نقاب'},{n:'نقاب'}];
+/* تسريحاتُ البنات ولحى الرجال — في لعبة «عائلتي» وحدَها */
+var GIRLCUTS=[{n:'طويل'},{n:'ذيل فرس'},{n:'ضفيرتان'},{n:'قصير'}];
+var BEARDS=[{n:'بلا لحية'},{n:'شنب'},{n:'لحية خفيفة'},{n:'لحية كاملة'}];
 var LOOK_OPEN=null;                 /* الصفّ المفتوح في لوحة الشخصية */
 var LOOK_ROWS=[{k:'skin',lb:'🎨 لون البشرة'},{k:'eyes',lb:'👁️ لون العينين'},
   {k:'veil',lb:'🧕 النقاب',kind:'choice',opts:VEIL,f:true},
@@ -2493,6 +2498,50 @@ function hairSVG(hair){
       'C52.5,45.5 53.5,42.5 52.5,39.5 C47.5,46.5 38.5,48.5 32.5,45.5 C30,48.5 28.6,52.5 28.2,57 Z"/>'+
     '<path d="M43,34 C38,36.5 34.6,40.5 33.2,45" stroke="#fff" stroke-opacity=".26" stroke-width="2.4" fill="none" stroke-linecap="round"/>';
 }
+/* ===== شعرُ البنات =====
+   يُرسم بمسارٍ واحدٍ يحيط بالوجه وينفتح عند الذقن، فيبقى الوجهُ ظاهراً
+   بلا حاجةٍ إلى ثقبٍ في المسار — كما يُصنع الحجاب */
+function girlHairSVG(hair){
+  var st=look.hairStyle||0, dk=darken(hair,0.8);
+  function frame(bot){
+    return '<path fill="'+hair+'" d="M50,26 C72,26 80,44 80,62 C80,76 78,'+(bot-8)+' 76,'+bot+
+           ' L66,'+bot+' C69,'+(bot-12)+' 70,76 69,64 C68,46 62,36 50,36 C38,36 32,46 31,64 '+
+           'C30,76 31,'+(bot-12)+' 34,'+bot+' L24,'+bot+' C22,'+(bot-8)+' 20,76 20,62 C20,44 28,26 50,26 Z"/>';
+  }
+  var cap='<path fill="'+hair+'" d="M29,58 C29,40 37,30 50,30 C63,30 71,40 71,58 '+
+          'C68,45 60,39 50,39 C40,39 32,45 29,58 Z"/>';
+  if(st===1){                                  /* ذيلُ فرس */
+    return cap+'<ellipse cx="77" cy="55" rx="8.5" ry="13" fill="'+hair+'"/>'+
+           '<path d="M69,45 C76,45 79,49 79,53" stroke="'+dk+'" stroke-width="2" fill="none"/>'+
+           '<rect x="67" y="42" width="8" height="5" rx="2.5" fill="#d1587a"/>';
+  }
+  if(st===2){                                  /* ضفيرتان */
+    function braid(x){
+      return '<path fill="'+hair+'" d="M'+(x-4)+',56 q4,-3 8,0 l1,30 q-5,3 -10,0 Z"/>'+
+             '<circle cx="'+x+'" cy="66" r="4.6" fill="'+dk+'" opacity=".5"/>'+
+             '<circle cx="'+x+'" cy="76" r="4.2" fill="'+dk+'" opacity=".5"/>'+
+             '<rect x="'+(x-4)+'" y="86" width="8" height="4" rx="2" fill="#d1587a"/>';
+    }
+    return cap+braid(25)+braid(75);
+  }
+  if(st===3) return frame(84);                 /* قصيرٌ يبلغ الفكّ */
+  return frame(104);                           /* طويلٌ ينسدل على الكتفين */
+}
+/* ===== اللحيةُ والشنب =====
+   يُرسمان قبل الفم، فيقع الفمُ فوقهما كما هو في الوجه */
+function beardSVG(hair){
+  var b=look.beard||0; if(!b) return '';
+  var bc=darken(hair,0.9);
+  var mus='<path fill="'+bc+'" d="M41,68.8 C45,66 55,66 59,68.8 C55,70.6 45,70.6 41,68.8 Z"/>';
+  if(b===1) return mus;
+  if(b===2) return mus+
+    '<path fill="'+bc+'" opacity=".82" d="M31,60 C32,74 39,83 50,83 C61,83 68,74 69,60 '+
+    'C67,71 61,78 50,78 C39,78 33,71 31,60 Z"/>';
+  return mus+
+    '<path fill="'+bc+'" d="M30,55 C31,72 35,83 43,87 C47,88.6 53,88.6 57,87 C65,83 69,72 70,55 '+
+    'C68,66 63,71 57,72.4 L57,74.5 C57,77.4 54,79 50,79 C46,79 43,77.4 43,74.5 L43,72.4 '+
+    'C37,71 32,66 30,55 Z"/>';
+}
 function agalSVG(){
   return '<path d="M28,35 Q50,25 72,35" stroke="#1c1c1c" stroke-width="4.6" fill="none" stroke-linecap="round"/>'+
          '<path d="M28.5,41 Q50,31 71.5,41" stroke="#262626" stroke-width="4.2" fill="none" stroke-linecap="round"/>';
@@ -2531,7 +2580,7 @@ function maleHead(skin,hair,cloth){
   var ears='<ellipse cx="28.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>'+
            '<ellipse cx="71.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>';
   var covered=(look.head||0)>=3;          /* الشماغ والغترة يغطيان الشعر */
-  return ears + (covered?'':hairSVG(hair)) + headwearSVG(cloth);
+  return ears + (covered?'':hairSVG(hair)) + headwearSVG(cloth) + beardSVG(hair);
 }
 /* ===== تاج الحافظ =====
    من أتمّ حفظ القرآن كلّه لبسته شخصيّته تاجاً لا يفارقها.
@@ -2583,7 +2632,7 @@ function avatarSVG(){
     ? maleHead(skin,hair,cloth)
     : (look.hijOn===0)
     ? '<ellipse cx="28.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>'+
-      '<ellipse cx="71.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>'+hairSVG(hair)
+      '<ellipse cx="71.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>'+girlHairSVG(hair)
     : '<path fill-rule="evenodd" fill="'+hij+'" d="M50,13 C75,13 85,33 85,60 C85,81 77,95 67,101 L33,101 C23,95 15,81 15,60 C15,33 25,13 50,13 Z '+
         'M31,58 a19,23 0 1,0 38,0 a19,23 0 1,0 -38,0 Z"/>'+
       '<path d="M50,13 C33,13 22,27 18,46 C24,30 35,20 50,18 Z" fill="#fff" opacity=".22"/>'+
@@ -2651,17 +2700,18 @@ function famRowsFor(kind, L){
       r=[{k:'skin',lb:'🎨 لون البشرة'},{k:'eyes',lb:'👁️ لون العينين'}];
   if(K.male){
     r.push({k:'head',lb:'🧢 غطاء الرأس',kind:'choice',opts:HEADWEAR});
-    if((L.head||0)<3){                       /* الشماغُ والغترةُ يغطّيان الشعر */
+    if((L.head||0)<3)                        /* الشماغُ والغترةُ يغطّيان الشعر */
       r.push({k:'hairStyle',lb:'✂️ تسريحة الشعر',kind:'choice',opts:HAIRCUTS});
-      r.push({k:'hair',lb:'💇 لون الشعر'});
-    }
+    if(K.adult) r.push({k:'beard',lb:'🧔 اللحية والشنب',kind:'choice',opts:BEARDS});
+    /* لونُ الشعر يلزم ما دام شعرٌ أو لحيةٌ يُريان، وإن غُطّي رأسُه */
+    if((L.head||0)<3 || (L.beard||0)>0) r.push({k:'hair',lb:'💇 لون الشعر'});
   }else{
     if(!K.adult) r.push({k:'hijOn',lb:'🧕 الحجاب',kind:'choice',opts:HIJON});
     if(K.adult || (L.hijOn||0)===1){
       if(K.adult) r.push({k:'veil',lb:'🧕 النقاب',kind:'choice',opts:VEIL});
       r.push({k:'hijab',lb:'🧕 لون الحجاب'});
     }else{
-      r.push({k:'hairStyle',lb:'✂️ تسريحة الشعر',kind:'choice',opts:HAIRCUTS});
+      r.push({k:'hairStyle',lb:'✂️ تسريحة الشعر',kind:'choice',opts:GIRLCUTS});
       r.push({k:'hair',lb:'💇 لون الشعر'});
     }
   }
@@ -2682,8 +2732,8 @@ function meRows(){
   return out;
 }
 /* لوحةُ خياراتٍ واحدةٌ تخدم المستخدمَ وأفرادَ عائلته: L هو المظهرُ المعروض */
-function lookPanelHTML(rows, L, head){
-  var h='<div class="lookhead">'+head+'</div>';
+function lookPanelHTML(rows, L, head, extra){
+  var h='<div class="lookhead">'+head+'</div>'+(extra||'');
   rows.forEach(function(r){
     var open=(LOOK_OPEN===r.k), body='', cur='';
     if(r.kind==='choice'){
@@ -2756,7 +2806,8 @@ function renderAvatars(){
 /* تبويباتُ العائلة: أنا وأبي وأمّي وإخوتي */
 function famTabsRender(el){
   var F=famData(), i;
-  var t=[['me','🧒 أنا'],['dad','👨 أبي'],['mom','👩 أمي'],
+  /* الاسمُ إن كُتب حلّ محلّ الوصف في التبويب، فيعرف الطفلُ أهلَه بأسمائهم */
+  var t=[['me','🧒 أنا'],['dad','👨 '+esc(F.dad.nm||'أبي')],['mom','👩 '+esc(F.mom.nm||'أمي')],
          ['kids','👧 إخوتي'+(F.kids.length?(' ('+arNum(F.kids.length)+')'):'')]];
   el.innerHTML=t.map(function(x){
     return '<button type="button" class="onbtab'+(FAM_TAB===x[0]?' sel':'')+'" data-ft="'+x[0]+'">'+x[1]+'</button>';
@@ -2770,7 +2821,7 @@ function famKidsRender(el){
   var F=famData(), h='', i;
   F.kids.forEach(function(k,j){
     h+='<button type="button" class="chipsel'+(j===FAM_KID?' sel':'')+'" data-fk="'+j+'">'+
-       ((k.type==='girl')?'👧':'🧒')+' '+arNum(j+1)+'</button>';
+       ((k.type==='girl')?'👧':'🧒')+' '+esc((k.look&&k.look.nm)||arNum(j+1))+'</button>';
   });
   h+='<button type="button" class="chipsel famadd" data-fadd="boy">➕ أخ</button>'+
      '<button type="button" class="chipsel famadd" data-fadd="girl">➕ أخت</button>';
@@ -2784,6 +2835,12 @@ function famKidsRender(el){
     var t=this.getAttribute('data-fadd');
     F.kids.push({ type:t, look:famNew(t) });
     FAM_KID=F.kids.length-1; LOOK_OPEN=null; saveDB(); beep([680,900],0.05); renderAvatars();
+    /* الاسمُ يُسأل عنه أوّلَ مرّةٍ فقط، ثمّ يظهر في التبويب وفي شريط الإخوة */
+    var k=F.kids[FAM_KID];
+    uiPrompt((t==='girl')?'ما اسمُ أختك؟':'ما اسمُ أخيك؟', '', function(v){
+      if(!v) return;
+      k.look.nm=v.slice(0,14); saveDB(); renderAvatars();
+    }, (t==='girl')?'👧':'🧒');
   };
   var db=el.querySelector('[data-fdel]');
   if(db) db.onclick=function(){
@@ -2804,10 +2861,21 @@ function famRenderMember(){
   if(big) big.innerHTML=famAvatar(m);
   if(!panel) return;
   var L=m.look, K=FAM_KINDS[m.kind]||FAM_KINDS.boy;
-  panel.innerHTML=lookPanelHTML(famRowsFor(m.kind,L), L,
-      '🎨 اختر شكل '+esc(K.n)+(FAM_TAB==='kids'?' '+arNum(FAM_KID+1):''))+
+  var who=L.nm||(K.n+(FAM_TAB==='kids'?' '+arNum(FAM_KID+1):''));
+  /* صفُّ الاسم أوّلَ اللوحة: يُكتب ويُبدَّل متى شاء */
+  var nmRow='<button type="button" class="pkh" data-fnm="1">'+
+              '<span class="lbx">✏️ الاسم</span>'+
+              '<span class="cur"><span>'+esc(L.nm||'بلا اسم')+'</span></span>'+
+            '</button>';
+  panel.innerHTML=lookPanelHTML(famRowsFor(m.kind,L), L, '🎨 اختر شكل '+esc(who), nmRow)+
     '<button type="button" class="btn ghost mini" id="btnRandomLook" style="width:100%;margin-top:8px">🎲 مظهر عشوائي</button>';
   lookPanelWire(panel, L);
+  var nb=panel.querySelector('[data-fnm]');
+  if(nb) nb.onclick=function(){
+    uiPrompt('اسمُ '+K.n+':', L.nm||'', function(v){
+      L.nm=String(v||'').slice(0,14); saveDB(); renderAvatars();
+    }, '✏️');
+  };
   var rb=$('btnRandomLook');
   if(rb) rb.onclick=function(){
     ['skin','eyes','hair','cloth','hijab'].forEach(function(p){ L[p]=Math.floor(Math.random()*PAL[p].length); });
@@ -2828,8 +2896,8 @@ var FAM_KINDS={ dad:{n:'أبي',ic:'👨',adult:true,male:true}, mom:{n:'أمي'
 var HIJON=[{n:'بلا حجاب'},{n:'بحجاب'}];
 var FAM_TAB='me', FAM_KID=0;
 function famNew(kind){
-  return { skin:1, eyes:0, hair:0, hairStyle:0, head:(kind==='dad')?4:0, veil:0,
-           cloth:(kind==='mom')?4:(kind==='girl')?5:0,
+  return { nm:'', skin:1, eyes:0, hair:0, hairStyle:0, head:(kind==='dad')?4:0, veil:0,
+           beard:(kind==='dad')?2:0, cloth:(kind==='mom')?4:(kind==='girl')?5:0,
            hijab:(kind==='mom')?1:3, hijOn:(kind==='mom')?1:0 };
 }
 function famData(){
@@ -13682,10 +13750,16 @@ function curScreen(){ var e=document.querySelector('.screen.active'); return e?e
 /* ===== تنبيهٌ وتأكيدٌ بثيمة التطبيق =====
    نوافذ المتصفّح تقول «This page says» وتقطع جوّ الشاشة، فهذه تخلفها.
    uiAlert(نصّ) — خبرٌ يُقرأ ثم يُغلق.  uiAsk(نصّ, دالّة) — نعم أو لا. */
-function uiBox(msg,ic,yes,no,cb,muteKey){
+function uiBox(msg,ic,yes,no,cb,muteKey,inp){
   var bg=$('ask'); if(!bg){ if(cb) cb(!!no?false:true); return; }
   var cw=$('askChkWrap'), ck=$('askChk');
   if(cw){ cw.hidden=!muteKey; if(ck) ck.checked=false; }
+  /* حقلُ نصٍّ اختياريّ: يُعطى قيمتَه الأولى، ويُردّ ما فيه مع الجواب */
+  var ip=$('askInp'), wantInp=(inp!=null);
+  if(ip){
+    ip.hidden=!wantInp;
+    if(wantInp){ ip.value=String(inp); }
+  }
   $('askIc').textContent=ic||'💚';
   /* يُهرَّب كلُّ شيءٍ إلا <b> — فبعض الرسائل تُبرز اسماً أو عدداً */
   $('askMsg').innerHTML=String(msg).replace(/&/g,'&amp;').replace(/</g,'&lt;')
@@ -13695,12 +13769,19 @@ function uiBox(msg,ic,yes,no,cb,muteKey){
   n.hidden=!no; if(no) n.textContent=no;
   var done=function(v){
     if(muteKey && ck && ck.checked) save(muteKey,1);   /* رغبتُه تُحفظ فلا يُكرَّر عليه */
-    bg.hidden=true; y.onclick=null; n.onclick=null; bg.onclick=null; if(cb) cb(v);
+    var val=(ip && wantInp)?ip.value:undefined;
+    bg.hidden=true; y.onclick=null; n.onclick=null; bg.onclick=null;
+    if(ip) ip.onkeydown=null;
+    if(cb) cb(v,val);
   };
   y.onclick=function(){ done(true); };
   n.onclick=function(){ done(false); };
   bg.onclick=function(e){ if(e.target===bg) done(false); };   /* الضغط خارجه إلغاء */
   bg.hidden=false;
+  if(ip && wantInp){
+    ip.onkeydown=function(e){ if(e.key==='Enter'){ e.preventDefault(); done(true); } };
+    setTimeout(function(){ try{ ip.focus(); ip.select(); }catch(e){} }, 40);
+  }
 }
 function uiAlert(msg,ic){ uiBox(msg,ic||'💚',null,null,null); }
 /* تنبيهٌ يُقال مرّةً، ولصاحبه أن يكتمه */
@@ -13711,6 +13792,12 @@ function uiOnce(key,msg,ic,btn,cb){
   return true;
 }
 function uiAsk(msg,cb,ic){ uiBox(msg,ic||'🤔','✅ نعم','لا',cb); }
+/* uiPrompt(نصّ, القيمةُ الأولى, دالّة) — اسمٌ يُكتب، ولا تُنادى الدالّةُ إن أُلغي */
+function uiPrompt(msg,val,cb,ic){
+  uiBox(msg,ic||'✏️','✅ حفظ','إلغاء',function(ok,v){
+    if(ok && cb) cb(String(v==null?'':v).trim());
+  },null,(val==null?'':val));
+}
 function navToast(msg, ms){
   if(!NAV.tEl){ NAV.tEl=document.createElement('div'); NAV.tEl.className='toast'; document.body.appendChild(NAV.tEl); }
   var el=NAV.tEl;
