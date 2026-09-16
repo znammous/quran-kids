@@ -344,6 +344,7 @@ label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
   padding:7px 2px;border-radius:12px;min-height:54px;touch-action:manipulation;transition:.12s}
 .mfdock button .tico{font-size:23px;line-height:1}
+.mfdock button .tico svg{display:block}
 .mfdock button.on{background:var(--psel);box-shadow:inset 0 -3px 0 var(--gold)}
 .mfdock button:active{transform:scale(.93)}
 /* لوحتا الفهرس والبحث فوق الوجه، وتقفان عند الشريط السفليّ فيبقى ظاهراً */
@@ -1705,9 +1706,10 @@ body.glow-off .dfpic{animation:none}
   <nav class="mfdock" id="mfDock">
     <button type="button" id="mfDockMean"><span class="tico">💡</span>المعاني</button>
     <button type="button" id="mfDockIdx"><span class="tico">📑</span>الفهرس</button>
-    <button type="button" id="mfDockFind"><span class="tico">🔎</span>البحث</button>
+    <!-- الطيُّ في الوسط: أقربُ موضعٍ للإبهام، وسهمٌ نازلٌ يعني طيَّ الوجه لا تنزيلَ ملفّ -->
+    <button type="button" id="mfDockClose" aria-label="اطوِ وجه المصحف"><span class="tico"><svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9.5l6 6 6-6"/></svg></span>إخفاء</button>
     <button type="button" id="mfDockSim" aria-pressed="true"><span class="tico">🎨</span>التظليل</button>
-    <button type="button" id="mfDockClose"><span class="tico">✕</span>إغلاق</button>
+    <button type="button" id="mfDockFind"><span class="tico">🔎</span>البحث</button>
   </nav>
 </div>
 
