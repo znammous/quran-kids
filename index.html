@@ -2086,6 +2086,7 @@ body.glow-off .dfpic{animation:none}
       </div>
       <div class="switchrow"><span>✨ تظليل المتشابهات<br><small style="font-weight:700;color:var(--mute)">في كل وجهٍ من المصحف: ما تشابه أو تكرّر من العبارات والكلمات، لكل مجموعةٍ لونٌ واحد — ويُبدَّل كذلك من شريط المصحف نفسِه 🎨</small></span><input type="checkbox" id="setSimHl"></div>
       <div class="switchrow"><span>📝 شرحُ المقطع مع وجه المصحف<br><small style="font-weight:700;color:var(--mute)">سطورُ البيان فوق الوجه قبل البدء: موضعُ المقطع وألوانُ المتشابهات والتنبيه عليها — ووجهُ المصحف يُعرض على كلّ حال</small></span><input type="checkbox" id="setPvNote"></div>
+      <div class="switchrow"><span>💡 إبقاء الشاشة مضاءة أثناء القراءة<br><small style="font-weight:700;color:var(--mute)">لا تنطفئ الشاشةُ ووجهُ المصحف مفتوحٌ بين يديه، وتعود مهلةُ جهازك حين يُغلق الوجه</small></span><input type="checkbox" id="setWake"></div>
       <div class="setblock">
         <label class="lbl">🔎 حجم خط الآية</label>
         <select id="setFont">
@@ -2249,7 +2250,7 @@ function kindAllowed(t){
   var h=LV_HIDE[SET&&SET.level];
   return !(h&&h[t]);
 }
-function defSet(){ return { level:'easy', lv3:true, script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false, simHl:true, pvNote:true }; }
+function defSet(){ return { level:'easy', lv3:true, script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false, simHl:true, pvNote:true, wake:true }; }
 /* ثلاث درجات للخطّ لا خمس — ويُردّ القديم إلى أقربها */
 var FONTS=[{v:20,n:'صغير'},{v:24,n:'متوسط'},{v:30,n:'كبير'}];
 function normFont(f){ f=parseInt(f,10)||24; return f<=22?20:(f<=27?24:30); }
@@ -2348,6 +2349,7 @@ function bindPlayer(){
   /* كان الخيارُ أوّلَ أمره يُخفي الوجهَ كلَّه، وإنّما المرادُ كتمُ الشرح وحدَه */
   if(typeof SET.segPv==='boolean' && typeof SET.pvNote!=='boolean'){ SET.pvNote=SET.segPv; delete SET.segPv; }
   if(typeof SET.pvNote!=='boolean') SET.pvNote=true;   /* شرحُ المقطع مع الوجه، مفعَّلٌ افتراضياً */
+  if(typeof SET.wake!=='boolean') SET.wake=true;       /* وإبقاءُ الشاشة مضاءةً في القراءة */
   if(typeof SET.rec!=='boolean') SET.rec=false;   /* مطفأ افتراضياً */
   if(!SET.segMode) SET.segMode="q";
   applyGlow();
@@ -3244,6 +3246,7 @@ function mfAfterPaint(){
 function mushafOpenPage(P, hlGi, title){
   var sh=$('mfSheet'), wasHidden=sh.hidden;
   MF_HL=(hlGi==null?-1:hlGi);
+  wakeOn();                                   /* الوجهُ مفتوحٌ: لا تنطفئ الشاشةُ تحته */
   if(wasHidden){
     /* أُغلق الوجهُ في أثناء سحبٍ: لا تبقى طبقتُه ولا إزاحتُه للفتح التالي */
     var ol=sh.querySelectorAll('.mfpeek'), z;
@@ -3358,7 +3361,34 @@ window.addEventListener('resize', function(){
     if(!$('mfSheet').hidden) mushafFit(b);
   }).observe(b);
 })();
+/* ===== إبقاءُ الشاشة مضاءةً أثناء القراءة =====
+   الطفلُ يقرأ الوجهَ ولا يلمس الشاشة، فتُطفئها مهلةُ الجهاز في وسط آية. فيُطلب قفلُ
+   الشاشة ما دام الوجهُ مفتوحاً، ويُطلق عند إغلاقه فتعود مهلةُ الجهاز كما كانت.
+   والنظامُ يُطلق القفلَ إذا غاب التطبيق، فيُعاد طلبُه عند العودة. */
+var WAKE=null;
+function wakeOn(){
+  try{
+    if(!(navigator.wakeLock && navigator.wakeLock.request)) return;   /* متصفّحٌ لا يدعمه */
+    if(WAKE || (SET && SET.wake===false)) return;
+    navigator.wakeLock.request('screen').then(function(s){
+      WAKE=s;
+      try{ s.addEventListener('release', function(){ WAKE=null; }); }catch(e){}
+    })['catch'](function(){});                                        /* رُفض الطلب: لا يضرّ */
+  }catch(e){}
+}
+function wakeOff(){
+  try{
+    if(!WAKE) return;
+    var s=WAKE; WAKE=null;
+    var p=s.release(); if(p && p['catch']) p['catch'](function(){});
+  }catch(e){}
+}
+document.addEventListener('visibilitychange', function(){
+  if(document.hidden) return;                                         /* أُطلق عند الغياب */
+  if($('mfSheet') && !$('mfSheet').hidden) wakeOn();
+});
 function mushafClose(){
+  wakeOff();
   MF_MARK=null; MF_PV=null;
   if($('mfGo')) $('mfGo').hidden=true;
   try{ mfPanel(null); }catch(e){}
@@ -10156,6 +10186,7 @@ function fillSettings(){
   $('setLight').checked=!!SET.light;
   $('setSimHl').checked=(SET.simHl!==false);
   if($('setPvNote')) $('setPvNote').checked=(SET.pvNote!==false);
+  if($('setWake')) $('setWake').checked=(SET.wake!==false);
   $('setRec').checked=!!SET.rec;
   $('setFree').checked=!!SET.free;
   $('setBoard').checked=!!DB.app.board;
@@ -10205,6 +10236,7 @@ function readSettings(){
   SET.light=$('setLight').checked; applyTheme();
   SET.simHl=$('setSimHl').checked;
   if($('setPvNote')) SET.pvNote=$('setPvNote').checked;
+  if($('setWake')){ SET.wake=$('setWake').checked; if(!SET.wake) wakeOff(); }
   SET.rec=$('setRec').checked;
   if(SET.rec) REC.off=false;                 /* إعادة التفعيل تُلغي إيقاف الجلسة */
   applyGlow();
