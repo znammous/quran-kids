@@ -9826,9 +9826,10 @@ function onbNameAsk(){
 }
 function onbNudge(msg){
   try{ navToast(msg); }catch(e){ try{ alert(msg); }catch(e2){} }
+  /* خطوةُ الخطّة صارت بطاقةَ ملخّصٍ وباباً إلى الشاشات، فلا مواضعَ داخلها
+     يُساق إليها بصرُه — يكفي أن يُساق إلى بابها */
   var el=(ONB.i===0)?$('onbNameBtn')
-        :((!curP().planChosen)?$('onbBody')
-        :((!onPlan()&&!selfDirPicked()&&$('onbDirQ'))?$('onbDirQ'):$('onbPMode')));
+        :($('onbPlanGo')||$('onbBody'));
   try{ if(el&&el.scrollIntoView) el.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
   if(ONB.i===0) onbNameAsk();      /* يُفتح له الصندوقُ مباشرةً بدل أن يبحث عن الحقل */
 }
@@ -10261,19 +10262,9 @@ function foldBind(root){
     this.querySelector('.fi').textContent=b.hidden?'▾ افتح':'▴ اطوِ';
   };
 }
-/* طيُّ عنصرٍ موجودٍ في الصفحة دون إعادة بنائه، فتبقى معالجاته */
-function foldWrap(el,id,title,open){
-  if(!el||!el.parentNode) return;
-  var pnt=el.parentNode;
-  var head=document.createElement('button');
-  head.type='button'; head.className='foldh'+(open?' open':'');
-  head.setAttribute('data-fold',id);
-  head.innerHTML='<span>'+title+'</span><span class="fi">'+(open?'▴ اطوِ':'▾ افتح')+'</span>';
-  var body=document.createElement('div');
-  body.className='foldb'; body.id='fold_'+id; body.hidden=!open;
-  pnt.insertBefore(head,el); pnt.insertBefore(body,el); body.appendChild(el);
-  foldBind(pnt);
-}
+/* «foldWrap» — طيُّ عنصرٍ قائمٍ دون إعادة بنائه — زالت بزوال لوحة الخطّة
+   الطويلة في المعالج، ولم يبقَ لها نداء. وأخواتُها باقياتٌ: foldHTML
+   وfoldIsOpen في شاشة الخطّة، وfoldBind تُنادى منها. */
 /* ---------- شاشة اختيار خطة الحفظ: مسارك الخاص أو خطة جاهزة ---------- */
 var SELF_SIZES=[['q','🌱','ربع صفحة'],['h','🌿','نصف صفحة'],['p','🌳','صفحة كاملة (وجه)'],
                 ['3','3️⃣','ثلاث آيات'],['4','4️⃣','أربع آيات'],['5','5️⃣','خمس آيات'],['8','8️⃣','ثماني آيات']];
