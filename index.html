@@ -9715,13 +9715,17 @@ function bqnOnbWire(){
     var ms=mb.querySelectorAll('[data-pmode]'), z;
     for(z=0;z<ms.length;z++) ms[z].onclick=function(){
       var v=this.getAttribute('data-pmode');
-      priorModeSet(v);
-      var a=$('onbPMode').querySelectorAll('[data-pmode]'), y;
-      for(y=0;y<a.length;y++)
-        a[y].className='onbopt'+(a[y].getAttribute('data-pmode')===v?' sel':'');
-      if($('pOWrap')) $('pOWrap').hidden=(v!=='has');
-      try{ wirdOnbSync(); }catch(e){}
-      onbGate();
+      priorModeSet(v, function(){
+        /* تُرسم الإشارةُ على الحال الواقعيّ لا على ما ضُغط: من رفض المسحَ
+           بقي على حاله، فلا تكذب عليه الإشارة */
+        var cur=curP().priorMode||'';
+        var a=$('onbPMode').querySelectorAll('[data-pmode]'), y;
+        for(y=0;y<a.length;y++)
+          a[y].className='onbopt'+(a[y].getAttribute('data-pmode')===cur?' sel':'');
+        if($('pOWrap')) $('pOWrap').hidden=(cur!=='has');
+        try{ wirdOnbSync(); }catch(e){}
+        onbGate();
+      });
     };
   }
   var box=$('onbBqnList'); if(!box) return;
@@ -9965,8 +9969,28 @@ function hafizClear(after){
 }
 /* اختيارُ الحال يُسجَّل في موضعٍ واحد: ومن قال «حافظٌ كاملاً» أُشّر له المصحفُ
    كلُّه واعتُمد ساعتَه، فلا لوحةَ تأشيرٍ تُعرض عليه ولا شيءَ ينتظر اعتماده */
-function priorModeSet(v){
-  var p=priorSel();
+function priorModeSet(v, after){
+  var p=priorSel(), fin=function(){ saveDB(); if(after) after(); };
+  /* «أبدأ من جديد» ولَه سجلُّ محفوظاتٍ قائم: لا يُمحى بلا إذنه، ولا يُترك
+     فيتناقض اختيارُه مع حاله. فيُعلَم بما وجدناه ويُسأل — ومن رفض بقي على
+     حاله ولم يتبدّل اختيارُه */
+  if(v==='new'){
+    var t=0; try{ t=memTotal(); }catch(e){}
+    if(t>0){
+      uiAsk('وجدنا لك سجلَّ محفوظاتٍ سابقاً — '+arNum(t)+' آية.\n'+
+            '«أبدأ من جديد» يمسح هذا السجلَّ ويُعيد ضبطَ تقدّمك.\nأتوافق؟',
+        function(ok){
+          if(!ok){ if(after) after(); return; }
+          p.priorMode='new';
+          p.priorJ={}; p.priorS={}; p.priorP=[];
+          p.mem={}; p.crowned=0;
+          try{ ensureAllSchedules(); }catch(e){}
+          try{ navToast('🗑️ مُسح سجلُّ المحفوظ — وبدأتَ من جديد'); }catch(e){}
+          fin();
+        },'🗑️');
+      return;
+    }
+  }
   p.priorMode=v;
   if(v==='all'){
     for(var j=1;j<=30;j++) p.priorJ[j]=1;
@@ -9976,7 +10000,7 @@ function priorModeSet(v){
        وله أن يبدّله في السؤال نفسِه */
     try{ REV.on=true; REV.wird=true; p.noRev=false; revSave(); }catch(e){}
   }
-  saveDB();
+  fin();
 }
 /* في الإعدادات: البطاقتان ثم اللوحة تحتهما */
 function renderPriorMode(){
@@ -9988,9 +10012,10 @@ function renderPriorMode(){
   bx.hidden=(pm!=='has');
   var ms=mb.querySelectorAll('[data-pmode]'), z;
   for(z=0;z<ms.length;z++) ms[z].onclick=function(){
-    priorModeSet(this.getAttribute('data-pmode'));
-    renderPriorMode();
-    try{ fillBqnSelect(); }catch(e){}
+    priorModeSet(this.getAttribute('data-pmode'), function(){
+      renderPriorMode();
+      try{ fillBqnSelect(); }catch(e){}
+    });
   };
   /* سجّل حفظه فصار له محفوظ — فيُسأل الآن عن ورد مراجعته.
      والانتقالُ إلى الخطوة التالية شأنُ أزرار المعالج لا شأنُ الرسم:
@@ -10303,15 +10328,16 @@ function renderBqnList(){
     var ms=$('bqnList').querySelectorAll('[data-pmode]'), z;
     for(z=0;z<ms.length;z++) ms[z].onclick=function(){
       var v=this.getAttribute('data-pmode');
-      priorModeSet(v);
-      try{ revLoad(); }catch(e){}
-      /* حافظٌ كاملاً: لا شيءَ يؤشّره، فيمضي إلى خطّة المراجعة رأساً */
-      if(v==='all'){
-        var w=bqnSteps().indexOf('wird');
-        try{ navToast('🏅 سُجّل لك المصحفُ كاملاً — وهذه خطّةُ مراجعتك'); }catch(e){}
-        bqnShow(w>=0?w:BQ.i); return;
-      }
-      bqnShow(BQ.i);          /* عددُ الخطوات يتبدّل بجوابه، فتُعاد هيئةُ المعالج */
+      priorModeSet(v, function(){
+        try{ revLoad(); }catch(e){}
+        /* حافظٌ كاملاً: لا شيءَ يؤشّره، فيمضي إلى خطّة المراجعة رأساً */
+        if(v==='all' && curP().priorMode==='all'){
+          var w=bqnSteps().indexOf('wird');
+          try{ navToast('🏅 سُجّل لك المصحفُ كاملاً — وهذه خطّةُ مراجعتك'); }catch(e){}
+          bqnShow(w>=0?w:BQ.i); return;
+        }
+        bqnShow(BQ.i);        /* عددُ الخطوات يتبدّل بجوابه، فتُعاد هيئةُ المعالج */
+      });
     };
     return;
   }
