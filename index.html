@@ -9727,9 +9727,12 @@ function bqnOnbWire(){
   var box=$('onbBqnList'); if(!box) return;
   var bs=box.querySelectorAll('[data-obqn]');
   for(var k=0;k<bs.length;k++) bs[k].onclick=function(){
-    setPlan(this.getAttribute('data-obqn'));
-    curP().planChosen=1; saveDB();
-    onbShow(ONB.i);
+    var bid=this.getAttribute('data-obqn');   /* قبل السؤال: اللوحةُ قد يُعاد رسمُها */
+    hafizClear(function(){
+      setPlan(bid);
+      curP().planChosen=1; saveDB();
+      onbShow(ONB.i);
+    });
   };
 }
 /* «التالي» لا يُفتح حتى يجيب عن السؤال اللازم */
@@ -9938,6 +9941,27 @@ function priorModeHTML(){
     '<button type="button" class="onbopt'+(pm==='all'?' sel':'')+'" data-pmode="all">'+
       '<span class="oe">🏅</span><span class="ot"><b>أنا حافظٌ لكتاب الله كاملاً</b>'+
       '<i>يُسجَّل المصحفُ كلُّه محفوظاً، وتنتقل إلى خطّة المراجعة</i></span></button></div>';
+}
+/* اختار خطّةَ حفظٍ بعد أن قال «أنا حافظ»: فلم يعُد على مسار الحافظ، وتُزال
+   إشارتُه. وأمّا سجلُّ محفوظه فلا يُمحى بلا إذنه — إبقاؤه يجعل المصحفَ كلَّه
+   محسوباً محفوظاً وهو يمشي في خطّة، ومحوُه قد يُذهب حفظاً حقيقيّاً سجّله
+   قبلَه. فيُسأل، ويمضي على الوجهين. */
+function hafizClear(after){
+  var p=curP();
+  if(p.priorMode!=='all'){ if(after) after(); return; }
+  p.priorMode=''; p.priorJ={}; saveDB();
+  uiAsk('كنتَ قد سجّلتَ المصحفَ كاملاً محفوظاً، والآن اخترتَ خطّةَ حفظ.\n'+
+        'أتمسح ذلك السجلَّ لتبدأ بخطّتك من أوّلها؟\n'+
+        'وإن أبقيتَه بقي كلُّ المصحف محسوباً محفوظاً.',
+    function(ok){
+      if(ok){
+        p.mem={}; p.crowned=0;
+        try{ ensureAllSchedules(); }catch(e){}
+        saveDB();
+        try{ navToast('🗑️ مُسح سجلُّ المحفوظ — وخطّتُك تبدأ من أوّلها'); }catch(e){}
+      }
+      if(after) after();
+    },'🗑️');
 }
 /* اختيارُ الحال يُسجَّل في موضعٍ واحد: ومن قال «حافظٌ كاملاً» أُشّر له المصحفُ
    كلُّه واعتُمد ساعتَه، فلا لوحةَ تأشيرٍ تُعرض عليه ولا شيءَ ينتظر اعتماده */
@@ -10362,11 +10386,14 @@ function renderBqnList(){
   };
   /* اختيارٌ واحد يكفي هذه الصفحة، ثم يمضي إلى التي بعدها */
   var pick=function(el){
-    var sid=el.getAttribute('data-self');
-    if(sid){ SET.segMode=sid; setPlan('self'); ensureAllSchedules(); }
-    else setPlan(el.getAttribute('data-bqn'));
-    curP().planChosen=1; saveDB();
-    bqnShow(1);
+    /* تُقرأ سماتُه قبل السؤال: اللوحةُ قد يُعاد رسمُها فيذهب العنصر */
+    var sid=el.getAttribute('data-self'), bid=el.getAttribute('data-bqn');
+    hafizClear(function(){
+      if(sid){ SET.segMode=sid; setPlan('self'); ensureAllSchedules(); }
+      else setPlan(bid);
+      curP().planChosen=1; saveDB();
+      bqnShow(1);
+    });
   };
   var bs=$('bqnList').querySelectorAll('[data-self],[data-bqn]');
   for(var k=0;k<bs.length;k++) bs[k].onclick=function(){ pick(this); };
@@ -12128,8 +12155,9 @@ function onbShow(i){
       {v:'5', e:'5️⃣', t:'خمس آيات',        d:kh('5','بعدد الآيات بدل الصفحة')},
       {v:'8', e:'8️⃣', t:'ثماني آيات',      d:kh('8','للآيات القصيرة والسور المكية')}
     ], function(){ return (onPlan()||!curP().planChosen)? '' : String(SET.segMode||'q'); },
-       function(v){ SET.segMode=v; setPlan('self'); curP().planChosen=1; ensureAllSchedules();
-                    saveDB(); setTimeout(function(){ onbShow(ONB.i); onbAskDir(); },0); },
+       function(v){ hafizClear(function(){
+                      SET.segMode=v; setPlan('self'); curP().planChosen=1; ensureAllSchedules();
+                      saveDB(); setTimeout(function(){ onbShow(ONB.i); onbAskDir(); },0); }); },
     '<div class="note">التقدير بمقطع واحد كل يوم، وهو للمصحف كاملاً — ولك أن تبدأ بجزء عمّ وحده.<br>'+
     'ولا تُقسَّم السورة القصيرة أبداً مهما كان الحجم: الناس والإخلاص وأمثالها مقطع واحد.</div>'+
     bqnOnbHTML());
