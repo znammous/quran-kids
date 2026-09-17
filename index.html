@@ -166,7 +166,9 @@ body.native #qaBar,body.native #btnPrint,body.native #btnTreePrint{display:none!
 input[type=text],select{width:100%;padding:14px;border-radius:12px;border:2px solid #d7e2f0;
   font-size:17px;appearance:none;-webkit-appearance:none;font-family:inherit;background:#fff;color:var(--ink)}
 input[type=text]:focus,select:focus{outline:none;border-color:var(--g2);box-shadow:0 0 0 4px rgba(30,139,106,.15)}
-label.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:#3d5b7a}
+/* لونُ العناوين يتبع الثيم: كان ثابتاً داكناً، والوضعُ الليليُّ هو الأصل —
+   فيختفي «كم وجهاً في الجلسة؟» وأمثالُه على الخلفية الداكنة */
+label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:var(--ttl)}
 
 .ph{width:110px;height:140px;border-radius:12px;overflow:hidden;border:3px solid #d7e2f0;background:#eef5fd;margin:0 auto}
 .ph svg{width:100%;height:100%;display:block}
@@ -1085,6 +1087,17 @@ body.light .sp-lit{fill:#1f92d4}
 .revbox{border:3px solid var(--pb);border-radius:14px;padding:14px;margin:22px 0;
   background:var(--pnl2)}
 .revbox .rl{font-weight:900;color:var(--ttl);font-size:15px;margin-bottom:9px}
+/* صفُّ نطاق الصفحات: الحقلان وزرُّ الإضافة على سطرٍ واحدٍ بارتفاعٍ واحد —
+   كان الزرُّ أقصرَ منهما فيبدو الصفُّ مكسوراً */
+.pgrow{display:flex;align-items:stretch;gap:7px}
+.pgrow input{flex:1 1 0;min-width:0;height:46px;margin:0;padding:0 10px;
+  font-family:inherit;font-size:15px;font-weight:800;text-align:center;
+  border:2px solid #cfe0f2;border-radius:12px;background:#fff;color:#102b4a}
+/* والزرُّ يُساوى بهما: ظلُّه وحشوتُه الرأسيّةُ كانا يزيدانه ستّةَ بكسلات */
+.pgrow .btn{flex:0 0 auto;height:46px;min-height:0;margin:0;padding:0 15px;font-size:15px;
+  line-height:1;box-shadow:none;display:flex;align-items:center;justify-content:center;
+  white-space:nowrap;box-sizing:border-box}
+.pgrow .btn:active{transform:translateY(2px)}
 /* سطرُ التحديد واحدٌ واضح، وقائمتاه تحته بخطٍّ يُقرأ بلا تحديق */
 .revbox .rl.rlbig{font-size:17.5px;margin-bottom:11px;white-space:nowrap}
 .revbox .revrow select{font-size:16px;font-weight:800}
@@ -9833,13 +9846,8 @@ function onbNudge(msg){
   try{ if(el&&el.scrollIntoView) el.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
   if(ONB.i===0) onbNameAsk();      /* يُفتح له الصندوقُ مباشرةً بدل أن يبحث عن الحقل */
 }
-/* بعد اختيار المقدار: يُساق بصره إلى السؤال، ولا يُترك ليكتشفه بنفسه */
-function onbAskDir(){
-  if(onPlan() || !curP().planChosen || selfDirPicked()) return;
-  var q=$('onbDirQ'); if(!q) return;
-  try{ q.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
-  try{ navToast('🧭 وبقيت واحدة: من أين تبدأ؟'); }catch(e){}
-}
+/* «onbAskDir» — سوقُ بصره إلى سؤال الاتّجاه داخل الصفحة الطويلة — زالت معها:
+   صار السؤالُ شاشةً برأسه في معالج الخطّة، فلا موضعَ يُساق إليه */
 function onbGate(){
   var b=$('onbNext'); if(!b) return;
   b.disabled=false;
@@ -10108,10 +10116,10 @@ function priorPanelHTML(pfx){
   h+='<button type="button" class="btn ghost mini" id="'+pfx+'PMore" style="width:100%;margin-top:8px">'+
      '📄 أو صفحاتٌ بعينها — كأوّل خمس صفحاتٍ من سورة</button>'+
      '<div id="'+pfx+'P" hidden style="margin-top:8px">'+
-       '<div class="row" style="gap:6px;align-items:center">'+
+       '<div class="pgrow">'+
          '<input type="number" id="'+pfx+'P1" min="1" max="604" inputmode="numeric" placeholder="من صفحة">'+
          '<input type="number" id="'+pfx+'P2" min="1" max="604" inputmode="numeric" placeholder="إلى صفحة">'+
-         '<button type="button" class="btn blue mini" id="'+pfx+'PAdd" style="margin:0;flex:0 0 auto">➕</button>'+
+         '<button type="button" class="btn blue" id="'+pfx+'PAdd">➕ أضِف</button>'+
        '</div>'+
        '<div class="chips" id="'+pfx+'PL" style="margin-top:8px;gap:6px"></div>'+
      '</div>';
@@ -12218,21 +12226,9 @@ function onbShow(i){
   else if(st===1){                         /* خطة الحفظ */
     $('onbTitle').textContent='ما خطة حفظك؟';
     $('onbSub').textContent='المقطع هو وحدة الحفظ والنجوم والمراجعة — ويمكن تغييره لاحقاً';
-    var kh=function(m,txt){ var k=khatmaLabel(m); return txt+(k?(' • '+k):''); };
-    onbOpts(B,[
-      {v:'q', e:'🌱', t:'ربع صفحة',         d:kh('q','مناسب للبداية — نحو 38 كلمة')},
-      {v:'h', e:'🌿', t:'نصف صفحة',         d:kh('h','خطوة أوسع — نحو 68 كلمة')},
-      {v:'p', e:'🌳', t:'صفحة كاملة (وجه)', d:kh('p','للمتمكّن — نحو 137 كلمة')},
-      {v:'3', e:'3️⃣', t:'ثلاث آيات',       d:kh('3','بعدد الآيات بدل الصفحة')},
-      {v:'4', e:'4️⃣', t:'أربع آيات',       d:kh('4','بعدد الآيات بدل الصفحة')},
-      {v:'5', e:'5️⃣', t:'خمس آيات',        d:kh('5','بعدد الآيات بدل الصفحة')},
-      {v:'8', e:'8️⃣', t:'ثماني آيات',      d:kh('8','للآيات القصيرة والسور المكية')}
-    ], function(){ return (onPlan()||!curP().planChosen)? '' : String(SET.segMode||'q'); },
-       function(v){ hafizClear(function(){
-                      SET.segMode=v; setPlan('self'); curP().planChosen=1; ensureAllSchedules();
-                      saveDB(); setTimeout(function(){ onbShow(ONB.i); onbAskDir(); },0); }); },
-    '');
-    /* لا خياراتِ هنا: ملخّصٌ وبابٌ إلى الشاشات المتتابعة */
+    /* لا خياراتِ هنا: ملخّصٌ وبابٌ إلى الشاشات المتتابعة. وكانت تُبنى قبلها
+       أحجامُ المقاطع السبعةُ وتُربط مُهيِّئاتُها ثمّ يُكتب فوقها هذا الملخّص،
+       فبناءٌ يُهدم قبل أن يُرى */
     B.innerHTML=onbPlanHTML();
     if($('onbPlanGo')) $('onbPlanGo').onclick=function(){ startBqn('onb'); };
     onbGate();
