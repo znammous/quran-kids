@@ -2190,14 +2190,6 @@ body.glow-off .dfpic{animation:none}
     <div class="card">
       <div class="setpage" data-setp="hifz">
       <div class="setblock">
-        <label class="lbl">🎚️ المستوى</label>
-        <select id="setLevel">
-          <option value="easy">سهل — ضغطٌ واختيارٌ بلا كتابة</option>
-          <option value="mid">متوسّط — يزيد مطالعَ الآيات وخواتمَها ورصَّها</option>
-          <option value="hard">متقدّم — يزيد كتابةَ الكلمات والتسميعَ كتابةً</option>
-        </select>
-      </div>
-      <div class="setblock">
         <label class="lbl">🧭 خطة الحفظ</label>
         <div class="note" id="bqnNote" style="font-weight:800;color:#1a4f8f"></div>
         <button type="button" class="btn blue mini" id="btnBqnOpen" style="width:100%;margin-top:10px">🧭 غيّر خطة الحفظ</button>
@@ -2240,6 +2232,15 @@ body.glow-off .dfpic{animation:none}
       </div>
       </div>
       <div class="setpage" data-setp="play" hidden>
+      <!-- المستوى يحكم نوعَ الأسئلة لا مقدارَ الحفظ، فبابُه اللعبُ لا الحفظ -->
+      <div class="setblock">
+        <label class="lbl">🎚️ المستوى</label>
+        <select id="setLevel">
+          <option value="easy">سهل — ضغطٌ واختيارٌ بلا كتابة</option>
+          <option value="mid">متوسّط — يزيد مطالعَ الآيات وخواتمَها ورصَّها</option>
+          <option value="hard">متقدّم — يزيد كتابةَ الكلمات والتسميعَ كتابةً</option>
+        </select>
+      </div>
       <div class="switchrow"><span>🔔 أصوات التشجيع (نغمات فقط)</span><input type="checkbox" id="setSound"></div>
       <div class="switchrow"><span>🎤 تسجيل الصوت في القراءة والتسميع<br><small style="font-weight:700;color:var(--mute)">يستمع لنفسه بعد التسجيل — ومع التسميع يظهر النص للمقارنة</small></span><input type="checkbox" id="setRec"></div>
       <div class="switchrow"><span>🌞 الوضع النهاريّ<br><small style="font-weight:700;color:var(--mute)">خلفية فاتحة بدل سماء الليل — لكل مستخدم اختياره</small></span><input type="checkbox" id="setLight"></div>
@@ -6813,13 +6814,14 @@ $('mfDockPlay').onclick=function(){
 function audAsk(list){
   if(!list || !list.length){ try{ navToast('لا آياتِ في هذا الوجه لتُتلى'); }catch(e){} return; }
   var last=(typeof SET.audRep==='number')?SET.audRep:1;
-  var reps=AUD_REPS.map(function(o){ return { v:o.v, n:(o.v===last?'✅ ':'')+o.n }; });
-  reps.push({ v:'qari', n:'🎙️ '+qariName() });
+  var reps=AUD_REPS.map(function(o){ return { v:o.v, n:o.n, sel:(o.v===last) }; });
+  /* رقاقةُ القارئ بابٌ يُفتح لا عددٌ يُختار، فتنفذ بنقرتها ولا تنتظر الإقرار */
+  reps.push({ v:'qari', n:'🎙️ '+qariName(), act:true });
   uiPick('كم مرّةً تريد سماعَه؟', reps, function(rep){
     if(rep==='qari'){ qariAsk(function(){ audAsk(list); }); return; }
     SET.audRep=rep; saveDB();          /* آخرُ تحديدٍ يُحفظ فيُعرض مؤشَّراً */
     audPlay(list, rep);
-  }, '🎧');
+  }, '🎧', '✅ موافق');
 }
 /* قائمةُ القرّاء: المختارُ مؤشَّر، والرجوعُ يُعيده إلى سؤاله لا يُخرجه منه */
 function qariAsk(after){
@@ -14644,11 +14646,14 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
     if(wantInp){ ip.value=String(inp); }
   }
   /* خياراتٌ سريعة: كلُّ خيارٍ زرٌّ يُنهي السؤالَ بقيمته، فلا «نعم» بعده */
-  var cz=$('askChips');
+  /* خياراتٌ سريعة. فإن كان معها زرُّ إقرار صارت تُنتقى ثمّ تُقرّ، وإلّا نفذت
+     بنقرتها. وما وُسم «act» فبابٌ يُفتح لا قيمةٌ تُختار، فينفذ في الحالين */
+  var cz=$('askChips'), pickV=null, confirmMode=!!(chips && yes);
   if(cz){
     cz.hidden=!chips;
     cz.innerHTML = chips ? chips.map(function(o,i){
-      return '<button type="button" class="chipsel" data-pi="'+i+'">'+esc(o.n)+'</button>';
+      if(o.sel) pickV=o.v;
+      return '<button type="button" class="chipsel'+(o.sel?' sel':'')+'" data-pi="'+i+'">'+esc(o.n)+'</button>';
     }).join('') : '';
   }
   $('askIc').textContent=ic||'💚';
@@ -14657,7 +14662,7 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
     .replace(/&lt;(\/?b)>/g,'<$1>').replace(/\n/g,'<br>');
   var y=$('askYes'), n=$('askNo');
   y.textContent=yes||'✅ حسناً';
-  y.hidden=!!chips;                                    /* الخياراتُ تُغني عن زرّ الإقرار */
+  y.hidden=(!!chips && !confirmMode);                  /* خياراتٌ بلا إقرار: تُغني عن زرّه */
   n.hidden=!no; if(no) n.textContent=no;
   var done=function(v,pv){
     if(muteKey && ck && ck.checked) save(muteKey,1);   /* رغبتُه تُحفظ فلا يُكرَّر عليه */
@@ -14666,14 +14671,17 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
     if(ip) ip.onkeydown=null;
     if(cb) cb(v,val);
   };
-  y.onclick=function(){ done(true); };
+  y.onclick=function(){ done(true, confirmMode?pickV:undefined); };
   n.onclick=function(){ done(false); };
   bg.onclick=function(e){ if(e.target===bg) done(false); };   /* الضغط خارجه إلغاء */
   bg.hidden=false;
   if(cz && chips){
     var bs=cz.querySelectorAll('[data-pi]'), z;
     for(z=0;z<bs.length;z++) bs[z].onclick=function(){
-      done(true, chips[parseInt(this.getAttribute('data-pi'),10)].v);
+      var ix=parseInt(this.getAttribute('data-pi'),10), o=chips[ix], k;
+      if(!confirmMode || o.act){ done(true, o.v); return; }
+      pickV=o.v;                                       /* يُنتقى وينتظر الإقرار */
+      for(k=0;k<bs.length;k++) bs[k].className='chipsel'+(k===ix?' sel':'');
     };
   }
   if(ip && wantInp){
@@ -14691,9 +14699,10 @@ function uiOnce(key,msg,ic,btn,cb){
 }
 function uiAsk(msg,cb,ic){ uiBox(msg,ic||'🤔','✅ نعم','لا',cb); }
 /* uiPick(نصّ, [{v,n}…], دالّة) — خياراتٌ سريعةٌ تُضغط، ولا تُنادى الدالّةُ إن أُلغي */
-function uiPick(msg,list,cb,ic){
-  uiBox(msg,ic||'❓',null,'إلغاء',function(ok,v){
-    if(ok && cb) cb(v);
+/* yes: إن أُعطي صار للخيارات زرُّ إقرارٍ يُراجَع قبله، وإلّا نفذت بنقرتها */
+function uiPick(msg,list,cb,ic,yes){
+  uiBox(msg,ic||'❓',yes||null,'إلغاء',function(ok,v){
+    if(ok && v!=null && cb) cb(v);
   },null,null,list);
 }
 /* uiPrompt(نصّ, القيمةُ الأولى, دالّة) — اسمٌ يُكتب، ولا تُنادى الدالّةُ إن أُلغي */
