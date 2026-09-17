@@ -9921,6 +9921,10 @@ function priorCount(){
     var base=GIDX[z.s.n-1], q;
     for(q=z.from;q<z.to;q++) seen[base+q]=1;
   });
+  /* والنطاقاتُ التي أضافها «من … إلى …» */
+  (p.priorR||[]).forEach(function(r){
+    for(var g=r[0]; g<=r[1]; g++) seen[g]=1;
+  });
   var t=0; for(k in seen) t++;
   return t;
 }
@@ -9935,6 +9939,8 @@ function priorApply(){
   priorPagePieces().forEach(function(z){
     if(!memHas(z.s.n, z.from, z.to)){ memAdd(z.s.n, z.from, z.to); added++; }
   });
+  /* ونطاقاتُ «من … إلى …» تُقطَّع على سورها */
+  (p.priorR||[]).forEach(function(r){ added+=markRange(r[0], r[1]); });
   ensureAllSchedules();
   /* وتُفتح الأجزاء التي عيّنها، فلا يُقفل عليه ما يحفظه */
   try{
@@ -10099,111 +10105,150 @@ function priorFoldHead(){
   hd.textContent='📌 ما حفظتَه قبل التطبيق'+
     (pm==='new'?' — ✅ أبدأ من جديد':(pm==='has'?' — ✅ مُسجّل':''));
 }
+/* ===== ما حفظتَه قبل التطبيق: بابٌ واحد =====
+   كانت اللوحةُ ستّةَ أبوابٍ في شاشةٍ واحدة — ثلاثون جزءاً، ومئةٌ وأربعَ عشرةَ
+   سورة، وأربعةُ أزرارٍ سريعة، وصفُّ صفحات، وقائمةُ نطاقات — مئةٌ واثنان وخمسون
+   زرّاً يتيه بينها. وكلُّها تنتهي إلى شيءٍ واحد: مدًى من الآيات. فصارت باباً
+   واحداً: اختصاراتٌ لِما يشيع، ثمّ «من … إلى …» كنطاق المراجعة، ثمّ قائمةُ ما
+   سجّلتَه بمجموعه. والأجزاءُ الثلاثون في طيّةٍ لمن أرادها عدّاً. */
+function priorRanges(){
+  var p=priorSel(), out=[], k, r;
+  /* ما سُجّل بالبنية القديمة يُقرأ كما هو، فلا يضيع على أحدٍ ما سجّله */
+  for(k in p.priorJ) if(p.priorJ[k]){ r=juzRange(parseInt(k,10)); out.push({g0:r[0],g1:r[1],t:'جزء '+arNum(k)}); }
+  for(k in p.priorS) if(p.priorS[k]){
+    var n=parseInt(k,10), sx=surahBy(n);
+    if(sx) out.push({g0:GIDX[n-1], g1:GIDX[n-1]+sx.ayat.length-1, t:'سورة '+sx.name});
+  }
+  (p.priorP||[]).forEach(function(z){
+    var pc=[], P;
+    for(P=z[0];P<=z[1];P++){ try{ pagePieces(P).forEach(function(q){ pc.push(q); }); }catch(e){} }
+    if(!pc.length) return;
+    var a=GIDX[pc[0].s.n-1]+pc[0].from, b=GIDX[pc[pc.length-1].s.n-1]+pc[pc.length-1].to-1;
+    out.push({g0:a, g1:b, t:'صفحة '+arNum(z[0])+(z[1]>z[0]?(' — '+arNum(z[1])):'')});
+  });
+  (p.priorR||[]).forEach(function(z){
+    var la=mLoc(z[0]), lb=mLoc(z[1]), sa=surahBy(la[0]), sb=surahBy(lb[0]);
+    out.push({g0:z[0], g1:z[1],
+      t:(sa?sa.name:'')+' '+arNum(la[1])+' ← '+(sb?sb.name:'')+' '+arNum(lb[1])});
+  });
+  return out;
+}
 function priorPanelHTML(pfx){
-  var p=priorSel(), h='', j, i2;
-  h+='<div class="chips" id="'+pfx+'J" style="gap:7px">';
-  for(j=1;j<=30;j++)
-    h+='<button type="button" class="chipsel'+(p.priorJ[j]?' sel':'')+'" data-pj="'+j+'">'+arNum(j)+'</button>';
-  h+='</div>';
-  h+='<div class="chips" id="'+pfx+'Q" style="margin-top:9px;gap:7px">'+
+  var p=priorSel(), h='', j;
+  h+='<div class="prquick chips" id="'+pfx+'Q">'+
      '<button type="button" class="chipsel" data-pq="amma">جزء عمّ</button>'+
      '<button type="button" class="chipsel" data-pq="last5">آخر ٥ أجزاء</button>'+
-     '<button type="button" class="chipsel" data-pq="all">الكل</button>'+
-     '<button type="button" class="chipsel" data-pq="none">مسح</button></div>';
-  h+='<button type="button" class="btn ghost mini" id="'+pfx+'More" style="width:100%;margin-top:10px">'+
-     '📖 أو سورٌ بعينها</button>';
-  /* نطاقُ صفحاتٍ: لمن حفظ بعضَ سورةٍ لا كلَّها — كأوّل خمس صفحاتٍ من الأنعام */
-  h+='<button type="button" class="btn ghost mini" id="'+pfx+'PMore" style="width:100%;margin-top:8px">'+
-     '📄 أو صفحاتٌ بعينها — كأوّل خمس صفحاتٍ من سورة</button>'+
-     '<div id="'+pfx+'P" hidden style="margin-top:8px">'+
-       '<div class="pgrow">'+
-         '<input type="number" id="'+pfx+'P1" min="1" max="604" inputmode="numeric" placeholder="من صفحة">'+
-         '<input type="number" id="'+pfx+'P2" min="1" max="604" inputmode="numeric" placeholder="إلى صفحة">'+
-         '<button type="button" class="btn blue" id="'+pfx+'PAdd">➕ أضِف</button>'+
-       '</div>'+
-       '<div class="chips" id="'+pfx+'PL" style="margin-top:8px;gap:6px"></div>'+
+     '<button type="button" class="chipsel" data-pq="half">نصف المصحف</button>'+
+     '<button type="button" class="chipsel" data-pq="all">المصحفُ كلُّه</button></div>';
+  /* «من … إلى …» — كنطاق المراجعة الحرّة سواءً بسواء، فلا طريقةَ ثانيةً تُتعلَّم */
+  h+='<div class="revbox" style="margin:14px 0 0">'+
+       '<div class="rl rlbig">أضِفْ ما تحفظه</div>'+
+       '<button type="button" class="btn blue mini" id="'+pfx+'Pick" style="width:100%;margin:0 0 10px">'+
+         '📖 حدّدْه من المصحف بلمستين</button>'+
+       '<div class="revrow"><select id="'+pfx+'FS">'+revSurahOpts(1)+'</select>'+
+       '<select id="'+pfx+'FA">'+revAyahOpts(1,1)+'</select></div>'+
+       '<div class="rl" style="margin:12px 0 8px">إلى</div>'+
+       '<div class="revrow"><select id="'+pfx+'TS">'+revSurahOpts(114)+'</select>'+
+       '<select id="'+pfx+'TA">'+revAyahOpts(114,6)+'</select></div>'+
+       '<button type="button" class="btn blue" id="'+pfx+'Add" style="width:100%;margin:12px 0 0">➕ أضِفْه إلى محفوظي</button>'+
      '</div>';
-  h+='<div id="'+pfx+'S" hidden style="margin-top:8px"><div class="chips" style="gap:6px">';
-  for(i2=0;i2<SURAHS.length;i2++){
-    var x=SURAHS[i2];
-    h+='<button type="button" class="chipsel'+(p.priorS[x.n]?' sel':'')+'" data-ps="'+x.n+'" '+
-       'style="font-size:12px;padding:5px 8px">'+esc(x.name)+'</button>';
-  }
-  h+='</div></div>';
-  h+='<div class="note" id="'+pfx+'Note" style="font-weight:800;color:#1a4f8f;margin-top:10px"></div>';
+  h+='<div class="revrow" style="margin:16px 0 8px;justify-content:space-between">'+
+       '<span class="rl" style="margin:0">📋 ما سجّلتَه</span>'+
+       '<button type="button" class="btn ghost mini" id="'+pfx+'Clr" style="margin:0;padding:6px 12px">🗑️ امسح الكلّ</button>'+
+     '</div>'+
+     '<div class="chips prlist" id="'+pfx+'L" style="gap:6px"></div>';
+  /* الأجزاءُ الثلاثون مطويّةٌ: لمن يعدّ حفظَه بالأجزاء، ولا تفرض نفسَها */
+  var jz='<div class="chips" id="'+pfx+'J" style="gap:7px">';
+  for(j=1;j<=30;j++)
+    jz+='<button type="button" class="chipsel'+(p.priorJ[j]?' sel':'')+'" data-pj="'+j+'">'+arNum(j)+'</button>';
+  jz+='</div>';
+  h+='<div style="margin-top:14px">'+foldHTML(pfx+'JZ','🧩 أو أشّر بالأجزاء',false,jz)+'</div>';
+  h+='<div class="note" id="'+pfx+'Note" style="font-weight:800;margin-top:12px"></div>';
   return h;
 }
 function priorPanelWire(pfx,after){
-  var p=priorSel(), box=$(pfx+'J'); if(!box) return;
-  /* قائمةُ نطاقات الصفحات المؤشَّرة، ولكلٍّ زرُّ حذفه */
+  var p=priorSel(), box=$(pfx+'Q'); if(!box) return;
+  if(!Array.isArray(p.priorR)) p.priorR=[];
+  var sel=function(id){ return $(pfx+id); };
+  var val=function(id){ var e=sel(id); return e?parseInt(e.value,10):0; };
+  /* قائمةُ ما سجّله من كلّ باب — قديمِه وجديدِه — ولكلٍّ زرُّ حذفه */
   var rlist=function(){
-    var el=$(pfx+'PL'); if(!el) return;
-    el.innerHTML = p.priorP.length
-      ? p.priorP.map(function(r,z){
-          return '<button type="button" class="chipsel sel" data-prm="'+z+'">'+
-                 'صفحة '+arNum(r[0])+(r[1]>r[0]?(' — '+arNum(r[1])):'')+' ✕</button>';
+    var el=sel('L'); if(!el) return;
+    var L=priorRanges();
+    el.innerHTML = L.length
+      ? L.map(function(r,z){
+          return '<button type="button" class="chipsel sel" data-prm="'+z+'">'+esc(r.t)+' ✕</button>';
         }).join('')
-      : '<div class="note" style="margin:0">لم تُضِف نطاقَ صفحاتٍ بعد</div>';
+      : '<div class="note" style="margin:0">لم تسجّل شيئاً بعد</div>';
     var ds=el.querySelectorAll('[data-prm]'), y;
     for(y=0;y<ds.length;y++) ds[y].onclick=function(){
-      p.priorP.splice(parseInt(this.getAttribute('data-prm'),10),1);
+      var z=parseInt(this.getAttribute('data-prm'),10), L2=priorRanges(), r=L2[z];
+      if(!r) return;
+      /* يُحذف من البابِ الذي جاء منه، أيّاً كان */
+      var nJ=Object.keys(p.priorJ).filter(function(k){ return p.priorJ[k]; }).length;
+      var nS=Object.keys(p.priorS).filter(function(k){ return p.priorS[k]; }).length;
+      if(z<nJ){ var ks=Object.keys(p.priorJ).filter(function(k){ return p.priorJ[k]; }); delete p.priorJ[ks[z]]; }
+      else if(z<nJ+nS){ var ss2=Object.keys(p.priorS).filter(function(k){ return p.priorS[k]; }); delete p.priorS[ss2[z-nJ]]; }
+      else if(z<nJ+nS+(p.priorP||[]).length){ p.priorP.splice(z-nJ-nS,1); }
+      else p.priorR.splice(z-nJ-nS-(p.priorP||[]).length,1);
       saveDB(); paint();
     };
   };
   var note=function(){
-    var n=priorCount(), el=$(pfx+'Note'); if(!el) return;
-    el.textContent = n ? ('محسوبٌ لك '+arNum(n)+' آية — نحو '+arNum(Math.round(n/6236*604))+' صفحة')
-                       : 'أشّر ما حفظتَه قبل التطبيق — أجزاءً أو سوراً، ولو كان متفرّقاً.';
+    var n=priorCount(), el=sel('Note'); if(!el) return;
+    el.textContent = n ? ('محسوبٌ لك '+arNum(n)+' آية — نحو '+arNum(Math.round(n/QURAN_AYAT*604))+' صفحة')
+                       : 'أضِفْ ما تحفظه: اختصاراً جاهزاً، أو نطاقاً من آيةٍ إلى آية.';
   };
   var paint=function(){
-    var a=$(pfx+'J').querySelectorAll('[data-pj]'), i;
+    var a=sel('J')?sel('J').querySelectorAll('[data-pj]'):[], i;
     for(i=0;i<a.length;i++)
       a[i].className='chipsel'+(p.priorJ[a[i].getAttribute('data-pj')]?' sel':'');
-    var b=$(pfx+'S')?$(pfx+'S').querySelectorAll('[data-ps]'):[];
-    for(i=0;i<b.length;i++)
-      b[i].className='chipsel'+(p.priorS[b[i].getAttribute('data-ps')]?' sel':'');
-    rlist();
-    note();
+    rlist(); note();
     /* التأشيرُ يفتح خطوةَ الورد أو يُغلقها، فيُحدَّث العدّادُ والأزرار
        دون إعادة رسم اللوحة تحت إصبعه */
     try{ if($('scr-bqn') && $('scr-bqn').classList.contains('active')) bqnChrome(); }catch(e){}
     try{ if($('scr-onb') && $('scr-onb').classList.contains('active')) onbGate(); }catch(e){}
   };
-  var js=box.querySelectorAll('[data-pj]'), i;
+  var addGi=function(g0,g1){
+    if(g1<g0){ var t=g0; g0=g1; g1=t; }   /* عكس الطرفين: يُقوَّم ولا يُردّ */
+    p.priorR.push([g0,g1]); saveDB(); paint();
+    try{ navToast('✅ أُضيف إلى محفوظك'); }catch(e){}
+  };
+  /* مسحُ ما سجّله كلِّه — من كلّ بابٍ جاء منه — ولا يُمسح بلا إذنه */
+  if(sel('Clr')) sel('Clr').onclick=function(){
+    if(!priorRanges().length) return;
+    uiAsk('أتمسح كلَّ ما سجّلتَه هنا؟\nولا يمسّ هذا ما اعتُمد في محفوظك من قبل.',
+      function(ok){
+        if(!ok) return;
+        p.priorJ={}; p.priorS={}; p.priorP=[]; p.priorR=[];
+        saveDB(); paint();
+      },'🗑️');
+  };
+  var js=sel('J')?sel('J').querySelectorAll('[data-pj]'):[], i;
   for(i=0;i<js.length;i++) js[i].onclick=function(){
     var k=this.getAttribute('data-pj');
     p.priorJ[k]=p.priorJ[k]?0:1; saveDB(); paint();
   };
-  var ss=$(pfx+'S')?$(pfx+'S').querySelectorAll('[data-ps]'):[];
-  for(i=0;i<ss.length;i++) ss[i].onclick=function(){
-    var k=this.getAttribute('data-ps');
-    p.priorS[k]=p.priorS[k]?0:1; saveDB(); paint();
-  };
-  var qs=$(pfx+'Q')?$(pfx+'Q').querySelectorAll('[data-pq]'):[];
+  var qs=box.querySelectorAll('[data-pq]');
   for(i=0;i<qs.length;i++) qs[i].onclick=function(){
     var q=this.getAttribute('data-pq'), k;
-    if(q==='none'){ p.priorJ={}; p.priorS={}; }
-    else if(q==='all'){ for(k=1;k<=30;k++) p.priorJ[k]=1; }
+    if(q==='all'){ for(k=1;k<=30;k++) p.priorJ[k]=1; }
+    else if(q==='half'){ for(k=16;k<=30;k++) p.priorJ[k]=1; }
     else if(q==='amma'){ p.priorJ[30]=1; }
     else if(q==='last5'){ for(k=26;k<=30;k++) p.priorJ[k]=1; }
     saveDB(); paint();
   };
-  if($(pfx+'More')) $(pfx+'More').onclick=function(){
-    var el=$(pfx+'S'); if(el) el.hidden=!el.hidden;
+  /* قائمتا الآيات تتبعان سورتَيهما */
+  if(sel('FS')) sel('FS').onchange=function(){ sel('FA').innerHTML=revAyahOpts(val('FS'),1); };
+  if(sel('TS')) sel('TS').onchange=function(){ sel('TA').innerHTML=revAyahOpts(val('TS'),1); };
+  if(sel('Add')) sel('Add').onclick=function(){
+    addGi(gAt(val('FS'),val('FA')), gAt(val('TS'),val('TA')));
   };
-  if($(pfx+'PMore')) $(pfx+'PMore').onclick=function(){
-    var el=$(pfx+'P'); if(el) el.hidden=!el.hidden;
-  };
-  /* يُضاف النطاقُ ويُرتَّب طرفاه، ومن كتب طرفاً واحداً فصفحةٌ واحدة */
-  if($(pfx+'PAdd')) $(pfx+'PAdd').onclick=function(){
-    var e1=$(pfx+'P1'), e2=$(pfx+'P2');
-    var a=parseInt(e1?e1.value:'',10), b2=parseInt(e2?e2.value:'',10);
-    if(!(a>=1&&a<=604)) return;
-    if(!(b2>=1&&b2<=604)) b2=a;
-    if(b2<a){ var t=a; a=b2; b2=t; }
-    p.priorP.push([a,b2]);
-    if(e1) e1.value=''; if(e2) e2.value='';
-    saveDB(); paint();
+  /* واللمستان في المصحف: أوّلُ ما يحفظ وآخرُه */
+  if(sel('Pick')) sel('Pick').onclick=function(){
+    mfPickRange(gAt(val('FS'),val('FA')), function(fs,fa,ts,ta){
+      addGi(gAt(fs,fa), gAt(ts,ta));
+    });
   };
   /* الاعتماد يقع بالانتقال إلى ما بعده، فلا يحتاج زرّاً خاصّاً به */
   /* الاعتمادُ يقع ولا يُحتفل به هنا: المعالجُ لم يُتمّ بعد، والاحتفالُ
@@ -10321,7 +10366,7 @@ var BQ_HEAD={
   plan : ['🧭 ما خطة حفظك؟','مسار واحد تسير عليه — اختر ما يناسب همّتك'],
   dir  : ['🧭 من أين تبدأ؟','من قِصار السور صعوداً، أم على ترتيب المصحف'],
   prior: ['📌 وأين أنت من الحفظ الآن؟','لنعرف من أين نبدأ بك — ولا يضيع ما حفظتَه قبلُ'],
-  pick : ['📌 وما الذي تحفظه؟','أشّر أجزاءك أو سورَك — ولو كانت متفرّقة'],
+  pick : ['📌 وما الذي تحفظه؟','أضِفْه اختصاراً جاهزاً، أو نطاقاً من آيةٍ إلى آية — ولو كان متفرّقاً'],
   wird : ['📖 خطة المراجعة','ما تحفظه يحتاج تعاهداً — ولك أن تحفظ بلا مراجعة إن شئت']
 };
 /* شارةُ الخطوات وأزرارُها وحدَها — تُستدعى إذا تبدّل ما يُحسب به عددُ
@@ -10399,8 +10444,9 @@ function renderBqnList(){
   /* وخطوةُ التأشير: اللوحةُ وحدَها، ولا تُعرض إلّا لمن قال «أسجّل حفظي» */
   if(step==='pick'){
     $('bqnList').innerHTML='<div id="priorBox">'+priorPanelHTML('pS')+'</div>'+
-      '<div class="note" style="margin-top:12px">أشّر ما تحفظه — أجزاءً أو سوراً، '+
-      'ولو كان متفرّقاً كآخر خمسة أجزاء وأوّل جزأين. تُحسب محفوظةً بخمس نجوم.</div>';
+      '<div class="note" style="margin-top:12px">أضِفْ ما تحفظه نطاقاً بعد نطاق — '+
+      'ولو كان متفرّقاً كآخر خمسة أجزاء وأوّل جزأين. وما أضفتَه يُحسب محفوظاً '+
+      'بخمس نجوم، ويدخل جدولَ المراجعة، ويُعاد حسابُ أيّامك وموضعِك من الخطة.</div>';
     priorPanelWire('pS', function(){
       try{ fillBqnSelect(); }catch(e){}
       try{ revLoad(); }catch(e){}
