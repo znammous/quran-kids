@@ -9739,34 +9739,37 @@ function fillBqnSelect(){
   if(el) el.textContent='الآن: '+planTitle()+' • '+planSubtitle();
   if($('btnBqnOpen')) $('btnBqnOpen').onclick=function(){ startBqn('set'); };
 }
-function bqnOnbHTML(){
-  var id=planId(), p=planStore(), h='';
-  var body2='<div class="note" style="margin-bottom:10px">جداول حفظ ومراجعة يومية جاهزة من <b>'+
-     esc(BQN_SRC_T)+'</b><br>'+esc(BQN_SRC_S)+' — تُغنيك عن اختيار الحجم أعلاه.</div>'+
-     '<div class="onbopts" id="onbBqnList">';
-  var h2=body2;
-  var chosen=!!curP().planChosen;
-  for(var i=0;i<BQN_PLANS.length;i++){
-    var pl=BQN_PLANS[i], on=(chosen && id===pl.id), st=p.plans[pl.id], day=(st&&st.day)||0;
-    if(pl.hide && id!==pl.id) continue;   /* مخفيّة مؤقّتاً */
-    h2+='<button type="button" class="onbopt'+(on?' sel':'')+'" data-obqn="'+pl.id+'">'+
-       '<span class="oe">📅</span><span class="ot"><b>'+esc(pl.t)+'</b><i>'+esc(pl.sub)+
-       ' • '+arNum(pl.n)+' يوماً • من '+esc(pl.from)+
-       (day?(' • وقفتَ عند اليوم '+arNum(Math.min(day+1,pl.n))):'')+'</i></span></button>';
-  }
-  h2+='</div>';
-  var pn2=(chosen && id!=='self')?bqnPlan(id):null;
-  h+=foldHTML('fOBqn','📅 خطط «بالقرآن نحيا»'+(pn2?(' — ✅ '+esc(pn2.t)):''),false,h2);
-  /* القسم الثالث إجباريّ: إمّا أن يسجّل حفظه، وإمّا أن يبدأ من جديد */
-  var pm=curP().priorMode||'';
-  h+='<div class="lbl steplb" style="margin-top:22px">📌 وأين أنت من الحفظ الآن؟ <b style="color:var(--gold)">(لازم)</b></div>'+
-     '<div class="note" style="margin-bottom:10px">اختر واحداً لنعرف من أين نبدأ بك.</div>'+
-     priorModeHTML()+
-     '<div id="pOWrap"'+(pm==='has'?'':' hidden')+' style="margin-top:12px">'+priorPanelHTML('pO')+'</div>'+
-     '<div id="pOWird" style="margin-top:22px"></div>';
+/* ===== خطوةُ الخطّة في معالج المستخدم الجديد =====
+   كانت صفحةً واحدةً تجمع خمسةَ أسئلة: الحافظَ والخططَ و«أين أنت من الحفظ»
+   ولوحةَ التأشير وخطّةَ المراجعة — فيتيه بينها ولا يدري أين هو منها.
+   فصارت بطاقةَ ملخّصٍ وزرّاً يفتح شاشةَ الخطّة المقسَّمةَ سؤالاً في كلّ شاشة،
+   وهي تعود إليه عند تمامها. ولا شيفرةَ ثانيةً تُصان. */
+function onbPlanHTML(){
+  var p=curP(), h='', pm=p.priorMode||'', ok=!!p.planChosen;
+  var line=function(ic,k,v,done){
+    return '<div class="reprow" style="padding:7px 0">'+
+      '<span class="repk">'+ic+' '+esc(k)+'</span>'+
+      '<span class="repv" style="color:'+(done?'#147c40':'#a06a12')+'">'+
+        (done?'✅ ':'⌛ ')+esc(v)+'</span></div>';
+  };
+  h+='<div class="revbox" style="margin:0 0 16px">';
+  try{ h+=line('🧭','خطّةُ الحفظ', ok?planTitle():'لم تُختر بعد', ok); }catch(e){}
+  h+=line('📌','حالُك من الحفظ',
+      pm==='all'?'حافظٌ لكتاب الله':(pm==='has'?'لك حفظٌ سابق':(pm==='new'?'تبدأ من جديد':'لم يُحدَّد بعد')),
+      !!pm);
+  var rv = revOff() ? 'حفظٌ بلا مراجعة'
+         : (REV.on===true ? 'وردٌ يوميّ لمحفوظك'
+         : (REV.on===false ? (revIsWird()?'مراجعةُ جديدِ حفظك':'خطّةٌ حرّة') : 'لم تُحدَّد بعد'));
+  h+=line('📖','خطّةُ المراجعة', rv, !(REV.on==null && !revOff()));
+  h+='</div>'+
+     '<button type="button" class="btn blue big" id="onbPlanGo" style="margin:0">'+
+       (ok?'🧭 راجِعْ خطّتك — سؤالاً سؤالاً':'🧭 اضبط خطّتك — سؤالاً سؤالاً')+'</button>'+
+     '<div class="note" style="margin-top:10px">تُفتح لك شاشةٌ لكلّ سؤال، وتتنقّل بينها بزرّي «السابق» و«التالي» — ثمّ تعود إلى هنا.</div>';
   return h;
 }
-/* ورد المراجعة في معالج اللاعب كذلك — لمن سجّل حفظاً سابقاً */
+/* لوحةُ الخطّة الطويلةُ في المعالج زالت: صارت خطوتُها ملخّصاً وباباً إلى
+   الشاشات المتتابعة، فسقط بناؤها وربطُها. وبقيت «wirdOnbSync» وحدَها لأنّ
+   «التالي» و«إتمامَ التعديل» ما زالا ينادياها، وهي محروسةٌ إن لم تجد لوحتَها. */
 function wirdOnbSync(){
   var box=$('pOWird'); if(!box) return;
   /* يُعرض لكلّ مستخدم، فخيارُ «حفظٍ بلا مراجعة» يخصّ من لا محفوظَ له كذلك.
@@ -9791,47 +9794,6 @@ function wirdOnbSync(){
     try{ onbGate(); }catch(e){}
   };
   for(i=0;i<bs.length;i++) bs[i].onclick=hit;
-}
-function bqnOnbWire(){
-  try{ foldBind($('onbBody')); }catch(e){}
-  try{ priorPanelWire('pO',function(){ wirdOnbSync(); onbGate(); }); }catch(e){}
-  try{ wirdOnbSync(); }catch(e){}
-  /* اختارها: يُسجَّل محفوظُه كلُّه وتُعدّ خطّتُه مختارة، ثمّ تُعاد اللوحةُ فتُطوى
-     لوحةُ التأشير وتبقى أمامه خطّةُ مراجعته وحدَها */
-  if($('onbHafiz')) $('onbHafiz').onclick=function(){
-    priorModeSet('all');
-    curP().planChosen=1; saveDB();
-    try{ navToast('🏅 سُجّل لك المصحفُ كاملاً — وبقيت خطّةُ مراجعتك'); }catch(e){}
-    onbShow(ONB.i);
-  };
-  var mb=$('onbPMode');
-  if(mb){
-    var ms=mb.querySelectorAll('[data-pmode]'), z;
-    for(z=0;z<ms.length;z++) ms[z].onclick=function(){
-      var v=this.getAttribute('data-pmode');
-      priorModeSet(v, function(){
-        /* تُرسم الإشارةُ على الحال الواقعيّ لا على ما ضُغط: من رفض المسحَ
-           بقي على حاله، فلا تكذب عليه الإشارة */
-        var cur=curP().priorMode||'';
-        var a=$('onbPMode').querySelectorAll('[data-pmode]'), y;
-        for(y=0;y<a.length;y++)
-          a[y].className='onbopt'+(a[y].getAttribute('data-pmode')===cur?' sel':'');
-        if($('pOWrap')) $('pOWrap').hidden=(cur!=='has');
-        try{ wirdOnbSync(); }catch(e){}
-        onbGate();
-      });
-    };
-  }
-  var box=$('onbBqnList'); if(!box) return;
-  var bs=box.querySelectorAll('[data-obqn]');
-  for(var k=0;k<bs.length;k++) bs[k].onclick=function(){
-    var bid=this.getAttribute('data-obqn');   /* قبل السؤال: اللوحةُ قد يُعاد رسمُها */
-    hafizClear(function(){
-      setPlan(bid);
-      curP().planChosen=1; saveDB();
-      onbShow(ONB.i);
-    });
-  };
 }
 /* «التالي» لا يُفتح حتى يجيب عن السؤال اللازم */
 /* ما الذي يمنع المضيّ من هذه الخطوة؟ */
@@ -12278,37 +12240,10 @@ function onbShow(i){
        function(v){ hafizClear(function(){
                       SET.segMode=v; setPlan('self'); curP().planChosen=1; ensureAllSchedules();
                       saveDB(); setTimeout(function(){ onbShow(ONB.i); onbAskDir(); },0); }); },
-    '<div class="note">التقدير بمقطع واحد كل يوم، وهو للمصحف كاملاً — ولك أن تبدأ بجزء عمّ وحده.<br>'+
-    'ولا تُقسَّم السورة القصيرة أبداً مهما كان الحجم: الناس والإخلاص وأمثالها مقطع واحد.</div>'+
-    bqnOnbHTML());
-    try{
-      foldWrap(B.querySelector('.onbopts'),'fOSelf',
-        '🌙 خطط تطبيق «نور الوحي»'+((!onPlan()&&curP().planChosen)?(' — ✅ '+esc(segModeName())):''),
-        (!onPlan() && !!curP().planChosen));   /* تبقى مفتوحة ليرى السؤال بعد المقدار */
-      /* المقدار أوّلاً، فإذا اختاره سُئل: من أين تبدأ؟ */
-      var fb=$('fold_fOSelf');
-      if(fb){
-        fb.insertAdjacentHTML('afterbegin','<div class="lbl" style="margin-bottom:6px">📏 حجم المقطع</div>');
-        if(!onPlan() && curP().planChosen)
-          fb.insertAdjacentHTML('beforeend',
-            '<div class="lbl" id="onbDirQ" style="margin:16px 0 6px">🧭 من أين تبدأ؟</div>'+selfDirHTML());
-      }
-    }catch(e){}
-    /* بطاقةُ الحافظ في رأس الصفحة، بعد لفّ الأحجام في طيّتها لا قبله —
-       وإلّا التُفّت هي في الطيّة مكانَها. ومن أتمّ المصحفَ لا خطّةَ حفظٍ له،
-       فلا يُمرَّر على سؤالٍ لا يعنيه ثمّ يُطلب منه جوابُه */
-    try{
-      var isAllO=(curP().priorMode==='all');
-      B.insertAdjacentHTML('afterbegin',
-        '<div class="onbopts" style="margin-bottom:14px">'+
-          '<button type="button" class="onbopt'+(isAllO?' sel':'')+'" id="onbHafiz">'+
-            '<span class="oe">'+(isAllO?'✅':'🏅')+'</span>'+
-            '<span class="ot"><b>أنا حافظٌ لكتاب الله كاملاً</b>'+
-            '<i>لا خطّةَ حفظٍ لي — يُسجَّل المصحفُ كلُّه محفوظاً، وتُضبط خطّةُ مراجعتك</i>'+
-          '</span></button></div>');
-    }catch(e){}
-    bqnOnbWire();
-    selfDirWire(B, function(){ onbShow(ONB.i); });
+    '');
+    /* لا خياراتِ هنا: ملخّصٌ وبابٌ إلى الشاشات المتتابعة */
+    B.innerHTML=onbPlanHTML();
+    if($('onbPlanGo')) $('onbPlanGo').onclick=function(){ startBqn('onb'); };
     onbGate();
   }
   else if(st===2){                         /* تسجيل الصوت */
@@ -12379,6 +12314,13 @@ $('onbNext').onclick=function(){
     try{ PRIOR_COMMIT(); wirdOnbSync(); onbGate(); }catch(e){}
   }
   var m=onbBlocked();
+  /* نقصَ من خطّته شيء: يُفتح له سؤالُه بعينه في شاشته، لا يُنبَّه على موضعٍ يبحث عنه */
+  if(m && ONB.i===1){
+    try{ navToast(m); }catch(e){}
+    var b=null; try{ b=bqnBlocked(); }catch(e){}
+    startBqn('onb', b?bqnSteps()[b.i]:null);
+    return;
+  }
   if(m){ onbNudge(m); return; }
   if(ONB.i<ONB.n-1) onbShow(ONB.i+1); else onbFinish();
 };
