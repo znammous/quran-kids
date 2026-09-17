@@ -1703,8 +1703,10 @@ body.glow-off .dfpic{animation:none}
     <div id="askMsg" style="font-size:17px;font-weight:800;line-height:1.9;color:var(--ttl)"></div>
     <!-- حقلُ الاسم: لا يظهر إلّا حين يُطلب اسمٌ (أسماءُ الأهل في «عائلتي») -->
     <input type="text" id="askInp" maxlength="14" hidden autocomplete="off" spellcheck="false" style="margin-top:12px;text-align:center">
-    <!-- خياراتٌ سريعةٌ تُغني عن «نعم/لا» حين يكون الجوابُ عدداً أو اختياراً -->
-    <div class="row" id="askChips" hidden style="flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px"></div>
+    <!-- خياراتٌ سريعةٌ تُغني عن «نعم/لا» حين يكون الجوابُ عدداً أو اختياراً.
+         وتُسحب إن طالت (قائمةُ القرّاء سبعةَ عشر) فلا تخرج عن الشاشة -->
+    <div class="row" id="askChips" hidden
+      style="flex-wrap:wrap;justify-content:center;gap:8px;margin-top:14px;max-height:44vh;overflow:auto"></div>
     <label class="chk" id="askChkWrap" hidden style="margin-top:12px;justify-content:center"><input type="checkbox" id="askChk"> لا تُظهر هذه الرسالة مرّة أخرى</label>
     <div class="row" style="margin-top:18px;justify-content:center">
       <button class="btn ghost" id="askNo" hidden>لا</button>
@@ -2395,7 +2397,7 @@ function kindAllowed(t){
   var h=LV_HIDE[SET&&SET.level];
   return !(h&&h[t]);
 }
-function defSet(){ return { level:'easy', lv3:true, script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false, simHl:true, pvNote:true, wake:true, qari:'Husary_64kbps' }; }
+function defSet(){ return { level:'easy', lv3:true, script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false, simHl:true, pvNote:true, wake:true, qari:'Husary_64kbps', audRep:1 }; }
 /* ثلاث درجات للخطّ لا خمس — ويُردّ القديم إلى أقربها */
 var FONTS=[{v:20,n:'صغير'},{v:24,n:'متوسط'},{v:30,n:'كبير'}];
 function normFont(f){ f=parseInt(f,10)||24; return f<=22?20:(f<=27?24:30); }
@@ -6805,10 +6807,32 @@ $('mfDockPlay').onclick=function(){
   }
   audAsk(audQueuePage());
 };
-/* يُسأل عن التكرار أوّلاً: خياراتٌ سريعةٌ تُضغط بإصبعٍ واحد، لا عددٌ يُكتب */
+/* يُسأل عن التكرار أوّلاً: خياراتٌ سريعةٌ تُضغط بإصبعٍ واحد، لا عددٌ يُكتب.
+   ومع الخيارات رقاقةٌ تحمل اسمَ القارئ الحاليّ: من رضيه لم يزد نقرة، ومن أراد
+   تبديلَه نقرها فظهرت القائمة ثمّ عاد إلى سؤاله. ويبقى آخرُ اختيارٍ مؤشَّراً. */
 function audAsk(list){
   if(!list || !list.length){ try{ navToast('لا آياتِ في هذا الوجه لتُتلى'); }catch(e){} return; }
-  uiPick('كم مرّةً تريد سماعَه؟', AUD_REPS, function(rep){ audPlay(list, rep); }, '🎧');
+  var last=(typeof SET.audRep==='number')?SET.audRep:1;
+  var reps=AUD_REPS.map(function(o){ return { v:o.v, n:(o.v===last?'✅ ':'')+o.n }; });
+  reps.push({ v:'qari', n:'🎙️ '+qariName() });
+  uiPick('كم مرّةً تريد سماعَه؟', reps, function(rep){
+    if(rep==='qari'){ qariAsk(function(){ audAsk(list); }); return; }
+    SET.audRep=rep; saveDB();          /* آخرُ تحديدٍ يُحفظ فيُعرض مؤشَّراً */
+    audPlay(list, rep);
+  }, '🎧');
+}
+/* قائمةُ القرّاء: المختارُ مؤشَّر، والرجوعُ يُعيده إلى سؤاله لا يُخرجه منه */
+function qariAsk(after){
+  var cur=qariF();
+  var list=QARIS.map(function(q){ return { v:q.f, n:(q.f===cur?'✅ ':'')+q.n }; });
+  uiBox('مَن تحبُّ أن تسمع؟','🎙️',null,'رجوع',function(ok,v){
+    if(ok && v){
+      SET.qari=v; saveDB();
+      try{ audStop(); }catch(e){}      /* بُدّل القارئ: تسكت تلاوةُ سابقه */
+      try{ navToast('🎙️ '+qariName()); }catch(e){}
+    }
+    if(after) after();
+  },null,null,list);
 }
 function audPlay(list, rep){
   AUD.q=list; AUD.i=-1;
