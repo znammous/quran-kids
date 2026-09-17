@@ -6418,10 +6418,11 @@ $('mfGoListen').onclick=function(){
   if(AUD.q.length){ audStop(); return; }
   audAsk(audQueueSeg());
 };
-/* اختصارٌ في الدرس نفسِه لمن لم يفتح وجهَ المصحف: يتلو مقطعَ درسه الجاري */
+/* اختصارٌ في الدرس نفسِه لمن لم يفتح وجهَ المصحف: يتلو آيتَه التي هو فيها،
+   وإن لم تكن جولتُه آيةً بعينها (كتسميع صفحة) فمقطعَه */
 $('pListen').onclick=function(){
   if(AUD.q.length){ audStop(); return; }
-  audAsk(audList(playPieces()));
+  audAsk(audList(playNowPieces()));
 };
 /* يُحفظ فورَ تعليمه، فيصحّ وإن خرج من الوجه بالإغلاق أو بزرّ الرجوع لا بزرّ البدء.
    ولوليّ الأمر أن يعيده من «الإعدادات ← 📖 عرض المقطع في المصحف قبل البدء» */
@@ -6576,6 +6577,27 @@ function playPieces(){
     if(S && S.surah && S.seg) return [{s:S.surah, from:S.seg[0], to:S.seg[1]}];
   }catch(e){}
   return [];
+}
+/* الآيةُ التي هو فيها الآن من جولته — إن كانت جولتُه آيةً بعينها.
+   وبها يُتلى موضعُه لا الوجهُ كلُّه: فالوجهُ مقصودُ ما قبل البدء، وأمّا بعد
+   الدخول فالمقصودُ آيتُه التي يحفظها. */
+function playAyahPieces(){
+  try{
+    if(!S || !S.rounds || S.i>=S.rounds.length) return [];
+    var r=S.rounds[S.i]; if(!r || r.a==null) return [];
+    var su=r.surah||S.surah; if(!su) return [];
+    return [{ s:su, from:r.a, to:r.a+1 }];
+  }catch(e){ return []; }
+}
+/* ما يُتلى وهو في درسه: آيتُه إن كانت، وإلّا مقطعُه */
+function playNowPieces(){
+  var a=playAyahPieces();
+  return a.length ? a : playPieces();
+}
+/* أفي درسٍ هو الآن؟ فالوجهُ المفتوحُ فوقه تابعٌ لدرسه لا مقصودٌ لذاته */
+function inLesson(){
+  try{ return !!(S && S.rounds && S.rounds.length) && curScreen()==='scr-play'; }
+  catch(e){ return false; }
 }
 function audSync(){
   var on=AUD.q.length>0;
@@ -6775,7 +6797,13 @@ $('mfDockMean').onclick=function(){
    والضغطةُ الثانية توقفه — وزرٌّ واحدٌ لا زرّان */
 $('mfDockPlay').onclick=function(){
   if(AUD.q.length){ audStop(); return; }
-  audAsk(audQueuePage());          /* الوجهُ كلُّه، لا النطاقُ المعلَّم */
+  /* في الدرس: تُتلى آيتُه التي هو فيها — فالوجهُ مقصودُ ما قبل البدء، وأمّا
+     بعد الدخول فمقصودُه موضعُه. وخارجَ الدرس: الوجهُ كلُّه */
+  if(inLesson()){
+    var q=audList(playNowPieces());
+    if(q.length){ audAsk(q); return; }
+  }
+  audAsk(audQueuePage());
 };
 /* يُسأل عن التكرار أوّلاً: خياراتٌ سريعةٌ تُضغط بإصبعٍ واحد، لا عددٌ يُكتب */
 function audAsk(list){
@@ -10151,6 +10179,16 @@ function priorPanelHTML(pfx){
        '<div class="revrow"><select id="'+pfx+'TS">'+revSurahOpts(114)+'</select>'+
        '<select id="'+pfx+'TA">'+revAyahOpts(114,6)+'</select></div>'+
        '<button type="button" class="btn blue" id="'+pfx+'Add" style="width:100%;margin:12px 0 0">➕ أضِفْه إلى محفوظي</button>'+
+       /* ومن يعدّ حفظَه بالصفحات يكتب رقمَيها — أيسرُ له من قائمتَي سورةٍ وآية */
+       '<button type="button" class="btn ghost mini" id="'+pfx+'PMore" style="width:100%;margin:10px 0 0">'+
+         '📄 أو بأرقام الصفحات</button>'+
+       '<div id="'+pfx+'P" hidden style="margin-top:8px">'+
+         '<div class="pgrow">'+
+           '<input type="number" id="'+pfx+'P1" min="1" max="604" inputmode="numeric" placeholder="من صفحة">'+
+           '<input type="number" id="'+pfx+'P2" min="1" max="604" inputmode="numeric" placeholder="إلى صفحة">'+
+           '<button type="button" class="btn blue" id="'+pfx+'PAdd">➕ أضِف</button>'+
+         '</div>'+
+       '</div>'+
      '</div>';
   h+='<div class="revrow" style="margin:16px 0 8px;justify-content:space-between">'+
        '<span class="rl" style="margin:0">📋 ما سجّلتَه</span>'+
@@ -10224,6 +10262,12 @@ function priorPanelWire(pfx,after){
         saveDB(); paint();
       },'🗑️');
   };
+  /* رأسُ الطيّة يُربط هنا: كان يُربط في اللوحة القديمة التي زالت، فبقي رأسُ
+     «أشّر بالأجزاء» لا يُفتح بالضغط */
+  try{
+    var fh=document.querySelector('[data-fold="'+pfx+'JZ"]');
+    if(fh && fh.parentNode) foldBind(fh.parentNode);
+  }catch(e){}
   var js=sel('J')?sel('J').querySelectorAll('[data-pj]'):[], i;
   for(i=0;i<js.length;i++) js[i].onclick=function(){
     var k=this.getAttribute('data-pj');
@@ -10243,6 +10287,21 @@ function priorPanelWire(pfx,after){
   if(sel('TS')) sel('TS').onchange=function(){ sel('TA').innerHTML=revAyahOpts(val('TS'),1); };
   if(sel('Add')) sel('Add').onclick=function(){
     addGi(gAt(val('FS'),val('FA')), gAt(val('TS'),val('TA')));
+  };
+  /* الصفحاتُ بأرقامها: تُضاف نطاقاً، ومن كتب طرفاً واحداً فصفحةٌ واحدة */
+  if(sel('PMore')) sel('PMore').onclick=function(){
+    var el=sel('P'); if(el) el.hidden=!el.hidden;
+  };
+  if(sel('PAdd')) sel('PAdd').onclick=function(){
+    var e1=sel('P1'), e2=sel('P2');
+    var a=parseInt(e1?e1.value:'',10), b2=parseInt(e2?e2.value:'',10);
+    if(!(a>=1&&a<=604)) return;
+    if(!(b2>=1&&b2<=604)) b2=a;
+    if(b2<a){ var t=a; a=b2; b2=t; }
+    p.priorP.push([a,b2]);
+    if(e1) e1.value=''; if(e2) e2.value='';
+    saveDB(); paint();
+    try{ navToast('✅ أُضيفت الصفحاتُ إلى محفوظك'); }catch(e){}
   };
   /* واللمستان في المصحف: أوّلُ ما يحفظ وآخرُه */
   if(sel('Pick')) sel('Pick').onclick=function(){
