@@ -812,6 +812,24 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
 .tree .meta2{display:flex;justify-content:space-around;flex-wrap:wrap;gap:10px;margin-top:12px;
   font-size:13px;color:#4a627e}
 .tapp{margin-top:10px;font-size:12px;font-weight:800;color:#8a6a1e}
+/* ===== ورقةُ تقرير الخطّة ===== */
+.rep{background:#fffdf3;border:10px double var(--gold);border-radius:16px;padding:18px 14px;
+  box-shadow:0 14px 34px rgba(0,0,0,.3);text-align:right}
+.rep h2{font-family:"Traditional Arabic","Amiri","IBM Plex Sans Arabic","Segoe UI",serif;
+  font-size:28px;color:var(--g1);margin:4px 0 2px;text-align:center}
+.rep .who{text-align:center;font-size:18px;font-weight:900;color:#102b4a;margin-bottom:12px}
+.rep .orn{font-size:19px;color:#c9a227;letter-spacing:8px;text-align:center}
+.repsec{margin-top:14px;border-top:2px dotted #c9bfa0;padding-top:10px}
+.repsec h3{font-size:16px;font-weight:900;color:#8a6100;margin:0 0 8px}
+/* المفتاحُ لا يُقتطع والقيمةُ تلتفّ إن ضاقت: كان الصفُّ بين طرفين بلا حدٍّ
+   أدنى، فتزاحم القيمةُ المفتاحَ فتُبتر حروفُه — «الخطّة» تصير «ـلة» */
+.reprow{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
+  font-size:14px;font-weight:800;color:#31465f;padding:5px 0;line-height:1.7}
+.reprow .repk{flex:0 0 auto;white-space:nowrap}
+.reprow .repv{flex:1 1 auto;min-width:0;color:#102b4a;text-align:left;
+  white-space:normal;overflow-wrap:anywhere}
+.repbar{height:11px;border-radius:99px;background:#e8e0c6;overflow:hidden;margin:8px 0 4px}
+.repbar i{display:block;height:100%;background:linear-gradient(90deg,#d9a441,#8a6100)}
 .cert .waqf{margin-top:10px;font-size:12.5px;font-weight:800;color:#8a6a1e;line-height:1.9}
 /* الوقف واسم المطوّر في الإعدادات */
 .waqfbox{text-align:center;margin:14px 0 18px;font-size:11px;font-weight:700;color:var(--ttl2);
@@ -2143,6 +2161,14 @@ body.glow-off .dfpic{animation:none}
     </div>
   </section>
 
+  <section class="screen" id="scr-report">
+    <div id="repWrap"></div>
+    <div class="noprint">
+      <button class="btn blue big" id="btnRepPrint">🖨️ طباعة التقرير</button>
+      <button class="btn ghost big" id="btnRepBack" style="margin:0">⬅️ رجوع</button>
+    </div>
+  </section>
+
   <section class="screen" id="scr-settings">
     <h1>⚙️ الإعدادات</h1>
     <div class="onbtabs" id="setTabs"></div>
@@ -2160,6 +2186,7 @@ body.glow-off .dfpic{animation:none}
         <label class="lbl">🧭 خطة الحفظ</label>
         <div class="note" id="bqnNote" style="font-weight:800;color:#1a4f8f"></div>
         <button type="button" class="btn blue mini" id="btnBqnOpen" style="width:100%;margin-top:10px">🧭 غيّر خطة الحفظ</button>
+        <button type="button" class="btn ghost mini" id="btnReport" style="width:100%;margin-top:8px">🧾 تقريرُ خطّتي — أين وصلتُ وماذا راجعت</button>
       </div>
       <div class="setblock">
         <label class="lbl">🔓 الأجزاء المتاحة</label>
@@ -2947,6 +2974,73 @@ function famTreeOpen(){
   var w=$('treeWrap'); if(!w) return;
   w.innerHTML=famTreeHTML();
   show('scr-tree');
+}
+/* ===== تقريرُ الخطّة =====
+   ورقةٌ تُطبع كورقة الشهادة: أين وصل من خطّته، وكم حفظ، وماذا راجع، وما همّتُه.
+   وكلُّ رقمٍ فيها من حسابات التطبيق نفسِها، فلا رقمَ يُحسب هنا حساباً ثانياً. */
+function repRow(k,v){
+  return '<div class="reprow"><span class="repk">'+k+'</span><span class="repv">'+v+'</span></div>';
+}
+function repBar(pct){
+  pct=Math.max(0,Math.min(100,Math.round(pct)));
+  return '<div class="repbar"><i style="width:'+pct+'%"></i></div>'+
+         '<div style="text-align:left;font-size:12px;font-weight:800;color:#8a6100">'+arNum(pct)+'٪</div>';
+}
+function reportHTML(){
+  var p=curP(), h='', nm=(profile.name||'').trim()||'صديقي';
+  var mem=0; try{ mem=memTotal(); }catch(e){}
+  var pages=Math.round(mem/QURAN_AYAT*604);
+  h='<div class="rep"><div class="orn">✦ ✦ ✦</div>'+
+    '<h2>🧭 تقريرُ خطّتي</h2><div class="who">'+esc(nm)+'</div>';
+  /* ١) الخطّة وموضعُه منها */
+  h+='<div class="repsec"><h3>🧭 الخطّة</h3>';
+  try{ h+=repRow('خطّتك', esc(planTitle())); }catch(e){}
+  try{ h+=repRow('موضعك منها', esc(planSubtitle())); }catch(e){}
+  try{
+    var kl=khatmaLeft();
+    if(kl) h+=repRow(kl.plan?'بقي من أيّامها':'بقي من مقاطعها', arNum(kl.days));
+  }catch(e){}
+  h+='</div>';
+  /* ٢) الحفظ */
+  h+='<div class="repsec"><h3>📖 الحفظ</h3>'+
+     repRow('المحفوظ', arNum(mem)+' آية — نحو '+arCount(pages,C_PAGE));
+  try{ h+=repRow('من المصحف', arNum(Math.round(mem/QURAN_AYAT*100))+'٪'); }catch(e){}
+  try{
+    var dn=doneSegsCountFor(segMode()), tt=khatmaSegs(segMode());
+    h+=repRow('المقاطع المُتمّة', arNum(dn)+' من '+arNum(tt)+' ('+esc(segModeName())+')');
+  }catch(e){}
+  h+=repBar(mem/QURAN_AYAT*100)+'</div>';
+  /* ٣) المراجعة */
+  h+='<div class="repsec"><h3>☀️ المراجعة</h3>';
+  try{
+    if(revOff()) h+=repRow('خطّةُ المراجعة','لا مراجعةَ في خطّتك');
+    else{
+      h+=repRow('وردُ المحفوظ', wirdOn()? ('نعم — '+arCount(revSize('wird'),C_PAGE)+' في اليوم') : 'لا');
+      if(!!p.rev && !revIsWird()){
+        var all=revSessions('free').length, dnf=Math.min(REV.done||0, all);
+        h+=repRow('المسار الحرّ', arNum(dnf)+' من '+arCount(all,C_SESS));
+      }
+      h+=repRow('مستحقٌّ اليوم', arNum((function(){ try{ return dueSegs().length; }catch(e){ return 0; } })())+' مقطع');
+    }
+  }catch(e){}
+  try{ h+=repRow('راجعتَ اليوم', arCount(todayBox().reviews||0, C_SESS)); }catch(e){}
+  h+='</div>';
+  /* ٤) الهمّة */
+  h+='<div class="repsec"><h3>🔥 الهمّة</h3>';
+  try{ h+=repRow('المواظبة', arNum(streakNow(p))+' يوماً'); }catch(e){}
+  try{ h+=repRow('الجواهر', arNum(p.gems||0)); }catch(e){}
+  try{ h+=repRow('الشارات', arNum(Object.keys(p.badges||{}).length)); }catch(e){}
+  try{ if(isHafiz(p)) h+=repRow('التاج','👑 حافظٌ لكتاب الله'); }catch(e){}
+  h+='</div>';
+  h+='<div class="meta2"><span>📅 '+greg()+'</span>'+
+     (hijriDate()?('<span>🌙 '+hijriDate()+'</span>'):'')+'</div>'+
+     '<div class="tapp">من تطبيق «نور الوحي»</div></div>';
+  return h;
+}
+function reportOpen(){
+  var w=$('repWrap'); if(!w) return;
+  w.innerHTML=reportHTML();
+  show('scr-report');
 }
 /* صورةُ الفرد المختار ولوحةُ خياراته */
 function famRenderMember(){
@@ -5768,7 +5862,7 @@ var TABS=[
   {id:'scr-settings', ic:'⚙️', n:'الإعدادات', go:function(){ $('btnSettings').click(); }}
 ];
 /* تختفي أثناء الدرس والشهادة والمعالج، كما تفعل دولينجو داخل الدرس */
-var TABS_HIDE={'scr-onb':1,'scr-look':1,'scr-tree':1,'scr-play':1,'scr-cert':1,'scr-runner':1,'scr-shelf':1,'scr-bird':1};
+var TABS_HIDE={'scr-onb':1,'scr-look':1,'scr-tree':1,'scr-report':1,'scr-play':1,'scr-cert':1,'scr-runner':1,'scr-shelf':1,'scr-bird':1};
 function buildTabs(){
   if($('tabbar')) return;
   var bar=document.createElement('nav');
@@ -12362,6 +12456,12 @@ $('btnTreePrint').onclick=function(){
   var n=(profile.name||'').trim();
   printAs(n?('شجرة عائلة '+n):'شجرة عائلتي');
 };
+$('btnRepPrint').onclick=function(){
+  var n=(profile.name||'').trim();
+  printAs('تقرير خطّتي'+(n?(' — '+n):''));
+};
+$('btnRepBack').onclick=function(){ fillSettings(); show('scr-settings'); };
+if($('btnReport')) $('btnReport').onclick=reportOpen;
 $('btnTreeBack').onclick=function(){ lookHome(); renderAvatars(); show('scr-look'); };
 $('btnFamTree').onclick=famTreeOpen;
 /* ===== الشهادةُ صورةً تُشارَك =====
@@ -14464,7 +14564,8 @@ try{ syncTabs((document.querySelector('.screen.active')||{}).id||'scr-start'); }
 /* ===== زرّ الرجوع ===== */
 var NAV={ ok:false, guard:false, exit:0, tEl:null, tT:0 };
 /* زرّ الرجوع الموجود أصلاً في كل شاشة — نضغطه نيابةً عن اللاعب */
-var NAV_BACK={ 'scr-look':'btnLookDone', 'scr-tree':'btnTreeBack', 'scr-map':'btnBackStart', 'scr-path':'btnBackMap',
+var NAV_BACK={ 'scr-look':'btnLookDone', 'scr-tree':'btnTreeBack', 'scr-report':'btnRepBack',
+  'scr-map':'btnBackStart', 'scr-path':'btnBackMap',
   'scr-rev':'btnRevHome', 'scr-revpath':'btnRevQuit', 'scr-build':'btnBuildBack',
   'scr-shop':'btnShopBack', 'scr-board':'btnBoardBack', 'scr-cert':'btnCertBack',
   'scr-badges':'btnBadgesBack', 'scr-bqn':'btnBqnHome',
