@@ -2918,9 +2918,32 @@ function renderAvatars(){
   if(FAM_TAB!=='me'){ famRenderMember(); return; }
   var panel=$('lookPanel');
   if(panel){
-    panel.innerHTML=lookPanelHTML(meRows(), look, '🎨 اختر شكل شخصيتك')+
+    /* واسمُه هو أوّلَ لوحته كأسماء أهله: كان اسمُ الأب والأمّ والإخوة يُبدَّل
+       من هنا، واسمُ صاحب الملفّ وحدَه محبوسٌ في معالج البداية — فمن أخطأ في
+       كتابته أوّلَ مرّةٍ لم يجد له باباً. ولا يظهر في المعالج نفسِه: هناك
+       سؤالُ الاسم قائمٌ في خطوته، فلا يُسأل عنه مرّتين في شاشةٍ واحدة */
+    var nmRow = inLook
+      ? ('<button type="button" class="pkh" data-mnm="1">'+
+           '<span class="lbx">✏️ اسمي</span>'+
+           '<span class="cur"><span>'+esc((profile.name||'').trim()||'بلا اسم')+'</span></span>'+
+         '</button>')
+      : '';
+    panel.innerHTML=lookPanelHTML(meRows(), look, '🎨 اختر شكل شخصيتك', nmRow)+
       '<button type="button" class="btn ghost mini" id="btnRandomLook" style="width:100%;margin-top:8px">🎲 مظهر عشوائي</button>';
     lookPanelWire(panel, look);
+    var nb=panel.querySelector('[data-mnm]');
+    if(nb) nb.onclick=function(){
+      uiPrompt('ما اسمك؟', profile.name||'', function(v){
+        var nm=String(v||'').trim().slice(0,24);
+        if(!nm) return;               /* الاسمُ لا يُمحى: التطبيقُ يناديه به */
+        profile.name=nm;
+        try{ if($('pname')) $('pname').value=nm; }catch(e){}
+        saveDB();
+        try{ renderPlayers(); }catch(e){}
+        try{ renderHome(); }catch(e){}
+        renderAvatars();
+      }, '✍️', 24);
+    };
     var rb=$('btnRandomLook'); if(rb) rb.onclick=randomLook;
   }
 }
@@ -2928,7 +2951,9 @@ function renderAvatars(){
    وآخرُها زرّا الإضافة. والاسمُ إن كُتب حلّ محلّ الوصف، فيعرف الطفلُ أهلَه بأسمائهم */
 function famTabsRender(el){
   var F=famData(), i;
-  var t=[['me','🧒 أنا'],['dad','👨 '+esc(F.dad.nm||'أبي')],['mom','👩 '+esc(F.mom.nm||'أمي')]];
+  /* وتبويبُه باسمه هو أيضاً، كتبويبات أهله — فلا يكون وحدَه بلا اسم */
+  var me=(profile.name||'').trim();
+  var t=[['me','🧒 '+esc(me||'أنا')],['dad','👨 '+esc(F.dad.nm||'أبي')],['mom','👩 '+esc(F.mom.nm||'أمي')]];
   F.kids.forEach(function(k,j){
     t.push(['k'+j, ((k.type==='girl')?'👧 ':'🧒 ')+esc((k.look&&k.look.nm)||arNum(j+1))]);
   });
