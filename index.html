@@ -1555,6 +1555,23 @@ body.glow-off .dfpic{animation:none}
 .gmsuras{background:var(--pnl);border:2px solid var(--pb);border-radius:16px;padding:4px 10px 6px;margin-bottom:14px}
 .gmsuras .mfprow:last-child{border-bottom:0}
 .gmsuras .mfprow .gmhas{color:var(--green);font-size:18px;font-weight:900}
+/* صفُّ السورة في فهرس الألعاب: مربّعُ ضمٍّ، ومدى آياتٍ يظهر متى ضُمّت */
+.gmsrow{border-bottom:1px solid var(--pb)}
+.gmsrow:last-child{border-bottom:0}
+.gmsrow .mfprow{border-bottom:0}
+.gmsrow.on{background:var(--psel);border-radius:12px;margin:4px 0;border-bottom-color:transparent}
+.gmsrow .gmck{flex:0 0 auto;font-size:19px;line-height:1}
+.gmrng{display:flex;align-items:center;gap:8px;padding:0 10px 10px;flex-wrap:wrap}
+.gmrng span{font-size:13px;font-weight:800;color:var(--mute);flex:0 0 auto}
+.gmrng input{flex:1 1 64px;min-width:0;padding:8px 6px;border-radius:10px;border:2px solid var(--pb);
+  background:var(--pnl2);color:var(--ttl);font-family:inherit;font-weight:900;font-size:15px;text-align:center}
+/* شريطُ البدء: يبقى في أسفل الشاشة والفهرسُ يُمرَّر تحته */
+.gmgo{position:sticky;bottom:10px;z-index:3;margin-top:12px;background:var(--pnl);
+  border:2px solid var(--pb);border-radius:16px;padding:10px;box-shadow:0 10px 26px rgba(0,0,0,.3)}
+.gmgo .gmsum{text-align:center;font-size:13px;font-weight:800;color:var(--mute);margin-bottom:8px}
+.gmgo .btn{width:100%;margin:0}
+.gmgo .gmclr{margin-top:8px}
+@media(max-width:820px){ body.hastabs .gmgo{bottom:calc(98px + env(safe-area-inset-bottom))} }
 /* ===== «رفّ الآيات» و«عصفور الآيات» ===== */
 #shelfCv,#birdCv{display:block;width:100%}
 
@@ -13312,10 +13329,60 @@ function dayPoolLabel(n){
   }
   return (what?what+' — ':'')+arCount(n,C_AYAH)+' تصلح للسؤال';
 }
+/* ===== نطاقُ الفهرس: سورٌ يُختار منها، ولكلّ سورةٍ مداها =====
+   كان الفهرسُ يأخذ سورةً واحدةً كاملةً لا غير، فمن أراد «البقرة ١ — ٢٠» أو
+   أراد ثلاثَ سورٍ معاً لم يجد له باباً. فصار التحديدُ خريطةَ
+   {رقم السورة: [من آية, إلى آية]}، وأوّلُ ما يُملأ به عند اختيار السورة
+   آياتُها كلُّها — فمن رضي بها لم يزد نقرة، ومن أراد مدًى ضيّقاً ضيّقه. */
+function selRange(s, r){
+  var f=Math.max(1, Math.min(parseInt(r&&r[0],10)||1, s.ayat.length));
+  var t=Math.max(f, Math.min(parseInt(r&&r[1],10)||s.ayat.length, s.ayat.length));
+  return [f,t];
+}
+function selItems(map){
+  var out=[], n, s, r, a;
+  for(n in (map||{})){
+    s=surahBy(parseInt(n,10)); if(!s || !map[n]) continue;
+    r=selRange(s, map[n]);
+    for(a=r[0]; a<=r[1]; a++) out.push({ s:s, a:a-1 });
+  }
+  return out;
+}
+function selCount(map){ return selItems(map).length; }
+function selLabel(map){
+  var ks=Object.keys(map||{}).filter(function(k){ return !!map[k]; }), s, r;
+  if(!ks.length) return '';
+  if(ks.length===1){
+    s=surahBy(parseInt(ks[0],10)); if(!s) return '';
+    r=selRange(s, map[ks[0]]);
+    return 'سورة '+s.name+((r[0]===1 && r[1]>=s.ayat.length) ? '' : (' '+arNum(r[0])+'—'+arNum(r[1])));
+  }
+  return arCount(ks.length, C_SURAH)+' — '+arCount(selCount(map), C_AYAH);
+}
+/* تحديدُ كلّ لعبةٍ يُذكر، وأوّلُ فتحه يَرِث اختيارَ السورة الواحدة القديم */
+function gameSelMap(id){
+  var st=gameStats(id);
+  if(!st.sel || typeof st.sel!=='object' || Array.isArray(st.sel)) st.sel={};
+  if(!Object.keys(st.sel).length && st.sura){
+    var s0=surahBy(parseInt(st.sura,10));
+    if(s0) st.sel[s0.n]=[1, s0.ayat.length];
+  }
+  return st.sel;
+}
 function gamePool(src){
   if(src==='day'){
     var d=dayPool();
     if(d.length) return { items:d, mem:true, sura:null, day:true };
+  }
+  if(src && typeof src==='object' && src.sel){
+    var raw=selItems(src.sel), fit=[], z, ws;
+    for(z=0;z<raw.length;z++){
+      try{ ws=wordsOf(ayahText(raw[z].s, raw[z].a)); }catch(e){ ws=[]; }
+      if(ws.length>=MISS_MIN) fit.push(raw[z]);
+    }
+    /* المصفّاةُ أَولى، فإن خلا المدى منها لُعب بما فيه ولا يُردّ اختيارُه */
+    var use=fit.length?fit:raw;
+    if(use.length) return { items:use, mem:false, sura:null, sel:src.sel };
   }
   var n=parseInt(src,10);
   if(n>=1 && n<=114){
@@ -13328,6 +13395,7 @@ function gamePool(src){
 }
 function gameSrcLabel(pool){
   if(pool && pool.day) return '📅 من مقرَّر اليوم — وجواهرُه مضاعَفة';
+  if(pool && pool.sel) return '📖 من '+selLabel(pool.sel);
   if(pool && pool.sura) return '📖 من سورة '+pool.sura.name;
   return (pool && pool.mem) ? '📚 من محفوظك' : '📚 من الفاتحة وقصار السور';
 }
@@ -13369,7 +13437,7 @@ function gamePick(id){
   if(!g) return;
   GAME_PICK=id; GAME_LIST=false;
   var st=gameStats(id), pool=runPool(), memN=pool.mem ? pool.items.length : 0;
-  var last=surahBy(parseInt(st.sura,10));
+  var selLbl=''; try{ selLbl=selLabel(gameSelMap(id)); }catch(e){}
   /* مقرَّرُ اليوم يتصدّر الأبوابَ متى كان فيه ما يُسأل عنه — فهو أَولى بلعبه */
   var dayN=0; try{ dayN=dayPool().length; }catch(e){}
   $('gamesBody').innerHTML=
@@ -13384,8 +13452,8 @@ function gamePick(id){
         (memN ? ('آياتٌ من كلّ ما حفظتَ — '+arNum(memN)+' آية') : 'لم يُسجَّل لك محفوظٌ بعد — فمن الفاتحة وقصار السور')+
       '</i></span><span class="gcgo">❮</span></button>'+
     '<button type="button" class="goalcard'+(st.src==='sura'?' now':'')+'" id="gsSura"><span class="gcic">📖</span>'+
-      '<span class="gctx"><b>سورةٌ أختارها</b><i>'+
-        (last ? ('آخرُ ما اخترتَ: سورة '+esc(last.name)) : 'من فهرس السور')+
+      '<span class="gctx"><b>سورٌ أختارها</b><i>'+
+        (selLbl ? ('آخرُ ما اخترتَ: '+esc(selLbl)) : 'من الفهرس — سورةً أو أكثر، بكلّ آياتها أو بمدًى منها')+
       '</i></span><span class="gcgo">❮</span></button>';
   if($('gsDay')) $('gsDay').onclick=function(){ st.src='day'; saveDB(); g.open('day'); };
   $('gsMem').onclick=function(){ st.src='mem'; saveDB(); g.open('mem'); };
@@ -13397,27 +13465,81 @@ function gamePick(id){
    ولا رقمَ الصفحة. وعلامةُ ✓ لما حفظ منها، وآخرُ ما اختاره مُضاءٌ في وسط الشاشة.
    ولمسةٌ على السورة تبدأ اللعب */
 function gameSuraList(g){
-  var st=gameStats(g.id), m=memAll(), cur=parseInt(st.sura,10)||0, h='';
+  var st=gameStats(g.id), m=memAll(), sel=gameSelMap(g.id), B=$('gamesBody');
   GAME_LIST=true;
-  SURAHS.forEach(function(s){
-    var has=(m[s.n]||[]).length>0;
-    h+='<button type="button" class="mfprow'+(s.n===cur?' here':'')+'" data-sn="'+s.n+'">'+
-         '<span class="n">'+arNum(s.n)+'</span>'+
-         '<span class="t"><b>سورة '+esc(s.name)+'</b><i>'+juzLabel(s)+' • آياتها '+arNum(s.ayat.length)+'</i></span>'+
-         (has ? '<span class="p gmhas" aria-label="حفظتَ منها">✓</span>' : '')+
-       '</button>';
-  });
-  var B=$('gamesBody');
+  var rowsHTML=function(){
+    var h='';
+    SURAHS.forEach(function(s){
+      var has=(m[s.n]||[]).length>0, on=!!sel[s.n], r=on?selRange(s,sel[s.n]):null;
+      h+='<div class="gmsrow'+(on?' on':'')+'" data-row="'+s.n+'">'+
+           '<button type="button" class="mfprow" data-sn="'+s.n+'">'+
+             '<span class="n">'+arNum(s.n)+'</span>'+
+             '<span class="t"><b>سورة '+esc(s.name)+'</b><i>'+juzLabel(s)+' • آياتها '+arNum(s.ayat.length)+
+               (has?' • ✓ حفظتَ منها':'')+'</i></span>'+
+             '<span class="p gmck">'+(on?'☑️':'⬜')+'</span>'+
+           '</button>'+
+           (on ? ('<div class="gmrng">'+
+                    '<span>من آية</span>'+
+                    '<input type="number" min="1" max="'+s.ayat.length+'" inputmode="numeric" data-rf="'+s.n+'" value="'+r[0]+'">'+
+                    '<span>إلى</span>'+
+                    '<input type="number" min="1" max="'+s.ayat.length+'" inputmode="numeric" data-rt="'+s.n+'" value="'+r[1]+'">'+
+                  '</div>') : '')+
+         '</div>';
+    });
+    return h;
+  };
+  var foot=function(){
+    var n=selCount(sel), el=$('gsGo'), c=$('gsClr');
+    if(el){
+      el.disabled=!n;
+      el.textContent = n ? ('▶️ ابدأ اللعب — '+arCount(n,C_AYAH)) : 'اختر سورةً أوّلاً';
+    }
+    if(c) c.hidden=!n;
+    var lb=$('gsSum'); if(lb) lb.textContent = n ? selLabel(sel) : 'لم تختر شيئاً بعد';
+  };
+  /* الفهرسُ يُعاد رسمُه ولا يقفز: موضعُ الصفحة يُردّ كما كان تحت إصبعه */
+  var draw=function(){
+    var y=window.scrollY||0;
+    $('gsList').innerHTML=rowsHTML();
+    foot();
+    try{ window.scrollTo(0,y); }catch(e){}
+  };
   B.innerHTML='<div class="gmsrch">'+g.ic+' '+g.n+'</div>'+
-    '<p class="gmnote">📖 اختر السورة — وعلامةُ ✓ لما حفظتَ منها</p>'+
-    '<div class="gmsuras" id="gsList">'+h+'</div>';
+    '<p class="gmnote">📖 اختر سورةً أو أكثر — وتُملأ آياتُها كلُّها، ولك أن تضيّق المدى</p>'+
+    '<div class="gmsuras" id="gsList">'+rowsHTML()+'</div>'+
+    '<div class="gmgo">'+
+      '<div class="gmsum" id="gsSum"></div>'+
+      '<button type="button" class="btn primary" id="gsGo"></button>'+
+      '<button type="button" class="btn ghost mini gmclr" id="gsClr">🗑️ امسح التحديد</button>'+
+    '</div>';
+  /* اللمسةُ على السورة تضمّها أو تُخرجها، ولا تبدأ اللعبَ من تحت يده */
   $('gsList').onclick=function(e){
     var b=e.target.closest && e.target.closest('[data-sn]'); if(!b) return;
-    var n=parseInt(b.getAttribute('data-sn'),10);
-    st.src='sura'; st.sura=n; saveDB(); g.open(n);
+    var n=parseInt(b.getAttribute('data-sn'),10), s=surahBy(n); if(!s) return;
+    if(sel[n]) delete sel[n]; else sel[n]=[1, s.ayat.length];
+    st.sura=n; saveDB(); draw();
   };
-  var here=B.querySelector('.mfprow.here');
-  if(here) setTimeout(function(){ try{ here.scrollIntoView({block:'center'}); }catch(e){} }, 0);
+  /* طرفا المدى: يُقوَّمان في حدود السورة، والمعكوسُ يُردّ إلى وجهه عند الخروج */
+  $('gsList').addEventListener('change', function(e){
+    var el=e.target; if(!el || el.tagName!=='INPUT') return;
+    var f=el.getAttribute('data-rf'), t=el.getAttribute('data-rt');
+    var n=parseInt(f||t,10), s=surahBy(n); if(!s || !sel[n]) return;
+    var r=sel[n].slice();
+    if(f) r[0]=parseInt(el.value,10)||1; else r[1]=parseInt(el.value,10)||s.ayat.length;
+    if(r[1]<r[0]){ var z=r[0]; r[0]=r[1]; r[1]=z; }
+    sel[n]=selRange(s,r); saveDB(); draw();
+  });
+  $('gsGo').onclick=function(){
+    if(!selCount(sel)) return;
+    st.src='sura'; saveDB(); g.open({ sel:sel });
+  };
+  $('gsClr').onclick=function(){
+    Object.keys(sel).forEach(function(k){ delete sel[k]; });
+    saveDB(); draw();
+  };
+  foot();
+  var on1=B.querySelector('.gmsrow.on');
+  if(on1) setTimeout(function(){ try{ on1.scrollIntoView({block:'center'}); }catch(e){} }, 0);
   else window.scrollTo(0,0);
 }
 function runOpen(src){
