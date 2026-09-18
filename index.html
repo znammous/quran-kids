@@ -5155,13 +5155,10 @@ function gftRedeem(raw){
   if(gftGate().n>=GFT_TRIES)
     return { ok:false, msg:'جرّبتَ خمسة أكواد خاطئة اليوم — عُد غداً 💚' };
   if(gftUsed()[s]) return { ok:false, msg:'هذا الكود مصروفٌ من قبل — لكلٍّ كودُه مرّة واحدة' };
-  /* كودٌ أنشأه هو: كان يُردّ عنه ويُقال «أرسله إليه»، فمن ولّده خطأً أو لم
-     يرسله ذهب ما خُصم منه ولا سبيلَ إلى ردّه. فصار له أن يصرفه لنفسه:
-     يعود إليه ما خُصم، ويُبطَل الكودُ فلا يُصرف بعدُ — وهو إلغاءُ الهديّة */
-  var mine=!!gftMinted()[s];
-  /* ولا يرتجع ما صُرف: لو صرفه أخوه في هذا الجهاز ثمّ ارتجعه هو، نالاه معاً */
-  if(mine && gftSpent(s))
-    return { ok:false, msg:'صُرف هذا الكود فعلاً — فلا يُرتجع 🤍' };
+  /* كودٌ أنشأه هو: لا يصرفه لنفسه. جُرّب أن يُؤذن له فيه ارتجاعاً لما خُصم
+     منه، فانفتح بابُ الخلق من عدم: يولّده فيُخصَم، ثمّ يرتجعه فيعود إليه،
+     ثمّ يرسل الكودَ نفسَه إلى أخيه فيصرفه — فتُوجَد الجواهرُ مرّتين. */
+  if(gftMinted()[s]) return { ok:false, msg:'هذا كودٌ أنشأتَه أنت لأخيك — أرسله إليه 🤍' };
   var promo=gftPromoValue(s);
   var d = promo ? { type:3, val:promo, id:0 } : gftDec(s);
   if(!d){ gftMiss(); return { ok:false, msg:'لم أعرف هذا الكود — راجع أرقامه' }; }
@@ -5171,15 +5168,8 @@ function gftRedeem(raw){
   if(d.type===0 || d.type===3) addGems(d.val);
   else if(d.type===1){ var m=MATS[Math.floor(d.val/4096)]; addMat(m.k, d.val%4096); }
   else if(d.type===2){ var it=gftItemByHash(d.val); if(!p.owned) p.owned={}; p.owned[it.k]=true; }
-  gftUsed()[s]=1;
-  if(mine) gftLogVoid(s);              /* كودُه هو: يُوسَم في سجلّه أنّه أُبطل */
-  saveDB();
-  return { ok:true, txt:txt, promo:!!promo, mine:mine };
-}
-/* وسمُ الكود في سجلّ صاحبه بأنّه ارتُجع، فيراه مشطوباً ولا يبحث عنه */
-function gftLogVoid(code){
-  var L=gftLog(), i;
-  for(i=0;i<L.length;i++) if(L[i].c===code){ L[i].v=todayNum(); return; }
+  gftUsed()[s]=1; saveDB();
+  return { ok:true, txt:txt, promo:!!promo };
 }
 /* ===== التوليد: يُخصم من المُهدي أوّلاً ===== */
 function gftMake(type, val){
@@ -5314,11 +5304,16 @@ function gftPanelHTML(){
       '<div id="gftForm">'+gftFormHTML()+'</div>'+
       '<div class="gftrow"><label>عبارة الإهداء (اختياريّة)</label>'+
         '<textarea id="gftNote" rows="2" maxlength="200" placeholder="اكتب ما تحبّ أن يقرأه أخوك…">'+esc(GFT_NOTE)+'</textarea></div>'+
-      '<button class="btn green big" id="gftGo">🎁 ولّد كود الهديّة</button>'+
+      /* وُلِّد كودُه: يُقفل الزرُّ فلا تقع ضغطةٌ ثانيةٌ تخصم منه مرّةً أخرى وهو
+         يحسبها الأولى. ومن أراد كوداً آخر طلبه صراحةً بالزرّ تحته */
+      '<button class="btn green big" id="gftGo"'+(GFT_LAST?' disabled':'')+'>'+
+        (GFT_LAST ? '✅ وُلِّد كودُك — انسخْه أدناه' : '🎁 ولّد كود الهديّة')+'</button>'+
       '<div id="gftOut"'+(GFT_LAST?'':' hidden')+'>'+
         '<div class="gftcode" id="gftCode">'+(GFT_LAST?esc(GFT_LAST.code):'')+'</div>'+
         '<div class="gfttxt" id="gftText">'+(GFT_LAST?esc(GFT_CARD):'')+'</div>'+
         '<button class="btn blue" id="gftCopy" style="width:100%">📋 انسخ الرسالة</button>'+
+        '<button class="btn ghost mini" id="gftMore" style="width:100%;margin-top:8px">'+
+          '🎁 ولّد كوداً آخر</button>'+
       '</div>'+
     '</div>'+
     gftLogHTML();
@@ -5329,18 +5324,12 @@ function gftLogHTML(){
   var L=gftLog();
   if(!L.length) return '';
   var body=L.map(function(r,i){
-    var back=!!r.v, sp=(!back && gftSpent(r.c));
-    var st = back ? ' • ↩️ ارتجعتَها' : (sp ? ' • ✅ صُرف في هذا الجهاز' : '');
-    return '<div class="gftlr'+((sp||back)?' sp':'')+'">'+
+    var sp=gftSpent(r.c);
+    return '<div class="gftlr'+(sp?' sp':'')+'">'+
         '<span class="lc">'+esc(r.c)+'</span>'+
-        '<span class="lt"><b>'+esc(r.t)+'</b><i>'+gftLogWhen(r.d)+st+'</i></span>'+
-        (back ? '' :
-          '<button type="button" class="btn ghost mini" data-lgc="'+i+'" style="margin:0;padding:7px 9px" '+
-            'aria-label="انسخ الرسالة">📋</button>'+
-          /* ولا يُعرض الارتجاعُ على كودٍ صُرف: لا يُرتجع ما نالَه صاحبُه */
-          (sp ? '' :
-          '<button type="button" class="btn ghost mini" data-lgv="'+i+'" style="margin:0;padding:7px 9px" '+
-            'aria-label="ارتجع الهديّة وأبطِلِ الكود">↩️</button>'))+
+        '<span class="lt"><b>'+esc(r.t)+'</b><i>'+gftLogWhen(r.d)+(sp?' • ✅ صُرف في هذا الجهاز':'')+'</i></span>'+
+        '<button type="button" class="btn ghost mini" data-lgc="'+i+'" style="margin:0;padding:7px 10px" '+
+          'aria-label="انسخ الرسالة">📋</button>'+
       '</div>';
   }).join('');
   return '<div style="margin-top:14px">'+
@@ -5361,11 +5350,9 @@ function gftBindIn(){
     var r=gftRedeem(raw);
     if(!r.ok){ gftMsg(r.msg,true); try{ sBad(); }catch(e){} return; }
     $('gftIn').value='';
-    /* كودُه هو: ارتجاعٌ لا هديّة — فلا يُقال له «وصلتك هديّة» ممّا أهداه */
-    celeShow({ ic: r.mine?'↩️':'🎁', kick:'تَهَادَوْا تَحَابُّوا',
-      title: r.mine ? 'ارتجعتَ هديّتك' : (r.promo ? 'منحةٌ لك!' : 'وصلتك هديّة!'),
-      sub: r.mine ? 'رجعتْ إليك، وأُبطل الكودُ فلا يصرفه أحدٌ بعدُ'
-         : r.promo ? 'بارك الله فيك وأعانك على حفظ كتابه'
+    celeShow({ ic:'🎁', kick:'تَهَادَوْا تَحَابُّوا',
+      title: r.promo ? 'منحةٌ لك!' : 'وصلتك هديّة!',
+      sub: r.promo ? 'بارك الله فيك وأعانك على حفظ كتابه'
                    : 'من أخٍ لك في الله — فادعُ له بظهر الغيب',
       rew: r.txt });
     renderShop();
@@ -5374,6 +5361,7 @@ function gftBindIn(){
 }
 function gftBindOut(){
   $('gftGo').onclick=function(){
+    if(GFT_LAST) return;                 /* كودُه مُولَّدٌ أمامه: لا يُخصم مرّتين */
     var type=GFT_T, val=0;
     if(type===0) val=parseInt($('gftN').value,10)||0;
     else if(type===1) val=(parseInt($('gftM').value,10)||0)*4096+(parseInt($('gftN').value,10)||0);
@@ -5389,6 +5377,10 @@ function gftBindOut(){
     renderShop();                        /* الكودُ ورصيدُه وسجلُّه تُعرض معاً */
   };
   $('gftCopy').onclick=function(){ gftCopy(GFT_CARD); };
+  /* كودٌ آخر: يُفتح البابُ من جديد، وعبارتُه تبقى له فلا يكتبها ثانية */
+  if($('gftMore')) $('gftMore').onclick=function(){
+    GFT_LAST=null; renderShop(); window.scrollTo(0,0);
+  };
 }
 /* السجلُّ يُربط حيث عُرض — في بابِ الاختيار وفي بابِ الإهداء سواء */
 function gftLogBind(){
@@ -5397,21 +5389,6 @@ function gftLogBind(){
   for(z=0;z<ls.length;z++) ls[z].onclick=function(){
     var r2=gftLog()[parseInt(this.getAttribute('data-lgc'),10)];
     if(r2) gftCopy(gftCard(r2.c, r2.t, r2.n));
-  };
-  /* الارتجاع: يعود إليه ما خُصم منه، ويُبطَل الكودُ فلا يُصرف بعدُ. ولا يقع
-     إلّا بإذنه، فربّما أرسله وهو لا يدري أصُرف أم لا */
-  var vs=$('shopBody').querySelectorAll('[data-lgv]'), y;
-  for(y=0;y<vs.length;y++) vs[y].onclick=function(){
-    var ix=parseInt(this.getAttribute('data-lgv'),10), r3=gftLog()[ix];
-    if(!r3) return;
-    uiAsk('تُرجع إليك '+r3.t+'، ويُبطَل الكود '+r3.c+' فلا يصرفه أحدٌ بعدُ.\nأتفعل؟',
-      function(ok){
-        if(!ok) return;
-        var res=gftRedeem(r3.c);
-        if(!res.ok){ try{ navToast(res.msg); }catch(e){} return; }
-        try{ navToast('↩️ ارتجعتَ '+res.txt+' — وأُبطل الكود'); }catch(e){}
-        renderShop();
-      }, '↩️');
   };
   var lh=document.querySelector('[data-fold="gftLog"]');
   if(lh && lh.parentNode) foldBind(lh.parentNode);
