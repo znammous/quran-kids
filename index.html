@@ -5171,6 +5171,32 @@ function gftRedeem(raw){
   gftUsed()[s]=1; saveDB();
   return { ok:true, txt:txt, promo:!!promo };
 }
+/* ===== ثمنُ الهديّة قبل أن تُولَّد =====
+   يُسأل عنه الطفلُ قبل الخصم فيعرف ما يبذل وما يبقى له — ولا يمسّ رصيدَه
+   هنا شيء، إنّما يخصم «gftMake» وحدَه. وهو يُغني عن الرسائل المتأخّرة:
+   كان يضغط فيُخصم منه أو يُقال له «رصيدك لا يكفي» بعد أن ضغط. */
+function gftPrice(type, val){
+  var p=curP();
+  if(type===0){
+    if(val<1) return { ok:false, msg:'اكتب عدد الجواهر' };
+    if((p.gems||0)<val) return { ok:false, msg:'رصيدك '+arNum(p.gems||0)+' جوهرة فقط' };
+    var g='💎 '+arNum(val)+' جوهرة';
+    return { ok:true, what:g, cost:g, left:'💎 '+arNum((p.gems||0)-val)+' جوهرة' };
+  }
+  if(type===1){
+    var mi=Math.floor(val/4096), n=val%4096, m=MATS[mi];
+    if(!m || n<1) return { ok:false, msg:'اختر المادّة والعدد' };
+    var have=mats()[m.k]||0;
+    if(have<n) return { ok:false, msg:'عندك '+arNum(have)+' '+m.n+' فقط' };
+    var t=m.ic+' '+arNum(n)+' '+m.n;
+    return { ok:true, what:t, cost:t, left:m.ic+' '+arNum(have-n)+' '+m.n };
+  }
+  var it=gftItemByHash(val);
+  if(!it) return { ok:false, msg:'اختر الغرض' };
+  if((p.gems||0)<it.p) return { ok:false, msg:'ثمنه '+arNum(it.p)+' جوهرة، ورصيدك '+arNum(p.gems||0) };
+  return { ok:true, what:it.ic+' '+it.n, cost:'💎 '+arNum(it.p)+' جوهرة',
+           left:'💎 '+arNum((p.gems||0)-it.p)+' جوهرة' };
+}
 /* ===== التوليد: يُخصم من المُهدي أوّلاً ===== */
 function gftMake(type, val){
   var p=curP(), i;
@@ -5367,14 +5393,24 @@ function gftBindOut(){
     else if(type===1) val=(parseInt($('gftM').value,10)||0)*4096+(parseInt($('gftN').value,10)||0);
     else val=gftItemHash($('gftI').value);
     var note=($('gftNote').value||'').trim();
-    var r=gftMake(type,val);
-    if(!r.ok){ try{ navToast(r.msg); }catch(e){} return; }
-    GFT_NOTE=note;
-    GFT_CARD=gftCard(r.code, r.txt, note);
-    GFT_LAST={ code:r.code, txt:r.txt };
-    gftLogAdd(r.code, r.txt, note);      /* يُقيَّد في سجلّه، فلا يضيع بنسيانٍ */
-    try{ sWin(); }catch(e){}
-    renderShop();                        /* الكودُ ورصيدُه وسجلُّه تُعرض معاً */
+    /* يُنبَّه قبل الخصم: البذلُ يُعلَّم لا يُخدَع فيه — يرى ما يُهدي وما
+       يُخصم منه وما يبقى له، ثمّ يقرّ. ولا رجعةَ بعدها: الكودُ لأخيه وحدَه */
+    var pr=gftPrice(type,val);
+    if(!pr.ok){ try{ navToast(pr.msg); }catch(e){} return; }
+    uiAsk('تُهدي أخاك '+pr.what+' 🤍\n'+
+          'ويُخصم من رصيدك الآن '+pr.cost+'، فيبقى لك '+pr.left+'.\n'+
+          'والكودُ لأخيك وحدَه، لا يعود إليك.\nأتولّده؟',
+      function(ok){
+        if(!ok) return;
+        var r=gftMake(type,val);
+        if(!r.ok){ try{ navToast(r.msg); }catch(e){} return; }
+        GFT_NOTE=note;
+        GFT_CARD=gftCard(r.code, r.txt, note);
+        GFT_LAST={ code:r.code, txt:r.txt };
+        gftLogAdd(r.code, r.txt, note);      /* يُقيَّد في سجلّه، فلا يضيع بنسيانٍ */
+        try{ sWin(); }catch(e){}
+        renderShop();                        /* الكودُ ورصيدُه وسجلُّه تُعرض معاً */
+      }, '🎁');
   };
   $('gftCopy').onclick=function(){ gftCopy(GFT_CARD); };
   /* كودٌ آخر: يُفتح البابُ من جديد، وعبارتُه تبقى له فلا يكتبها ثانية */
