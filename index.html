@@ -5110,8 +5110,34 @@ function gftEnc(type,val,id){
   return ('000'+n).slice(-4);
 }
 function gftNorm(str){ return String(str||'').replace(/[^0-9]/g,''); }
+/* ===== كودُ الجواهر: ستّةُ أرقامٍ تحمل أيَّ عدد =====
+   جدولُ الأربعة أرقامٍ ضيّقٌ — عشرةُ آلافِ موضعٍ لا غير — فلم يحمل من الجواهر
+   إلّا سلّماً معلوماً: عشرةً وخمسين ومئة… والطفلُ يريد أن يُهدي ما شاء.
+   فصار كودُ الجواهر ستّةَ أرقام: أربعةٌ للعدد (١–٩٩٩٩) ورقمان للتحقّق
+   مشتقّان منه، ثمّ تُخلط المواضع بضربٍ دوريٍّ فلا تتجاور الأكوادُ الصحيحة.
+   واحتمالُ أن يصادف مخترعٌ كوداً صحيحاً واحدٌ من مئة — أضيقُ ممّا في أكواد
+   الأربعة، ومع سقف المحاولات اليوميّ يُغلق البابُ.
+   وأكوادُ الأربعة تبقى تُصرف كما هي: ما وُلِّد قبل اليوم لا يبطل. */
+var GFT6_M=1000000, GFT6_A=483721, GFT6_AI=66681, GFT6_C=51907, GFT6_MAX=9999;
+function gft6Chk(v){ return gftFnv('gem|'+v, 0x9E3779B1) % 100; }
+function gft6Enc(v){
+  if(!(v>=1 && v<=GFT6_MAX)) return null;
+  var raw=v*100+gft6Chk(v);
+  return ('00000'+((raw*GFT6_A+GFT6_C)%GFT6_M)).slice(-6);
+}
+function gft6Dec(s){
+  if(s.length!==6) return null;
+  var n=parseInt(s,10);
+  if(!(n>=0 && n<GFT6_M)) return null;
+  var raw=(((n-GFT6_C)%GFT6_M+GFT6_M)*GFT6_AI)%GFT6_M;
+  var v=Math.floor(raw/100), c=raw%100;
+  if(!(v>=1 && v<=GFT6_MAX) || c!==gft6Chk(v)) return null;
+  return { type:0, val:v, id:0 };
+}
 function gftDec(str){
-  var s=gftNorm(str); if(s.length!==4) return null;
+  var s=gftNorm(str);
+  if(s.length===6) return gft6Dec(s);        /* كودُ جواهرَ بعدَدٍ حرّ */
+  if(s.length!==4) return null;
   var n=parseInt(s,10);
   var raw=(((n-7919)%GFT_M+GFT_M)*GFT_AI)%GFT_M;
   var c=gftCat(); if(raw>=c.span) return null;
@@ -5178,7 +5204,8 @@ function gftRedeem(raw){
 function gftPrice(type, val){
   var p=curP();
   if(type===0){
-    if(val<1) return { ok:false, msg:'اكتب عدد الجواهر' };
+    if(!(val>=1)) return { ok:false, msg:'اكتب عدد الجواهر' };
+    if(val>GFT6_MAX) return { ok:false, msg:'أكثرُ ما يحمله الكود '+arNum(GFT6_MAX)+' جوهرة' };
     if((p.gems||0)<val) return { ok:false, msg:'رصيدك '+arNum(p.gems||0)+' جوهرة فقط' };
     var g='💎 '+arNum(val)+' جوهرة';
     return { ok:true, what:g, cost:g, left:'💎 '+arNum((p.gems||0)-val)+' جوهرة' };
@@ -5201,7 +5228,8 @@ function gftPrice(type, val){
 function gftMake(type, val){
   var p=curP(), i;
   if(type===0){
-    if(val<1) return { ok:false, msg:'اكتب عدد الجواهر' };
+    if(!(val>=1)) return { ok:false, msg:'اكتب عدد الجواهر' };
+    if(val>GFT6_MAX) return { ok:false, msg:'أكثرُ ما يحمله الكود '+arNum(GFT6_MAX)+' جوهرة' };
     if((p.gems||0)<val) return { ok:false, msg:'رصيدك '+arNum(p.gems||0)+' جوهرة فقط' };
     p.gems-=val;
   } else if(type===1){
@@ -5215,9 +5243,14 @@ function gftMake(type, val){
     if((p.gems||0)<it.p) return { ok:false, msg:'ثمنه '+arNum(it.p)+' جوهرة، ورصيدك '+arNum(p.gems||0) };
     p.gems-=it.p;                                  /* تشتريه له، ولا تفقد نسختك */
   } else return { ok:false, msg:'صنفٌ غير معروف' };
-  var row=gftFind(type,val);
-  if(!row) return { ok:false, msg:'هذه الهديّة لا يحملها الكود — اختر غيرها' };
-  var code=gftEnc(type, val, Math.floor(Math.random()*row.ids));
+  /* الجواهرُ لها كودُها الستّاسيّ يحمل أيَّ عدد، وما سواها من الجدول */
+  var code;
+  if(type===0) code=gft6Enc(val);
+  else{
+    var row=gftFind(type,val);
+    if(!row) return { ok:false, msg:'هذه الهديّة لا يحملها الكود — اختر غيرها' };
+    code=gftEnc(type, val, Math.floor(Math.random()*row.ids));
+  }
   if(!code) return { ok:false, msg:'تعذّر توليد الكود' };
   gftMinted()[gftNorm(code)]=1; saveDB();
   return { ok:true, code:code, txt:gftDesc({type:type,val:val}) };
@@ -5271,11 +5304,14 @@ var GFT_NOTE='';                                   /* وعبارتُه، فلا 
 function gftFormHTML(){
   var p=curP(), i, o;
   if(GFT_T===0){
-    o='';
-    for(i=0;i<GFT_GEMS.length;i++)
-      o+='<option value="'+GFT_GEMS[i]+'"'+(GFT_GEMS[i]===100?' selected':'')+'>💎 '+arNum(GFT_GEMS[i])+' جوهرة</option>';
-    return '<div class="gftrow"><label>عدد الجواهر</label><select id="gftN">'+o+'</select></div>'+
-      '<div class="note">رصيدك 💎 '+arNum(p.gems||0)+' جوهرة — ويُخصم منك ما تُهديه.</div>';
+    /* كان سلّماً من ستّة أعدادٍ في قائمة، فصار يكتب ما يشاء: كودُ الجواهر
+       ستّاسيٌّ يحمل أيَّ عددٍ إلى تسعةِ آلافٍ وتسعِ مئةٍ وتسعةٍ وتسعين */
+    var mx=Math.min(GFT6_MAX, p.gems||0);
+    return '<div class="gftrow"><label>عدد الجواهر</label>'+
+      '<input type="number" id="gftN" min="1" max="'+GFT6_MAX+'" inputmode="numeric" '+
+        'placeholder="اكتب العدد" value="'+(mx>=10?10:(mx||1))+'"></div>'+
+      '<div class="note">رصيدك 💎 '+arNum(p.gems||0)+' جوهرة — ويُخصم منك ما تُهديه.'+
+      (mx>=1 ? (' وأكثرُ ما تُهديه الآن 💎 '+arNum(mx)+'.') : ' ولا جواهرَ عندك بعدُ.')+'</div>';
   }
   if(GFT_T===1){
     o='';
