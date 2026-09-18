@@ -9870,18 +9870,7 @@ function renderRevPlanBody(){
   $('revPlan').innerHTML=
     contHTML+
     '<div id="revFree"'+(panelOpen?'':' hidden')+'>'+
-    /* زرُّ المصحف أوّلاً: كان تحت الصناديق فيُظنّ «موافق» فيُنقر بعد
-       الاختيار، ثمّ يُحدَّد النطاقُ من المصحف من جديد */
-    '<div class="revbox">'+
-      '<button type="button" class="btn blue mini" id="revPickR" style="width:100%;margin:0 0 10px">'+
-        '📖 افتح المصحف وحدّد النطاق</button>'+
-      '<div class="rl rlbig">حدّد نقطة البداية</div>'+
-      '<div class="revrow"><select id="revFS">'+revSurahOpts(REV.fromS)+'</select>'+
-      '<select id="revFA">'+revAyahOpts(REV.fromS,REV.fromA)+'</select></div></div>'+
-    '<div class="revbox">'+
-      '<div class="rl rlbig">حدّد نقطة النهاية</div>'+
-      '<div class="revrow"><select id="revTS">'+revSurahOpts(REV.toS)+'</select>'+
-      '<select id="revTA">'+revAyahOpts(REV.toS,REV.toA)+'</select></div></div>'+
+    revScopeDoorsHTML()+
     '<div class="revbox"><div class="rl">ومن أيّ الطرفين تمشي؟</div><div class="chips">'+
       '<button type="button" class="chipsel'+(revDir('free')<0?' sel':'')+'" data-rd="-1">🌙 من جهة الناس</button>'+
       '<button type="button" class="chipsel'+(revDir('free')>0?' sel':'')+'" data-rd="1">📖 من جهة البقرة</button>'+
@@ -9892,6 +9881,7 @@ function renderRevPlanBody(){
     '<button type="button" class="btn green big" id="btnFreeFix" '+
       'style="margin:2px 0 0">✅ ثبّت هذا المسار</button></div>';
 
+  revScopeDoorsWire();
   /* ضبطُ نطاقٍ بيده خروجٌ من الورد إلى المسار الحرّ، بإرادته لا سهواً */
   /* يمسّ عدّادَ المسار الحرّ وحده — والوردُ باقٍ بعدّاده وحجمه */
   var reset=function(){ REV.wird=false; REV.mode='free'; REV.done=0; REV.weak={}; revSave(); renderRevPlan(); };
@@ -9944,6 +9934,90 @@ function renderRevPlanBody(){
     beginRevPath();
   };
   renderRevSum();
+}
+/* ===== أبوابُ تحديد نطاق المراجعة الحرّة =====
+   كانت الشاشةُ تنشر قائمتَي سورةٍ وآيةٍ لطرفٍ، ومثلَهما للطرف الآخر، وفوقهما
+   زرُّ المصحف — ولا بابَ لمن يعدّ نطاقَه بالصفحات أو بالأجزاء.
+   فصارت على صورة أبواب تسجيل المحفوظ: سؤالٌ واحدٌ ثمّ أربعةُ أبوابٍ مطويّةٍ
+   بتنسيقٍ واحد، لا يُفتح بابٌ إلّا انطوى ما سواه. والبابُ المفتوحُ يُذكر،
+   فلا ينطبق تحت يده كلّما بدّل سورةً وأُعيد رسمُ اللوحة. */
+var REV_DOOR='';
+function revDoorHTML(id,ic,t,sub,body){
+  return foldHTML(id,'<span class="prdoor"><b>'+ic+' '+t+'</b><small>'+sub+'</small></span>',
+                  REV_DOOR===id, body);
+}
+function juzOfGi(gi){
+  var j=1,k;
+  for(k=1;k<=30;k++) if(gAt(JUZ_AT[k-1][0],JUZ_AT[k-1][1])<=gi) j=k;
+  return j;
+}
+function revJuzOpts(sel){
+  var o='', j;
+  for(j=1;j<=30;j++) o+='<option value="'+j+'"'+(j===sel?' selected':'')+'>الجزء '+arNum(j)+'</option>';
+  return o;
+}
+/* طرفا النطاق بالفهرس العامّ: يُقوَّمان ويُحفظان، ويُستأنف العدُّ من أوّله */
+function revSetGi(g0,g1){
+  if(g1<g0){ var t=g0; g0=g1; g1=t; }
+  var A=bqnIdx(g0), B=bqnIdx(g1);
+  REV.fromS=A.s.n; REV.fromA=A.a; REV.toS=B.s.n; REV.toA=B.a;
+  REV.wird=false; REV.mode='free'; REV.done=0; REV.weak={};
+  revSave(); renderRevPlan();
+}
+function revScopeDoorsHTML(){
+  var b=[0,0];
+  try{ b=revBounds(); }catch(e){}
+  var p1=pageOfIdx(b[0]), p2=pageOfIdx(b[1]);
+  var h='<div class="rl rlbig" style="margin:2px 0 0">كيف تحدّد نطاقك؟</div>'+
+        '<div class="note" style="margin:4px 0 0">افتحِ البابَ الذي يناسبك — والنطاقُ واحدٌ يُضبط بأيّها شئت</div>';
+  h+=revDoorHTML('rvDP','📄','بأرقام الصفحات','من صفحةٍ إلى صفحةٍ في المصحف',
+     '<div class="pgrow">'+
+       '<input type="number" id="rvP1" min="1" max="604" inputmode="numeric" placeholder="من صفحة" value="'+p1+'">'+
+       '<input type="number" id="rvP2" min="1" max="604" inputmode="numeric" placeholder="إلى صفحة" value="'+p2+'">'+
+       '<button type="button" class="btn blue" id="rvPGo">✅ اضبط</button>'+
+     '</div>');
+  h+=revDoorHTML('rvDS','📖','بالسور والآيات','من سورةٍ وآيةٍ إلى سورةٍ وآية',
+     '<div class="rl">من</div>'+
+     '<div class="revrow"><select id="revFS">'+revSurahOpts(REV.fromS)+'</select>'+
+     '<select id="revFA">'+revAyahOpts(REV.fromS,REV.fromA)+'</select></div>'+
+     '<div class="rl" style="margin:12px 0 8px">إلى</div>'+
+     '<div class="revrow"><select id="revTS">'+revSurahOpts(REV.toS)+'</select>'+
+     '<select id="revTA">'+revAyahOpts(REV.toS,REV.toA)+'</select></div>');
+  h+=revDoorHTML('rvDJ','🧩','بالأجزاء','من جزءٍ إلى جزء',
+     '<div class="revrow"><select id="rvJ1">'+revJuzOpts(juzOfGi(b[0]))+'</select>'+
+     '<select id="rvJ2">'+revJuzOpts(juzOfGi(b[1]))+'</select></div>'+
+     '<button type="button" class="btn blue" id="rvJGo" style="width:100%;margin:10px 0 0">✅ اضبط</button>');
+  h+=revDoorHTML('rvDM','✌️','بلمستين من المصحف','يُفتح المصحفُ فتلمسُ أوّلَ نطاقك وآخرَه',
+     '<button type="button" class="btn blue" id="revPickR" style="width:100%;margin:0">'+
+       '📖 افتحِ المصحفَ الآن</button>');
+  return h;
+}
+function revScopeDoorsWire(){
+  var D=['rvDP','rvDS','rvDJ','rvDM'];
+  D.forEach(function(d){
+    var hd=document.querySelector('[data-fold="'+d+'"]');
+    if(!hd) return;
+    hd.onclick=function(){
+      var open=!foldIsOpen(d), x;
+      for(x=0;x<D.length;x++) foldSet(D[x], D[x]===d && open);
+      REV_DOOR = open ? d : '';
+      if(open) try{ hd.scrollIntoView({block:'nearest'}); }catch(e){}
+    };
+  });
+  if($('rvPGo')) $('rvPGo').onclick=function(){
+    var a=numOf($('rvP1').value), b2=numOf($('rvP2').value), t;
+    if(!(a>=1&&a<=604)) return;
+    if(!(b2>=1&&b2<=604)) b2=a;                 /* طرفٌ واحدٌ يكفي: وجهٌ واحد */
+    if(b2<a){ t=a; a=b2; b2=t; }
+    revSetGi(pageBounds(a)[0], pageBounds(b2)[1]);
+    try{ navToast('📄 من الوجه '+arNum(a)+' إلى الوجه '+arNum(b2)); }catch(e){}
+  };
+  if($('rvJGo')) $('rvJGo').onclick=function(){
+    var a=parseInt($('rvJ1').value,10)||1, b2=parseInt($('rvJ2').value,10)||1, t;
+    if(b2<a){ t=a; a=b2; b2=t; }
+    revSetGi(juzRange(a)[0], juzRange(b2)[1]);
+    try{ navToast('🧩 من الجزء '+arNum(a)+' إلى الجزء '+arNum(b2)); }catch(e){}
+  };
 }
 function renderRevSum(){
   var all=revAllPages('free'), ss=revSessions('free');
