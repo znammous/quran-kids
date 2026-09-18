@@ -12374,13 +12374,16 @@ function examBody(k){
         ' وما لا تحتمله آيةٌ يُبدَّل بما تحتمله.</div>';
   }
   else if(k==='count'){
-    h='<div class="revbox"><div class="rl">كم سؤالاً في الاختبار كلّه؟</div><div class="chips">'+
+    /* الملخّصُ أعلى والرقاقاتُ أسفل: الأعدادُ هي التي تُنقر — وتُنقر مراراً
+       ليرى أثرَها في حصيلته — فتكون قريبةً من الإبهام تحت، والحصيلةُ فوقها
+       في مرمى البصر تتبدّل مع كلّ نقرة */
+    h=examSummary()+
+      '<div class="revbox" style="margin-top:14px"><div class="rl">كم سؤالاً في الاختبار كلّه؟</div>'+
+      '<div class="chips">'+
       EX_COUNTS.map(function(c){
         return '<button type="button" class="chipsel'+(EX.count===c?' sel':'')+'" data-exc="'+c+'">'+arNum(c)+'</button>';
-      }).join('')+'</div></div>'+
-      '<div class="note" style="margin-bottom:10px">العشرةُ تكفي لجسّ النبض، والخمسون ميزانٌ لا يُجامل.</div>'+
-      /* وحصيلتُه تحتها، تتبدّل مع كلّ عددٍ يختاره */
-      examSummary();
+      }).join('')+'</div>'+
+      '<div class="note" style="margin:8px 0 0">العشرةُ تكفي لجسّ النبض، والخمسون ميزانٌ لا يُجامل.</div></div>';
   }
   else {
     h=examSummary();
