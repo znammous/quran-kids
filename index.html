@@ -3129,7 +3129,8 @@ function repBar(pct){
 function reportHTML(){
   var p=curP(), h='', nm=(profile.name||'').trim()||'صديقي';
   var mem=0; try{ mem=memTotal(); }catch(e){}
-  var pages=Math.round(mem/QURAN_AYAT*604);
+  /* أوجهُ محفوظه تُعدّ عدّاً كذلك، لا بنسبةٍ من مجموع المصحف */
+  var pages=0; try{ pages=memPages().length; }catch(e){ pages=0; }
   h='<div class="rep"><div class="orn">✦ ✦ ✦</div>'+
     '<h2>🧭 تقريرُ خطّتي</h2><div class="who">'+esc(nm)+'</div>';
   /* ١) الخطّة وموضعُه منها */
@@ -10679,7 +10680,14 @@ function priorPagePieces(){
   }
   return out;
 }
-function priorCount(){
+/* ===== ما أشّره من حفظه السابق =====
+   «priorSeen» تجمع فهارسَ آياته العامّة، فلا تُعدّ آيةٌ مرّتين وإن تداخل
+   نطاقان. ومنها يُعرف عددُ آياته وعددُ أوجهه.
+   والأوجهُ تُعدّ عدّاً من مواضع آياتها، ولا تُقدَّر بنسبةٍ من مجموع المصحف:
+   الآياتُ لا تتوزّع على الأوجه سواءً — أوّلُ المصحف آياتُه طوالٌ فيقلّ
+   عددُها في الوجه، وآخرُه قصارٌ فيكثر. فكان يُقال لمن أشّر الجزءَ الأوّل
+   «نحو ١٤ صفحة» وهو أحدٌ وعشرون وجهاً. */
+function priorSeen(){
   var p=priorSel(), seen={}, j, k, sn;
   for(j in p.priorJ) if(p.priorJ[j]){
     var r=juzRange(parseInt(j,10));
@@ -10698,8 +10706,14 @@ function priorCount(){
   (p.priorR||[]).forEach(function(r){
     for(var g=r[0]; g<=r[1]; g++) seen[g]=1;
   });
-  var t=0; for(k in seen) t++;
-  return t;
+  return seen;
+}
+function priorCount(){ var s2=priorSeen(), t=0, k; for(k in s2) t++; return t; }
+function priorPages(){
+  var s2=priorSeen(), pg={}, k, n=0;
+  for(k in s2){ try{ pg[pageOfIdx(parseInt(k,10))]=1; }catch(e){} }
+  for(k in pg) n++;
+  return n;
 }
 function priorApply(){
   var p=priorSel(), added=0, j, sn;
@@ -10969,7 +10983,7 @@ function priorPanelWire(pfx,after){
   };
   var note=function(){
     var n=priorCount(), el=sel('Note'); if(!el) return;
-    el.textContent = n ? ('محسوبٌ لك '+arNum(n)+' آية — نحو '+arNum(Math.round(n/QURAN_AYAT*604))+' صفحة')
+    el.textContent = n ? ('محسوبٌ لك '+arCount(n,C_AYAH)+' — '+arCount(priorPages(),C_PAGE))
                        : 'لم تسجّل شيئاً بعد — افتحْ أحدَ الأبواب فوقُ وأضِفْ ما تحفظه.';
   };
   var paint=function(){
