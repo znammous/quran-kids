@@ -2887,8 +2887,12 @@ function avatarSVG(){
     (niqab?'':
       '<path d="M50,60 Q52,64 49.2,65" stroke="'+darken(skin.s,0.82)+'" stroke-width="1.5" fill="none" stroke-linecap="round"/>'+
       '<path d="M45,70.5 Q50,75.5 55,70.5" stroke="#c9635f" stroke-width="2.2" fill="none" stroke-linecap="round"/>'+
-      '<ellipse cx="36" cy="66" rx="4.6" ry="2.8" fill="#f39ba0" opacity=".45"/>'+
-      '<ellipse cx="64" cy="66" rx="4.6" ry="2.8" fill="#f39ba0" opacity=".45"/>')+'</svg>';
+      /* حُمرةُ الخدَّين للأنثى وحدَها: كانت على الذكر أيضاً فتبدو دائرتين
+         ورديّتين في وجهه */
+      (gender==='f'
+        ? '<ellipse cx="36" cy="66" rx="4.6" ry="2.8" fill="#f39ba0" opacity=".45"/>'+
+          '<ellipse cx="64" cy="66" rx="4.6" ry="2.8" fill="#f39ba0" opacity=".45"/>'
+        : ''))+'</svg>';
 }
 /* ---------- رسمُ فردٍ من العائلة بصورة الشخصية نفسِها ----------
    نبدّل «look» و«gender» لحظةَ الرسم ثمّ نردُّهما في «finally» فلا يضيعان،
