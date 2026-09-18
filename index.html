@@ -12397,19 +12397,24 @@ var EX_GEM=3;
    البقرة. فصار يُحسب بأوجه نطاقه على سعر المراجعة نفسِه — «noteReview»:
    خمسٌ وعشرون جوهرةً وحديدتان لكلّ وجه، وزجاجتان لكلّ وجهٍ لمن لم يُخطئ.
    ويُضرب في نسبة إتقانه، فمن أصاب نصفَ أسئلته نال نصفَ العطاء.
-   والأوجهُ المعتبَرةُ لا تتجاوز عددَ أسئلته: لا يُمتحَن ستُّ مئةِ وجهٍ
-   بخمسة أسئلة، فلو حُسبت كلُّها لصار فتحُ النطاق على آخره بابَ ربحٍ بلا
-   حفظ. فيُؤخذ الأقلُّ من الاثنين. */
-var EX_PAGE_GEM=25, EX_PAGE_IRON=2, EX_PAGE_GLASS=2;
+   والأوجهُ المعتبَرةُ: أقلُّ الأمرين — أوجهُ نطاقه، وما امتحنه منها فعلاً.
+   وما امتحنه = أسئلتُه ÷ خمسةٍ، فالوجهُ في المراجعة لا يُعدّ مُراجَعاً
+   بسؤالٍ واحدٍ بل بخمسة (REV_PER_DEFAULT)، فكذلك لا يُعدّ ممتحَناً بسؤال.
+   وكان الحدُّ عددَ الأسئلة نفسَه، فمن حدّد عشرةَ أوجهٍ وعشرةَ أسئلةٍ نال
+   مئتين وخمسين جوهرةً بعشر نقرات — وهي أجرُ خمسين سؤالاً في المراجعة.
+   فالعطاءُ الآن محصورٌ بين حدَّين: لا يزيد على قيمة نطاقه مهما أكثر
+   الأسئلة، ولا على عمله مهما وسّع النطاق. والعددُ كسريٌّ لا يُجبَر،
+   فثلاثةُ أسئلةٍ ثلاثةُ أخماسِ وجه. */
+var EX_PAGE_GEM=25, EX_PAGE_IRON=2, EX_PAGE_GLASS=2, EX_Q_PER_PAGE=5;
 function examPagesEff(n){
   var pg=1; try{ pg=examPagesN(); }catch(e){ pg=1; }
-  return Math.max(1, Math.min(Math.max(1, pg||1), Math.max(1, n||1)));
+  return Math.min(Math.max(1, pg||1), Math.max(1, n||1)/EX_Q_PER_PAGE);
 }
 function examPrize(right,tot){
   var pe=examPagesEff(tot), sh=(tot>0 ? right/tot : 1);
-  return { gems:Math.round(EX_PAGE_GEM*pe*sh),
+  return { gems:Math.max(1, Math.round(EX_PAGE_GEM*pe*sh)),
            iron:Math.max(1, Math.round(EX_PAGE_IRON*pe*sh)),
-           glass:(tot>0 && right>=tot) ? EX_PAGE_GLASS*pe : 0 };
+           glass:(tot>0 && right>=tot) ? Math.max(1, Math.round(EX_PAGE_GLASS*pe)) : 0 };
 }
 /* مقدارُ النطاق وحدَه: يُعرض في خطوة النطاق قبل أن يُختار نوعٌ أو عدد */
 function examRangeLine(){
