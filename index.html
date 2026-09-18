@@ -2097,7 +2097,7 @@ body.glow-off .dfpic{animation:none}
 
   <section class="screen" id="scr-games">
     <h1>🎮 الألعاب</h1>
-    <p class="sub">العبْ وراجِعْ — من آياتِ محفوظك أو من سورةٍ تختارها</p>
+    <p class="sub">العبْ وراجِعْ — من مقرَّر يومك أو من محفوظك أو من سورةٍ تختارها<br><small>وكلُّ آيةٍ تُتمّها تعطيك 💎 جواهر، ومن مقرَّر اليوم بالضِّعف</small></p>
     <div class="gmlist" id="gamesBody"></div>
     <!-- مخفيٌّ: الشريطُ السفليّ يُغني عنه، ويبقى ليضغطه زرُّ الرجوع في الجهاز -->
     <button class="btn primary big" id="btnGamesBack" hidden style="margin:0">➡️ رجوع</button>
@@ -4463,7 +4463,7 @@ function renderHUDInto(id){ var e=$(id); if(!e) return; renderHUD(); e.innerHTML
 /* شرح كل عدّاد، يظهر عند الضغط عليه */
 var HUD_TIP={
   streak:['🏮 المواظبة','أيام متتابعة حقّقت فيها هدف اليوم. ويُمنح «يوم راحة» كل سبعة أيام (يُدَّخر منها يومان)، يغطّي كلٌّ منها يوماً فائتاً تلقائياً.'],
-  gems:['💎 الجواهر','تكسبها من كل مرحلة ومقطع ومراجعة، وتنفقها في 💎 متجري و🕌 مسجدي.'],
+  gems:['💎 الجواهر','تكسبها من كل مرحلة ومقطع ومراجعة، ومن 🎮 الألعاب: جوهرتان لكل آية تُتمّها (وأربع إن لعبتَ من مقرَّر اليوم) في حدود أربعين جوهرة يوميّاً. وتنفقها في 💎 متجري و🕌 مسجدي.'],
   stars:['⭐ النجوم','نجمة لكل مرحلة تُنجزها، وخمس نجوم تُتمّ المقطع.'],
   ayat:['📖 الآيات','عدد الآيات التي حفظتها — يبقى محفوظاً مهما غيّرت حجم المقطع.'],
   build:['🏗️ البناء','قطع المسجد الكبير التي بنيتها من ست عشرة. والحديد والزجاج لا يأتيان إلا من المراجعة.']
@@ -13149,6 +13149,7 @@ function runReset(){
   RUN.hearts=RUN_HEARTS; RUN.score=0; RUN.done=0; RUN.words=0; RUN.items=[]; RUN.parts=[];
   RUN.speed=RUN_V_MIN*runK(); RUN.jy=0; RUN.vy=0; RUN.buf=0; RUN.inv=0; RUN.shake=0; RUN.rest=0;
   RUN.t=0; RUN.off=0; RUN.toast=''; RUN.toastT=0; RUN.flashT=0; RUN.lastKind=''; RUN.last=null;
+  RUN.gems=0; RUN.flash='';
   runPickAyah(); RUN.gap=RUN.speed*1.6;
 }
 /* ===== مصدرُ الآيات في الألعاب =====
@@ -13158,6 +13159,28 @@ function gameStats(g){
   var p=curP(); if(!p.games) p.games={};
   if(!p.games[g]) p.games[g]={ best:0, plays:0, ayat:0 };
   return p.games[g];
+}
+/* ===== جواهرُ الألعاب =====
+   كانت «رفّ الآيات» وحدَها تُعطي جوهرتين لكلّ آيةٍ تُتمّها، والعدّاءُ والعصفورُ
+   يكتفيان بنقاطٍ تذهب بذهاب الجولة. فصارت الآيةُ التامّة في الألعاب الثلاث
+   جواهرَ في جيبه، ومن لعب بمقرَّر يومه فله الضِّعف.
+   وللّعب سقفٌ يوميّ: يُحفَظ في صندوق اليوم فيُمحى مع فجره. وبه يبقى المتجرُ
+   والمسجدُ ثمرةَ حفظٍ ومراجعةٍ، لا ثمرةَ جولاتٍ تُعاد بلا عدد. */
+var GAME_GEMS=2, GAME_GEM_CAP=40;
+function gameGemCap(){ return Math.max(0, GAME_GEM_CAP-(todayBox().gg||0)); }
+/* تُعطي ما وسعه السقفُ وتُخبر بما أعطت، فلا يُعلَن للطفل عمّا لم يقع */
+function gameGems(pool){
+  var n=(pool && pool.day) ? GAME_GEMS*2 : GAME_GEMS;
+  var give=Math.min(n, gameGemCap());
+  if(give<=0) return 0;
+  var t=todayBox(); t.gg=(t.gg||0)+give;
+  addGems(give);                       /* وفيها حفظُ القاعدة */
+  return give;
+}
+/* سطرُ «أحسنت» بعد كلّ آية: يذكر الجواهرَ إن نالها، ويُنبّه إن بلغ سقفَ يومه */
+function gameWinLine(g){
+  return g ? ('أحسنت! 🌟 +'+arNum(g)+' 💎')
+           : (gameGemCap()<=0 ? 'أحسنت! 🌟 بلغتَ سقفَ جواهر اللعب اليوم' : 'أحسنت! 🌟');
 }
 /* مستوياتُ الألعاب: واحدةٌ لكلّ لعبةٍ تُذكر، ولكلّ مستوىً أفضلُ نتيجته */
 function gameLv(id){ var l=gameStats(id).lvl; return RUN_LEVELS[l] ? l : 'mid'; }
@@ -13177,7 +13200,65 @@ function gameLvWire(id, box, onPick){
     if(onPick) onPick();
   };
 }
+/* ===== آياتُ مقرَّر اليوم: بابٌ ثالثٌ للّعب =====
+   كان اللاعبُ يلعب من محفوظه كلِّه أو من سورةٍ يختارها، وكلاهما نزهةٌ بعيدةٌ
+   عمّا بين يديه اليوم. فصار له أن يلعب بمقرَّر يومه نفسِه — حفظِه ومراجعتِه
+   معاً — فاللعبُ تثبيتٌ لما يحفظ الآن لا تسليةٌ إلى جانبه.
+   ومن كان على خطّةٍ فمقرَّرُها، ومن كان في مساره الحرّ فمقطعُه التالي وما حلّ
+   موعدُ مراجعته. */
+function dayAyat(){
+  var out=[], seen={};
+  function take(sn, f, t){
+    var s=surahBy(sn); if(!s) return;
+    var a, k, hi=Math.min(t, s.ayat.length);
+    for(a=Math.max(0,f); a<hi; a++){
+      k=sn+'_'+a; if(seen[k]) continue;
+      seen[k]=1; out.push({ s:s, a:a });
+    }
+  }
+  var T=null; try{ T=bqnToday(); }catch(e){}
+  if(T){
+    [T.h, T.r].forEach(function(r){
+      if(!r) return;
+      try{ bqnPieces(r).forEach(function(p){ take(p.n, p.f, p.t); }); }catch(e){}
+    });
+  }else{
+    var nx=null; try{ nx=selfNext(); }catch(e){}
+    if(nx) take(nx.s.n, nx.g[0], nx.g[1]);
+    try{ dueSegs().forEach(function(d){ take(d.s.n, d.from, d.to); }); }catch(e){}
+  }
+  return out;
+}
+/* لا سؤالَ في آيةٍ دون ثلاث كلمات، فتُصفّى قبل اللعب: مقرَّرُ اليوم صندوقٌ
+   صغيرٌ لا يحتمل أن تُسحب منه آيةٌ لا تصلح، بخلاف المحفوظ الواسع */
+function dayPool(){
+  var A=dayAyat(), out=[], i, ws;
+  for(i=0;i<A.length;i++){
+    try{ ws=wordsOf(ayahText(A[i].s,A[i].a)); }catch(e){ ws=[]; }
+    if(ws.length>=MISS_MIN) out.push(A[i]);
+  }
+  return out;
+}
+/* وصفُ مقرَّر اليوم في سطرٍ واحد، ليعرف إلامَ يقوده الزرُّ قبل ضغطه */
+function dayPoolLabel(n){
+  var T=null; try{ T=bqnToday(); }catch(e){}
+  var what;
+  if(T) what=(T.h&&T.r) ? 'حفظُ اليوم ومراجعتُه'
+           : T.h ? ('حفظُ اليوم — '+bqnLabel(T.h))
+           : T.r ? ('مراجعةُ اليوم — '+bqnLabel(T.r)) : '';
+  else {
+    var nx=null, due=0;
+    try{ nx=selfNext(); }catch(e){}
+    try{ due=dueSegs().length; }catch(e){}
+    what=(nx?'مقطعُك التالي':'')+((nx&&due)?' وما حلّ موعدُ مراجعته':(due?'ما حلّ موعدُ مراجعته':''));
+  }
+  return (what?what+' — ':'')+arCount(n,C_AYAH)+' تصلح للسؤال';
+}
 function gamePool(src){
+  if(src==='day'){
+    var d=dayPool();
+    if(d.length) return { items:d, mem:true, sura:null, day:true };
+  }
   var n=parseInt(src,10);
   if(n>=1 && n<=114){
     var s=surahBy(n), out=[], a;
@@ -13188,6 +13269,7 @@ function gamePool(src){
   return r;
 }
 function gameSrcLabel(pool){
+  if(pool && pool.day) return '📅 من مقرَّر اليوم — وجواهرُه مضاعَفة';
   if(pool && pool.sura) return '📖 من سورة '+pool.sura.name;
   return (pool && pool.mem) ? '📚 من محفوظك' : '📚 من الفاتحة وقصار السور';
 }
@@ -13230,10 +13312,16 @@ function gamePick(id){
   GAME_PICK=id; GAME_LIST=false;
   var st=gameStats(id), pool=runPool(), memN=pool.mem ? pool.items.length : 0;
   var last=surahBy(parseInt(st.sura,10));
+  /* مقرَّرُ اليوم يتصدّر الأبوابَ متى كان فيه ما يُسأل عنه — فهو أَولى بلعبه */
+  var dayN=0; try{ dayN=dayPool().length; }catch(e){}
   $('gamesBody').innerHTML=
     '<div class="gmsrch">'+g.ic+' '+g.n+'</div>'+
     '<p class="gmnote">من أين تأتي الآيات؟</p>'+
-    '<button type="button" class="goalcard'+(st.src!=='sura'?' now':'')+'" id="gsMem"><span class="gcic">📚</span>'+
+    (dayN ? ('<button type="button" class="goalcard'+(st.src==='day'?' now':'')+'" id="gsDay"><span class="gcic">📅</span>'+
+      '<span class="gctx"><b>من مقرَّر اليوم <span class="gcage">💎 ×٢</span></b><i>'+
+        dayPoolLabel(dayN)+
+      '</i></span><span class="gcgo">❮</span></button>') : '')+
+    '<button type="button" class="goalcard'+((st.src!=='sura'&&!(dayN&&st.src==='day'))?' now':'')+'" id="gsMem"><span class="gcic">📚</span>'+
       '<span class="gctx"><b>من محفوظي</b><i>'+
         (memN ? ('آياتٌ من كلّ ما حفظتَ — '+arNum(memN)+' آية') : 'لم يُسجَّل لك محفوظٌ بعد — فمن الفاتحة وقصار السور')+
       '</i></span><span class="gcgo">❮</span></button>'+
@@ -13241,6 +13329,7 @@ function gamePick(id){
       '<span class="gctx"><b>سورةٌ أختارها</b><i>'+
         (last ? ('آخرُ ما اخترتَ: سورة '+esc(last.name)) : 'من فهرس السور')+
       '</i></span><span class="gcgo">❮</span></button>';
+  if($('gsDay')) $('gsDay').onclick=function(){ st.src='day'; saveDB(); g.open('day'); };
   $('gsMem').onclick=function(){ st.src='mem'; saveDB(); g.open('mem'); };
   $('gsSura').onclick=function(){ gameSuraList(g); };
   window.scrollTo(0,0);
@@ -13288,7 +13377,8 @@ function runOverlay(kind, nb){
   else if(kind==='pause')
     h='<div class="ot">⏸️ توقّفتِ اللعبة</div><button type="button" class="btn primary" id="runStart">▶️ تابِعْ</button>';
   else
-    h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+arNum(RUN.score)+' نقطة • 📜 '+arNum(RUN.done)+' سؤال • 🏁 '+arNum(runMeters())+' م<br>'+
+    h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+arNum(RUN.score)+' نقطة • 📜 '+arNum(RUN.done)+' سؤال • 🏁 '+arNum(runMeters())+' م'+
+      (RUN.gems?' • 💎 '+arNum(RUN.gems):'')+'<br>'+
       (nb ? '🏆 أفضلُ نتيجةٍ لك في «'+RUN_LEVELS[runLv()].n+'» حتى الآن!'
           : 'أفضلُ نتيجةٍ لك في «'+RUN_LEVELS[runLv()].n+'»: ⭐ '+arNum(runBests()[runLv()]||0))+'</p>'+
       runLvHTML()+
@@ -13373,6 +13463,8 @@ function runTouch(o){
     runBurst(cx,cy,'#9ff0c0',16);
     if(ay.i>=ay.to){                                   /* تمّ السؤال */
       RUN.score+=(ay.kind==='fill1'?3:5); RUN.done++; sWin();
+      var gm=0; try{ gm=gameGems(RUN.pool); }catch(e){}
+      RUN.gems=(RUN.gems||0)+gm; RUN.flash=gameWinLine(gm);
       RUN.flashT=1.3; RUN.rest=1.4;
       RUN.items.forEach(function(it){ if(it.kind==='word' && !it.dead){ it.dead=true; runBurst(it.x+it.w/2, runPillY(it), '#ffffff', 6); } });
       runHud();
@@ -13520,9 +13612,10 @@ function runDraw(){
   c.fillText('🏁 '+arNum(runMeters())+' م', W-10, 20);
   c.textAlign='center';
   if(RUN.flashT>0){
-    c.font='900 28px "IBM Plex Sans Arabic",sans-serif';
-    c.lineWidth=6; c.strokeStyle='#0a2a5e'; c.strokeText('أحسنت! 🌟', W/2, 64);
-    c.fillStyle='#ffe27a'; c.fillText('أحسنت! 🌟', W/2, 64);
+    var fl=RUN.flash||'أحسنت! 🌟';
+    c.font='900 '+(fl.length>12?21:28)+'px "IBM Plex Sans Arabic",sans-serif';
+    c.lineWidth=6; c.strokeStyle='#0a2a5e'; c.strokeText(fl, W/2, 64);
+    c.fillStyle='#ffe27a'; c.fillText(fl, W/2, 64);
   }
   if(RUN.toastT>0 && RUN.toast){
     c.font='700 14px "IBM Plex Sans Arabic",sans-serif';
@@ -13541,7 +13634,7 @@ function runDraw(){
    وإكراماً للقرآن: لا يلمس صندوقٌ الأرضَ أبداً، ولا يسقط ولا يُرمى ولا يُقفز فوقه،
    ويُحمل باليدين فوق الخصر، والخطأُ يُعاد إلى مكانه بهدوءٍ لا يُطرح.
    ========================================================= */
-var SHELF_HEARTS=3, SHELF_PART=5, SHELF_SPEED=210, SHELF_BH=34, SHELF_PX=4, SHELF_DECOY_AFTER=3, SHELF_GEMS=2;
+var SHELF_HEARTS=3, SHELF_PART=5, SHELF_SPEED=210, SHELF_BH=34, SHELF_PX=4, SHELF_DECOY_AFTER=3;
 var SH={ state:'idle', raf:0, W:400, H:330, G:306, k:1, slots:[], boxes:[], anims:[], parts:[], benchX:[] };
 function shelfFont(){ return '19px "Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif'; }
 function shelfCtx(){ var c=$('shelfCv').getContext('2d'); c.font=shelfFont(); return c; }
@@ -13814,8 +13907,8 @@ function shelfPartDone(){
   ay.p++; SH.i=0;
   if(ay.p>=ay.parts.length){
     SH.done++; SH.score+=2;
-    try{ addGems(SHELF_GEMS); SH.gems+=SHELF_GEMS; }catch(e){}
-    SH.flash='أحسنت! 🌟 +'+arNum(SHELF_GEMS)+' 💎';
+    var gm=0; try{ gm=gameGems(SH.pool); }catch(e){}
+    SH.gems+=gm; SH.flash=gameWinLine(gm);
   } else SH.flash='أحسنت — والجزءُ التالي';
   SH.flashT=1.5; SH.rest=1.6; SH.busy=true;
   /* تعود الشخصيّةُ إلى موضع البداية في الطرف، فلا تقف أمام صناديق الجزء التالي */
@@ -13913,7 +14006,7 @@ function shelfDraw(){
   c.globalAlpha=1;
   c.textAlign='center'; c.textBaseline='middle'; c.direction='rtl';
   if(SH.flashT>0 && SH.flash){
-    c.font='900 24px "IBM Plex Sans Arabic",sans-serif';
+    c.font='900 '+(SH.flash.length>16?18:24)+'px "IBM Plex Sans Arabic",sans-serif';
     c.lineWidth=6; c.strokeStyle='#0a2a5e'; c.strokeText(SH.flash, W/2, 18);
     c.fillStyle='#ffe27a'; c.fillText(SH.flash, W/2, 18);
   }
@@ -14037,7 +14130,7 @@ function birdReset(){
   BD.hearts=BIRD_HEARTS; BD.score=0; BD.done=0; BD.items=[]; BD.parts=[]; BD.last=null;
   BD.speed=BIRD_V0*gameK('bird'); BD.y=birdMidY(); BD.vy=0; BD.decoySince=9;
   BD.t=0; BD.off=0; BD.inv=0; BD.shake=0; BD.rest=0; BD.dist=0; BD.gap=BD.speed*1.1;
-  BD.toast=''; BD.toastT=0; BD.flashT=0; BD.lastObs=0;
+  BD.toast=''; BD.toastT=0; BD.flashT=0; BD.lastObs=0; BD.gems=0; BD.flash='';
   birdPickAyah();
 }
 function birdOpen(src){
@@ -14056,7 +14149,8 @@ function birdOverlay(kind, nb){
   else if(kind==='pause')
     h='<div class="ot">⏸️ توقّفتِ اللعبة</div><button type="button" class="btn primary" id="birdStart">▶️ تابِعْ</button>';
   else
-    h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+arNum(BD.score)+' نقطة • 📜 '+arNum(BD.done)+' سؤال<br>'+
+    h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+arNum(BD.score)+' نقطة • 📜 '+arNum(BD.done)+' سؤال'+
+      (BD.gems?' • 💎 '+arNum(BD.gems):'')+'<br>'+
       (nb ? '🏆 أفضلُ نتيجةٍ لك في «'+RUN_LEVELS[lv].n+'» حتى الآن!'
           : 'أفضلُ نتيجةٍ لك في «'+RUN_LEVELS[lv].n+'»: ⭐ '+arNum(B[lv]||0))+'</p>'+
       gameLvHTML('bird')+
@@ -14156,6 +14250,8 @@ function birdTouch(o){
     birdBurst(o.x+o.w/2, o.y, '#9ff0c0', 16);
     if(ay.i>=ay.to){
       BD.score+=(ay.kind==='fill1'?3:5); BD.done++; sWin();
+      var gm=0; try{ gm=gameGems(BD.pool); }catch(e){}
+      BD.gems=(BD.gems||0)+gm; BD.flash=gameWinLine(gm);
       BD.flashT=1.3; BD.rest=1.2;
       BD.items.forEach(function(it){ if(it.kind==='cloud' && !it.taken){ it.taken=true; it.fade=1; } });
       birdHud();
@@ -14288,9 +14384,10 @@ function birdDraw(){
   for(i=0;i<BD.parts.length;i++){ var p=BD.parts[i]; c.fillStyle=p.c; c.fillRect(Math.round(p.x), Math.round(p.y), 3, 3); }
   c.textBaseline='middle'; c.direction='rtl'; c.textAlign='center';
   if(BD.flashT>0){
-    c.font='900 26px "IBM Plex Sans Arabic",sans-serif';
-    c.lineWidth=6; c.strokeStyle='#0a2a5e'; c.strokeText('أحسنت! 🌟', W/2, 20);
-    c.fillStyle='#ffe27a'; c.fillText('أحسنت! 🌟', W/2, 20);
+    var fl=BD.flash||'أحسنت! 🌟';
+    c.font='900 '+(fl.length>12?20:26)+'px "IBM Plex Sans Arabic",sans-serif';
+    c.lineWidth=6; c.strokeStyle='#0a2a5e'; c.strokeText(fl, W/2, 20);
+    c.fillStyle='#ffe27a'; c.fillText(fl, W/2, 20);
   }
   if(BD.toastT>0 && BD.toast){
     c.font='700 14px "IBM Plex Sans Arabic",sans-serif';
