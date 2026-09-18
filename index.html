@@ -6709,24 +6709,28 @@ function audBox(){
   if(!AUD.q.length) return;
   var rp = (AUD.rep===0) ? '♾️ بلا توقّف'
          : (AUD.rep>1 ? (arNum(AUD.left)+' من '+arNum(AUD.rep)) : 'مرّة واحدة');
+  /* الرقاقاتُ أبوابٌ تُفتح، وأمّا الإيقافُ فهو خاتمةُ التلاوة — فمكانُه صفُّ
+     الأزرار أسفلَ الصندوق بجانب «إغلاق»، لا رقاقةٌ تضيع بين الرقاقات */
   var list=[
     { v:'go',    n:'▶️ تابِعْ',        act:true },
     { v:'again', n:'🔁 من أوّله',      act:true },
     { v:'qari',  n:'🎙️ '+qariName(),  act:true },
-    { v:'rep',   n:'🔂 التكرار: '+rp,  act:true },
-    { v:'stop',  n:'⏹️ أوقِفْ',        act:true }
+    { v:'rep',   n:'🔂 التكرار: '+rp,  act:true }
   ];
   uiBox('⏸️ التلاوةُ ممسَكة عند الآية <b>'+arNum(AUD.i+1)+'</b> من <b>'+arNum(AUD.q.length)+'</b>',
-    '🎧', null, '✖️ إغلاق', function(ok,v){
+    '🎧', '⏹️ أوقِفْ', '✖️ إغلاق', function(ok,v){
+      /* زرُّ الأسفل: لا قيمةَ معه — وهو الإيقاف */
+      if(ok && v==null){ audStop(); return; }
       if(!ok || v==null) return;        /* أُغلق: تبقى ممسَكةً، ولمسةٌ تتابعها */
       if(v==='go'){ audToggle(); return; }
-      if(v==='stop'){ audStop(); return; }
       if(v==='again'){ audRestart(); return; }
       /* بدّل القارئ فاستُؤنفت التلاوة: لا يُعاد صندوقُ الإمساك على تلاوةٍ
          تجري. وإن رجع عن التبديل فهي ممسَكةٌ بعدُ، فيعود إليه */
       if(v==='qari'){ qariAsk(function(){ if(AUD.hold) audBox(); }); return; }
       if(v==='rep'){ audRepAsk(); return; }
     }, null, null, list);
+  /* والإيقافُ أحمرُ لا ينبض: خاتمةٌ لا دعوة */
+  var ys=$('askYes'); if(ys) ys.className='btn red';
 }
 /* من أوّل القائمة، وتكرارُه يُستأنف عدَدُه كاملاً */
 function audRestart(){
@@ -15258,6 +15262,7 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
     .replace(/&lt;(\/?b)>/g,'<$1>').replace(/\n/g,'<br>');
   var y=$('askYes'), n=$('askNo');
   y.textContent=yes||'✅ حسناً';
+  y.className='btn primary pulse';                    /* هيئتُه الأصل، ولمن أراد أن يصبغه بعد الفتح */
   y.hidden=(!!chips && !confirmMode);                  /* خياراتٌ بلا إقرار: تُغني عن زرّه */
   n.hidden=!no; if(no) n.textContent=no;
   var done=function(v,pv){
