@@ -9652,6 +9652,17 @@ var REV_SUB={ due:'ما استحقّ اليوم من خطّتك ومن محفو�
 var REV_TAB='';
 /* بابُ الدخول دائماً «المقرَّر اليوميّ»: هو موضعُ عمل اليوم، وما سواه يُقصد قصداً */
 function revTabDefault(){ return 'due'; }
+/* ===== إلى أين يعود زرُّ الرجوع من مسار المراجعة؟ =====
+   كان يعود إلى «المقرَّر اليوميّ» أبداً، فمن دخل المسارَ من المراجعة الحرّة
+   أو من محفوظاته رُدّ إلى بابٍ غيرِ بابه. فصار يُحفظ البابُ الذي فُتح منه.
+   وإن ضاع فمن حال المسار نفسِه يُعرف: المهمّةُ من المقرَّر، والوردُ من
+   المحفوظات، والنطاقُ المختار من الحرّة. */
+var REV_BACK_TAB='';
+function revBackTab(){
+  if(REV_BACK_TAB) return REV_BACK_TAB;
+  var md=revMode();
+  return md==='task' ? 'due' : (md==='wird' ? 'mine' : (md==='free' ? 'free' : revTabDefault()));
+}
 function renderRevTabs(){
   var bar=$('revTabs'); if(!bar) return;
   /* نقطةٌ حمراءُ على البابِ الذي وراءه عملٌ لم يتمّ، فينتبه إليه قبل أن يدخل */
@@ -10314,6 +10325,7 @@ function beginTaskPath(k){
   }
   REV.task=t; REV.mode='task';
   REV.si=0; REV.pi=0; REV.due=false; REV.pages=[];
+  REV_BACK_TAB='due';                        /* المهمّتان بابُهما المقرَّرُ اليوميّ */
   renderRevPath(); show('scr-revpath');
   return true;
 }
@@ -11320,7 +11332,11 @@ function startRevPlan(tab){
   REV_TAB = tab || revTabDefault();
   renderRevPlan(); show('scr-rev');
 }
-function beginRevPath(){ revLoad(); renderRevPath(); show('scr-revpath'); }
+function beginRevPath(){
+  revLoad();
+  REV_BACK_TAB=REV_TAB||revTabDefault();     /* يعود إلى بابه الذي دخل منه */
+  renderRevPath(); show('scr-revpath');
+}
 
 /* ===== مسارُ المراجعة: خطٌّ واحدٌ من أوّل النطاق إلى آخره =====
    كان يُعرض سورةً سورةً وبينهما سهمان، فلا يرى الطفلُ طولَ الطريق ولا
@@ -13367,11 +13383,12 @@ $('btnReviewGo').onclick=function(){ startRevPlan(); };
    فإن خلا مقرَّرُ اليوم فإلى بابِ محفوظاته، لا إلى شاشةٍ فارغة. */
 if($('cardHifz')) $('cardHifz').onclick=function(){ openBqn(); };
 if($('cardRev')) $('cardRev').onclick=function(){
-  REV_TAB = revDueToday() ? 'due' : 'mine';
-  startRevPlan();
+  /* كان البابُ يُختار ثمّ يُمحى: «startRevPlan» بلا وسيطٍ تردّ كلَّ داخلٍ
+     إلى «المقرَّر اليوميّ»، فيُفتح على من لا مقرَّرَ له بابٌ فارغ */
+  startRevPlan(revDueToday() ? 'due' : 'mine');
 };
 $('btnRevHome').onclick=function(){ renderPlayers(); show('scr-start'); };
-$('btnRevQuit').onclick=function(){ startRevPlan(); };   /* إلى شاشة المراجعة، فهي بابُه */
+$('btnRevQuit').onclick=function(){ startRevPlan(revBackTab()); };   /* إلى البابِ الذي دخل منه */
 /* ===== التبويباتُ تُسحب لا تُنقر وحدَها =====
    كان التبويبُ لا يتبدّل إلا بالنقر على عنوانه في أعلى الشاشة، فيمدّ
    إصبعَه إليه كلّ مرّة. فصار السحبُ الأفقيُّ على المحتوى يمضي إلى
