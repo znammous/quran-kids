@@ -1152,6 +1152,36 @@ body.light .sp-lit{fill:#1f92d4}
   direction:ltr;user-select:all;-webkit-user-select:all}
 .gfttxt{white-space:pre-wrap;font-size:13px;font-weight:700;line-height:1.9;color:#4a627e;
   background:#f7fbff;border:2px solid #e5ecf6;border-radius:10px;padding:10px;margin-bottom:8px}
+/* ===== غرفةُ الهدايا ===== */
+/* بابُ العلبة تحت البابين، بعرض الشاشة وبارتفاعٍ أقلّ — فهو ثالثٌ لا ثانٍ */
+.gftpk.wide{display:block;width:100%;margin-top:10px;padding:14px 10px}
+.gftpk.wide .pi{font-size:34px}
+.gftroom{background:linear-gradient(180deg,#fffaf0,#fff3dc);border:3px solid #e8d3a8;
+  border-radius:16px;padding:12px;margin-bottom:12px;text-align:right}
+.gftroom .gfth{text-align:center}
+.bxslots{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+/* موضعٌ في العلبة: أيقونةٌ واسمٌ وما وُضع فيه */
+.bxslot{display:flex;align-items:center;gap:10px;width:100%;text-align:right;cursor:pointer;
+  font-family:inherit;background:#fffdf7;border:2px dashed #dcc79a;border-radius:14px;
+  padding:10px 12px;touch-action:manipulation;transition:.12s}
+.bxslot:active{transform:translateY(2px)}
+.bxslot.full{border-style:solid;border-color:#1faa59;background:#f3fbf6}
+.bxslot.open{border-color:var(--g1);box-shadow:0 0 0 3px rgba(11,61,145,.12)}
+.bxslot .si{flex:0 0 auto;font-size:26px;line-height:1}
+.bxslot .st{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.bxslot .st b{font-size:15px;font-weight:900;color:var(--g1)}
+.bxslot .st i{font-size:12.5px;font-weight:700;font-style:normal;color:#6b7f96}
+/* رفُّ الخزانة: أغراضُه مصفوفةً عليه */
+.bxshelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:8px}
+.bxitem{display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;
+  font-family:inherit;background:#f7fbff;border:2px solid #e5ecf6;border-radius:12px;
+  padding:8px 4px;touch-action:manipulation;transition:.12s}
+.bxitem:active{transform:translateY(2px)}
+.bxitem.sel{border-color:#1faa59;background:#eefaf3}
+.bxitem .bi{font-size:24px;line-height:1.2}
+.bxitem .bi svg{width:26px;height:26px;display:block}
+.bxitem .bn{font-size:11.5px;font-weight:800;color:#3d5b7a;text-align:center;line-height:1.3}
+.bxitem .bp{font-size:11px;font-weight:700;color:#8a6100}
 /* سطرُ كودٍ في السجلّ: رقمُه، وما يحمل ويومُه، وزرُّ نسخِ رسالته */
 .gftlr{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--pb)}
 .gftlr:last-child{border-bottom:0}
@@ -5240,6 +5270,94 @@ function gftDesc(d){
 /* ===== الصرف ===== */
 function gftUsed(){ var p=curP(); if(!p.codes) p.codes={}; return p.codes; }
 function gftMinted(){ var p=curP(); if(!p.minted) p.minted={}; return p.minted; }
+/* =========================================================
+   📦 علبةُ الهديّة
+   ثلاثةُ مواضعَ لا أكثر، واحدٌ من كلّ صنف: جواهرُ ومادّةٌ وغرض، وكلٌّ منها
+   يجوز أن يبقى فارغاً. وبهذا القيد تبقى احتمالاتُ العلبة دون ستّة آلاف،
+   فتُشفَّر في سبعة أرقامٍ بلا شَرْطات.
+   وطولُ الكود هو الذي يميّز صنفَه: أربعةٌ هديّةٌ مفردة، وستّةٌ جواهرُ بعددٍ
+   حرّ، وسبعةٌ علبة. فلا يلتبس كودٌ بكود.
+   ولا يُخصم من صاحبها شيءٌ حتّى يُغلقها: يضع ويُخرج ويبدّل ما شاء، فإن
+   عدل عنها لم يخسر شيئاً. والخصمُ عند الإغلاق دفعةً واحدة.
+   ========================================================= */
+var GFT7_M=10000000, GFT7_A=3186547, GFT7_AI=7357883, GFT7_C=4180693;
+var GFT_BOX_PRICE=15;                  /* ثمنُ العلبة نفسِها */
+function gftMatN(){ return MATS.length*GFT_MATN.length; }
+function gftItemN(){ try{ return shopEvery().length; }catch(e){ return 0; } }
+/* موضعُ المادّة: رقمٌ من ١ إلى (عددُ الموادّ × عددُ الكمّيّات) */
+function gftMatPack(i){          /* i من ١ فصاعداً → {الفهرس، العدد} */
+  var z=i-1, mi=Math.floor(z/GFT_MATN.length), am=GFT_MATN[z%GFT_MATN.length];
+  return { m:MATS[mi], n:am, val:mi*4096+am };
+}
+function gftBoxEnc(g,m,i){
+  var NM=gftMatN()+1, NI=gftItemN()+1;
+  if(!(g||m||i)) return null;                       /* علبةٌ فارغةٌ لا تُغلَق */
+  if(g<0||g>GFT_GEMS.length||m<0||m>=NM||i<0||i>=NI) return null;
+  var raw=(g*NM+m)*NI+i;
+  if(raw>=GFT7_M) return null;
+  return ('000000'+((raw*GFT7_A+GFT7_C)%GFT7_M)).slice(-7);
+}
+function gftBoxDec(s){
+  if(s.length!==7) return null;
+  var n=parseInt(s,10); if(!(n>=0&&n<GFT7_M)) return null;
+  var NM=gftMatN()+1, NI=gftItemN()+1;
+  var raw=(((n-GFT7_C)%GFT7_M+GFT7_M)*GFT7_AI)%GFT7_M;
+  var i=raw%NI, r2=Math.floor(raw/NI), m=r2%NM, g=Math.floor(r2/NM);
+  if(g>GFT_GEMS.length) return null;
+  if(!(g||m||i)) return null;
+  var out=[];
+  if(g) out.push({ type:0, val:GFT_GEMS[g-1], id:0 });
+  if(m) out.push({ type:1, val:gftMatPack(m).val, id:0 });
+  if(i) out.push({ type:2, val:i-1, id:0 });
+  return out.length ? out : null;
+}
+/* ما في علبته الآن — نيّةٌ لا مِلك، تُحفظ مع اللاعب فلا تضيع بإغلاق التطبيق */
+function gftBoxSel(){
+  var p=curP();
+  if(!p.gbox || typeof p.gbox!=='object') p.gbox={ g:0, m:0, i:0, note:'' };
+  var b=p.gbox;
+  if(!(b.g>=0&&b.g<=GFT_GEMS.length)) b.g=0;
+  if(!(b.m>=0&&b.m<=gftMatN())) b.m=0;
+  if(!(b.i>=0&&b.i<=gftItemN())) b.i=0;
+  return b;
+}
+function gftBoxEmpty(){ var b=gftBoxSel(); return !(b.g||b.m||b.i); }
+/* ثمنُها: جواهرُ ما فيها وثمنُ غرضها وثمنُ العلبة، ومادّتُها من مخزونه */
+function gftBoxCost(){
+  var b=gftBoxSel(), gems=GFT_BOX_PRICE, mats={}, it, pk;
+  if(b.g) gems+=GFT_GEMS[b.g-1];
+  if(b.i){ it=gftItemByHash(b.i-1); if(it) gems+=it.p; }
+  if(b.m){ pk=gftMatPack(b.m); if(pk.m) mats[pk.m.k]=pk.n; }
+  return { gems:gems, mats:mats };
+}
+function gftBoxLines(){
+  var b=gftBoxSel(), out=[], it, pk;
+  if(b.g) out.push('💎 '+arNum(GFT_GEMS[b.g-1])+' جوهرة');
+  if(b.m){ pk=gftMatPack(b.m); if(pk.m) out.push(pk.m.ic+' '+arNum(pk.n)+' '+pk.m.n); }
+  if(b.i){ it=gftItemByHash(b.i-1); if(it) out.push(it.ic+' '+it.n); }
+  return out;
+}
+/* الإغلاق: يُفحص الثمنُ كلُّه أوّلاً ثمّ يُخصم دفعةً واحدة، فلا يُخصم بعضُه
+   ثمّ يتبيّن أنّ باقيه لا يكفي */
+function gftBoxSeal(){
+  var b=gftBoxSel(), c=gftBoxCost(), p=curP(), k, mm=mats();
+  if(gftBoxEmpty()) return { ok:false, msg:'علبتُك فارغة — ضَعْ فيها شيئاً أوّلاً' };
+  if((p.gems||0)<c.gems)
+    return { ok:false, msg:'تحتاج '+arNum(c.gems-(p.gems||0))+' جوهرةً أخرى لإتمام علبتك' };
+  for(k in c.mats) if((mm[k]||0)<c.mats[k]){
+    var mn=''; MATS.forEach(function(z){ if(z.k===k) mn=z.n; });
+    return { ok:false, msg:'عندك '+arNum(mm[k]||0)+' '+mn+' فقط، وعلبتُك تطلب '+arNum(c.mats[k]) };
+  }
+  var code=gftBoxEnc(b.g,b.m,b.i);
+  if(!code) return { ok:false, msg:'تعذّر توليد كود العلبة' };
+  p.gems-=c.gems;
+  for(k in c.mats) mm[k]-=c.mats[k];
+  gftMinted()[code]=1;
+  var txt=gftBoxLines().join(' • '), note=String(b.note||'').trim();
+  p.gbox={ g:0, m:0, i:0, note:'' };       /* تُفرَّغ لعلبةٍ أخرى */
+  saveDB();
+  return { ok:true, code:code, txt:txt, note:note };
+}
 /* ===== الصرف: كودٌ واحدٌ أو علبةٌ فيها أكواد =====
    العلبةُ أكوادٌ مقرونةٌ بشَرْطات: «3164-724801-5391». وتُفحص كلُّها قبل أن
    يُصرَف منها شيء، فإمّا أن تُصرف جميعاً أو لا يُصرف شيء — ولو صُرف نصفُها
@@ -5250,6 +5368,15 @@ function gftParts(raw){
 /* فحصُ كودٍ واحدٍ ووصفُه، بلا أثرٍ في رصيده */
 function gftLook(s){
   if(gftUsed()[s]) return { ok:false, msg:'هذا الكود مصروفٌ من قبل — لكلٍّ كودُه مرّة واحدة' };
+  /* علبةٌ: يُعرف صنفُها بطول كودها، وتُفكّ إلى ما فيها */
+  if(s.length===7){
+    if(gftMinted()[s]) return { ok:false, msg:'هذه علبةٌ صنعتَها أنت لأخيك — أرسلها إليه 🤍' };
+    var L=gftBoxDec(s);
+    if(!L) return { ok:false, msg:'لم أعرف هذا الكود — راجع أرقامه', miss:true };
+    var tx=L.map(function(z){ return gftDesc(z); }).filter(function(z){ return z; });
+    if(!tx.length) return { ok:false, msg:'هذا الكود لا يطابق شيئاً في هذه النسخة', miss:true };
+    return { ok:true, ds:L, txt:tx.join(' • '), code:s, box:true };
+  }
   /* كودٌ أنشأه هو: لا يصرفه لنفسه. جُرّب أن يُؤذن له فيه ارتجاعاً لما خُصم
      منه، فانفتح بابُ الخلق من عدم: يولّده فيُخصَم، ثمّ يرتجعه فيعود إليه،
      ثمّ يرسل الكودَ نفسَه إلى أخيه فيصرفه — فتُوجَد الجواهرُ مرّتين. */
@@ -5259,14 +5386,16 @@ function gftLook(s){
   if(!d) return { ok:false, msg:'لم أعرف هذا الكود — راجع أرقامه', miss:true };
   var txt=gftDesc(d);
   if(!txt) return { ok:false, msg:'هذا الكود لا يطابق شيئاً في هذه النسخة', miss:true };
-  return { ok:true, d:d, txt:txt, promo:!!promo, code:s };
+  return { ok:true, ds:[d], txt:txt, promo:!!promo, code:s };
 }
-/* وتسليمُه بعد أن يصحّ */
+/* وتسليمُه بعد أن يصحّ — والعلبةُ تُسلَّم بما فيها كلِّه */
 function gftHandOver(r){
-  var p=curP(), d=r.d;
-  if(d.type===0 || d.type===3) addGems(d.val);
-  else if(d.type===1){ var m=MATS[Math.floor(d.val/4096)]; addMat(m.k, d.val%4096); }
-  else if(d.type===2){ var it=gftItemByHash(d.val); if(it){ if(!p.owned) p.owned={}; p.owned[it.k]=true; } }
+  var p=curP();
+  (r.ds||[]).forEach(function(d){
+    if(d.type===0 || d.type===3) addGems(d.val);
+    else if(d.type===1){ var m=MATS[Math.floor(d.val/4096)]; if(m) addMat(m.k, d.val%4096); }
+    else if(d.type===2){ var it=gftItemByHash(d.val); if(it){ if(!p.owned) p.owned={}; p.owned[it.k]=true; } }
+  });
   gftUsed()[r.code]=1;
 }
 function gftRedeem(raw){
@@ -5284,7 +5413,7 @@ function gftRedeem(raw){
   }
   for(i=0;i<got.length;i++) gftHandOver(got[i]);
   saveDB();
-  return { ok:true, n:got.length, box:got.length>1,
+  return { ok:true, n:got.length, box:(got.length>1 || !!(got[0]&&got[0].box)),
            promo:(got.length===1 && got[0].promo),
            txt:got.map(function(x){ return x.txt; }).join(' • ') };
 }
@@ -5420,6 +5549,102 @@ function gftFormHTML(){
     '<div class="note">تشتريه له بجواهرك ولا تفقد نسختك — رصيدك 💎 '+arNum(p.gems||0)+'.</div>';
 }
 
+/* ===== غرفةُ الهدايا =====
+   مشهدُه في بيته: علبةٌ مفتوحةٌ أمامه بثلاثة مواضع، ورفُّ خزانته وعليه ما
+   اشتراه فيلمس الغرضَ فينزل إلى العلبة. ولا يُهدي من الرفّ إلّا ما جرّبه
+   وأحبّه — «تهادوا تحابّوا» — ومن أراد ما لم يملكه ففي طيّةٍ تحته المتجرُ
+   كلُّه. ونسختُه تبقى عنده، إنّما يشتري لأخيه أخرى. */
+var BX_OPEN='';
+function gftSlotHTML(k,ic,ttl,cur){
+  return '<button type="button" class="bxslot'+(cur?' full':'')+(BX_OPEN===k?' open':'')+
+    '" data-bxs="'+k+'"><span class="si">'+ic+'</span>'+
+    '<span class="st"><b>'+ttl+'</b><i>'+(cur||'— فارغ، اضغط لتضع فيه —')+'</i></span></button>';
+}
+function gftRoomHTML(){
+  var b=gftBoxSel(), p=curP(), o=p.owned||{}, c=gftBoxCost(), mm=mats();
+  var it=b.i?gftItemByHash(b.i-1):null, pk=b.m?gftMatPack(b.m):null;
+  var matLine=function(){
+    var t='', k;
+    for(k in c.mats){
+      (function(kk){ MATS.forEach(function(z){ if(z.k===kk) t+=' و '+z.ic+' '+arNum(c.mats[kk])+' '+z.n; }); })(k);
+    }
+    return t;
+  };
+  var h='<div class="gftroom">'+
+    '<div class="gfth">📦 علبتُك</div>'+
+    '<div class="bxslots">'+
+      gftSlotHTML('g','💎','جواهر', b.g?('💎 '+arNum(GFT_GEMS[b.g-1])+' جوهرة'):'')+
+      gftSlotHTML('m','🪨','مادّة',  (pk&&pk.m)?(pk.m.ic+' '+arNum(pk.n)+' '+esc(pk.m.n)):'')+
+      gftSlotHTML('i','🎒','غرض',   it?(it.ic+' '+esc(it.n)):'')+
+    '</div>'+
+    '<div class="note" style="margin-top:10px">ثمنُ علبتك: <b>💎 '+arNum(c.gems)+'</b>'+matLine()+
+      ' — ومنها '+arNum(GFT_BOX_PRICE)+' 💎 للعلبة نفسِها.'+
+      '<br>رصيدك 💎 '+arNum(p.gems||0)+' — ولا يُخصم منك شيءٌ حتّى تُغلقها.</div>'+
+  '</div>';
+
+  if(BX_OPEN==='g'){
+    h+='<div class="gftbox"><div class="gfth">💎 كم جوهرةً تضع؟</div><div class="chips">'+
+      '<button type="button" class="chipsel'+(!b.g?' sel':'')+'" data-bxg="0">لا شيء</button>'+
+      GFT_GEMS.map(function(v,z){
+        return '<button type="button" class="chipsel'+(b.g===z+1?' sel':'')+'" data-bxg="'+(z+1)+'">'+arNum(v)+'</button>';
+      }).join('')+'</div></div>';
+  }
+  else if(BX_OPEN==='m'){
+    var ms='';
+    MATS.forEach(function(m,mi){
+      GFT_MATN.forEach(function(n,ni){
+        var idx=mi*GFT_MATN.length+ni+1;
+        ms+='<button type="button" class="chipsel'+(b.m===idx?' sel':'')+'" data-bxm="'+idx+'">'+
+            m.ic+' '+arNum(n)+'</button>';
+      });
+    });
+    h+='<div class="gftbox"><div class="gfth">🪨 أيَّ مادّةٍ تضع؟</div><div class="chips">'+
+      '<button type="button" class="chipsel'+(!b.m?' sel':'')+'" data-bxm="0">لا شيء</button>'+ms+'</div>'+
+      '<div class="note" style="margin-top:8px">تُخصم من مخزونك: '+
+      MATS.map(function(m){ return m.ic+' '+arNum(mm[m.k]||0); }).join(' • ')+'</div></div>';
+  }
+  else if(BX_OPEN==='i'){
+    var all=shopEvery(), mine=[], rest=[];
+    all.forEach(function(x,z){ (o[x.k]?mine:rest).push({ x:x, z:z }); });
+    var cell=function(r){
+      return '<button type="button" class="bxitem'+(b.i===r.z+1?' sel':'')+'" data-bxi="'+(r.z+1)+'">'+
+        '<span class="bi">'+r.x.ic+'</span><span class="bn">'+esc(r.x.n)+'</span>'+
+        '<span class="bp">💎 '+arNum(r.x.p)+'</span></button>';
+    };
+    h+='<div class="gftbox"><div class="gfth">🎒 رفُّ خزانتك</div>'+
+      (mine.length
+        ? '<div class="bxshelf">'+mine.map(cell).join('')+'</div>'+
+          '<div class="note" style="margin-top:8px">تُهدي أخاك ممّا جرّبتَه وأحببتَه — ونسختُك تبقى عندك، إنّما تشتري له أخرى.</div>'
+        : '<div class="note">رفُّك فارغٌ بعدُ — اشترِ لنفسك شيئاً من المتجر، أو خُذْ لأخيك ممّا تحته.</div>')+
+      '<div style="margin-top:12px">'+foldHTML('bxAll','🏬 أو من المتجر كلِّه',!mine.length,
+        '<div class="bxshelf">'+
+          '<button type="button" class="bxitem'+(!b.i?' sel':'')+'" data-bxi="0">'+
+            '<span class="bi">🚫</span><span class="bn">لا شيء</span><span class="bp">—</span></button>'+
+          rest.map(cell).join('')+'</div>')+'</div></div>';
+  }
+
+  h+='<div class="gftbox"><div class="gftrow"><label>عبارةُ الإهداء (اختياريّة)</label>'+
+      '<textarea id="bxNote" rows="2" maxlength="200" placeholder="اكتب ما تحبّ أن يقرأه أخوك…">'+esc(b.note||'')+'</textarea></div>'+
+      '<button class="btn green big" id="bxSeal"'+(gftBoxEmpty()?' disabled':'')+'>'+
+        (gftBoxEmpty()?'ضَعْ في علبتك شيئاً أوّلاً':'🎀 أغلقِ العلبة وولّد الكود')+'</button>'+
+    '</div>';
+  if(GFT_LAST) h+=
+    '<div class="gftbox"><div class="gftcode" id="gftCode">'+esc(GFT_LAST.code)+'</div>'+
+      '<div class="gfttxt" id="gftText">'+esc(GFT_CARD)+'</div>'+
+      '<button class="btn blue" id="gftCopy" style="width:100%">📋 انسخ الرسالة</button></div>';
+  return h+gftLogHTML();
+}
+/* رسالةُ العلبة: تُذكر محتوياتُها واحداً واحداً، فيعرف أخوه ما فيها قبل أن يفتح */
+function gftBoxCard(code, lines, note){
+  var p=curP(), me=(p.name||'').trim(), NL='\n';
+  var from=(p.gender==='m') ? 'من أخيك' : 'من أختك';
+  return '📦 علبةُ هديّةٍ '+from+(me?(' '+me):'')+NL+NL+
+    '«تَهَادَوْا تَحَابُّوا»'+NL+NL+
+    (note? (note+NL+NL) : '')+
+    'في علبتك:'+NL+lines.map(function(x){ return '  • '+x; }).join(NL)+NL+NL+
+    'كودُ العلبة:'+NL+NL+code+NL+NL+
+    'افتحها من: 💎 متجري ← 🎁 تهادوا تحابّوا ← استقبل هديّة';
+}
 function gftPanelHTML(){
   var cats='<button class="btn ghost mini" id="btnShopCats" style="width:100%;margin-bottom:10px">➡️ كل الأقسام</button>';
   if(!GFT_V){                                      /* الاختيار أوّلاً: بابان لا غير */
@@ -5432,11 +5657,15 @@ function gftPanelHTML(){
           '<div class="pi">🤍</div><div class="pn">أرسل هديّة</div>'+
           '<div class="pd">أهدِ أخاك ممّا تحبّ</div></button>'+
       '</div>'+
+      '<button type="button" class="gftpk wide" data-gv="box">'+
+        '<div class="pi">📦</div><div class="pn">اصنعْ علبةَ هديّة</div>'+
+        '<div class="pd">في غرفتك: املأ العلبةَ ممّا تملك ثمّ أغلِقْها</div></button>'+
       /* وسجلُّه هنا أيضاً: أوّلُ ما يُفتح البابُ يجد أكوادَه، فلا يحتاج أن
          يدخل «أرسل هديّة» ليطّلع على ما ولّده */
       gftLogHTML();
   }
   var back='<button class="btn ghost mini" id="gftBack" style="width:100%;margin-bottom:10px">➡️ رجوع</button>';
+  if(GFT_V==='box') return back+gftRoomHTML();
   if(GFT_V==='in'){
     return back+
       '<div class="gftbox">'+
@@ -5545,6 +5774,58 @@ function gftBindOut(){
     GFT_LAST=null; renderShop(); window.scrollTo(0,0);
   };
 }
+/* ربطُ غرفة الهدايا: كلُّ لمسةٍ تُحفظ في ملفّه ثمّ يُعاد الرسمُ، فلا يضيع
+   ما وضعه في علبته بإغلاق التطبيق ولا بانتقاله إلى شاشةٍ أخرى */
+function gftRoomWire(){
+  var i, b=gftBoxSel();
+  var draw=function(){ saveDB(); renderShop(); };
+  var ss=$('shopBody').querySelectorAll('[data-bxs]');
+  for(i=0;i<ss.length;i++) ss[i].onclick=function(){
+    var k=this.getAttribute('data-bxs');
+    BX_OPEN=(BX_OPEN===k)?'':k;          /* موضعٌ واحدٌ مفتوحٌ لا غير */
+    renderShop();
+  };
+  var gs=$('shopBody').querySelectorAll('[data-bxg]');
+  for(i=0;i<gs.length;i++) gs[i].onclick=function(){
+    b.g=parseInt(this.getAttribute('data-bxg'),10)||0; BX_OPEN=''; draw();
+  };
+  var ms=$('shopBody').querySelectorAll('[data-bxm]');
+  for(i=0;i<ms.length;i++) ms[i].onclick=function(){
+    b.m=parseInt(this.getAttribute('data-bxm'),10)||0; BX_OPEN=''; draw();
+  };
+  var is=$('shopBody').querySelectorAll('[data-bxi]');
+  for(i=0;i<is.length;i++) is[i].onclick=function(){
+    b.i=parseInt(this.getAttribute('data-bxi'),10)||0; BX_OPEN=''; draw();
+  };
+  var lh=document.querySelector('[data-fold="bxAll"]');
+  if(lh && lh.parentNode) foldBind(lh.parentNode);
+  var nt=$('bxNote');
+  if(nt) nt.oninput=function(){ b.note=this.value.slice(0,200); saveDB(); };
+  if($('gftCopy')) $('gftCopy').onclick=function(){ gftCopy(GFT_CARD); };
+  if($('bxSeal')) $('bxSeal').onclick=function(){
+    if(gftBoxEmpty()) return;
+    var lines=gftBoxLines(), c=gftBoxCost(), note=(nt?nt.value:'').trim();
+    /* يُنبَّه قبل الخصم كما يُنبَّه في الهديّة المفردة: يرى ما يبذل وما يبقى */
+    uiAsk('تُهدي أخاك علبةً فيها:\n• '+lines.join('\n• ')+'\n\n'+
+          'ويُخصم منك 💎 '+arNum(c.gems)+' (ومنها '+arNum(GFT_BOX_PRICE)+' للعلبة)'+
+          ', فيبقى لك 💎 '+arNum(Math.max(0,(curP().gems||0)-c.gems))+'.\n'+
+          'والعلبةُ لأخيك وحدَه، لا تعود إليك.\nأتُغلقها؟',
+      function(ok){
+        if(!ok) return;
+        var r=gftBoxSeal();
+        if(!r.ok){ try{ navToast(r.msg); }catch(e){} return; }
+        GFT_NOTE='';
+        GFT_CARD=gftBoxCard(r.code, lines, note);
+        GFT_LAST={ code:r.code, txt:r.txt };
+        gftLogAdd(r.code, '📦 '+r.txt, note);
+        BX_OPEN='';
+        try{ sWin(); }catch(e){}
+        try{ celeShow({ ic:'📦', kick:'تَهَادَوْا تَحَابُّوا', title:'أُغلقت علبتُك',
+                        sub:'انسخْ رسالتَها وأرسلها إلى أخيك', rew:r.txt }); }catch(e){}
+        renderShop();
+      }, '📦');
+  };
+}
 /* السجلُّ يُربط حيث عُرض — في بابِ الاختيار وفي بابِ الإهداء سواء */
 function gftLogBind(){
   var ls=$('shopBody').querySelectorAll('[data-lgc]'), z;
@@ -5582,6 +5863,7 @@ function gftBind(){
   };
   if($('gftUse')) gftBindIn();
   if($('gftGo'))  gftBindOut();
+  if($('bxSeal')) gftRoomWire();
   gftLogBind();
 }
 
