@@ -81,6 +81,13 @@ body{
   min-height:100vh;min-height:100dvh;overflow-x:hidden;
   overscroll-behavior-y:none;                 /* لا سحب مطّاطي يوحي بتحديث الصفحة */
 }
+/* ===== سحبُ الشاشة للتحديث =====
+   كان يقع بلمسةٍ زائدةٍ في أعلى الصفحة فيُعيد تحميلَ التطبيق: يقطع الدرسَ،
+   وتسكت التلاوة، وتُطوى اللوحاتُ المفتوحة. فأُطفئ في الشاشات كلِّها.
+   ويبقى في شاشة المتجر وحدَها بابًا يُحدَّث منه التطبيقُ عند الحاجة.
+   ويُوضع على الجذر لا على الجسد وحدَه: منه تأخذ الشاشةُ سلوكَها. */
+html{overscroll-behavior-y:none}
+html.pullok, html.pullok body{overscroll-behavior-y:auto}
 .bg{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
 .star{position:absolute;color:var(--startxt);opacity:.55;animation:tw 3s ease-in-out infinite}
 /* غيوم النهار: لا تظهر إلا مع الوضع النهاريّ */
@@ -5148,7 +5155,13 @@ function gftRedeem(raw){
   if(gftGate().n>=GFT_TRIES)
     return { ok:false, msg:'جرّبتَ خمسة أكواد خاطئة اليوم — عُد غداً 💚' };
   if(gftUsed()[s]) return { ok:false, msg:'هذا الكود مصروفٌ من قبل — لكلٍّ كودُه مرّة واحدة' };
-  if(gftMinted()[s]) return { ok:false, msg:'هذا كودٌ أنشأتَه أنت لأخيك — أرسله إليه 🤍' };
+  /* كودٌ أنشأه هو: كان يُردّ عنه ويُقال «أرسله إليه»، فمن ولّده خطأً أو لم
+     يرسله ذهب ما خُصم منه ولا سبيلَ إلى ردّه. فصار له أن يصرفه لنفسه:
+     يعود إليه ما خُصم، ويُبطَل الكودُ فلا يُصرف بعدُ — وهو إلغاءُ الهديّة */
+  var mine=!!gftMinted()[s];
+  /* ولا يرتجع ما صُرف: لو صرفه أخوه في هذا الجهاز ثمّ ارتجعه هو، نالاه معاً */
+  if(mine && gftSpent(s))
+    return { ok:false, msg:'صُرف هذا الكود فعلاً — فلا يُرتجع 🤍' };
   var promo=gftPromoValue(s);
   var d = promo ? { type:3, val:promo, id:0 } : gftDec(s);
   if(!d){ gftMiss(); return { ok:false, msg:'لم أعرف هذا الكود — راجع أرقامه' }; }
@@ -5158,8 +5171,15 @@ function gftRedeem(raw){
   if(d.type===0 || d.type===3) addGems(d.val);
   else if(d.type===1){ var m=MATS[Math.floor(d.val/4096)]; addMat(m.k, d.val%4096); }
   else if(d.type===2){ var it=gftItemByHash(d.val); if(!p.owned) p.owned={}; p.owned[it.k]=true; }
-  gftUsed()[s]=1; saveDB();
-  return { ok:true, txt:txt, promo:!!promo };
+  gftUsed()[s]=1;
+  if(mine) gftLogVoid(s);              /* كودُه هو: يُوسَم في سجلّه أنّه أُبطل */
+  saveDB();
+  return { ok:true, txt:txt, promo:!!promo, mine:mine };
+}
+/* وسمُ الكود في سجلّ صاحبه بأنّه ارتُجع، فيراه مشطوباً ولا يبحث عنه */
+function gftLogVoid(code){
+  var L=gftLog(), i;
+  for(i=0;i<L.length;i++) if(L[i].c===code){ L[i].v=todayNum(); return; }
 }
 /* ===== التوليد: يُخصم من المُهدي أوّلاً ===== */
 function gftMake(type, val){
@@ -5309,11 +5329,18 @@ function gftLogHTML(){
   var L=gftLog();
   if(!L.length) return '';
   var body=L.map(function(r,i){
-    var sp=gftSpent(r.c);
-    return '<div class="gftlr'+(sp?' sp':'')+'">'+
+    var back=!!r.v, sp=(!back && gftSpent(r.c));
+    var st = back ? ' • ↩️ ارتجعتَها' : (sp ? ' • ✅ صُرف في هذا الجهاز' : '');
+    return '<div class="gftlr'+((sp||back)?' sp':'')+'">'+
         '<span class="lc">'+esc(r.c)+'</span>'+
-        '<span class="lt"><b>'+esc(r.t)+'</b><i>'+gftLogWhen(r.d)+(sp?' • ✅ صُرف في هذا الجهاز':'')+'</i></span>'+
-        '<button type="button" class="btn ghost mini" data-lgc="'+i+'" style="margin:0;padding:7px 10px">📋</button>'+
+        '<span class="lt"><b>'+esc(r.t)+'</b><i>'+gftLogWhen(r.d)+st+'</i></span>'+
+        (back ? '' :
+          '<button type="button" class="btn ghost mini" data-lgc="'+i+'" style="margin:0;padding:7px 9px" '+
+            'aria-label="انسخ الرسالة">📋</button>'+
+          /* ولا يُعرض الارتجاعُ على كودٍ صُرف: لا يُرتجع ما نالَه صاحبُه */
+          (sp ? '' :
+          '<button type="button" class="btn ghost mini" data-lgv="'+i+'" style="margin:0;padding:7px 9px" '+
+            'aria-label="ارتجع الهديّة وأبطِلِ الكود">↩️</button>'))+
       '</div>';
   }).join('');
   return '<div style="margin-top:14px">'+
@@ -5334,9 +5361,11 @@ function gftBindIn(){
     var r=gftRedeem(raw);
     if(!r.ok){ gftMsg(r.msg,true); try{ sBad(); }catch(e){} return; }
     $('gftIn').value='';
-    celeShow({ ic:'🎁', kick:'تَهَادَوْا تَحَابُّوا',
-      title: r.promo ? 'منحةٌ لك!' : 'وصلتك هديّة!',
-      sub: r.promo ? 'بارك الله فيك وأعانك على حفظ كتابه'
+    /* كودُه هو: ارتجاعٌ لا هديّة — فلا يُقال له «وصلتك هديّة» ممّا أهداه */
+    celeShow({ ic: r.mine?'↩️':'🎁', kick:'تَهَادَوْا تَحَابُّوا',
+      title: r.mine ? 'ارتجعتَ هديّتك' : (r.promo ? 'منحةٌ لك!' : 'وصلتك هديّة!'),
+      sub: r.mine ? 'رجعتْ إليك، وأُبطل الكودُ فلا يصرفه أحدٌ بعدُ'
+         : r.promo ? 'بارك الله فيك وأعانك على حفظ كتابه'
                    : 'من أخٍ لك في الله — فادعُ له بظهر الغيب',
       rew: r.txt });
     renderShop();
@@ -5368,6 +5397,21 @@ function gftLogBind(){
   for(z=0;z<ls.length;z++) ls[z].onclick=function(){
     var r2=gftLog()[parseInt(this.getAttribute('data-lgc'),10)];
     if(r2) gftCopy(gftCard(r2.c, r2.t, r2.n));
+  };
+  /* الارتجاع: يعود إليه ما خُصم منه، ويُبطَل الكودُ فلا يُصرف بعدُ. ولا يقع
+     إلّا بإذنه، فربّما أرسله وهو لا يدري أصُرف أم لا */
+  var vs=$('shopBody').querySelectorAll('[data-lgv]'), y;
+  for(y=0;y<vs.length;y++) vs[y].onclick=function(){
+    var ix=parseInt(this.getAttribute('data-lgv'),10), r3=gftLog()[ix];
+    if(!r3) return;
+    uiAsk('تُرجع إليك '+r3.t+'، ويُبطَل الكود '+r3.c+' فلا يصرفه أحدٌ بعدُ.\nأتفعل؟',
+      function(ok){
+        if(!ok) return;
+        var res=gftRedeem(r3.c);
+        if(!res.ok){ try{ navToast(res.msg); }catch(e){} return; }
+        try{ navToast('↩️ ارتجعتَ '+res.txt+' — وأُبطل الكود'); }catch(e){}
+        renderShop();
+      }, '↩️');
   };
   var lh=document.querySelector('[data-fold="gftLog"]');
   if(lh && lh.parentNode) foldBind(lh.parentNode);
@@ -6072,6 +6116,8 @@ function show(id){
   if(id==='scr-start'){ try{ renderHome(); }catch(e){} }
   try{ syncTabs(id); }catch(e){}
   document.body.classList.toggle('bgrest', id!=='scr-start');   /* الخلفيّةُ تتحرّك في الرئيسيّة وحدها */
+  /* وسحبُ الشاشة للتحديث: في المتجر وحدَه */
+  try{ document.documentElement.classList.toggle('pullok', id==='scr-shop'); }catch(e){}
   /* وفي الدرس كذلك لا تنطفئ الشاشة: يقرأ ويردّد ويسمّع ولا يلمسها.
      وما دام وجهُ المصحف مفتوحاً فوق الشاشة، فالقفلُ له */
   try{
