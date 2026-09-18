@@ -919,6 +919,10 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
 .foldh.open{border-color:var(--gold)}
 .foldh .fi{flex:0 0 auto;font-size:13px;opacity:.75}
 .foldb{padding-top:10px}
+/* رأسُ بابٍ من أبواب تسجيل المحفوظ: عنوانٌ وتحته وصفُه، والأربعةُ سواء */
+.prdoor{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px;text-align:right}
+.prdoor b{font-size:15.5px;font-weight:900;line-height:1.3}
+.prdoor small{font-size:12.5px;font-weight:700;color:var(--mute);line-height:1.4;white-space:normal}
 /* ===== سطر «بقي لك ... لختم القرآن» ===== */
 /* صار سطراً داخل بطاقة الترحيب */
 .khatma{display:block;width:100%;text-align:start;background:none;border:0;padding:0;
@@ -10133,38 +10137,9 @@ function priorModeSet(v, after){
   }
   fin();
 }
-/* في الإعدادات: البطاقتان ثم اللوحة تحتهما */
-function renderPriorMode(){
-  var mb=$('priorMode'), bx=$('priorBox');
-  if(!mb||!bx) return;
-  var pm=curP().priorMode||'';
-  mb.innerHTML=priorModeHTML();
-  bx.innerHTML=priorPanelHTML('pS');
-  bx.hidden=(pm!=='has');
-  var ms=mb.querySelectorAll('[data-pmode]'), z;
-  for(z=0;z<ms.length;z++) ms[z].onclick=function(){
-    priorModeSet(this.getAttribute('data-pmode'), function(){
-      renderPriorMode();
-      try{ fillBqnSelect(); }catch(e){}
-    });
-  };
-  /* سجّل حفظه فصار له محفوظ — فيُسأل الآن عن ورد مراجعته.
-     والانتقالُ إلى الخطوة التالية شأنُ أزرار المعالج لا شأنُ الرسم:
-     كان يُنقل هنا ثمّ يُنقل بالزرّ، فتُتخطّى خطوةُ الورد ويُظنّ أنّه تمّ. */
-  priorPanelWire('pS',function(){
-    try{ fillBqnSelect(); }catch(e){}
-    try{ revLoad(); }catch(e){}
-    try{ if($('scr-bqn') && $('scr-bqn').classList.contains('active')) bqnChrome(); }catch(e){}
-  });
-  priorFoldHead();
-}
-/* علامة الطيّة تُحدّث مكانها، فلا يُعاد رسم القائمة فتنطبق تحت يده */
-function priorFoldHead(){
-  var hd=document.querySelector('[data-fold="fPrior"] span'); if(!hd) return;
-  var pm=curP().priorMode||'';
-  hd.textContent='📌 ما حفظتَه قبل التطبيق'+
-    (pm==='new'?' — ✅ أبدأ من جديد':(pm==='has'?' — ✅ مُسجّل':''));
-}
+/* «renderPriorMode» و«priorFoldHead» زالتا: كانتا ترسمان لوحةَ الإعدادات
+   القديمةَ في عنصرَي #priorMode و[data-fold="fPrior"]، وقد زال العنصران يوم
+   صار تسجيلُ المحفوظ خطوةً في المعالج — فبقيتا تُناديان ولا تعملان. */
 /* ===== ما حفظتَه قبل التطبيق: بابٌ واحد =====
    كانت اللوحةُ ستّةَ أبوابٍ في شاشةٍ واحدة — ثلاثون جزءاً، ومئةٌ وأربعَ عشرةَ
    سورة، وأربعةُ أزرارٍ سريعة، وصفُّ صفحات، وقائمةُ نطاقات — مئةٌ واثنان وخمسون
@@ -10193,46 +10168,65 @@ function priorRanges(){
   });
   return out;
 }
+/* رأسُ بابٍ من أبواب التسجيل: عنوانٌ وتحته سطرُ وصفٍ خافت، على صورةٍ واحدة
+   للأبواب الأربعة فلا يبدو بعضُها أَولى من بعض */
+function priorDoorHTML(id, ic, t, sub, body){
+  return foldHTML(id, '<span class="prdoor"><b>'+ic+' '+t+'</b><small>'+sub+'</small></span>', false, body);
+}
+/* ===== أبوابُ تسجيل المحفوظ الأربعة =====
+   كانت الطرقُ منشورةً في الشاشة كلُّها معاً: اختصاراتٌ، ثمّ زرُّ مصحفٍ، ثمّ
+   قائمتا سورةٍ وآية، ثمّ صفحاتٌ خلف زرّ، ثمّ ثلاثون جزءاً في طيّة — فيرى
+   الوالدُ جدارَ أزرارٍ لا يدري من أين يبدأ.
+   فصار السؤالُ أوّلاً: كيف تعدُّ حفظك؟ وتحته أربعةُ أبوابٍ مطويّةٍ على صورةٍ
+   واحدة، لا يُفتح بابٌ إلّا انطوى ما سواه — فتبقى الشاشةُ سؤالاً واحداً في
+   كلّ لحظة. وما سجّله يبقى تحتها ظاهراً أبداً، فهو ثمرةُ عمله لا بابٌ من
+   أبوابه. */
 function priorPanelHTML(pfx){
   var p=priorSel(), h='', j;
-  h+='<div class="prquick chips" id="'+pfx+'Q">'+
-     '<button type="button" class="chipsel" data-pq="amma">جزء عمّ</button>'+
-     '<button type="button" class="chipsel" data-pq="last5">آخر ٥ أجزاء</button>'+
-     '<button type="button" class="chipsel" data-pq="half">نصف المصحف</button>'+
-     '<button type="button" class="chipsel" data-pq="all">المصحفُ كلُّه</button></div>';
-  /* «من … إلى …» — كنطاق المراجعة الحرّة سواءً بسواء، فلا طريقةَ ثانيةً تُتعلَّم */
-  h+='<div class="revbox" style="margin:14px 0 0">'+
-       '<div class="rl rlbig">أضِفْ ما تحفظه</div>'+
-       '<button type="button" class="btn blue mini" id="'+pfx+'Pick" style="width:100%;margin:0 0 10px">'+
-         '📖 حدّدْه من المصحف بلمستين</button>'+
+  h+='<div class="rl rlbig" style="margin:2px 0 0">كيف تعدُّ حفظك؟</div>'+
+     '<div class="note" style="margin:4px 0 0">افتحِ البابَ الذي يناسبك — ولك أن تجمع بين أكثرَ من باب</div>';
+
+  /* ١) بأرقام الصفحات */
+  h+=priorDoorHTML(pfx+'DP','📄','بأرقام الصفحات','من صفحةٍ إلى صفحةٍ في المصحف',
+       '<div class="pgrow">'+
+         '<input type="number" id="'+pfx+'P1" min="1" max="604" inputmode="numeric" placeholder="من صفحة">'+
+         '<input type="number" id="'+pfx+'P2" min="1" max="604" inputmode="numeric" placeholder="إلى صفحة">'+
+         '<button type="button" class="btn blue" id="'+pfx+'PAdd">➕ أضِف</button>'+
+       '</div>'+
+       '<div class="note" style="margin:8px 0 0">من كتب طرفاً واحداً فصفحةٌ واحدة</div>');
+
+  /* ٢) بالسور والآيات — كنطاق المراجعة الحرّة سواءً بسواء، فلا طريقةَ ثانيةً تُتعلَّم */
+  h+=priorDoorHTML(pfx+'DS','📖','بالسور والآيات','من سورةٍ وآيةٍ إلى سورةٍ وآية',
        '<div class="revrow"><select id="'+pfx+'FS">'+revSurahOpts(1)+'</select>'+
        '<select id="'+pfx+'FA">'+revAyahOpts(1,1)+'</select></div>'+
        '<div class="rl" style="margin:12px 0 8px">إلى</div>'+
        '<div class="revrow"><select id="'+pfx+'TS">'+revSurahOpts(114)+'</select>'+
        '<select id="'+pfx+'TA">'+revAyahOpts(114,6)+'</select></div>'+
-       '<button type="button" class="btn blue" id="'+pfx+'Add" style="width:100%;margin:12px 0 0">➕ أضِفْه إلى محفوظي</button>'+
-       /* ومن يعدّ حفظَه بالصفحات يكتب رقمَيها — أيسرُ له من قائمتَي سورةٍ وآية */
-       '<button type="button" class="btn ghost mini" id="'+pfx+'PMore" style="width:100%;margin:10px 0 0">'+
-         '📄 أو بأرقام الصفحات</button>'+
-       '<div id="'+pfx+'P" hidden style="margin-top:8px">'+
-         '<div class="pgrow">'+
-           '<input type="number" id="'+pfx+'P1" min="1" max="604" inputmode="numeric" placeholder="من صفحة">'+
-           '<input type="number" id="'+pfx+'P2" min="1" max="604" inputmode="numeric" placeholder="إلى صفحة">'+
-           '<button type="button" class="btn blue" id="'+pfx+'PAdd">➕ أضِف</button>'+
-         '</div>'+
-       '</div>'+
-     '</div>';
-  h+='<div class="revrow" style="margin:16px 0 8px;justify-content:space-between">'+
+       '<button type="button" class="btn blue" id="'+pfx+'Add" style="width:100%;margin:12px 0 0">➕ أضِفْه إلى محفوظي</button>');
+
+  /* ٣) بالأجزاء — ومعها الاختصاراتُ الجاهزة، فكلُّها تأشيرٌ بالأجزاء */
+  var jz='<div class="prquick chips" id="'+pfx+'Q" style="gap:7px;margin-bottom:12px">'+
+     '<button type="button" class="chipsel" data-pq="amma">جزء عمّ</button>'+
+     '<button type="button" class="chipsel" data-pq="last5">آخر ٥ أجزاء</button>'+
+     '<button type="button" class="chipsel" data-pq="half">نصف المصحف</button>'+
+     '<button type="button" class="chipsel" data-pq="all">المصحفُ كلُّه</button></div>'+
+     '<div class="chips" id="'+pfx+'J" style="gap:7px">';
+  for(j=1;j<=30;j++)
+    jz+='<button type="button" class="chipsel'+(p.priorJ[j]?' sel':'')+'" data-pj="'+j+'">'+arNum(j)+'</button>';
+  jz+='</div>';
+  h+=priorDoorHTML(pfx+'DJ','🧩','بالأجزاء','أشِّرْ ما تحفظه من الثلاثين — أو خُذْ أحدَ الاختصارات', jz);
+
+  /* ٤) بلمستين من المصحف */
+  h+=priorDoorHTML(pfx+'DM','✌️','بلمستين من المصحف','يُفتح المصحفُ، فتلمسُ أوّلَ ما تحفظ وآخرَه',
+       '<button type="button" class="btn blue" id="'+pfx+'Pick" style="width:100%;margin:0">'+
+         '📖 افتحِ المصحفَ الآن</button>');
+
+  /* وما سجّله: ثمرةُ الأبواب كلِّها، ظاهرةٌ تحتها لا تُطوى */
+  h+='<div class="revrow" style="margin:20px 0 8px;justify-content:space-between">'+
        '<span class="rl" style="margin:0">📋 ما سجّلتَه</span>'+
        '<button type="button" class="btn ghost mini" id="'+pfx+'Clr" style="margin:0;padding:6px 12px">🗑️ امسح الكلّ</button>'+
      '</div>'+
      '<div class="chips prlist" id="'+pfx+'L" style="gap:6px"></div>';
-  /* الأجزاءُ الثلاثون مطويّةٌ: لمن يعدّ حفظَه بالأجزاء، ولا تفرض نفسَها */
-  var jz='<div class="chips" id="'+pfx+'J" style="gap:7px">';
-  for(j=1;j<=30;j++)
-    jz+='<button type="button" class="chipsel'+(p.priorJ[j]?' sel':'')+'" data-pj="'+j+'">'+arNum(j)+'</button>';
-  jz+='</div>';
-  h+='<div style="margin-top:14px">'+foldHTML(pfx+'JZ','🧩 أو أشّر بالأجزاء',false,jz)+'</div>';
   h+='<div class="note" id="'+pfx+'Note" style="font-weight:800;margin-top:12px"></div>';
   return h;
 }
@@ -10267,7 +10261,7 @@ function priorPanelWire(pfx,after){
   var note=function(){
     var n=priorCount(), el=sel('Note'); if(!el) return;
     el.textContent = n ? ('محسوبٌ لك '+arNum(n)+' آية — نحو '+arNum(Math.round(n/QURAN_AYAT*604))+' صفحة')
-                       : 'أضِفْ ما تحفظه: اختصاراً جاهزاً، أو نطاقاً من آيةٍ إلى آية.';
+                       : 'لم تسجّل شيئاً بعد — افتحْ أحدَ الأبواب فوقُ وأضِفْ ما تحفظه.';
   };
   var paint=function(){
     var a=sel('J')?sel('J').querySelectorAll('[data-pj]'):[], i;
@@ -10294,12 +10288,18 @@ function priorPanelWire(pfx,after){
         saveDB(); paint();
       },'🗑️');
   };
-  /* رأسُ الطيّة يُربط هنا: كان يُربط في اللوحة القديمة التي زالت، فبقي رأسُ
-     «أشّر بالأجزاء» لا يُفتح بالضغط */
-  try{
-    var fh=document.querySelector('[data-fold="'+pfx+'JZ"]');
-    if(fh && fh.parentNode) foldBind(fh.parentNode);
-  }catch(e){}
+  /* الأبوابُ الأربعة: لا يُفتح بابٌ إلّا انطوى ما سواه، فلا تصير الشاشةُ
+     أربعَ لوحاتٍ مفتوحةٍ كما كانت قبل أن تُطوى */
+  var DOORS=['DP','DS','DJ','DM'];
+  DOORS.forEach(function(d){
+    var hd=document.querySelector('[data-fold="'+pfx+d+'"]');
+    if(!hd) return;
+    hd.onclick=function(){
+      var open=!foldIsOpen(pfx+d), x;
+      for(x=0;x<DOORS.length;x++) foldSet(pfx+DOORS[x], DOORS[x]===d && open);
+      if(open) try{ hd.scrollIntoView({block:'nearest'}); }catch(e){}
+    };
+  });
   var js=sel('J')?sel('J').querySelectorAll('[data-pj]'):[], i;
   for(i=0;i<js.length;i++) js[i].onclick=function(){
     var k=this.getAttribute('data-pj');
@@ -10321,9 +10321,6 @@ function priorPanelWire(pfx,after){
     addGi(gAt(val('FS'),val('FA')), gAt(val('TS'),val('TA')));
   };
   /* الصفحاتُ بأرقامها: تُضاف نطاقاً، ومن كتب طرفاً واحداً فصفحةٌ واحدة */
-  if(sel('PMore')) sel('PMore').onclick=function(){
-    var el=sel('P'); if(el) el.hidden=!el.hidden;
-  };
   if(sel('PAdd')) sel('PAdd').onclick=function(){
     var e1=sel('P1'), e2=sel('P2');
     var a=parseInt(e1?e1.value:'',10), b2=parseInt(e2?e2.value:'',10);
@@ -10433,6 +10430,10 @@ function priorPicked(){
   var p=curP(), k;
   for(k in (p.priorJ||{})) if(p.priorJ[k]) return true;
   for(k in (p.priorS||{})) if(p.priorS[k]) return true;
+  /* والصفحاتُ والنطاقات: كانتا تسقطان من هذا السؤال، فمن سجّل حفظَه بأرقام
+     الصفحات أو من آيةٍ إلى آيةٍ قيل عنه إنّه لم يؤشّر شيئاً */
+  if((p.priorP||[]).length) return true;
+  if((p.priorR||[]).length) return true;
   return false;
 }
 function bqnSteps(){
@@ -11356,7 +11357,6 @@ function fillSettings(){
   $('setReps').value=String(SET.reps);
   $('setFont').value=String(SET.font);
   try{ fillBqnSelect(); }catch(e){}
-  try{ renderPriorMode(); }catch(e){}
   /* حالة التثبيت */
   (function(){
     var e=$('instNote2'), b=$('btnInstall2'); if(!e||!b) return;
