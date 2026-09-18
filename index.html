@@ -6470,13 +6470,13 @@ $('mfClose').onclick=function(){ mfPickEnd(); mushafClose(); mushafEatGhost(); }
 $('mfGoBtn').onclick=function(){ var pv=MF_PV; mushafClose(); mushafEatGhost(); if(pv && pv.go) pv.go(); };
 /* استماعُ المقطع من صندوق العرض: إن كان معلَّماً تُتلى آياتُه، وإلّا فالوجهُ من أوّله */
 $('mfGoListen').onclick=function(){
-  if(audToggle()) return;              /* تتلو الآن: تُمسك أو تُتابَع */
+  if(audTap()) return;              /* تتلو الآن: تُمسك ويُفتح صندوقُها */
   audAsk(audQueueSeg());
 };
 /* اختصارٌ في الدرس نفسِه لمن لم يفتح وجهَ المصحف: يتلو آيتَه التي هو فيها،
    وإن لم تكن جولتُه آيةً بعينها (كتسميع صفحة) فمقطعَه */
 $('pListen').onclick=function(){
-  if(audToggle()) return;
+  if(audTap()) return;
   audAsk(audList(playNowPieces()));
 };
 /* يُحفظ فورَ تعليمه، فيصحّ وإن خرج من الوجه بالإغلاق أو بزرّ الرجوع لا بزرّ البدء.
@@ -6586,6 +6586,70 @@ function audStop(){
    يردّد ما سمع، أو يجيب من ناداه — عاد فأعادها من الآية الأولى.
    فصارت الضغطةُ إمساكاً عند موضعها: يعود فيتابع من حيث وقفت. وتنتهي
    التلاوةُ بمغادرة الوجه، أو ببدء تلاوةٍ جديدة، أو بتبديل القارئ. */
+/* ===== صندوقُ التلاوة =====
+   لمّا صار الزرُّ يُمسك التلاوةَ لم يبقَ للإنهاء باب. فصارت الضغطةُ وهي تتلو
+   تُمسكها وتفتح صندوقَها: يتابع، أو يعيدها من أوّلها، أو يبدّل قارئَها أو
+   تكرارها وهي على موضعها، أو يُنهيها.
+   وإن أغلق الصندوقَ بقيت ممسَكةً، والضغطةُ التالية تتابع بلا سؤال — فلا
+   يُسأل مرّتين، ويبقى للمتابعة لمسةٌ واحدة كما كان. */
+function audTap(){
+  if(!AUD.q.length) return false;
+  var was=AUD.hold;
+  audToggle();
+  if(!was) audBox();                    /* أُمسكت الآن: يُعرض عليه ما يصنع بها */
+  return true;
+}
+function audBox(){
+  if(!AUD.q.length) return;
+  var rp = (AUD.rep===0) ? '♾️ بلا توقّف'
+         : (AUD.rep>1 ? (arNum(AUD.left)+' من '+arNum(AUD.rep)) : 'مرّة واحدة');
+  var list=[
+    { v:'go',    n:'▶️ تابِعْ',        act:true },
+    { v:'again', n:'🔁 من أوّله',      act:true },
+    { v:'qari',  n:'🎙️ '+qariName(),  act:true },
+    { v:'rep',   n:'🔂 التكرار: '+rp,  act:true },
+    { v:'stop',  n:'⏹️ أوقِفْ',        act:true }
+  ];
+  uiBox('⏸️ التلاوةُ ممسَكة عند الآية <b>'+arNum(AUD.i+1)+'</b> من <b>'+arNum(AUD.q.length)+'</b>',
+    '🎧', null, '✖️ إغلاق', function(ok,v){
+      if(!ok || v==null) return;        /* أُغلق: تبقى ممسَكةً، ولمسةٌ تتابعها */
+      if(v==='go'){ audToggle(); return; }
+      if(v==='stop'){ audStop(); return; }
+      if(v==='again'){ audRestart(); return; }
+      /* بدّل القارئ فاستُؤنفت التلاوة: لا يُعاد صندوقُ الإمساك على تلاوةٍ
+         تجري. وإن رجع عن التبديل فهي ممسَكةٌ بعدُ، فيعود إليه */
+      if(v==='qari'){ qariAsk(function(){ if(AUD.hold) audBox(); }); return; }
+      if(v==='rep'){ audRepAsk(); return; }
+    }, null, null, list);
+}
+/* من أوّل القائمة، وتكرارُه يُستأنف عدَدُه كاملاً */
+function audRestart(){
+  if(!AUD.q.length) return;
+  AUD.i=-1; AUD.left=AUD.rep; AUD.hold=false;
+  if(AUD.el){ try{ AUD.el.pause(); }catch(e){} }
+  audNext();
+}
+/* الآيةُ الجارية تُعاد من مصدرها الجديد، وموضعُه من القائمة محفوظ —
+   يُستعمل عند تبديل القارئ والتلاوةُ قائمة، فلا تُلغى من أوّلها */
+function audReload(){
+  if(!AUD.q.length) return;
+  AUD.i=Math.max(0, AUD.i)-1;           /* audNext يتقدّم بواحد */
+  AUD.hold=false;
+  if(AUD.el){ try{ AUD.el.pause(); }catch(e){} }
+  audNext();
+}
+/* التكرارُ يُبدَّل والتلاوةُ على موضعها، ثمّ يعود إلى صندوقه */
+function audRepAsk(){
+  var reps=AUD_REPS.map(function(o){ return { v:o.v, n:o.n, sel:(o.v===AUD.rep) }; });
+  uiBox('كم مرّةً تريد سماعَه؟','🔂','✅ موافق','رجوع',function(ok,v){
+    if(ok && v!=null){
+      SET.audRep=v; saveDB();
+      AUD.rep=v; AUD.left=v;
+      audSync();
+    }
+    audBox();
+  },null,null,reps);
+}
 function audToggle(){
   if(!AUD.q.length) return false;
   var el=AUD.el;
@@ -6875,9 +6939,9 @@ $('mfDockMean').onclick=function(){
   mfPanel('mfMean'); mfMeanRender();
 };
 /* الاستماع: يتلو آياتِ المقطع إن كان معلَّماً، وإلّا آياتِ الوجه كلَّه.
-   والضغطةُ الثانية تُمسكه عند موضعه، والثالثةُ تتابع — وزرٌّ واحدٌ لا زرّان */
+   والضغطةُ الثانية تُمسكه وتفتح صندوقَه، والثالثةُ تتابع — وزرٌّ واحدٌ لا زرّان */
 $('mfDockPlay').onclick=function(){
-  if(audToggle()) return;
+  if(audTap()) return;
   /* في الدرس: تُتلى آيتُه التي هو فيها — فالوجهُ مقصودُ ما قبل البدء، وأمّا
      بعد الدخول فمقصودُه موضعُه. وخارجَ الدرس: الوجهُ كلُّه */
   if(inLesson()){
@@ -6908,7 +6972,9 @@ function qariAsk(after){
   uiBox('مَن تحبُّ أن تسمع؟','🎙️',null,'رجوع',function(ok,v){
     if(ok && v){
       SET.qari=v; saveDB();
-      try{ audStop(); }catch(e){}      /* بُدّل القارئ: تسكت تلاوةُ سابقه */
+      /* بُدّل القارئ والتلاوةُ قائمة: تُستأنف من آيتها بصوته هو، ولا تُلغى
+         من أوّلها كما كانت — وإن لم تكن قائمةً سكتَ ما بقي من سابقه */
+      try{ if(AUD.q.length) audReload(); else audStop(); }catch(e){}
       try{ navToast('🎙️ '+qariName()); }catch(e){}
     }
     if(after) after();
