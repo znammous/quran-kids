@@ -3781,8 +3781,16 @@ function mfPickAt(t,x,y){
     if(fn0) fn0(f0.fromS, f0.fromA, sn, an);
     return true;
   }
-  uiBox('<b>'+(sx?sx.name:'')+' — الآية '+arNum(an)+'</b>\n'+(MF_PICK.stage==='from'?'أمِن هنا تبدأ مراجعتُك؟':'أوعندها تنتهي مراجعتُك؟'),
-    '📖','✅ موافق','↺ أعد التحديد', function(ok){
+  /* ومع إقرار البداية حقلٌ لرقم الصفحة: من كان آخرُ حفظه بعيداً عن بدايته
+     طوى إليه الأوجهَ طيّاً — كان عليه أن يُقرّ البدايةَ ثمّ يتصفّح وجهاً وجهاً
+     حتى يبلغ موضعَ نهايته. فإن كتب رقماً قُفز به إليه، وإن تركه فارغاً بقي
+     في وجهه كما كان. */
+  var askPage=(MF_PICK.stage==='from');
+  if(askPage) UI_NOFOCUS=true;            /* حقلُ الوجه اختياريّ، فلا تقفز لوحةُ المفاتيح */
+  uiBox('<b>'+(sx?sx.name:'')+' — الآية '+arNum(an)+'</b>\n'+
+    (askPage ? 'أمِن هنا تبدأ؟\nوإن كانت نهايتُك في وجهٍ آخر فاكتبْ رقمَه، وإلّا فاتركْه فارغاً'
+             : 'أوعندها تنتهي مراجعتُك؟'),
+    '📖','✅ موافق','↺ أعد التحديد', function(ok,v){
       if(!MF_PICK) return;
       if(!ok){
         /* عدل عنها: تُطفأ إضاءتُها، ويُفكّ الحظر بعد لحظةٍ تبتلع نقرةَ الصندوق
@@ -3794,17 +3802,32 @@ function mfPickAt(t,x,y){
       MF_PICK.busy=false;
       if(MF_PICK.stage==='from'){
         MF_PICK.fromS=sn; MF_PICK.fromA=an; MF_PICK.stage='to';
-        mfPickDraw();                     /* يبقى في الصفحة نفسها غالباً */
+        /* رقمُ الوجه إن كتبه: يُقوَّم في حدود المصحف، وما ليس رقماً يُهمَل */
+        var pg=parseInt(String(v==null?'':v).replace(/[^\d٠-٩]/g,'')
+                 .replace(/[٠-٩]/g,function(d){ return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); }),10);
+        var jump=(pg>=1 && pg<=604 && pg!==MF_PICK.page);
+        if(jump) MF_PICK.page=pg;
+        mfPickDraw();                     /* يبقى في الصفحة نفسها ما لم يقفز */
         /* تنبيهٌ عابرٌ لا صندوقٌ يُغلَق: الشريطُ يقول «② اضغط النهاية» فلا يضلّ */
         try{ navToast('✅ ضُبطت البداية عند '+(sx?sx.name:'')+' — الآية '+arNum(an)+
-                      ' • والآن اضغط موضعَ النهاية'); }catch(e){}
+                      (jump ? (' • وأنت الآن في الوجه '+arNum(pg)+' — اضغط موضعَ النهاية')
+                            : ' • والآن اضغط موضعَ النهاية')); }catch(e){}
         mfUnbusy();
         return;
       }
       var f=MF_PICK, fn=f.done;
       mfPickEnd(); mushafClose(); mushafEatGhost();
       if(fn) fn(f.fromS, f.fromA, sn, an);
-    });
+    }, null, askPage ? '' : null);
+  /* لوحةُ أرقامٍ لا حروف، وحدُّه ثلاثةُ أرقام */
+  if(askPage){
+    var ipg=$('askInp');
+    if(ipg){
+      ipg.maxLength=3;
+      ipg.placeholder='رقم وجه النهاية (اختياريّ)';
+      try{ ipg.inputMode='numeric'; }catch(e){}
+    }
+  }
   return true;
 }
 /* وجه المصحف ملء الشاشة: يُفتح عند الطلب ولا يزاحم القراءة */
@@ -14987,15 +15010,23 @@ function curScreen(){ var e=document.querySelector('.screen.active'); return e?e
 /* ===== تنبيهٌ وتأكيدٌ بثيمة التطبيق =====
    نوافذ المتصفّح تقول «This page says» وتقطع جوّ الشاشة، فهذه تخلفها.
    uiAlert(نصّ) — خبرٌ يُقرأ ثم يُغلق.  uiAsk(نصّ, دالّة) — نعم أو لا. */
+/* تُرفع قبل صندوقٍ حقلُه اختياريّ، فلا يُفتح على لوحة مفاتيح. وتُخفض بعد كلّ صندوق */
+var UI_NOFOCUS=false;
 function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
   var bg=$('ask'); if(!bg){ if(cb) cb(!!no?false:true); return; }
   var cw=$('askChkWrap'), ck=$('askChk');
   if(cw){ cw.hidden=!muteKey; if(ck) ck.checked=false; }
-  /* حقلُ نصٍّ اختياريّ: يُعطى قيمتَه الأولى، ويُردّ ما فيه مع الجواب */
+  /* حقلُ نصٍّ اختياريّ: يُعطى قيمتَه الأولى، ويُردّ ما فيه مع الجواب.
+     وصفاتُه تُردّ إلى أصلها في كلّ مرّة — لوحةُ مفاتيحه وعرضُه وسطرُ تلميحه —
+     فلا يرث صندوقٌ صفةَ صندوقٍ قبله */
   var ip=$('askInp'), wantInp=(inp!=null);
   if(ip){
     ip.hidden=!wantInp;
-    if(wantInp){ ip.value=String(inp); }
+    if(wantInp){
+      ip.value=String(inp);
+      ip.placeholder=''; ip.maxLength=14;
+      try{ ip.inputMode=''; }catch(e){}
+    }
   }
   /* خياراتٌ سريعة: كلُّ خيارٍ زرٌّ يُنهي السؤالَ بقيمته، فلا «نعم» بعده */
   /* خياراتٌ سريعة. فإن كان معها زرُّ إقرار صارت تُنتقى ثمّ تُقرّ، وإلّا نفذت
@@ -15038,8 +15069,11 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
   }
   if(ip && wantInp){
     ip.onkeydown=function(e){ if(e.key==='Enter'){ e.preventDefault(); done(true); } };
-    setTimeout(function(){ try{ ip.focus(); ip.select(); }catch(e){} }, 40);
+    /* الحقلُ الاختياريُّ لا يُخطف إليه التركيز: لوحةُ المفاتيح تقفز على من
+       لا يريده فتحجب نصفَ الصندوق */
+    if(!UI_NOFOCUS) setTimeout(function(){ try{ ip.focus(); ip.select(); }catch(e){} }, 40);
   }
+  UI_NOFOCUS=false;
 }
 function uiAlert(msg,ic){ uiBox(msg,ic||'💚',null,null,null); }
 /* تنبيهٌ يُقال مرّةً، ولصاحبه أن يكتمه */
@@ -15059,10 +15093,12 @@ function uiPick(msg,list,cb,ic,yes){
 }
 /* uiPrompt(نصّ, القيمةُ الأولى, دالّة) — اسمٌ يُكتب، ولا تُنادى الدالّةُ إن أُلغي */
 function uiPrompt(msg,val,cb,ic,max){
-  var ip=$('askInp'); if(ip) ip.maxLength=max||14;   /* أسماءُ العائلة أقصرُ من اسم صاحب الملفّ */
   uiBox(msg,ic||'✏️','✅ حفظ','إلغاء',function(ok,v){
     if(ok && cb) cb(String(v==null?'':v).trim());
   },null,(val==null?'':val));
+  /* بعد فتح الصندوق لا قبلَه: هو يردّ صفاتِ الحقل إلى أصلها عند كلّ فتح.
+     وأسماءُ العائلة أقصرُ من اسم صاحب الملفّ */
+  var ip=$('askInp'); if(ip) ip.maxLength=max||14;
 }
 function navToast(msg, ms){
   if(!NAV.tEl){ NAV.tEl=document.createElement('div'); NAV.tEl.className='toast'; document.body.appendChild(NAV.tEl); }
