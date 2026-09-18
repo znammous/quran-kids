@@ -7874,8 +7874,11 @@ function buildRounds(s,seg,stage){
     for(i=from;i<to;i++){
       if(ayahWords(s,i)<ORDER_MIN) continue;      /* آيةٌ لا يُرتَّب فيها شيء */
       var ch=wordChunks(s,i, SET.level==='hard'?8:WORDS_MIN);
-      /* الآيات الطويلة: نأخذ ٣ مقاطع كلمات فقط بدل تفكيك الآية كلها */
-      if(ch.length>3) ch=shuffle(ch.slice()).slice(0,3).sort(function(a,b){ return a[0]-b[0]; });
+      /* الآيات الطويلة: ثلاثةُ مقاطعَ من أوّل الآية على ترتيبها، لا تفكيكَ
+         للآية كلِّها. وكانت الثلاثةُ تُنتقى بالقرعة ثمّ تُرتَّب، فيبدأ الطفلُ
+         من وسط الآية أو من آخرها ولم يُرتّب أوّلَها — والحفظُ يُبنى من أوّله.
+         (ومقطعُ الآية الواحدة في المرحلة الرابعة كان على الصواب، فاستويا) */
+      if(ch.length>3) ch=ch.slice(0,3);
       for(k=0;k<ch.length;k++) r.push({t:'words',a:i,from:ch[k][0],to:ch[k][1],parts:ch.length,part:k});
     }
     /* مقطعٌ كلُّ آياته كلمةٌ أو كلمتان: يُقرأ ولا يُرتَّب */
