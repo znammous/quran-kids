@@ -4367,6 +4367,12 @@ function goalHifzPct(){
 }
 function goalRevMet(){
   if(revOff()) return true;            /* لا مراجعةَ في خطّته، فلا يُعلَّق تمامُ يومه عليها */
+  /* على خطّةٍ لها مقرَّرُ مراجعةٍ اليوم: هو الميزانُ وحده. كانت مراجعةٌ واحدةٌ
+     في أيّ موضعٍ تُخضِّرُ صحَّ البطاقة وإن لم يُمسَّ مقرَّرُ يومه بعد */
+  try{
+    var T=bqnToday();
+    if(T && T.r) return !!(T.revDone || T.dayDone);
+  }catch(e){}
   if(todayBox().reviews>=1) return true;
   try{
     if(wirdPending()) return false;               /* ورده لم يُؤدَّ بعد */
@@ -12208,6 +12214,9 @@ function renderHomeCards(){
   if(revOff() && !freeLeft) rTxt='ليس لديك خطة مراجعة مضبوطة';
   else if(revOff()) rTxt='مسارك الحرّ مفتوح — بقيت '+arCount(freeLeft,C_SESS);
   else if(T && T.r && !T.revDone) rTxt=bqnLabel(T.r)+' — '+arCount(T.pages.length,C_PAGE);
+  /* أتمّ مقرَّرَ خطّته: تُهنّئه البطاقةُ ولا يُنقضُ صحُّها بمستحقٍّ خارج المقرَّر */
+  else if(T && T.r) rTxt='أتممتَ مقرَّر مراجعة اليوم — ولك أن تزيد'+
+       (due?(' • وعندك '+arNum(due)+' مقطعاً حلّ موعدُه'):'');
   else if(due) rTxt=arNum(due)+' مقطعاً حلّ موعدُه';
   else if(wp) rTxt='وردُ اليوم: '+arCount(revSize('wird'),C_PAGE)+' من محفوظك';
   else if(freeLeft) rTxt='مسارك الحرّ مفتوح — بقيت '+arCount(freeLeft,C_SESS);
