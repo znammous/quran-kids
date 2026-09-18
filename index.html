@@ -2608,17 +2608,24 @@ var VEIL=[{n:'بلا نقاب'},{n:'نقاب'}];
 /* تسريحاتُ البنات ولحى الرجال — في لعبة «عائلتي» وحدَها */
 var GIRLCUTS=[{n:'طويل'},{n:'ذيل فرس'},{n:'ضفيرتان'},{n:'قصير'}];
 var BEARDS=[{n:'بلا لحية'},{n:'شنب'},{n:'لحية خفيفة'},{n:'لحية كاملة'}];
+/* وردةٌ على الحجاب: زينةٌ صغيرةٌ على جانبه، تختار لونَها أو تدعها */
+var FLOWERS=[{n:'بلا وردة'},{n:'🌸 ورديّة'},{n:'🌹 حمراء'},{n:'🌼 صفراء'},{n:'🤍 بيضاء'}];
 var LOOK_OPEN=null;                 /* الصفّ المفتوح في لوحة الشخصية */
 var LOOK_ROWS=[{k:'skin',lb:'🎨 لون البشرة'},{k:'eyes',lb:'👁️ لون العينين'},
   {k:'veil',lb:'🧕 النقاب',kind:'choice',opts:VEIL,f:true},
+  {k:'flower',lb:'🌸 وردة الحجاب',kind:'choice',opts:FLOWERS,f:true},
   {k:'head',lb:'🧢 غطاء الرأس',kind:'choice',opts:HEADWEAR,m:true},
   {k:'hairStyle',lb:'✂️ تسريحة الشعر',kind:'choice',opts:HAIRCUTS,m:true},
+  /* واللحيةُ والشنبُ لشخصيّة المستخدم كما هما لأبيه في «عائلتي» */
+  {k:'beard',lb:'🧔 اللحية والشنب',kind:'choice',opts:BEARDS,m:true},
   {k:'hair',lb:'💇 لون الشعر'},
                {k:'cloth',lb:'👕 لون الملابس'},{k:'hijab',lb:'🧕 لون الحجاب'}];
 for(var _k in PAL){ if(!(look[_k]>=0 && look[_k]<PAL[_k].length)) look[_k]=0; }
 if(!(look.head>=0&&look.head<5)) look.head=0;
 if(!(look.hairStyle>=0&&look.hairStyle<4)) look.hairStyle=0;
 if(!(look.veil>=0&&look.veil<2)) look.veil=0;
+if(!(look.beard>=0&&look.beard<BEARDS.length)) look.beard=0;
+if(!(look.flower>=0&&look.flower<FLOWERS.length)) look.flower=0;
 function darken(hex,f){ var n=parseInt(String(hex).replace('#',''),16);
   return 'rgb('+Math.round(((n>>16)&255)*f)+','+Math.round(((n>>8)&255)*f)+','+Math.round((n&255)*f)+')'; }
 
@@ -2692,6 +2699,24 @@ function beardSVG(hair){
     '<path fill="'+bc+'" d="M30,55 C31,72 35,83 43,87 C47,88.6 53,88.6 57,87 C65,83 69,72 70,55 '+
     'C68,66 63,71 57,72.4 L57,74.5 C57,77.4 54,79 50,79 C46,79 43,77.4 43,74.5 L43,72.4 '+
     'C37,71 32,66 30,55 Z"/>';
+}
+/* ===== وردةُ الحجاب =====
+   خمسُ بتلاتٍ حول قلبٍ صغير، على جانب الحجاب فوق الصُّدغ — لا تُزاحم الوجه
+   ولا تختفي تحت النقاب */
+function flowerSVG(){
+  var i=look.flower||0;
+  var C=[null,{p:'#ffc0da',c:'#e8629b'},{p:'#ff9090',c:'#cf3a3a'},
+              {p:'#ffdf8f',c:'#dda017'},{p:'#ffffff',c:'#dfe7ef'}][i];
+  if(!C) return '';
+  var x=71, y=33, r=3.9, h='', k, a, px, py;
+  for(k=0;k<5;k++){
+    a=(k*72-90)*Math.PI/180;
+    px=(x+Math.cos(a)*r).toFixed(1); py=(y+Math.sin(a)*r).toFixed(1);
+    h+='<ellipse cx="'+px+'" cy="'+py+'" rx="3.2" ry="2.4" '+
+       'transform="rotate('+(k*72)+' '+px+' '+py+')" fill="'+C.p+'" '+
+       'stroke="rgba(0,0,0,.10)" stroke-width="0.7"/>';
+  }
+  return h+'<circle cx="'+x+'" cy="'+y+'" r="2.2" fill="'+C.c+'"/>';
 }
 function agalSVG(){
   return '<path d="M28,35 Q50,25 72,35" stroke="#1c1c1c" stroke-width="4.6" fill="none" stroke-linecap="round"/>'+
@@ -2803,11 +2828,18 @@ function avatarSVG(){
     : '<path fill-rule="evenodd" fill="'+hij+'" d="M50,13 C75,13 85,33 85,60 C85,81 77,95 67,101 L33,101 C23,95 15,81 15,60 C15,33 25,13 50,13 Z '+
         'M31,58 a19,23 0 1,0 38,0 a19,23 0 1,0 -38,0 Z"/>'+
       '<path d="M50,13 C33,13 22,27 18,46 C24,30 35,20 50,18 Z" fill="#fff" opacity=".22"/>'+
-      '<path d="M76,44 C80,60 78,84 68,99 L67,101 C77,95 85,81 85,60 C85,54 84,49 83,44 Z" fill="#000" opacity=".13"/>';
-  /* ياقة سعودية: قبّة قائمة حول العنق، وفتحة رأسية بزرّين */
+      '<path d="M76,44 C80,60 78,84 68,99 L67,101 C77,95 85,81 85,60 C85,54 84,49 83,44 Z" fill="#000" opacity=".13"/>'+
+      flowerSVG();
+  /* ===== ياقة الدشداشة =====
+     كانت شريطاً عريضاً على الصدر تحت الرقبة، ويُرسم العنقُ فوقها فتبدو خلفه
+     لا حولَه. فصارت قبّةً قائمةً تلتفّ على العنق: حلقةٌ تحتضنه من جانبيه،
+     تُرسم بعده لا قبله، ومنها تنزل فتحةُ الأزرار على الصدر. */
   var collar=(gender==='m')
-    ? '<path d="M40,93 C43,99 57,99 60,93 L62,97 C57,104 43,104 38,97 Z" fill="#fff" '+
-        'stroke="rgba(0,0,0,.18)" stroke-width="1.1" stroke-linejoin="round"/>'+
+    ? '<path fill="#fff" stroke="rgba(0,0,0,.18)" stroke-width="1.1" stroke-linejoin="round" '+
+        'd="M38.4,97.5 C38,88.6 41.8,83.6 50,83.6 C58.2,83.6 62,88.6 61.6,97.5 '+
+          'L59.2,99.6 C59.6,91.8 56.4,87.8 50,87.8 C43.6,87.8 40.4,91.8 40.8,99.6 Z"/>'+
+      '<path d="M41.6,92.4 C42.6,89.2 45.8,87.6 50,87.6 C54.2,87.6 57.4,89.2 58.4,92.4" '+
+        'fill="none" stroke="rgba(0,0,0,.12)" stroke-width="0.9" stroke-linecap="round"/>'+
       '<rect x="47.2" y="97" width="5.6" height="24" rx="2.2" fill="#fff" '+
         'stroke="rgba(0,0,0,.14)" stroke-width="1"/>'+
       '<circle cx="50" cy="104" r="1.25" fill="rgba(0,0,0,.32)"/>'+
@@ -2832,8 +2864,8 @@ function avatarSVG(){
     '<circle cx="50" cy="62" r="34" fill="#c2ddf6" opacity=".7"/>'+
     '<path d="M4,128 C9,105 27,96 40,93 L60,93 C73,96 91,105 96,128 Z" fill="'+cloth+'" '+
       'stroke="rgba(0,0,0,.13)" stroke-width="1.3"/>'+
-    '<path d="M60,93 C73,96 91,105 96,128 L82,128 C78,108 70,99 60,95 Z" fill="#000" opacity=".12"/>'+collar+
-    '<rect x="43" y="76" width="14" height="18" rx="7" fill="'+skin.s+'"/>'+
+    '<path d="M60,93 C73,96 91,105 96,128 L82,128 C78,108 70,99 60,95 Z" fill="#000" opacity=".12"/>'+
+    '<rect x="43" y="76" width="14" height="18" rx="7" fill="'+skin.s+'"/>'+collar+
     '<ellipse cx="50" cy="58" rx="21" ry="24" fill="'+skin.f+'"/>'+head+crown+
     '<path d="M37,49.5 Q42,46.5 47,49.5" stroke="'+brow+'" stroke-width="2" fill="none" stroke-linecap="round"/>'+
     '<path d="M53,49.5 Q58,46.5 63,49.5" stroke="'+brow+'" stroke-width="2" fill="none" stroke-linecap="round"/>'+
@@ -2876,6 +2908,7 @@ function famRowsFor(kind, L){
     if(!K.adult) r.push({k:'hijOn',lb:'🧕 الحجاب',kind:'choice',opts:HIJON});
     if(K.adult || (L.hijOn||0)===1){
       if(K.adult) r.push({k:'veil',lb:'🧕 النقاب',kind:'choice',opts:VEIL});
+      r.push({k:'flower',lb:'🌸 وردة الحجاب',kind:'choice',opts:FLOWERS});
       r.push({k:'hijab',lb:'🧕 لون الحجاب'});
     }else{
       r.push({k:'hairStyle',lb:'✂️ تسريحة الشعر',kind:'choice',opts:GIRLCUTS});
@@ -2893,7 +2926,11 @@ function meRows(){
     if(r.f&&gender!=='f') return;
     if(r.k==='hair'&&gender==='f') return;
     if(r.m&&gender!=='m') return;
-    if((r.k==='hair'||r.k==='hairStyle')&&gender==='m'&&(look.head||0)>=3) return;
+    /* غُطّي رأسُه بشماغٍ أو غترة: لا شعرَ يُرى — إلّا أن تكون له لحيةٌ فلونُها لونُه */
+    if(r.k==='hairStyle'&&gender==='m'&&(look.head||0)>=3) return;
+    if(r.k==='hair'&&gender==='m'&&(look.head||0)>=3&&!(look.beard||0)) return;
+    /* والوردةُ لا تُعرض على من لا حجابَ عليها */
+    if(r.k==='flower'&&(look.hijOn||0)===0) return;
     out.push(r);
   });
   return out;
@@ -3175,7 +3212,10 @@ function famRenderMember(){
   if(rb) rb.onclick=function(){
     ['skin','eyes','hair','cloth','hijab'].forEach(function(p){ L[p]=Math.floor(Math.random()*PAL[p].length); });
     L.hairStyle=Math.floor(Math.random()*HAIRCUTS.length);
-    if(K.male) L.head=Math.floor(Math.random()*HEADWEAR.length);
+    if(K.male){
+      L.head=Math.floor(Math.random()*HEADWEAR.length);
+      if(K.adult) L.beard=Math.floor(Math.random()*BEARDS.length);
+    }else if(K.adult || (L.hijOn||0)===1) L.flower=Math.floor(Math.random()*FLOWERS.length);
     saveDB(); beep([700,900],0.05); renderAvatars();
   };
 }
@@ -3193,7 +3233,7 @@ var FAM_TAB='me', FAM_KID=0;
 function famNew(kind){
   return { nm:'', skin:1, eyes:0, hair:0, hairStyle:0, head:(kind==='dad')?4:0, veil:0,
            beard:(kind==='dad')?2:0, cloth:(kind==='mom')?4:(kind==='girl')?5:0,
-           hijab:(kind==='mom')?1:3, hijOn:(kind==='mom')?1:0 };
+           flower:0, hijab:(kind==='mom')?1:3, hijOn:(kind==='mom')?1:0 };
 }
 function famData(){
   var p=curP();
@@ -3216,6 +3256,9 @@ function famCur(){
 function randomLook(){ for(var k in PAL) look[k]=Math.floor(Math.random()*PAL[k].length);
   look.head=Math.floor(Math.random()*HEADWEAR.length);
   look.hairStyle=Math.floor(Math.random()*HAIRCUTS.length);
+  /* واللحيةُ للذكر والوردةُ للأنثى، يدخلان في العشوائيّ كما دخلا في الاختيار */
+  if(gender==='m') look.beard=Math.floor(Math.random()*BEARDS.length);
+  else look.flower=Math.floor(Math.random()*FLOWERS.length);
   saveDB(); renderAvatars(); beep([520,660,880],0.06); }
 
 /* ===== أدوات النص (تُستبدل ببنية \uXXXX عند البناء) ===== */
