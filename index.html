@@ -1736,6 +1736,11 @@ body.glow-off .dfpic{animation:none}
     <div id="askMsg" style="font-size:17px;font-weight:800;line-height:1.9;color:var(--ttl)"></div>
     <!-- حقلُ الاسم: لا يظهر إلّا حين يُطلب اسمٌ (أسماءُ الأهل في «عائلتي») -->
     <input type="text" id="askInp" maxlength="14" hidden autocomplete="off" spellcheck="false" style="margin-top:12px;text-align:center">
+    <!-- حقلان جنبَ بعضٍ: طرفا مدًى، كـ«من وجهٍ إلى وجه» -->
+    <div class="pgrow" id="askPair" hidden style="margin-top:12px">
+      <input type="number" id="askInpA" inputmode="numeric" autocomplete="off">
+      <input type="number" id="askInpB" inputmode="numeric" autocomplete="off">
+    </div>
     <!-- خياراتٌ سريعةٌ تُغني عن «نعم/لا» حين يكون الجوابُ عدداً أو اختياراً.
          وتُسحب إن طالت (قائمةُ القرّاء سبعةَ عشر) فلا تخرج عن الشاشة -->
     <div class="row" id="askChips" hidden
@@ -3818,8 +3823,7 @@ function mfPickAt(t,x,y){
       if(MF_PICK.stage==='from'){
         MF_PICK.fromS=sn; MF_PICK.fromA=an; MF_PICK.stage='to';
         /* رقمُ الوجه إن كتبه: يُقوَّم في حدود المصحف، وما ليس رقماً يُهمَل */
-        var pg=parseInt(String(v==null?'':v).replace(/[^\d٠-٩]/g,'')
-                 .replace(/[٠-٩]/g,function(d){ return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); }),10);
+        var pg=numOf(v);
         var jump=(pg>=1 && pg<=604 && pg!==MF_PICK.page);
         if(jump) MF_PICK.page=pg;
         mfPickDraw();                     /* يبقى في الصفحة نفسها ما لم يقفز */
@@ -5264,7 +5268,10 @@ function gftPanelHTML(){
         '<button type="button" class="gftpk" data-gv="out">'+
           '<div class="pi">🤍</div><div class="pn">أرسل هديّة</div>'+
           '<div class="pd">أهدِ أخاك ممّا تحبّ</div></button>'+
-      '</div>';
+      '</div>'+
+      /* وسجلُّه هنا أيضاً: أوّلُ ما يُفتح البابُ يجد أكوادَه، فلا يحتاج أن
+         يدخل «أرسل هديّة» ليطّلع على ما ولّده */
+      gftLogHTML();
   }
   var back='<button class="btn ghost mini" id="gftBack" style="width:100%;margin-bottom:10px">➡️ رجوع</button>';
   if(GFT_V==='in'){
@@ -5353,8 +5360,11 @@ function gftBindOut(){
     renderShop();                        /* الكودُ ورصيدُه وسجلُّه تُعرض معاً */
   };
   $('gftCopy').onclick=function(){ gftCopy(GFT_CARD); };
-  /* ونسخُ كودٍ قديم: تُعاد رسالتُه بعبارتها التي كتبها يومئذٍ */
+}
+/* السجلُّ يُربط حيث عُرض — في بابِ الاختيار وفي بابِ الإهداء سواء */
+function gftLogBind(){
   var ls=$('shopBody').querySelectorAll('[data-lgc]'), z;
+  /* نسخُ كودٍ قديم: تُعاد رسالتُه بعبارتها التي كتبها يومئذٍ */
   for(z=0;z<ls.length;z++) ls[z].onclick=function(){
     var r2=gftLog()[parseInt(this.getAttribute('data-lgc'),10)];
     if(r2) gftCopy(gftCard(r2.c, r2.t, r2.n));
@@ -5388,6 +5398,7 @@ function gftBind(){
   };
   if($('gftUse')) gftBindIn();
   if($('gftGo'))  gftBindOut();
+  gftLogBind();
 }
 
 function renderShop(){
@@ -6889,8 +6900,8 @@ function audGo(pcs){
 function audScopeAsk(){
   var P=MF_PAGE, pc=[];
   try{ pc=pagePieces(P); }catch(e){}
-  var n=audQueuePage().length, list=[
-    { v:'now',  n:'📄 هذا الوجه — '+arCount(n,C_AYAH), act:true },
+  var list=[
+    { v:'now',  n:'📄 هذا الوجه', act:true },
     { v:'sura', n:'📖 سورةٌ كاملة',                     act:true },
     { v:'ayah', n:'🔤 من آيةٍ إلى آية',                 act:true },
     { v:'page', n:'📚 من وجهٍ إلى وجه',                 act:true }
@@ -6940,19 +6951,25 @@ function audAyahPick(){
     audGo(audPiecesGi(a,b));
   }, null, true);                              /* والمصحفُ يبقى مفتوحاً */
 }
-/* من وجهٍ إلى وجه: من هذا الوجه إلى رقمٍ يكتبه — ورقمٌ واحدٌ يكفي */
+/* رقمٌ يُقرأ بالعربيّة أو بالهنديّة، وما ليس رقماً يسقط */
+function numOf(v){
+  return parseInt(String(v==null?'':v).replace(/[^\d٠-٩]/g,'')
+    .replace(/[٠-٩]/g,function(d){ return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); }),10);
+}
+/* من وجهٍ إلى وجه: حقلان، وأوّلُهما الوجهُ المفتوحُ فمن رضيه لم يكتبه */
 function audPageAsk(){
   var P=MF_PAGE;
-  uiBox('من الوجه <b>'+arNum(P)+'</b> إلى أيِّ وجه؟\nاكتبْ رقمَه (١–٦٠٤)','📚','✅ استمع','رجوع',
+  uiBox('من أيِّ وجهٍ إلى أيِّ وجه؟\nأرقامُ الأوجه من ١ إلى ٦٠٤','📚','✅ استمع','رجوع',
     function(ok,v){
       if(!ok){ audScopeAsk(); return; }
-      var b=parseInt(String(v==null?'':v).replace(/[^\d٠-٩]/g,'')
-              .replace(/[٠-٩]/g,function(d){ return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); }),10);
-      if(!(b>=1 && b<=604)) b=P;
-      audGo(audPiecesPages(P,b));
-    }, null, String(P));
-  var ip=$('askInp');
-  if(ip){ ip.maxLength=3; try{ ip.inputMode='numeric'; }catch(e){} }
+      var a=numOf(v&&v[0]), b=numOf(v&&v[1]);
+      if(!(a>=1 && a<=604)) a=P;
+      if(!(b>=1 && b<=604)) b=a;          /* طرفٌ واحدٌ يكفي: وجهٌ واحد */
+      audGo(audPiecesPages(a,b));
+    }, null, [P, P, 'من وجه', 'إلى وجه']);
+  ['askInpA','askInpB'].forEach(function(k){
+    var e=$(k); if(e){ e.min=1; e.max=604; }
+  });
 }
 /* لوحةٌ واحدةٌ في كلّ مرّة — ولا شيءَ يُطوي الكلّ */
 function mfPanel(id){
@@ -15204,7 +15221,18 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
   /* حقلُ نصٍّ اختياريّ: يُعطى قيمتَه الأولى، ويُردّ ما فيه مع الجواب.
      وصفاتُه تُردّ إلى أصلها في كلّ مرّة — لوحةُ مفاتيحه وعرضُه وسطرُ تلميحه —
      فلا يرث صندوقٌ صفةَ صندوقٍ قبله */
-  var ip=$('askInp'), wantInp=(inp!=null);
+  /* وإن جاء «inp» مصفوفةً [قيمةٌ، قيمةٌ، تلميحٌ، تلميحٌ] فهما حقلان جنبَ
+     بعضٍ — طرفا مدًى — ويُردّ ما فيهما مصفوفةً كما جاءا */
+  var pr=$('askPair'), wantPair=(inp!=null && Array.isArray(inp));
+  if(pr){
+    pr.hidden=!wantPair;
+    if(wantPair){
+      var A=$('askInpA'), B=$('askInpB');
+      if(A){ A.value=(inp[0]==null?'':String(inp[0])); A.placeholder=inp[2]||''; }
+      if(B){ B.value=(inp[1]==null?'':String(inp[1])); B.placeholder=inp[3]||''; }
+    }
+  }
+  var ip=$('askInp'), wantInp=(inp!=null && !wantPair);
   if(ip){
     ip.hidden=!wantInp;
     if(wantInp){
@@ -15234,9 +15262,13 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
   n.hidden=!no; if(no) n.textContent=no;
   var done=function(v,pv){
     if(muteKey && ck && ck.checked) save(muteKey,1);   /* رغبتُه تُحفظ فلا يُكرَّر عليه */
-    var val=(pv!==undefined)?pv:((ip && wantInp)?ip.value:undefined);
+    var val=(pv!==undefined) ? pv
+          : wantPair ? [($('askInpA')||{}).value, ($('askInpB')||{}).value]
+          : ((ip && wantInp)?ip.value:undefined);
     bg.hidden=true; y.onclick=null; n.onclick=null; bg.onclick=null;
     if(ip) ip.onkeydown=null;
+    if($('askInpA')) $('askInpA').onkeydown=null;
+    if($('askInpB')) $('askInpB').onkeydown=null;
     if(cb) cb(v,val);
   };
   y.onclick=function(){ done(true, confirmMode?pickV:undefined); };
@@ -15257,6 +15289,13 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
     /* الحقلُ الاختياريُّ لا يُخطف إليه التركيز: لوحةُ المفاتيح تقفز على من
        لا يريده فتحجب نصفَ الصندوق */
     if(!UI_NOFOCUS) setTimeout(function(){ try{ ip.focus(); ip.select(); }catch(e){} }, 40);
+  }
+  if(wantPair){
+    ['askInpA','askInpB'].forEach(function(k){
+      var e2=$(k); if(!e2) return;
+      e2.onkeydown=function(ev){ if(ev.key==='Enter'){ ev.preventDefault(); done(true); } };
+    });
+    if(!UI_NOFOCUS) setTimeout(function(){ try{ $('askInpA').focus(); $('askInpA').select(); }catch(e){} }, 40);
   }
   UI_NOFOCUS=false;
 }
