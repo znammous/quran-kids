@@ -12368,7 +12368,9 @@ function examBody(k){
         var on=picked.indexOf(z[0])>=0;
         return '<button type="button" class="onbopt'+(on?' sel':'')+'" data-exk="'+z[0]+'">'+
           '<span class="oe">'+(on?'✅':z[1])+'</span>'+
-          '<span class="ot"><b>'+esc(z[2])+'</b><i>'+esc(z[3])+'</i></span></button>';
+          '<span class="ot"><b>'+esc(z[2])+
+            (z[0]===EX_HARD?'<span class="gcage">💎 ×٢</span>':'')+
+          '</b><i>'+esc(z[3])+'</i></span></button>';
       }).join('')+'</div>'+
       '<div class="note">حدّد ما شئت من الأنواع — أو «منوّعة» فتشملها جميعاً.'+
         ' وما لا تحتمله آيةٌ يُبدَّل بما تحتمله.</div>';
@@ -12418,8 +12420,19 @@ function examPagesEff(n){
   var pg=1; try{ pg=examPagesN(); }catch(e){ pg=1; }
   return Math.min(Math.max(1, pg||1), Math.max(1, n||1)/EX_Q_PER_PAGE);
 }
-function examPrize(right,tot){
-  var pe=examPagesEff(tot), sh=(tot>0 ? right/tot : 1);
+/* ===== نصيبُ «رصّ المطالع والخواتم» مضاعَف =====
+   هو أشقُّ الأنواع: لا يُسأل عن كلمةٍ في آيةٍ بل عن أوائل آياتٍ أو أواخرها
+   مجموعةً، ولا يُجيبه إلّا من حفظ المقطعَ متّصلاً لا مبعثراً. فالصحيحةُ منه
+   تُحسب بصحيحتين — يُزاد نصيبُها في العطاء ولا يُزاد في الدرجة، فالدرجةُ
+   ميزانُ إتقانٍ لا ميزانُ أجر. */
+var EX_HARD='eorder';
+function examHardRight(){
+  var n=0, i;
+  for(i=0;i<EX.log.length;i++) if(EX.log[i].ok && EX.log[i].t===EX_HARD) n++;
+  return n;
+}
+function examPrize(right,tot,extra){
+  var pe=examPagesEff(tot), sh=(tot>0 ? (right+(extra||0))/tot : 1);
   return { gems:Math.max(1, Math.round(EX_PAGE_GEM*pe*sh)),
            iron:Math.max(1, Math.round(EX_PAGE_IRON*pe*sh)),
            glass:(tot>0 && right>=tot) ? Math.max(1, Math.round(EX_PAGE_GLASS*pe)) : 0 };
@@ -12440,7 +12453,9 @@ function examSummary(){
     /* يُقال له العطاءُ بأرقامه التامّة ولا يُشرح له حسابُه: المُضاعِفُ
        تدبيرٌ في الشيفرة لا درسٌ يُلقّنه الطفل */
     (function(){
-      var pz=examPrize(EX.count,EX.count);
+      /* نصيبُ الرصّ المتوقَّع: إن كان فيما اختاره فالأسئلةُ تُقسَم على أنواعه */
+      var pk=examPicks(), ex=(pk.indexOf(EX_HARD)>=0 && pk.length) ? (EX.count/pk.length) : 0;
+      var pz=examPrize(EX.count,EX.count,ex);
       return '<div class="revtot">🎁 إن أتقنتَ الكلَّ: <b>'+arNum(pz.gems)+' 💎</b>'+
         ' و '+arNum(pz.iron)+' ⚙️ و '+arNum(pz.glass)+' 🔷</div>';
     })()+
@@ -12607,7 +12622,7 @@ function finishExam(){
   for(i=0;i<EX.log.length;i++) if(EX.log[i].ok) right++;
   var pct=Math.round(100*right/tot), g=examGrade(pct);
   var secs=Math.max(1, Math.round((Date.now()-EX.t0)/1000));
-  var pz=examPrize(right,tot);
+  var pz=examPrize(right,tot,examHardRight());
   var gems=pz.gems, iron=pz.iron, glass=pz.glass;
   addGems(gems); addMat('iron',iron);
   if(glass) addMat('glass',glass);
