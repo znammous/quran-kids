@@ -9460,7 +9460,7 @@ function finishStage(){
 /* ===== المراجعة بالصفحات ===== */
 var REV={ fromS:1, fromA:1, toS:114, toA:6, size:3, per:5, done:0, weak:{},
           pages:[], si:0, pi:0, due:false, view:0,
-          wird:true, dir:-1, fdir:-1, day:null, on:null, cyc:0, wdone:0, wsize:3, mode:null };
+          wird:true, dir:-1, fdir:-1, day:null, on:null, cyc:0, wdone:0, wsize:3, mode:null, task:null };
 var REV_SIZES=[1,2,3,5,10];
 
 /* الخطة والتقدّم يُحفظان مع اللاعب، فيمشي على المسار يوماً بعد يوم */
@@ -9489,6 +9489,7 @@ function revLoad(){
   REV.wdone=r.wdone||0;                                    /* موضعُ وقوفه في ورده */
   REV.wsize=REV_SIZES.indexOf(r.wsize)>=0?r.wsize:3;       /* وحجمُ جلسته فيه */
   REV.mode=null;                                           /* أيّهما يُعرض الآن */
+  REV.task=null;                                           /* ومهمّةٌ مفتوحةٌ إن كانت */
   REV.pages=[]; REV.si=0; REV.pi=0; REV.due=false; REV.view=0;
   revClamp();
 }
@@ -9530,6 +9531,7 @@ function wirdPages(){
 }
 /* لكلّ بابٍ اتّجاهُه: الوردُ يمشي في محفوظه، والمسارُ الحرّ في نطاقه */
 function revDir(m){
+  if(revMode(m)==='task') return 1;    /* أوجهُ المهمّة مرتّبةٌ كما جاءت */
   var d = (revMode(m)==='wird') ? REV.dir : REV.fdir;
   return d<0 ? -1 : 1;
 }
@@ -9539,6 +9541,7 @@ function revIsWird(){ return REV.wird!==false; }
 function revMode(m){ return m || REV.mode || (revIsWird()?'wird':'free'); }
 function revAllPages(m){
   var out, P;
+  if(revMode(m)==='task') return ((REV.task&&REV.task.pages)||[]).slice();
   if(revMode(m)==='wird') out=wirdPages();
   else{
     revClamp();
@@ -9551,9 +9554,23 @@ function revAllPages(m){
 }
 /* حجمُ الجلسة: للورد حجمُه وللمسار حجمُه */
 function revSize(m){ return (revMode(m)==='wird') ? (REV.wsize||REV.size||3) : (REV.size||3); }
+/* ===== مسارُ مهمّةِ المراجعة =====
+   كان مقرَّرُ الخطّة وما حلّ موعدُ مراجعته يُدخلانه في أوّل وجهٍ رأساً، فلا
+   يرى طولَ طريقه ولا أين هو منه — بخلاف الحفظ، يُفتح له مسارُه فيرى مقرَّرَه
+   عُقَداً. فصار لهما مسارُهما: أوجهُ المهمّة عُقَدٌ، ما مضى ✓ وما هو فيه
+   «ابدأ» وما بعده مغلق.
+   ومقرَّرُ الخطّة يَرِث موضعَ وقوفه من «rp» فلا يُعاد من أوّله بعد إغلاق
+   التطبيق، وما حلّ موعدُه يُبنى من جديدٍ في كلّ مرّةٍ إذ تُباعد أوجهُه
+   مواعيدَها كلّما رُوجعت. */
 /* وموضعُ الوقوف كذلك */
-function revDone(m){ return (revMode(m)==='wird') ? (REV.wdone||0) : (REV.done||0); }
-function revSetDone(m,v){ if(revMode(m)==='wird') REV.wdone=v; else REV.done=v; }
+function revDone(m){
+  if(revMode(m)==='task') return (REV.task&&REV.task.done)||0;
+  return (revMode(m)==='wird') ? (REV.wdone||0) : (REV.done||0);
+}
+function revSetDone(m,v){
+  if(revMode(m)==='task'){ if(REV.task) REV.task.done=v; return; }
+  if(revMode(m)==='wird') REV.wdone=v; else REV.done=v;
+}
 /* المسارُ الحرّ إذا تمّ طُوي: لا بطاقةَ تدعوه إلى إعادته، بل يعود البابُ
    إلى دائرةِ «حدّد نطاقاً» — ويبقى آخرُ نطاقٍ مضبوطاً في اللوحة لمن أراده */
 function revFreeEnd(){
@@ -9892,6 +9909,9 @@ function revClipPieces(pcs){
   return out;
 }
 function pageScopePieces(P){
+  /* المهمّةُ نطاقُها نفسُها: لا تُقصّ على نطاق المراجعة الحرّة، وإلّا سقطت
+     أوجهُها الخارجةُ عنه فمرّت المهمّةُ كلُّها بلا سؤال */
+  if(REV.mode==='task') return pageMemPieces(P);
   return (revFree() && !revIsWird()) ? revClipPieces(pagePieces(P)) : pageMemPieces(P);
 }
 function pageScopeCount(P){
@@ -10273,7 +10293,34 @@ function bqnRevBanner(sfx){
         (T.h?(' • '+(T.dayDone?'وحفظ الغد: ':'وحفظ اليوم: ')+bqnLabel(T.h)):'')
   });
 }
+/* مهمّةٌ تُفتح مساراً: 'plan' مقرَّرُ الخطّة، و'due' ما حلّ موعدُ مراجعته */
+function beginTaskPath(k){
+  revLoad();                                  /* يُصفّر mode، فيُضبط بعده */
+  var t;
+  if(k==='plan'){
+    var T=null; try{ T=bqnToday(); }catch(e){}
+    if(!T || !T.r || !T.pages.length) return false;
+    if((T.st.rp||0)>=T.pages.length) T.st.rp=0;   /* أتمّه ثمّ عاد: يُستأنف من أوّله */
+    saveDB();
+    /* «rp» عدُّ أوجهٍ، وموضعُ المسار عدُّ جلسات — فيُقسم على حجم الجلسة */
+    var sz=REV.size||3;
+    t={ k:'plan', pages:T.pages.slice(), done:Math.floor((T.st.rp||0)/sz),
+        label:'📅 مقرَّر مراجعة اليوم', sub:bqnLabel(T.r) };
+  }else{
+    var pg=[]; try{ pg=duePages(); }catch(e){}
+    if(!pg.length) return false;
+    t={ k:'due', pages:pg.slice(), done:0,
+        label:'⏳ ما حلّ موعدُ مراجعته', sub:arCount(pg.length,C_PAGE)+' من محفوظك' };
+  }
+  REV.task=t; REV.mode='task';
+  REV.si=0; REV.pi=0; REV.due=false; REV.pages=[];
+  renderRevPath(); show('scr-revpath');
+  return true;
+}
+/* أبوابُ المهمّتين القديمةُ تُفضي إلى المسار نفسِه، فلا يُدخَل أحدٌ في وجهٍ
+   من غير أن يرى طريقَه. وإن تعذّر المسارُ مضى على ما كان */
 function bqnRevStart(){
+  if(beginTaskPath('plan')) return true;
   var T=bqnToday(); if(!T||!T.r) return false;
   var all=T.pages, t=T.st;
   if((t.rp||0)>=all.length) t.rp=0;
@@ -11309,6 +11356,11 @@ function renderRevPath(){
 
   /* الترويسةُ تصف المسارَ كلَّه، فلم يعد سورةً واحدة */
   var a=surahBy(REV.fromS), b=surahBy(REV.toS), wird=(md==='wird');
+  if(md==='task' && REV.task){
+    $('revTitle').innerHTML=esc(REV.task.label)+
+      '<span>'+arNum(Math.min(done,ss.length))+'/'+arNum(ss.length)+' جلسة • '+
+      arCount(REV.task.pages.length,C_PAGE)+' • '+REV.task.sub+'</span>';
+  }else
   $('revTitle').innerHTML=(wird?'📖 مسار ورد المراجعة':'🎛️ مسار المراجعة الحرّة')+
     '<span>'+arNum(Math.min(done,ss.length))+'/'+arNum(ss.length)+' جلسة • '+
     arCount(list.length,C_SURAH)+' • '+
@@ -11375,10 +11427,13 @@ function beginRevSession(i){
   var ss=revSessions(), pg=ss[i];
   if(!pg||!pg.length) return;
   REV.si=i; REV.pages=pg.slice(); REV.pi=0; REV.due=false;
+  /* جلسةٌ من مقرَّر الخطّة: تُحتسب في «rp» عند إتمامها لا عند فتحها */
+  REV.bqnAdd=(revMode()==='task' && REV.task && REV.task.k==='plan') ? pg.length : 0;
   revStartPage();
 }
 /* جلسة «ما استحقّ اليوم»: خارج المسار، ولا تُحرّك تقدّمه */
 function beginDueSession(){
+  if(beginTaskPath('due')) return;     /* مسارُها أوّلاً، كمقرَّر الخطّة */
   var pg=duePages();
   if(!pg.length) return;
   REV.bqnAdd=0;                     /* جلسةٌ أخرى: لا يُحتسب لها مقرَّرُ الخطّة */
