@@ -6764,28 +6764,32 @@ setTimeout(function(){
    بين ١٫٢ و٢ ج.ب — وإنّما يُخزَّن ما سُمع في مخزنٍ خاصّ فيُعاد بلا إنترنت.
    والمصدرُ في هذين السطرين وحدَهما، فإن أذن مجمّعُ الملك فهد بُدِّلا. */
 var QARI_BASE='https://everyayah.com/data/';
+/* «n» الاسمُ الكامل — يُعرض حيث تتّسع السطور كقائمة الإعدادات.
+   «s» اسمُ الشهرة — يُعرض في الأزرار والرقاقات، فعشرون رقاقةً بالأسماء
+   الكاملة تملأ الشاشة وتُسحب، وبأسماء الشهرة تقع في صفوفٍ قليلةٍ مرتَّبة.
+   وما تعدّدت روايتُه — كالحصريّ والمنشاويّ — بقي معه وصفُه، وإلّا التبس. */
 var QARIS=[
-  {f:'Husary_64kbps',             n:'محمود خليل الحصري'},
-  {f:'Husary_Muallim_128kbps',    n:'الحصري — المعلِّم (يردّد للأطفال)'},
-  {f:'Husary_Mujawwad_64kbps',    n:'الحصري — مجوَّد'},
-  {f:'Minshawy_Teacher_128kbps',  n:'المنشاوي — المعلِّم (يردّد للأطفال)'},
-  {f:'Minshawy_Murattal_128kbps', n:'محمد صديق المنشاوي'},
-  {f:'Abdul_Basit_Murattal_64kbps', n:'عبد الباسط عبد الصمد'},
-  {f:'Hudhaify_64kbps',           n:'علي الحذيفي'},
-  {f:'Alafasy_64kbps',            n:'مشاري راشد العفاسي'},
-  {f:'Abdurrahmaan_As-Sudais_64kbps', n:'عبد الرحمن السديس'},
-  {f:'Saood_ash-Shuraym_64kbps',  n:'سعود الشريم'},
-  {f:'Maher_AlMuaiqly_64kbps',    n:'ماهر المعيقلي'},
-  {f:'Abu_Bakr_Ash-Shaatree_64kbps', n:'أبو بكر الشاطري'},
-  {f:'Muhammad_Ayyoub_128kbps',   n:'محمد أيوب'},
-  {f:'Mohammad_al_Tablaway_64kbps', n:'محمد الطبلاوي'},
-  {f:'Ghamadi_40kbps',            n:'سعد الغامدي'},
-  {f:'Nasser_Alqatami_128kbps',   n:'ناصر القطامي'},
-  {f:'Yasser_Ad-Dussary_128kbps', n:'ياسر الدوسري'},
-  {f:'Ali_Jaber_64kbps',          n:'علي جابر'},
-  {f:'ahmed_ibn_ali_al_ajamy_128kbps', n:'أحمد العجمي'},
+  {f:'Husary_64kbps',             n:'محمود خليل الحصري',        s:'الحصري'},
+  {f:'Husary_Muallim_128kbps',    n:'الحصري — المعلِّم (يردّد للأطفال)', s:'الحصري — المعلِّم'},
+  {f:'Husary_Mujawwad_64kbps',    n:'الحصري — مجوَّد',           s:'الحصري — مجوَّد'},
+  {f:'Minshawy_Teacher_128kbps',  n:'المنشاوي — المعلِّم (يردّد للأطفال)', s:'المنشاوي — المعلِّم'},
+  {f:'Minshawy_Murattal_128kbps', n:'محمد صديق المنشاوي',        s:'المنشاوي'},
+  {f:'Abdul_Basit_Murattal_64kbps', n:'عبد الباسط عبد الصمد',    s:'عبد الباسط'},
+  {f:'Hudhaify_64kbps',           n:'علي الحذيفي',               s:'الحذيفي'},
+  {f:'Alafasy_64kbps',            n:'مشاري راشد العفاسي',        s:'العفاسي'},
+  {f:'Abdurrahmaan_As-Sudais_64kbps', n:'عبد الرحمن السديس',     s:'السديس'},
+  {f:'Saood_ash-Shuraym_64kbps',  n:'سعود الشريم',               s:'الشريم'},
+  {f:'Maher_AlMuaiqly_64kbps',    n:'ماهر المعيقلي',             s:'المعيقلي'},
+  {f:'Abu_Bakr_Ash-Shaatree_64kbps', n:'أبو بكر الشاطري',        s:'الشاطري'},
+  {f:'Muhammad_Ayyoub_128kbps',   n:'محمد أيوب',                 s:'محمد أيوب'},
+  {f:'Mohammad_al_Tablaway_64kbps', n:'محمد الطبلاوي',           s:'الطبلاوي'},
+  {f:'Ghamadi_40kbps',            n:'سعد الغامدي',               s:'الغامدي'},
+  {f:'Nasser_Alqatami_128kbps',   n:'ناصر القطامي',              s:'القطامي'},
+  {f:'Yasser_Ad-Dussary_128kbps', n:'ياسر الدوسري',              s:'الدوسري'},
+  {f:'Ali_Jaber_64kbps',          n:'علي جابر',                  s:'علي جابر'},
+  {f:'ahmed_ibn_ali_al_ajamy_128kbps', n:'أحمد العجمي',          s:'العجمي'},
   /* قراءةٌ تعليميّةٌ مبيَّنةُ الأحكام، بابُها بابُ «المعلِّم» */
-  {f:'Ayman_Sowaid_64kbps',       n:'أيمن سويد — تعليم التجويد'}
+  {f:'Ayman_Sowaid_64kbps',       n:'أيمن سويد — تعليم التجويد', s:'أيمن سويد — التجويد'}
 ];
 var AUD_CACHE='nur-audio';
 var AUD={ el:null, q:[], i:-1, url:'', rep:1, left:1, hold:false };   /* rep=0 يعني بلا توقّف */
@@ -6796,11 +6800,14 @@ function qariF(){
   for(i=0;i<QARIS.length;i++) if(QARIS[i].f===f) return f;
   return QARIS[0].f;                       /* اختيارٌ قديمٌ أو تالف: يُردّ إلى الأوّل */
 }
-function qariName(){
+function qariRow(){
   var f=qariF(), i;
-  for(i=0;i<QARIS.length;i++) if(QARIS[i].f===f) return QARIS[i].n;
-  return '';
+  for(i=0;i<QARIS.length;i++) if(QARIS[i].f===f) return QARIS[i];
+  return null;
 }
+/* اسمُ الشهرة للأزرار والرقاقات — وإلى الاسم الكامل إن لم يُذكر له اختصار.
+   والاسمُ الكاملُ موضعُه قائمةُ الإعدادات، فسطورُها تتّسع له */
+function qariShort(){ var q=qariRow(); return q?(q.s||q.n):''; }
 function pad3(n){ n=String(n); return n.length>=3 ? n : ('000'+n).slice(-3); }
 function audUrl(sn,ay){ return QARI_BASE+qariF()+'/'+pad3(sn)+pad3(ay)+'.mp3'; }
 /* المخزَّن أوّلاً: ما سُمع مرّةً لا يُنزَّل ثانية. وإن تعذّر المخزنُ بُثَّ من الشبكة */
@@ -6861,7 +6868,7 @@ function audBox(){
   var list=[
     { v:'go',    n:'▶️ تابِعْ',        act:true },
     { v:'again', n:'🔁 من أوّله',      act:true },
-    { v:'qari',  n:'🎙️ '+qariName(),  act:true },
+    { v:'qari',  n:'🎙️ '+qariShort(), act:true },
     { v:'rep',   n:'🔂 التكرار: '+rp,  act:true }
   ];
   uiBox('⏸️ التلاوةُ ممسَكة عند الآية <b>'+arNum(AUD.i+1)+'</b> من <b>'+arNum(AUD.q.length)+'</b>',
@@ -7327,7 +7334,7 @@ function audAsk(list){
   var last=(typeof SET.audRep==='number')?SET.audRep:1;
   var reps=AUD_REPS.map(function(o){ return { v:o.v, n:o.n, sel:(o.v===last) }; });
   /* رقاقةُ القارئ بابٌ يُفتح لا عددٌ يُختار، فتنفذ بنقرتها ولا تنتظر الإقرار */
-  reps.push({ v:'qari', n:'🎙️ '+qariName(), act:true });
+  reps.push({ v:'qari', n:'🎙️ '+qariShort(), act:true });
   uiPick('كم مرّةً تريد سماعَه؟', reps, function(rep){
     if(rep==='qari'){ qariAsk(function(){ audAsk(list); }); return; }
     SET.audRep=rep; saveDB();          /* آخرُ تحديدٍ يُحفظ فيُعرض مؤشَّراً */
@@ -7337,14 +7344,14 @@ function audAsk(list){
 /* قائمةُ القرّاء: المختارُ مؤشَّر، والرجوعُ يُعيده إلى سؤاله لا يُخرجه منه */
 function qariAsk(after){
   var cur=qariF();
-  var list=QARIS.map(function(q){ return { v:q.f, n:(q.f===cur?'✅ ':'')+q.n }; });
+  var list=QARIS.map(function(q){ return { v:q.f, n:(q.f===cur?'✅ ':'')+(q.s||q.n) }; });
   uiBox('مَن تحبُّ أن تسمع؟','🎙️',null,'رجوع',function(ok,v){
     if(ok && v){
       SET.qari=v; saveDB();
       /* بُدّل القارئ والتلاوةُ قائمة: تُستأنف من آيتها بصوته هو، ولا تُلغى
          من أوّلها كما كانت — وإن لم تكن قائمةً سكتَ ما بقي من سابقه */
       try{ if(AUD.q.length) audReload(); else audStop(); }catch(e){}
-      try{ navToast('🎙️ '+qariName()); }catch(e){}
+      try{ navToast('🎙️ '+qariShort()); }catch(e){}
     }
     if(after) after();
   },null,null,list);
@@ -7353,7 +7360,7 @@ function audPlay(list, rep){
   AUD.q=list; AUD.i=-1; AUD.hold=false;
   AUD.rep=(rep==null?1:rep); AUD.left=AUD.rep;
   try{
-    navToast('🎧 '+qariName()+(AUD.rep===0 ? ' — بلا توقّف'
+    navToast('🎧 '+qariShort()+(AUD.rep===0 ? ' — بلا توقّف'
              : (AUD.rep>1 ? (' — '+arNum(AUD.rep)+' مرّات') : '')));
   }catch(e){}
   audNext();
