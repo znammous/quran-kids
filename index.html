@@ -12401,6 +12401,26 @@ function examKindName(){
 }
 /* حصيلةُ الإتقان: ثلاثُ جواهر عن كلّ صحيحةٍ من أوّل محاولة */
 var EX_GEM=3;
+/* ===== مُضاعِفُ النطاق =====
+   كان العطاءُ بعدد الأسئلة وحدَه، فمن اختبر نفسَه في سورة الكوثر نال ما
+   يناله من اختبر في البقرة — والسؤالُ في وجهٍ واحدٍ ليس كالسؤال في ثمانيةٍ
+   وأربعين: فضاءُ الانتقاء أوسع، والمتشابهاتُ أكثر، والحفظُ المطلوبُ أبعد.
+   فيُضاعَف بقدر أوجه النطاق: وجهٌ واحدٌ ×١، وكلُّ اثنَي عشر وجهاً تزيد
+   ضِعفاً — ويُوقف عند ثلاثةٍ فلا يصير اتّساعُ النطاق بابَ ربحٍ بلا حدّ. */
+var EX_MUL_PER=12, EX_MUL_CAP=3;
+function examScopeMul(pg){
+  if(pg==null){ try{ pg=examPagesN(); }catch(e){ pg=1; } }
+  pg=Math.max(1, pg||1);
+  return Math.min(EX_MUL_CAP, 1+(pg-1)/EX_MUL_PER);
+}
+function examMulText(m){ return '×'+(Math.round(m*10)/10); }
+/* عطاءُ الاختبار بعد المُضاعِف */
+function examPrize(right,pct,mul){
+  if(mul==null) mul=examScopeMul();
+  return { gems:Math.round(EX_GEM*right*mul),
+           iron:Math.max(1, Math.round((right/4)*mul)),
+           glass:(pct>=90 ? Math.max(2, Math.round(2*mul)) : 0) };
+}
 /* مقدارُ النطاق وحدَه: يُعرض في خطوة النطاق قبل أن يُختار نوعٌ أو عدد */
 function examRangeLine(){
   var a=surahBy(EX.fromS), b=surahBy(EX.toS), ay=examAyat();
@@ -12414,8 +12434,14 @@ function examSummary(){
   return '<div class="revsum">من <b>'+esc(a.name)+' '+arNum(EX.fromA)+'</b> إلى <b>'+esc(b.name)+' '+arNum(EX.toA)+'</b><br>'+
     arCount(ay,C_AYAH)+' • '+arCount(examPagesN(),C_PAGE)+'<br>'+
     '<b>'+esc(examKindName())+'</b> • '+arCount(EX.count,C_QUES)+' في الاختبار كلّه'+
-    '<div class="revtot">🎁 إن أتقنتَ الكلَّ: <b>'+arNum(EX_GEM*EX.count)+' 💎</b>'+
-      ' و '+arNum(Math.max(1,Math.floor(EX.count/4)))+' ⚙️ و 2 🔷</div>'+
+    (function(){
+      var mu=examScopeMul(), pz=examPrize(EX.count,100,mu);
+      return '<div class="revtot">🎁 إن أتقنتَ الكلَّ: <b>'+arNum(pz.gems)+' 💎</b>'+
+        ' و '+arNum(pz.iron)+' ⚙️ و '+arNum(pz.glass)+' 🔷'+
+        '<div style="font-size:12.5px;font-weight:800;margin-top:5px;opacity:.9">'+
+          'نطاقُك '+arCount(examPagesN(),C_PAGE)+' — فالعطاءُ '+examMulText(mu)+
+          (mu>=EX_MUL_CAP?' (أقصاه)':'')+'</div></div>';
+    })()+
     '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:6px">'+
       'الاختبارُ لا ينوب عن مراجعتك ولا يغيّر مواعيدها — إنّما يدلّك على موضع الخلل</div></div>';
 }
@@ -12508,7 +12534,8 @@ function finishExam(){
   for(i=0;i<EX.log.length;i++) if(EX.log[i].ok) right++;
   var pct=Math.round(100*right/tot), g=examGrade(pct);
   var secs=Math.max(1, Math.round((Date.now()-EX.t0)/1000));
-  var gems=EX_GEM*right, iron=Math.max(1,Math.floor(right/4)), glass=(pct>=90?2:0);
+  var mul=examScopeMul(), pz=examPrize(right,pct,mul);
+  var gems=pz.gems, iron=pz.iron, glass=pz.glass;
   addGems(gems); addMat('iron',iron);
   if(glass) addMat('glass',glass);
   /* ولا شاراتٍ تُفحص هنا: الاختبارُ ميزانٌ لا مرحلةٌ تُحتسب */
@@ -12516,7 +12543,7 @@ function finishExam(){
   EX_LAST={ right:right, tot:tot, pct:pct, grade:g[1], ic:g[2], secs:secs,
             kind:examKindName(), from:(a?a.name:'')+' '+arNum(EX.fromA),
             to:(b?b.name:'')+' '+arNum(EX.toA), weak:examWeakest(),
-            gems:gems, iron:iron, glass:glass, date:greg() };
+            gems:gems, iron:iron, glass:glass, mul:mul, pages:examPagesN(), date:greg() };
   $('playCard').classList.remove('bare');
   $('mosque').removeAttribute('hidden');
   $('mosque').innerHTML=mosqueSVG(1);
@@ -12533,7 +12560,9 @@ function finishExam(){
       esc(EX_LAST.kind)+' • '+arCount(tot,C_QUES)+' • ⏱️ '+examDur(secs)+
       (weak.length? ('<br>راجِع: <b>'+esc(weak.join(' • '))+'</b>') : '<br>لم تُخطئ في موضع 👌')+'</p>'+
     '<div style="color:#8a6100;font-weight:800;margin-bottom:12px">+'+arNum(gems)+' 💎 و '+arNum(iron)+' ⚙️'+
-      (glass?(' و '+arNum(glass)+' 🔷'):'')+'</div>'+
+      (glass?(' و '+arNum(glass)+' 🔷'):'')+
+      (mul>1?('<div style="font-size:12.5px;margin-top:4px">نطاقُك '+arCount(EX_LAST.pages,C_PAGE)+
+              ' — فالعطاءُ '+examMulText(mul)+'</div>'):'')+'</div>'+
     '<button class="btn green big pulse" id="btnExPrint">🖨️ اطبع نتيجتك</button>'+
     '<button class="btn blue big" id="btnExAgain">🔁 اختبارٌ آخر</button>'+
     '<button class="btn ghost big" id="btnExHome2" style="margin:0">🏠 البداية</button></div>';
