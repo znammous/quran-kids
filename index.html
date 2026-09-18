@@ -5240,11 +5240,15 @@ function gftDesc(d){
 /* ===== الصرف ===== */
 function gftUsed(){ var p=curP(); if(!p.codes) p.codes={}; return p.codes; }
 function gftMinted(){ var p=curP(); if(!p.minted) p.minted={}; return p.minted; }
-function gftRedeem(raw){
-  var s=gftNorm(raw);
-  if(!s) return { ok:false, msg:'اكتب الكود أوّلاً' };
-  if(gftGate().n>=GFT_TRIES)
-    return { ok:false, msg:'جرّبتَ خمسة أكواد خاطئة اليوم — عُد غداً 💚' };
+/* ===== الصرف: كودٌ واحدٌ أو علبةٌ فيها أكواد =====
+   العلبةُ أكوادٌ مقرونةٌ بشَرْطات: «3164-724801-5391». وتُفحص كلُّها قبل أن
+   يُصرَف منها شيء، فإمّا أن تُصرف جميعاً أو لا يُصرف شيء — ولو صُرف نصفُها
+   ثمّ رُدّ باقيها ضاع على صاحبها ما بُذل ولم يُتمّ له ما وُعد. */
+function gftParts(raw){
+  return String(raw==null?'':raw).split(/[^0-9]+/).filter(function(x){ return x.length; });
+}
+/* فحصُ كودٍ واحدٍ ووصفُه، بلا أثرٍ في رصيده */
+function gftLook(s){
   if(gftUsed()[s]) return { ok:false, msg:'هذا الكود مصروفٌ من قبل — لكلٍّ كودُه مرّة واحدة' };
   /* كودٌ أنشأه هو: لا يصرفه لنفسه. جُرّب أن يُؤذن له فيه ارتجاعاً لما خُصم
      منه، فانفتح بابُ الخلق من عدم: يولّده فيُخصَم، ثمّ يرتجعه فيعود إليه،
@@ -5252,15 +5256,37 @@ function gftRedeem(raw){
   if(gftMinted()[s]) return { ok:false, msg:'هذا كودٌ أنشأتَه أنت لأخيك — أرسله إليه 🤍' };
   var promo=gftPromoValue(s);
   var d = promo ? { type:3, val:promo, id:0 } : gftDec(s);
-  if(!d){ gftMiss(); return { ok:false, msg:'لم أعرف هذا الكود — راجع أرقامه' }; }
+  if(!d) return { ok:false, msg:'لم أعرف هذا الكود — راجع أرقامه', miss:true };
   var txt=gftDesc(d);
-  if(!txt){ gftMiss(); return { ok:false, msg:'هذا الكود لا يطابق شيئاً في هذه النسخة' }; }
-  var p=curP();
+  if(!txt) return { ok:false, msg:'هذا الكود لا يطابق شيئاً في هذه النسخة', miss:true };
+  return { ok:true, d:d, txt:txt, promo:!!promo, code:s };
+}
+/* وتسليمُه بعد أن يصحّ */
+function gftHandOver(r){
+  var p=curP(), d=r.d;
   if(d.type===0 || d.type===3) addGems(d.val);
   else if(d.type===1){ var m=MATS[Math.floor(d.val/4096)]; addMat(m.k, d.val%4096); }
-  else if(d.type===2){ var it=gftItemByHash(d.val); if(!p.owned) p.owned={}; p.owned[it.k]=true; }
-  gftUsed()[s]=1; saveDB();
-  return { ok:true, txt:txt, promo:!!promo };
+  else if(d.type===2){ var it=gftItemByHash(d.val); if(it){ if(!p.owned) p.owned={}; p.owned[it.k]=true; } }
+  gftUsed()[r.code]=1;
+}
+function gftRedeem(raw){
+  var ps=gftParts(raw), i, r, got=[];
+  if(!ps.length) return { ok:false, msg:'اكتب الكود أوّلاً' };
+  if(gftGate().n>=GFT_TRIES)
+    return { ok:false, msg:'جرّبتَ خمسة أكواد خاطئة اليوم — عُد غداً 💚' };
+  for(i=0;i<ps.length;i++){
+    r=gftLook(ps[i]);
+    if(!r.ok){
+      if(r.miss) gftMiss();
+      return { ok:false, msg:(ps.length>1?('الجزءُ '+arNum(i+1)+' من العلبة: '):'')+r.msg };
+    }
+    got.push(r);
+  }
+  for(i=0;i<got.length;i++) gftHandOver(got[i]);
+  saveDB();
+  return { ok:true, n:got.length, box:got.length>1,
+           promo:(got.length===1 && got[0].promo),
+           txt:got.map(function(x){ return x.txt; }).join(' • ') };
 }
 /* ===== ثمنُ الهديّة قبل أن تُولَّد =====
    يُسأل عنه الطفلُ قبل الخصم فيعرف ما يبذل وما يبقى له — ولا يمسّ رصيدَه
