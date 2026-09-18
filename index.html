@@ -1285,6 +1285,10 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
 .shelf .sh{font-weight:900;color:var(--g1);font-size:15px;margin-bottom:5px}
 .shelf .its{font-size:25px;line-height:1.65;word-break:break-word}
 .shelf .non{color:var(--mute);font-size:13px;font-weight:700}
+/* والخزانةُ زرٌّ يُفتح: بهيئة الرفّ نفسِه لا يُزاد عليه إلّا أنّه يُضغط */
+button.shelf{display:block;width:100%;font-family:inherit;cursor:pointer;
+  touch-action:manipulation;transition:transform .12s}
+button.shelf:active{transform:translateY(2px)}
 .costlb{font-size:11px;font-weight:800;color:var(--mute);margin-inline-end:5px}
 .plus{font-size:12px;font-weight:900;color:var(--mute);margin:0 3px}
 /* المسجد قبل أن يُبنى: شبحٌ رماديّ ورسالة */
@@ -5494,9 +5498,46 @@ function gftBind(){
   gftLogBind();
 }
 
+/* ===== خزانتي =====
+   كانت سطراً من أيقوناتٍ في رأس المتجر: لا اسمَ لها ولا وصف، ومن ملك عشرين
+   غرضاً ازدحمت عليه. فصارت صفحةً تُفتح: أغراضُه مصنّفةً بأقسامها، ومعها
+   موادُّه وصدقاتُه، وفي كلّ قسمٍ كم ملك وكم بقي.
+   وتُؤخذ من «items» بلا تصفية: ما اشتراه لا يُخفى وإن تبدّل حالُه. */
+function renderMine(){
+  var p=curP(), o=p.owned||{}, h='', n=0, tot=0, S2=sad();
+  h+='<button class="btn ghost mini" id="btnShopCats" style="width:100%;margin-bottom:10px">➡️ كل الأقسام</button>';
+  /* الموادُّ مخزونٌ يُنفق لا غرضٌ يُملك، فتُعرض شريطاً فوقها */
+  var ms=MATS.filter(function(m){ return (mats()[m.k]||0)>0; });
+  if(ms.length) h+='<div class="shelf"><div class="sh">🧱 موادّي</div><div class="its">'+
+    ms.map(function(m){ return m.ic+'<small style="font-size:13px">×'+arNum(mats()[m.k]||0)+'</small>'; }).join(' ')+
+    '</div></div>';
+  SHOP_CATS.forEach(function(c){
+    if(c.gift || c.mat) return;
+    var own=c.items.filter(function(it){ return c.give ? S2[it.k] : o[it.k]; });
+    if(!c.give){ tot+=shopItems(c).length; n+=own.length; }
+    if(!own.length) return;
+    h+='<div class="rl" style="margin:16px 0 8px">'+c.ic+' '+esc(c.n)+
+         (c.give ? (' — بذلتَ '+arNum(sadTotal())+' مرّة')
+                 : (' — '+arNum(own.length)+' من '+arNum(shopItems(c).length)))+'</div>'+
+       '<div class="shopgrid">'+own.map(function(it){
+         return '<div class="item owned"><div class="ic">'+it.ic+'</div>'+
+           '<div class="nm2">'+esc(it.n)+'</div>'+
+           '<div class="ds">'+esc(it.d||'')+'</div>'+
+           '<div class="pr">'+(c.give ? ('🤲 بذلتَها '+arNum(S2[it.k])+' مرّة') : 'مملوك ✅')+'</div>'+
+         '</div>';
+       }).join('')+'</div>';
+  });
+  $('shopSub').textContent = n ? ('خزانتك: '+arNum(n)+' من '+arNum(tot)+' غرض')
+                               : 'خزانتك فارغة بعدُ';
+  if(!n && !ms.length)
+    h+='<div class="shelf"><div class="non">لم تقتنِ شيئاً بعدُ — ادخل الأقسام وابدأ بالسواك 🪥</div></div>';
+  $('shopBody').innerHTML=h;
+  $('btnShopCats').onclick=function(){ shopCat=''; renderShop(); window.scrollTo(0,0); };
+}
 function renderShop(){
   var p=curP(), o=p.owned||{}, i;
   $('shopGems').textContent='💎 '+arNum(p.gems||0)+' جوهرة';
+  if(shopCat==='mine'){ renderMine(); return; }
   var cat=null;
   for(i=0;i<SHOP_CATS.length;i++) if(SHOP_CATS[i].k===shopCat) cat=SHOP_CATS[i];
   if(!cat) shopCat='';
@@ -5505,10 +5546,14 @@ function renderShop(){
     var all=shopAll(), mine=shopEvery().filter(function(it){ return o[it.k]; });
     $('shopSub').textContent='ادخل القسم الذي تريد — تملك '+arNum(mine.length)+' من '+arNum(all.length)+' غرض';
     $('shopBody').innerHTML=
-      '<div class="shelf"><div class="sh">🎒 خزانتي</div>'+
-      (mine.length ? '<div class="its">'+mine.map(function(it){ return it.ic; }).join(' ')+'</div>'
+      /* الخزانةُ بابٌ يُفتح لا سطرَ أيقوناتٍ يُنظر إليه: من ملك عشرين غرضاً
+         ازدحمت عليه ولم يعرف أسماءها */
+      '<button type="button" class="shelf" id="shopMine">'+
+        '<div class="sh">🎒 خزانتي</div>'+
+      (mine.length ? '<div class="its">'+mine.map(function(it){ return it.ic; }).join(' ')+'</div>'+
+                     '<div class="non">اضغط لترى ما تملك ❮</div>'
                    : '<div class="non">خزانتك فارغة — ابدأ بالسواك، فهو أرخصها 🪥</div>')+
-      '</div>'+
+      '</button>'+
       '<div class="catgrid">'+SHOP_CATS.map(function(c){
         var n=shopOwnedIn(c), tot=shopItems(c).length;
         return '<button type="button" class="cat'+(!c.give&&!c.gift&&n===tot?' full':'')+'" data-cat="'+c.k+'">'+
@@ -5524,6 +5569,9 @@ function renderShop(){
     var cs=$('shopBody').querySelectorAll('[data-cat]');
     for(i=0;i<cs.length;i++) cs[i].onclick=function(){
       shopCat=this.getAttribute('data-cat'); GFT_V=''; renderShop(); window.scrollTo(0,0);
+    };
+    if($('shopMine') && mine.length) $('shopMine').onclick=function(){
+      shopCat='mine'; renderShop(); window.scrollTo(0,0);
     };
     return;
   }
