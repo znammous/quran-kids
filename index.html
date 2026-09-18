@@ -4463,7 +4463,7 @@ function renderHUDInto(id){ var e=$(id); if(!e) return; renderHUD(); e.innerHTML
 /* شرح كل عدّاد، يظهر عند الضغط عليه */
 var HUD_TIP={
   streak:['🏮 المواظبة','أيام متتابعة حقّقت فيها هدف اليوم. ويُمنح «يوم راحة» كل سبعة أيام (يُدَّخر منها يومان)، يغطّي كلٌّ منها يوماً فائتاً تلقائياً.'],
-  gems:['💎 الجواهر','تكسبها من كل مرحلة ومقطع ومراجعة، ومن 🎮 الألعاب: جوهرتان لكل آية تُتمّها (وأربع إن لعبتَ من مقرَّر اليوم) في حدود أربعين جوهرة يوميّاً. وتنفقها في 💎 متجري و🕌 مسجدي.'],
+  gems:['💎 الجواهر','تكسبها من كل مرحلة ومقطع ومراجعة، ومن 🎮 الألعاب: جوهرتان لكل آية تُتمّها (وأربع إن لعبتَ من مقرَّر اليوم) في حدود أربعين جوهرة يوميّاً من كلّ لعبة. وتنفقها في 💎 متجري و🕌 مسجدي.'],
   stars:['⭐ النجوم','نجمة لكل مرحلة تُنجزها، وخمس نجوم تُتمّ المقطع.'],
   ayat:['📖 الآيات','عدد الآيات التي حفظتها — يبقى محفوظاً مهما غيّرت حجم المقطع.'],
   build:['🏗️ البناء','قطع المسجد الكبير التي بنيتها من ست عشرة. والحديد والزجاج لا يأتيان إلا من المراجعة.']
@@ -5033,7 +5033,7 @@ function gftGate(){
 }
 function gftMiss(){ var g=gftGate(); g.n++; saveDB(); }
 /* أكواد المنح الثابتة — مُلبَّدة فلا تظهر بقراءة المصدر عَرَضاً */
-var GFT_PROMO={ '2847':100, '5391':500, '7620':1000 };
+var GFT_PROMO={ '2847':100, '3164':200, '5391':500, '7620':1000 };
 function gftPromoValue(raw){ return GFT_PROMO[gftNorm(raw)]||0; }
 /* الأصناف: 0 جواهر، 1 مادّة، 2 غرض، 3 منحة */
 /* الغرض يُعرَف بفهرسه في جدول الهدايا، فالفضاء لا يحتمل بصمةً طويلة */
@@ -13167,20 +13167,27 @@ function gameStats(g){
    وللّعب سقفٌ يوميّ: يُحفَظ في صندوق اليوم فيُمحى مع فجره. وبه يبقى المتجرُ
    والمسجدُ ثمرةَ حفظٍ ومراجعةٍ، لا ثمرةَ جولاتٍ تُعاد بلا عدد. */
 var GAME_GEMS=2, GAME_GEM_CAP=40;
-function gameGemCap(){ return Math.max(0, GAME_GEM_CAP-(todayBox().gg||0)); }
+/* السقفُ لكلّ لعبةٍ على حدة، لا لِلَّعب كلِّه: من أتقن العدّاءَ لا يُحرَم الرفَّ
+   والعصفور. وصندوقُ اليوم يحمل لكلّ لعبةٍ عدَدَها */
+function gameGemBox(){
+  var t=todayBox();
+  if(!t.gg || typeof t.gg!=='object') t.gg={};
+  return t.gg;
+}
+function gameGemCap(gid){ return Math.max(0, GAME_GEM_CAP-(gameGemBox()[gid]||0)); }
 /* تُعطي ما وسعه السقفُ وتُخبر بما أعطت، فلا يُعلَن للطفل عمّا لم يقع */
-function gameGems(pool){
+function gameGems(gid, pool){
   var n=(pool && pool.day) ? GAME_GEMS*2 : GAME_GEMS;
-  var give=Math.min(n, gameGemCap());
+  var give=Math.min(n, gameGemCap(gid));
   if(give<=0) return 0;
-  var t=todayBox(); t.gg=(t.gg||0)+give;
+  var b=gameGemBox(); b[gid]=(b[gid]||0)+give;
   addGems(give);                       /* وفيها حفظُ القاعدة */
   return give;
 }
 /* سطرُ «أحسنت» بعد كلّ آية: يذكر الجواهرَ إن نالها، ويُنبّه إن بلغ سقفَ يومه */
-function gameWinLine(g){
+function gameWinLine(gid, g){
   return g ? ('أحسنت! 🌟 +'+arNum(g)+' 💎')
-           : (gameGemCap()<=0 ? 'أحسنت! 🌟 بلغتَ سقفَ جواهر اللعب اليوم' : 'أحسنت! 🌟');
+           : (gameGemCap(gid)<=0 ? 'أحسنت! 🌟 بلغتَ سقفَ جواهر هذه اللعبة اليوم' : 'أحسنت! 🌟');
 }
 /* مستوياتُ الألعاب: واحدةٌ لكلّ لعبةٍ تُذكر، ولكلّ مستوىً أفضلُ نتيجته */
 function gameLv(id){ var l=gameStats(id).lvl; return RUN_LEVELS[l] ? l : 'mid'; }
@@ -13463,8 +13470,8 @@ function runTouch(o){
     runBurst(cx,cy,'#9ff0c0',16);
     if(ay.i>=ay.to){                                   /* تمّ السؤال */
       RUN.score+=(ay.kind==='fill1'?3:5); RUN.done++; sWin();
-      var gm=0; try{ gm=gameGems(RUN.pool); }catch(e){}
-      RUN.gems=(RUN.gems||0)+gm; RUN.flash=gameWinLine(gm);
+      var gm=0; try{ gm=gameGems('runner', RUN.pool); }catch(e){}
+      RUN.gems=(RUN.gems||0)+gm; RUN.flash=gameWinLine('runner', gm);
       RUN.flashT=1.3; RUN.rest=1.4;
       RUN.items.forEach(function(it){ if(it.kind==='word' && !it.dead){ it.dead=true; runBurst(it.x+it.w/2, runPillY(it), '#ffffff', 6); } });
       runHud();
@@ -13907,8 +13914,8 @@ function shelfPartDone(){
   ay.p++; SH.i=0;
   if(ay.p>=ay.parts.length){
     SH.done++; SH.score+=2;
-    var gm=0; try{ gm=gameGems(SH.pool); }catch(e){}
-    SH.gems+=gm; SH.flash=gameWinLine(gm);
+    var gm=0; try{ gm=gameGems('shelf', SH.pool); }catch(e){}
+    SH.gems+=gm; SH.flash=gameWinLine('shelf', gm);
   } else SH.flash='أحسنت — والجزءُ التالي';
   SH.flashT=1.5; SH.rest=1.6; SH.busy=true;
   /* تعود الشخصيّةُ إلى موضع البداية في الطرف، فلا تقف أمام صناديق الجزء التالي */
@@ -14250,8 +14257,8 @@ function birdTouch(o){
     birdBurst(o.x+o.w/2, o.y, '#9ff0c0', 16);
     if(ay.i>=ay.to){
       BD.score+=(ay.kind==='fill1'?3:5); BD.done++; sWin();
-      var gm=0; try{ gm=gameGems(BD.pool); }catch(e){}
-      BD.gems=(BD.gems||0)+gm; BD.flash=gameWinLine(gm);
+      var gm=0; try{ gm=gameGems('bird', BD.pool); }catch(e){}
+      BD.gems=(BD.gems||0)+gm; BD.flash=gameWinLine('bird', gm);
       BD.flashT=1.3; BD.rest=1.2;
       BD.items.forEach(function(it){ if(it.kind==='cloud' && !it.taken){ it.taken=true; it.fade=1; } });
       birdHud();
