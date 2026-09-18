@@ -12401,24 +12401,24 @@ function examKindName(){
 }
 /* حصيلةُ الإتقان: ثلاثُ جواهر عن كلّ صحيحةٍ من أوّل محاولة */
 var EX_GEM=3;
-/* ===== مُضاعِفُ النطاق =====
-   كان العطاءُ بعدد الأسئلة وحدَه، فمن اختبر نفسَه في سورة الكوثر نال ما
-   يناله من اختبر في البقرة — والسؤالُ في وجهٍ واحدٍ ليس كالسؤال في ثمانيةٍ
-   وأربعين: فضاءُ الانتقاء أوسع، والمتشابهاتُ أكثر، والحفظُ المطلوبُ أبعد.
-   فيُضاعَف بقدر أوجه النطاق: وجهٌ واحدٌ ×١، وكلُّ اثنَي عشر وجهاً تزيد
-   ضِعفاً — ويُوقف عند ثلاثةٍ فلا يصير اتّساعُ النطاق بابَ ربحٍ بلا حدّ. */
-var EX_MUL_PER=12, EX_MUL_CAP=3;
-function examScopeMul(pg){
-  if(pg==null){ try{ pg=examPagesN(); }catch(e){ pg=1; } }
-  pg=Math.max(1, pg||1);
-  return Math.min(EX_MUL_CAP, 1+(pg-1)/EX_MUL_PER);
+/* ===== عطاءُ الاختبار: بأوجهه كالمراجعة =====
+   كان بعدد الأسئلة وحدَه، فمن اختبر في الكوثر نال ما يناله من اختبر في
+   البقرة. فصار يُحسب بأوجه نطاقه على سعر المراجعة نفسِه — «noteReview»:
+   خمسٌ وعشرون جوهرةً وحديدتان لكلّ وجه، وزجاجتان لكلّ وجهٍ لمن لم يُخطئ.
+   ويُضرب في نسبة إتقانه، فمن أصاب نصفَ أسئلته نال نصفَ العطاء.
+   والأوجهُ المعتبَرةُ لا تتجاوز عددَ أسئلته: لا يُمتحَن ستُّ مئةِ وجهٍ
+   بخمسة أسئلة، فلو حُسبت كلُّها لصار فتحُ النطاق على آخره بابَ ربحٍ بلا
+   حفظ. فيُؤخذ الأقلُّ من الاثنين. */
+var EX_PAGE_GEM=25, EX_PAGE_IRON=2, EX_PAGE_GLASS=2;
+function examPagesEff(n){
+  var pg=1; try{ pg=examPagesN(); }catch(e){ pg=1; }
+  return Math.max(1, Math.min(Math.max(1, pg||1), Math.max(1, n||1)));
 }
-/* عطاءُ الاختبار بعد المُضاعِف */
-function examPrize(right,pct,mul){
-  if(mul==null) mul=examScopeMul();
-  return { gems:Math.round(EX_GEM*right*mul),
-           iron:Math.max(1, Math.round((right/4)*mul)),
-           glass:(pct>=90 ? Math.max(2, Math.round(2*mul)) : 0) };
+function examPrize(right,tot){
+  var pe=examPagesEff(tot), sh=(tot>0 ? right/tot : 1);
+  return { gems:Math.round(EX_PAGE_GEM*pe*sh),
+           iron:Math.max(1, Math.round(EX_PAGE_IRON*pe*sh)),
+           glass:(tot>0 && right>=tot) ? EX_PAGE_GLASS*pe : 0 };
 }
 /* مقدارُ النطاق وحدَه: يُعرض في خطوة النطاق قبل أن يُختار نوعٌ أو عدد */
 function examRangeLine(){
@@ -12436,7 +12436,7 @@ function examSummary(){
     /* يُقال له العطاءُ بأرقامه التامّة ولا يُشرح له حسابُه: المُضاعِفُ
        تدبيرٌ في الشيفرة لا درسٌ يُلقّنه الطفل */
     (function(){
-      var pz=examPrize(EX.count,100);
+      var pz=examPrize(EX.count,EX.count);
       return '<div class="revtot">🎁 إن أتقنتَ الكلَّ: <b>'+arNum(pz.gems)+' 💎</b>'+
         ' و '+arNum(pz.iron)+' ⚙️ و '+arNum(pz.glass)+' 🔷</div>';
     })()+
@@ -12532,7 +12532,7 @@ function finishExam(){
   for(i=0;i<EX.log.length;i++) if(EX.log[i].ok) right++;
   var pct=Math.round(100*right/tot), g=examGrade(pct);
   var secs=Math.max(1, Math.round((Date.now()-EX.t0)/1000));
-  var mul=examScopeMul(), pz=examPrize(right,pct,mul);
+  var pz=examPrize(right,tot);
   var gems=pz.gems, iron=pz.iron, glass=pz.glass;
   addGems(gems); addMat('iron',iron);
   if(glass) addMat('glass',glass);
@@ -12541,7 +12541,7 @@ function finishExam(){
   EX_LAST={ right:right, tot:tot, pct:pct, grade:g[1], ic:g[2], secs:secs,
             kind:examKindName(), from:(a?a.name:'')+' '+arNum(EX.fromA),
             to:(b?b.name:'')+' '+arNum(EX.toA), weak:examWeakest(),
-            gems:gems, iron:iron, glass:glass, mul:mul, pages:examPagesN(), date:greg() };
+            gems:gems, iron:iron, glass:glass, pages:examPagesN(), date:greg() };
   $('playCard').classList.remove('bare');
   $('mosque').removeAttribute('hidden');
   $('mosque').innerHTML=mosqueSVG(1);
