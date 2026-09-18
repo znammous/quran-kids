@@ -2703,20 +2703,21 @@ function beardSVG(hair){
 /* ===== الوردة =====
    خمسُ بتلاتٍ حول قلبٍ صغير، على جانب الرأس فوق الصُّدغ — على الحجاب لمن
    لبسته، وفي الشعر لمن لم تلبسه. لا تُزاحم الوجهَ ولا تختفي تحت النقاب */
-function flowerSVG(){
+function flowerSVG(x,y,sc){
   var i=look.flower||0;
   var C=[null,{p:'#ffc0da',c:'#e8629b'},{p:'#ff9090',c:'#cf3a3a'},
               {p:'#ffdf8f',c:'#dda017'},{p:'#ffffff',c:'#dfe7ef'}][i];
   if(!C) return '';
-  var x=71, y=33, r=3.9, h='', k, a, px, py;
+  if(x==null) x=71; if(y==null) y=33; sc=sc||1;
+  var r=3.9*sc, h='', k, a, px, py;
   for(k=0;k<5;k++){
     a=(k*72-90)*Math.PI/180;
     px=(x+Math.cos(a)*r).toFixed(1); py=(y+Math.sin(a)*r).toFixed(1);
-    h+='<ellipse cx="'+px+'" cy="'+py+'" rx="3.2" ry="2.4" '+
+    h+='<ellipse cx="'+px+'" cy="'+py+'" rx="'+(3.2*sc).toFixed(2)+'" ry="'+(2.4*sc).toFixed(2)+'" '+
        'transform="rotate('+(k*72)+' '+px+' '+py+')" fill="'+C.p+'" '+
        'stroke="rgba(0,0,0,.10)" stroke-width="0.7"/>';
   }
-  return h+'<circle cx="'+x+'" cy="'+y+'" r="2.2" fill="'+C.c+'"/>';
+  return h+'<circle cx="'+x+'" cy="'+y+'" r="'+(2.2*sc).toFixed(2)+'" fill="'+C.c+'"/>';
 }
 function agalSVG(){
   return '<path d="M28,35 Q50,25 72,35" stroke="#1c1c1c" stroke-width="4.6" fill="none" stroke-linecap="round"/>'+
@@ -2824,7 +2825,7 @@ function avatarSVG(){
     ? maleHead(skin,hair,cloth)
     : (look.hijOn===0)
     ? '<ellipse cx="28.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>'+
-      '<ellipse cx="71.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>'+girlHairSVG(hair)+flowerSVG()
+      '<ellipse cx="71.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>'+girlHairSVG(hair)
     : '<path fill-rule="evenodd" fill="'+hij+'" d="M50,13 C75,13 85,33 85,60 C85,81 77,95 67,101 L33,101 C23,95 15,81 15,60 C15,33 25,13 50,13 Z '+
         'M31,58 a19,23 0 1,0 38,0 a19,23 0 1,0 -38,0 Z"/>'+
       '<path d="M50,13 C33,13 22,27 18,46 C24,30 35,20 50,18 Z" fill="#fff" opacity=".22"/>'+
@@ -2865,6 +2866,8 @@ function avatarSVG(){
     '<path d="M4,128 C9,105 27,96 40,93 L60,93 C73,96 91,105 96,128 Z" fill="'+cloth+'" '+
       'stroke="rgba(0,0,0,.13)" stroke-width="1.3"/>'+
     '<path d="M60,93 C73,96 91,105 96,128 L82,128 C78,108 70,99 60,95 Z" fill="#000" opacity=".12"/>'+
+    /* بنتٌ بلا حجاب: وردتُها على ثوبها، فليس على رأسها ما تُعلَّق به */
+    ((gender==='f' && look.hijOn===0) ? flowerSVG(33,107,1.1) : '')+
     '<rect x="43" y="76" width="14" height="18" rx="7" fill="'+skin.s+'"/>'+collar+
     '<ellipse cx="50" cy="58" rx="21" ry="24" fill="'+skin.f+'"/>'+head+crown+
     '<path d="M37,49.5 Q42,46.5 47,49.5" stroke="'+brow+'" stroke-width="2" fill="none" stroke-linecap="round"/>'+
