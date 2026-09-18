@@ -2605,7 +2605,11 @@ var PAL={
 /* «حليق» صار «قصير»، وزالت التسريحةُ الطويلةُ التي كانت تحمل هذا الاسم،
    وخلفها في موضعها «أصلعُ وافتخر» — ولا شعرَ يُرسم معه البتّة */
 var HAIRCUTS=[{n:'قصير'},{n:'مموّج'},{n:'مجعّد'},{n:'أصلع وافتخر'}];
-var HEADWEAR=[{n:'بلا غطاء'},{n:'طاقية بيضاء'},{n:'طاقية ملوّنة'},{n:'شماغ أحمر'},{n:'غترة بيضاء'}];
+var HEADWEAR=[{n:'بلا غطاء'},{n:'طاقية بيضاء'},{n:'طاقية ملوّنة'},{n:'شماغ أحمر'},{n:'غترة بيضاء'},
+              {n:'طاقية عاديّة (كاب)'}];
+/* ما يستر الشعرَ كلَّه: الشماغُ والغترةُ وحدهما. وكان الشرطُ «٣ فما فوق»،
+   فلمّا زيد غطاءٌ بعدهما صار يستر الشعرَ وهو لا يستره */
+function headCovers(h){ return h===3 || h===4; }
 var VEIL=[{n:'بلا نقاب'},{n:'نقاب'}];
 /* تسريحاتُ البنات ولحى الرجال — في لعبة «عائلتي» وحدَها */
 var GIRLCUTS=[{n:'طويل'},{n:'ذيل فرس'},{n:'ضفيرتان'},{n:'قصير'}];
@@ -2623,7 +2627,7 @@ var LOOK_ROWS=[{k:'skin',lb:'🎨 لون البشرة'},{k:'eyes',lb:'👁️ ل
   {k:'hair',lb:'💇 لون الشعر'},
                {k:'cloth',lb:'👕 لون الملابس'},{k:'hijab',lb:'🧕 لون الحجاب'}];
 for(var _k in PAL){ if(!(look[_k]>=0 && look[_k]<PAL[_k].length)) look[_k]=0; }
-if(!(look.head>=0&&look.head<5)) look.head=0;
+if(!(look.head>=0&&look.head<HEADWEAR.length)) look.head=0;
 if(!(look.hairStyle>=0&&look.hairStyle<4)) look.hairStyle=0;
 if(!(look.veil>=0&&look.veil<2)) look.veil=0;
 if(!(look.beard>=0&&look.beard<BEARDS.length)) look.beard=0;
@@ -2749,6 +2753,16 @@ function headwearSVG(cloth){
     }
     return s;
   }
+  if(hw===5){   /* طاقيةٌ عاديّة بحافّة — كابٌ يلبسه في يومه */
+    var cc=cloth, cl=darken(cloth,0.7), cd=darken(cloth,0.82);
+    return /* الحافّةُ إلى جهة القراءة، تبرز من تحت القبّة */
+      '<path fill="'+cl+'" stroke="'+darken(cloth,0.6)+'" stroke-width="1" '+
+        'd="M31,50.5 C24,49.5 18,51 15.5,54 C18.5,56.5 25,56.5 31.5,54.5 Z"/>'+
+      '<path d="M30.5,45.5 a19.5,16.5 0 0 1 39,0 Z" fill="'+cc+'" stroke="'+cd+'" stroke-width="1.3"/>'+
+      '<rect x="29.5" y="44" width="41" height="6.5" rx="3.2" fill="'+cc+'" stroke="'+cd+'" stroke-width="1.3"/>'+
+      '<path d="M50,29.5 L50,45" stroke="'+cd+'" stroke-width="1.1" opacity=".7"/>'+
+      '<circle cx="50" cy="30.2" r="1.9" fill="'+cl+'"/>';
+  }
   /* شماغ / غترة: قماش يغطي الرأس وينسدل على الكتفين */
   var base = (hw===3) ? '#d94b3d' : '#fdfdfd';
   var edge = (hw===3) ? '#a83226' : '#e0e0e0';
@@ -2768,7 +2782,7 @@ function headwearSVG(cloth){
 function maleHead(skin,hair,cloth){
   var ears='<ellipse cx="28.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>'+
            '<ellipse cx="71.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>';
-  var covered=(look.head||0)>=3;          /* الشماغ والغترة يغطيان الشعر */
+  var covered=headCovers(look.head||0);   /* الشماغ والغترة يغطيان الشعر */
   return ears + (covered?'':hairSVG(hair)) + headwearSVG(cloth) + beardSVG(hair);
 }
 /* ===== تاج الحافظ =====
@@ -2918,12 +2932,12 @@ function famRowsFor(kind, L){
       r=[{k:'skin',lb:'🎨 لون البشرة'},{k:'eyes',lb:'👁️ لون العينين'}];
   if(K.male){
     r.push({k:'head',lb:'🧢 غطاء الرأس',kind:'choice',opts:HEADWEAR});
-    if((L.head||0)<3)                        /* الشماغُ والغترةُ يغطّيان الشعر */
+    if(!headCovers(L.head||0))               /* الشماغُ والغترةُ يغطّيان الشعر */
       r.push({k:'hairStyle',lb:'✂️ تسريحة الشعر',kind:'choice',opts:HAIRCUTS});
     if(K.adult) r.push({k:'beard',lb:'🧔 اللحية والشنب',kind:'choice',opts:BEARDS});
     /* لونُ الشعر يلزم ما دام شعرٌ أو لحيةٌ يُريان، وإن غُطّي رأسُه */
     /* ولا يُلوَّن شعرٌ لا يُرى: غُطّي رأسُه أو كان أصلعَ، ولا لحيةَ له */
-    if((((L.head||0)<3) && ((L.hairStyle||0)!==3)) || (L.beard||0)>0)
+    if((!headCovers(L.head||0) && ((L.hairStyle||0)!==3)) || (L.beard||0)>0)
       r.push({k:'hair',lb:'💇 لون الشعر'});
   }else{
     if(!K.adult) r.push({k:'hijOn',lb:'🧕 الحجاب',kind:'choice',opts:HIJON});
@@ -2949,8 +2963,8 @@ function meRows(){
     if(r.k==='hair'&&gender==='f') return;
     if(r.m&&gender!=='m') return;
     /* غُطّي رأسُه بشماغٍ أو غترة: لا شعرَ يُرى — إلّا أن تكون له لحيةٌ فلونُها لونُه */
-    if(r.k==='hairStyle'&&gender==='m'&&(look.head||0)>=3) return;
-    if(r.k==='hair'&&gender==='m'&&(look.head||0)>=3&&!(look.beard||0)) return;
+    if(r.k==='hairStyle'&&gender==='m'&&headCovers(look.head||0)) return;
+    if(r.k==='hair'&&gender==='m'&&headCovers(look.head||0)&&!(look.beard||0)) return;
     /* أصلعُ بلا لحيةٍ ولا غطاء: لا شعرَ يُلوَّن */
     if(r.k==='hair'&&gender==='m'&&(look.hairStyle||0)===3&&!(look.beard||0)) return;
     out.push(r);
@@ -13679,12 +13693,14 @@ function runCharImg(fr){
   var img=pxImg(rows, function(ch,x,y){
     switch(ch){
       case 'H':
-        if(hw>=3){ if(y===2) return '#1c1c1c';                         /* العقال */
+        /* الشماغُ والغترةُ وحدهما يغطّيان الرأسَ في شخصيّة الألعاب أيضاً —
+           وكان الشرطُ «٣ فما فوق» فصار الكابُ الجديدُ غترةً */
+        if(headCovers(hw)){ if(y===2) return '#1c1c1c';                /* العقال */
           if(hw===3) return ((x+y)%3===0)?'#ffffff':'#d94b3d'; return '#fdfdfd'; }
         if(hw===1 && y<=2) return '#fbfbfb';                           /* طاقية بيضاء */
-        if(hw===2 && y<=2) return cloth;                               /* طاقية ملوّنة */
+        if((hw===2||hw===5) && y<=2) return cloth;                     /* طاقية ملوّنة أو كاب */
         return hair;
-      case 'h': return hw>=3 ? ((hw===3 && (x+y)%3===0)?'#ffffff':(hw===3?'#d94b3d':'#fdfdfd')) : null;
+      case 'h': return headCovers(hw) ? ((hw===3 && (x+y)%3===0)?'#ffffff':(hw===3?'#d94b3d':'#fdfdfd')) : null;
       case 'J': return hij;
       case 'S': return (veil && y>=6 && y<=7) ? hij : skin.f;           /* النقاب */
       case 's': return skin.s;
