@@ -6453,13 +6453,13 @@ $('mfClose').onclick=function(){ mfPickEnd(); mushafClose(); mushafEatGhost(); }
 $('mfGoBtn').onclick=function(){ var pv=MF_PV; mushafClose(); mushafEatGhost(); if(pv && pv.go) pv.go(); };
 /* استماعُ المقطع من صندوق العرض: إن كان معلَّماً تُتلى آياتُه، وإلّا فالوجهُ من أوّله */
 $('mfGoListen').onclick=function(){
-  if(AUD.q.length){ audStop(); return; }
+  if(audToggle()) return;              /* تتلو الآن: تُمسك أو تُتابَع */
   audAsk(audQueueSeg());
 };
 /* اختصارٌ في الدرس نفسِه لمن لم يفتح وجهَ المصحف: يتلو آيتَه التي هو فيها،
    وإن لم تكن جولتُه آيةً بعينها (كتسميع صفحة) فمقطعَه */
 $('pListen').onclick=function(){
-  if(AUD.q.length){ audStop(); return; }
+  if(audToggle()) return;
   audAsk(audList(playNowPieces()));
 };
 /* يُحفظ فورَ تعليمه، فيصحّ وإن خرج من الوجه بالإغلاق أو بزرّ الرجوع لا بزرّ البدء.
@@ -6518,7 +6518,7 @@ var QARIS=[
   {f:'Yasser_Ad-Dussary_128kbps', n:'ياسر الدوسري'}
 ];
 var AUD_CACHE='nur-audio';
-var AUD={ el:null, q:[], i:-1, url:'', rep:1, left:1 };   /* rep=0 يعني بلا توقّف */
+var AUD={ el:null, q:[], i:-1, url:'', rep:1, left:1, hold:false };   /* rep=0 يعني بلا توقّف */
 var AUD_REPS=[{v:1,n:'مرّة'},{v:3,n:'٣ مرّات'},{v:5,n:'٥ مرّات'},
               {v:7,n:'٧ مرّات'},{v:10,n:'١٠ مرّات'},{v:0,n:'♾️ بلا توقّف'}];
 function qariF(){
@@ -6562,7 +6562,29 @@ function audFree(){
 }
 function audStop(){
   if(AUD.el){ try{ AUD.el.pause(); }catch(e){} }
-  AUD.q=[]; AUD.i=-1; AUD.rep=1; AUD.left=1; audFree(); audSync();
+  AUD.q=[]; AUD.i=-1; AUD.rep=1; AUD.left=1; AUD.hold=false; audFree(); audSync();
+}
+/* ===== إمساكُ التلاوة =====
+   كانت الضغطةُ الثانية تُلغي التلاوةَ من أوّلها، فمن أراد أن يسكت لحظةً —
+   يردّد ما سمع، أو يجيب من ناداه — عاد فأعادها من الآية الأولى.
+   فصارت الضغطةُ إمساكاً عند موضعها: يعود فيتابع من حيث وقفت. وتنتهي
+   التلاوةُ بمغادرة الوجه، أو ببدء تلاوةٍ جديدة، أو بتبديل القارئ. */
+function audToggle(){
+  if(!AUD.q.length) return false;
+  var el=AUD.el;
+  if(AUD.hold){
+    AUD.hold=false;
+    /* وإن لم يصلْ صوتُها بعدُ فالجلبُ جارٍ، وتُتلى متى وصل */
+    if(el && el.src){
+      var p; try{ p=el.play(); }catch(e){ audErr(); return true; }
+      if(p && p['catch']) p['catch'](function(){ audErr(); });
+    }
+  }else{
+    AUD.hold=true;
+    if(el){ try{ el.pause(); }catch(e){} }
+  }
+  audSync();
+  return true;
 }
 function audErr(){
   audStop();
@@ -6583,6 +6605,8 @@ function audNext(){
     if(want!==AUD.i || !AUD.q.length) return;       /* أُوقف أو تغيّر أثناء الجلب */
     var el=audEl();
     audFree(); AUD.url=src; el.src=src;
+    /* أُمسكت وهي تُجلب: يُهيَّأ صوتُها ولا يُبثّ، حتى يأذن بمتابعتها */
+    if(AUD.hold){ audSync(); return; }
     var p; try{ p=el.play(); }catch(e){ audErr(); return; }
     if(p && p['catch']) p['catch'](function(){ audErr(); });
   })['catch'](function(){ audErr(); });
@@ -6638,17 +6662,19 @@ function inLesson(){
   catch(e){ return false; }
 }
 function audSync(){
-  var on=AUD.q.length>0;
+  var on=AUD.q.length>0, hold=(on && AUD.hold);
   /* موضعُه من الآيات، ومعه ما بقي من التكرار إن كان */
   var rp = (AUD.rep===0) ? ' ♾️' : (AUD.rep>1 ? (' ×'+arNum(AUD.left)) : '');
-  /* زرُّ الدرس: يُظهر أنّه يتلو ليعرف كيف يوقفه */
+  /* الأيقونةُ تقول ما تفعله الضغطةُ التالية: تُمسك إن كانت تتلو، وتتابع إن أُمسكت */
+  var ic = !on ? '🎧' : (hold ? '▶️' : '⏸️');
+  /* زرُّ الدرس: يُظهر أنّه يتلو ليعرف كيف يُمسكه */
   var pl=$('pListen');
-  if(pl){ pl.classList.toggle('on', on); pl.textContent = on ? '⏹️' : '🎧'; }
+  if(pl){ pl.classList.toggle('on', on); pl.textContent=ic; }
   var b=$('mfDockPlay'); if(!b) return;
   var t=b.querySelector('.tico'), l=$('mfPlayLbl');
   b.classList.toggle('on', on);
-  if(t) t.textContent = on ? '⏹️' : '🎧';
-  if(l) l.textContent = on ? (arNum(AUD.i+1)+'/'+arNum(AUD.q.length)+rp) : 'استمع';
+  if(t) t.textContent=ic;
+  if(l) l.textContent = on ? ((hold?'⏸️ ':'')+arNum(AUD.i+1)+'/'+arNum(AUD.q.length)+rp) : 'استمع';
 }
 /* لوحةٌ واحدةٌ في كلّ مرّة — ولا شيءَ يُطوي الكلّ */
 function mfPanel(id){
@@ -6832,9 +6858,9 @@ $('mfDockMean').onclick=function(){
   mfPanel('mfMean'); mfMeanRender();
 };
 /* الاستماع: يتلو آياتِ المقطع إن كان معلَّماً، وإلّا آياتِ الوجه كلَّه.
-   والضغطةُ الثانية توقفه — وزرٌّ واحدٌ لا زرّان */
+   والضغطةُ الثانية تُمسكه عند موضعه، والثالثةُ تتابع — وزرٌّ واحدٌ لا زرّان */
 $('mfDockPlay').onclick=function(){
-  if(AUD.q.length){ audStop(); return; }
+  if(audToggle()) return;
   /* في الدرس: تُتلى آيتُه التي هو فيها — فالوجهُ مقصودُ ما قبل البدء، وأمّا
      بعد الدخول فمقصودُه موضعُه. وخارجَ الدرس: الوجهُ كلُّه */
   if(inLesson()){
@@ -6872,7 +6898,7 @@ function qariAsk(after){
   },null,null,list);
 }
 function audPlay(list, rep){
-  AUD.q=list; AUD.i=-1;
+  AUD.q=list; AUD.i=-1; AUD.hold=false;
   AUD.rep=(rep==null?1:rep); AUD.left=AUD.rep;
   try{
     navToast('🎧 '+qariName()+(AUD.rep===0 ? ' — بلا توقّف'
