@@ -14163,6 +14163,18 @@ var RUN_STARS=(function(){ var a=[], i; for(i=0;i<28;i++) a.push([Math.random()*
    E عين، C ملابس، c ظلُّها، w ياقةُ الثوب، B حذاء. ويُحاط كلُّه بإطارٍ داكنٍ تلقائياً */
 var PX_HEAD_M=['....HHHH....','..HHHHHHHH..','.HHHHHHHHHH.','.HSSSSSHHHH.','.SSSSSSSHHH.',
                '.SESSSSsSHH.','SSSSSSSSSHHh','.SSSSSSSSHhh','..SSSSSS.hhh','....ss...hh.'];
+/* لحيةُ الشخصيّة في الألعاب: «D» بكسلاتُها، ولونُها لونُ الشعر داكناً كما في
+   شخصيّة الشاشات. والقالبُ ينظر إلى اليسار، فمقدَّمُ الوجه في الأعمدة الأولى:
+   الشنبُ بكسلتان تحت العين، والخفيفةُ تمتدّ إلى الذقن، والكاملةُ تعمّ الفكَّ
+   وتصعد إلى السالفين. */
+function pxHeadM(){
+  var b=look.beard||0, r=PX_HEAD_M.slice();
+  if(b===1){ r[6]='SDDSSSSSSHHh'; }
+  else if(b===2){ r[6]='SDDSSSSSSHHh'; r[7]='.DDDDSSSSHhh'; r[8]='..DDDSSS.hhh'; }
+  else if(b>=3){ r[5]='.SESSSSDDHH.'; r[6]='SDDDDDDDDHHh';
+                 r[7]='.DDDDDDDDHhh'; r[8]='..DDDDDD.hhh'; }
+  return r;
+}
 var PX_HEAD_F=['....JJJJ....','..JJJJJJJJ..','.JJJJJJJJJJ.','.JSSSSSJJJJ.','.SSSSSSJJJJ.',
                '.SESSSSJJJJ.','SSSSSSJJJJJ.','.SSSSSJJJJJ.','.JJJJJJJJJJ.','..JJJJJJJJ..'];
 var PX_BODY=['..CwCCCC....','.CCCCCCCC...','.CCCCCCCCc..','.SCCCCCCcc..','..CCCCCCc...','..CCCCCCc...'];
@@ -14193,7 +14205,7 @@ function runCharImg(fr){
   var key=gender+'|'+JSON.stringify(look)+'|'+fr;
   if(RUN.spr[key]) return RUN.spr[key];
   var f=(gender!=='m'), legs=PX_LEGS[fr];
-  var rows=(f?PX_HEAD_F:PX_HEAD_M).concat(PX_BODY, f?PX_DRESS.concat(legs.slice(2)):legs);
+  var rows=(f?PX_HEAD_F:pxHeadM()).concat(PX_BODY, f?PX_DRESS.concat(legs.slice(2)):legs);
   var skin=PAL.skin[look.skin]||PAL.skin[0], eye=(PAL.eyes[look.eyes]||PAL.eyes[0]).c,
       hair=(PAL.hair[look.hair]||PAL.hair[0]).c, cloth=(PAL.cloth[look.cloth]||PAL.cloth[0]).c,
       hij=(PAL.hijab[look.hijab]||PAL.hijab[0]).c;
@@ -14206,6 +14218,8 @@ function runCharImg(fr){
           if(hw===3) return ((x+y)%3===0)?'#ffffff':'#d94b3d'; return '#fdfdfd'; }
         if(hw===1 && y<=2) return '#fbfbfb';                           /* طاقية بيضاء */
         if(hw===2 && y<=2) return cloth;                               /* طاقية ملوّنة */
+        /* أصلعُ وافتخر: رأسُه بشرةٌ لا شعر — وكان يبقى شعرُه في الألعاب وحدَها */
+        if(!f && (look.hairStyle||0)===3) return skin.f;
         return hair;
       case 'h': return headCovers(hw) ? ((hw===3 && (x+y)%3===0)?'#ffffff':(hw===3?'#d94b3d':'#fdfdfd')) : null;
       case 'J': return hij;
@@ -14215,6 +14229,7 @@ function runCharImg(fr){
       case 'C': return cloth;
       case 'c': return darken(cloth,0.72);
       case 'w': return f ? cloth : '#ffffff';
+      case 'D': return darken(hair,0.9);                              /* اللحيةُ والشنب */
       case 'B': return '#3b2a20';
     }
     return null;
