@@ -1145,6 +1145,16 @@ body.light .sp-lit{fill:#1f92d4}
   direction:ltr;user-select:all;-webkit-user-select:all}
 .gfttxt{white-space:pre-wrap;font-size:13px;font-weight:700;line-height:1.9;color:#4a627e;
   background:#f7fbff;border:2px solid #e5ecf6;border-radius:10px;padding:10px;margin-bottom:8px}
+/* سطرُ كودٍ في السجلّ: رقمُه، وما يحمل ويومُه، وزرُّ نسخِ رسالته */
+.gftlr{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--pb)}
+.gftlr:last-child{border-bottom:0}
+.gftlr .lc{flex:0 0 auto;direction:ltr;font-size:18px;font-weight:900;letter-spacing:2px;color:var(--ttl);
+  background:var(--pnl2);border:2px dashed var(--pb3);border-radius:10px;padding:6px 10px;
+  user-select:all;-webkit-user-select:all}
+.gftlr .lt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.gftlr .lt b{font-size:14px;font-weight:900;color:var(--ttl)}
+.gftlr .lt i{font-size:12px;font-weight:700;font-style:normal;color:var(--mute)}
+.gftlr.sp .lc{opacity:.55;border-style:solid}
 /* بطاقة «ثبّت التطبيق»: تظهر متى كان التثبيت ممكناً ولم يُثبَّت بعد */
 .instbox{position:relative;background:linear-gradient(180deg,#fff,#f4f9ff);border:3px solid #bcd9f5;
   border-radius:14px;padding:12px 14px;margin-bottom:12px;text-align:right}
@@ -5179,6 +5189,31 @@ function gftMake(type, val){
   gftMinted()[gftNorm(code)]=1; saveDB();
   return { ok:true, code:code, txt:gftDesc({type:type,val:val}) };
 }
+/* ===== سجلُّ ما ولَّده من أكواد =====
+   الجواهرُ تُخصم عند التوليد لا عند الصرف، فمن نسي كودَه أو لم ينسخه ذهب
+   عليه ما خُصم ولا يدري إلامَ صار. فيُحفظ له كلُّ كودٍ ولّده: رقمُه، وما
+   يحمل، وعبارتُه، ويومُه — وتُعاد له رسالتُه كما كتبها أوّلَ مرّة.
+   وعلامةُ «صُرف» لا تُقال إلّا عمّا صُرف في هذا الجهاز بين ملفّاته؛ ومن
+   صرفه في جهازٍ آخر فلا خبرَ لنا به، فلا يُقال عنه إنّه لم يُصرف. */
+var GFT_LOG_CAP=40;
+function gftLog(){ var p=curP(); if(!Array.isArray(p.gftLog)) p.gftLog=[]; return p.gftLog; }
+function gftLogAdd(code, txt, note){
+  var L=gftLog();
+  L.unshift({ c:gftNorm(code), t:String(txt||''), n:String(note||'').slice(0,200), d:todayNum() });
+  if(L.length>GFT_LOG_CAP) L.length=GFT_LOG_CAP;
+  saveDB();
+}
+function gftSpent(code){
+  try{
+    var ps=DB.players, i;
+    for(i=0;i<ps.length;i++) if(ps[i] && ps[i].codes && ps[i].codes[code]) return true;
+  }catch(e){}
+  return false;
+}
+function gftLogWhen(d){
+  var k=todayNum()-(d||0);
+  return k<=0 ? 'اليوم' : (k===1 ? 'أمس' : ('قبل '+arDays(k)));
+}
 /* نصّ بطاقة الهديّة: الكود وحده في سطر ليسهل نسخه، والمُهدي يُذكر بجنسه */
 function gftCard(code, txt, note){
   var p=curP(), me=(p.name||'').trim();
@@ -5198,6 +5233,8 @@ function gftCard(code, txt, note){
 var GFT_V='';                                      /* '' اختيار، in استقبال، out إرسال */
 var GFT_T=0;                                       /* 0 جواهر، 1 مادّة، 2 غرض */
 var GFT_CARD='';
+var GFT_LAST=null;                                 /* آخرُ كودٍ ولّده، يبقى معروضاً بعد إعادة الرسم */
+var GFT_NOTE='';                                   /* وعبارتُه، فلا تضيع بإعادة الرسم */
 function gftFormHTML(){
   var p=curP(), i, o;
   if(GFT_T===0){
@@ -5256,14 +5293,31 @@ function gftPanelHTML(){
       '</div>'+
       '<div id="gftForm">'+gftFormHTML()+'</div>'+
       '<div class="gftrow"><label>عبارة الإهداء (اختياريّة)</label>'+
-        '<textarea id="gftNote" rows="2" maxlength="200" placeholder="اكتب ما تحبّ أن يقرأه أخوك…"></textarea></div>'+
+        '<textarea id="gftNote" rows="2" maxlength="200" placeholder="اكتب ما تحبّ أن يقرأه أخوك…">'+esc(GFT_NOTE)+'</textarea></div>'+
       '<button class="btn green big" id="gftGo">🎁 ولّد كود الهديّة</button>'+
-      '<div id="gftOut" hidden>'+
-        '<div class="gftcode" id="gftCode"></div>'+
-        '<div class="gfttxt" id="gftText"></div>'+
+      '<div id="gftOut"'+(GFT_LAST?'':' hidden')+'>'+
+        '<div class="gftcode" id="gftCode">'+(GFT_LAST?esc(GFT_LAST.code):'')+'</div>'+
+        '<div class="gfttxt" id="gftText">'+(GFT_LAST?esc(GFT_CARD):'')+'</div>'+
         '<button class="btn blue" id="gftCopy" style="width:100%">📋 انسخ الرسالة</button>'+
       '</div>'+
-    '</div>';
+    '</div>'+
+    gftLogHTML();
+}
+/* سجلُّه معروضاً: مطويٌّ لا يزاحم، وفي رأسه عدَدُه — ولكلّ كودٍ زرُّ نسخٍ
+   يُعيد رسالتَه كاملةً كما كانت، فلا يحتاج أن يكتبها ثانية */
+function gftLogHTML(){
+  var L=gftLog();
+  if(!L.length) return '';
+  var body=L.map(function(r,i){
+    var sp=gftSpent(r.c);
+    return '<div class="gftlr'+(sp?' sp':'')+'">'+
+        '<span class="lc">'+esc(r.c)+'</span>'+
+        '<span class="lt"><b>'+esc(r.t)+'</b><i>'+gftLogWhen(r.d)+(sp?' • ✅ صُرف في هذا الجهاز':'')+'</i></span>'+
+        '<button type="button" class="btn ghost mini" data-lgc="'+i+'" style="margin:0;padding:7px 10px">📋</button>'+
+      '</div>';
+  }).join('');
+  return '<div style="margin-top:14px">'+
+    foldHTML('gftLog','📜 أكوادٌ ولّدتُها — '+arNum(L.length),false,body)+'</div>';
 }
 function gftBindIn(){
   $('gftUse').onclick=function(){
@@ -5295,19 +5349,29 @@ function gftBindOut(){
     if(type===0) val=parseInt($('gftN').value,10)||0;
     else if(type===1) val=(parseInt($('gftM').value,10)||0)*4096+(parseInt($('gftN').value,10)||0);
     else val=gftItemHash($('gftI').value);
+    var note=($('gftNote').value||'').trim();
     var r=gftMake(type,val);
     if(!r.ok){ try{ navToast(r.msg); }catch(e){} return; }
-    GFT_CARD=gftCard(r.code, r.txt, ($('gftNote').value||'').trim());
-    $('gftCode').textContent=r.code;
-    $('gftText').textContent=GFT_CARD;
-    $('gftOut').hidden=false;
-    $('shopGems').textContent='💎 '+arNum(curP().gems||0)+' جوهرة';
+    GFT_NOTE=note;
+    GFT_CARD=gftCard(r.code, r.txt, note);
+    GFT_LAST={ code:r.code, txt:r.txt };
+    gftLogAdd(r.code, r.txt, note);      /* يُقيَّد في سجلّه، فلا يضيع بنسيانٍ */
     try{ sWin(); }catch(e){}
+    renderShop();                        /* الكودُ ورصيدُه وسجلُّه تُعرض معاً */
   };
-  $('gftCopy').onclick=function(){
-    try{ navigator.clipboard.writeText(GFT_CARD); navToast('نُسخت الرسالة — الصقها لأخيك'); }
-    catch(e){ try{ navToast('انسخ الرسالة من الصندوق أعلاه'); }catch(e2){} }
+  $('gftCopy').onclick=function(){ gftCopy(GFT_CARD); };
+  /* ونسخُ كودٍ قديم: تُعاد رسالتُه بعبارتها التي كتبها يومئذٍ */
+  var ls=$('shopBody').querySelectorAll('[data-lgc]'), z;
+  for(z=0;z<ls.length;z++) ls[z].onclick=function(){
+    var r2=gftLog()[parseInt(this.getAttribute('data-lgc'),10)];
+    if(r2) gftCopy(gftCard(r2.c, r2.t, r2.n));
   };
+  var lh=document.querySelector('[data-fold="gftLog"]');
+  if(lh && lh.parentNode) foldBind(lh.parentNode);
+}
+function gftCopy(txt){
+  try{ navigator.clipboard.writeText(txt); navToast('نُسخت الرسالة — الصقها لأخيك'); }
+  catch(e){ try{ navToast('انسخ الرسالة من الصندوق أعلاه'); }catch(e2){} }
 }
 function gftMsg(s,bad){
   var e=$('gftMsg'); if(!e) return;
@@ -5316,15 +5380,17 @@ function gftMsg(s,bad){
 
 function gftBind(){
   var i, el;
-  el=$('btnShopCats'); if(el) el.onclick=function(){ shopCat=''; GFT_V=''; renderShop(); window.scrollTo(0,0); };
-  el=$('gftBack');     if(el) el.onclick=function(){ GFT_V=''; renderShop(); window.scrollTo(0,0); };
+  /* الخروجُ من باب الإهداء يطوي آخرَ كودٍ عُرض — وهو محفوظٌ في سجلّه فلا يضيع */
+  el=$('btnShopCats'); if(el) el.onclick=function(){ shopCat=''; GFT_V=''; GFT_LAST=null; renderShop(); window.scrollTo(0,0); };
+  el=$('gftBack');     if(el) el.onclick=function(){ GFT_V=''; GFT_LAST=null; renderShop(); window.scrollTo(0,0); };
   var pk=$('shopBody').querySelectorAll('[data-gv]');
   for(i=0;i<pk.length;i++) pk[i].onclick=function(){
-    GFT_V=this.getAttribute('data-gv'); renderShop(); window.scrollTo(0,0);
+    GFT_V=this.getAttribute('data-gv'); GFT_LAST=null; renderShop(); window.scrollTo(0,0);
   };
   var ts=$('shopBody').querySelectorAll('[data-gt]');
   for(i=0;i<ts.length;i++) ts[i].onclick=function(){
     GFT_T=parseInt(this.getAttribute('data-gt'),10)||0;
+    GFT_LAST=null;                      /* صنفٌ آخر: الكودُ السابقُ ليس له */
     renderShop();
   };
   if($('gftUse')) gftBindIn();
