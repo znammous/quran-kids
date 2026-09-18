@@ -2613,7 +2613,7 @@ var FLOWERS=[{n:'بلا وردة'},{n:'🌸 ورديّة'},{n:'🌹 حمراء'}
 var LOOK_OPEN=null;                 /* الصفّ المفتوح في لوحة الشخصية */
 var LOOK_ROWS=[{k:'skin',lb:'🎨 لون البشرة'},{k:'eyes',lb:'👁️ لون العينين'},
   {k:'veil',lb:'🧕 النقاب',kind:'choice',opts:VEIL,f:true},
-  {k:'flower',lb:'🌸 وردة الحجاب',kind:'choice',opts:FLOWERS,f:true},
+  {k:'flower',lb:'🌸 وردة',kind:'choice',opts:FLOWERS,f:true},
   {k:'head',lb:'🧢 غطاء الرأس',kind:'choice',opts:HEADWEAR,m:true},
   {k:'hairStyle',lb:'✂️ تسريحة الشعر',kind:'choice',opts:HAIRCUTS,m:true},
   /* واللحيةُ والشنبُ لشخصيّة المستخدم كما هما لأبيه في «عائلتي» */
@@ -2700,9 +2700,9 @@ function beardSVG(hair){
     'C68,66 63,71 57,72.4 L57,74.5 C57,77.4 54,79 50,79 C46,79 43,77.4 43,74.5 L43,72.4 '+
     'C37,71 32,66 30,55 Z"/>';
 }
-/* ===== وردةُ الحجاب =====
-   خمسُ بتلاتٍ حول قلبٍ صغير، على جانب الحجاب فوق الصُّدغ — لا تُزاحم الوجه
-   ولا تختفي تحت النقاب */
+/* ===== الوردة =====
+   خمسُ بتلاتٍ حول قلبٍ صغير، على جانب الرأس فوق الصُّدغ — على الحجاب لمن
+   لبسته، وفي الشعر لمن لم تلبسه. لا تُزاحم الوجهَ ولا تختفي تحت النقاب */
 function flowerSVG(){
   var i=look.flower||0;
   var C=[null,{p:'#ffc0da',c:'#e8629b'},{p:'#ff9090',c:'#cf3a3a'},
@@ -2824,7 +2824,7 @@ function avatarSVG(){
     ? maleHead(skin,hair,cloth)
     : (look.hijOn===0)
     ? '<ellipse cx="28.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>'+
-      '<ellipse cx="71.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>'+girlHairSVG(hair)
+      '<ellipse cx="71.5" cy="60" rx="4" ry="5.5" fill="'+skin.s+'"/>'+girlHairSVG(hair)+flowerSVG()
     : '<path fill-rule="evenodd" fill="'+hij+'" d="M50,13 C75,13 85,33 85,60 C85,81 77,95 67,101 L33,101 C23,95 15,81 15,60 C15,33 25,13 50,13 Z '+
         'M31,58 a19,23 0 1,0 38,0 a19,23 0 1,0 -38,0 Z"/>'+
       '<path d="M50,13 C33,13 22,27 18,46 C24,30 35,20 50,18 Z" fill="#fff" opacity=".22"/>'+
@@ -2835,11 +2835,14 @@ function avatarSVG(){
      لا حولَه. فصارت قبّةً قائمةً تلتفّ على العنق: حلقةٌ تحتضنه من جانبيه،
      تُرسم بعده لا قبله، ومنها تنزل فتحةُ الأزرار على الصدر. */
   var collar=(gender==='m')
-    ? '<path fill="#fff" stroke="rgba(0,0,0,.18)" stroke-width="1.1" stroke-linejoin="round" '+
-        'd="M38.4,97.5 C38,88.6 41.8,83.6 50,83.6 C58.2,83.6 62,88.6 61.6,97.5 '+
-          'L59.2,99.6 C59.6,91.8 56.4,87.8 50,87.8 C43.6,87.8 40.4,91.8 40.8,99.6 Z"/>'+
-      '<path d="M41.6,92.4 C42.6,89.2 45.8,87.6 50,87.6 C54.2,87.6 57.4,89.2 58.4,92.4" '+
-        'fill="none" stroke="rgba(0,0,0,.12)" stroke-width="0.9" stroke-linecap="round"/>'+
+    ? /* شريطٌ رفيعٌ قائمٌ يحتضن أسفلَ العنق ولا يغطّيه — كان قبّةً عريضةً
+         تبلغ الذقنَ فتبتلع العنقَ كلَّه */
+      '<path fill="#fff" stroke="rgba(0,0,0,.16)" stroke-width="0.9" stroke-linejoin="round" '+
+        'd="M41,94.5 C40.8,88.6 44,86 50,86 C56,86 59.2,88.6 59,94.5 '+
+          'C57.4,90.6 54.2,89.2 50,89.2 C45.8,89.2 42.6,90.6 41,94.5 Z"/>'+
+      /* وما انسدل منه على الصدر */
+      '<path fill="#fff" stroke="rgba(0,0,0,.18)" stroke-width="1.1" stroke-linejoin="round" '+
+        'd="M40,93 C43,99 57,99 60,93 L62,97 C57,104 43,104 38,97 Z"/>'+
       '<rect x="47.2" y="97" width="5.6" height="24" rx="2.2" fill="#fff" '+
         'stroke="rgba(0,0,0,.14)" stroke-width="1"/>'+
       '<circle cx="50" cy="104" r="1.25" fill="rgba(0,0,0,.32)"/>'+
@@ -2908,12 +2911,13 @@ function famRowsFor(kind, L){
     if(!K.adult) r.push({k:'hijOn',lb:'🧕 الحجاب',kind:'choice',opts:HIJON});
     if(K.adult || (L.hijOn||0)===1){
       if(K.adult) r.push({k:'veil',lb:'🧕 النقاب',kind:'choice',opts:VEIL});
-      r.push({k:'flower',lb:'🌸 وردة الحجاب',kind:'choice',opts:FLOWERS});
       r.push({k:'hijab',lb:'🧕 لون الحجاب'});
     }else{
       r.push({k:'hairStyle',lb:'✂️ تسريحة الشعر',kind:'choice',opts:GIRLCUTS});
       r.push({k:'hair',lb:'💇 لون الشعر'});
     }
+    /* والوردةُ لكلّ أنثى: على حجابها إن لبسته، وفي شعرها إن لم تلبسه */
+    r.push({k:'flower',lb:'🌸 وردة',kind:'choice',opts:FLOWERS});
   }
   r.push({k:'cloth',lb:'👕 لون الملابس'});
   return r;
@@ -2929,8 +2933,6 @@ function meRows(){
     /* غُطّي رأسُه بشماغٍ أو غترة: لا شعرَ يُرى — إلّا أن تكون له لحيةٌ فلونُها لونُه */
     if(r.k==='hairStyle'&&gender==='m'&&(look.head||0)>=3) return;
     if(r.k==='hair'&&gender==='m'&&(look.head||0)>=3&&!(look.beard||0)) return;
-    /* والوردةُ لا تُعرض على من لا حجابَ عليها */
-    if(r.k==='flower'&&(look.hijOn||0)===0) return;
     out.push(r);
   });
   return out;
@@ -3215,7 +3217,7 @@ function famRenderMember(){
     if(K.male){
       L.head=Math.floor(Math.random()*HEADWEAR.length);
       if(K.adult) L.beard=Math.floor(Math.random()*BEARDS.length);
-    }else if(K.adult || (L.hijOn||0)===1) L.flower=Math.floor(Math.random()*FLOWERS.length);
+    }else L.flower=Math.floor(Math.random()*FLOWERS.length);
     saveDB(); beep([700,900],0.05); renderAvatars();
   };
 }
