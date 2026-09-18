@@ -12686,10 +12686,14 @@ function renderHomeCards(){
     hDone=true;
   }
   else if(T){
-    hDone=!!T.hifzDone || dayH;
+    /* على خطّة: الميزانُ مقرَّرُ يومها نفسُه — أفي محفوظه أم لا — أو إقرارُه
+       أنّه أنجز يومه. وكان يُقبل معهما عَلَمُ «hifz» في صندوق اليوم، وهو
+       يُرفع متى تمّ مقطعٌ والخطّةُ يومئذٍ لا حفظَ فيها، أو متى تقدّم يومُ
+       الخطّة بعد رفعه — فيبقى الصحُّ أخضرَ على مقرَّرٍ لم يُمسّ. */
+    hDone=!!(T.hifzDone || T.dayDone);
     hTxt = !T.h ? 'لا حفظ جديد اليوم'
          : T.hifzDone ? ('أتممتَه — '+bqnLabel(T.h))
-         : dayH ? 'أتممتَ حفظ اليوم — ولك أن تزيد'
+         : T.dayDone ? ('أقررتَ إنجازَ يومك — '+bqnLabel(T.h))
          : bqnLabel(T.h);
   } else {
     var nx=null; try{ nx=selfNext(); }catch(e){}
