@@ -12351,17 +12351,8 @@ function examGate(){
 function examBody(k){
   var h='';
   if(k==='range'){
-    /* زرُّ المصحف أوّلاً كما في المراجعة الحرّة، لئلّا يُظنّ «موافق» */
-    h='<div class="revbox">'+
-      '<button type="button" class="btn blue mini" id="exPick" style="width:100%;margin:0 0 10px">'+
-        '📖 افتح المصحف وحدّد النطاق</button>'+
-      '<div class="rl">من أين يبدأ الاختبار؟</div>'+
-      '<div class="revrow"><select id="exFS">'+revSurahOpts(EX.fromS)+'</select>'+
-      '<select id="exFA">'+revAyahOpts(EX.fromS,EX.fromA)+'</select></div>'+
-      '<div class="rl" style="margin:12px 0 8px">وإلى أين ينتهي؟</div>'+
-      '<div class="revrow"><select id="exTS">'+revSurahOpts(EX.toS)+'</select>'+
-      '<select id="exTA">'+revAyahOpts(EX.toS,EX.toA)+'</select></div></div>'+
-      '<div class="revsum" id="exRange"></div>';   /* مقدارُ النطاق وحدَه */
+    /* أبوابُ النطاق نفسُها التي في المراجعة الحرّة وتسجيل المحفوظ */
+    h=exScopeDoorsHTML()+'<div class="revsum" id="exRange"></div>';
   }
   else if(k==='kind'){
     var picked=examPicks(), allOn=examAllOn(), kinds=exKinds();
@@ -12443,12 +12434,83 @@ function examSummary(){
     '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:6px">'+
       'الاختبارُ لا ينوب عن مراجعتك ولا يغيّر مواعيدها — إنّما يدلّك على موضع الخلل</div></div>';
 }
+/* ===== أبوابُ نطاق الاختبار =====
+   هي أبوابُ المراجعة الحرّة وتسجيل المحفوظ نفسُها، فلا يتعلّم الطفلُ ثلاثَ
+   طرائقَ لشيءٍ واحد: سؤالٌ ثمّ أربعةُ أبوابٍ مطويّة، لا يُفتح بابٌ إلّا
+   انطوى ما سواه. والبابُ المفتوحُ يُذكر، فاللوحةُ يُعاد رسمُها مع كلّ تبديل. */
+var EX_DOOR='';
+function exDoorHTML(id,ic,t,sub,body){
+  return foldHTML(id,'<span class="prdoor"><b>'+ic+' '+t+'</b><small>'+sub+'</small></span>',
+                  EX_DOOR===id, body);
+}
+function exSetGi(g0,g1){
+  if(g1<g0){ var t=g0; g0=g1; g1=t; }
+  var A=bqnIdx(g0), B=bqnIdx(g1);
+  EX.fromS=A.s.n; EX.fromA=A.a; EX.toS=B.s.n; EX.toA=B.a;
+  examBody('range');
+}
+function exScopeDoorsHTML(){
+  var g0=gAt(EX.fromS,EX.fromA), g1=gAt(EX.toS,EX.toA);
+  if(g1<g0){ var t=g0; g0=g1; g1=t; }
+  var p1=pageOfIdx(g0), p2=pageOfIdx(g1);
+  var h='<div class="rl rlbig" style="margin:2px 0 0">كيف تحدّد نطاق اختبارك؟</div>'+
+        '<div class="note" style="margin:4px 0 0">افتحِ البابَ الذي يناسبك — والنطاقُ واحدٌ يُضبط بأيّها شئت</div>';
+  h+=exDoorHTML('exDP','📄','بأرقام الصفحات','من صفحةٍ إلى صفحةٍ في المصحف',
+     '<div class="pgrow">'+
+       '<input type="number" id="exP1" min="1" max="604" inputmode="numeric" placeholder="من صفحة" value="'+p1+'">'+
+       '<input type="number" id="exP2" min="1" max="604" inputmode="numeric" placeholder="إلى صفحة" value="'+p2+'">'+
+       '<button type="button" class="btn blue" id="exPGo">✅ اضبط</button>'+
+     '</div>');
+  h+=exDoorHTML('exDS','📖','بالسور والآيات','من سورةٍ وآيةٍ إلى سورةٍ وآية',
+     '<div class="rl">من</div>'+
+     '<div class="revrow"><select id="exFS">'+revSurahOpts(EX.fromS)+'</select>'+
+     '<select id="exFA">'+revAyahOpts(EX.fromS,EX.fromA)+'</select></div>'+
+     '<div class="rl" style="margin:12px 0 8px">إلى</div>'+
+     '<div class="revrow"><select id="exTS">'+revSurahOpts(EX.toS)+'</select>'+
+     '<select id="exTA">'+revAyahOpts(EX.toS,EX.toA)+'</select></div>');
+  h+=exDoorHTML('exDJ','🧩','بالأجزاء','من جزءٍ إلى جزء',
+     '<div class="revrow"><select id="exJ1">'+revJuzOpts(juzOfGi(g0))+'</select>'+
+     '<select id="exJ2">'+revJuzOpts(juzOfGi(g1))+'</select></div>'+
+     '<button type="button" class="btn blue" id="exJGo" style="width:100%;margin:10px 0 0">✅ اضبط</button>');
+  h+=exDoorHTML('exDM','✌️','بلمستين من المصحف','يُفتح المصحفُ فتلمسُ أوّلَ نطاقك وآخرَه',
+     '<button type="button" class="btn blue" id="exPick" style="width:100%;margin:0">'+
+       '📖 افتحِ المصحفَ الآن</button>');
+  return h;
+}
+function exScopeDoorsWire(){
+  var D=['exDP','exDS','exDJ','exDM'];
+  D.forEach(function(d){
+    var hd=document.querySelector('[data-fold="'+d+'"]');
+    if(!hd) return;
+    hd.onclick=function(){
+      var open=!foldIsOpen(d), x;
+      for(x=0;x<D.length;x++) foldSet(D[x], D[x]===d && open);
+      EX_DOOR = open ? d : '';
+      if(open) try{ hd.scrollIntoView({block:'nearest'}); }catch(e){}
+    };
+  });
+  if($('exPGo')) $('exPGo').onclick=function(){
+    var a=numOf($('exP1').value), b=numOf($('exP2').value), t;
+    if(!(a>=1&&a<=604)) return;
+    if(!(b>=1&&b<=604)) b=a;                    /* طرفٌ واحدٌ يكفي: وجهٌ واحد */
+    if(b<a){ t=a; a=b; b=t; }
+    exSetGi(pageBounds(a)[0], pageBounds(b)[1]);
+    try{ navToast('📄 من الوجه '+arNum(a)+' إلى الوجه '+arNum(b)); }catch(e){}
+  };
+  if($('exJGo')) $('exJGo').onclick=function(){
+    var a=parseInt($('exJ1').value,10)||1, b=parseInt($('exJ2').value,10)||1, t;
+    if(b<a){ t=a; a=b; b=t; }
+    exSetGi(juzRange(a)[0], juzRange(b)[1]);
+    try{ navToast('🧩 من الجزء '+arNum(a)+' إلى الجزء '+arNum(b)); }catch(e){}
+  };
+}
 function examWire(k){
   if(k==='range'){
     var sync=function(){
       if($('exRange')) $('exRange').innerHTML=examRangeLine();
       examGate();
     };
+    exScopeDoorsWire();
     $('exFS').onchange=function(){ EX.fromS=parseInt(this.value,10); EX.fromA=1; examBody('range'); };
     $('exFA').onchange=function(){ EX.fromA=parseInt(this.value,10); sync(); };
     $('exTS').onchange=function(){ EX.toS=parseInt(this.value,10); EX.toA=(surahBy(EX.toS)||SURAHS[0]).ayat.length; examBody('range'); };
