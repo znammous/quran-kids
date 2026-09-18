@@ -1829,15 +1829,6 @@ body.glow-off .dfpic{animation:none}
   <div class="mfpanel" id="mfMean" hidden>
     <div class="mfplist" id="mfMeanList"></div>
   </div>
-  <!-- لوحةُ الاستماع: لا تُفتح إلّا من المصحف نفسِه، فأمّا في الحفظ والمراجعة
-       فالمقصودُ موضعُ درسه لا نطاقٌ يختاره -->
-  <div class="mfpanel" id="mfAud" hidden>
-    <div class="mfphead">
-      <b style="flex:1;font-size:16px;color:var(--ttl)">🎧 الاستماع</b>
-      <button class="mfx2" id="mfAudX" aria-label="أغلق الاستماع">✕</button>
-    </div>
-    <div class="mfplist" id="mfAudBody"></div>
-  </div>
   <nav class="mfdock" id="mfDock">
     <button type="button" id="mfDockMean"><span class="tico">💡</span>المعاني</button>
     <button type="button" id="mfDockIdx"><span class="tico">📑</span>الفهرس</button>
@@ -3649,8 +3640,10 @@ function mushafPageHTML(P, hlGi, glyphs){
    أين يقف بصرُه. فهذا وضعٌ يُفتح فيه الوجه، يتصفّحه، ثمّ يلمس الكلمة
    فيصير موضعها حدَّ نطاقه. */
 var MF_PICK=null;   /* {page, stage:'from'|'to', fromS, fromA, busy, done} */
-function mfPickRange(startGi, done, rg){
-  MF_PICK={ page:pageOfIdx(startGi), stage:'from', busy:false, done:done };
+/* keep: يبقى وجهُ المصحف مفتوحاً بعد التحديد ولا يُغلق — كتحديد نطاق
+   الاستماع: يسمع وهو ينظر في وجهه، ولا تُطوى الصفحةُ من تحت عينه */
+function mfPickRange(startGi, done, rg, keep){
+  MF_PICK={ page:pageOfIdx(startGi), stage:'from', busy:false, done:done, keep:!!keep };
   $('mfSheet').classList.add('picking');
   /* نطاقُه الحاليُّ مظلَّلٌ أمامه ويُقال له إلى أين يمتدّ، فلا يحسبه وجهاً واحداً
      وهو يمتدّ على أوجهٍ بعده. ومن لا نطاقَ له (كالاختبار) يُفتح له الوجهُ صافياً */
@@ -3702,10 +3695,8 @@ function mfBarSync(P, hlGi){
   if(f && document.activeElement!==f) f.value=P;
   if(hlGi!=null && hlGi>=0){ try{ sn=mLoc(hlGi)[0]; }catch(e){} }
   mfIdxFill(P, sn);
-  /* لوحةُ المعاني تتبع الوجهَ حيث قُلِّب، ولوحةُ الاستماع كذلك: زرُّها الأوّلُ
-     «هذا الوجه» فلا يبقى على وجهٍ غادره */
+  /* لوحةُ المعاني تتبع الوجهَ حيث قُلِّب */
   if($('mfMean') && !$('mfMean').hidden){ try{ mfMeanRender(); }catch(e){} }
-  if($('mfAud') && !$('mfAud').hidden){ try{ mfAudRender(); }catch(e){} }
 }
 function mfPage(){ return MF_PICK ? MF_PICK.page : MF_PAGE; }
 /* اتّجاهُ التقليب من إزاحة الإصبع، على سَنن المصحف العربيّ: الوجهُ التالي
@@ -3799,8 +3790,9 @@ function mfPickAt(t,x,y){
   /* نقطةُ النهاية تُضبط بنقرةٍ واحدة: كان يُسأل عنها بصندوقٍ فتصير نقرتين،
      والبدايةُ مضبوطةٌ أمامه فلا لبس */
   if(MF_PICK.stage==='to'){
-    var f0=MF_PICK, fn0=f0.done;
-    mfPickEnd(); mushafClose(); mushafEatGhost();
+    var f0=MF_PICK, fn0=f0.done, k0=f0.keep;
+    mfPickEnd();
+    if(!k0){ mushafClose(); mushafEatGhost(); }
     if(fn0) fn0(f0.fromS, f0.fromA, sn, an);
     return true;
   }
@@ -3838,8 +3830,9 @@ function mfPickAt(t,x,y){
         mfUnbusy();
         return;
       }
-      var f=MF_PICK, fn=f.done;
-      mfPickEnd(); mushafClose(); mushafEatGhost();
+      var f=MF_PICK, fn=f.done, k=f.keep;
+      mfPickEnd();
+      if(!k){ mushafClose(); mushafEatGhost(); }
       if(fn) fn(f.fromS, f.fromA, sn, an);
     }, null, askPage ? '' : null);
   /* لوحةُ أرقامٍ لا حروف، وحدُّه ثلاثةُ أرقام */
@@ -6859,13 +6852,15 @@ function audSync(){
   if(t) t.textContent=ic;
   if(l) l.textContent = on ? ((hold?'⏸️ ':'')+arNum(AUD.i+1)+'/'+arNum(AUD.q.length)+rp) : 'استمع';
 }
-/* ===== لوحةُ الاستماع من المصحف =====
-   الوجهُ المفتوحُ هو المقصودُ أوّلاً، فزرٌّ واحدٌ يتلوه بلمسة. ومن أراد غيرَه
-   فتحَ «تحديد نطاق»، وتحته ثلاثةُ أبوابٍ مطويّة: سورةٌ كاملة، أو من آيةٍ إلى
-   آية، أو من وجهٍ إلى وجه. ولا يُفتح بابٌ إلّا انطوى ما سواه.
-   وهذه اللوحةُ من المصحف وحدَه: أمّا في الحفظ والمراجعة فالمقصودُ موضعُ
-   درسه، لا نطاقٌ يختاره — فلا تُعرض عليه هناك. */
-var MF_AUD_DOORS=['aSura','aAyah','aPage'];
+/* ===== نطاقُ الاستماع من المصحف =====
+   صندوقٌ كصندوق «كم مرّةً تريد سماعه» سواءً بسواء: رقاقاتٌ تُضغط بإصبعٍ
+   واحدٍ لا لوحةٌ تُفتح وتُطوى. والوجهُ المفتوحُ أوّلُها، فمن أراده لم يزد
+   نقرة. وما بعده يفتح صندوقَه:
+     • سورةٌ كاملة  — سورُ هذا الوجه رقاقاتٌ، وما سواها من الفهرس
+     • من آيةٍ إلى آية — يلمسهما في المصحف نفسِه، كتحديد الحفظ
+     • من وجهٍ إلى وجه — من هذا الوجه إلى رقمٍ يكتبه
+   وهذا من المصحف وحدَه: أمّا في الحفظ والمراجعة فالمقصودُ موضعُ درسه، لا
+   نطاقٌ يختاره — فلا يُعرض عليه هناك. */
 function audPiecesPages(a,b){
   var out=[], P;
   if(b<a){ var z=a; a=b; b=z; }
@@ -6884,93 +6879,91 @@ function audPiecesGi(g0,g1){
   }catch(e){}
   return out;
 }
-function mfAudRender(){
-  var box=$('mfAudBody'); if(!box) return;
+/* آياتُ النطاق ثمّ سؤالُ التكرار: مَخرجُ الصناديق كلِّها واحد */
+function audGo(pcs){
+  var list=audList(pcs);
+  if(!list.length){ try{ navToast('لا آياتِ في هذا النطاق'); }catch(e){} return; }
+  audAsk(list);
+}
+/* الصندوقُ الأوّل: رقاقاتٌ تُضغط، لا لوحةٌ تُفتح */
+function audScopeAsk(){
   var P=MF_PAGE, pc=[];
   try{ pc=pagePieces(P); }catch(e){}
-  var s=(pc.length && pc[0].s) || SURAHS[0];   /* سورةُ أوّل الوجه: أوّلُ ما يُعرض مختاراً */
-  var here=audQueuePage().length;
-  var door=function(id, ic, t, sub, body){
-    return priorDoorHTML(id, ic, t, sub, body);
-  };
-  var h='';
-  /* الوجهُ المفتوح: مقصودُه الأوّل، بلمسةٍ واحدةٍ بلا فتحِ بابٍ ولا اختيار */
-  h+='<button type="button" class="btn primary" id="aNow" style="width:100%;margin:0">'+
-       '▶️ استمعْ لهذا الوجه — '+arCount(here,C_AYAH)+'</button>'+
-     '<div class="note" style="margin:8px 0 0">الوجه '+arNum(P)+' • سورة '+esc(s.name)+'</div>';
-  /* ثمّ بابُ النطاق، مطويّاً فلا يزاحم المقصودَ الأوّل */
-  var inner='';
-  inner+=door('aSura','📖','سورةٌ كاملة','تُتلى من أوّلها إلى آخرها',
-    '<div class="revrow"><select id="aSuraS">'+revSurahOpts(s.n)+'</select></div>'+
-    '<button type="button" class="btn blue" id="aSuraGo" style="width:100%;margin:10px 0 0">▶️ استمع</button>');
-  inner+=door('aAyah','🔤','من آيةٍ إلى آية','تختار سورتَها وآيتَها في الطرفين',
-    '<div class="revrow"><select id="aFS">'+revSurahOpts(s.n)+'</select>'+
-    '<select id="aFA">'+revAyahOpts(s.n,1)+'</select></div>'+
-    '<div class="rl" style="margin:10px 0 8px">إلى</div>'+
-    '<div class="revrow"><select id="aTS">'+revSurahOpts(s.n)+'</select>'+
-    '<select id="aTA">'+revAyahOpts(s.n,s.ayat.length)+'</select></div>'+
-    '<button type="button" class="btn blue" id="aAyahGo" style="width:100%;margin:10px 0 0">▶️ استمع</button>');
-  inner+=door('aPage','📄','من وجهٍ إلى وجه','بأرقام الأوجه (١–٦٠٤)',
-    '<div class="pgrow">'+
-      '<input type="number" id="aP1" min="1" max="604" inputmode="numeric" placeholder="من وجه" value="'+P+'">'+
-      '<input type="number" id="aP2" min="1" max="604" inputmode="numeric" placeholder="إلى وجه" value="'+P+'">'+
-      '<button type="button" class="btn blue" id="aPageGo">▶️ استمع</button>'+
-    '</div>');
-  h+='<div style="margin-top:6px">'+foldHTML('aRange','🎯 تحديد نطاق',false,inner)+'</div>';
-  box.innerHTML=h;
-
-  var play=function(pcs){
-    var list=audList(pcs);
-    if(!list.length){ try{ navToast('لا آياتِ في هذا النطاق'); }catch(e){} return; }
-    mfPanel(null);
-    audAsk(list);
-  };
-  /* بابُ النطاق يُفتح ويُطوى وحدَه، وأبوابُه الثلاثةُ لا يجتمع منها اثنان */
-  var rh=document.querySelector('[data-fold="aRange"]');
-  if(rh) rh.onclick=function(){
-    var open=!foldIsOpen('aRange');
-    foldSet('aRange', open);
-    if(!open) MF_AUD_DOORS.forEach(function(d){ foldSet(d,false); });
-  };
-  MF_AUD_DOORS.forEach(function(d){
-    var hd=document.querySelector('[data-fold="'+d+'"]');
-    if(!hd) return;
-    hd.onclick=function(){
-      var open=!foldIsOpen(d), x;
-      for(x=0;x<MF_AUD_DOORS.length;x++) foldSet(MF_AUD_DOORS[x], MF_AUD_DOORS[x]===d && open);
-    };
+  var n=audQueuePage().length, list=[
+    { v:'now',  n:'📄 هذا الوجه — '+arCount(n,C_AYAH), act:true },
+    { v:'sura', n:'📖 سورةٌ كاملة',                     act:true },
+    { v:'ayah', n:'🔤 من آيةٍ إلى آية',                 act:true },
+    { v:'page', n:'📚 من وجهٍ إلى وجه',                 act:true }
+  ];
+  uiBox('ماذا تُحبُّ أن تسمع؟\nالوجه '+arNum(P)+((pc.length&&pc[0].s)?(' • سورة '+pc[0].s.name):''),
+    '🎧', null, 'إلغاء', function(ok,v){
+      if(!ok || v==null) return;
+      if(v==='now'){ audGo(pagePieces(MF_PAGE)); return; }
+      if(v==='sura'){ audSuraAsk(); return; }
+      if(v==='ayah'){ audAyahPick(); return; }
+      if(v==='page'){ audPageAsk(); return; }
+    }, null, null, list);
+}
+/* سورةٌ كاملة: سورُ هذا الوجه حاضرةٌ رقاقاتٍ — وهي مرادُه غالباً — ومن أراد
+   سواها فتح الفهرسَ فلمسَ سورتَه، ولا يُعرض عليه أربعَ عشرةَ ومئةَ رقاقة */
+function audSuraAsk(){
+  var pc=[]; try{ pc=pagePieces(MF_PAGE); }catch(e){}
+  var seen={}, list=[];
+  pc.forEach(function(x){
+    if(seen[x.s.n]) return; seen[x.s.n]=1;
+    list.push({ v:String(x.s.n), n:'📖 '+x.s.name+' — '+arCount(x.s.ayat.length,C_AYAH), act:true });
   });
-  var v=function(id){ var e=$(id); return e?parseInt(e.value,10):0; };
-  if($('aFS')) $('aFS').onchange=function(){ $('aFA').innerHTML=revAyahOpts(v('aFS'),1); };
-  if($('aTS')) $('aTS').onchange=function(){
-    var sx=surahBy(v('aTS'))||SURAHS[0];
-    $('aTA').innerHTML=revAyahOpts(sx.n, sx.ayat.length);
-  };
-  if($('aNow')) $('aNow').onclick=function(){ play(pagePieces(MF_PAGE)); };
-  if($('aSuraGo')) $('aSuraGo').onclick=function(){
-    var sx=surahBy(v('aSuraS')); if(!sx) return;
-    play([{ s:sx, from:0, to:sx.ayat.length }]);
-  };
-  if($('aAyahGo')) $('aAyahGo').onclick=function(){
-    play(audPiecesGi(gAt(v('aFS'),v('aFA')), gAt(v('aTS'),v('aTA'))));
-  };
-  if($('aPageGo')) $('aPageGo').onclick=function(){
-    var a=v('aP1'), b=v('aP2');
-    if(!(a>=1&&a<=604)) return;
-    if(!(b>=1&&b<=604)) b=a;
-    play(audPiecesPages(a,b));
-  };
+  list.push({ v:'idx', n:'📑 سورةٌ أخرى من الفهرس', act:true });
+  uiBox('أيَّ سورةٍ تُحبُّ أن تسمع كاملةً؟','📖', null, 'رجوع', function(ok,v){
+    if(!ok || v==null){ if(ok===false) audScopeAsk(); return; }
+    if(v==='idx'){
+      AUD_PICKSURA=true; MF_IDX_T='s';
+      mfPanel('mfIdx'); mfIdxRender();
+      try{ navToast('اختر السورةَ التي تُحبُّ أن تسمعها كاملة'); }catch(e){}
+      return;
+    }
+    var s=surahBy(parseInt(v,10)); if(!s) return;
+    audGo([{ s:s, from:0, to:s.ayat.length }]);
+  }, null, null, list);
+}
+/* من آيةٍ إلى آية: يلمسهما في المصحف كتحديد الحفظ — لا قائمتَي سورةٍ وآية.
+   والمصحفُ يبقى مفتوحاً على أوّل ما اختار، فيقرأ ويسمع معاً */
+var AUD_PICKSURA=false;
+function audAyahPick(){
+  var g0=null;
+  try{ var pc=pagePieces(MF_PAGE); if(pc.length) g0=GIDX[pc[0].s.n-1]+pc[0].from; }catch(e){}
+  if(g0==null) g0=0;
+  mfPickRange(g0, function(fs,fa,ts,ta){
+    var a=gAt(fs,fa), b=gAt(ts,ta);
+    if(b<a){ var z=a; a=b; b=z; }
+    try{ mfGoto(pageOfIdx(a)); }catch(e){}     /* يعود إلى أوّل نطاقه فيقرأ ويسمع */
+    audGo(audPiecesGi(a,b));
+  }, null, true);                              /* والمصحفُ يبقى مفتوحاً */
+}
+/* من وجهٍ إلى وجه: من هذا الوجه إلى رقمٍ يكتبه — ورقمٌ واحدٌ يكفي */
+function audPageAsk(){
+  var P=MF_PAGE;
+  uiBox('من الوجه <b>'+arNum(P)+'</b> إلى أيِّ وجه؟\nاكتبْ رقمَه (١–٦٠٤)','📚','✅ استمع','رجوع',
+    function(ok,v){
+      if(!ok){ audScopeAsk(); return; }
+      var b=parseInt(String(v==null?'':v).replace(/[^\d٠-٩]/g,'')
+              .replace(/[٠-٩]/g,function(d){ return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); }),10);
+      if(!(b>=1 && b<=604)) b=P;
+      audGo(audPiecesPages(P,b));
+    }, null, String(P));
+  var ip=$('askInp');
+  if(ip){ ip.maxLength=3; try{ ip.inputMode='numeric'; }catch(e){} }
 }
 /* لوحةٌ واحدةٌ في كلّ مرّة — ولا شيءَ يُطوي الكلّ */
 function mfPanel(id){
-  ['mfIdx','mfFind','mfMean','mfAud'].forEach(function(k){ if($(k)) $(k).hidden=(k!==id); });
+  ['mfIdx','mfFind','mfMean'].forEach(function(k){ if($(k)) $(k).hidden=(k!==id); });
+  if(!id) AUD_PICKSURA=false;            /* أُغلق الفهرسُ ولم يختر: يعود فهرساً كعادته */
   if(id){ var d=$('mfDock'); $(id).style.bottom=(d?d.offsetHeight:0)+'px'; }
   if($('mfDockIdx')) $('mfDockIdx').classList.toggle('on', id==='mfIdx');
   if($('mfDockFind')) $('mfDockFind').classList.toggle('on', id==='mfFind');
   if($('mfDockMean')) $('mfDockMean').classList.toggle('on', id==='mfMean');
-  if($('mfDockPlay') && !AUD.q.length) $('mfDockPlay').classList.toggle('on', id==='mfAud');
 }
-function mfPanelOpen(){ return ['mfIdx','mfFind','mfMean','mfAud'].some(function(k){ return $(k) && !$(k).hidden; }); }
+function mfPanelOpen(){ return ['mfIdx','mfFind','mfMean'].some(function(k){ return $(k) && !$(k).hidden; }); }
 /* ===== معاني الكلمات: «الميسر في غريب القرآن الكريم» (مجمع الملك فهد) =====
    مقطَّعٌ على أوجه مصحف المدينة: GHARIB[P-1] = [[سورة، آية، الكلمة، معناها]، …].
    يُحمَّل عند أوّل فتحٍ للّوحة مرّةً واحدة، ويخزّنه عاملُ الخدمة فيعمل دون إنترنت. */
@@ -7061,7 +7054,7 @@ function mfIdxRender(){
   if(MF_IDX_T==='s'){
     for(i=0;i<SURAHS.length;i++){
       var s=SURAHS[i], sp=mfSuraPage(s.n);
-      h+='<button type="button" class="mfprow'+(s.n===curS?' here':'')+'" data-pg="'+sp+'">'+
+      h+='<button type="button" class="mfprow'+(s.n===curS?' here':'')+'" data-pg="'+sp+'" data-sn="'+s.n+'">'+
          '<span class="n">'+arNum(s.n)+'</span>'+
          '<span class="t"><b>سورة '+esc(s.name)+'</b><i>'+juzLabel(s)+' • آياتها '+arNum(s.ayat.length)+'</i></span>'+
          '<span class="p">ص '+arNum(sp)+'</span></button>';
@@ -7153,13 +7146,11 @@ $('mfDockPlay').onclick=function(){
     var q=audList(playNowPieces());
     if(q.length){ audAsk(q); return; }
   }
-  /* والمقطعُ المعلَّم — كالذي يُعرض قبل البدء — يُتلى كما هو بلا لوحة */
+  /* والمقطعُ المعلَّم — كالذي يُعرض قبل البدء — يُتلى كما هو بلا سؤالِ نطاق */
   if(MF_MARK && MF_MARK.pieces && MF_MARK.pieces.length){ audAsk(audQueueSeg()); return; }
-  /* وفي المصحف نفسِه: لوحةُ الاستماع — الوجهُ بلمسة، وتحته بابُ النطاق */
-  if(!$('mfAud').hidden){ mfPanel(null); return; }
-  mfPanel('mfAud'); mfAudRender();
+  /* وفي المصحف نفسِه: يُسأل عن نطاقه أوّلاً */
+  audScopeAsk();
 };
-if($('mfAudX')) $('mfAudX').onclick=function(){ mfPanel(null); };
 /* يُسأل عن التكرار أوّلاً: خياراتٌ سريعةٌ تُضغط بإصبعٍ واحد، لا عددٌ يُكتب.
    ومع الخيارات رقاقةٌ تحمل اسمَ القارئ الحاليّ: من رضيه لم يزد نقرة، ومن أراد
    تبديلَه نقرها فظهرت القائمة ثمّ عاد إلى سؤاله. ويبقى آخرُ اختيارٍ مؤشَّراً. */
@@ -7237,6 +7228,13 @@ $('mfIdxTabs').onclick=function(e){
 };
 $('mfIdxList').onclick=function(e){
   var b=e.target.closest && e.target.closest('[data-pg]'); if(!b) return;
+  /* الفهرسُ مفتوحٌ لاختيار سورةٍ تُتلى: تُؤخذ سورتُه فتُسمع كاملةً، ولا
+     يُقلَّب إليه. وتبويبُ الأجزاء لا سورةَ فيه، فيمضي على عادته */
+  if(AUD_PICKSURA){
+    var s=surahBy(parseInt(b.getAttribute('data-sn')||'0',10));
+    AUD_PICKSURA=false;
+    if(s){ mfPanel(null); audGo([{ s:s, from:0, to:s.ayat.length }]); return; }
+  }
   mfPanel(null); mfGoto(parseInt(b.getAttribute('data-pg'),10));
 };
 $('mfFindQ').oninput=function(){ clearTimeout(MF_FT); MF_FT=setTimeout(mfFindRun, 180); };
