@@ -1658,7 +1658,7 @@ body.glow-off .dfpic{animation:none}
   border:2px solid var(--pb);border-radius:999px;padding:4px 13px;font-variant-numeric:tabular-nums}
 .stimgbox{position:relative;width:100%;aspect-ratio:4/3;border-radius:18px;overflow:hidden;
   background:var(--pnl3);border:3px solid var(--pb);margin-bottom:14px}
-.stimgbox img{width:100%;height:100%;object-fit:cover;display:block;
+.stimgbox img{width:100%;height:100%;object-fit:contain;display:block;
   opacity:0;transition:opacity .35s}
 .stimgbox img.in{opacity:1}
 /* ريثما تصل الصورة: نبضةٌ هادئة مكانَها، فلا تقفز الصفحةُ حين تحلّ */
@@ -1670,11 +1670,33 @@ body.glow-off .dfpic{animation:none}
   font-size:17.5px;font-weight:700;line-height:2.1;color:var(--on1);white-space:pre-wrap}
 .stload{text-align:center;padding:44px 10px;font-size:16px;font-weight:800;color:var(--on3)}
 .stnav{display:flex;align-items:center;gap:10px;margin:16px 0 4px}
-.stnav .btn{flex:0 0 auto;margin:0;min-width:116px}
+.stnav .btn{flex:0 0 auto;margin:0;min-width:120px;
+  display:flex;align-items:center;justify-content:center;gap:8px}
+.stnav .btn .sar{font-size:19px;line-height:1;font-weight:900}
 .stnav .btn[disabled]{opacity:.38;pointer-events:none}
 .stdots{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
 .stdots i{width:8px;height:8px;border-radius:50%;background:var(--pb2);display:block}
 .stdots i.on{background:var(--gold);transform:scale(1.4)}
+/* ===== شاشةُ القصّة ثابتةٌ لا تنساح =====
+   صفحةُ الكتاب لا تتحرّك تحت إصبع الطفل: الترويسةُ في أعلاها، والصورةُ في
+   مكانها، والنصُّ تحتها، والزرّان في زاويتَي أسفلها. وما طال من النصّ
+   يُمرَّر في صندوقه وحدَه، فلا تُجرّ الصفحةُ كلُّها ولا يضيع الزرّان. */
+#scr-story.active{
+  position:fixed; inset:0; z-index:30;
+  display:flex; flex-direction:column; align-items:center;
+  padding:calc(10px + env(safe-area-inset-top))  calc(14px + env(safe-area-inset-right))
+          calc(12px + env(safe-area-inset-bottom)) calc(14px + env(safe-area-inset-left));
+  overflow:hidden}
+#scr-story.active > *{width:100%;max-width:640px}   /* ولا تتمدّد على الشاشات العريضة */
+#scr-story .sthead{flex:0 0 auto;margin:0 0 10px}
+#scr-story #stPage{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:12px}
+/* حصّةٌ ثابتةٌ لكلٍّ منهما، فلا يتراقص الإطارُ بين صفحةٍ وصفحة تبعاً لطول
+   النصّ: الصورةُ تأخذ ما بقي، والنصُّ قدرٌ معلومٌ يُمرَّر في صندوقه إن طال */
+#scr-story .stimgbox{flex:0 0 auto;aspect-ratio:4/3;max-height:46%;margin-bottom:0}
+#scr-story .sttext{flex:1 1 auto;min-height:0;
+  overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+#scr-story .stload,#scr-story .gmnote{flex:1 1 auto;display:flex;align-items:center;justify-content:center;margin:0}
+#scr-story .stnav{flex:0 0 auto;margin:12px 0 0}
 /* ===== الألعاب: «عدّاء الآيات» ===== */
 .gmlist .goalcard{margin-bottom:12px}
 .gmnote{text-align:center;color:var(--on3);font-size:13.5px;font-weight:700;margin:2px 0 14px;line-height:1.7}
@@ -2315,10 +2337,12 @@ body.glow-off .dfpic{animation:none}
     </div>
     <div class="stpage" id="stPage"></div>
     <div class="stnav">
-      <!-- الاتّجاهُ عربيٌّ: السهمُ في «السابق» يُشير يساراً وفي «التالي» يميناً -->
-      <button type="button" class="btn ghost" id="stPrev">❮ السابق</button>
+      <!-- الاتّجاهُ عربيّ: «السابق» يميناً بسهمٍ يمين، و«التالي» يساراً بسهمٍ يسار.
+           والسهمُ في عنصرٍ مستقلٍّ بحرفٍ لا ينعكس (← →) — فحرفا ❮ ❯ من
+           الأحرف المنعكسة، يُرسمان مقلوبَين في السياق العربيّ فيُضلّلان -->
+      <button type="button" class="btn ghost" id="stPrev"><span class="sar">→</span><span>السابق</span></button>
       <div class="stdots" id="stDots"></div>
-      <button type="button" class="btn primary" id="stNext">التالي ❯</button>
+      <button type="button" class="btn primary" id="stNext"><span>التالي</span><span class="sar">←</span></button>
     </div>
   </section>
 
@@ -15439,13 +15463,15 @@ function storyDraw(){
   for(i=0;i<n;i++) d+='<i'+(i===STORY_I?' class="on"':'')+'></i>';
   $('stDots').innerHTML=d;
   $('stPrev').disabled=(STORY_I<=0);
-  $('stNext').textContent=(STORY_I>=n-1) ? 'تمّتْ ✨' : 'التالي ❯';
+  $('stNext').innerHTML=(STORY_I>=n-1) ? '<span>تمّتْ</span><span class="sar">✨</span>'
+                                       : '<span>التالي</span><span class="sar">←</span>';
   $('stNext').disabled=false;
   var s=stBox();
   s.pos[STORY.id]=STORY_I;
   if(STORY_I>=n-1) s.read[STORY.id]=1;
   saveDB();
-  window.scrollTo(0,0);
+  /* الشاشةُ ثابتةٌ لا تنساح، فالذي يُردّ إلى أوّله صندوقُ النصّ لا الصفحة */
+  try{ var tb=$('stPage').querySelector('.sttext'); if(tb) tb.scrollTop=0; }catch(e){}
   /* وتُجلب صورةُ الصفحة التالية سلفاً، فتُقلب الصفحةُ ولا تنتظر */
   var nx=pg[STORY_I+1];
   if(nx && nx.img) stImg(nx.img)['catch'](function(){});
