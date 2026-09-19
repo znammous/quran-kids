@@ -7575,31 +7575,66 @@ function renderPath(){
   }catch(e){}
 }
 /* التمريرُ إلى المقطع المقصود: ما هو فيه الآن، وإلّا فقسمُه، وإلّا فما استحقّ */
+/* ===== ردُّ النظر إلى موضعه من المسار =====
+   كان الضبطُ يجري مرّةً واحدةً فور الرسم، فيُقاس والصفحةُ لم تستقرّ بعد:
+   المسارُ يبلغ مئاتِ العقد متى وسّعه بزرّ «السابق»، والخطوطُ تحلّ بعد
+   الرسم والخطُّ المتعرّجُ يُرسم — فيزحزح ما فوق مقطعه بعد أن قِسناه،
+   فيجد نفسَه في أوّل المسار. فصار الهدفُ يُختار مرّةً لكلّ رسم، ثمّ
+   يُعاد تثبيتُه على دفعاتٍ حتى تثبت المقاييس — ويُترك متى لمس الشاشة،
+   فلا نُنازعه إصبعَه. */
+var PATH_FSEL='', PATH_FBLK='center', PATH_FLOCK=false;
+function pathPick(box){
+  /* طلب ما مضى: يقع نظرُه على أوّل ما كُشف، لا يُردّ إلى موضعه الحاليّ */
+  if(PATH_GOTOP){
+    PATH_GOTOP=false; PATH_FBLK='start';
+    return box.querySelector('#pathPrev') ? '#pathPrev' : '.pathsec';
+  }
+  PATH_FBLK='center';
+  /* خرج لتوّه من مقطع: يُردّ إليه بعينه، فلا يفقد موضعه من السورة */
+  if(PATH_AT){
+    var at='.pnode[data-s="'+PATH_AT.s+'"][data-i="'+PATH_AT.i+'"]';
+    if(box.querySelector(at)) return at;
+  }
+  /* المختارةُ من الفهرس: يقع نظرُه عليها — على «ابدأ» فيها، وإلّا فعلى رأسها */
+  if(!PATH_SCOPE && curSurah && PATH_PICK===curSurah.n){
+    var a='.pnode.now[data-s="'+PATH_PICK+'"]', b='.pathsec[data-s="'+PATH_PICK+'"]';
+    if(box.querySelector(a)) return a;
+    if(box.querySelector(b)) return b;      /* تامّةٌ لا «ابدأ» فيها: رأسُها */
+  }
+  if(box.querySelector('.pnode.now'))    return '.pnode.now';
+  if(box.querySelector('.pathsec.here')) return '.pathsec.here';
+  if(box.querySelector('.pnode.due'))    return '.pnode.due';
+  return '';
+}
+function pathFocusApply(){
+  try{
+    if(!PATH_FSEL || PATH_FLOCK) return;
+    if(curScreen()!=='scr-path') return;     /* غادرها: لا نُحرّك شاشةً أخرى تحته */
+    var box=$('path'); if(!box) return;
+    var el=box.querySelector(PATH_FSEL);
+    if(el && el.scrollIntoView) el.scrollIntoView({block:PATH_FBLK});
+  }catch(e){}
+}
 function pathFocus(){
   try{
     var box=$('path'); if(!box) return;
-    /* طلب ما مضى: يقع نظرُه على أوّل ما كُشف، لا يُردّ إلى موضعه الحاليّ */
-    if(PATH_GOTOP){
-      PATH_GOTOP=false;
-      var tp=box.querySelector('#pathPrev') || box.querySelector('.pathsec');
-      if(tp && tp.scrollIntoView){ tp.scrollIntoView({block:'start'}); return; }
-    }
-    /* خرج لتوّه من مقطع: يُردّ إليه بعينه، فلا يفقد موضعه من السورة */
-    if(PATH_AT){
-      var at=box.querySelector('.pnode[data-s="'+PATH_AT.s+'"][data-i="'+PATH_AT.i+'"]');
-      if(at && at.scrollIntoView){ at.scrollIntoView({block:'center'}); return; }
-    }
-    /* المختارةُ من الفهرس: يقع نظرُه عليها — على «ابدأ» فيها، وإلّا فعلى رأسها */
-    var pk=(!PATH_SCOPE && curSurah && PATH_PICK===curSurah.n)
-      ? (box.querySelector('.pnode.now[data-s="'+PATH_PICK+'"]') ||
-         box.querySelector('.pathsec[data-s="'+PATH_PICK+'"]'))   /* تامّةٌ لا «ابدأ» فيها: رأسُها */
-      : null;
-    var el=pk || box.querySelector('.pnode.now') ||
-             box.querySelector('.pathsec.here') ||
-             box.querySelector('.pnode.due');
-    if(el && el.scrollIntoView) el.scrollIntoView({block:'center'});
+    PATH_FLOCK=false;
+    PATH_FSEL=pathPick(box);
+    if(!PATH_FSEL) return;
+    pathFocusApply();
+    try{ requestAnimationFrame(pathFocusApply); }catch(e){}
+    setTimeout(pathFocusApply, 200);
+    setTimeout(pathFocusApply, 600);
+    setTimeout(pathFocusApply, 1200);        /* بعد حلول الخطوط وأثقلِ الرسم */
   }catch(e){}
 }
+/* لمسةٌ منه تُنهي التثبيت: ما دام يسوق الصفحةَ بيده فلا تُنازعه */
+(function(){
+  var stop=function(){ PATH_FLOCK=true; };
+  ['pointerdown','touchstart','wheel','keydown'].forEach(function(ev){
+    try{ window.addEventListener(ev, stop, {passive:true}); }catch(e){ window.addEventListener(ev, stop); }
+  });
+})();
 /* ===== الخطُّ المتعرّج =====
    كان الخطُّ عموداً في الوسط والعقدُ تُزاح عنه يميناً ويساراً، فبدا
    مستقيماً لا يصل بينها. فصار منحنىً يمرّ بمركز كلِّ عقدة، ويعود إلى
@@ -17221,6 +17256,9 @@ function navPop(){
   /* كان تعذُّرُ «replaceState» يُسقط السجلَّ كلَّه ومعه مستمعُ الرجوع،
      فيخرج من التطبيق بأوّل ضغطة. وهو زينةٌ لا يقوم عليها شيء */
   try{ history.replaceState({nw:0},''); }catch(e){}
+  /* ونحن نتولّى موضعَ التمرير بأنفسنا: كان المتصفّحُ يُعيد الموضعَ المحفوظ
+     في سجلّه بعد معالجتنا للرجوع، فيمحو ما ضبطناه ويردّه إلى أوّل المسار */
+  try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(e){}
   if(!window.history || !history.pushState) return;
   NAV.ok=true;
   window.addEventListener('popstate', navPop);
