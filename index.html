@@ -1660,9 +1660,9 @@ body.glow-off .dfpic{animation:none}
   border:2px solid var(--pb);border-radius:999px;padding:4px 13px;font-variant-numeric:tabular-nums}
 .stimgbox{position:relative;width:100%;aspect-ratio:4/3;border-radius:18px;overflow:hidden;
   background:var(--pnl3);border:3px solid var(--pb);margin-bottom:14px}
-/* صورُ القصص ٤:٣ كإطارِها، فـcover وcontain سواءٌ ما دام الإطارُ على نسبته.
-   وإذا ضاق الارتفاعُ (max-height أدناه) خرج الإطارُ عن ٤:٣، فـcontain يترك
-   شريطَين فارغَين عن جانبَيها — وcover يملأ ويقتطع من أعلاها وأسفلها قليلاً */
+/* الصورةُ تُنشر ١٦:٩ كاملةً وإطارُ الصفحة ٤:٣، فـcover يقصّ جانبَيها.
+   وموضعُ القصّ من `pos` في الصفحة (object-position) — فما كان أهلُ المشهد
+   إلى جانبٍ زُحزحت النافذةُ إليهم، ولا يُعاد بناءُ الصورة. */
 .stimgbox img{width:100%;height:100%;object-fit:cover;display:block;
   opacity:0;transition:opacity .35s}
 .stimgbox img.in{opacity:1}
@@ -1686,17 +1686,21 @@ body.glow-off .dfpic{animation:none}
 .stzoom{position:fixed;inset:0;z-index:60;background:#04173a;overflow:hidden}
 .stzoom[hidden]{display:none}
 /* عرضٌ وارتفاعٌ مبدَّلان ثمّ تدوير: فيصير الصندوقُ المرئيُّ ملءَ الشاشة */
+/* مُدارةً: الشاشةُ تطلب نسبةً نحوَ ٢٫١٦:١ والصورةُ ١٫٧٨:١، فـcover يملؤها
+   بقصّ نحوِ ١٨٪ من أعلاها وأسفلها. ولو كُبّرت نسخةُ ٤:٣ لبلغ القصُّ ٣٨٪ —
+   ولذلك تُنشر ١٦:٩. */
 .stzoom img{position:absolute;top:50%;left:50%;width:100vh;height:100vw;
   width:100dvh;height:100dvw;
-  object-fit:contain;transform:translate(-50%,-50%) rotate(90deg)}
+  object-fit:cover;transform:translate(-50%,-50%) rotate(90deg)}
 .stzhint{position:absolute;top:calc(16px + env(safe-area-inset-top));left:0;right:0;
   text-align:center;font-size:14.5px;font-weight:800;color:#fff;opacity:.8;
   text-shadow:0 1px 7px rgba(0,0,0,.65);pointer-events:none}
 .stzhint[hidden]{display:none}
 /* شاشةٌ عريضةٌ أصلاً — لوحيٌّ أو نافذةُ حاسوب — فلا تُدار صورةٌ مستقيمة */
 @media (min-aspect-ratio:1/1){
+  /* وشاشةٌ عريضةٌ أصلاً تُقارب نسبةَ الصورة، فـcontain يملؤها بلا قصّ */
   .stzoom img{width:100vw;height:100vh;width:100dvw;height:100dvh;
-    transform:translate(-50%,-50%)}
+    object-fit:contain;transform:translate(-50%,-50%)}
   .stzhint{display:none}
 }
 .stload{text-align:center;padding:44px 10px;font-size:16px;font-weight:800;color:var(--on3)}
@@ -15634,6 +15638,9 @@ function storyDraw(){
     (p.img ? '<div class="stimgbox" id="stImgBox"><img id="stImgEl" alt="">'+
              '<button type="button" class="stzoomb" id="stZoomB" aria-label="كبِّر الصورة">🔍</button></div>' : '')+
     '<div class="sttext">'+esc(p.x||'')+'</div>';
+  /* نافذةُ ٤:٣ من الصورة الواسعة: وسطاً إلّا أن تذكر الصفحةُ موضعاً */
+  var ie=$('stImgEl');
+  if(ie) ie.style.objectPosition=(p.pos||'50%')+' 50%';
   var zb=$('stZoomB');
   if(zb) zb.onclick=function(e){ e.stopPropagation(); stZoomOpen(); };
   if(p.img) stImg(stAt(p.img,rv)).then(function(u){
