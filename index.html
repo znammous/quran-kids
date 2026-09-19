@@ -1673,6 +1673,32 @@ body.glow-off .dfpic{animation:none}
 @keyframes stpulse{0%,100%{opacity:.18}50%{opacity:.4}}
 .sttext{background:var(--pnl);border:3px solid var(--pb);border-radius:18px;padding:16px 17px;
   font-size:17.5px;font-weight:700;line-height:2.1;color:var(--on1);white-space:pre-wrap}
+/* ===== تكبيرُ صورة القصّة =====
+   صورةُ الصفحة محدودةٌ بعرضها لا بارتفاعها، ففتحُها ملءَ الشاشة بلا تدويرٍ
+   لا يزيدها شيئاً (٣٩٠×٢٩٢ بدل ٣٦٢×٢٧٢). والتدويرُ يجعلها ٣٩٠×٥٢٠ — ضعفَ
+   المساحة، وهو الفائدةُ كلُّها. والتطبيقُ مقفولٌ على الوضع الرأسيّ في
+   الـmanifest، فلا تضطرب الشاشةُ حين يُدير الطفلُ هاتفَه لتستقيم أمامه. */
+.stzoomb{position:absolute;inset-inline-end:8px;bottom:8px;z-index:2;
+  width:38px;height:38px;border-radius:12px;border:2px solid var(--pb);
+  background:rgba(4,23,58,.62);color:#fff;font-size:17px;font-weight:900;
+  font-family:inherit;cursor:pointer;touch-action:manipulation;line-height:1;
+  display:flex;align-items:center;justify-content:center}
+.stzoom{position:fixed;inset:0;z-index:60;background:#04173a;overflow:hidden}
+.stzoom[hidden]{display:none}
+/* عرضٌ وارتفاعٌ مبدَّلان ثمّ تدوير: فيصير الصندوقُ المرئيُّ ملءَ الشاشة */
+.stzoom img{position:absolute;top:50%;left:50%;width:100vh;height:100vw;
+  width:100dvh;height:100dvw;
+  object-fit:contain;transform:translate(-50%,-50%) rotate(90deg)}
+.stzhint{position:absolute;top:calc(16px + env(safe-area-inset-top));left:0;right:0;
+  text-align:center;font-size:14.5px;font-weight:800;color:#fff;opacity:.8;
+  text-shadow:0 1px 7px rgba(0,0,0,.65);pointer-events:none}
+.stzhint[hidden]{display:none}
+/* شاشةٌ عريضةٌ أصلاً — لوحيٌّ أو نافذةُ حاسوب — فلا تُدار صورةٌ مستقيمة */
+@media (min-aspect-ratio:1/1){
+  .stzoom img{width:100vw;height:100vh;width:100dvw;height:100dvh;
+    transform:translate(-50%,-50%)}
+  .stzhint{display:none}
+}
 .stload{text-align:center;padding:44px 10px;font-size:16px;font-weight:800;color:var(--on3)}
 .stnav{display:flex;align-items:center;gap:10px;margin:16px 0 4px}
 .stnav .btn{flex:0 0 auto;margin:0;min-width:120px;
@@ -2363,6 +2389,13 @@ body.glow-off .dfpic{animation:none}
       <button type="button" class="btn primary" id="stNext"><span>التالي</span><span class="sar">←</span></button>
     </div>
   </section>
+
+  <!-- صورةُ القصّة مكبَّرةً: تُدار ربعَ دورةٍ فتملأ الشاشةَ، ويُدير الطفلُ
+       هاتفَه. مقصورٌ على قارئ القصص، ويُغلق بأيّ نقرة -->
+  <div class="stzoom" id="stZoom" hidden>
+    <img id="stZoomImg" alt="">
+    <div class="stzhint" id="stZoomHint" hidden>🔄 أدِرْ هاتفك</div>
+  </div>
 
   <section class="screen" id="scr-runner">
     <div class="runtop">
@@ -15598,8 +15631,11 @@ function storyDraw(){
   var pg=STORY.pages, n=pg.length, p=pg[STORY_I]||{}, rv=stRev(STORY.meta);
   $('stCount').textContent=arNum(STORY_I+1)+' / '+arNum(n);
   $('stPage').innerHTML=
-    (p.img ? '<div class="stimgbox" id="stImgBox"><img id="stImgEl" alt=""></div>' : '')+
+    (p.img ? '<div class="stimgbox" id="stImgBox"><img id="stImgEl" alt="">'+
+             '<button type="button" class="stzoomb" id="stZoomB" aria-label="كبِّر الصورة">🔍</button></div>' : '')+
     '<div class="sttext">'+esc(p.x||'')+'</div>';
+  var zb=$('stZoomB');
+  if(zb) zb.onclick=function(e){ e.stopPropagation(); stZoomOpen(); };
   if(p.img) stImg(stAt(p.img,rv)).then(function(u){
     var e=$('stImgEl'); if(!e) return;
     STORY_BLOBS.push(u);
@@ -15620,6 +15656,23 @@ function storyDraw(){
   /* وتُجلب صورةُ الصفحة التالية سلفاً، فتُقلب الصفحةُ ولا تنتظر */
   var nx=pg[STORY_I+1];
   if(nx && nx.img) stImg(stAt(nx.img,rv))['catch'](function(){});
+}
+/* الصورةُ المحمّلةُ نفسُها (blob) تُعرض مكبَّرةً، فلا تُجلب ثانية.
+   والتلميحُ يُرى مرّةً واحدةً في عمر الجهاز — ثمّ يعرفها الطفل. */
+function stZoomOpen(){
+  var e=$('stImgEl'), z=$('stZoom'), im=$('stZoomImg'), h=$('stZoomHint');
+  if(!e || !e.src || !z || !im) return;
+  im.src=e.src;
+  var wide=(window.innerWidth>=window.innerHeight);
+  if(h) h.hidden = wide || !!load('nur_stzoom_hint',0);
+  if(!wide) save('nur_stzoom_hint',1);
+  z.hidden=false;
+}
+function stZoomClose(){
+  var z=$('stZoom'); if(!z || z.hidden) return false;
+  z.hidden=true;
+  var im=$('stZoomImg'); if(im) im.removeAttribute('src');   /* لا يُمسك رابطَ blob بعد إغلاقه */
+  return true;
 }
 function storyStep(d){
   if(!STORY) return;
@@ -16893,7 +16946,14 @@ $('stNext').onclick=function(){ storyStep(1); };
   P.addEventListener('pointermove', function(e){ if(e.pointerType!=='touch') move(e.clientX,e.clientY); });
   P.addEventListener('pointerup',   function(e){ if(e.pointerType!=='touch') end(); });
 })();
-$('btnStoryBack').onclick=function(){ storyFree(); STORY=null; storiesOpen(); };
+/* وزرُّ الرجوع في الجهاز يضغط هذا الزرَّ نيابةً عن الطفل (NAV_BACK)، فأوّلُ
+   ضغطةٍ تُغلق الصورةَ المكبَّرة لا القصّةَ كلَّها */
+$('btnStoryBack').onclick=function(){
+  if(stZoomClose()) return;
+  storyFree(); STORY=null; storiesOpen();
+};
+$('stZoom').onclick=stZoomClose;
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') stZoomClose(); });
 /* رجوعٌ من اختيار المصدر إلى قائمة الألعاب، ومن القائمة إلى الرئيسيّة.
    والزرُّ مخفيٌّ في الشاشة — الشريطُ السفليّ يُغني عنه — ويبقى موصولاً
    ليضغطه زرُّ الرجوع في الجهاز على درجاته */
