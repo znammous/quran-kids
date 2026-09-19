@@ -1386,7 +1386,10 @@ button.shelf:active{transform:translateY(2px)}
 
 /* ===== المواد وورشة البناء ===== */
 .matbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.mat{flex:1;min-width:74px;background:#fff;border:3px solid #e5ecf6;border-radius:12px;padding:7px 4px;text-align:center}
+.mat{flex:1;min-width:74px;background:#fff;border:3px solid #e5ecf6;border-radius:12px;
+  padding:7px 4px;text-align:center;font-family:inherit;cursor:pointer;
+  touch-action:manipulation;transition:transform .12s}
+.mat:active{transform:translateY(2px)}
 .mat .ic2{font-size:27px;display:block;line-height:1.15}
 .mat b{display:block;font-size:17px;color:var(--g1)}
 .mat .mn{font-size:11px;color:var(--mute);font-weight:800}
@@ -6317,7 +6320,7 @@ var MATS=[
   { k:'wood',  ic:'🪵', n:'خشب',  from:'من كل مرحلة تنجزها' },
   { k:'iron',  ic:'⚙️', n:'حديد', from:'من كل مراجعة' },
   { k:'glass', ic:'🔷', n:'زجاج', from:'من مراجعة بلا خطأ' },
-  { k:'gold',  ic:'✨', n:'ذهب',  from:'من اختبار الجزء' }
+  { k:'gold',  ic:'✨', n:'ذهب',  from:'من اختبار الجزء ومن إتمام دورة الورد' }
 ];
 function mats(){
   var p=curP();
@@ -6521,11 +6524,39 @@ function costHTML(it){
   if(it.c.gems) out.push('<span class="cost'+(gems>=it.c.gems?' ok':'')+'">💎 '+arNum(it.c.gems)+'</span>');
   return '<span class="costlb">يحتاج</span>'+out.join('<span class="plus">+</span>');
 }
+/* ===== من أين تأتي المواد؟ =====
+   كان مصدرُ المادّة في «title» لا يُرى إلّا بمرور الفأرة — ولا فأرةَ في يد
+   الطفل. فصارت كلُّ مادّةٍ تُلمس فيُشرح مأتاها ومصرفُها. */
+var MAT_TIP={
+  stone:['🪨','🪨 الحجر',
+    'يأتي من كلّ مقطعٍ تُتمّه — حجران عن المقطع. ويُشترى كذلك من 💎 متجري ← 🧱 مواد البناء.\nيُنفَق في 🕌 مسجدي: الأساسُ والجدرانُ والقبّة.'],
+  wood:['🪵','🪵 الخشب',
+    'يأتي من كلّ مرحلةٍ تُنجزها — خشبةٌ عن المرحلة، وخمسُ مراحلَ في المقطع. ويُشترى كذلك من 🧱 مواد البناء.\nيُنفَق في 🕌 مسجدي: البابُ والرواقُ والنوافذ.'],
+  iron:['⚙️','⚙️ الحديد',
+    'يأتي من المراجعة وحدَها — حديدتان عن كلّ وجهٍ تراجعه، ومثلُهما من الاختبار.\nولا يُشترى بالجواهر أبداً.\nيُنفَق في 🕌 مسجدي.'],
+  glass:['🔷','🔷 الزجاج',
+    'يأتي من المراجعة بلا خطأ — زجاجتان عن كلّ وجهٍ تُتقنه، ومن الاختبار إن لم تُخطئ فيه.\nولا يُشترى بالجواهر أبداً.\nيُنفَق في 🕌 مسجدي: النوافذُ والزخارف.'],
+  gold:['✨','✨ الذهب',
+    'أندرُ ما في مسجدك — لا يأتي إلّا من بابين، وكلاهما منزلةٌ لا جلسةٌ تمرّ:\n🏰 اختبارُ الجزء إذا اجتزتَه — ٥ ✨\n🏅 إتمامُ دورةِ الورد على محفوظك كلِّه — ٣ ✨\nولا يُشترى بالجواهر أبداً، ويُنفَق في أنفس قطع مسجدك.'],
+  gems:['💎','💎 الجواهر',
+    'تكسبها من كلّ مرحلةٍ ومقطعٍ ومراجعةٍ واختبار، ومن 🎮 الألعاب، ومن الشارات.\nتُنفَق في 💎 متجري و🕌 مسجدي وفي إهداء إخوتك.']
+};
+function matTip(k){
+  var t=MAT_TIP[k]; if(!t) return;
+  try{ uiAlert('<b>'+t[1]+'</b>\n'+t[2], t[0]); }catch(e){}
+}
 function renderBuild(){
   var nx=nextPieceIdx(), have=mats(), p=curP();
   $('matBar').innerHTML=MATS.map(function(m){
-    return '<div class="mat" title="'+m.from+'"><span class="ic2">'+m.ic+'</span><b>'+arNum(have[m.k]||0)+'</b><span class="mn">'+m.n+'</span></div>';
-  }).join('')+'<div class="mat"><span class="ic2">💎</span><b>'+arNum(p.gems||0)+'</b><span class="mn">جواهر</span></div>';
+    return '<button type="button" class="mat" data-mtip="'+m.k+'" title="'+m.from+'">'+
+      '<span class="ic2">'+m.ic+'</span><b>'+arNum(have[m.k]||0)+'</b>'+
+      '<span class="mn">'+m.n+'</span></button>';
+  }).join('')+'<button type="button" class="mat" data-mtip="gems">'+
+    '<span class="ic2">💎</span><b>'+arNum(p.gems||0)+'</b><span class="mn">جواهر</span></button>';
+  (function(){
+    var ts=$('matBar').querySelectorAll('[data-mtip]'), z;
+    for(z=0;z<ts.length;z++) ts[z].onclick=function(){ matTip(this.getAttribute('data-mtip')); };
+  })();
   /* قبل أن تُوضع أوّل قطعة: يُرى المسجد كاملاً شبحاً رمادياً، ليعرف إلى أين يمضي */
   $('bigMosque').innerHTML = buildCount()
     ? bigMosqueSVG()
