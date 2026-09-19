@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="s2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b4a78"/><stop offset="1" stop-color="#6f9fc4"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#s2)"/>
+  <!-- قوسُ الشمس: تطلع ذاتَ اليمين وتغرب ذاتَ الشمال -->
+  <path d="M90 470A330 330 0 0 1 710 470" fill="none" stroke="#f4e3b0" stroke-width="5" stroke-dasharray="14 12" opacity=".65"/>
+  <circle cx="120" cy="392" r="30" fill="#f2d98a" opacity=".45"/>
+  <circle cx="400" cy="152" r="46" fill="#ffe9a8"/>
+  <g stroke="#ffe9a8" stroke-width="6" stroke-linecap="round" opacity=".8">
+    <path d="M400 76v-26"/><path d="M400 228v26"/><path d="M324 152h-26"/><path d="M476 152h26"/>
+    <path d="M346 98l-18-18"/><path d="M454 98l18-18"/><path d="M346 206l-18 18"/><path d="M454 206l18 18"/>
+  </g>
+  <circle cx="680" cy="392" r="30" fill="#f2d98a" opacity=".45"/>
+  <!-- الجبل والكهف في ظلٍّ دائم -->
+  <path d="M120 600 L400 300 L680 600Z" fill="#33445c"/>
+  <path d="M470 600c0-108 -32-172 -72-172s-72 64 -72 172z" fill="#0b1a2c"/>
+  <path d="M452 600c0-94 -26-150 -54-150s-54 56 -54 150z" fill="#061220"/>
+  <text x="400" y="556" font-size="34" text-anchor="middle" opacity=".55">💤</text>
+  <rect y="586" width="800" height="14" fill="#1d2c42"/>
+</svg>

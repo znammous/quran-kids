@@ -4,10 +4,14 @@
    التنصيب، وخطوطُ صفحات المصحف عند أوّل استعمال فقط فلا نُنزّل ستّة وأربعين ميجابايت دفعةً واحدة.
    البيانات (data/): المخزَّن أوّلاً. ملفّاتُ الآيات والخطط تُطلب برقم إصدارٍ (?v=)
    فإذا تغيّر ملفٌّ رُفع رقمُه في index.html وفي DATA_FILES هنا، فيُجلب الجديدُ ويُحذف القديم. */
-var VER   = 'v4';
+var VER   = 'v5';
 var SHELL = 'nur-shell-' + VER;   /* الصفحة وما يتبعها — يُمسح مع كل إصدار */
 var ASSET = 'nur-assets';         /* خطوط لا تتغيّر — يبقى عبر الإصدارات */
 var DATA  = 'nur-data-1';         /* بياناتُ الآيات والخطط والمعاني */
+/* القصصُ: تُجلب من الشبكة أوّلَ مرّةٍ ثمّ تبقى — فهي محتوًى يُضاف بلا تحديثِ
+   تطبيق، ولا يُعقل أن يذهب ما قرأه الطفلُ مع كلّ إصدار. والصفحةُ تخزّن فيه
+   بنفسها كذلك (nur-stories)، فالمخزنُ واحدٌ بينهما */
+var STORY = 'nur-stories';
 /* تلاواتُ القرّاء: تُخزَّن من الصفحة لا من هنا (مصدرُها خارجيّ فيمرّ كما هو)،
    لكنّها تُستثنى من المسح — وإلّا ذهب ما سمعه الطفلُ مع كلّ تحديثٍ للتطبيق */
 var AUDIO = 'nur-audio';
@@ -41,7 +45,7 @@ self.addEventListener('activate', function(e){
   e.waitUntil(
     caches.keys().then(function(ks){
       return Promise.all(ks.map(function(k){
-        if(k!==SHELL && k!==ASSET && k!==DATA && k!==AUDIO) return caches['delete'](k);
+        if(k!==SHELL && k!==ASSET && k!==DATA && k!==AUDIO && k!==STORY) return caches['delete'](k);
       }));
     }).then(function(){
       /* نسخُ البيانات القديمة (رقمُ إصدارٍ سابق) تُحذف، ويبقى ما لا رقمَ له كالمعاني */
@@ -60,6 +64,9 @@ self.addEventListener('activate', function(e){
 /* ما لا يتغيّر أبداً: خطوط الصفحات والأيقونات */
 function immutable(p){ return p.indexOf('/fonts/')>-1 || p.indexOf('/icons/')>-1; }
 function isData(p){ return p.indexOf('/data/')>-1; }
+/* القصّةُ وصورُها لا تتغيّر بعد نشرها: المخزَّن أوّلاً. أمّا فهرسُها فيُسأل عنه
+   الشبكةُ كلَّ مرّة — وإلّا لم تصل قصّةٌ جديدة أبداً */
+function isStory(p){ return p.indexOf('/stories/')>-1 && p.indexOf('/index.json')<0; }
 
 /* المخزَّن أوّلاً، وما لم يُخزَّن يُجلب ثمّ يُحفظ */
 function cacheFirst(name, req){
@@ -90,6 +97,7 @@ self.addEventListener('fetch', function(e){
 
   if(immutable(url.pathname)){ e.respondWith(cacheFirst(ASSET, req)); return; }
   if(isData(url.pathname)){ e.respondWith(cacheFirst(DATA, req)); return; }
+  if(isStory(url.pathname)){ e.respondWith(cacheFirst(STORY, req)); return; }
 
   /* «الشبكة أوّلاً» لا تعني شيئاً إن أجاب مخزنُ المتصفّح دونها:
      GitHub Pages يرسل max-age=600، فتبقى الصفحةُ القديمةَ عشرَ دقائق وإن رُفع

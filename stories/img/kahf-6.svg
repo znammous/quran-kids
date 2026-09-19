@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="m" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f6f9e"/><stop offset="1" stop-color="#bfd9ea"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#m)"/>
+  <circle cx="150" cy="120" r="48" fill="#ffe9a8"/>
+  <!-- سوقُ المدينة -->
+  <g fill="#e8d9b5">
+    <rect x="60" y="330" width="130" height="210" rx="6"/><rect x="210" y="300" width="110" height="240" rx="6"/>
+    <rect x="620" y="320" width="130" height="220" rx="6"/>
+  </g>
+  <g fill="#c9b184">
+    <rect x="86" y="370" width="30" height="34" rx="4"/><rect x="134" y="370" width="30" height="34" rx="4"/>
+    <rect x="236" y="340" width="30" height="34" rx="4"/><rect x="646" y="360" width="30" height="34" rx="4"/>
+    <rect x="694" y="360" width="30" height="34" rx="4"/>
+  </g>
+  <path d="M340 540V330h180v210z" fill="#d9c7a0"/>
+  <path d="M320 336l110-64 110 64z" fill="#4e8a6b"/>
+  <!-- الفتى ومعه ورِقُه القديم -->
+  <g transform="translate(400 470)">
+    <circle cx="0" cy="-44" r="20" fill="#f0e2c4"/>
+    <path d="M-22 -24h44l11 84h-66z" fill="#7a9ec4"/>
+    <circle cx="34" cy="-4" r="18" fill="#d9a441" stroke="#a87c22" stroke-width="4"/>
+    <text x="34" y="3" font-size="16" text-anchor="middle" fill="#7a5a12" font-weight="bold">۞</text>
+  </g>
+  <!-- بائعٌ متعجّب -->
+  <g transform="translate(560 476)">
+    <circle cx="0" cy="-42" r="19" fill="#f0e2c4"/>
+    <path d="M-21 -23h42l10 80h-62z" fill="#b5735e"/>
+    <text x="0" y="-70" font-size="30" text-anchor="middle">❕</text>
+  </g>
+  <rect y="540" width="800" height="60" fill="#a9906a"/>
+</svg>
