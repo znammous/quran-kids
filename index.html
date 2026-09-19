@@ -7448,7 +7448,7 @@ function renderPath(){
     var view=scopedSegs(sx);
     if(!view.length) continue;
     h+=pathSecHTML(sx,view,sx.n===s.n);
-    (function(sx,view){
+    (function(sx,view,atOrAfter){
       view.forEach(function(x,k){
         var g=x.g, p=peek(gk(sx.n,g)), fin=segDone(sx,g);
         var isDue=fin && p.due!=null && p.due<=tn;
@@ -7458,8 +7458,11 @@ function renderPath(){
         if(fin && isDue) cls+=' due';
         else if(fin) cls+=' done';
         else if(locked) cls+=' locked';
-        /* «ابدأ» في السورة المختارة من الفهرس، لا فيما قبلها من النافذة */
-        else if(!nowUsed && (!picked || sx.n===s.n)){ cls+=' now'; now=true; nowUsed=true; }
+        /* «ابدأ» في السورة المختارة من الفهرس، لا فيما قبلها من النافذة.
+           وكذلك لا تُمنح لسورةٍ قبل موضعه: النافذةُ تعرض ما قبله للسياق، فكانت
+           «ابدأ» تقع في أوّل عقدةٍ ناقصةٍ فيه — ويتبعها النظرُ — فيجد نفسَه في
+           أوّل السورة السابقة كلّما فتح المسارَ أو عاد إليه من مقطع */
+        else if(!nowUsed && atOrAfter && (!picked || sx.n===s.n)){ cls+=' now'; now=true; nowUsed=true; }
         h+='<div class="'+cls+'" data-s="'+sx.n+'" data-i="'+x.i+'">'+
            (now?'<span class="bubble">ابدأ</span>':'')+
            '<div class="dot">'+(fin?(isDue?'🔁':'✓'):(locked?'🔒':arNum(k+1)))+'</div>'+
@@ -7482,7 +7485,7 @@ function renderPath(){
           }
         }
       });
-    })(sx,view);
+    })(sx,view,i>=pos);
 
     /* شهادةُ السورة عند تمامها، واختبارُ الجزء عند آخر سوره */
     var t=surahStats(sx);
