@@ -2315,9 +2315,10 @@ body.glow-off .dfpic{animation:none}
     </div>
     <div class="stpage" id="stPage"></div>
     <div class="stnav">
-      <button type="button" class="btn ghost" id="stPrev">❯ السابقة</button>
+      <!-- الاتّجاهُ عربيٌّ: السهمُ في «السابق» يُشير يساراً وفي «التالي» يميناً -->
+      <button type="button" class="btn ghost" id="stPrev">❮ السابق</button>
       <div class="stdots" id="stDots"></div>
-      <button type="button" class="btn primary" id="stNext">التالية ❮</button>
+      <button type="button" class="btn primary" id="stNext">التالي ❯</button>
     </div>
   </section>
 
@@ -15438,7 +15439,7 @@ function storyDraw(){
   for(i=0;i<n;i++) d+='<i'+(i===STORY_I?' class="on"':'')+'></i>';
   $('stDots').innerHTML=d;
   $('stPrev').disabled=(STORY_I<=0);
-  $('stNext').textContent=(STORY_I>=n-1) ? 'تمّتْ ✨' : 'التالية ❮';
+  $('stNext').textContent=(STORY_I>=n-1) ? 'تمّتْ ✨' : 'التالي ❯';
   $('stNext').disabled=false;
   var s=stBox();
   s.pos[STORY.id]=STORY_I;
