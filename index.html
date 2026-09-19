@@ -5697,7 +5697,8 @@ function gftRoomHTML(){
         '<span class="gsl">'+(nIn?('فيها '+arNum(nIn)):'العلبة')+'</span></button>'+
       '<img class="gbchar" id="gbChar" alt="" src="'+gbCharURL()+'" style="left:'+GB.x+'%">'+
     '</div>'+
-    '<div class="note gbhint">المسْ ما تريد وضعَه في العلبة — يمشي إليه ويأخذه.</div>';
+    '<div class="note gbhint">المسْ ما تريد وضعَه في العلبة — يمشي إليه ويأخذه، '+
+      'ولمسةٌ ثانيةٌ عليه تُخرجه منها.</div>';
 
   h+='<div class="gftbox">'+
       '<div class="gfth">📦 ما في علبتك</div>'+
@@ -5713,6 +5714,11 @@ function gftRoomHTML(){
         '<textarea id="bxNote" rows="2" maxlength="200" placeholder="اكتب ما تحبّ أن يقرأه أخوك…">'+esc(b.note||'')+'</textarea></div>'+
       '<button class="btn green big" id="bxSeal"'+(gftBoxEmpty()?' disabled':'')+'>'+
         (gftBoxEmpty()?'ضَعْ في علبتك شيئاً أوّلاً':'🎀 أغلقِ العلبة وولّد الكود')+'</button>'+
+      /* بابُ التفريغ صريحٌ: كان لا يُفرَّغ إلّا بلمسةٍ ثانيةٍ على كلّ شيءٍ
+         وضعه، أو باختيار «لا شيء» في صندوقه — وكلاهما خفيّ */
+      (gftBoxEmpty()?'' :
+        '<button class="btn ghost mini" id="bxClear" style="width:100%;margin-top:8px">'+
+          '🗑️ أفرغِ العلبة</button>')+
     '</div>';
   if(GFT_LAST) h+=
     '<div class="gftbox"><div class="gftcode" id="gftCode">'+esc(GFT_LAST.code)+'</div>'+
@@ -5899,6 +5905,12 @@ function gftRoomWire(){
   if(nt) nt.oninput=function(){ b.note=this.value.slice(0,200); saveDB(); };
   if($('gftCopy')) $('gftCopy').onclick=function(){ gftCopy(GFT_CARD); };
   if($('bxSeal')) $('bxSeal').onclick=gbSeal;
+  /* التفريغُ لا يُستأذن فيه: لم يُخصم منه شيءٌ بعدُ، وإنّما هي نيّةٌ يعدل عنها */
+  if($('bxClear')) $('bxClear').onclick=function(){
+    b.g=0; b.m=0; b.i=0; saveDB();
+    try{ navToast('أُفرغت علبتُك'); }catch(e){}
+    renderShop();
+  };
 }
 function gbAskGems(){
   var b=gftBoxSel();
