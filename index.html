@@ -16631,7 +16631,7 @@ try{ syncTabs((document.querySelector('.screen.active')||{}).id||'scr-start'); }
   });
 })();
 /* ===== زرّ الرجوع ===== */
-var NAV={ ok:false, n:0, want:3, exit:0, tEl:null, tT:0 };
+var NAV={ ok:false, n:0, want:5, exit:0, tEl:null, tT:0 };
 /* زرّ الرجوع الموجود أصلاً في كل شاشة — نضغطه نيابةً عن اللاعب */
 var NAV_BACK={ 'scr-look':'btnLookDone', 'scr-tree':'btnTreeBack', 'scr-report':'btnRepBack',
   'scr-map':'btnBackStart', 'scr-path':'btnBackMap',
@@ -16843,7 +16843,10 @@ function navPop(){
   navToast('اضغط رجوع مرّة أخرى للخروج');
 }
 (function navInit(){
-  try{ history.replaceState({nw:0},''); }catch(e){ return; }   /* بعض البيئات تمنع */
+  /* كان تعذُّرُ «replaceState» يُسقط الحرّاسَ كلَّهم ومعهم مستمعُ الرجوع،
+     فيخرج من التطبيق بأوّل ضغطة. وهو زينةٌ لا يقوم عليها شيء */
+  try{ history.replaceState({nw:0},''); }catch(e){}
+  if(!window.history || !history.pushState) return;
   NAV.ok=true;
   navGuard();
   window.addEventListener('popstate', navPop);
