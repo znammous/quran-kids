@@ -1660,7 +1660,10 @@ body.glow-off .dfpic{animation:none}
   border:2px solid var(--pb);border-radius:999px;padding:4px 13px;font-variant-numeric:tabular-nums}
 .stimgbox{position:relative;width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;
   background:var(--pnl3);border:3px solid var(--pb);margin-bottom:14px}
-.stimgbox img{width:100%;height:100%;object-fit:contain;display:block;
+/* صورُ القصص ١٦:٩ كإطارِها، فـcover وcontain سواءٌ ما دام الإطارُ على نسبته.
+   وإذا ضاق الارتفاعُ (max-height أدناه) خرج الإطارُ عن ١٦:٩، فـcontain يترك
+   شريطَين فارغَين عن جانبَيها — وcover يملأ ويقتطع من أعلاها وأسفلها قليلاً */
+.stimgbox img{width:100%;height:100%;object-fit:cover;display:block;
   opacity:0;transition:opacity .35s}
 .stimgbox img.in{opacity:1}
 /* ريثما تصل الصورة: نبضةٌ هادئة مكانَها، فلا تقفز الصفحةُ حين تحلّ */
