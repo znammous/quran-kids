@@ -5285,13 +5285,20 @@ function gftItemHash(k){ var a=shopEvery(), i; for(i=0;i<a.length;i++) if(a[i].k
 function gftItemByHash(h){ var a=shopEvery(); return (h>=0 && h<a.length) ? a[h] : null; }
 function gftMatIdx(k){ for(var i=0;i<MATS.length;i++) if(MATS[i].k===k) return i; return -1; }
 /* وصف الهديّة كما تُقرأ */
+/* أيقونةُ الغرض نصّاً: منها ما هو رسمٌ متّجهيّ لا يصلح في سطرِ نصّ —
+   كانت شيفرتُه تُطبع في وصف الهديّة وفي رسالتها وفي سجلّها. فيُسقط ويبقى
+   اسمُه وحدَه */
+function gftIcTxt(ic){
+  ic=String(ic==null?'':ic);
+  return (ic.charAt(0)==='<' || !ic) ? '' : (ic+' ');
+}
 function gftDesc(d){
   if(d.type===0 || d.type===3) return '💎 '+arNum(d.val)+' جوهرة';
   if(d.type===1){
     var m=MATS[Math.floor(d.val/4096)], n=d.val%4096;
-    return m ? (m.ic+' '+arNum(n)+' '+m.n) : null;
+    return m ? (gftIcTxt(m.ic)+arNum(n)+' '+m.n) : null;
   }
-  if(d.type===2){ var it=gftItemByHash(d.val); return it ? (it.ic+' '+it.n) : null; }
+  if(d.type===2){ var it=gftItemByHash(d.val); return it ? (gftIcTxt(it.ic)+it.n) : null; }
   return null;
 }
 /* ===== الصرف ===== */
@@ -5396,7 +5403,7 @@ function gftBoxLines(){
   var b=gftBoxSel(), out=[], pk;
   if(b.g) out.push('💎 '+arNum(GFT_GEMS[b.g-1])+' جوهرة');
   if(b.m){ pk=gftMatPack(b.m); if(pk.m) out.push(pk.m.ic+' '+arNum(pk.n)+' '+pk.m.n); }
-  b.it.forEach(function(x){ var t=gftItemByHash(x-1); if(t) out.push(t.ic+' '+t.n); });
+  b.it.forEach(function(x){ var t=gftItemByHash(x-1); if(t) out.push(gftIcTxt(t.ic)+t.n); });
   return out;
 }
 /* الإغلاق: يُفحص الثمنُ كلُّه أوّلاً ثمّ يُخصم دفعةً واحدة، وتخرج الأغراضُ
@@ -5504,7 +5511,7 @@ function gftPrice(type, val){
   var it=gftItemByHash(val);
   if(!it) return { ok:false, msg:'اختر الغرض' };
   if((p.gems||0)<it.p) return { ok:false, msg:'ثمنه '+arNum(it.p)+' جوهرة، ورصيدك '+arNum(p.gems||0) };
-  return { ok:true, what:it.ic+' '+it.n, cost:'💎 '+arNum(it.p)+' جوهرة',
+  return { ok:true, what:gftIcTxt(it.ic)+it.n, cost:'💎 '+arNum(it.p)+' جوهرة',
            left:'💎 '+arNum((p.gems||0)-it.p)+' جوهرة' };
 }
 /* ===== التوليد: يُخصم من المُهدي أوّلاً ===== */
