@@ -1658,10 +1658,10 @@ body.glow-off .dfpic{animation:none}
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .stcount{flex:0 0 auto;font-weight:900;font-size:14px;color:var(--on2);background:var(--pnl);
   border:2px solid var(--pb);border-radius:999px;padding:4px 13px;font-variant-numeric:tabular-nums}
-.stimgbox{position:relative;width:100%;aspect-ratio:16/9;border-radius:18px;overflow:hidden;
+.stimgbox{position:relative;width:100%;aspect-ratio:4/3;border-radius:18px;overflow:hidden;
   background:var(--pnl3);border:3px solid var(--pb);margin-bottom:14px}
-/* صورُ القصص ١٦:٩ كإطارِها، فـcover وcontain سواءٌ ما دام الإطارُ على نسبته.
-   وإذا ضاق الارتفاعُ (max-height أدناه) خرج الإطارُ عن ١٦:٩، فـcontain يترك
+/* صورُ القصص ٤:٣ كإطارِها، فـcover وcontain سواءٌ ما دام الإطارُ على نسبته.
+   وإذا ضاق الارتفاعُ (max-height أدناه) خرج الإطارُ عن ٤:٣، فـcontain يترك
    شريطَين فارغَين عن جانبَيها — وcover يملأ ويقتطع من أعلاها وأسفلها قليلاً */
 .stimgbox img{width:100%;height:100%;object-fit:cover;display:block;
   opacity:0;transition:opacity .35s}
@@ -1699,7 +1699,7 @@ body.glow-off .dfpic{animation:none}
   touch-action:pan-y;overscroll-behavior:none}
 /* حصّةٌ ثابتةٌ لكلٍّ منهما، فلا يتراقص الإطارُ بين صفحةٍ وصفحة تبعاً لطول
    النصّ: الصورةُ تأخذ ما بقي، والنصُّ قدرٌ معلومٌ يُمرَّر في صندوقه إن طال */
-#scr-story .stimgbox{flex:0 0 auto;aspect-ratio:16/9;max-height:46%;margin-bottom:0}
+#scr-story .stimgbox{flex:0 0 auto;aspect-ratio:4/3;max-height:46%;margin-bottom:0}
 #scr-story .sttext{flex:1 1 auto;min-height:0;
   overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 #scr-story .stload,#scr-story .gmnote{flex:1 1 auto;display:flex;align-items:center;justify-content:center;margin:0}
