@@ -7018,6 +7018,8 @@ function show(id){
   if(id==='scr-start'){ try{ renderHome(); }catch(e){} }
   try{ syncTabs(id); }catch(e){}
   try{ $('pathFabs').hidden = (id!=='scr-path'); }catch(e){}
+  /* ولا يبقى «من أين جاء الفهرسُ» معلّقاً: يُنسى متى غادرَه إلى غير شهادة */
+  if(id!=='scr-map' && id!=='scr-cert') MAP_BACK='';
   document.body.classList.toggle('bgrest', id!=='scr-start');   /* الخلفيّةُ تتحرّك في الرئيسيّة وحدها */
   /* وسحبُ الشاشة للتحديث: في المتجر وحدَه */
   try{ document.documentElement.classList.toggle('pullok', id==='scr-shop'); }catch(e){}
@@ -7109,6 +7111,8 @@ function srPickOpen(n){
   $('srPick').hidden=false;
 }
 var certFrom='';
+/* من أين جاء الفهرسُ؟ فمن فتحه من «شهاداتي» فوق المسار يُردّ إليه، لا إلى البداية */
+var MAP_BACK='';
 function renderMap(){
   $('mapName').textContent = profile.name || 'صديقي';
   var totStars=0, totDone=0;
@@ -7271,6 +7275,7 @@ function openSurah(n, picked){
   var s=surahBy(n); if(!s) return;
   PATH_PICK=picked ? s.n : 0;
   clearScope();
+  PATH_BACK=1;                       /* فتحٌ جديد: النافذةُ تعود إلى موضعه */
   curSurah=s; curP().last=n; saveDB();
   renderPath(); show('scr-path');
 }
@@ -7425,14 +7430,18 @@ function renderPath(){
   /* وما مضى يُطلب بزرٍّ في الرأس — يُدسّ في موضعه لا في أوّل الشاشة، فلا
      يعلو صندوقَ مقرَّر اليوم. وفي مقرَّر اليوم النطاقُ مقصورٌ عليه، فلا يكفي
      توسيعُ نافذة السور، بل يُوسَّع النطاقُ نفسُه إلى الوراء */
+  /* ولا يُحسب عنوانُه إلّا إن ظهر: كان يُحسب على كلّ حال، فإن بلغ أوّلَ
+     الخطّة قُرئ اسمُ ما قبلها ولا شيءَ قبلها، فيسقط الرسمُ كلُّه ولا يُفتح
+     المسارُ أصلاً */
   var prevOK = SC ? scopeCanBack() : (from>0);
-  var prevLbl = SC ? ('وجه '+arNum(scopeBackPage())+' وما قبله')
-                   : (esc(list[from-1].name)+' وما قبلها');
-  if(prevOK)
+  if(prevOK){
+    var prevLbl = SC ? ('وجه '+arNum(scopeBackPage())+' وما قبله')
+                     : (esc(list[from-1].name)+' وما قبلها');
     h = h.slice(0,hHead)+
         '<button type="button" class="pathmore up" id="pathPrev">▲ السابق — '+
           prevLbl+'</button>'+
         h.slice(hHead);
+  }
 
   $('path').innerHTML=h;
   if($('pathMore')) $('pathMore').onclick=function(){
@@ -12409,7 +12418,9 @@ function renderRevPath(){
        esc(surahBy(list[to+1]).name)+' وما بعدها</button>';
   if(from>0)
     h = h.slice(0,hHead)+
-        '<button type="button" class="pathmore up" id="revPrev">▲ السابق — '+
+        /* لا يُسمّى «revPrev»: في الشاشة سهمٌ مخفيٌّ بهذا الاسم، فيسبقه
+           في الوثيقة ويُوصَل الحدثُ به لا بهذا الزرّ */
+        '<button type="button" class="pathmore up" id="revPathPrev">▲ السابق — '+
           esc(surahBy(list[from-1]).name)+' وما قبلها</button>'+
         h.slice(hHead);
 
@@ -12417,7 +12428,7 @@ function renderRevPath(){
   if($('revMore')) $('revMore').onclick=function(){
     RPATH_WIN+=RPATH_WIN_STEP; renderRevPath();
   };
-  if($('revPrev')) $('revPrev').onclick=function(){
+  if($('revPathPrev')) $('revPathPrev').onclick=function(){
     RPATH_BACK+=RPATH_WIN_STEP; RPATH_GOTOP=true; renderRevPath();
   };
   var ns=$('revPath').querySelectorAll('[data-revs]'), y;
@@ -12436,7 +12447,7 @@ function revPathFocus(){
     var box=$('revPath'); if(!box) return;
     if(RPATH_GOTOP){
       RPATH_GOTOP=false;
-      var tp=box.querySelector('#revPrev') || box.querySelector('.pathsec');
+      var tp=box.querySelector('#revPathPrev') || box.querySelector('.pathsec');
       if(tp && tp.scrollIntoView){ tp.scrollIntoView({block:'start'}); return; }
     }
     var el=box.querySelector('.pnode.now') ||
@@ -14185,13 +14196,18 @@ $('onbBack').onclick=function(){ onbShow(ONB.i-1); };
 $('btnEditMe').onclick=function(){ ONB.edit=true; onbShow(0); };
 $('onbSave').onclick=onbEditDone;
 $('btnGoMap').onclick=function(){ openBqn(); };
-$('btnBackStart').onclick=function(){ show('scr-start'); };
+/* من جاء الفهرسَ من زرّ «شهاداتي» العائم رُدَّ إلى مساره، لا إلى البداية */
+$('btnBackStart').onclick=function(){
+  if(MAP_BACK==='path'){ MAP_BACK=''; renderPath(); show('scr-path'); return; }
+  show('scr-start');
+};
 $('mapHome').onclick=function(){ renderPlayers(); show('scr-start'); };
 $('mapHome').onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); this.onclick(); } };
 /* الأزرارُ العائمة: القلاعُ وحدَها، والفهرسُ بشهاداته */
 $('fabJuz').onclick=function(){ renderJuzTests(); show('scr-juz'); };
 $('fabCerts').onclick=function(){
   if(!openJuz) openJuz=(curSurah?curSurah.juz:Math.max(SET.juzFrom,SET.juzTo));
+  MAP_BACK='path';                    /* يُردّ من حيث جاء */
   renderMap(); show('scr-map');
 };
 $('btnJuzListBack').onclick=function(){ renderPath(); show('scr-path'); };
