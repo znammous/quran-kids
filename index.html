@@ -15442,6 +15442,18 @@ var ST_WAIT=6000;                         /* مهلةُ الفهرس، ثمّ ي
 var SIDX=null;
 function stBase(){ return isNative() ? ST_HOME : ST_BASE; }
 function stUrl(p){ return /^https?:/.test(p) ? p : (stBase()+p); }
+/* ===== مراجعةُ القصّة =====
+   القصّةُ تُستبدل بمعرّفها نفسِه أحياناً — تُحسَّن صورُها أو يُوسَّع نصُّها.
+   فإن رُفع `rev` في الفهرس جرى أمران: حُمل الرقمُ في روابط القصّة كلِّها،
+   فلا يبقى أحدٌ على نسخةٍ قديمةٍ في مخزنه — ومخزنُ القصص يسبق الشبكةَ عمداً،
+   والفهرسُ وحدَه يُسأل عنه كلَّ مرّة فبه يصل الخبر؛ وعُدّتِ القصّةُ جديدةً
+   لمن قرأ ما قبلها. وما لا rev له فمراجعتُه ١، وما حُفظ قديماً كان ١ كذلك،
+   فاستقام القياسُ بلا ترحيل. */
+function stRev(x){ var r=(x && x.rev)|0; return r>0 ? r : 1; }
+function stAt(p, rev){
+  if(!p) return p;
+  return (rev>1 && p.indexOf('?')<0) ? (p+'?r='+rev) : p;
+}
 /* الشبكةُ بمهلة: لا يعلق الطفلُ على اتّصالٍ ضعيفٍ ينتظر فهرساً */
 function stFetch(url,to){
   return new Promise(function(res,rej){
@@ -15505,7 +15517,7 @@ function stBox(){
 /* «الجديدُ» ما لم يفتحه بعد — لا ما لم يُتمّه، فلا تبقى النقطةُ حتى يقرأ الكلّ */
 function stNew(){
   var s=stBox();
-  return stList().filter(function(x){ return !s.op[x.id]; });
+  return stList().filter(function(x){ return (s.op[x.id]|0) < stRev(x); });
 }
 function storiesOpen(){
   ADV_V='stories'; GAME_PICK=null; GAME_LIST=false;
@@ -15525,11 +15537,12 @@ function storiesRender(){
     h='<p class="gmnote">لا قصصَ بعدُ هنا 📖<br>تظهر حين تصل — ويكفي أن يتّصل التطبيقُ بالإنترنت مرّةً واحدة</p>';
   }else{
     L.forEach(function(x){
-      var fresh=!s.op[x.id], done=!!s.read[x.id];
+      var rv=stRev(x), seen=(s.op[x.id]|0)>0;
+      var fresh=(s.op[x.id]|0)<rv, done=(s.read[x.id]|0)>=rv;
       h+='<button type="button" class="goalcard'+(fresh?' now newdot':(done?' done':''))+'" data-story="'+esc(x.id)+'">'+
-         '<span class="gcic'+(x.cover?' stcov':'')+'" data-cov="'+esc(x.cover||'')+'">'+(x.cover?'':esc(x.ic||'📖'))+'</span>'+
+         '<span class="gcic'+(x.cover?' stcov':'')+'" data-cov="'+esc(stAt(x.cover,rv)||'')+'">'+(x.cover?'':esc(x.ic||'📖'))+'</span>'+
          '<span class="gctx"><b>'+esc(x.t||'قصّة')+'</b><i>'+esc(x.d||'')+
-           (fresh?' • ✨ جديدة':(done?' • ✓ قرأتَها':' • ⏳ لم تُتمَّها'))+'</i></span>'+
+           (fresh?(seen?' • ✨ تجدّدت':' • ✨ جديدة'):(done?' • ✓ قرأتَها':' • ⏳ لم تُتمَّها'))+'</i></span>'+
          '<span class="gcgo">❮</span></button>';
     });
   }
@@ -15556,7 +15569,8 @@ function storyFree(){
 function storyOpen(id){
   var meta=stMeta(id); if(!meta) return;
   var s=stBox();
-  s.op[id]=1; s.ann[id]=1; saveDB();      /* فتحَها: لا نقطةَ بعد اليوم ولا إعلان */
+  var rv=stRev(meta);
+  s.op[id]=rv; s.ann[id]=rv; saveDB();    /* فتح هذه المراجعة: لا نقطةَ بعد اليوم ولا إعلان */
   storyFree();
   STORY=null; STORY_I=0;
   $('stTitle').textContent=meta.t||'قصّة';
@@ -15565,7 +15579,7 @@ function storyOpen(id){
   $('stDots').innerHTML='';
   $('stPrev').disabled=true; $('stNext').disabled=true;
   show('scr-story');
-  stJson(meta.file || ('s/'+id+'.json')).then(function(j){
+  stJson(stAt(meta.file || ('s/'+id+'.json'), rv)).then(function(j){
     var pg=(j && j.pages) || [];
     if(!pg.length) throw new Error('فارغة');
     STORY={ id:id, meta:meta, pages:pg };
@@ -15578,12 +15592,12 @@ function storyOpen(id){
 }
 function storyDraw(){
   if(!STORY) return;
-  var pg=STORY.pages, n=pg.length, p=pg[STORY_I]||{};
+  var pg=STORY.pages, n=pg.length, p=pg[STORY_I]||{}, rv=stRev(STORY.meta);
   $('stCount').textContent=arNum(STORY_I+1)+' / '+arNum(n);
   $('stPage').innerHTML=
     (p.img ? '<div class="stimgbox" id="stImgBox"><img id="stImgEl" alt=""></div>' : '')+
     '<div class="sttext">'+esc(p.x||'')+'</div>';
-  if(p.img) stImg(p.img).then(function(u){
+  if(p.img) stImg(stAt(p.img,rv)).then(function(u){
     var e=$('stImgEl'); if(!e) return;
     STORY_BLOBS.push(u);
     e.onload=function(){ e.classList.add('in'); var b=$('stImgBox'); if(b) b.classList.add('ready'); };
@@ -15597,12 +15611,12 @@ function storyDraw(){
                                        : '<span>التالي</span><span class="sar">←</span>';
   $('stNext').disabled=false;
   var s=stBox();
-  if(STORY_I>=n-1){ s.read[STORY.id]=1; saveDB(); }   /* بلغ آخرَها: تُعلَّم مقروءة */
+  if(STORY_I>=n-1){ s.read[STORY.id]=rv; saveDB(); }   /* بلغ آخرَها: تُعلَّم مقروءة */
   /* الشاشةُ ثابتةٌ لا تنساح، فالذي يُردّ إلى أوّله صندوقُ النصّ لا الصفحة */
   try{ var tb=$('stPage').querySelector('.sttext'); if(tb) tb.scrollTop=0; }catch(e){}
   /* وتُجلب صورةُ الصفحة التالية سلفاً، فتُقلب الصفحةُ ولا تنتظر */
   var nx=pg[STORY_I+1];
-  if(nx && nx.img) stImg(nx.img)['catch'](function(){});
+  if(nx && nx.img) stImg(stAt(nx.img,rv))['catch'](function(){});
 }
 function storyStep(d){
   if(!STORY) return;
@@ -15628,12 +15642,13 @@ function stBoot(){
   try{ if(!curP()) return; }catch(e){ return; }
   stIdxLoad().then(function(){
     var L=stList(); if(!L.length) return;
-    var s=stBox(), fresh=L.filter(function(x){ return !s.ann[x.id]; });
+    var s=stBox(), fresh=L.filter(function(x){ return (s.ann[x.id]|0) < stRev(x); });
+    var again=!!(fresh.length && (s.ann[fresh[0].id]|0));   /* قرأ ما قبلها: تجدّدت لا وصلت */
     try{ advSync(); }catch(e){ try{ tabDot(); }catch(e2){} }
     if(!fresh.length) return;
     var first=!s.init;
     s.init=1;
-    fresh.forEach(function(x){ s.ann[x.id]=1; });
+    fresh.forEach(function(x){ s.ann[x.id]=stRev(x); });
     saveDB();
     if(first){
       /* لا يُعلَن عمّا كان موجوداً يومَ نزل التطبيق — يجده في ركنه */
@@ -15643,9 +15658,9 @@ function stBoot(){
                       rew:'📖 اقرأها متى شئت' }); }catch(e){}
       return;
     }
-    celeShow({ ic:esc(fresh[0].ic||'📖'), kick:'✨ قصّةٌ جديدة وصلت',
+    celeShow({ ic:esc(fresh[0].ic||'📖'), kick:(again?'✨ قصّةٌ تجدّدت':'✨ قصّةٌ جديدة وصلت'),
                title:fresh[0].t||'قصّة جديدة',
-               sub:(fresh[0].d||'')+(fresh.length>1?'\nومعها '+arNum(fresh.length-1)+' قصّةً أخرى':''),
+               sub:(again?'صورُها ونصُّها أجملُ ممّا قرأتَ — أعِدْها':(fresh[0].d||''))+(fresh.length>1?'\nومعها '+arNum(fresh.length-1)+' قصّةً أخرى':''),
                rew:'🎪 تجدها في ركن المغامرة' });
   })['catch'](function(){});
 }
