@@ -1634,6 +1634,47 @@ body.glow-off .dfpic{animation:none}
   /* ألوانُ الشهادة تُطبع كما هي، فلا تخرج بيضاءَ باهتة */
   .cert,.cert *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
+/* ===== ركن المغامرة: تبويبان — ألعابٌ وقصص ===== */
+.advtabs{display:flex;gap:10px;margin:0 0 15px}
+.advtabs button{flex:1;position:relative;display:flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--pnl);border:3px solid var(--pb);border-radius:14px;padding:11px 8px;
+  font-family:inherit;font-size:15.5px;font-weight:900;color:var(--on2);cursor:pointer;
+  box-shadow:0 4px 0 rgba(0,0,0,.16);transition:.12s;-webkit-tap-highlight-color:transparent}
+.advtabs button:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.16)}
+.advtabs button.on{border-color:var(--gold);background:var(--psel);color:var(--ttl)}
+.advtabs button .ati{font-size:20px;line-height:1}
+/* نقطةُ «الجديد»: على تبويب القصص وعلى زرّ الشريط السفليّ وعلى بطاقة القصّة */
+.newdot::after{content:'';position:absolute;top:7px;inset-inline-start:9px;
+  width:11px;height:11px;border-radius:50%;background:var(--red);
+  box-shadow:0 0 0 2px var(--pnl),0 0 0 3px rgba(0,0,0,.14)}
+@media(max-width:820px){ .tabbar button.newdot::after{box-shadow:0 0 0 2px var(--tabbg)} }
+/* ===== القصص: البطاقةُ بغلافها، ثمّ شاشةُ القراءة ===== */
+.goalcard .gcic.stcov{overflow:hidden;padding:0;background:var(--pnl3)}
+.goalcard .gcic.stcov img{width:100%;height:100%;object-fit:cover;display:block}
+.sthead{display:flex;align-items:center;gap:10px;margin:2px 0 12px}
+.sttitle{flex:1;min-width:0;font-size:18px;font-weight:900;color:var(--ttl);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stcount{flex:0 0 auto;font-weight:900;font-size:14px;color:var(--on2);background:var(--pnl);
+  border:2px solid var(--pb);border-radius:999px;padding:4px 13px;font-variant-numeric:tabular-nums}
+.stimgbox{position:relative;width:100%;aspect-ratio:4/3;border-radius:18px;overflow:hidden;
+  background:var(--pnl3);border:3px solid var(--pb);margin-bottom:14px}
+.stimgbox img{width:100%;height:100%;object-fit:cover;display:block;
+  opacity:0;transition:opacity .35s}
+.stimgbox img.in{opacity:1}
+/* ريثما تصل الصورة: نبضةٌ هادئة مكانَها، فلا تقفز الصفحةُ حين تحلّ */
+.stimgbox::after{content:'🖼️';position:absolute;inset:0;display:flex;align-items:center;
+  justify-content:center;font-size:34px;opacity:.25;animation:stpulse 1.6s ease-in-out infinite}
+.stimgbox.ready::after{display:none}
+@keyframes stpulse{0%,100%{opacity:.18}50%{opacity:.4}}
+.sttext{background:var(--pnl);border:3px solid var(--pb);border-radius:18px;padding:16px 17px;
+  font-size:17.5px;font-weight:700;line-height:2.1;color:var(--on1);white-space:pre-wrap}
+.stload{text-align:center;padding:44px 10px;font-size:16px;font-weight:800;color:var(--on3)}
+.stnav{display:flex;align-items:center;gap:10px;margin:16px 0 4px}
+.stnav .btn{flex:0 0 auto;margin:0;min-width:116px}
+.stnav .btn[disabled]{opacity:.38;pointer-events:none}
+.stdots{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.stdots i{width:8px;height:8px;border-radius:50%;background:var(--pb2);display:block}
+.stdots i.on{background:var(--gold);transform:scale(1.4)}
 /* ===== الألعاب: «عدّاء الآيات» ===== */
 .gmlist .goalcard{margin-bottom:12px}
 .gmnote{text-align:center;color:var(--on3);font-size:13.5px;font-weight:700;margin:2px 0 14px;line-height:1.7}
@@ -1706,7 +1747,7 @@ body.glow-off .dfpic{animation:none}
     padding:5px 4px calc(5px + env(safe-area-inset-bottom));
     box-shadow:0 -8px 24px rgba(0,0,0,.4);
     /* بلا تغبيشٍ لما خلفه: الخلفيّةُ معتمةٌ ٩٧٪ فلا يُرى، ويُعاد حسابُه مع كلّ حركةٍ تحته */}  .tabbar.gone{display:none}
-  .tabbar button{flex:1;min-width:0;background:none;border:0;color:var(--tabfg);font-family:inherit;
+  .tabbar button{flex:1;min-width:0;position:relative;background:none;border:0;color:var(--tabfg);font-family:inherit;
     font-size:11px;font-weight:800;line-height:1.2;cursor:pointer;
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
     padding:7px 2px;border-radius:12px;min-height:54px;touch-action:manipulation;transition:.12s}
@@ -2252,11 +2293,32 @@ body.glow-off .dfpic{animation:none}
   </section>
 
   <section class="screen" id="scr-games">
-    <h1>🎮 الألعاب</h1>
-    <p class="sub">العبْ وراجِعْ — من مقرَّر يومك أو من محفوظك أو من سورةٍ تختارها<br><small>وكلُّ آيةٍ تُتمّها تعطيك 💎 جواهر، ومن مقرَّر اليوم بالضِّعف</small></p>
+    <h1>🎪 ركن المغامرة</h1>
+    <!-- تبويبان في ركنٍ واحد: يلعب أو يقرأ، ولا يزدحم الشريطُ السفليّ بسابع -->
+    <div class="advtabs" id="advTabs">
+      <button type="button" data-adv="games"><span class="ati">🎮</span>الألعاب</button>
+      <button type="button" data-adv="stories"><span class="ati">📚</span>القصص</button>
+    </div>
+    <p class="sub" id="advSub"></p>
     <div class="gmlist" id="gamesBody"></div>
+    <div class="gmlist" id="storiesBody" hidden></div>
     <!-- مخفيٌّ: الشريطُ السفليّ يُغني عنه، ويبقى ليضغطه زرُّ الرجوع في الجهاز -->
     <button class="btn primary big" id="btnGamesBack" hidden style="margin:0">➡️ رجوع</button>
+  </section>
+
+  <!-- قارئُ القصص: صفحةٌ صورةً ونصّاً، تُقلَب بالزرّ أو بالسحب -->
+  <section class="screen" id="scr-story">
+    <div class="sthead">
+      <button type="button" class="runx" id="btnStoryBack" aria-label="رجوع">➡️</button>
+      <div class="sttitle" id="stTitle">—</div>
+      <div class="stcount" id="stCount">—</div>
+    </div>
+    <div class="stpage" id="stPage"></div>
+    <div class="stnav">
+      <button type="button" class="btn ghost" id="stPrev">❯ السابقة</button>
+      <div class="stdots" id="stDots"></div>
+      <button type="button" class="btn primary" id="stNext">التالية ❮</button>
+    </div>
   </section>
 
   <section class="screen" id="scr-runner">
@@ -6976,13 +7038,14 @@ var TABS=[
   {id:'scr-start',    ic:'🏠', n:'الرئيسية',  go:function(){ renderPlayers(); show('scr-start'); }},
   /* المصحفُ يُفتح على آخر وجهٍ قُرئ منه — وفهرسُ السور والأجزاء في شريطه السفليّ */
   {id:'mushaf',       ic:'📖', n:'المصحف',    go:function(){ mushafReader(); }},
-  {id:'scr-games',    ic:'🎮', n:'الألعاب',   go:function(){ gamesOpen(); }},
+  /* ركنُ المغامرة: ألعابٌ وقصص في تبويبين، فيبقى الشريطُ ستّةَ أزرارٍ لا سبعة */
+  {id:'scr-games',    ic:'🎪', n:'المغامرة',  also:['scr-story'], go:function(){ advGo(ADV_V); }},
   {id:'scr-build',    ic:'🕌', n:'مسجدي',    go:function(){ $('btnBuild').click(); }},
   {id:'scr-shop',     ic:'💎', n:'متجري',    go:function(){ $('btnShop').click(); }},
   {id:'scr-settings', ic:'⚙️', n:'الإعدادات', go:function(){ $('btnSettings').click(); }}
 ];
 /* تختفي أثناء الدرس والشهادة والمعالج، كما تفعل دولينجو داخل الدرس */
-var TABS_HIDE={'scr-onb':1,'scr-look':1,'scr-tree':1,'scr-report':1,'scr-play':1,'scr-cert':1,'scr-runner':1,'scr-shelf':1,'scr-bird':1};
+var TABS_HIDE={'scr-onb':1,'scr-look':1,'scr-tree':1,'scr-report':1,'scr-play':1,'scr-cert':1,'scr-runner':1,'scr-shelf':1,'scr-bird':1,'scr-story':1};
 function buildTabs(){
   if($('tabbar')) return;
   var bar=document.createElement('nav');
@@ -7006,6 +7069,7 @@ function syncTabs(id){
     var tab=TABS[i], on=(tab.id===id)||(tab.also && tab.also.indexOf(id)>=0);
     if(on) bs[i].classList.add('on'); else bs[i].classList.remove('on');
   }
+  try{ tabDot(); }catch(e){}          /* ونقطةُ القصّة الجديدة تُرى من كلّ شاشة */
 }
 function show(id){
   recReset();
@@ -15121,7 +15185,264 @@ var GAMES=[
 ];
 var GAME_PICK=null;                    /* لعبةٌ يُختار لها المصدرُ الآن */
 var GAME_LIST=false;                   /* وفهرسُ السور مفتوحٌ لها */
+/* ===== ركن المغامرة =====
+   تبويبان يتقاسمان شاشةً واحدة — ألعابٌ وقصص — فلا يزدحم الشريطُ السفليّ بسابع.
+   وآخرُ تبويبٍ فُتح يُذكر، فيعود الطفلُ إلى حيث كان. */
+var ADV_V='games';
+var ADV_SUB={
+  games:'العبْ وراجِعْ — من مقرَّر يومك أو من محفوظك أو من سورةٍ تختارها<br><small>وكلُّ آيةٍ تُتمّها تعطيك 💎 جواهر، ومن مقرَّر اليوم بالضِّعف</small>',
+  stories:'قصصُ من سبقوا، بالصُّور — وفي كلِّ واحدةٍ عبرةٌ تبقى<br><small>وما فُتح مرّةً بقي معك ولو انقطع الإنترنت</small>'
+};
+function advSync(){
+  var T=$('advTabs'); if(!T) return;
+  var deep=!!GAME_PICK;                    /* داخل اختيار مصدر اللعبة: تنحّى التبويبان */
+  var bs=T.querySelectorAll('[data-adv]'), i, v, fresh=stNew().length;
+  for(i=0;i<bs.length;i++){
+    v=bs[i].getAttribute('data-adv');
+    if(v===ADV_V) bs[i].classList.add('on'); else bs[i].classList.remove('on');
+    if(v==='stories' && fresh) bs[i].classList.add('newdot'); else bs[i].classList.remove('newdot');
+  }
+  T.hidden=deep;
+  $('advSub').innerHTML = deep ? '' : (ADV_SUB[ADV_V]||'');
+  $('gamesBody').hidden   = (ADV_V!=='games');
+  $('storiesBody').hidden = (ADV_V!=='stories');
+  try{ tabDot(); }catch(e){}
+}
+function advGo(v){ if(v==='stories') storiesOpen(); else gamesOpen(); }
+/* نقطةُ «الجديد» على زرّ المغامرة في الشريط السفليّ — تُرى من أيّ شاشة */
+function tabDot(){
+  var bar=$('tabbar'); if(!bar) return;
+  var i, idx=-1;
+  for(i=0;i<TABS.length;i++) if(TABS[i].id==='scr-games') idx=i;
+  if(idx<0) return;
+  var b=bar.querySelector('[data-tab="'+idx+'"]'); if(!b) return;
+  var fresh=0; try{ fresh=stNew().length; }catch(e){}
+  if(fresh) b.classList.add('newdot'); else b.classList.remove('newdot');
+}
+
+/* ===== القصص =====
+   فهرسٌ خفيفٌ يُحدَّث من الشبكة عند الفتح، والقصّةُ نفسُها لا تُنزَّل إلّا حين
+   تُفتح — ثمّ تبقى في مخزن المتصفّح كما تبقى تلاواتُ القرّاء، فتُقرأ بعدها
+   بلا إنترنت. فتُضاف قصّةٌ برفع ملفٍّ، بلا تحديثٍ للتطبيق في المتاجر. */
+var ST_BASE='stories/';                   /* على الويب: بجوار الصفحة، فيتبع مضيفَها */
+/* وفي النسخة الأصلية لا صفحةَ على الشبكة تُنسب إليها، فالمصدرُ مذكورٌ كاملاً */
+var ST_HOME='https://znammous.github.io/quran-kids/stories/';
+var ST_CACHE='nur-stories';
+var ST_WAIT=6000;                         /* مهلةُ الفهرس، ثمّ يُكتفى بالمخزَّن */
+var SIDX=null;
+function stBase(){ return isNative() ? ST_HOME : ST_BASE; }
+function stUrl(p){ return /^https?:/.test(p) ? p : (stBase()+p); }
+/* الشبكةُ بمهلة: لا يعلق الطفلُ على اتّصالٍ ضعيفٍ ينتظر فهرساً */
+function stFetch(url,to){
+  return new Promise(function(res,rej){
+    var over=false;
+    var t=setTimeout(function(){ if(!over){ over=true; rej(new Error('بطء')); } }, to||ST_WAIT);
+    fetch(url).then(function(r){
+      if(over) return;
+      over=true; clearTimeout(t);
+      if(!r || !r.ok) rej(new Error('تعذّر')); else res(r);
+    })['catch'](function(e){ if(!over){ over=true; clearTimeout(t); rej(e); } });
+  });
+}
+/* المخزَّن أوّلاً: ما فُتح مرّةً لا يُنزَّل ثانية */
+function stJson(p){
+  var u=stUrl(p);
+  if(!window.caches) return stFetch(u,15000).then(function(r){ return r.json(); });
+  return caches.open(ST_CACHE).then(function(c){
+    return c.match(u).then(function(hit){
+      if(hit) return hit.json();
+      return stFetch(u,15000).then(function(r){
+        try{ c.put(u, r.clone()); }catch(e){}
+        return r.json();
+      });
+    });
+  });
+}
+function stImg(p){
+  var u=stUrl(p);
+  if(!window.caches) return Promise.resolve(u);
+  return caches.open(ST_CACHE).then(function(c){
+    return c.match(u).then(function(hit){
+      if(hit) return hit.blob().then(function(b){ return URL.createObjectURL(b); });
+      return stFetch(u,20000).then(function(r){
+        try{ c.put(u, r.clone()); }catch(e){}
+        return r.blob().then(function(b){ return URL.createObjectURL(b); });
+      });
+    });
+  })['catch'](function(){ return u; });
+}
+/* الفهرسُ من الشبكة متى أمكن — وهو كيلوباتٌ لا أكثر — وإلّا فآخرُ ما حُفظ منه */
+function stIdxLoad(){
+  if(!SIDX){ var c=load('nur_stidx',null); if(c && c.stories) SIDX=c; }
+  return stFetch(stUrl('index.json')).then(function(r){ return r.json(); })
+    .then(function(j){
+      if(!j || !j.stories || !j.stories.length) throw new Error('فارغ');
+      SIDX=j; save('nur_stidx', j);
+      return j;
+    })['catch'](function(){ return SIDX; });
+}
+function stList(){ return (SIDX && SIDX.stories) ? SIDX.stories : []; }
+function stMeta(id){ var m=null; stList().forEach(function(x){ if(x.id===id) m=x; }); return m; }
+/* حالُ القصص مع هذا الطفل وحده: ما أُعلن عنه، وما فتحه، وما أتمّه، وأين وقف */
+function stBox(){
+  var p=null; try{ p=curP(); }catch(e){}
+  if(!p) return { ann:{}, op:{}, read:{}, pos:{} };
+  if(!p.stories || typeof p.stories!=='object') p.stories={};
+  var s=p.stories;
+  if(!s.ann) s.ann={}; if(!s.op) s.op={}; if(!s.read) s.read={}; if(!s.pos) s.pos={};
+  return s;
+}
+/* «الجديدُ» ما لم يفتحه بعد — لا ما لم يُتمّه، فلا تبقى النقطةُ حتى يقرأ الكلّ */
+function stNew(){
+  var s=stBox();
+  return stList().filter(function(x){ return !s.op[x.id]; });
+}
+function storiesOpen(){
+  ADV_V='stories'; GAME_PICK=null; GAME_LIST=false;
+  storiesRender(); advSync(); show('scr-games');
+  /* ثمّ يُلتمس الجديدُ في الخلفيّة، فتُعاد القائمةُ إن جاء شيء */
+  stIdxLoad().then(function(){
+    if(ADV_V==='stories' && curScreen()==='scr-games'){ storiesRender(); advSync(); }
+  });
+}
+var ST_COVERS=[];                          /* روابطُ الأغلفة المؤقّتة، تُفكّ عند إعادة الرسم */
+function storiesRender(){
+  var B=$('storiesBody'); if(!B) return;
+  ST_COVERS.forEach(function(u){ try{ URL.revokeObjectURL(u); }catch(e){} });
+  ST_COVERS=[];
+  var L=stList(), s=stBox(), h='';
+  if(!L.length){
+    h='<p class="gmnote">لا قصصَ بعدُ هنا 📖<br>تظهر حين تصل — ويكفي أن يتّصل التطبيقُ بالإنترنت مرّةً واحدة</p>';
+  }else{
+    L.forEach(function(x){
+      var fresh=!s.op[x.id], done=!!s.read[x.id];
+      h+='<button type="button" class="goalcard'+(fresh?' now newdot':(done?' done':''))+'" data-story="'+esc(x.id)+'">'+
+         '<span class="gcic'+(x.cover?' stcov':'')+'" data-cov="'+esc(x.cover||'')+'">'+(x.cover?'':esc(x.ic||'📖'))+'</span>'+
+         '<span class="gctx"><b>'+esc(x.t||'قصّة')+'</b><i>'+esc(x.d||'')+
+           (fresh?' • ✨ جديدة':(done?' • ✓ قرأتَها':' • ⏳ لم تُتمَّها'))+'</i></span>'+
+         '<span class="gcgo">❮</span></button>';
+    });
+  }
+  B.innerHTML=h;
+  var bs=B.querySelectorAll('[data-story]'), i;
+  for(i=0;i<bs.length;i++) bs[i].onclick=function(){ storyOpen(this.getAttribute('data-story')); };
+  /* الأغلفةُ تُجلب بعد رسم القائمة، فلا تنتظرها */
+  var cs=B.querySelectorAll('.stcov[data-cov]');
+  for(i=0;i<cs.length;i++) (function(el){
+    var p=el.getAttribute('data-cov'); if(!p) return;
+    stImg(p).then(function(u){
+      if(u && u.indexOf('blob:')===0) ST_COVERS.push(u);
+      if(el.isConnected) el.innerHTML='<img alt="" src="'+esc(u)+'">';
+    });
+  })(cs[i]);
+}
+
+/* ===== قراءةُ القصّة ===== */
+var STORY=null, STORY_I=0, STORY_BLOBS=[];
+function storyFree(){
+  STORY_BLOBS.forEach(function(u){ if(u && u.indexOf('blob:')===0) try{ URL.revokeObjectURL(u); }catch(e){} });
+  STORY_BLOBS=[];
+}
+function storyOpen(id){
+  var meta=stMeta(id); if(!meta) return;
+  var s=stBox();
+  s.op[id]=1; s.ann[id]=1; saveDB();      /* فتحَها: لا نقطةَ بعد اليوم ولا إعلان */
+  storyFree();
+  STORY=null; STORY_I=0;
+  $('stTitle').textContent=meta.t||'قصّة';
+  $('stCount').textContent='…';
+  $('stPage').innerHTML='<div class="stload">📖 تُفتح القصّة…</div>';
+  $('stDots').innerHTML='';
+  $('stPrev').disabled=true; $('stNext').disabled=true;
+  show('scr-story');
+  stJson(meta.file || ('s/'+id+'.json')).then(function(j){
+    var pg=(j && j.pages) || [];
+    if(!pg.length) throw new Error('فارغة');
+    STORY={ id:id, meta:meta, pages:pg };
+    var at=parseInt(s.pos[id],10) || 0;
+    STORY_I=Math.max(0, Math.min(at, pg.length-1));
+    storyDraw();
+  })['catch'](function(){
+    $('stPage').innerHTML='<p class="gmnote">تعذّر فتحُ القصّة الآن 🌧️<br>'+
+      'تحتاج اتّصالاً بالإنترنت أوّلَ مرّةٍ فقط — ثمّ تبقى معك</p>';
+  });
+}
+function storyDraw(){
+  if(!STORY) return;
+  var pg=STORY.pages, n=pg.length, p=pg[STORY_I]||{};
+  $('stCount').textContent=arNum(STORY_I+1)+' / '+arNum(n);
+  $('stPage').innerHTML=
+    (p.img ? '<div class="stimgbox" id="stImgBox"><img id="stImgEl" alt=""></div>' : '')+
+    '<div class="sttext">'+esc(p.x||'')+'</div>';
+  if(p.img) stImg(p.img).then(function(u){
+    var e=$('stImgEl'); if(!e) return;
+    STORY_BLOBS.push(u);
+    e.onload=function(){ e.classList.add('in'); var b=$('stImgBox'); if(b) b.classList.add('ready'); };
+    e.src=u;
+  });
+  var d='', i;
+  for(i=0;i<n;i++) d+='<i'+(i===STORY_I?' class="on"':'')+'></i>';
+  $('stDots').innerHTML=d;
+  $('stPrev').disabled=(STORY_I<=0);
+  $('stNext').textContent=(STORY_I>=n-1) ? 'تمّتْ ✨' : 'التالية ❮';
+  $('stNext').disabled=false;
+  var s=stBox();
+  s.pos[STORY.id]=STORY_I;
+  if(STORY_I>=n-1) s.read[STORY.id]=1;
+  saveDB();
+  window.scrollTo(0,0);
+  /* وتُجلب صورةُ الصفحة التالية سلفاً، فتُقلب الصفحةُ ولا تنتظر */
+  var nx=pg[STORY_I+1];
+  if(nx && nx.img) stImg(nx.img)['catch'](function(){});
+}
+function storyStep(d){
+  if(!STORY) return;
+  var n=STORY.pages.length, to=STORY_I+d;
+  if(to<0) return;
+  if(to>=n){ storyDone(); return; }
+  STORY_I=to; storyDraw();
+}
+/* آخرُ صفحةٍ: شاشةُ حماسةٍ ثمّ عودةٌ إلى رفّ القصص */
+function storyDone(){
+  var t=(STORY && STORY.meta && STORY.meta.t) || 'القصّة';
+  try{ celeShow({ ic:'📚', kick:'✨ أتممتَ القصّة', title:t,
+                  sub:'قرأتَها إلى آخرها — ولك أن تعيدها متى شئت' }); }catch(e){}
+  storyFree(); STORY=null;
+  storiesOpen();
+}
+
+/* ===== الإعلانُ عن الجديد عند الفتح =====
+   شاشةُ الحماسة نفسُها التي تُبشّره بإتمام مقرَّر يومه — يُذكر فيها اسمُ القصّة.
+   وأوّلُ مرّةٍ يصل فيها الفهرسُ كلُّه جديد، فلا تنهال عليه الشاشات: بشارةٌ
+   واحدةٌ بالركن، ثمّ لكلّ قصّةٍ قادمةٍ بشارتُها. */
+function stBoot(){
+  try{ if(!curP()) return; }catch(e){ return; }
+  stIdxLoad().then(function(){
+    var L=stList(); if(!L.length) return;
+    var s=stBox(), fresh=L.filter(function(x){ return !s.ann[x.id]; });
+    try{ advSync(); }catch(e){ try{ tabDot(); }catch(e2){} }
+    if(!fresh.length) return;
+    var first=!s.init;
+    s.init=1;
+    fresh.forEach(function(x){ s.ann[x.id]=1; });
+    saveDB();
+    if(first){
+      /* لا يُعلَن عمّا كان موجوداً يومَ نزل التطبيق — يجده في ركنه */
+      try{ celeShow({ ic:'📚', kick:'🎪 ركن المغامرة', title:'وصلتْك قصص!',
+                      sub:'في ركن المغامرة تبويبٌ جديدٌ للقصص — فيه '+arNum(L.length)+
+                          (L.length===1?' قصّة':' قصص')+' بالصُّور',
+                      rew:'📖 اقرأها متى شئت' }); }catch(e){}
+      return;
+    }
+    celeShow({ ic:esc(fresh[0].ic||'📖'), kick:'✨ قصّةٌ جديدة وصلت',
+               title:fresh[0].t||'قصّة جديدة',
+               sub:(fresh[0].d||'')+(fresh.length>1?'\nومعها '+arNum(fresh.length-1)+' قصّةً أخرى':''),
+               rew:'🎪 تجدها في ركن المغامرة' });
+  })['catch'](function(){});
+}
+
 function gamesOpen(){
+  ADV_V='games';
   GAME_PICK=null; GAME_LIST=false;
   var pool=runPool(), h='';
   GAMES.forEach(function(g){
@@ -15155,6 +15476,7 @@ function gamesOpen(){
   };
   /* أيقونةُ البطاقة صورةُ المستخدم نفسِه، فيعرف أنّها شخصيّتُه هو */
   var av=B.querySelector('.gcava'); if(av) av.innerHTML=avatarSVG();
+  advSync();
   show('scr-games');
 }
 function gamePick(id){
@@ -15183,6 +15505,7 @@ function gamePick(id){
   if($('gsDay')) $('gsDay').onclick=function(){ st.src='day'; saveDB(); g.open('day'); };
   $('gsMem').onclick=function(){ st.src='mem'; saveDB(); g.open('mem'); };
   $('gsSura').onclick=function(){ gameSuraList(g); };
+  advSync();                                  /* التبويبان ينسحبان داخل اللعبة */
   window.scrollTo(0,0);
 }
 /* فهرسُ السور للّعب: على هيئة فهرس المصحف (رقمُ السورة في دائرة، واسمُها، وجزؤها
@@ -16314,7 +16637,30 @@ window.addEventListener('resize', function(){
   birdSize(); if(BD.state!=='run') birdDraw();
 });
 
-$('btnGames').onclick=gamesOpen;
+$('btnGames').onclick=function(){ advGo(ADV_V); };
+/* تبويبا الركن */
+(function(){
+  var T=$('advTabs'); if(!T) return;
+  var bs=T.querySelectorAll('[data-adv]'), i;
+  for(i=0;i<bs.length;i++) bs[i].onclick=function(){ advGo(this.getAttribute('data-adv')); };
+})();
+/* قلبُ صفحات القصّة */
+$('stPrev').onclick=function(){ storyStep(-1); };
+$('stNext').onclick=function(){ storyStep(1); };
+/* وسحبةُ الإصبع تقلبها كذلك — والاتّجاهُ عربيٌّ: سحبٌ لليسار يمضي */
+(function(){
+  var P=$('stPage'), x0=0, y0=0, live=false;
+  if(!P) return;
+  P.addEventListener('pointerdown', function(e){ x0=e.clientX; y0=e.clientY; live=true; }, {passive:true});
+  P.addEventListener('pointerup', function(e){
+    if(!live) return; live=false;
+    var dx=e.clientX-x0, dy=e.clientY-y0;
+    if(Math.abs(dx)<56 || Math.abs(dy)>Math.abs(dx)) return;   /* سحبةٌ أفقيّةٌ واضحة */
+    storyStep(dx<0 ? 1 : -1);
+  }, {passive:true});
+  P.addEventListener('pointercancel', function(){ live=false; }, {passive:true});
+})();
+$('btnStoryBack').onclick=function(){ storyFree(); STORY=null; storiesOpen(); };
 /* رجوعٌ من اختيار المصدر إلى قائمة الألعاب، ومن القائمة إلى الرئيسيّة.
    والزرُّ مخفيٌّ في الشاشة — الشريطُ السفليّ يُغني عنه — ويبقى موصولاً
    ليضغطه زرُّ الرجوع في الجهاز على درجاته */
@@ -16640,7 +16986,8 @@ var NAV_BACK={ 'scr-look':'btnLookDone', 'scr-tree':'btnTreeBack', 'scr-report':
   'scr-rev':'btnRevHome', 'scr-revpath':'btnRevQuit', 'scr-build':'btnBuildBack',
   'scr-shop':'btnShopBack', 'scr-board':'btnBoardBack', 'scr-cert':'btnCertBack',
   'scr-badges':'btnBadgesBack', 'scr-bqn':'btnBqnHome', 'scr-juz':'btnJuzListBack',
-  'scr-games':'btnGamesBack', 'scr-runner':'btnRunQuit', 'scr-shelf':'btnShelfQuit', 'scr-bird':'btnBirdQuit',
+  'scr-games':'btnGamesBack', 'scr-story':'btnStoryBack',
+  'scr-runner':'btnRunQuit', 'scr-shelf':'btnShelfQuit', 'scr-bird':'btnBirdQuit',
   'scr-settings':'btnSetBack', 'scr-exam':'btnExamHome' };
 function curScreen(){ var e=document.querySelector('.screen.active'); return e?e.id:'scr-start'; }
 /* ===== تنبيهٌ وتأكيدٌ بثيمة التطبيق =====
@@ -16891,7 +17238,11 @@ if(DB_BAD) whenCalm(function(){
 try{ crownCheck(); }catch(e){}
 try{ checkBadges(true); }catch(e){}      /* ما استُحقّ قبل النظام يُمنح صامتاً */
 if(onbNeeded()){ ONB.edit=false; onbShow(0); }     /* أول مرة: المعالج */
-else{ renderHome(); if(!load(LS.help,0)) $('help').hidden=false; }
+else{
+  renderHome(); if(!load(LS.help,0)) $('help').hidden=false;
+  /* وبشارةُ القصّة الجديدة بعد أن تهدأ الشاشة — لا تزاحم ستاراً ولا صندوقاً */
+  whenCalm(function(){ try{ stBoot(); }catch(e){} });
+}
 
 /* الستارُ يُرفع بعد أن تستقرّ العناصرُ خلفه: رفعُه على الأثر يكشف
    قفزتَها. فله مكثٌ أدنى منذ فتح الصفحة، ويُنتظر معه استواءُ الخطوط
