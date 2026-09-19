@@ -15165,25 +15165,44 @@ function gemHud(id, n){
 /* سطرُ «أحسنت» بعد كلّ آية: يذكر الجواهرَ إن نالها، ويُنبّه إن بلغ سقفَ يومه */
 function gameWinLine(gid, g){
   return g ? ('أحسنت! 🌟 +'+arNum(g)+' 💎')
-           : (gameGemCap(gid)<=0 ? '🌟 بلغتَ سقفَ جواهر اليوم' : 'أحسنت! 🌟');
+           : (gameGemCap(gid)<=0 ? '💎 اكتملَ سقفُ اليوم' : 'أحسنت! 🌟');
 }
 /* ===== سطرُ الحماسة على اللوحة =====
    كان يُكتب بحجمٍ ثابتٍ لا يُقاس، فما طال منه خرج عن حدّ اللوحة ولم يُقرأ
    — كسطرِ بلوغِ سقفِ الجواهر. فصار يُقاس عرضُه: يُصغَّر حتى يسعه، فإن
    ضاق عنه قُسم سطرَين. */
 function gameFlash(c, txt, W, y, big){
-  var max=W-24, lines=[String(txt||'')], size=big, i, k;
-  function fits(){
+  var max=W-44, lines=[String(txt||'')], size=big, i, k;   /* هامشٌ سخيٌّ من الجانبين */
+  /* القياسُ نفسُه لا يُؤمَن: وزنُ الخطّ ٩٠٠ غيرُ محمَّلٍ في التطبيق، فكلُّ
+     جهازٍ يصطنعه بعرضٍ يخالف غيرَه، وإيموجي الأجهزة تختلف عروضُها كذلك.
+     فيُؤخذ أوسعُ ما يُقاس — عرضُ التقديم أو حبرُ الحروف — ويُزاد عليه
+     الخطُّ المحيطُ وفضلُ احتياطٍ سُدسَ العرض، فما انضبط عندنا انضبط عندهم. */
+  function wide(s){
+    var m=c.measureText(s), a=m.width||0;
+    if(m.actualBoundingBoxLeft!=null && m.actualBoundingBoxRight!=null)
+      a=Math.max(a, Math.abs(m.actualBoundingBoxLeft)+Math.abs(m.actualBoundingBoxRight));
+    return a*1.17+8;
+  }
+  function widest(){
     c.font='900 '+size+'px "IBM Plex Sans Arabic",sans-serif';
-    for(var z=0;z<lines.length;z++) if(c.measureText(lines[z]).width>max) return false;
-    return true;
+    var mx=0; for(var z=0;z<lines.length;z++) mx=Math.max(mx, wide(lines[z]));
+    return mx;
   }
-  while(size>15 && !fits()) size-=1;
-  if(!fits()){
-    var ws=lines[0].split(' '), a='', b='';
-    for(i=0;i<ws.length;i++){ if(i<Math.ceil(ws.length/2)) a+=(a?' ':'')+ws[i]; else b+=(b?' ':'')+ws[i]; }
-    if(b){ lines=[a,b]; size=big; while(size>12 && !fits()) size-=1; }
+  while(size>16 && widest()>max) size-=1;
+  if(widest()>max){                       /* ما زال يضيق: سطران ثمّ تصغيرٌ ثانية */
+    var ws=lines[0].split(' ');
+    if(ws.length>1){
+      var a='', b='', half=Math.ceil(ws.length/2);
+      for(i=0;i<ws.length;i++){ if(i<half) a+=(a?' ':'')+ws[i]; else b+=(b?' ':'')+ws[i]; }
+      lines=[a,b]; size=big;
+    }
+    while(size>10 && widest()>max) size-=1;
   }
+  /* وضمانٌ أخير لا يُخطئ: إن بقي أوسعَ — لخطٍّ لم يُقَس كما رُسم — ضُغط
+     أفقيّاً بقدر ما يزيد. ضغطٌ يسيرٌ خيرٌ من سطرٍ يخرج عن اللوحة. */
+  var over=widest()/max;
+  c.save();
+  if(over>1){ c.translate(W/2,0); c.scale(1/over,1); c.translate(-W/2,0); }
   c.textAlign='center'; c.lineWidth=6; c.strokeStyle='#0a2a5e';
   for(k=0;k<lines.length;k++){
     var yy=y+k*(size+5);
@@ -15191,6 +15210,7 @@ function gameFlash(c, txt, W, y, big){
     c.strokeText(lines[k], W/2, yy);
     c.fillStyle='#ffe27a'; c.fillText(lines[k], W/2, yy);
   }
+  c.restore();
 }
 /* مستوياتُ الألعاب: واحدةٌ لكلّ لعبةٍ تُذكر، ولكلّ مستوىً أفضلُ نتيجته */
 function gameLv(id){ var l=gameStats(id).lvl; return RUN_LEVELS[l] ? l : 'mid'; }
