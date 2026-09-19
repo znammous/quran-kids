@@ -7018,6 +7018,11 @@ function show(id){
   if(id==='scr-start'){ try{ renderHome(); }catch(e){} }
   try{ syncTabs(id); }catch(e){}
   try{ $('pathFabs').hidden = (id!=='scr-path'); }catch(e){}
+  /* من أين دخل المسارَ؟ من الرئيسيّة غالباً («حفظ اليوم»)، ومن الفهرس أحياناً.
+     فيُحفظ ليردّه زرُّ رجوع الهاتف من حيث جاء. وما سواهما — درسٌ أو شهادةٌ
+     أو اختباراتٌ أو رجوعٌ من الفهرس بزرّ «شهاداتي» — عودةٌ إليه لا دخولٌ له */
+  if(id==='scr-path' && (from==='scr-start' || (from==='scr-map' && MAP_BACK!=='path')))
+    PATH_FROM=from;
   /* ولا يبقى «من أين جاء الفهرسُ» معلّقاً: يُنسى متى غادرَه إلى غير شهادة */
   if(id!=='scr-map' && id!=='scr-cert') MAP_BACK='';
   document.body.classList.toggle('bgrest', id!=='scr-start');   /* الخلفيّةُ تتحرّك في الرئيسيّة وحدها */
@@ -7113,6 +7118,8 @@ function srPickOpen(n){
 var certFrom='';
 /* من أين جاء الفهرسُ؟ فمن فتحه من «شهاداتي» فوق المسار يُردّ إليه، لا إلى البداية */
 var MAP_BACK='';
+/* ومن أين جاء المسارُ؟ من الرئيسيّة غالباً، فإليها يُردّ */
+var PATH_FROM='scr-start';
 function renderMap(){
   $('mapName').textContent = profile.name || 'صديقي';
   var totStars=0, totDone=0;
@@ -14198,7 +14205,8 @@ $('onbSave').onclick=onbEditDone;
 $('btnGoMap').onclick=function(){ openBqn(); };
 /* من جاء الفهرسَ من زرّ «شهاداتي» العائم رُدَّ إلى مساره، لا إلى البداية */
 $('btnBackStart').onclick=function(){
-  if(MAP_BACK==='path'){ MAP_BACK=''; renderPath(); show('scr-path'); return; }
+  /* ولا يُصفَّر MAP_BACK هنا: «show» تتولّاه، وبه تعرف أنّها عودةٌ لا دخول */
+  if(MAP_BACK==='path'){ renderPath(); show('scr-path'); return; }
   show('scr-start');
 };
 $('mapHome').onclick=function(){ renderPlayers(); show('scr-start'); };
@@ -16793,6 +16801,12 @@ function navBack(){
     return true;
   }
   if(scr==='scr-shop' && shopCat){ shopCat=''; renderShop(); window.scrollTo(0,0); return true; }
+  /* المسارُ يُردّ من حيث دُخل: كان يفتح الفهرسَ دائماً، وأكثرُ دخوله اليومَ
+     من «حفظ اليوم» في الرئيسيّة، فكان الرجوعُ يقذفه إلى غير ما جاء منه */
+  if(scr==='scr-path'){
+    var pb=(PATH_FROM==='scr-map')?'btnBackMap':'btnPathHome';
+    if($(pb)){ $(pb).click(); return true; }
+  }
   var b=NAV_BACK[scr];
   if(b && $(b)){ $(b).click(); return true; }
   return false;                                   /* نحن في الصفحة الأولى */
