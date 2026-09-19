@@ -6599,23 +6599,40 @@ function renderBuild(){
 /* =========================================================
    اختبار نهاية الجزء 🏰
    ========================================================= */
+/* السورُ التي تبتدئ في الجزء — تُستعمل في شهادته لا في فتحه */
 function juzStartSurahs(j){ return SURAHS.filter(function(s){ return s.juz===j; }); }
-function juzProgress(j){
-  var list=juzStartSurahs(j), done=0;
-  list.forEach(function(s){ if(surahStats(s).full) done++; });
-  return { total:list.length, done:done, ready:(list.length>0 && done===list.length), passed:!!curP().badges['juz'+j] };
+/* ===== مقاطعُ الجزء =====
+   كان الجزءُ يُقاس بالسور التي تبتدئ فيه، والسورةُ قد تمتدّ على أجزاء:
+   فاختبارُ الجزء الأوّل كان يطلب البقرةَ كاملةً — وهي ثلاثةُ أجزاء — وكان
+   الجزءان الثاني والخامس لا تبتدئ فيهما سورةٌ أصلاً، فلا قلعةَ لهما أبداً.
+   فصار الجزءُ يُقاس بمداه: كلُّ مقطعٍ تقع آيةٌ منه بين أوّل الجزء وآخره. */
+function juzSegs(j){
+  var r=juzRange(j), out=[];
+  ((typeof JUZMAP!=='undefined' && JUZMAP[j]) || []).forEach(function(n){
+    var sx=surahBy(n); if(!sx) return;
+    var base=GIDX[sx.n-1];
+    segsOf(sx).forEach(function(g){
+      if(base+g[1]-1 >= r[0] && base+g[0] <= r[1]) out.push({ s:sx, g:g });
+    });
+  });
+  return out;
 }
-function lastSurahOfJuz(j){
-  var list=juzStartSurahs(j);
-  return list.length ? list[list.length-1].n : 0;
+function juzProgress(j){
+  var segs=juzSegs(j), done=0;
+  segs.forEach(function(x){ if(segDone(x.s,x.g)) done++; });
+  return { total:segs.length, done:done,
+           ready:(segs.length>0 && done===segs.length),
+           passed:!!curP().badges['juz'+j] };
+}
+/* أيُّ جزءٍ تقع خاتمتُه في هذا المقطع؟ — فعندها تُوضع قلعتُه */
+function juzEndsIn(a,b){
+  for(var j=1;j<=30;j++){ var e=juzRange(j)[1]; if(e>=a && e<=b) return j; }
+  return 0;
 }
 function buildJuzTest(j){
   var pool=[];
-  juzStartSurahs(j).forEach(function(s){
-    segsOf(s).forEach(function(g){
-      if(segDone(s,g)) pool.push({ s:s, g:g });
-    });
-  });
+  /* من مقاطع الجزء المنجَزة، لا من سورٍ تمتدّ خارجه */
+  juzSegs(j).forEach(function(x){ if(segDone(x.s,x.g)) pool.push({ s:x.s, g:x.g }); });
   shuffle(pool);
   var rounds=[], guard=0;
   while(rounds.length<10 && pool.length && guard<80){
@@ -7211,6 +7228,19 @@ function renderPath(){
            ((fin||p.stars)?'<div class="st">'+stars5(fin?stagesN():p.stars)+'</div>':'')+
            '</div>';
         nodes++;
+        /* قلعةُ الجزء تُوضع عند خاتمته، ولو كانت في وسط سورة — فآخرُ الجزء
+           الأوّل في البقرة ١٤١ لا في آخرها */
+        if(!SC){
+          var bs=GIDX[sx.n-1], jn=juzEndsIn(bs+g[0], bs+g[1]-1);
+          if(jn){
+            var jp=juzProgress(jn);
+            h+='<div class="pnode castle'+(jp.ready?'':' locked')+'" data-act="juz" data-j="'+jn+'" data-s="'+sx.n+'">'+
+               '<div class="dot">🏰</div><div class="lbl">اختبار الجزء '+arNum(jn)+
+               (jp.ready?(jp.passed?' ✅':''):(' — '+arNum(jp.done)+'/'+arNum(jp.total)+' مقطع'))+
+               '</div></div>';
+            nodes++;
+          }
+        }
       });
     })(sx,view);
 
@@ -7220,13 +7250,6 @@ function renderPath(){
       h+='<div class="pnode" data-act="cert" data-s="'+sx.n+'"><div class="dot" '+
          'style="background:linear-gradient(180deg,#ffd75e,#eab308);border-color:#a1791a;color:#4a3600">📜</div>'+
          '<div class="lbl">شهادة السورة</div></div>';
-    if(!SC && lastSurahOfJuz(sx.juz)===sx.n){
-      var jp=juzProgress(sx.juz);
-      h+='<div class="pnode castle'+(jp.ready?'':' locked')+'" data-act="juz" data-s="'+sx.n+'">'+
-         '<div class="dot">🏰</div><div class="lbl">اختبار الجزء '+arNum(sx.juz)+
-         (jp.ready?(jp.passed?' ✅':''):(' — '+arNum(jp.done)+'/'+arNum(jp.total)+' سورة'))+
-         '</div></div>';
-    }
     if(nodes>=PATH_NODE_CAP){ to=i; break; }
   }
 
@@ -7259,9 +7282,13 @@ function renderPath(){
       if(act==='review'){ startReview(); return; }
       if(act==='cert'){ showCert(sx); return; }
       if(act==='juz'){
-        var jp=juzProgress(sx.juz);
-        if(!jp.ready){ uiAlert('أتمم سور الجزء أوّلاً — أنجزت '+arNum(jp.done)+' من '+arNum(jp.total),'🏰'); return; }
-        startJuzTest(sx.juz); return;
+        var jn=parseInt(this.getAttribute('data-j'),10)||sx.juz;
+        var jp=juzProgress(jn);
+        if(!jp.ready){
+          uiAlert('أتمم مقاطع الجزء '+arNum(jn)+' أوّلاً — أنجزت '+
+                  arNum(jp.done)+' من '+arNum(jp.total),'🏰'); return;
+        }
+        startJuzTest(jn); return;
       }
       if(this.className.indexOf('locked')>=0 && !act){
         uiAlert('أتمم المقطع الذي قبله أوّلاً' + String.fromCharCode(10) +
