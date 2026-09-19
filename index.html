@@ -86,7 +86,9 @@ body{
    وتسكت التلاوة، وتُطوى اللوحاتُ المفتوحة. فأُطفئ في الشاشات كلِّها.
    ويبقى في شاشة المتجر وحدَها بابًا يُحدَّث منه التطبيقُ عند الحاجة.
    ويُوضع على الجذر لا على الجسد وحدَه: منه تأخذ الشاشةُ سلوكَها. */
-html{overscroll-behavior-y:none}
+/* ولا أفقيّاً كذلك: السحبةُ الأفقيّة تُشغّل إيماءةَ «الرجوع» في المتصفّح
+   فتبتلعها قبل أن تصل إلى التطبيق — فلا تُقلَّب صفحةُ قصّةٍ ولا وجهُ مصحف */
+html{overscroll-behavior:none}
 html.pullok, html.pullok body{overscroll-behavior-y:auto}
 .bg{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
 .star{position:absolute;color:var(--startxt);opacity:.55;animation:tw 3s ease-in-out infinite}
@@ -1689,7 +1691,9 @@ body.glow-off .dfpic{animation:none}
   overflow:hidden}
 #scr-story.active > *{width:100%;max-width:640px}   /* ولا تتمدّد على الشاشات العريضة */
 #scr-story .sthead{flex:0 0 auto;margin:0 0 10px}
-#scr-story #stPage{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:12px}
+/* السحبُ الأفقيُّ لنا نقلّب به، والرأسيُّ يبقى للنصّ يُمرّره */
+#scr-story #stPage{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;gap:12px;
+  touch-action:pan-y;overscroll-behavior:none}
 /* حصّةٌ ثابتةٌ لكلٍّ منهما، فلا يتراقص الإطارُ بين صفحةٍ وصفحة تبعاً لطول
    النصّ: الصورةُ تأخذ ما بقي، والنصُّ قدرٌ معلومٌ يُمرَّر في صندوقه إن طال */
 #scr-story .stimgbox{flex:0 0 auto;aspect-ratio:4/3;max-height:46%;margin-bottom:0}
@@ -16728,18 +16732,36 @@ $('btnGames').onclick=function(){ advGo(ADV_V); };
 /* قلبُ صفحات القصّة */
 $('stPrev').onclick=function(){ storyStep(-1); };
 $('stNext').onclick=function(){ storyStep(1); };
-/* وسحبةُ الإصبع تقلبها كذلك — والاتّجاهُ عربيٌّ: سحبٌ لليسار يمضي */
+/* ===== تقليبُ صفحات القصّة بالسحب =====
+   على سَنن المصحف سواء، وبعتبته نفسِها (mfSwipeDir): سحبٌ إلى اليمين
+   يمضي إلى التالية — كما تُقلَّب صفحةُ الكتاب العربيّ — وإلى اليسار
+   يعود إلى السابقة. وكان عندي بالعكس.
+   ويُحسم المحورُ من أوّل حركةٍ فلا يُقلّب من أراد تمريرَ النصّ، ويُمسك
+   المؤشّرُ فلا تفلت الإيماءة. والإلغاءُ يُحسم من آخر موضعٍ بلغه: بعضُ
+   المتصفّحات تُلغي المؤشّرَ ولا تُبلّغ رفعَه، فكانت السحبةُ تذهب هدراً. */
 (function(){
-  var P=$('stPage'), x0=0, y0=0, live=false;
-  if(!P) return;
-  P.addEventListener('pointerdown', function(e){ x0=e.clientX; y0=e.clientY; live=true; }, {passive:true});
-  P.addEventListener('pointerup', function(e){
-    if(!live) return; live=false;
-    var dx=e.clientX-x0, dy=e.clientY-y0;
-    if(Math.abs(dx)<56 || Math.abs(dy)>Math.abs(dx)) return;   /* سحبةٌ أفقيّةٌ واضحة */
-    storyStep(dx<0 ? 1 : -1);
-  }, {passive:true});
-  P.addEventListener('pointercancel', function(){ live=false; }, {passive:true});
+  var P=$('stPage'); if(!P) return;
+  var live=false, sx=0, sy=0, lx=0, ly=0;
+  function start(x,y){ live=true; sx=x; sy=y; lx=0; ly=0; }
+  function move(x,y){ if(live){ lx=x-sx; ly=y-sy; } }
+  function end(){
+    if(!live) return;
+    live=false;
+    var d=0; try{ d=mfSwipeDir(lx,ly); }catch(e){}   /* عتبةُ المصحف نفسُها */
+    if(d) storyStep(d);                              /* +١ يميناً: التالية */
+  }
+  /* اللمسُ هو الأصل هنا لا المؤشّر: إن وقعت السحبةُ على صندوق النصّ بدأ
+     المتصفّحُ يُمرّره فألغى المؤشّرَ بعد أوّل حركة — فكانت السحبةُ تضيع.
+     وأحداثُ اللمس تصل إلى آخرها في الحالين، فيُحسم منها. والسحبُ الرأسيُّ
+     يبقى للنصّ: العتبةُ لا تقلّب إلّا لأفقيٍّ واضح. */
+  P.addEventListener('touchstart',  function(e){ var t=e.touches[0]; if(t) start(t.clientX,t.clientY); }, {passive:true});
+  P.addEventListener('touchmove',   function(e){ var t=e.touches[0]; if(t) move(t.clientX,t.clientY); }, {passive:true});
+  P.addEventListener('touchend',    end, {passive:true});
+  P.addEventListener('touchcancel', end, {passive:true});
+  /* وعلى الحاسوب: الفأرةُ وحدَها، فلمسُ الشاشة قد سبق */
+  P.addEventListener('pointerdown', function(e){ if(e.pointerType!=='touch') start(e.clientX,e.clientY); });
+  P.addEventListener('pointermove', function(e){ if(e.pointerType!=='touch') move(e.clientX,e.clientY); });
+  P.addEventListener('pointerup',   function(e){ if(e.pointerType!=='touch') end(); });
 })();
 $('btnStoryBack').onclick=function(){ storyFree(); STORY=null; storiesOpen(); };
 /* رجوعٌ من اختيار المصدر إلى قائمة الألعاب، ومن القائمة إلى الرئيسيّة.
