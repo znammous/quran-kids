@@ -1709,7 +1709,18 @@ body.glow-off .dfpic{animation:none}
   color:var(--ttl);font-size:18px;font-weight:900;font-family:inherit;cursor:pointer;touch-action:manipulation}
 .runhearts{flex:1;min-width:0;font-size:19px;letter-spacing:1px;white-space:nowrap;overflow:hidden}
 .runscore{flex:0 0 auto;font-weight:900;font-size:17px;color:var(--ttl);background:var(--pnl);
-  border:2px solid var(--pb);border-radius:999px;padding:4px 14px;font-variant-numeric:tabular-nums}
+  border:2px solid var(--pb);border-radius:999px;padding:4px 12px;font-variant-numeric:tabular-nums}
+/* عدّادُ الجواهر بجوار النقاط: تُقيَّد لحظةَ إتمام الآية لا عند نفاد القلوب،
+   فيراها الطفلُ تزيد ولا ينتظر النهايةَ ليعلم ما نال */
+.rungem{flex:0 0 auto;font-weight:900;font-size:17px;color:var(--rew);background:var(--pnl);
+  border:2px solid var(--gold);border-radius:999px;padding:4px 12px;font-variant-numeric:tabular-nums}
+.rungem.pop{animation:gempop .34s ease}
+@keyframes gempop{0%{transform:scale(1)}45%{transform:scale(1.22)}100%{transform:scale(1)}}
+/* الشاشاتُ الضيّقة: القلوبُ تتنازل أوّلاً، فلا يُزاحَم العدّادان */
+@media(max-width:380px){
+  .runhearts{font-size:16px;letter-spacing:0}
+  .runscore,.rungem{font-size:15px;padding:4px 9px}
+}
 .runayah{background:var(--pnl);border:2px solid var(--pb);border-radius:16px;padding:6px 12px 8px;margin-bottom:8px;text-align:center}
 .runref{font-size:12.5px;font-weight:800;color:var(--on3)}
 .runline{font-family:"Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif;font-size:23px;line-height:1.85;color:var(--ttl);min-height:3.7em;
@@ -2354,6 +2365,7 @@ body.glow-off .dfpic{animation:none}
     <div class="runtop">
       <button type="button" class="runx" id="btnRunQuit" aria-label="خروج">✕</button>
       <div class="runhearts" id="runHearts"></div>
+      <div class="rungem" id="runGem">💎 0</div>
       <div class="runscore" id="runScore">⭐ 0</div>
     </div>
     <div class="runayah"><div class="runref" id="runRef">—</div><div class="runline" id="runLine"></div></div>
@@ -2365,6 +2377,7 @@ body.glow-off .dfpic{animation:none}
     <div class="runtop">
       <button type="button" class="runx" id="btnShelfQuit" aria-label="خروج">✕</button>
       <div class="runhearts" id="shelfHearts"></div>
+      <div class="rungem" id="shelfGem">💎 0</div>
       <div class="runscore" id="shelfScore">⭐ 0</div>
     </div>
     <div class="runayah"><div class="runref" id="shelfRef">—</div><div class="runline" id="shelfLine"></div></div>
@@ -2376,6 +2389,7 @@ body.glow-off .dfpic{animation:none}
     <div class="runtop">
       <button type="button" class="runx" id="btnBirdQuit" aria-label="خروج">✕</button>
       <div class="runhearts" id="birdHearts"></div>
+      <div class="rungem" id="birdGem">💎 0</div>
       <div class="runscore" id="birdScore">⭐ 0</div>
     </div>
     <div class="runayah"><div class="runref" id="birdRef">—</div><div class="runline" id="birdLine"></div></div>
@@ -15061,6 +15075,7 @@ function runHud(){
   for(i=0;i<RUN_HEARTS;i++) h+=(i<RUN.hearts)?'❤️':'🤍';
   $('runHearts').textContent=h;
   $('runScore').textContent='⭐ '+arNum(RUN.score);
+  gemHud('runGem', RUN.gems||0);
   if(!ay) return;
   $('runRef').textContent='سورة '+ay.s.name+' • '+RUN_KIND[ay.kind];
   var L='', sh=ay.show;
@@ -15131,10 +15146,51 @@ function gameGems(gid, pool){
   addGems(give);                       /* وفيها حفظُ القاعدة */
   return give;
 }
+/* عدّادُ الجواهر في أعلى شاشة اللعب — للألعاب الثلاث سواء.
+   الجواهرُ تُقيَّد لحظةَ إتمام الآية لا عند نفاد القلوب، وكان لا يُرى منها
+   شيءٌ إلّا سطرٌ عابرٌ ثمّ ملخّصُ النهاية — والعدّادُ الظاهرُ ⭐ نقاطٌ لا
+   جواهر، فيُظنّ أنّها لا تأتي إلّا بالموت. فصارت تُعدّ أمامه، وتنبض
+   كلّما زادت. */
+function gemHud(id, n){
+  var e=$(id); if(!e) return;
+  var was=e.getAttribute('data-n');
+  e.textContent='💎 '+arNum(n);
+  e.setAttribute('data-n', n);
+  if(was!=null && +was<n){            /* تنبض للزيادة وحدَها، لا لتصفيرها بلعبةٍ جديدة */
+    e.classList.remove('pop');
+    void e.offsetWidth;                 /* لتُعاد الحركةُ من أوّلها */
+    e.classList.add('pop');
+  }
+}
 /* سطرُ «أحسنت» بعد كلّ آية: يذكر الجواهرَ إن نالها، ويُنبّه إن بلغ سقفَ يومه */
 function gameWinLine(gid, g){
   return g ? ('أحسنت! 🌟 +'+arNum(g)+' 💎')
-           : (gameGemCap(gid)<=0 ? 'أحسنت! 🌟 بلغتَ سقفَ جواهر هذه اللعبة اليوم' : 'أحسنت! 🌟');
+           : (gameGemCap(gid)<=0 ? '🌟 بلغتَ سقفَ جواهر اليوم' : 'أحسنت! 🌟');
+}
+/* ===== سطرُ الحماسة على اللوحة =====
+   كان يُكتب بحجمٍ ثابتٍ لا يُقاس، فما طال منه خرج عن حدّ اللوحة ولم يُقرأ
+   — كسطرِ بلوغِ سقفِ الجواهر. فصار يُقاس عرضُه: يُصغَّر حتى يسعه، فإن
+   ضاق عنه قُسم سطرَين. */
+function gameFlash(c, txt, W, y, big){
+  var max=W-24, lines=[String(txt||'')], size=big, i, k;
+  function fits(){
+    c.font='900 '+size+'px "IBM Plex Sans Arabic",sans-serif';
+    for(var z=0;z<lines.length;z++) if(c.measureText(lines[z]).width>max) return false;
+    return true;
+  }
+  while(size>15 && !fits()) size-=1;
+  if(!fits()){
+    var ws=lines[0].split(' '), a='', b='';
+    for(i=0;i<ws.length;i++){ if(i<Math.ceil(ws.length/2)) a+=(a?' ':'')+ws[i]; else b+=(b?' ':'')+ws[i]; }
+    if(b){ lines=[a,b]; size=big; while(size>12 && !fits()) size-=1; }
+  }
+  c.textAlign='center'; c.lineWidth=6; c.strokeStyle='#0a2a5e';
+  for(k=0;k<lines.length;k++){
+    var yy=y+k*(size+5);
+    c.font='900 '+size+'px "IBM Plex Sans Arabic",sans-serif';
+    c.strokeText(lines[k], W/2, yy);
+    c.fillStyle='#ffe27a'; c.fillText(lines[k], W/2, yy);
+  }
 }
 /* مستوياتُ الألعاب: واحدةٌ لكلّ لعبةٍ تُذكر، ولكلّ مستوىً أفضلُ نتيجته */
 function gameLv(id){ var l=gameStats(id).lvl; return RUN_LEVELS[l] ? l : 'mid'; }
@@ -15972,12 +16028,7 @@ function runDraw(){
   c.fillStyle=L?'rgba(10,42,94,.75)':'rgba(255,255,255,.8)';
   c.fillText('🏁 '+arNum(runMeters())+' م', W-10, 20);
   c.textAlign='center';
-  if(RUN.flashT>0){
-    var fl=RUN.flash||'أحسنت! 🌟';
-    c.font='900 '+(fl.length>12?21:28)+'px "IBM Plex Sans Arabic",sans-serif';
-    c.lineWidth=6; c.strokeStyle='#0a2a5e'; c.strokeText(fl, W/2, 64);
-    c.fillStyle='#ffe27a'; c.fillText(fl, W/2, 64);
-  }
+  if(RUN.flashT>0) gameFlash(c, RUN.flash||'أحسنت! 🌟', W, 64, 28);
   if(RUN.toastT>0 && RUN.toast){
     c.font='700 14px "IBM Plex Sans Arabic",sans-serif';
     var tw=c.measureText(RUN.toast).width+24;
@@ -16079,6 +16130,7 @@ function shelfHud(){
   for(i=0;i<SHELF_HEARTS;i++) h+=(i<SH.hearts)?'❤️':'🤍';
   $('shelfHearts').textContent=h;
   $('shelfScore').textContent='⭐ '+arNum(SH.score);
+  gemHud('shelfGem', SH.gems||0);
   if(!ay) return;
   var np=ay.parts.length, done=ay.p>=np;
   $('shelfRef').textContent='سورة '+ay.s.name+(np>1 && !done ? ' • الجزء '+arNum(ay.p+1)+' من '+arNum(np) : '');
@@ -16366,11 +16418,7 @@ function shelfDraw(){
   for(i=0;i<SH.parts.length;i++){ var p=SH.parts[i]; c.globalAlpha=Math.min(1, p.l*1.6); c.fillStyle=p.c; c.fillRect(Math.round(p.x), Math.round(p.y), 3, 3); }
   c.globalAlpha=1;
   c.textAlign='center'; c.textBaseline='middle'; c.direction='rtl';
-  if(SH.flashT>0 && SH.flash){
-    c.font='900 '+(SH.flash.length>16?18:24)+'px "IBM Plex Sans Arabic",sans-serif';
-    c.lineWidth=6; c.strokeStyle='#0a2a5e'; c.strokeText(SH.flash, W/2, 18);
-    c.fillStyle='#ffe27a'; c.fillText(SH.flash, W/2, 18);
-  }
+  if(SH.flashT>0 && SH.flash) gameFlash(c, SH.flash, W, 18, 24);
   if(SH.toastT>0 && SH.toast){
     c.font='700 14px "IBM Plex Sans Arabic",sans-serif';
     var tw=c.measureText(SH.toast).width+24;
@@ -16456,6 +16504,7 @@ function birdHud(){
   for(i=0;i<BIRD_HEARTS;i++) h+=(i<BD.hearts)?'❤️':'🤍';
   $('birdHearts').textContent=h;
   $('birdScore').textContent='⭐ '+arNum(BD.score);
+  gemHud('birdGem', BD.gems||0);
   if(!ay) return;
   $('birdRef').textContent='سورة '+ay.s.name+' • '+RUN_KIND[ay.kind];
   var L='', sh=ay.show;
@@ -16744,12 +16793,7 @@ function birdDraw(){
   }
   for(i=0;i<BD.parts.length;i++){ var p=BD.parts[i]; c.fillStyle=p.c; c.fillRect(Math.round(p.x), Math.round(p.y), 3, 3); }
   c.textBaseline='middle'; c.direction='rtl'; c.textAlign='center';
-  if(BD.flashT>0){
-    var fl=BD.flash||'أحسنت! 🌟';
-    c.font='900 '+(fl.length>12?20:26)+'px "IBM Plex Sans Arabic",sans-serif';
-    c.lineWidth=6; c.strokeStyle='#0a2a5e'; c.strokeText(fl, W/2, 20);
-    c.fillStyle='#ffe27a'; c.fillText(fl, W/2, 20);
-  }
+  if(BD.flashT>0) gameFlash(c, BD.flash||'أحسنت! 🌟', W, 20, 26);
   if(BD.toastT>0 && BD.toast){
     c.font='700 14px "IBM Plex Sans Arabic",sans-serif';
     var tw=c.measureText(BD.toast).width+24;
