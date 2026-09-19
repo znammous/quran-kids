@@ -7077,7 +7077,10 @@ function openScopedPath(r,label){
   }
   ns.sort(function(x,y){ return x-y; });
   PATH_SCOPE={ lo:Math.min(r[0],r[1]), hi:Math.max(r[0],r[1]),
-               label:label||'مقرَّر اليوم', surahs:ns, pieces:pm };
+               label:label||'مقرَّر اليوم', surahs:ns, pieces:pm,
+               /* حدُّ المقرَّر نفسِه، يبقى وإن وُسّع النطاق إلى الماضي */
+               base:[Math.min(r[0],r[1]), Math.max(r[0],r[1])] };
+  PATH_BACK=1;
   /* يبدأ من أوّل قِطع المقرَّر على ترتيب الخطة */
   var s0=surahBy(pc[0].n); if(!s0) { clearScope(); return false; }
   curSurah=s0; curP().last=s0.n; saveDB();
@@ -7108,10 +7111,48 @@ function scopeNextSurah(){
   if(planDir()<0) ns.reverse();
   for(i=0;i<ns.length;i++){
     var s=surahBy(ns[i]); if(!s) continue;
-    var v=scopedSegs(s);
-    for(k=0;k<v.length;k++) if(!segDone(s,v[k].g)) return s;
+    var v=scopedSegs(s), bs=PATH_SCOPE.base, bse=GIDX[s.n-1];
+    for(k=0;k<v.length;k++){
+      /* ما كُشف من الماضي ليس من المقرَّر، فلا يُقصد به */
+      if(bs && (bse+v[k].g[1]-1<bs[0] || bse+v[k].g[0]>bs[1])) continue;
+      if(!segDone(s,v[k].g)) return s;
+    }
   }
   return null;
+}
+/* كشفُ ما قبل المقرَّر: يُوسَّع النطاق وجهين إلى الوراء في كلّ نقرة، والمقرَّرُ
+   على حاله — فمن دخل من حفظ اليوم صار له سبيلٌ إلى استعراض ما مضى */
+var PATH_SC_STEP=2;
+function lastGi(){ return GIDX[SURAHS.length-1]+SURAHS[SURAHS.length-1].ayat.length-1; }
+/* أوّلُ وجهٍ يُكشف: في الخطة المنكوسة يكون «السابقُ» بعدَه في المصحف */
+function scopeBackPage(){
+  if(!PATH_SCOPE) return 0;
+  return planDir()<0 ? pageOfIdx(PATH_SCOPE.hi)+1 : pageOfIdx(PATH_SCOPE.lo)-1;
+}
+function scopeCanBack(){
+  if(!PATH_SCOPE) return false;
+  return planDir()<0 ? (PATH_SCOPE.hi<lastGi()) : (PATH_SCOPE.lo>0);
+}
+function pathScopeBack(){
+  if(!scopeCanBack()) return false;
+  var lo=PATH_SCOPE.lo, hi=PATH_SCOPE.hi, LAST=PAGE_STARTS.length;
+  if(planDir()<0){
+    var pe=pageOfIdx(hi)+PATH_SC_STEP;
+    hi=(pe<LAST)?(PAGE_STARTS[pe]-1):lastGi();
+  }else{
+    var pg=pageOfIdx(lo)-1-PATH_SC_STEP;
+    lo=(pg>0)?PAGE_STARTS[pg]:0;
+  }
+  var pc=bqnPieces([lo,hi]), pm={}, ns=[], i;
+  if(!pc.length) return false;
+  for(i=0;i<pc.length;i++){
+    (pm[pc[i].n]=pm[pc[i].n]||[]).push([pc[i].f,pc[i].t]);
+    if(ns.indexOf(pc[i].n)<0) ns.push(pc[i].n);
+  }
+  ns.sort(function(x,y){ return x-y; });
+  PATH_SCOPE.lo=lo; PATH_SCOPE.hi=hi; PATH_SCOPE.surahs=ns; PATH_SCOPE.pieces=pm;
+  PATH_BACK+=PATH_WIN_STEP;
+  return true;
 }
 function allowedSurahs(){ return SURAHS.filter(inRange); }
 function defaultSurah(){
@@ -7136,9 +7177,10 @@ function openSurah(n, picked){
    تتّسع بزرٍّ كلّما بلغ آخرَها. */
 var PATH_WIN=2;                    /* كم سورةً تُرسم بعد موضعه */
 /* وكم سورةً تُرسم قبله: كان واحدةً لا تزيد، فلا سبيلَ إلى استعراض ما مضى.
-   فصار له زرٌّ في الرأس كزرّ المتابعة في الذيل، ولها حدٌّ لئلّا يبتلع سقفُ
-   العقد موضعَه الحاليَّ فيختفي من الشاشة */
-var PATH_BACK=1, PATH_BACK_MAX=12, PATH_GOTOP=false;
+   فصار له زرٌّ في الرأس كزرّ المتابعة في الذيل، يتّسع بلا حدٍّ حتى يبلغ
+   أوّلَ الخطّة فيختفي — وكان له حدٌّ وميزانيّةُ عقدٍ فيقف بعد نقرةٍ أو
+   نقرتين ولا يستجيب، فرُفعا */
+var PATH_BACK=1, PATH_GOTOP=false;
 var PATH_WIN_STEP=3, PATH_NODE_CAP=240;
 function pathSurahList(){
   var SC=PATH_SCOPE;
@@ -7172,7 +7214,9 @@ function renderPath(){
     tot+=vv.length;
     for(z=0;z<vv.length;z++) if(segDone(list[i],vv[z].g)) dnAll++;
   }
-  $('pathTitle').innerHTML=(SC?('📅 '+esc(SC.label)):'🗺️ مسارك')+
+  /* إن كُشف ما قبل المقرَّر بُيّن في الترويسة، فلا يظنّ المقرَّرَ اتّسع */
+  $('pathTitle').innerHTML=(SC?('📅 '+esc(SC.label)+
+      ((SC.base && (SC.lo<SC.base[0] || SC.hi>SC.base[1]))?' + ما مضى':'')):'🗺️ مسارك')+
     '<span>'+arNum(dnAll)+'/'+arNum(tot)+' مقطع • '+arCount(list.length,C_SURAH)+'</span>';
 
   var tn=todayNum(), offs=['off2','off1','off2','','off3','off4','off3',''];
@@ -7207,16 +7251,7 @@ function renderPath(){
   }
   /* النافذة: ما قبله بما طلب وما بعده بعدّة — ولا تتجاوز سقفَ العقد */
   var from=Math.max(0,pos-PATH_BACK), to=Math.min(list.length-1, pos+PATH_WIN);
-  /* ولا يُسرف في الماضي: تُحصى عقدُه قبل الرسم، فإن جاوزت نصفَ السقف قُرّب
-     الرأس — وإلّا انقطع الرسمُ عند السقف دون موضعه اليومَ فغاب عن الشاشة */
-  if(from<pos){
-    var bud=Math.floor(PATH_NODE_CAP/2), acc=0, q;
-    for(q=pos-1;q>=from;q--){
-      acc+=scopedSegs(list[q]).length+1;
-      if(acc>bud){ from=q+1; break; }
-    }
-  }
-  var hHead=h.length;                       /* موضعُ رأس المسار، ليُدسّ زرُّ السابق فيه */
+  var hHead=h.length;                     /* موضعُ رأس المسار، ليُدسّ زرُّ السابق فيه */
   for(i=from;i<=to;i++){
     var sx=list[i];
     ensureSchedule(sx);
@@ -7265,7 +7300,9 @@ function renderPath(){
       h+='<div class="pnode" data-act="cert" data-s="'+sx.n+'"><div class="dot" '+
          'style="background:linear-gradient(180deg,#ffd75e,#eab308);border-color:#a1791a;color:#4a3600">📜</div>'+
          '<div class="lbl">شهادة السورة</div></div>';
-    if(nodes>=PATH_NODE_CAP){ to=i; break; }
+    /* السقفُ يقطع ما بعد موضعه، لا ما قبله: لو قطع الماضيَ لانقطع الرسمُ
+       قبل أن يبلغ موضعَه اليومَ فغاب عن الشاشة */
+    if(nodes>=PATH_NODE_CAP && i>=pos){ to=i; break; }
   }
 
   /* مقرَّرُ اليوم: عقدةُ الغد في آخره */
@@ -7282,11 +7319,15 @@ function renderPath(){
     h+='<button type="button" class="pathmore" id="pathMore">▼ تابع المسار — '+
        esc(list[to+1].name)+' وما بعدها</button>';
   /* وما مضى يُطلب بزرٍّ في الرأس — يُدسّ في موضعه لا في أوّل الشاشة، فلا
-     يعلو صندوقَ مقرَّر اليوم */
-  if(from>0)
+     يعلو صندوقَ مقرَّر اليوم. وفي مقرَّر اليوم النطاقُ مقصورٌ عليه، فلا يكفي
+     توسيعُ نافذة السور، بل يُوسَّع النطاقُ نفسُه إلى الوراء */
+  var prevOK = SC ? scopeCanBack() : (from>0);
+  var prevLbl = SC ? ('وجه '+arNum(scopeBackPage())+' وما قبله')
+                   : (esc(list[from-1].name)+' وما قبلها');
+  if(prevOK)
     h = h.slice(0,hHead)+
         '<button type="button" class="pathmore up" id="pathPrev">▲ السابق — '+
-          esc(list[from-1].name)+' وما قبلها</button>'+
+          prevLbl+'</button>'+
         h.slice(hHead);
 
   $('path').innerHTML=h;
@@ -7294,7 +7335,7 @@ function renderPath(){
     PATH_WIN+=PATH_WIN_STEP; renderPath();
   };
   if($('pathPrev')) $('pathPrev').onclick=function(){
-    PATH_BACK=Math.min(PATH_BACK+PATH_WIN_STEP, PATH_BACK_MAX);
+    if(SC) pathScopeBack(); else PATH_BACK+=PATH_WIN_STEP;
     PATH_GOTOP=true; renderPath();
   };
   var ns=$('path').querySelectorAll('.pnode'), z;
@@ -12188,7 +12229,7 @@ function beginRevPath(){
    والجلساتُ تحته عُقَداً، وما بعدَ النافذةِ يُطلب بزرّ لئلّا تُرسم مئاتُ
    العقد على هاتف طفل. */
 var RPATH_WIN=2, RPATH_WIN_STEP=3, RPATH_NODE_CAP=240;
-var RPATH_BACK=1, RPATH_BACK_MAX=12, RPATH_GOTOP=false;
+var RPATH_BACK=1, RPATH_GOTOP=false;
 function revSecHTML(sn,cnt,dn,here){
   var sx=surahBy(sn), all=(cnt>0 && dn>=cnt);
   return '<div class="pathsec'+(all?' done':(here?' here':''))+'">'+
@@ -12231,13 +12272,6 @@ function renderRevPath(){
   var offs=['off2','off1','off2','','off3','off4','off3',''];
   var h='', nodes=0;
   var from=Math.max(0,pos-RPATH_BACK), to=Math.min(list.length-1, pos+RPATH_WIN);
-  if(from<pos){
-    var bud=Math.floor(RPATH_NODE_CAP/2), acc=0, q;
-    for(q=pos-1;q>=from;q--){
-      acc+=((by[list[q]]||[]).length)+1;
-      if(acc>bud){ from=q+1; break; }
-    }
-  }
   var hHead=h.length;
   for(i=from;i<=to;i++){
     var sn=list[i], mine=by[sn]||[], dn=0, k;
@@ -12255,7 +12289,7 @@ function renderRevPath(){
          '<div class="lbl wide">'+esc(revSessionLabel(x.pg))+(weak?' 🔁':'')+'</div></div>';
       nodes++;
     }
-    if(nodes>=RPATH_NODE_CAP){ to=i; break; }
+    if(nodes>=RPATH_NODE_CAP && i>=pos){ to=i; break; }
   }
   if(done>=ss.length && to>=list.length-1)
     h+='<div class="pnode done"><div class="dot">🏁</div>'+
@@ -12274,8 +12308,7 @@ function renderRevPath(){
     RPATH_WIN+=RPATH_WIN_STEP; renderRevPath();
   };
   if($('revPrev')) $('revPrev').onclick=function(){
-    RPATH_BACK=Math.min(RPATH_BACK+RPATH_WIN_STEP, RPATH_BACK_MAX);
-    RPATH_GOTOP=true; renderRevPath();
+    RPATH_BACK+=RPATH_WIN_STEP; RPATH_GOTOP=true; renderRevPath();
   };
   var ns=$('revPath').querySelectorAll('[data-revs]'), y;
   for(y=0;y<ns.length;y++) ns[y].onclick=function(){
