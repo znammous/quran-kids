@@ -16048,7 +16048,7 @@ function runDraw(){
   c.fillStyle=L?'rgba(10,42,94,.75)':'rgba(255,255,255,.8)';
   c.fillText('🏁 '+arNum(runMeters())+' م', W-10, 20);
   c.textAlign='center';
-  if(RUN.flashT>0) gameFlash(c, RUN.flash||'أحسنت! 🌟', W, 64, 28);
+  if(RUN.flashT>0) gameFlash(c, RUN.flash||'أحسنت! 🌟', W, 80, 23);
   if(RUN.toastT>0 && RUN.toast){
     c.font='700 14px "IBM Plex Sans Arabic",sans-serif';
     var tw=c.measureText(RUN.toast).width+24;
@@ -16438,7 +16438,7 @@ function shelfDraw(){
   for(i=0;i<SH.parts.length;i++){ var p=SH.parts[i]; c.globalAlpha=Math.min(1, p.l*1.6); c.fillStyle=p.c; c.fillRect(Math.round(p.x), Math.round(p.y), 3, 3); }
   c.globalAlpha=1;
   c.textAlign='center'; c.textBaseline='middle'; c.direction='rtl';
-  if(SH.flashT>0 && SH.flash) gameFlash(c, SH.flash, W, 18, 24);
+  if(SH.flashT>0 && SH.flash) gameFlash(c, SH.flash, W, 32, 20);
   if(SH.toastT>0 && SH.toast){
     c.font='700 14px "IBM Plex Sans Arabic",sans-serif';
     var tw=c.measureText(SH.toast).width+24;
@@ -16813,7 +16813,7 @@ function birdDraw(){
   }
   for(i=0;i<BD.parts.length;i++){ var p=BD.parts[i]; c.fillStyle=p.c; c.fillRect(Math.round(p.x), Math.round(p.y), 3, 3); }
   c.textBaseline='middle'; c.direction='rtl'; c.textAlign='center';
-  if(BD.flashT>0) gameFlash(c, BD.flash||'أحسنت! 🌟', W, 20, 26);
+  if(BD.flashT>0) gameFlash(c, BD.flash||'أحسنت! 🌟', W, 34, 22);
   if(BD.toastT>0 && BD.toast){
     c.font='700 14px "IBM Plex Sans Arabic",sans-serif';
     var tw=c.measureText(BD.toast).width+24;
