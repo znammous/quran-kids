@@ -1166,16 +1166,18 @@ body.light .sp-lit{fill:#1f92d4}
   font-size:clamp(9px,2.6vw,13px);font-weight:900;color:#fff;
   background:rgba(20,26,43,.55);border-radius:8px;padding:2px 10px;white-space:nowrap}
 /* لوحا كلّ رفّ: يمينًا ويسارًا، وعليهما الأغراض */
-.gbpl{position:absolute;display:flex;align-items:flex-end;justify-content:center;gap:3%;
-  overflow:hidden;height:14%}
-.gbpl.l1{left:8%;width:28%;top:11%}
-.gbpl.l2{left:8%;width:28%;top:29%}
-.gbpl.r1{right:8%;width:28%;top:11%}
-.gbpl.r2{right:8%;width:28%;top:29%}
-.gbit{background:none;border:0;padding:0;cursor:pointer;position:relative;
+/* الأيقوناتُ كبيرةٌ ما وسعها اللوحُ: كانت صغيرةً يصعب نقرُها وفوقها فراغ.
+   وقاعُ اللوح هو خطُّ الرفّ في الرسم، فمهما كبرت نمت إلى أعلى ولم تنزل عنه */
+.gbpl{position:absolute;display:flex;align-items:flex-end;justify-content:space-evenly;
+  gap:1%;overflow:hidden;height:19%}
+.gbpl.l1{left:7%;width:31%;top:6%}
+.gbpl.l2{left:7%;width:31%;top:24%}
+.gbpl.r1{right:7%;width:31%;top:6%}
+.gbpl.r2{right:7%;width:31%;top:24%}
+.gbit{background:none;border:0;padding:0 1px;cursor:pointer;position:relative;
   font-family:inherit;line-height:1;touch-action:manipulation;transition:transform .12s}
 .gbit:active{transform:translateY(2px)}
-.gbit .gi{font-size:clamp(14px,4vw,22px)}
+.gbit .gi{font-size:clamp(22px,7.6vw,40px)}
 .gbit .gi svg{width:1em;height:1em;display:block}
 .gbit.on{filter:drop-shadow(0 0 4px #3fe08a)}
 .gbit.off{opacity:.38;cursor:default}
@@ -5659,7 +5661,7 @@ function gbPaint(){
       R(x0+2,y+4,3,6,'#8a5626'); R(x1-5,y+4,3,6,'#8a5626');
     });
   };
-  shelf(16,72); shelf(128,184);
+  shelf(14,76); shelf(124,186);
 
   if(rk==='kit'){
     /* مكتبُه: طاولةٌ وورقٌ وأقلامٌ ومصباح، ولافتةُ «بسم الله» ومصحفٌ أخضر */
