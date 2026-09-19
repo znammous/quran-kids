@@ -11237,6 +11237,23 @@ function selfNext(){
   }
   return null;
 }
+/* آخرُ مقطعٍ أتمّه على ترتيب مساره: الذي يسبق مقطعَه التالي. ومن أتمّ
+   الخطّةَ كلَّها فآخرُ ما فيها. يُستعمل حين لا يكون في مقرَّر اليوم شيءٌ
+   تامٌّ يُلعب به. */
+function selfLast(){
+  var nx=null; try{ nx=selfNext(); }catch(e){}
+  var list=allowedSurahs(); if(!list.length) return null;
+  if(planDir()<0) list=list.slice().reverse();
+  var last=null, i, k, s, segs;
+  for(i=0;i<list.length;i++){
+    s=list[i]; segs=segsOf(s);
+    for(k=0;k<segs.length;k++){
+      if(nx && s.n===nx.s.n && k===nx.i) return last;   /* بلغ موضعَه: ما قبله آخرُ تامّ */
+      if(segDone(s,segs[k])) last={ s:s, i:k, g:segs[k] };
+    }
+  }
+  return last;
+}
 var BQN_CHUNK=8;                     /* أوجه المراجعة في الجلسة الواحدة */
 function bqn36(x){ return parseInt(x,36); }
 /* يوم واحد: {h:[من,إلى], r:[من,إلى]} بفهرس عام، وقد يكون أيّهما فارغاً */
@@ -15143,6 +15160,8 @@ function gameLvWire(id, box, onPick){
    معاً — فاللعبُ تثبيتٌ لما يحفظ الآن لا تسليةٌ إلى جانبه.
    ومن كان على خطّةٍ فمقرَّرُها، ومن كان في مساره الحرّ فمقطعُه التالي وما حلّ
    موعدُ مراجعته. */
+/* من أين جاء صندوقُ اليوم؟ ليُوصف للطفل بما هو، لا بما كان يُظنّ */
+var DAY_SRC='';
 function dayAyat(){
   var out=[], seen={};
   function take(sn, f, t){
@@ -15153,16 +15172,54 @@ function dayAyat(){
       seen[k]=1; out.push({ s:s, a:a });
     }
   }
+  /* ولا يُؤخذ من مدًى إلّا المقاطعُ التامّةُ منه: اللعبةُ مراجعةٌ لا تلقين،
+     فلا يُسأل الطفلُ عن آيةٍ لم يحفظها بعد */
+  function takeDone(sn,f,t){
+    var s=surahBy(sn); if(!s) return;
+    var segs=segsOf(s), i, g;
+    for(i=0;i<segs.length;i++){
+      g=segs[i];
+      if(g[1]<=f || g[0]>=t) continue;          /* خارج المدى */
+      if(!segDone(s,g)) continue;               /* لم يُتمّه */
+      take(sn, Math.max(g[0],f), Math.min(g[1],t));
+    }
+  }
   var T=null; try{ T=bqnToday(); }catch(e){}
+  DAY_SRC='';
   if(T){
     [T.h, T.r].forEach(function(r){
       if(!r) return;
-      try{ bqnPieces(r).forEach(function(p){ take(p.n, p.f, p.t); }); }catch(e){}
+      try{ bqnPieces(r).forEach(function(p){ takeDone(p.n, p.f, p.t); }); }catch(e){}
     });
+    if(out.length) DAY_SRC='today';
+    /* لم يتمّ من مقرَّر اليوم شيءٌ بعد — أو مضت الخطّةُ إلى الغد فصار
+       المقرَّرُ آياتِ غدٍ لم يرَها: يُرجع إلى آخر يومٍ أتمّه */
+    if(!out.length){
+      var d=T.day-1, guard=0, parts;
+      while(d>=0 && !out.length && guard++<60){
+        parts=bqnDayParts(T.plan,d);
+        if(parts && parts.h){
+          try{ bqnPieces(parts.h).forEach(function(p){ takeDone(p.n,p.f,p.t); }); }catch(e){}
+        }
+        d--;
+      }
+      if(out.length) DAY_SRC='prev';
+    }
   }else{
-    var nx=null; try{ nx=selfNext(); }catch(e){}
-    if(nx) take(nx.s.n, nx.g[0], nx.g[1]);
+    /* الوضعُ الحرّ: ما حلّ موعدُ مراجعته محفوظٌ، وأمّا «المقطع التالي»
+       فهو بتعريفه ما لم يُتمَّ بعد — فلا يُسحب منه سؤال */
     try{ dueSegs().forEach(function(d){ take(d.s.n, d.from, d.to); }); }catch(e){}
+    if(out.length) DAY_SRC='due';
+    /* ويُضمّ إليه آخرُ ما أتمّ: هو أحوجُ ما يكون إلى تثبيت، ولم يحلّ
+       موعدُ مراجعته بعدُ فلا يأتي من الأوّل — وبه لا يخلو الصندوقُ يومَ
+       يُتمّ مقطعَه ولا شيءَ مستحقٌّ للمراجعة */
+    var lp0=null; try{ lp0=selfLast(); }catch(e){}
+    if(lp0){ take(lp0.s.n, lp0.g[0], lp0.g[1]); if(!DAY_SRC && out.length) DAY_SRC='last'; }
+  }
+  /* ولا شيءَ بعد: آخرُ مقطعٍ أتمّه */
+  if(!out.length){
+    var lp=null; try{ lp=selfLast(); }catch(e){}
+    if(lp){ take(lp.s.n, lp.g[0], lp.g[1]); DAY_SRC='last'; }
   }
   return out;
 }
@@ -15178,17 +15235,11 @@ function dayPool(){
 }
 /* وصفُ مقرَّر اليوم في سطرٍ واحد، ليعرف إلامَ يقوده الزرُّ قبل ضغطه */
 function dayPoolLabel(n){
-  var T=null; try{ T=bqnToday(); }catch(e){}
-  var what;
-  if(T) what=(T.h&&T.r) ? 'حفظُ اليوم ومراجعتُه'
-           : T.h ? ('حفظُ اليوم — '+bqnLabel(T.h))
-           : T.r ? ('مراجعةُ اليوم — '+bqnLabel(T.r)) : '';
-  else {
-    var nx=null, due=0;
-    try{ nx=selfNext(); }catch(e){}
-    try{ due=dueSegs().length; }catch(e){}
-    what=(nx?'مقطعُك التالي':'')+((nx&&due)?' وما حلّ موعدُ مراجعته':(due?'ما حلّ موعدُ مراجعته':''));
-  }
+  var what='';
+  if(DAY_SRC==='today')     what='ممّا أتممتَه من مقرَّر اليوم';
+  else if(DAY_SRC==='prev') what='آخرُ مقرَّرٍ أتممتَه';
+  else if(DAY_SRC==='due')  what='ما أتممتَه وما حلّ موعدُ مراجعته';
+  else if(DAY_SRC==='last') what='آخرُ مقطعٍ أتممتَه';
   return (what?what+' — ':'')+arCount(n,C_AYAH)+' تصلح للسؤال';
 }
 /* ===== نطاقُ الفهرس: سورٌ يُختار منها، ولكلّ سورةٍ مداها =====
@@ -15369,10 +15420,10 @@ function stMeta(id){ var m=null; stList().forEach(function(x){ if(x.id===id) m=x
 /* حالُ القصص مع هذا الطفل وحده: ما أُعلن عنه، وما فتحه، وما أتمّه، وأين وقف */
 function stBox(){
   var p=null; try{ p=curP(); }catch(e){}
-  if(!p) return { ann:{}, op:{}, read:{}, pos:{} };
+  if(!p) return { ann:{}, op:{}, read:{} };
   if(!p.stories || typeof p.stories!=='object') p.stories={};
   var s=p.stories;
-  if(!s.ann) s.ann={}; if(!s.op) s.op={}; if(!s.read) s.read={}; if(!s.pos) s.pos={};
+  if(!s.ann) s.ann={}; if(!s.op) s.op={}; if(!s.read) s.read={};
   return s;
 }
 /* «الجديدُ» ما لم يفتحه بعد — لا ما لم يُتمّه، فلا تبقى النقطةُ حتى يقرأ الكلّ */
@@ -15442,8 +15493,7 @@ function storyOpen(id){
     var pg=(j && j.pages) || [];
     if(!pg.length) throw new Error('فارغة');
     STORY={ id:id, meta:meta, pages:pg };
-    var at=parseInt(s.pos[id],10) || 0;
-    STORY_I=Math.max(0, Math.min(at, pg.length-1));
+    STORY_I=0;                      /* القصّةُ تُفتح من أوّلها دائماً، كالكتاب يُعاد */
     storyDraw();
   })['catch'](function(){
     $('stPage').innerHTML='<p class="gmnote">تعذّر فتحُ القصّة الآن 🌧️<br>'+
@@ -15471,9 +15521,7 @@ function storyDraw(){
                                        : '<span>التالي</span><span class="sar">←</span>';
   $('stNext').disabled=false;
   var s=stBox();
-  s.pos[STORY.id]=STORY_I;
-  if(STORY_I>=n-1) s.read[STORY.id]=1;
-  saveDB();
+  if(STORY_I>=n-1){ s.read[STORY.id]=1; saveDB(); }   /* بلغ آخرَها: تُعلَّم مقروءة */
   /* الشاشةُ ثابتةٌ لا تنساح، فالذي يُردّ إلى أوّله صندوقُ النصّ لا الصفحة */
   try{ var tb=$('stPage').querySelector('.sttext'); if(tb) tb.scrollTop=0; }catch(e){}
   /* وتُجلب صورةُ الصفحة التالية سلفاً، فتُقلب الصفحةُ ولا تنتظر */
