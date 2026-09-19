@@ -7036,7 +7036,9 @@ function show(id){
   }catch(e){}
   /* غادر الدرسَ ولا وجهَ مفتوحٌ فوقه: تسكت التلاوةُ، فلا تبقى تتلو خلف شاشةٍ أخرى */
   try{ if(id!=='scr-play' && !($('mfSheet') && !$('mfSheet').hidden)) audStop(); }catch(e){}
-  try{ if(id!=='scr-start') navGuard(); }catch(e){}   /* رجوع الهاتف يبقى داخل اللعبة */
+  /* كلُّ انتقالِ شاشةٍ يدفع موضعاً في سجلّ الصفحة، فتردّه ضغطةُ الرجوع
+     شاشةً واحدةً كما جاء. ولا يُدفع شيءٌ أثناء معالجة الرجوع نفسِها */
+  try{ navGuard(); }catch(e){}
   window.scrollTo(0,0);
   /* الشهادةُ تُضبط على الشاشة، وكلُّ انتقالٍ آخر يفكّ قفلَ الصفحة. ويُعاد الضبطُ
      بعد لحظةٍ لما تأخّر: صورةُ الطالب والخطوط */
@@ -16631,7 +16633,7 @@ try{ syncTabs((document.querySelector('.screen.active')||{}).id||'scr-start'); }
   });
 })();
 /* ===== زرّ الرجوع ===== */
-var NAV={ ok:false, n:0, want:5, exit:0, tEl:null, tT:0 };
+var NAV={ ok:false, n:0, min:2, inpop:false, exit:0, tEl:null, tT:0 };
 /* زرّ الرجوع الموجود أصلاً في كل شاشة — نضغطه نيابةً عن اللاعب */
 var NAV_BACK={ 'scr-look':'btnLookDone', 'scr-tree':'btnTreeBack', 'scr-report':'btnRepBack',
   'scr-map':'btnBackStart', 'scr-path':'btnBackMap',
@@ -16811,29 +16813,36 @@ function navBack(){
   if(b && $(b)){ $(b).click(); return true; }
   return false;                                   /* نحن في الصفحة الأولى */
 }
-/* ===== حرّاسُ السجلّ =====
-   كان حارساً واحداً يُعاد نصبُه داخل معالج «popstate» نفسِه. وكروم يَسِم ما
-   يُدفع في السجلّ بلا لمسةٍ من المستخدم بأنّه «يُتخطّى» (History Manipulation
-   Intervention)، والرجوعُ ليس لمسةً في الصفحة — فالحارسُ المنصوبُ أثناء
-   معالجته يُتخطّى، فتخرج الضغطةُ التالية من التطبيق. وهي علّةُ من رجع من
-   «الاختبارات» فأغلقت الضغطةُ الثانيةُ التطبيقَ بدل أن تردّه إلى الرئيسيّة.
+/* ===== سجلُّ الرجوع =====
+   كان في السجلّ «حارسٌ» واحدٌ يُعاد نصبُه داخل معالج «popstate» نفسِه، فيكفي
+   كلَّ الرحلة. وكروم يَسِم ما يُدفع في السجلّ بلا لمسةٍ من المستخدم بأنّه
+   «يُتخطّى» (History Manipulation Intervention)، وضغطةُ الرجوع ليست لمسةً في
+   الصفحة — فكلُّ ما يُنصب أثناء معالجتها يُتخطّى، فيُستهلك الحارسُ ولا يُخلَف،
+   وتخرج الضغطةُ التالية من التطبيق. وهي علّةُ من رجع من «🏰 الاختبارات»
+   فردّته الأولى إلى المسار وأغلقت الثانيةُ التطبيقَ بدل أن تردّه إلى الرئيسيّة.
 
-   فصاروا حرّاساً عدّة، ويُجدَّدون مع كلّ لمسةٍ في الصفحة — وما يُدفع مع لمسةٍ
-   لا يُتخطّى. فلا يبقى التطبيقُ مكشوفاً ولو تتابعت ضغطاتُ الرجوع. */
+   فصار السجلُّ يُماثل رحلتَه: كلُّ انتقالِ شاشةٍ — وهو بلمسةٍ دائماً فلا
+   يُتخطّى — يدفع موضعاً، وكلُّ ضغطةِ رجوعٍ تستهلك موضعاً وتردّه شاشةً واحدة.
+   ولا يُدفع شيءٌ أثناء المعالجة أصلاً. ويبقى احتياطٌ موضعين يُجدَّد باللمس،
+   لما يُفتح بلا انتقالِ شاشةٍ كالنوافذ ووجهِ المصحف. */
 function navGuard(){
-  if(!NAV.ok) return;
-  try{
-    while(NAV.n < NAV.want){ history.pushState({nw:1},''); NAV.n++; }
-  }catch(e){}
+  if(!NAV.ok || NAV.inpop) return;
+  try{ history.pushState({nw:1},''); NAV.n++; }catch(e){}
+}
+function navTop(){                                /* الاحتياطُ الأدنى، مع لمسة */
+  if(!NAV.ok || NAV.inpop) return;
+  try{ while(NAV.n < NAV.min){ history.pushState({nw:1},''); NAV.n++; } }catch(e){}
 }
 function navPop(){
-  if(NAV.n>0) NAV.n--;                            /* استُهلك حارس */
+  if(NAV.n>0) NAV.n--;                            /* استُهلك موضع */
+  NAV.inpop=true;
   /* ولو سقط معالجُ شاشةٍ باستثناء لم يُترك التطبيقُ مكشوفاً */
   var ok=false;
   try{ ok=navBack(); }catch(e){ ok=true; }
-  if(ok){ NAV.exit=0; navGuard(); return; }
-  /* الصفحةُ الأولى: ننبّه، فإن أعادها قريباً خرج فعلاً — ولا يُنتظر نفادُ
-     الحرّاس واحداً واحداً، بل يُتخطَّون جميعاً دفعةً */
+  NAV.inpop=false;
+  if(ok){ NAV.exit=0; return; }
+  /* الصفحةُ الأولى: ننبّه، فإن أعادها قريباً خرج فعلاً — وتُتخطّى المواضعُ
+     الباقيةُ دفعةً، فلا تُستهلك واحداً واحداً */
   if(Date.now()-NAV.exit < 2500){
     var k=NAV.n+1; NAV.n=0; NAV.ok=false;
     try{ history.go(-k); }catch(e){}
@@ -16843,18 +16852,16 @@ function navPop(){
   navToast('اضغط رجوع مرّة أخرى للخروج');
 }
 (function navInit(){
-  /* كان تعذُّرُ «replaceState» يُسقط الحرّاسَ كلَّهم ومعهم مستمعُ الرجوع،
+  /* كان تعذُّرُ «replaceState» يُسقط السجلَّ كلَّه ومعه مستمعُ الرجوع،
      فيخرج من التطبيق بأوّل ضغطة. وهو زينةٌ لا يقوم عليها شيء */
   try{ history.replaceState({nw:0},''); }catch(e){}
   if(!window.history || !history.pushState) return;
   NAV.ok=true;
-  navGuard();
   window.addEventListener('popstate', navPop);
-  /* التجديدُ مع اللمس: لمسةٌ واحدةٌ في أيّ موضعٍ تكفي لإعادة ما نفد */
-  var top=function(){ navGuard(); };
-  document.addEventListener('pointerdown', top, true);
-  document.addEventListener('touchstart', top, true);
-  document.addEventListener('click', top, true);
+  /* الاحتياطُ يُجدَّد مع اللمس: ما يُدفع مع لمسةٍ لا يَسِمه المتصفّحُ بالتخطّي */
+  document.addEventListener('pointerdown', navTop, true);
+  document.addEventListener('touchstart', navTop, true);
+  document.addEventListener('click', navTop, true);
 })();
 /* زرُّ الرجوع في أندرويد داخل التطبيق: لا يمرّ بسجلّ الصفحة، فيُسمع من Capacitor نفسه.
    يُرجِع خطوةً كما في الموقع، وفي الشاشة الأولى ضغطتان متقاربتان تُغلقان التطبيق */
