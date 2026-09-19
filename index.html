@@ -16623,7 +16623,7 @@ try{ syncTabs((document.querySelector('.screen.active')||{}).id||'scr-start'); }
   });
 })();
 /* ===== زرّ الرجوع ===== */
-var NAV={ ok:false, guard:false, exit:0, tEl:null, tT:0 };
+var NAV={ ok:false, guard:false, exit:0, tEl:null, tT:0, retry:0 };
 /* زرّ الرجوع الموجود أصلاً في كل شاشة — نضغطه نيابةً عن اللاعب */
 var NAV_BACK={ 'scr-look':'btnLookDone', 'scr-tree':'btnTreeBack', 'scr-report':'btnRepBack',
   'scr-map':'btnBackStart', 'scr-path':'btnBackMap',
@@ -16799,11 +16799,23 @@ function navBack(){
 }
 function navGuard(){
   if(!NAV.ok || NAV.guard) return;
-  try{ history.pushState({nw:1},''); NAV.guard=true; }catch(e){}
+  try{ history.pushState({nw:1},''); }catch(e){ return; }
+  /* ولا يُكتفى بالدفع: بعض المتصفّحات وعارضاتِ أندرويد تُسقط ما يُدفع داخل
+     «popstate» نفسِه، فيبقى التطبيقُ بلا حارسٍ وتُغلقه الضغطةُ التالية —
+     وهي علّةُ من رجع من «الاختبارات» إلى المسار فأغلقت الضغطةُ الثانيةُ
+     التطبيق. فيُتحقَّق من وصوله، وإن سقط أُعيد بعد أن يفرغ الحدث */
+  var ok=true;
+  try{ ok=!!(history.state && history.state.nw===1); }catch(e){}
+  NAV.guard=ok;
+  if(ok){ NAV.retry=0; return; }
+  if((NAV.retry||0)<3){ NAV.retry=(NAV.retry||0)+1; setTimeout(navGuard,0); }
 }
 function navPop(){
   NAV.guard=false;                                /* استُهلك الحارس */
-  if(navBack()){ NAV.exit=0; navGuard(); return; }
+  /* ولو سقط معالجُ شاشةٍ باستثناء لم يُترك التطبيقُ مكشوفاً */
+  var ok=false;
+  try{ ok=navBack(); }catch(e){ ok=true; }
+  if(ok){ NAV.exit=0; navGuard(); return; }
   /* الصفحة الأولى: ننبّه، ولا ننصب الحارس — فالضغطة التالية تخرج فعلاً */
   NAV.exit=Date.now();
   navToast('اضغط رجوع مرّة أخرى للخروج');
@@ -16821,7 +16833,9 @@ function navPop(){
   if(!isNative() || !App || !App.addListener) return;
   var last=0;
   App.addListener('backButton', function(){
-    if(navBack()){ last=0; return; }
+    var ok=false;
+    try{ ok=navBack(); }catch(e){ ok=true; }     /* سقط المعالجُ: لا يُغلق التطبيق */
+    if(ok){ last=0; return; }
     if(Date.now()-last<2000){ try{ App.exitApp(); }catch(e){} return; }
     last=Date.now();
     navToast('اضغط رجوع مرّةً أخرى للخروج');
