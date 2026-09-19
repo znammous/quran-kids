@@ -1281,6 +1281,7 @@ body.light .sp-lit{fill:#1f92d4}
   color:var(--ttl);font-family:inherit;font-size:15px;font-weight:900;cursor:pointer;
   -webkit-tap-highlight-color:transparent}
 .pathmore:active{transform:translateY(2px)}
+.pathmore.up{margin:2px 0 10px}
 .path{position:relative;padding:6px 0 10px}
 .path::before{content:"";position:absolute;top:0;bottom:0;right:50%;width:0;z-index:0;
   border-right:5px dashed var(--wire);transform:translateX(2.5px)}
@@ -7134,6 +7135,10 @@ function openSurah(n, picked){
    يفصلها عمّا قبلها. ولا يُرسم المصحفُ كلُّه دفعةً: نافذةٌ حول موضعه
    تتّسع بزرٍّ كلّما بلغ آخرَها. */
 var PATH_WIN=2;                    /* كم سورةً تُرسم بعد موضعه */
+/* وكم سورةً تُرسم قبله: كان واحدةً لا تزيد، فلا سبيلَ إلى استعراض ما مضى.
+   فصار له زرٌّ في الرأس كزرّ المتابعة في الذيل، ولها حدٌّ لئلّا يبتلع سقفُ
+   العقد موضعَه الحاليَّ فيختفي من الشاشة */
+var PATH_BACK=1, PATH_BACK_MAX=12, PATH_GOTOP=false;
 var PATH_WIN_STEP=3, PATH_NODE_CAP=240;
 function pathSurahList(){
   var SC=PATH_SCOPE;
@@ -7200,8 +7205,18 @@ function renderPath(){
       if(tgt && tgt.s) for(z=0;z<list.length;z++) if(list[z].n===tgt.s.n){ pos=z; break; }
     }
   }
-  /* النافذة: ما قبله بسورةٍ وما بعده بعدّة — ولا تتجاوز سقفَ العقد */
-  var from=Math.max(0,pos-1), to=Math.min(list.length-1, pos+PATH_WIN);
+  /* النافذة: ما قبله بما طلب وما بعده بعدّة — ولا تتجاوز سقفَ العقد */
+  var from=Math.max(0,pos-PATH_BACK), to=Math.min(list.length-1, pos+PATH_WIN);
+  /* ولا يُسرف في الماضي: تُحصى عقدُه قبل الرسم، فإن جاوزت نصفَ السقف قُرّب
+     الرأس — وإلّا انقطع الرسمُ عند السقف دون موضعه اليومَ فغاب عن الشاشة */
+  if(from<pos){
+    var bud=Math.floor(PATH_NODE_CAP/2), acc=0, q;
+    for(q=pos-1;q>=from;q--){
+      acc+=scopedSegs(list[q]).length+1;
+      if(acc>bud){ from=q+1; break; }
+    }
+  }
+  var hHead=h.length;                       /* موضعُ رأس المسار، ليُدسّ زرُّ السابق فيه */
   for(i=from;i<=to;i++){
     var sx=list[i];
     ensureSchedule(sx);
@@ -7266,10 +7281,21 @@ function renderPath(){
   if(to<list.length-1)
     h+='<button type="button" class="pathmore" id="pathMore">▼ تابع المسار — '+
        esc(list[to+1].name)+' وما بعدها</button>';
+  /* وما مضى يُطلب بزرٍّ في الرأس — يُدسّ في موضعه لا في أوّل الشاشة، فلا
+     يعلو صندوقَ مقرَّر اليوم */
+  if(from>0)
+    h = h.slice(0,hHead)+
+        '<button type="button" class="pathmore up" id="pathPrev">▲ السابق — '+
+          esc(list[from-1].name)+' وما قبلها</button>'+
+        h.slice(hHead);
 
   $('path').innerHTML=h;
   if($('pathMore')) $('pathMore').onclick=function(){
     PATH_WIN+=PATH_WIN_STEP; renderPath();
+  };
+  if($('pathPrev')) $('pathPrev').onclick=function(){
+    PATH_BACK=Math.min(PATH_BACK+PATH_WIN_STEP, PATH_BACK_MAX);
+    PATH_GOTOP=true; renderPath();
   };
   var ns=$('path').querySelectorAll('.pnode'), z;
   for(z=0;z<ns.length;z++){
@@ -7308,6 +7334,12 @@ function renderPath(){
 function pathFocus(){
   try{
     var box=$('path'); if(!box) return;
+    /* طلب ما مضى: يقع نظرُه على أوّل ما كُشف، لا يُردّ إلى موضعه الحاليّ */
+    if(PATH_GOTOP){
+      PATH_GOTOP=false;
+      var tp=box.querySelector('#pathPrev') || box.querySelector('.pathsec');
+      if(tp && tp.scrollIntoView){ tp.scrollIntoView({block:'start'}); return; }
+    }
     /* المختارةُ من الفهرس: يقع نظرُه عليها — على «ابدأ» فيها، وإلّا فعلى رأسها */
     var pk=(!PATH_SCOPE && curSurah && PATH_PICK===curSurah.n)
       ? (box.querySelector('.pnode.now[data-s="'+PATH_PICK+'"]') ||
@@ -12156,6 +12188,7 @@ function beginRevPath(){
    والجلساتُ تحته عُقَداً، وما بعدَ النافذةِ يُطلب بزرّ لئلّا تُرسم مئاتُ
    العقد على هاتف طفل. */
 var RPATH_WIN=2, RPATH_WIN_STEP=3, RPATH_NODE_CAP=240;
+var RPATH_BACK=1, RPATH_BACK_MAX=12, RPATH_GOTOP=false;
 function revSecHTML(sn,cnt,dn,here){
   var sx=surahBy(sn), all=(cnt>0 && dn>=cnt);
   return '<div class="pathsec'+(all?' done':(here?' here':''))+'">'+
@@ -12197,7 +12230,15 @@ function renderRevPath(){
 
   var offs=['off2','off1','off2','','off3','off4','off3',''];
   var h='', nodes=0;
-  var from=Math.max(0,pos-1), to=Math.min(list.length-1, pos+RPATH_WIN);
+  var from=Math.max(0,pos-RPATH_BACK), to=Math.min(list.length-1, pos+RPATH_WIN);
+  if(from<pos){
+    var bud=Math.floor(RPATH_NODE_CAP/2), acc=0, q;
+    for(q=pos-1;q>=from;q--){
+      acc+=((by[list[q]]||[]).length)+1;
+      if(acc>bud){ from=q+1; break; }
+    }
+  }
+  var hHead=h.length;
   for(i=from;i<=to;i++){
     var sn=list[i], mine=by[sn]||[], dn=0, k;
     if(!mine.length) continue;
@@ -12222,10 +12263,19 @@ function renderRevPath(){
   if(to<list.length-1)
     h+='<button type="button" class="pathmore" id="revMore">▼ تابع المسار — '+
        esc(surahBy(list[to+1]).name)+' وما بعدها</button>';
+  if(from>0)
+    h = h.slice(0,hHead)+
+        '<button type="button" class="pathmore up" id="revPrev">▲ السابق — '+
+          esc(surahBy(list[from-1]).name)+' وما قبلها</button>'+
+        h.slice(hHead);
 
   $('revPath').innerHTML=h;
   if($('revMore')) $('revMore').onclick=function(){
     RPATH_WIN+=RPATH_WIN_STEP; renderRevPath();
+  };
+  if($('revPrev')) $('revPrev').onclick=function(){
+    RPATH_BACK=Math.min(RPATH_BACK+RPATH_WIN_STEP, RPATH_BACK_MAX);
+    RPATH_GOTOP=true; renderRevPath();
   };
   var ns=$('revPath').querySelectorAll('[data-revs]'), y;
   for(y=0;y<ns.length;y++) ns[y].onclick=function(){
@@ -12241,6 +12291,11 @@ function renderRevPath(){
 function revPathFocus(){
   try{
     var box=$('revPath'); if(!box) return;
+    if(RPATH_GOTOP){
+      RPATH_GOTOP=false;
+      var tp=box.querySelector('#revPrev') || box.querySelector('.pathsec');
+      if(tp && tp.scrollIntoView){ tp.scrollIntoView({block:'start'}); return; }
+    }
     var el=box.querySelector('.pnode.now') ||
              box.querySelector('.pathsec.here') ||
              box.querySelector('.pnode.done');
