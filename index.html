@@ -1161,18 +1161,33 @@ body.light .sp-lit{fill:#1f92d4}
   overflow:hidden;margin-bottom:10px;background:#f7e6c8;box-shadow:0 8px 20px rgba(0,0,0,.22)}
 .gbroom canvas{display:block;width:100%;image-rendering:pixelated}
 /* رفُّ الكتب: ما اشتراه مصفوفاً عليه، ويُسحب إن كثر */
-.gbshelf{position:absolute;left:64%;right:3%;top:20%;height:15%;
-  display:flex;align-items:flex-end;gap:2%;overflow-x:auto;overflow-y:hidden;
-  -webkit-overflow-scrolling:touch;scrollbar-width:none}
-.gbshelf::-webkit-scrollbar{display:none}
-.gbit{flex:0 0 auto;background:none;border:0;padding:0 1px;cursor:pointer;
+/* اسمُ الغرفة في أعلاها */
+.gbname{position:absolute;top:2%;left:50%;transform:translateX(-50%);
+  font-size:clamp(9px,2.6vw,13px);font-weight:900;color:#fff;
+  background:rgba(20,26,43,.55);border-radius:8px;padding:2px 10px;white-space:nowrap}
+/* لوحا كلّ رفّ: يمينًا ويسارًا، وعليهما الأغراض */
+.gbpl{position:absolute;display:flex;align-items:flex-end;justify-content:center;gap:3%;
+  overflow:hidden;height:14%}
+.gbpl.l1{left:8%;width:28%;top:11%}
+.gbpl.l2{left:8%;width:28%;top:29%}
+.gbpl.r1{right:8%;width:28%;top:11%}
+.gbpl.r2{right:8%;width:28%;top:29%}
+.gbit{background:none;border:0;padding:0;cursor:pointer;position:relative;
   font-family:inherit;line-height:1;touch-action:manipulation;transition:transform .12s}
 .gbit:active{transform:translateY(2px)}
-.gbit .gi{font-size:clamp(13px,3.6vw,20px)}
+.gbit .gi{font-size:clamp(14px,4vw,22px)}
 .gbit .gi svg{width:1em;height:1em;display:block}
-.gbit.on{filter:drop-shadow(0 0 3px #3fe08a)}
-.gbempty{font-size:clamp(8px,2.2vw,11px);font-weight:800;color:#7a5a2a;white-space:nowrap}
-/* محطّاتُ الغرفة: كيسُ الجواهر وصندوقُ الموادّ وعلبةُ الهديّة */
+.gbit.on{filter:drop-shadow(0 0 4px #3fe08a)}
+.gbit.off{opacity:.38;cursor:default}
+.gbit .lk{position:absolute;inset-inline-end:-2px;bottom:-2px;font-size:.55em}
+/* البابان */
+.gbdoor{position:absolute;bottom:14%;width:7%;min-width:22px;padding:6px 0;
+  background:rgba(20,26,43,.5);border:0;border-radius:8px;color:#ffd86a;
+  font-family:inherit;font-size:clamp(11px,3vw,16px);font-weight:900;cursor:pointer;
+  touch-action:manipulation;transition:.12s}
+.gbdoor:active{transform:translateY(2px)}
+.gbdoor.l{left:1%}
+.gbdoor.r{right:1%}
 .gbst{position:absolute;bottom:4%;transform:translateX(-50%);background:none;border:0;
   padding:2px;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;
   align-items:center;gap:1px;touch-action:manipulation;transition:transform .12s}
@@ -1192,20 +1207,6 @@ body.light .sp-lit{fill:#1f92d4}
 .gbchar.walk{animation:gbstep .26s steps(2) infinite}
 @keyframes gbstep{0%{margin-bottom:0}50%{margin-bottom:2px}100%{margin-bottom:0}}
 .gbhint{text-align:center;margin-bottom:10px}
-/* خزانتي تحت الغرفة: أغراضُه بأسمائها مصنَّفةً — كان رفُّ الغرفة ضيّقاً
-   لا يسع إلّا أوّلَ ما اشترى، فلا يرى ملابسَه ولا عطورَه */
-.bxshelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
-.bxitem{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;
-  font-family:inherit;background:var(--pnl2);border:2px solid var(--pb);border-radius:12px;
-  padding:9px 5px;touch-action:manipulation;transition:.12s}
-.bxitem:active{transform:translateY(2px)}
-.bxitem.sel{border-color:#1faa59;background:rgba(31,170,89,.12)}
-.bxitem .bi{font-size:26px;line-height:1.2}
-.bxitem .bi svg{width:28px;height:28px;display:block}
-.bxitem .bn{font-size:11.5px;font-weight:800;color:var(--ttl);text-align:center;line-height:1.35}
-.bxitem .bp{font-size:10.5px;font-weight:700;color:var(--mute)}
-.bxitem.sel .bp{color:#1faa59}
-.bxlines{font-size:14px;font-weight:800;color:var(--ttl);line-height:2}
 @media(prefers-reduced-motion:reduce){
   .gbchar{transition:none} .gbchar.walk{animation:none} .gbst.box.full .gse{animation:none}
 }
@@ -5620,94 +5621,102 @@ function gftFormHTML(){
 }
 
 /* =========================================================
-   🛏️ غرفةُ الطفل — مشهدُ صنع الهديّة
-   غرفةٌ دافئةٌ على طراز ستّةَ عشرَ بتاً، تُرسم بكسلاً ببكسل في الشيفرة إذ
-   لا موارد خارجيّةَ للتطبيق: سريرٌ بلحافٍ منقوشٍ ووسادةِ هلالٍ ونجمة،
-   ومكتبٌ عليه ورقٌ وأقلامٌ ومصباح، ونافذةٌ بستائرَ يدخل منها ضوءُ الشمس،
-   ورفٌّ عليه مصحفٌ أخضرُ وما اشتراه الطفل، ولافتةُ «بسم الله» ولوحُ
-   «الله أكبر» وجدولُ الصلوات، وسجّادةٌ صغيرة، وملصقاتُ حيواناتٍ ومسجد.
-   وهو نفسُه في وسطها بشخصيّته التي في الألعاب: يمشي إلى ما يلمسه ثمّ يفعل.
+   🏠 غرفُ الهديّة
+   لكلّ قسمٍ من خزانته غرفةٌ بهيئتها: رفٌّ يمينًا ورفٌّ يسارًا عليهما أغراضُ
+   ذلك القسم — ما يملكه يُلتقط، وما لا يملكه باهتٌ عليه قفل. وفي وسط الغرفة
+   طاولةُ الهديّة، وعلى الأرض كيسُ جواهره وصندوقُ موادّه. وفي الطرفين بابان
+   يمشي إليهما فينتقل إلى غرفةٍ أخرى.
+   والغرفُ تُرسم بكسلاً ببكسل في الشيفرة، إذ لا موارد خارجيّةَ للتطبيق.
    ========================================================= */
-var GB_W=200, GB_H=112;                 /* مقاسُ الغرفة المنطقيّ — تُكبَّر بلا تنعيم */
-var GB={ x:50, walkT:null };
-function gbCharURL(){
-  try{ return runCharImg('b').toDataURL(); }catch(e){ return ''; }
+var GB_W=200, GB_H=112;
+var GB_ROOMS=[
+  { k:'kit',   ic:'🧰', n:'مكتبي' },
+  { k:'cloth', ic:'🧕', n:'خزانةُ ثيابي' }
+];
+var GB={ x:50, room:0, walkT:null };
+function gbRoom(){ return GB_ROOMS[Math.max(0,Math.min(GB_ROOMS.length-1,GB.room||0))]; }
+function gbCatItems(k){
+  var out=[];
+  SHOP_CATS.forEach(function(ct){
+    if(ct.k!==k) return;
+    ct.items.forEach(function(x){
+      if(!shopFits(x)) return;                 /* ما لا يليق بجنسه لا يُعرض */
+      var z=gftItemHash(x.k);
+      if(z>=0) out.push({ x:x, z:z });
+    });
+  });
+  return out;
 }
-/* رسمُ الغرفة على اللوحة */
-function gbPaint(){
-  var cv=$('gbCv'); if(!cv) return;
-  var box=$('gbRoom'); if(!box) return;
-  var wpx=box.clientWidth||320, k=Math.max(1, Math.round(wpx/GB_W));
-  cv.width=GB_W*k; cv.height=GB_H*k;
-  cv.style.height=(GB_H*k)+'px';
-  var c=cv.getContext('2d');
-  c.setTransform(k,0,0,k,0,0);
-  c.imageSmoothingEnabled=false;
-  var R=function(x,y,w,h,col){ c.fillStyle=col; c.fillRect(x,y,w,h); };
+function gbCharURL(){ try{ return runCharImg('b').toDataURL(); }catch(e){ return ''; } }
 
-  /* ١) الجدارُ والأرض */
-  R(0,0,GB_W,84,'#f7e6c8');
-  R(0,0,GB_W,3,'#ead6ae');
-  for(var i=0;i<GB_W;i+=16) R(i,0,1,84,'#f1ddbd');         /* خطوطُ الورق */
-  R(0,72,GB_W,12,'#d09a63');                                /* إزارُ الجدار */
-  R(0,72,GB_W,2,'#e0b381');
-  R(0,84,GB_W,GB_H-84,'#b87e45');                           /* الأرضُ خشبيّة */
-  for(var f=0;f<GB_W;f+=22) R(f,84,1,GB_H-84,'#a46c36');
+/* ===== رسمُ الغرفة ===== */
+function gbPaint(){
+  var cv=$('gbCv'), box=$('gbRoom'); if(!cv||!box) return;
+  var wpx=box.clientWidth||320, k=Math.max(1, Math.round(wpx/GB_W));
+  cv.width=GB_W*k; cv.height=GB_H*k; cv.style.height=(GB_H*k)+'px';
+  var c=cv.getContext('2d');
+  c.setTransform(k,0,0,k,0,0); c.imageSmoothingEnabled=false;
+  var R=function(x,y,w,h,col){ c.fillStyle=col; c.fillRect(x,y,w,h); };
+  var rk=gbRoom().k, i;
+
+  /* الجدارُ والأرضُ والإزار — أساسٌ واحدٌ لكلّ الغرف، وتختلف صِبغتُه */
+  var wall=(rk==='cloth')?'#efe0f2':'#f7e6c8', wl2=(rk==='cloth')?'#e6d2ea':'#f1ddbd';
+  R(0,0,GB_W,84,wall); R(0,0,GB_W,3,'#e2cfae');
+  for(i=0;i<GB_W;i+=16) R(i,0,1,84,wl2);
+  R(0,72,GB_W,12,'#d09a63'); R(0,72,GB_W,2,'#e0b381');
+  R(0,84,GB_W,GB_H-84,'#b87e45');
+  for(i=0;i<GB_W;i+=22) R(i,84,1,GB_H-84,'#a46c36');
   R(0,84,GB_W,1,'#8e5a2a');
 
-  /* ٢) النافذةُ والستائرُ وضوءُ الشمس */
-  R(70,10,54,40,'#8a5a2b'); R(73,13,48,34,'#7ec8f2');
-  R(73,13,48,10,'#a8dcfa');                                  /* سماءٌ أفتح أعلى */
-  R(78,30,10,7,'#ffffff'); R(92,26,14,6,'#ffffff');          /* غيمتان */
-  R(96,17,7,7,'#ffe98a');                                    /* الشمس */
-  R(96,13,1,34,'#8a5a2b'); R(73,29,48,1,'#8a5a2b');          /* قضيبا النافذة */
-  R(68,7,58,3,'#a0642c');                                    /* قضيبُ الستارة */
-  R(66,10,9,42,'#e4756e'); R(66,10,3,42,'#f0938d');
-  R(119,10,9,42,'#e4756e'); R(125,10,3,42,'#cf5d56');
-  c.fillStyle='rgba(255,238,170,.28)';                       /* شعاعُ الشمس */
-  c.beginPath(); c.moveTo(78,47); c.lineTo(118,47); c.lineTo(150,98); c.lineTo(58,98); c.closePath(); c.fill();
+  /* البابان في الطرفين */
+  var door=function(x0){
+    R(x0,40,14,44,'#8a5626'); R(x0+2,43,10,41,'#a0642c');
+    R(x0+2,43,10,2,'#c98a45'); R(x0+(x0<20?9:2),62,2,2,'#ffd86a');
+  };
+  door(0); door(GB_W-14);
 
-  /* ٣) لافتةُ «بسم الله» فوق النافذة */
-  R(74,1,46,7,'#1f7a4d'); R(74,1,46,1,'#39a06b');
-  R(77,3,3,3,'#ffd86a'); R(82,3,8,3,'#ffd86a'); R(92,3,5,3,'#ffd86a');
-  R(99,3,9,3,'#ffd86a'); R(110,3,6,3,'#ffd86a');
+  /* الرفّان: يمينًا ويسارًا، لوحان في كلٍّ */
+  var shelf=function(x0,x1){
+    [26,46].forEach(function(y){
+      R(x0,y,x1-x0,4,'#a0642c'); R(x0,y,x1-x0,1,'#c98a45');
+      R(x0+2,y+4,3,6,'#8a5626'); R(x1-5,y+4,3,6,'#8a5626');
+    });
+  };
+  shelf(16,72); shelf(128,184);
 
-  /* ٤) لوحُ «الله أكبر» وجدولُ الصلوات — يمينَ النافذة */
-  R(132,10,26,16,'#2f6f8f'); R(133,11,24,14,'#0e4a68');
-  R(137,15,4,3,'#ffd86a'); R(143,15,9,3,'#ffd86a'); R(137,20,15,2,'#8fd0e8');
-  R(164,10,26,22,'#fffaf0'); R(164,10,26,4,'#1f7a4d');
-  for(var pr=0;pr<5;pr++){ R(167,17+pr*3,10,1,'#9aa7b4'); R(180,17+pr*3,6,1,'#c98f5a'); }
+  if(rk==='kit'){
+    /* مكتبُه: طاولةٌ وورقٌ وأقلامٌ ومصباح، ولافتةُ «بسم الله» ومصحفٌ أخضر */
+    R(76,2,48,7,'#1f7a4d'); R(76,2,48,1,'#39a06b');
+    R(79,4,3,3,'#ffd86a'); R(84,4,8,3,'#ffd86a'); R(94,4,5,3,'#ffd86a');
+    R(101,4,9,3,'#ffd86a'); R(112,4,6,3,'#ffd86a');
+    R(84,14,32,22,'#fffaf0'); R(84,14,32,3,'#1f7a4d');   /* جدولُ الصلوات */
+    for(i=0;i<5;i++){ R(88,20+i*3,12,1,'#9aa7b4'); R(104,20+i*3,8,1,'#c98f5a'); }
+    R(150,60,40,4,'#b8763a'); R(150,60,40,1,'#d79a5c');  /* المكتب */
+    R(153,64,4,20,'#8a5626'); R(183,64,4,20,'#8a5626');
+    R(158,54,12,6,'#ffffff'); R(159,56,10,1,'#c3ccd6');
+    R(172,56,2,4,'#e05a5a'); R(175,56,2,4,'#3f8fd0'); R(178,56,2,4,'#3fae6a');
+    R(30,58,2,10,'#8a5626'); R(26,53,10,6,'#f2c14e'); R(26,53,10,2,'#ffe08a');
+  } else {
+    /* خزانةُ ثيابه: بابان مفتوحان وعلّاقاتٌ ومرآة */
+    R(80,12,40,60,'#c99a6a'); R(82,14,36,56,'#e6c79a');
+    R(82,14,17,56,'#d8b386'); R(101,14,17,56,'#d8b386');
+    R(98,38,2,6,'#8a5626'); R(100,38,2,6,'#8a5626');
+    R(84,20,32,2,'#a0642c');                              /* عارضةُ العلّاقات */
+    [88,96,104,112].forEach(function(hx){
+      R(hx,22,1,4,'#9aa7b4'); R(hx-3,26,7,1,'#9aa7b4');
+    });
+    R(24,12,22,30,'#dfe8ef'); R(26,14,18,26,'#f7fbff');   /* مرآة */
+    R(26,14,18,8,'#ffffff');
+    R(150,10,34,26,'#fffaf0'); R(154,16,26,14,'#c9a4d8'); /* ملصقٌ لطيف */
+    R(160,20,4,4,'#6b4a7a'); R(172,20,4,4,'#6b4a7a');
+  }
 
-  /* ٥) ملصقاتٌ لطيفة: فيلٌ وحوتٌ وقطّةٌ ومسجد — يسارَ النافذة */
-  R(10,10,22,16,'#fffaf0'); R(13,15,13,7,'#9bb6c9'); R(24,16,4,6,'#9bb6c9'); R(12,22,3,4,'#9bb6c9');
-  R(36,10,22,16,'#fffaf0'); R(39,16,15,6,'#5fa9d6'); R(52,14,4,4,'#5fa9d6'); R(41,14,2,2,'#1b3a52');
-  R(10,30,22,16,'#fffaf0'); R(15,35,11,8,'#e0a44a'); R(15,33,3,3,'#e0a44a'); R(23,33,3,3,'#e0a44a');
-  R(36,30,22,16,'#fffaf0'); R(39,38,16,5,'#dfe8ef'); R(45,33,4,5,'#1f7a4d'); R(46,30,2,3,'#ffd86a');
-  R(41,35,2,3,'#1f7a4d'); R(51,35,2,3,'#1f7a4d');
-
-  /* ٦) المكتبُ والمصباحُ والورقُ والأقلام — أسفلَ الملصقات */
-  R(8,58,54,4,'#b8763a'); R(8,58,54,1,'#d79a5c');
-  R(11,62,4,22,'#8a5626'); R(55,62,4,22,'#8a5626');
-  R(18,52,12,6,'#ffffff'); R(19,54,10,1,'#c3ccd6'); R(19,56,7,1,'#c3ccd6');
-  R(33,54,2,4,'#e05a5a'); R(36,54,2,4,'#3f8fd0'); R(39,54,2,4,'#3fae6a'); R(42,54,2,4,'#e0b33f');
-  R(50,48,2,10,'#8a5626'); R(46,43,10,6,'#f2c14e'); R(46,43,10,2,'#ffe08a');
-
-  /* ٧) رفُّ الكتب: عليه مصحفٌ أخضر، وفوقه يوضع ما اشتراه */
-  R(128,36,64,4,'#a0642c'); R(128,36,64,1,'#c98a45');
-  R(131,26,5,10,'#1f7a4d'); R(131,27,5,1,'#ffd86a'); R(131,34,5,1,'#ffd86a');
-  R(137,27,4,9,'#8a4a3a'); R(142,28,3,8,'#3f6f9a'); R(146,26,4,10,'#b0803a');
-
-  /* ٨) السريرُ باللحاف المنقوش ووسادةِ الهلال */
-  R(128,60,66,6,'#8a5626'); R(190,60,6,28,'#8a5626');       /* لوحُ الرأس */
-  R(126,66,70,16,'#3f9ec4'); R(126,66,70,3,'#5fc0e0');
-  for(var q=130;q<194;q+=10){ R(q,71,5,3,'#ffd868'); R(q+5,76,5,3,'#ffffff'); }
-  R(126,82,70,4,'#2f7fa6');
-  R(160,58,32,10,'#fff6e0'); R(160,58,32,2,'#ffffff');      /* الوسادة */
-  R(170,61,5,5,'#ffd24a'); R(172,61,3,5,'#fff6e0'); R(177,62,3,3,'#ffd24a');
-
-  /* ٩) سجّادةُ الصلاة على الأرض */
-  R(56,92,46,14,'#2f7f5b'); R(56,92,46,2,'#e0c56a'); R(56,104,46,2,'#e0c56a');
-  R(60,95,4,8,'#e0c56a'); R(94,95,4,8,'#e0c56a'); R(74,94,8,4,'#e0c56a');
+  /* طاولةُ الهديّة في الوسط، وكيسُ الجواهر وصندوقُ الموادّ على الأرض */
+  R(86,74,30,4,'#a0642c'); R(86,74,30,1,'#c98a45');
+  R(89,78,3,6,'#8a5626'); R(110,78,3,6,'#8a5626');
+  R(60,88,12,10,'#3f7fae'); R(60,88,12,2,'#5fa0cf');       /* كيسُ الجواهر */
+  R(128,88,14,10,'#8a5626'); R(128,88,14,2,'#a0642c');     /* صندوقُ الموادّ */
+  R(131,91,8,1,'#c98a45');
 }
 /* المشيُ إلى موضعٍ بالنسبة المئويّة من عرض الغرفة، ثمّ يُنادى ما بعده */
 function gbWalk(pct, cb){
@@ -5717,87 +5726,65 @@ function gbWalk(pct, cb){
   var dir=(pct>=GB.x)?1:-1, dist=Math.abs(pct-GB.x), ms=Math.max(180, Math.min(1100, dist*17));
   GB.x=pct;
   el.style.transitionDuration=(ms/1000)+'s';
-  /* القالبُ منظورٌ إلى اليسار، فيُقلب إذا مشى يميناً */
   el.style.transform='translateX(-50%) scaleX('+(dir>0?-1:1)+')';
   el.style.left=pct+'%';
   el.classList.add('walk');
   clearTimeout(GB.walkT);
   GB.walkT=setTimeout(function(){ el.classList.remove('walk'); if(cb) cb(); }, ms+30);
 }
-/* أيقونةُ الغرض: منها ما هو محرفٌ ومنها ما هو رسمٌ متّجهيّ */
 function gbIcon(ic){ return String(ic||'').charAt(0)==='<' ? ic : esc(ic); }
 function gftRoomHTML(){
   var b=gftBoxSel(), p=curP(), o=p.owned||{}, c=gftBoxCost();
-  var pk=b.m?gftMatPack(b.m):null;
+  var pk=b.m?gftMatPack(b.m):null, rm=gbRoom();
   var nIn=(b.g?1:0)+(b.m?1:0)+b.it.length, lines=gftBoxLines();
+  var its=gbCatItems(rm.k), planks=[[],[],[],[]];
+  its.forEach(function(r,z){ planks[z%4].push(r); });
 
-  /* ما على رفّ الغرفة: ما وضعه في هديّته — يراه مجموعاً أمامه */
-  var onShelf=b.it.map(function(x){
-    var t=gftItemByHash(x-1);
-    return t ? '<span class="gbit on"><span class="gi">'+gbIcon(t.ic)+'</span></span>' : '';
-  }).join('') || '<div class="gbempty">هديّتُك فارغة</div>';
+  var cell=function(r){
+    var own=!!o[r.x.k], on=b.it.indexOf(r.z+1)>=0;
+    return '<button type="button" class="gbit'+(own?'':' off')+(on?' on':'')+'" '+
+      (own?('data-gbi="'+(r.z+1)+'"'):'disabled')+' aria-label="'+esc(r.x.n)+'">'+
+      '<span class="gi">'+gbIcon(r.x.ic)+'</span>'+
+      (own?'':'<span class="lk">🔒</span>')+'</button>';
+  };
+  var plank=function(n,cls){
+    return '<div class="gbpl '+cls+'">'+planks[n].map(cell).join('')+'</div>';
+  };
 
   var h='<div class="gbroom" id="gbRoom">'+
       '<canvas id="gbCv"></canvas>'+
-      '<div class="gbshelf" id="gbShelf">'+onShelf+'</div>'+
-      '<button type="button" class="gbst" data-gbs="g" style="left:11%">'+
+      '<div class="gbname">'+rm.ic+' '+esc(rm.n)+'</div>'+
+      plank(0,'l1')+plank(1,'l2')+plank(2,'r1')+plank(3,'r2')+
+      '<button type="button" class="gbdoor l" data-gbd="-1" aria-label="الغرفة السابقة">❯</button>'+
+      '<button type="button" class="gbdoor r" data-gbd="1" aria-label="الغرفة التالية">❮</button>'+
+      '<button type="button" class="gbst" data-gbs="g" style="left:33%">'+
         '<span class="gse">💎</span><span class="gsl">'+(b.g?arNum(GFT_GEMS[b.g-1]):'جواهر')+'</span></button>'+
-      '<button type="button" class="gbst" data-gbs="m" style="left:29%">'+
+      '<button type="button" class="gbst" data-gbs="m" style="left:67%">'+
         '<span class="gse">'+((pk&&pk.m)?pk.m.ic:'🪨')+'</span>'+
         '<span class="gsl">'+((pk&&pk.m)?(arNum(pk.n)+' '+esc(pk.m.n)):'موادّ')+'</span></button>'+
-      '<button type="button" class="gbst" data-gbs="w" style="left:47%">'+
-        '<span class="gse">🧺</span><span class="gsl">خزانتي</span></button>'+
-      '<button type="button" class="gbst box'+(nIn?' full':'')+'" data-gbs="box" style="left:78%">'+
+      '<button type="button" class="gbst box'+(nIn?' full':'')+'" data-gbs="box" style="left:50%">'+
         '<span class="gse">🎁</span>'+
         '<span class="gsl">'+(nIn?('فيها '+arNum(nIn)):'هديّتي')+'</span></button>'+
       '<img class="gbchar" id="gbChar" alt="" src="'+gbCharURL()+'" style="left:'+GB.x+'%">'+
     '</div>'+
-    '<div class="note gbhint">المسْ ما في غرفتك ليمشيَ إليه ويأخذه — ولمسةٌ ثانيةٌ تُخرجه.</div>';
-
-  /* ===== خزانتي: كلُّ ما اشتراه بأسمائه، مصنَّفاً بأقسامه =====
-     كان الرفُّ في الغرفة ضيّقاً لا يسع إلّا أوّلَ ما اشترى، فلا يرى ملابسَه
-     ولا عطورَه. فصارت خزانتُه تحت الغرفة مبسوطةً بأسمائها */
-  var wh='', any=false;
-  SHOP_CATS.forEach(function(ct){
-    if(ct.gift || ct.mat || ct.give) return;
-    var rows=[];
-    ct.items.forEach(function(x){
-      var z=gftItemHash(x.k);
-      if(z>=0 && o[x.k]) rows.push({ x:x, z:z });
-    });
-    if(!rows.length) return;
-    any=true;
-    wh+='<div class="rl" style="margin:12px 0 6px">'+ct.ic+' '+esc(ct.n)+'</div>'+
-        '<div class="bxshelf">'+rows.map(function(r){
-          var on=b.it.indexOf(r.z+1)>=0;
-          return '<button type="button" class="bxitem'+(on?' sel':'')+'" data-gbi="'+(r.z+1)+'">'+
-            '<span class="bi">'+gbIcon(r.x.ic)+'</span><span class="bn">'+esc(r.x.n)+'</span>'+
-            '<span class="bp">'+(on?'✅ في هديّتك':'اضغط لتضعه')+'</span></button>';
-        }).join('')+'</div>';
-  });
-  h+='<div class="gftbox" id="bxWard"><div class="gfth">🧺 خزانتي</div>'+
-      (any ? wh : '<div class="note">خزانتُك فارغة — اشترِ شيئاً من المتجر ثمّ أهدِه.</div>')+
-      '<div class="note" style="margin-top:10px">لك أن تضع '+arNum(GFT_BOX_ITEMS)+
-        ' أغراضٍ في هديّتك. ولا تُشترى مرّةً ثانية — أنت دفعتَ ثمنَها، '+
-        'فتخرج من خزانتك إلى أخيك.</div></div>';
+    '<div class="note gbhint">المسْ ما على الرفّ ليمشيَ إليه ويأخذه، والبابان ينقلانك بين غرفك.</div>';
 
   h+='<div class="gftbox">'+
       '<div class="gfth">🎁 ما في هديّتك</div>'+
       (lines.length
         ? '<div class="bxlines">'+lines.map(function(x){ return '<div>• '+esc(x)+'</div>'; }).join('')+'</div>'
-        : '<div class="note">فارغةٌ بعدُ.</div>')+
+        : '<div class="note">فارغةٌ بعدُ — المسْ شيئاً من رفوف غرفتك.</div>')+
       '<div class="note" style="margin-top:8px">ثمنُ التغليف: <b>💎 '+arNum(c.gems)+'</b>'+
         (function(){ var t='', k; for(k in c.mats){ (function(kk){ MATS.forEach(function(z){
-            if(z.k===kk) t+=' و '+z.ic+' '+arNum(c.mats[kk])+' '+z.n; }); })(k); } return t; })()+
+            if(z.k===kk) t+=' و '+gftIcTxt(z.ic)+arNum(c.mats[kk])+' '+z.n; }); })(k); } return t; })()+
         ' — ومنها '+arNum(GFT_BOX_PRICE)+' 💎 للعلبة. ورصيدك 💎 '+arNum(p.gems||0)+'.'+
-        '<br>ولا يُخصم منك شيءٌ حتّى تُغلقها.</div>'+
+        '<br>لك أن تضع '+arNum(GFT_BOX_ITEMS)+' أغراضٍ — وهي أغراضُك، لا تُشترى ثانيةً بل تخرج إليه.</div>'+
       '<div class="gftrow" style="margin-top:10px"><label>عبارةُ الإهداء (اختياريّة)</label>'+
         '<textarea id="bxNote" rows="2" maxlength="200" placeholder="اكتب ما تحبّ أن يقرأه أخوك…">'+esc(b.note||'')+'</textarea></div>'+
       '<button class="btn green big" id="bxSeal"'+(gftBoxEmpty()?' disabled':'')+'>'+
         (gftBoxEmpty()?'ضَعْ في هديّتك شيئاً أوّلاً':'🎀 أغلقِ الهديّة وولّد الكود')+'</button>'+
       (gftBoxEmpty()?'' :
-        '<button class="btn ghost mini" id="bxClear" style="width:100%;margin-top:8px">'+
-          '🗑️ أفرغِ الهديّة</button>')+
+        '<button class="btn ghost mini" id="bxClear" style="width:100%;margin-top:8px">🗑️ أفرغِ الهديّة</button>')+
     '</div>';
   if(GFT_LAST) h+=
     '<div class="gftbox"><div class="gftcode" id="gftCode">'+esc(GFT_LAST.code)+'</div>'+
@@ -5945,8 +5932,8 @@ function gftBindOut(){
     GFT_LAST=null; renderShop(); window.scrollTo(0,0);
   };
 }
-/* ربطُ غرفة الهديّة: كلُّ لمسةٍ تُمشيه إلى موضعها ثمّ تُنفَّذ، وتُحفظ في
-   ملفّه — فلا يضيع ما وضعه بإغلاق التطبيق ولا بانتقاله. */
+/* ربطُ غرف الهديّة: كلُّ لمسةٍ تُمشيه إلى موضعها ثمّ تُنفَّذ، وما وضعه
+   يُحفظ في ملفّه فلا يضيع بإغلاق التطبيق ولا بانتقاله بين الغرف. */
 function gftRoomWire(){
   var i, b=gftBoxSel();
   gbPaint();
@@ -5957,6 +5944,18 @@ function gftRoomWire(){
     if(!r0.width) return 50;
     return Math.round(100*((r1.left+r1.width/2)-r0.left)/r0.width);
   };
+  /* البابان: يمشي إليه ثمّ تُبدَّل الغرفة، ويدخل من الباب المقابل */
+  var ds=$('shopBody').querySelectorAll('[data-gbd]');
+  for(i=0;i<ds.length;i++) ds[i].onclick=function(){
+    var d=parseInt(this.getAttribute('data-gbd'),10)||1, el=this;
+    gbWalk(pctOf(el), function(){
+      GB.room=(GB.room+d+GB_ROOMS.length)%GB_ROOMS.length;
+      GB.x=(d>0)?10:90;                      /* يدخل من الباب المقابل */
+      try{ sPick(); }catch(e){}
+      renderShop();
+      try{ navToast(gbRoom().ic+' '+gbRoom().n); }catch(e){}
+    });
+  };
   var ss=$('shopBody').querySelectorAll('[data-gbs]');
   for(i=0;i<ss.length;i++) ss[i].onclick=function(){
     var k=this.getAttribute('data-gbs'), el=this;
@@ -5964,28 +5963,28 @@ function gftRoomWire(){
       try{ sPick(); }catch(e){}
       if(k==='g') gbAskGems();
       else if(k==='m') gbAskMat();
-      else if(k==='w'){ var w=$('bxWard'); if(w && w.scrollIntoView) w.scrollIntoView({block:'start'}); }
       else gbSeal();
     });
   };
-  /* أغراضُ خزانته: لمسةٌ تضعه في الهديّة، وأخرى تُخرجه — وثلاثةٌ لا تُتجاوز */
+  /* أغراضُ الرفوف: لمسةٌ تضعه في الهديّة، وأخرى تُخرجه — وثلاثةٌ لا تُتجاوز */
   var is=$('shopBody').querySelectorAll('[data-gbi]');
   for(i=0;i<is.length;i++) is[i].onclick=function(){
-    var v=parseInt(this.getAttribute('data-gbi'),10)||0, at=b.it.indexOf(v);
-    if(at>=0){ b.it.splice(at,1); try{ navToast('أُخرج من هديّتك'); }catch(e){} }
-    else if(b.it.length>=GFT_BOX_ITEMS){
-      try{ navToast('لا تحمل هديّتُك أكثرَ من '+arNum(GFT_BOX_ITEMS)+' أغراض'); }catch(e){}
-      return;
-    }
-    else { b.it.push(v); try{ navToast('🎁 وُضع في هديّتك'); }catch(e){} }
-    try{ sPick(); }catch(e){}
-    draw();
+    var v=parseInt(this.getAttribute('data-gbi'),10)||0, at=b.it.indexOf(v), el=this;
+    gbWalk(pctOf(el), function(){
+      if(at>=0){ b.it.splice(at,1); try{ navToast('أُخرج من هديّتك'); }catch(e){} }
+      else if(b.it.length>=GFT_BOX_ITEMS){
+        try{ navToast('لا تحمل هديّتُك أكثرَ من '+arNum(GFT_BOX_ITEMS)+' أغراض'); }catch(e){}
+        return;
+      }
+      else { b.it.push(v); try{ navToast('🎁 وُضع في هديّتك'); }catch(e){} }
+      try{ sPick(); }catch(e){}
+      draw();
+    });
   };
   var nt=$('bxNote');
   if(nt) nt.oninput=function(){ b.note=this.value.slice(0,200); saveDB(); };
   if($('gftCopy')) $('gftCopy').onclick=function(){ gftCopy(GFT_CARD); };
   if($('bxSeal')) $('bxSeal').onclick=gbSeal;
-  /* التفريغُ لا يُستأذن فيه: لم يُخصم منه شيءٌ بعدُ، وإنّما هي نيّةٌ يعدل عنها */
   if($('bxClear')) $('bxClear').onclick=function(){
     b.g=0; b.m=0; b.it=[]; saveDB();
     try{ navToast('أُفرغت هديّتُك'); }catch(e){}
