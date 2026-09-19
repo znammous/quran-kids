@@ -661,6 +661,8 @@ body.light .card.bare .diffline{color:var(--on2)}
 .cele[hidden]{display:none!important}
 .cele .kick{color:var(--on1);font-weight:800;font-size:14px;letter-spacing:1px;margin-bottom:6px}
 .cele .big{font-size:92px;line-height:1;animation:celepop .55s cubic-bezier(.2,1.7,.4,1)}
+/* وما كانت أيقونتُه رسماً متّجهيّاً يُضبط على قدر المحرف، وإلّا مُلئت الشاشة */
+.cele .big svg{width:1em;height:1em;display:block;margin:0 auto}
 .cele h2{color:var(--gink);font-size:29px;margin:14px 0 8px;line-height:1.5}
 .cele p{color:var(--on2);font-size:16px;font-weight:700;margin:0;line-height:1.75;max-width:24em;white-space:pre-line}
 .cele .rew{color:var(--rew);font-weight:800;font-size:20px;margin-top:12px}
@@ -5408,6 +5410,16 @@ function gftBoxSeal(){
   saveDB();
   return { ok:true, code:code, txt:txt, note:note };
 }
+/* أيقونةُ الهديّة واسمُها مفترقين — لتُعرض في شاشة الحماسة صورةً وعنواناً */
+function gftGiftView(d){
+  if(d.type===0 || d.type===3) return { ic:'💎', txt:arNum(d.val)+' جوهرة' };
+  if(d.type===1){
+    var m=MATS[Math.floor(d.val/4096)], n=d.val%4096;
+    return m ? { ic:m.ic, txt:arNum(n)+' '+m.n } : null;
+  }
+  if(d.type===2){ var it=gftItemByHash(d.val); return it ? { ic:it.ic, txt:it.n } : null; }
+  return null;
+}
 /* ===== الصرف: كودٌ واحدٌ أو علبةٌ فيها أكواد =====
    العلبةُ أكوادٌ مقرونةٌ بشَرْطات: «3164-724801-5391». وتُفحص كلُّها قبل أن
    يُصرَف منها شيء، فإمّا أن تُصرف جميعاً أو لا يُصرف شيء — ولو صُرف نصفُها
@@ -5463,7 +5475,13 @@ function gftRedeem(raw){
   }
   for(i=0;i<got.length;i++) gftHandOver(got[i]);
   saveDB();
-  return { ok:true, n:got.length, box:(got.length>1 || !!(got[0]&&got[0].box)),
+  /* وما سُلّم يُردّ مفصَّلاً، ليُعرض واحداً واحداً بصورته */
+  var views=[];
+  got.forEach(function(x){ (x.ds||[]).forEach(function(d){
+    var v=gftGiftView(d); if(v) views.push(v);
+  }); });
+  return { ok:true, n:got.length, items:views,
+           box:(views.length>1 || !!(got[0]&&got[0].box)),
            promo:(got.length===1 && got[0].promo),
            txt:got.map(function(x){ return x.txt; }).join(' • ') };
 }
@@ -5918,11 +5936,7 @@ function gftBindIn(){
     var r=gftRedeem(raw);
     if(!r.ok){ gftMsg(r.msg,true); try{ sBad(); }catch(e){} return; }
     $('gftIn').value='';
-    celeShow({ ic:'🎁', kick:'تَهَادَوْا تَحَابُّوا',
-      title: r.promo ? 'منحةٌ لك!' : 'وصلتك هديّة!',
-      sub: r.promo ? 'بارك الله فيك وأعانك على حفظ كتابه'
-                   : 'من أخٍ لك في الله — فادعُ له بظهر الغيب',
-      rew: r.txt });
+    gftCelebrate(r);
     renderShop();
   };
   $('gftIn').onkeydown=function(e){ if(e.key==='Enter') $('gftUse').click(); };
@@ -6080,6 +6094,32 @@ function gftLogBind(){
   };
   var lh=document.querySelector('[data-fold="gftLog"]');
   if(lh && lh.parentNode) foldBind(lh.parentNode);
+}
+/* ===== فتحُ الهديّة =====
+   كانت شاشةُ حماسةٍ واحدةٌ فيها صورةُ علبةٍ وسطرٌ يعدّ ما فيها، فيُقرأ ولا
+   يُرى. فصارت لكلّ ما فيها شاشتُه: صورتُه واسمُه، تُعرض واحدةً بعد أخرى —
+   وطابورُ الحماسة يسوقها، فلا تتزاحم.
+   ومن أطفأ الاحتفالات جُمع له الكلُّ في سطرٍ واحدٍ عابر، فلا تنهال عليه
+   السطورُ واحداً واحداً. */
+function gftCelebrate(r){
+  var L=(r&&r.items)||[], many=L.length>1;
+  if(!L.length) return;
+  var off=false; try{ off=!celeOn(); }catch(e){}
+  if(off){
+    try{ navToast('🎁 وصلتْك: '+L.map(function(g){ return g.txt; }).join(' • ')); }catch(e){}
+    return;
+  }
+  if(many) celeShow({ ic:'🎁', kick:'تَهَادَوْا تَحَابُّوا', title:'وصلتْك هديّة!',
+                      sub:'فيها '+arNum(L.length)+' — تُفتح واحداً واحداً' });
+  L.forEach(function(g,z){
+    celeShow({
+      ic: g.ic,
+      kick: many ? ('🎁 '+arNum(z+1)+' من '+arNum(L.length)) : 'تَهَادَوْا تَحَابُّوا',
+      title: g.txt,
+      sub: many ? '' : (r.promo ? 'بارك الله فيك وأعانك على حفظ كتابه'
+                                : 'من أخٍ لك في الله — فادعُ له بظهر الغيب')
+    });
+  });
 }
 function gftCopy(txt){
   try{ navigator.clipboard.writeText(txt); navToast('نُسخت الرسالة — الصقها لأخيك'); }
