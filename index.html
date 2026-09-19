@@ -7261,7 +7261,7 @@ function openScopedPath(r,label){
                label:label||'مقرَّر اليوم', surahs:ns, pieces:pm,
                /* حدُّ المقرَّر نفسِه، يبقى وإن وُسّع النطاق إلى الماضي */
                base:[Math.min(r[0],r[1]), Math.max(r[0],r[1])] };
-  PATH_BACK=1;
+  PATH_BACK=1; PATH_AT=null;
   /* يبدأ من أوّل قِطع المقرَّر على ترتيب الخطة */
   var s0=surahBy(pc[0].n); if(!s0) { clearScope(); return false; }
   curSurah=s0; curP().last=s0.n; saveDB();
@@ -7349,6 +7349,7 @@ function openSurah(n, picked){
   PATH_PICK=picked ? s.n : 0;
   clearScope();
   PATH_BACK=1;                       /* فتحٌ جديد: النافذةُ تعود إلى موضعه */
+  PATH_AT=null;                      /* ولا يُردّ إلى مقطعٍ خرج منه قبل حين */
   curSurah=s; curP().last=n; saveDB();
   renderPath(); show('scr-path');
 }
@@ -7363,6 +7364,11 @@ var PATH_WIN=2;                    /* كم سورةً تُرسم بعد موضع
    أوّلَ الخطّة فيختفي — وكان له حدٌّ وميزانيّةُ عقدٍ فيقف بعد نقرةٍ أو
    نقرتين ولا يستجيب، فرُفعا */
 var PATH_BACK=1, PATH_GOTOP=false;
+/* آخرُ مقطعٍ دخله من المسار — فإذا خرج منه رُدّ النظرُ إليه هو، لا إلى
+   «العقدة التالية». كان يُردّ إلى ما لم يبدأه بعد، فمن أعاد مقطعاً مضى
+   وجد نفسَه في موضعٍ آخر؛ ومن لم تكن في نافذته عقدةٌ مفتوحةٌ لم يُردّ
+   إلى شيءٍ، فبقي على رأس النافذة — وهي تبدأ بالسورة التي قبله. */
+var PATH_AT=null;                  /* {s,i} */
 var PATH_WIN_STEP=3, PATH_NODE_CAP=240;
 function pathSurahList(){
   var SC=PATH_SCOPE;
@@ -7423,7 +7429,9 @@ function renderPath(){
      وأمّا من فتح سورةً فيها عملٌ فلا يُنقل عنها، فقصدُه ظاهر. */
   /* إلّا أن يكون اختارها بعينها من الفهرس: فقصدُه ظاهرٌ ولو كانت تامّة */
   var picked=(!SC && PATH_PICK===s.n);
-  if(!SC && !picked){
+  /* وإن خرج لتوّه من مقطعٍ في هذه السورة، فالنافذةُ عليها هي — ولو تمّت كلُّها،
+     فلا يُقفز به إلى ما بعدها وهو ينظر إلى ما أعاده فيها */
+  if(!SC && !picked && !(PATH_AT && PATH_AT.s===s.n)){
     var vv=scopedSegs(s), allDone=(vv.length>0), z;
     for(z=0;z<vv.length;z++) if(!segDone(s,vv[z].g)){ allDone=false; break; }
     if(allDone){
@@ -7573,6 +7581,11 @@ function pathFocus(){
       var tp=box.querySelector('#pathPrev') || box.querySelector('.pathsec');
       if(tp && tp.scrollIntoView){ tp.scrollIntoView({block:'start'}); return; }
     }
+    /* خرج لتوّه من مقطع: يُردّ إليه بعينه، فلا يفقد موضعه من السورة */
+    if(PATH_AT){
+      var at=box.querySelector('.pnode[data-s="'+PATH_AT.s+'"][data-i="'+PATH_AT.i+'"]');
+      if(at && at.scrollIntoView){ at.scrollIntoView({block:'center'}); return; }
+    }
     /* المختارةُ من الفهرس: يقع نظرُه عليها — على «ابدأ» فيها، وإلّا فعلى رأسها */
     var pk=(!PATH_SCOPE && curSurah && PATH_PICK===curSurah.n)
       ? (box.querySelector('.pnode.now[data-s="'+PATH_PICK+'"]') ||
@@ -7678,6 +7691,9 @@ function adabAsk(o){
 }
 function startSeg(s,i){
   var g=segsOf(s)[i]; if(!g) return;
+  /* يُعلَّم المقطعُ ليُردّ إليه نظرُه متى خرج — وهنا لا في ضغطة العقدة وحدها،
+     فيشمل «المقطع التالي» من شاشة النتيجة كذلك */
+  PATH_AT={ s:s.n, i:i };
   var key=gk(s.n,g), p=getP(key);
   var stage = p.done ? 0 : Math.min(p.stage, stagesN()-1);
   var o={ s:s, seg:g, si:i, key:key, stage:stage, review:false };
