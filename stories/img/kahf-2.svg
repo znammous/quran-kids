@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="d" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#153a62"/><stop offset="1" stop-color="#3f6a8e"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#d)"/>
+  <circle cx="640" cy="130" r="54" fill="#f2d98a" opacity=".9"/>
+  <!-- جبال -->
+  <path d="M0 600 L170 250 L320 600Z" fill="#33445c"/>
+  <path d="M220 600 L430 180 L660 600Z" fill="#26364d"/>
+  <path d="M520 600 L700 300 L800 470 L800 600Z" fill="#3a4c66"/>
+  <!-- فمُ الكهف -->
+  <path d="M430 600c0-120 -40-190 -95-190s-95 70 -95 190z" fill="#0b1a2c"/>
+  <path d="M410 600c0-104 -32-166 -75-166s-75 62 -75 166z" fill="#061220"/>
+  <!-- الفتيةُ يقصدونه -->
+  <g>
+    <g transform="translate(540 540)"><circle cx="0" cy="-32" r="14" fill="#e8d9b5"/><path d="M-16 -17h32l8 60h-48z" fill="#4e8a6b"/></g>
+    <g transform="translate(584 552)"><circle cx="0" cy="-30" r="13" fill="#e8d9b5"/><path d="M-15 -16h30l7 56h-44z" fill="#d9a441"/></g>
+    <g transform="translate(626 544)"><circle cx="0" cy="-31" r="13" fill="#e8d9b5"/><path d="M-15 -16h30l7 58h-44z" fill="#7a9ec4"/></g>
+    <!-- الكلب -->
+    <g transform="translate(672 566)" fill="#c9b184">
+      <rect x="-22" y="-14" width="44" height="18" rx="9"/><circle cx="24" cy="-18" r="10"/>
+      <rect x="-20" y="2" width="6" height="14" rx="3"/><rect x="12" y="2" width="6" height="14" rx="3"/>
+      <path d="M-24 -16l-14-10 6 16z"/>
+    </g>
+  </g>
+  <rect y="586" width="800" height="14" fill="#1d2c42"/>
+</svg>
