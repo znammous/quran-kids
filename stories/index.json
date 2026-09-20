@@ -1,5 +1,5 @@
 {
-  "v": 4,
+  "v": 5,
   "stories": [
     {
       "id": "kahf",
@@ -36,7 +36,8 @@
       "ic": "🚪",
       "cover": "covers/qatil.webp",
       "file": "s/qatil.json",
-      "added": "2026-09-20"
+      "added": "2026-09-20",
+      "rev": 2
     }
   ]
 }
