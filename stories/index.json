@@ -1,5 +1,5 @@
 {
-  "v": 5,
+  "v": 6,
   "stories": [
     {
       "id": "kahf",
@@ -38,6 +38,15 @@
       "file": "s/qatil.json",
       "added": "2026-09-20",
       "rev": 2
+    },
+    {
+      "id": "jannatayn",
+      "t": "صاحبُ الجنّتين",
+      "d": "جنّةٌ قال لا تبيد فبادت",
+      "ic": "🍇",
+      "cover": "covers/jannatayn.webp",
+      "file": "s/jannatayn.json",
+      "added": "2026-09-20"
     }
   ]
 }
