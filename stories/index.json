@@ -1,5 +1,5 @@
 {
-  "v": 9,
+  "v": 10,
   "stories": [
     {
       "id": "kahf",
@@ -73,6 +73,15 @@
       "ic": "🧱",
       "cover": "covers/jidar.webp",
       "file": "s/jidar.json",
+      "added": "2026-09-21"
+    },
+    {
+      "id": "kalima",
+      "t": "الكلمةُ تمشي",
+      "d": "مَثَلٌ في طيب الكلام",
+      "ic": "🍞",
+      "cover": "covers/kalima.webp",
+      "file": "s/kalima.json",
       "added": "2026-09-21"
     }
   ]
