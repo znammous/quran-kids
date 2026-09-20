@@ -1,5 +1,5 @@
 {
-  "v": 1,
+  "v": 2,
   "stories": [
     {
       "id": "kahf",
@@ -10,6 +10,15 @@
       "file": "s/kahf.json",
       "rev": 4,
       "added": "2026-09-19"
+    },
+    {
+      "id": "qarya",
+      "t": "الرجلُ الذي مرّ على قرية",
+      "d": "مات مئةَ عامٍ ثمّ بعثه الله",
+      "ic": "🏚️",
+      "cover": "covers/qarya.webp",
+      "file": "s/qarya.json",
+      "added": "2026-09-20"
     }
   ]
 }
