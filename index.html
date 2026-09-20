@@ -7876,7 +7876,7 @@ $('mfGoListen').onclick=function(){
    وإن لم تكن جولتُه آيةً بعينها (كتسميع صفحة) فمقطعَه */
 $('pListen').onclick=function(){
   if(audTap()) return;
-  audAsk(audList(playNowPieces()));
+  audAsk(audQueueNow());
 };
 /* يُحفظ فورَ تعليمه، فيصحّ وإن خرج من الوجه بالإغلاق أو بزرّ الرجوع لا بزرّ البدء.
    ولوليّ الأمر أن يعيده من «الإعدادات ← 📖 عرض المقطع في المصحف قبل البدء» */
@@ -8151,7 +8151,17 @@ function playNowPieces(){
   var a=playAyahPieces();
   return a.length ? a : playPieces();
 }
-/* أفي درسٍ هو الآن؟ فالوجهُ المفتوحُ فوقه تابعٌ لدرسه لا مقصودٌ لذاته */
+/* ما يُتلى الآن: المظلَّلُ في الوجه أوّلاً — فالعينُ تتبع التظليل، ولا يُعقل أن
+   يُتلى سواه وهو ينظر إليه. وكان الدرسُ يسبقه، فإذا عُرض مقطعٌ جديدٌ في وجهه
+   وشاشةُ الدرس تحته — كـ«المقطع التالي» من شاشة النتيجة — تُلي مقطعُ الدرس
+   الماضي لا المظلَّل، فيمضي القارئُ إلى آخر الوجه ولا يقف عنده.
+   فإن لم يكن في الوجه تظليلٌ فموضعُه من درسه. */
+function audQueueNow(){
+  if(MF_MARK && MF_MARK.pieces && MF_MARK.pieces.length) return audList(MF_MARK.pieces);
+  return inLesson() ? audList(playNowPieces()) : [];
+}
+/* أفي درسٍ هو الآن؟ فالوجهُ المفتوحُ فوقه تابعٌ لدرسه لا مقصودٌ لذاته.
+   ودرسٌ انقضى وعاد إلى المصحف ليس درساً: يُسأل عن نطاقه كسائر القرّاء */
 function inLesson(){
   try{ return !!(S && S.rounds && S.rounds.length) && curScreen()==='scr-play'; }
   catch(e){ return false; }
@@ -8465,14 +8475,11 @@ $('mfDockMean').onclick=function(){
    والضغطةُ الثانية تُمسكه وتفتح صندوقَه، والثالثةُ تتابع — وزرٌّ واحدٌ لا زرّان */
 $('mfDockPlay').onclick=function(){
   if(audTap()) return;
-  /* في الدرس: تُتلى آيتُه التي هو فيها — فالوجهُ مقصودُ ما قبل البدء، وأمّا
-     بعد الدخول فمقصودُه موضعُه. ولا نطاقَ يُختار هناك: مقصودُه درسُه */
-  if(inLesson()){
-    var q=audList(playNowPieces());
-    if(q.length){ audAsk(q); return; }
-  }
-  /* والمقطعُ المعلَّم — كالذي يُعرض قبل البدء — يُتلى كما هو بلا سؤالِ نطاق */
-  if(MF_MARK && MF_MARK.pieces && MF_MARK.pieces.length){ audAsk(audQueueSeg()); return; }
+  /* المظلَّلُ أوّلاً — وهو المقطعُ المعلَّمُ كالذي يُعرض قبل البدء — ثمّ موضعُه
+     من درسه إن كان في درس: فالوجهُ مقصودُ ما قبل البدء، وأمّا بعد الدخول
+     فمقصودُه موضعُه. ولا نطاقَ يُختار في الحالين: مقصودُه بيِّنٌ أمامه */
+  var q=audQueueNow();
+  if(q.length){ audAsk(q); return; }
   /* وفي المصحف نفسِه: يُسأل عن نطاقه أوّلاً */
   audScopeAsk();
 };
