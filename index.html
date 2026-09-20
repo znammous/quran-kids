@@ -6969,7 +6969,12 @@ function addPlayer(){
 }
 
 /* ===== تسجيل صوت اللاعب في مرحلة القراءة ===== */
-var REC={ mr:null, chunks:[], url:null, stream:null, rec:false, starting:false, cancel:false, audio:null, fail:'', rate:1 };
+var REC={ mr:null, chunks:[], url:null, stream:null, rec:false, starting:false, cancel:false, audio:null, fail:'', rate:1, hitMax:false };
+/* مؤقّتُ الحدّ الأقصى: يُحفظ ليُلغى عند الإيقاف — كان يُترك حيّاً، فإن
+   أوقف الطفلُ تسجيلَه ثمّ بدأ آخرَ قبل انقضاء مهلة الأوّل، قتلها التسجيلَ
+   الجديدَ وهو لا يدري. */
+var RECMAX=null;
+function recMaxStop(){ if(RECMAX){ clearTimeout(RECMAX); RECMAX=null; } }
 /* أوقفه اللاعب لهذه الجلسة؟ */
 function useRecNow(){ return SET.rec!==false && !REC.off; }
 function recSupported(){
@@ -6986,6 +6991,7 @@ function recClear(){
   if(REC.url){ try{ URL.revokeObjectURL(REC.url); }catch(e){} REC.url=null; }
 }
 function recStop(){
+  recMaxStop();
   try{ if(REC.mr && REC.mr.state!=='inactive') REC.mr.stop(); }catch(e){}
   try{ if(REC.stream) REC.stream.getTracks().forEach(function(tr){ tr.stop(); }); }catch(e){}
   REC.stream=null; REC.rec=false;
@@ -7025,7 +7031,12 @@ function recOnGrant(cb){
 }
 function recStart(onReady,onFail,onLive,maxMs,onCancel){
   if(recBusy()) return;                                  /* لا تسجيلان معاً */
-  REC.max=maxMs||30000;                                  /* حد أقصى للتسجيل */
+  /* حدٌّ أقصى — شبكةُ أمانٍ لتسجيلٍ نُسي مفتوحاً، لا سقفٌ يُنتظر بلوغُه.
+     كان نصفَ دقيقةٍ للآية الواحدة، وفيها من الآيات ما يستغرق من الطفل
+     دقائق — آيةُ الدَّين وحدها مئةٌ وثمانٍ وعشرون كلمة — فينقطع عليه
+     تسجيلُه وهو لا يدري لِمَ. */
+  REC.max=maxMs||300000;
+  REC.hitMax=false;
   var why=recWhy();
   if(why){ REC.fail=why; onFail&&onFail(); return; }
   REC.starting=true; REC.cancel=false;
@@ -7050,7 +7061,11 @@ function recStart(onReady,onFail,onLive,maxMs,onCancel){
     };
     mr.start();
     onLive&&onLive();
-    setTimeout(function(){ if(REC.rec) recStop(); }, REC.max||30000);
+    recMaxStop();
+    RECMAX=setTimeout(function(){
+      RECMAX=null;
+      if(REC.rec){ REC.hitMax=true; recStop(); }         /* يُعلَّم ليُخبَر الطفلُ لِمَ توقّف */
+    }, REC.max||300000);
   })['catch'](function(){ REC.starting=false; REC.cancel=false; REC.fail='denied'; REC.rec=false; onFail&&onFail(); });
 }
 var REC_RATES=[1,1.5,2];
@@ -9705,7 +9720,8 @@ function roundRead(r){
       recUI('wait','⏳ إن سألك المتصفح عن المايكروفون فاضغط «سماح»');
       recStart(function(){
         if(!REC.url){ recUI('idle','لم أسمع شيئاً — اضغط 🎤 واقرأ ثم أوقف التسجيل'); return; }
-        recUI('ready','استمع لصوتك، فإن أعجبك احسبها مرة ✅');
+        recUI('ready', REC.hitMax ? 'بلغ التسجيلُ حدَّه فتوقّف — استمعْ لما سُجّل، أو أعِدْه'
+                                  : 'استمع لصوتك، فإن أعجبك احسبها مرة ✅');
       }, function(){
         var msg;
         if(REC.fail==='denied') msg='لم يُسمح بالمايكروفون — اضغط 🔒 في شريط العنوان واسمح به، ثم أعِد المحاولة';
@@ -9714,7 +9730,7 @@ function roundRead(r){
         recUI('fail',msg);
       }, function(){
         recUI('rec','أنا أستمع… اقرأ الآية ثم اضغط إيقاف');
-      }, 30000, function(){
+      }, 60000, function(){                            /* قراءةُ الآية: دقيقة */
         recUI('idle','أُلغي التسجيل — اضغط 🎤 لتبدأ من جديد');
       });
     };
@@ -10309,7 +10325,8 @@ function roundRevPage(r){
     rUI('wait','⏳ إن سألك المتصفح عن المايكروفون فاضغط «سماح»');
     recStart(function(){
       if(!REC.url){ rUI('idle','لم أسمع شيئاً — اضغط 🎤 وسمّع'); return; }
-      rUI('ready','استمع لتسميعك والصفحة أمامك — إن طابقها فاضغط ✅');
+      rUI('ready', REC.hitMax ? 'بلغ التسجيلُ حدَّه فتوقّف — استمعْ لما سُجّل، أو أعِدْه'
+                              : 'استمع لتسميعك والصفحة أمامك — إن طابقها فاضغط ✅');
     }, function(){
       var msg;
       if(REC.fail==='denied') msg='لم يُسمح بالمايكروفون — اضغط 🔒 في شريط العنوان واسمح به';
@@ -10438,7 +10455,8 @@ function roundRecite(r){
       rUI('wait','⏳ إن سألك المتصفح عن المايكروفون فاضغط «سماح»');
       recStart(function(){
         if(!REC.url){ rUI('idle','لم أسمع شيئاً — اضغط 🎤 وسمّع ثم أوقف التسجيل'); return; }
-        rUI('ready','استمع لتسميعك والنص أمامك — إن طابقه فاضغط ✅');
+        rUI('ready', REC.hitMax ? 'بلغ التسجيلُ حدَّه فتوقّف — استمعْ لما سُجّل، أو أعِدْه'
+                                : 'استمع لتسميعك والنص أمامك — إن طابقه فاضغط ✅');
       }, function(){
         var msg;
         if(REC.fail==='denied') msg='لم يُسمح بالمايكروفون — اضغط 🔒 في شريط العنوان واسمح به، ثم أعِد المحاولة';
@@ -10447,7 +10465,7 @@ function roundRecite(r){
         rUI('fail',msg);
       }, function(){
         rUI('rec','أنا أسجّل… سمّع كامل المقطع ثم اضغط «انتهيت»');
-      }, 180000, function(){                             /* التسميع قد يطول: ٣ دقائق */
+      }, 300000, function(){                             /* التسميع قد يطول: خمسُ دقائق */
         rUI('idle','أُلغي التسجيل — اضغط 🎤 لتبدأ من جديد');
       });
     };
