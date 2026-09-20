@@ -1,5 +1,5 @@
 {
-  "v": 10,
+  "v": 11,
   "stories": [
     {
       "id": "kahf",
@@ -82,6 +82,15 @@
       "ic": "🍞",
       "cover": "covers/kalima.webp",
       "file": "s/kalima.json",
+      "added": "2026-09-21"
+    },
+    {
+      "id": "jabal",
+      "t": "الجبلُ لا يلتفت",
+      "d": "مَثَلٌ في الكِبر",
+      "ic": "⛰️",
+      "cover": "covers/jabal.webp",
+      "file": "s/jabal.json",
       "added": "2026-09-21"
     }
   ]
