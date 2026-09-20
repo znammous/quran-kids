@@ -239,9 +239,9 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
 /* ==== قائمة الأجزاء والسور ==== */
 .juz{border:2px solid #e5ecf6;border-radius:14px;margin-bottom:12px;overflow:hidden;background:#fff}
 .juzhead{width:100%;border:0;background:#f2f9ff;font-family:inherit;font-size:16px;font-weight:800;
-  color:var(--g1);padding:12px 14px;text-align:right;cursor:pointer;display:flex;justify-content:space-between;
+  color:var(--g1);padding:12px 14px;text-align:start;cursor:pointer;display:flex;justify-content:space-between;
   align-items:center;gap:8px;touch-action:manipulation}
-.juzhead .names{font-size:12px;font-weight:700;color:var(--mute);flex:1;text-align:left;
+.juzhead .names{font-size:12px;font-weight:700;color:var(--mute);flex:1;text-align:end;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .juzhead.open{background:#e2f1ff}
 .juzhead.locked{opacity:.5}
@@ -348,7 +348,7 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
   font-family:"UthmanicHafs","Amiri Quran",serif;font-size:.6em;color:#9a7b3a}
 /* الوجهُ المجاور وهو يُسحب: طبقةٌ فوق الوجه بمقاسه، تتبع الإصبعَ معه —
    التالي يدخل من اليسار والسابق من اليمين، كما يُقلَّب المصحف. */
-.mfbody.mfpeek{position:absolute;left:0;right:0;z-index:2;overflow:hidden;pointer-events:none;
+.mfbody.mfpeek{position:absolute;inset-inline:0;z-index:2;overflow:hidden;pointer-events:none;
   background:var(--paper);box-shadow:0 0 22px rgba(0,0,0,.2)}
 .mfbody .mushaf{font-size:clamp(16px,4.6vw,25px)}
 /* الوجهُ المضبوطُ على إطاره ثابتٌ على الجوال: يسعه الإطارُ فلا يُمرَّر رأسيّاً،
@@ -371,7 +371,7 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
 .mfdock button.on{background:var(--psel);box-shadow:inset 0 -3px 0 var(--gold)}
 .mfdock button:active{transform:scale(.93)}
 /* لوحتا الفهرس والبحث فوق الوجه، وتقفان عند الشريط السفليّ فيبقى ظاهراً */
-.mfpanel{position:absolute;left:0;right:0;top:0;z-index:6;background:var(--pnl);
+.mfpanel{position:absolute;inset-inline:0;top:0;z-index:6;background:var(--pnl);
   display:flex;flex-direction:column}
 .mfpanel[hidden]{display:none!important}
 .mfphead{flex:0 0 auto;display:flex;gap:8px;align-items:center;padding:10px;border-bottom:2px solid var(--pb)}
@@ -669,7 +669,7 @@ body.light .card.bare .diffline{color:var(--on2)}
 .cele p{color:var(--on2);font-size:16px;font-weight:700;margin:0;line-height:1.75;max-width:24em;white-space:pre-line}
 .cele .rew{color:var(--rew);font-weight:800;font-size:20px;margin-top:12px}
 .cele .tap{color:var(--on1);font-size:12px;font-weight:700;margin-top:22px}
-.cele .cbar{position:absolute;left:0;right:0;bottom:0;height:5px;background:rgba(255,255,255,.12)}
+.cele .cbar{position:absolute;inset-inline:0;bottom:0;height:5px;background:rgba(255,255,255,.12)}
 .cele .cbar i{display:block;height:100%;width:100%;transform-origin:right center;
   background:linear-gradient(90deg,#48d98a,var(--gold));animation:cdrain 5s linear forwards}
 @keyframes cdrain{to{transform:scaleX(0)}}
@@ -770,14 +770,14 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
   box-shadow:0 20px 60px rgba(0,0,0,.55);max-height:88vh;overflow:auto;
   border:3px solid var(--pb);color:var(--on2)}
 .modal h2{margin:0 0 10px;padding:0 44px;color:var(--ttl);font-size:22px;text-align:center}
-.xbtn{position:absolute;top:12px;right:12px;width:40px;height:40px;border-radius:50%;
+.xbtn{position:absolute;top:12px;inset-inline-start:12px;width:40px;height:40px;border-radius:50%;
   border:3px solid #fff;background:linear-gradient(180deg,#ff9c9c,#e04b4b);color:#fff;
   font-size:20px;font-weight:900;font-family:inherit;line-height:1;cursor:pointer;
   display:flex;align-items:center;justify-content:center;box-shadow:0 5px 0 rgba(0,0,0,.22);
   transition:.12s;touch-action:manipulation;z-index:5}
 .xbtn:hover{transform:scale(1.06)}
 .xbtn:active{transform:translateY(3px) scale(1);box-shadow:0 2px 0 rgba(0,0,0,.22)}
-.modal ol{padding-right:20px;line-height:1.9;font-size:15px;color:var(--on2)}
+.modal ol{padding-inline-start:20px;line-height:1.9;font-size:15px;color:var(--on2)}
 .modal ol b{color:var(--ttl)}
 .modal p,.modal .sub{color:var(--on1)}
 /* كان لونُها مكتوباً في السطر: أزرقُ شاحبٌ يصلح لليل ويغيب في النهار */
@@ -827,7 +827,7 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
 .tapp{margin-top:10px;font-size:12px;font-weight:800;color:#8a6a1e}
 /* ===== ورقةُ تقرير الخطّة ===== */
 .rep{background:#fffdf3;border:10px double var(--gold);border-radius:16px;padding:18px 14px;
-  box-shadow:0 14px 34px rgba(0,0,0,.3);text-align:right}
+  box-shadow:0 14px 34px rgba(0,0,0,.3);text-align:start}
 .rep h2{font-family:"Traditional Arabic","Amiri","IBM Plex Sans Arabic","Segoe UI",serif;
   font-size:28px;color:var(--g1);margin:4px 0 2px;text-align:center}
 .rep .who{text-align:center;font-size:18px;font-weight:900;color:#102b4a;margin-bottom:12px}
@@ -839,7 +839,7 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
 .reprow{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;
   font-size:14px;font-weight:800;color:#31465f;padding:5px 0;line-height:1.7}
 .reprow .repk{flex:0 0 auto;white-space:nowrap}
-.reprow .repv{flex:1 1 auto;min-width:0;color:#102b4a;text-align:left;
+.reprow .repv{flex:1 1 auto;min-width:0;color:#102b4a;text-align:end;
   white-space:normal;overflow-wrap:anywhere}
 .repbar{height:11px;border-radius:99px;background:#e8e0c6;overflow:hidden;margin:8px 0 4px}
 .repbar i{display:block;height:100%;background:linear-gradient(90deg,#d9a441,#8a6100)}
@@ -925,13 +925,13 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
 .foldh{display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;
   border:2px solid var(--pb);background:var(--pnl);color:var(--ttl);border-radius:14px;
   padding:12px 14px;margin:14px 0 0;font-family:inherit;font-size:15.5px;font-weight:900;
-  cursor:pointer;touch-action:manipulation;text-align:right;transition:.12s}
+  cursor:pointer;touch-action:manipulation;text-align:start;transition:.12s}
 .foldh:active{transform:translateY(2px)}
 .foldh.open{border-color:var(--gold)}
 .foldh .fi{flex:0 0 auto;font-size:13px;opacity:.75}
 .foldb{padding-top:10px}
 /* رأسُ بابٍ من أبواب تسجيل المحفوظ: عنوانٌ وتحته وصفُه، والأربعةُ سواء */
-.prdoor{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px;text-align:right}
+.prdoor{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px;text-align:start}
 .prdoor b{font-size:15.5px;font-weight:900;line-height:1.3}
 .prdoor small{font-size:12.5px;font-weight:700;color:var(--mute);line-height:1.4;white-space:normal}
 /* ===== سطر «بقي لك ... لختم القرآن» ===== */
@@ -948,13 +948,13 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
 .hello .hi{font-size:19px;font-weight:900;color:var(--g1);line-height:1.6}
 .hello .hi2{font-size:13.5px;font-weight:700;color:var(--mute);margin-top:6px}
 .hello{position:relative}
-.hello .pen{position:absolute;top:6px;left:8px;border:0;background:none;padding:4px;margin:0;
+.hello .pen{position:absolute;top:6px;inset-inline-end:8px;border:0;background:none;padding:4px;margin:0;
   font-size:15px;line-height:1;opacity:.55;cursor:pointer;font-family:inherit;touch-action:manipulation}
 .hello .pen:active{transform:translateY(1px);opacity:.95}
 .avwrap{position:relative;flex:0 0 auto;border:0;background:none;padding:0;margin:0;cursor:pointer;
   font-family:inherit;touch-action:manipulation}
 .avwrap:active{transform:translateY(2px)}
-.avbadge{position:absolute;top:-9px;left:-9px;width:34px;height:34px;line-height:30px;text-align:center;
+.avbadge{position:absolute;top:-9px;inset-inline-end:-9px;width:34px;height:34px;line-height:30px;text-align:center;
   border-radius:50%;background:linear-gradient(180deg,#fff6d8,#ffd75e);border:2px solid #a1791a;
   font-size:18px;box-shadow:0 4px 10px rgba(0,0,0,.28)}
 /* زرّ الوضع في صفّ اللاعبين: مربّع بحجم الشريحة نفسها */
@@ -963,10 +963,10 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
 .htop{position:relative}
 .htop h1{margin-inline:42px}                 /* العنوانُ في وسط الشاشة، والتاريخُ فوقها لا يزحزحه */
 /* التاريخُ الهجريّ في أعلى يسار الرئيسيّة: نصٌّ مجرّدٌ لا صندوقَ له، فلا يحجب ما خلفه */
-.hijri{position:absolute;left:0;top:50%;transform:translateY(-50%);
+.hijri{position:absolute;inset-inline-end:0;top:50%;transform:translateY(-50%);
   max-width:88px;font-size:10.5px;font-weight:800;line-height:1.25;
-  color:var(--ttl2);text-align:left;white-space:nowrap;pointer-events:none}
-.themebtn{position:absolute;top:50%;right:0;transform:translateY(-50%);
+  color:var(--ttl2);text-align:end;white-space:nowrap;pointer-events:none}
+.themebtn{position:absolute;top:50%;inset-inline-start:0;transform:translateY(-50%);
   width:42px;height:42px;padding:0;border-radius:50%;line-height:1;font-size:21px;
   border:2px solid var(--pb);background:var(--pnl);cursor:pointer;
   font-family:inherit;box-shadow:0 3px 0 rgba(0,0,0,.18);
@@ -995,7 +995,7 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
 /* ===== بطاقتا هدف اليوم =====
    كان زرّاً يقول «ابدأ الحفظ» ولا يقول ماذا يحفظ. فصارت بطاقةً تُخبره
    بمقرَّر يومه، وهي نفسُها بابُه إليه. */
-.goalcard{display:flex;align-items:center;gap:13px;width:100%;text-align:right;
+.goalcard{display:flex;align-items:center;gap:13px;width:100%;text-align:start;
   background:var(--pnl);border:3px solid var(--pb);border-radius:16px;
   padding:14px 15px;margin-bottom:12px;cursor:pointer;font-family:inherit;
   box-shadow:0 5px 0 rgba(0,0,0,.16);transition:.12s;
@@ -1023,7 +1023,7 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
 .gcwrap .gcgo{visibility:hidden}
 /* أنعمُ ممّا كانت: أصغرُ وشبهُ شفّافةٍ بحدٍّ خفيف، فلا تحجب ما تحتها من البطاقة */
 /* في مستوى السطر الأوّل من البطاقة لا في وسطها: كانت تغطّي سطرَ الوصف تحتها */
-.gcedit{position:absolute;left:10px;top:10px;
+.gcedit{position:absolute;inset-inline-end:10px;top:10px;
   width:32px;height:32px;border-radius:50%;border:1px solid rgba(20,40,70,.16);
   background:rgba(255,255,255,.62);font-size:14px;line-height:1;cursor:pointer;
   opacity:.92;backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);
@@ -1031,7 +1031,7 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
 .gcedit:active{transform:scale(.92)}
 .gcedit.sel{background:var(--psel);border-color:var(--gold)}
 /* حذفُ المسار الحرّ: إلى جانب القلم، بلونٍ ينبّه أنّه لا رجعةَ فيه */
-.gcdel{left:50px;border-color:rgba(179,64,47,.35);color:#b3402f}
+.gcdel{inset-inline-end:50px;border-color:rgba(179,64,47,.35);color:#b3402f}
 /* شارةُ عمر المهمّة على بطاقتها */
 .gcage{display:inline-block;margin-inline-start:8px;padding:2px 8px;border-radius:999px;
   background:#fdecea;color:#b3402f;border:1px solid #f0b8b0;
@@ -1139,7 +1139,7 @@ body.light .sp-lit{fill:#1f92d4}
 .gftpk .pn{font-weight:900;color:var(--g1);font-size:16px;margin-top:8px}
 .gftpk .pd{font-size:12px;font-weight:700;color:#4a627e;margin-top:5px;line-height:1.6}
 /* 🎁 تهادوا تحابّوا */
-.gftbox{background:#fff;border:3px solid #e5ecf6;border-radius:14px;padding:12px;margin-bottom:12px;text-align:right}
+.gftbox{background:#fff;border:3px solid #e5ecf6;border-radius:14px;padding:12px;margin-bottom:12px;text-align:start}
 .gftbox .gfth{font-weight:900;color:var(--g1);font-size:15px;margin-bottom:8px}
 .gftbox input[type=text],.gftbox input[type=number],.gftbox select,.gftbox textarea{
   width:100%;font-family:inherit;font-size:15px;font-weight:700;color:#102b4a;background:#f7fbff;
@@ -1232,12 +1232,12 @@ body.light .sp-lit{fill:#1f92d4}
 
 /* بطاقة «ثبّت التطبيق»: تظهر متى كان التثبيت ممكناً ولم يُثبَّت بعد */
 .instbox{position:relative;background:linear-gradient(180deg,#fff,#f4f9ff);border:3px solid #bcd9f5;
-  border-radius:14px;padding:12px 14px;margin-bottom:12px;text-align:right}
+  border-radius:14px;padding:12px 14px;margin-bottom:12px;text-align:start}
 .instbox .insth{font-weight:900;color:var(--g1);font-size:15px;margin-bottom:4px}
 .instbox .instd{font-size:13px;font-weight:700;color:#4a627e;line-height:1.7}
 .instbox .instd b{color:var(--g1)}
 .instbox .btn{margin-top:10px;margin-bottom:0}
-.instx{position:absolute;top:8px;left:8px;width:26px;height:26px;border-radius:50%;border:2px solid #d7e2f0;
+.instx{position:absolute;top:8px;inset-inline-end:8px;width:26px;height:26px;border-radius:50%;border:2px solid #d7e2f0;
   background:#fff;color:#8aa0bb;font-size:13px;font-weight:900;font-family:inherit;line-height:1;cursor:pointer;
   display:flex;align-items:center;justify-content:center;touch-action:manipulation}
 .goalbox{background:#fff;border:3px solid #e5ecf6;border-radius:14px;padding:12px;margin-bottom:12px}
@@ -1301,7 +1301,7 @@ body.light .sp-lit{fill:#1f92d4}
   body.hastabs .fabbar{bottom:calc(72px + env(safe-area-inset-bottom))}
 }
 /* ===== صفّ الجزء في شاشة الاختبارات ===== */
-.jzrow{display:flex;align-items:center;gap:10px;width:100%;text-align:right;
+.jzrow{display:flex;align-items:center;gap:10px;width:100%;text-align:start;
   background:#fff;border:3px solid var(--pb);border-radius:14px;padding:10px 12px;
   margin-bottom:8px;font-family:inherit;cursor:pointer;touch-action:manipulation}
 .jzrow:active{transform:scale(.99)}
@@ -1364,10 +1364,10 @@ body.glow-off .pnode.now .dot{animation:bob 1.6s ease-in-out infinite;box-shadow
   border-color:#1faa59;color:#102b4a}
 .pnode.castle.locked .dot{background:#eaf0f7;border-color:#dde6f1}
 .pnode.review .dot{width:86px;height:86px;font-size:32px}
-.off1{margin-right:96px}
-.off2{margin-right:52px}
-.off3{margin-left:52px}
-.off4{margin-left:96px}
+.off1{margin-inline-start:96px}
+.off2{margin-inline-start:52px}
+.off3{margin-inline-end:52px}
+.off4{margin-inline-end:96px}
 
 /* ===== المتجر ولوحة البيت ===== */
 .shopgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
@@ -1408,7 +1408,7 @@ button.shelf:active{transform:translateY(2px)}
 .brow.me{border-color:var(--gold);background:#fffaea}
 .brow .rank{font-size:20px;font-weight:900;color:#b9a24a;min-width:28px;text-align:center}
 .brow .who2{flex:1;font-weight:900;color:var(--g1);font-size:17px}
-.brow .num2{font-size:13px;color:#4a627e;font-weight:800;text-align:left}
+.brow .num2{font-size:13px;color:#4a627e;font-weight:800;text-align:end}
 .players{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
 .pchip{display:flex;align-items:center;gap:6px;border:3px solid #e5ecf6;background:#fff;border-radius:14px;
   padding:6px 10px;font-family:inherit;font-weight:800;color:#3d5b7a;font-size:15px;cursor:pointer}
@@ -1454,7 +1454,7 @@ button.shelf:active{transform:translateY(2px)}
 /* زرُّ الاختبار: أيقونةٌ عائمةٌ في ركن الصفحة، والاسمُ إلى جنبها —
    فلا يزاحم بطاقتي اليوم وهو بابٌ من نوعٍ آخر. */
 /* الأيقونةُ والاسمُ جسمٌ واحد: يضيء وينطفئ معاً، فلا يتفرّق نظرُه بينهما */
-.examfp{position:fixed;left:10px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:35;
+.examfp{position:fixed;inset-inline-end:10px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:35;
   display:flex;flex-direction:row-reverse;align-items:center;gap:8px;width:auto;
   background:var(--pnl);border:2px solid var(--pb3);border-radius:999px;
   padding:7px 15px 7px 8px;margin:0;
@@ -1539,7 +1539,7 @@ body.glow-off .iceflame,body.glow-off .iceflame path{animation:none}
 /* زرُّ «تحدّي اليوم»: صورةُ «اختبر نفسي» في المرآة — مثلُه شكلاً وبُعداً عن
    الحافة، في الركن الأيمن. ذهبيُّ الهالة لا ثلجيُّها، فلا يُظنّ أنّه البابُ نفسُه.
    يظهر من التاسعة صباحاً ويبقى حتى يُتمّ تحدّيه. */
-.dailyfp{position:fixed;right:10px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:35;
+.dailyfp{position:fixed;inset-inline-start:10px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:35;
   display:flex;flex-direction:row;align-items:center;gap:8px;width:auto;
   background:var(--pnl);border:2px solid var(--pb3);border-radius:999px;
   padding:7px 8px 7px 15px;margin:0;
@@ -1692,7 +1692,7 @@ body.glow-off .dfpic{animation:none}
 .stzoom img{position:absolute;top:50%;left:50%;width:100vh;height:100vw;
   width:100dvh;height:100dvw;
   object-fit:cover;transform:translate(-50%,-50%) rotate(90deg)}
-.stzhint{position:absolute;top:calc(16px + env(safe-area-inset-top));left:0;right:0;
+.stzhint{position:absolute;top:calc(16px + env(safe-area-inset-top));inset-inline:0;
   text-align:center;font-size:14.5px;font-weight:800;color:#fff;opacity:.8;
   text-shadow:0 1px 7px rgba(0,0,0,.65);pointer-events:none}
 .stzhint[hidden]{display:none}
