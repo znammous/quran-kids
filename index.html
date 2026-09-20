@@ -2589,6 +2589,7 @@ body.glow-off .dfpic{animation:none}
           🌐 ويُنزَّل من الشبكة: التطبيقُ والقصصُ وخطوطُ المصحف وتلاواتُ القرّاء — تنزيلٌ فقط.
         </div>
         <button class="btn" id="btnPrivacy" style="width:100%;margin-top:8px">📄 سياسةُ الخصوصيّة كاملةً</button>
+        <button class="btn" id="btnNotesAgain" style="width:100%;margin-top:8px">🔁 أعِدْ إظهار رسائل التعريف</button>
       </div>
       <button class="btn red big" id="btnReset" style="margin-top:10px">🗑️ تصفير التقدّم</button>
       </div>
@@ -14421,7 +14422,7 @@ function onbFinish(){
   saveDB(); ensureAllSchedules();
   renderPlayers(); renderAvatars();
   show('scr-start');
-  if(!load(LS.help,0)) $('help').hidden=false;
+  bootNotes();                 /* ومن أنشأ مستخدماً جديداً يرى ما يراه غيرُه */
 }
 
 /* ===== الربط ===== */
@@ -17090,6 +17091,28 @@ $('btnPrivacy').onclick=function(){
     catch(e){ location.href='privacy.html'; }
   });
 };
+/* ===== رسائلُ الفتح =====
+   تتتابع ولا تتزاحم: الخصوصيّةُ فهي حقُّه أن يعلمها، ثمّ شرحُ اللعب،
+   ثمّ بشارةُ القصّة، ثمّ نصيحةُ النسخة. وكلٌّ ينتظر هدوءَ ما قبله.
+   وتُنادى من الفتح المعتاد ومن نهاية المعالج سواءً — وكانت في الفتح
+   المعتاد وحدَه، فمن أنشأ مستخدماً جديداً مرّ بالمعالج ولم يرَ شيئاً. */
+/* وله أن يُعيدها متى شاء: رسالةُ الخصوصيّة وشرحُ اللعب */
+$('btnNotesAgain').onclick=function(){
+  save('nur_priv1',0); save(LS.help,0);
+  show('scr-start');
+  bootNotes();
+};
+function bootNotes(){
+  whenCalm(function(){
+    privacyNote(function(){
+      if(!load(LS.help,0)) $('help').hidden=false;
+      whenCalm(function(){
+        try{ stBoot(); }catch(e){}
+        whenCalm(function(){ try{ backupNudge(); }catch(e){} });
+      });
+    });
+  });
+}
 function privacyNote(next){
   uiOnce('nur_priv1',
     '🔒 <b>خصوصيّتك في «نور الوحي»</b>\n\n'+
@@ -17621,21 +17644,7 @@ if(DB_BAD) whenCalm(function(){
 try{ crownCheck(); }catch(e){}
 try{ checkBadges(true); }catch(e){}      /* ما استُحقّ قبل النظام يُمنح صامتاً */
 if(onbNeeded()){ ONB.edit=false; onbShow(0); }     /* أول مرة: المعالج */
-else{
-  renderHome();
-  /* رسائلُ الفتح تتتابع ولا تتزاحم: الخصوصيّةُ أوّلاً فهي حقُّه أن يعلمها،
-     ثمّ شرحُ اللعب، ثمّ بشارةُ القصّة الجديدة، ثمّ نصيحةُ حفظ النسخة.
-     وكلُّ واحدةٍ تنتظر هدوءَ الشاشة قبلها. */
-  whenCalm(function(){
-    privacyNote(function(){
-      if(!load(LS.help,0)) $('help').hidden=false;
-      whenCalm(function(){
-        try{ stBoot(); }catch(e){}
-        whenCalm(function(){ try{ backupNudge(); }catch(e){} });
-      });
-    });
-  });
-}
+else{ renderHome(); bootNotes(); }
 
 /* الستارُ يُرفع بعد أن تستقرّ العناصرُ خلفه: رفعُه على الأثر يكشف
    قفزتَها. فله مكثٌ أدنى منذ فتح الصفحة، ويُنتظر معه استواءُ الخطوط
