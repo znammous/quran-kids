@@ -2589,7 +2589,9 @@ body.glow-off .dfpic{animation:none}
           🌐 ويُنزَّل من الشبكة: التطبيقُ والقصصُ وخطوطُ المصحف وتلاواتُ القرّاء — تنزيلٌ فقط.
         </div>
         <button class="btn" id="btnPrivacy" style="width:100%;margin-top:8px">📄 سياسةُ الخصوصيّة كاملةً</button>
-        <button class="btn" id="btnNotesAgain" style="width:100%;margin-top:8px">🔁 أعِدْ إظهار رسائل التعريف</button>
+        <!-- مخفيٌّ عن المستخدم: لا حاجةَ به إليه، وإنّما هو للفحص.
+             يظهر في وضع الفحص (Ctrl+Shift+Q) -->
+        <button class="btn" id="btnNotesAgain" hidden style="width:100%;margin-top:8px">🔁 أعِدْ إظهار رسائل التعريف</button>
       </div>
       <button class="btn red big" id="btnReset" style="margin-top:10px">🗑️ تصفير التقدّم</button>
       </div>
@@ -9124,6 +9126,7 @@ function qaSync(){
   if(a) a.hidden=!QA;
   if(b) b.hidden=!QA;
   if(bar) bar.hidden=!QA;
+  var na=$('btnNotesAgain'); if(na) na.hidden=!QA;     /* زرُّ إعادة الرسائل: للفحص لا للمستخدم */
   if(n) n.textContent = QA_DAYS===0 ? 'اليوم'
       : (QA_DAYS>0 ? ('+'+arNum(QA_DAYS)+' يوم') : (arNum(QA_DAYS)+' يوم'));
 }
