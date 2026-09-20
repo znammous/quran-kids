@@ -2350,6 +2350,9 @@ body.glow-off .dfpic{animation:none}
 
   <section class="screen" id="scr-badges">
     <h1>🎖️ شاراتي</h1>
+    <!-- شريطُ حصيلته كاملةً: المواظبةُ والجواهرُ والنجومُ والآياتُ والبناء —
+         ليرى كلَّ ما يخصّه في مكانٍ واحد، ولكلّ عدّادٍ شرحُه بنقرة -->
+    <div class="hud" id="badgeHud"></div>
     <p class="sub" id="badgeSub">—</p>
     <div id="badgeWrap"></div>
     <button class="btn primary big" id="btnBadgesBack" style="margin:0">➡️ رجوع</button>
@@ -9629,6 +9632,7 @@ function crownRowHTML(){
 }
 function renderBadges(){
   var p=curP(), h=crownRowHTML();
+  try{ renderHUDInto('badgeHud'); }catch(e){}
   $('badgeSub').textContent='نلتَ '+arNum(badgeCount())+' من '+arNum(badgeTotal())+' شارة — اضغط أيّ شارةٍ لتعرف شرطَها';
   BADGE_FAM.forEach(function(F){
     var v=F.v(), next=null, i;
