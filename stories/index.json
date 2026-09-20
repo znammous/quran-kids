@@ -1,5 +1,5 @@
 {
-  "v": 8,
+  "v": 9,
   "stories": [
     {
       "id": "kahf",
@@ -64,6 +64,15 @@
       "ic": "🐑",
       "cover": "covers/shah.webp",
       "file": "s/shah.json",
+      "added": "2026-09-21"
+    },
+    {
+      "id": "jidar",
+      "t": "ما وراء الجدار",
+      "d": "مَثَلٌ في التجسّس",
+      "ic": "🧱",
+      "cover": "covers/jidar.webp",
+      "file": "s/jidar.json",
       "added": "2026-09-21"
     }
   ]
