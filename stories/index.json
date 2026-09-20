@@ -1,5 +1,5 @@
 {
-  "v": 6,
+  "v": 7,
   "stories": [
     {
       "id": "kahf",
@@ -47,6 +47,15 @@
       "cover": "covers/jannatayn.webp",
       "file": "s/jannatayn.json",
       "added": "2026-09-20"
+    },
+    {
+      "id": "shiraa",
+      "t": "الشِّراع",
+      "d": "مَثَلٌ في التنازع",
+      "ic": "⛵",
+      "cover": "covers/shiraa.webp",
+      "file": "s/shiraa.json",
+      "added": "2026-09-21"
     }
   ]
 }
