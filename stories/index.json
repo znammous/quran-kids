@@ -1,5 +1,5 @@
 {
-  "v": 3,
+  "v": 4,
   "stories": [
     {
       "id": "kahf",
@@ -27,6 +27,15 @@
       "ic": "💰",
       "cover": "covers/qarun.webp",
       "file": "s/qarun.json",
+      "added": "2026-09-20"
+    },
+    {
+      "id": "qatil",
+      "t": "قاتلُ المئة",
+      "d": "قتل مئةً ثمّ غُفر له",
+      "ic": "🚪",
+      "cover": "covers/qatil.webp",
+      "file": "s/qatil.json",
       "added": "2026-09-20"
     }
   ]
