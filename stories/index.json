@@ -1,5 +1,5 @@
 {
-  "v": 7,
+  "v": 8,
   "stories": [
     {
       "id": "kahf",
@@ -55,6 +55,15 @@
       "ic": "⛵",
       "cover": "covers/shiraa.webp",
       "file": "s/shiraa.json",
+      "added": "2026-09-21"
+    },
+    {
+      "id": "shah",
+      "t": "الشاةُ الضالّة",
+      "d": "مَثَلٌ في التثبّت",
+      "ic": "🐑",
+      "cover": "covers/shah.webp",
+      "file": "s/shah.json",
       "added": "2026-09-21"
     }
   ]
