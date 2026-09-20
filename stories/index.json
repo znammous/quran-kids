@@ -1,5 +1,5 @@
 {
-  "v": 2,
+  "v": 3,
   "stories": [
     {
       "id": "kahf",
@@ -18,6 +18,15 @@
       "ic": "🏚️",
       "cover": "covers/qarya.webp",
       "file": "s/qarya.json",
+      "added": "2026-09-20"
+    },
+    {
+      "id": "qarun",
+      "t": "قارون",
+      "d": "كنوزٌ خسف اللهُ بها الأرض",
+      "ic": "💰",
+      "cover": "covers/qarun.webp",
+      "file": "s/qarun.json",
       "added": "2026-09-20"
     }
   ]
