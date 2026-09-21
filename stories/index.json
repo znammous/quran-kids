@@ -1,5 +1,5 @@
 {
-  "v": 14,
+  "v": 15,
   "stories": [
     {
       "id": "kahf",
@@ -111,6 +111,15 @@
       "ic": "⚖️",
       "cover": "covers/tamra.webp",
       "file": "s/tamra.json",
+      "added": "2026-09-21"
+    },
+    {
+      "id": "fasila",
+      "t": "الفسيلة",
+      "d": "مَثَلٌ في الشكر",
+      "ic": "🌴",
+      "cover": "covers/fasila.webp",
+      "file": "s/fasila.json",
       "added": "2026-09-21"
     }
   ]
