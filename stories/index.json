@@ -1,5 +1,5 @@
 {
-  "v": 15,
+  "v": 16,
   "stories": [
     {
       "id": "kahf",
@@ -120,6 +120,15 @@
       "ic": "🌴",
       "cover": "covers/fasila.webp",
       "file": "s/fasila.json",
+      "added": "2026-09-21"
+    },
+    {
+      "id": "siyaj",
+      "t": "السياج",
+      "d": "مَثَلٌ في الإحسان إلى المسيء",
+      "ic": "🐐",
+      "cover": "covers/siyaj.webp",
+      "file": "s/siyaj.json",
       "added": "2026-09-21"
     }
   ]
