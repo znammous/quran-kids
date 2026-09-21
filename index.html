@@ -8302,11 +8302,51 @@ function audSync(){
   /* زرُّ الدرس: يُظهر أنّه يتلو ليعرف كيف يُمسكه */
   var pl=$('pListen');
   if(pl){ pl.classList.toggle('on', on); pl.textContent=ic; }
+  audMedia(on, hold);
   var b=$('mfDockPlay'); if(!b) return;
   var t=b.querySelector('.tico'), l=$('mfPlayLbl');
   b.classList.toggle('on', on);
   if(t) t.textContent=ic;
   if(l) l.textContent = on ? ((hold?'⏸️ ':'')+arNum(AUD.i+1)+'/'+arNum(AUD.q.length)+rp) : 'استمع';
+}
+/* ===== التلاوةُ والشاشةُ مقفلة =====
+   يُعرَّف النظامُ بما يُتلى: اسمُ السورة ورقمُ الآية واسمُ القارئ على شاشة
+   القفل وفي شريط الإشعارات، ومعها أزرارٌ تُمسك وتتابع وتتقدّم آيةً وترجع.
+   وبهذا يعدّها النظامُ مشغّلَ صوتٍ قائماً، فلا يُسكتها إذا أُقفلت الشاشة. */
+var AUD_MS=false;                        /* رُبطت الأزرارُ مرّةً واحدة */
+function audMedia(on, hold){
+  var ms=navigator.mediaSession;
+  if(!ms) return;
+  try{
+    if(!AUD_MS){
+      AUD_MS=true;
+      var h=function(a,f){ try{ ms.setActionHandler(a,f); }catch(e){} };
+      h('play',  function(){ if(AUD.q.length && AUD.hold) audToggle(); });
+      h('pause', function(){ if(AUD.q.length && !AUD.hold) audToggle(); });
+      h('stop',  function(){ audStop(); });
+      h('nexttrack', function(){
+        if(!AUD.q.length) return;
+        if(AUD.el){ try{ AUD.el.pause(); }catch(e){} }
+        AUD.hold=false; audNext();
+      });
+      h('previoustrack', function(){
+        if(!AUD.q.length) return;
+        if(AUD.el){ try{ AUD.el.pause(); }catch(e){} }
+        AUD.i=Math.max(-1, AUD.i-2); AUD.hold=false; audNext();
+      });
+    }
+    if(!on){ ms.metadata=null; ms.playbackState='none'; return; }
+    var it=AUD.q[Math.max(0, AUD.i)], su=surahBy(it[0]), q=qariRow();
+    var ttl='سورة '+(su?su.name:'')+' — الآية '+arNum(it[1]);
+    if(!ms.metadata || ms.metadata.title!==ttl){
+      ms.metadata=new MediaMetadata({
+        title:ttl, artist:(q?q.n:''), album:'نور الوحي',
+        artwork:[{src:'icons/icon-192.png', sizes:'192x192', type:'image/png'},
+                 {src:'icons/icon-512.png', sizes:'512x512', type:'image/png'}]
+      });
+    }
+    ms.playbackState = hold ? 'paused' : 'playing';
+  }catch(e){}
 }
 /* ===== نطاقُ الاستماع من المصحف =====
    صندوقٌ كصندوق «كم مرّةً تريد سماعه» سواءً بسواء: رقاقاتٌ تُضغط بإصبعٍ
