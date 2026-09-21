@@ -1,5 +1,5 @@
 {
-  "v": 13,
+  "v": 14,
   "stories": [
     {
       "id": "kahf",
@@ -102,6 +102,15 @@
       "ic": "💧",
       "cover": "covers/hajar.webp",
       "file": "s/hajar.json",
+      "added": "2026-09-21"
+    },
+    {
+      "id": "tamra",
+      "t": "التمرةُ الزائدة",
+      "d": "مَثَلٌ في الميزان",
+      "ic": "⚖️",
+      "cover": "covers/tamra.webp",
+      "file": "s/tamra.json",
       "added": "2026-09-21"
     }
   ]
