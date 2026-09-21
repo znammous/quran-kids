@@ -1,5 +1,5 @@
 {
-  "v": 12,
+  "v": 13,
   "stories": [
     {
       "id": "kahf",
@@ -94,6 +94,15 @@
       "file": "s/jabal.json",
       "added": "2026-09-21",
       "rev": 2
+    },
+    {
+      "id": "hajar",
+      "t": "الحجرُ الأوّل",
+      "d": "مَثَلٌ في التعاون",
+      "ic": "💧",
+      "cover": "covers/hajar.webp",
+      "file": "s/hajar.json",
+      "added": "2026-09-21"
     }
   ]
 }
