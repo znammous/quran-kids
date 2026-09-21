@@ -1062,6 +1062,16 @@ body.light .sp-lit{fill:#1f92d4}
 @media (prefers-reduced-motion:reduce){
   .sp-lit{animation:none;clip-path:none}
 }
+/* ستارُ تحميل التلاوة: شعارُ ستار الفتح نفسُه فوق الوجه، والوجهُ يُرى من ورائه */
+.audload{position:fixed;inset:0;z-index:8500;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  padding:16px;background:rgba(6,20,30,.72);
+  -webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+.audload[hidden]{display:none}
+.audload .splogo{width:min(120px,36vw)}
+.audload .sptxt{color:#fff;opacity:.95}
+.audload .alcnt{min-height:20px;font-size:15px;font-weight:800;color:#fff;opacity:.75}
+.audload .btn{width:auto;min-width:min(180px,60vw);margin-top:8px}
 .btn.revcta{box-shadow:0 6px 18px rgba(0,0,0,.35)}
 /* ===== بابٌ خالٍ =====
    لا يُترك القسمُ فارغاً بلا بيان: أيقونةٌ في وسطه تدعو إلى ملئه،
@@ -7960,28 +7970,142 @@ function qariRow(){
 function qariShort(){ var q=qariRow(); return q?(q.s||q.n):''; }
 function pad3(n){ n=String(n); return n.length>=3 ? n : ('000'+n).slice(-3); }
 function audUrl(sn,ay){ return QARI_BASE+qariF()+'/'+pad3(sn)+pad3(ay)+'.mp3'; }
-/* المخزَّن أوّلاً: ما سُمع مرّةً لا يُنزَّل ثانية. وإن تعذّر المخزنُ بُثَّ من الشبكة */
-function audSrc(url){
-  if(!window.caches) return Promise.resolve(url);
-  return caches.open(AUD_CACHE).then(function(c){
-    return c.match(url).then(function(hit){
-      if(hit) return hit.blob().then(function(b){ return URL.createObjectURL(b); });
-      return fetch(url).then(function(r){
-        if(!r || !r.ok) throw new Error('net');
-        try{ c.put(url, r.clone()); }catch(e){}
-        return r.blob().then(function(b){ return URL.createObjectURL(b); });
+/* المخزَّن أوّلاً: ما سُمع مرّةً لا يُنزَّل ثانية.
+   وما يُجلب الآن لا يُطلب مرّةً أخرى: فالتهيئةُ والجلبُ المسبق والتلاوةُ
+   قد تطلب الآيةَ نفسَها معاً، فيشتركون في جلبٍ واحد. */
+var AUD_PEND={}, AUD_HAVE={};           /* ما يُجلب الآن، وما عُلم أنّه في المخزن */
+function audGet(url){
+  if(AUD_PEND[url]) return AUD_PEND[url];
+  var p = !window.caches
+    ? fetch(url).then(function(r){ if(!r || !r.ok) throw new Error('net'); return r.blob(); })
+    : caches.open(AUD_CACHE).then(function(c){
+        return c.match(url).then(function(hit){
+          if(hit) return hit.blob();
+          return fetch(url).then(function(r){
+            if(!r || !r.ok) throw new Error('net');
+            var put=c.put(url, r.clone())['catch'](function(){});
+            return Promise.all([r.blob(), put]).then(function(x){ return x[0]; });
+          });
+        });
       });
-    });
-  })['catch'](function(){ return url; });
+  AUD_PEND[url]=p;
+  p.then(function(){ AUD_HAVE[url]=1; delete AUD_PEND[url]; },
+         function(){ delete AUD_PEND[url]; });
+  return p;
 }
+/* وإن تعذّر المخزنُ بُثَّ من الشبكة */
+function audSrc(url){
+  return audGet(url).then(function(b){ return URL.createObjectURL(b); })['catch'](function(){ return url; });
+}
+/* ===== تهيئةُ التلاوة وجلبُها المسبق =====
+   كانت الآياتُ تُجلب واحدةً عند بلوغها، فأوّلَ مرّةٍ يسكت القارئُ بين الآية
+   والآية ريثما تصل. فصار الوجهُ الذي يبدأ منه يُجلب كلُّه قبل أن يُتلى،
+   وستارٌ بشعار التطبيق يقول «جارٍ تحميل الآيات». ثمّ وهو يتلو يُجلب
+   ما بعده بصمتٍ إلى آخر الوجه التالي — فإذا انتقل إليه لم ينتظر شيئاً.
+   وما خُزّن لا يُجلب ثانيةً، فمن سمع الوجهَ مرّةً لا يرى الستار. */
+var AUD_GEN=0;                           /* يتبدّل مع كلّ تلاوةٍ جديدة أو إيقاف، فيسكت جلبُ ما قبلها */
+function audPg(it){
+  try{ return ayahPage(surahBy(it[0]), it[1]-1); }catch(e){ return 0; }
+}
+/* جلبُ قائمةِ روابط، بضعةً بضعةً — لا يُطلق الوجهُ كلُّه في لحظةٍ واحدة */
+function audPool(urls, n, gen, each){
+  return new Promise(function(res){
+    var i=0, done=0, bad=0, k;
+    if(!urls.length){ res(0); return; }
+    function one(){
+      if(gen!==AUD_GEN){ res(bad); return; }
+      if(i>=urls.length) return;
+      audGet(urls[i++]).then(null, function(){ bad++; }).then(function(){
+        done++;
+        if(each && gen===AUD_GEN) each(done, urls.length);
+        if(done>=urls.length) res(bad); else one();
+      });
+    }
+    for(k=0; k<Math.min(n, urls.length); k++) one();
+  });
+}
+function audNeed(items){
+  var out=[];
+  items.forEach(function(it){
+    var u=audUrl(it[0], it[1]);
+    if(!AUD_HAVE[u] && out.indexOf(u)<0) out.push(u);
+  });
+  return out;
+}
+/* الوجهُ الذي يبدأ منه: آياتُ القائمة من موضعه ما دامت في وجهه */
+function audHead(start){
+  var q=AUD.q, p=audPg(q[start]), out=[], j;
+  for(j=start; j<q.length; j++){ if(audPg(q[j])!==p) break; out.push(q[j]); }
+  return out;
+}
+/* يُجلب وجهُ البداية كلُّه ثمّ يُتلى. والستارُ لا يُرى إن كان مخزَّناً أو وصل سريعاً */
+function audPrime(start, go){
+  var gen=++AUD_GEN;
+  var first=audUrl(AUD.q[start][0], AUD.q[start][1]);
+  var need=audNeed(audHead(start));
+  if(!need.length){ go(); return; }
+  var t=setTimeout(function(){ if(gen===AUD_GEN) audLoadShow(0, need.length); }, 180);
+  audPool(need, 4, gen, function(n, tot){ audLoadShow(n, tot); }).then(function(){
+    clearTimeout(t);
+    if(gen!==AUD_GEN) return;            /* أُلغيت أو بدأت تلاوةٌ غيرها */
+    audLoadHide();
+    if(!AUD_HAVE[first]){ audErr(); return; }   /* لم تصل الأولى: لا إنترنت */
+    go();
+  });
+}
+/* وهو يتلو: ما بقي من القائمة إلى آخر الوجه التالي، فإن انتهت القائمةُ قبله
+   فالوجهُ الذي بعدها في المصحف — فهو ما ينتقل إليه غالباً */
+function audAhead(){
+  if(!AUD.q.length) return;
+  var q=AUD.q, s=Math.max(0, AUD.i), p=audPg(q[s]), items=[], j, last;
+  for(j=s; j<q.length; j++){ if(audPg(q[j])>p+1) break; items.push(q[j]); }
+  if(j>=q.length){
+    last=audPg(q[q.length-1]);
+    if(last>=1 && last<604){ try{ items=items.concat(audList(pagePieces(last+1))); }catch(e){} }
+  }
+  audPool(audNeed(items), 2, AUD_GEN);
+}
+/* الستار: شعارُ التطبيق نفسُه الذي على ستار الفتح، ومعه عددُ ما وصل */
+function audLoadShow(n, tot){
+  var el=$('audLoad');
+  if(!el){
+    el=document.createElement('div');
+    el.id='audLoad'; el.className='audload';
+    var sp=$('splash'), lg=sp && sp.querySelector('.splogo');
+    if(lg) el.appendChild(lg.cloneNode(true));
+    el.insertAdjacentHTML('beforeend',
+      '<div class="sptxt">جارٍ تحميل الآيات…</div><div class="alcnt" id="audLoadN"></div>'+
+      '<button class="btn ghost" id="audLoadX" type="button">إلغاء</button>');
+    document.body.appendChild(el);
+    $('audLoadX').onclick=function(){ audStop(); };
+  }
+  $('audLoadN').textContent = tot>1 ? (arNum(n)+' من '+arNum(tot)) : '';
+  el.hidden=false;
+}
+function audLoadHide(){ var el=$('audLoad'); if(el) el.hidden=true; }
 function audEl(){
   if(!AUD.el){
     AUD.el=new Audio();
     AUD.el.preload='auto';
-    AUD.el.onended=function(){ audNext(); };
-    AUD.el.onerror=function(){ audErr(); };
+    /* صمتُ الفتح (audUnlock) ليس تلاوةً: لا يُعدّ انتهاؤه ولا خطؤه */
+    AUD.el.onended=function(){ if(!audMute()) audNext(); };
+    AUD.el.onerror=function(){ if(!audMute()) audErr(); };
   }
   return AUD.el;
+}
+/* سفاري يأبى تشغيلَ صوتٍ بعد انتظارٍ طويلٍ من اللمسة، وقد صار التشغيلُ ينتظر
+   تحميلَ الوجه. فيُفتح العنصرُ في اللمسة نفسِها بصمتٍ قصير، ثمّ يُتلى متى وصل */
+var AUD_SILENT='data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';
+function audMute(){ return !!(AUD.el && String(AUD.el.src).indexOf('data:')===0); }
+function audUnlock(){
+  if(AUD.unl) return;
+  var el=audEl();
+  AUD.unl=true;
+  try{
+    el.src=AUD_SILENT;
+    var p=el.play();
+    if(p && p['catch']) p['catch'](function(){ AUD.unl=false; });
+  }catch(e){ AUD.unl=false; }
 }
 function audFree(){
   if(AUD.url && AUD.url.indexOf('blob:')===0){ try{ URL.revokeObjectURL(AUD.url); }catch(e){} }
@@ -7990,6 +8114,7 @@ function audFree(){
 function audStop(){
   if(AUD.el){ try{ AUD.el.pause(); }catch(e){} }
   AUD.q=[]; AUD.i=-1; AUD.rep=1; AUD.left=1; AUD.hold=false; audFree(); audSync();
+  AUD_GEN++; audLoadHide();
 }
 /* ===== إمساكُ التلاوة =====
    كانت الضغطةُ الثانية تُلغي التلاوةَ من أوّلها، فمن أراد أن يسكت لحظةً —
@@ -8047,10 +8172,11 @@ function audRestart(){
    يُستعمل عند تبديل القارئ والتلاوةُ قائمة، فلا تُلغى من أوّلها */
 function audReload(){
   if(!AUD.q.length) return;
-  AUD.i=Math.max(0, AUD.i)-1;           /* audNext يتقدّم بواحد */
+  var s=Math.max(0, AUD.i);
+  AUD.i=s-1;                            /* audNext يتقدّم بواحد */
   AUD.hold=false;
   if(AUD.el){ try{ AUD.el.pause(); }catch(e){} }
-  audNext();
+  audPrime(s, audNext);                 /* قارئٌ جديد: وجهُه يُجلب بصوته قبل أن يُتلى */
 }
 /* التكرارُ يُبدَّل والتلاوةُ على موضعها، ثمّ يعود إلى صندوقه */
 function audRepAsk(){
@@ -8101,6 +8227,7 @@ function audNext(){
     var el=audEl();
     audFree(); AUD.url=src; el.src=src;
     /* أُمسكت وهي تُجلب: يُهيَّأ صوتُها ولا يُبثّ، حتى يأذن بمتابعتها */
+    audAhead();                          /* ما بعدها يُجلب بصمتٍ وهي تُتلى */
     if(AUD.hold){ audSync(); return; }
     var p; try{ p=el.play(); }catch(e){ audErr(); return; }
     if(p && p['catch']) p['catch'](function(){ audErr(); });
@@ -8516,11 +8643,15 @@ function qariAsk(after){
 function audPlay(list, rep){
   AUD.q=list; AUD.i=-1; AUD.hold=false;
   AUD.rep=(rep==null?1:rep); AUD.left=AUD.rep;
-  try{
-    navToast('🎧 '+qariShort()+(AUD.rep===0 ? ' — بلا توقّف'
-             : (AUD.rep>1 ? (' — '+arNum(AUD.rep)+' مرّات') : '')));
-  }catch(e){}
-  audNext();
+  if(AUD.el){ try{ AUD.el.pause(); }catch(e){} }
+  audUnlock();
+  audPrime(0, function(){
+    try{
+      navToast('🎧 '+qariShort()+(AUD.rep===0 ? ' — بلا توقّف'
+               : (AUD.rep>1 ? (' — '+arNum(AUD.rep)+' مرّات') : '')));
+    }catch(e){}
+    audNext();
+  });
 }
 /* التظليلُ يُبدَّل من شريط المصحف نفسِه، في كلّ موضعٍ يُعرض فيه الوجه: يُحفظ في
    إعدادات اللاعب (هو إعدادُ «تظليل المتشابهات» نفسُه)، ويُعاد رسمُ الوجه بحاله */
