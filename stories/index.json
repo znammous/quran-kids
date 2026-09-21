@@ -1,5 +1,5 @@
 {
-  "v": 16,
+  "v": 17,
   "stories": [
     {
       "id": "kahf",
@@ -129,6 +129,15 @@
       "ic": "🐐",
       "cover": "covers/siyaj.webp",
       "file": "s/siyaj.json",
+      "added": "2026-09-21"
+    },
+    {
+      "id": "fakhkhar",
+      "t": "عند باب الفخّار",
+      "d": "مَثَلٌ في الرفق بالسائل",
+      "ic": "🏺",
+      "cover": "covers/fakhkhar.webp",
+      "file": "s/fakhkhar.json",
       "added": "2026-09-21"
     }
   ]
