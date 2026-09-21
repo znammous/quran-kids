@@ -1663,6 +1663,8 @@ body.glow-off .dfpic{animation:none}
 /* ===== القصص: البطاقةُ بغلافها، ثمّ شاشةُ القراءة ===== */
 .goalcard .gcic.stcov{overflow:hidden;padding:0;background:var(--pnl3)}
 .goalcard .gcic.stcov img{width:100%;height:100%;object-fit:cover;display:block}
+/* قبل مقرَّر اليوم: البطاقةُ كلُّها بالأبيض والأسود — بلا قفل */
+.goalcard.stoff{filter:grayscale(1);opacity:.8}
 .sthead{display:flex;align-items:center;gap:10px;margin:2px 0 12px}
 .sttitle{flex:1;min-width:0;font-size:18px;font-weight:900;color:var(--ttl);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -14348,34 +14350,44 @@ function revDueToday(){
   try{ if(dueSegs().length) return true; }catch(e){}
   return false;
 }
+/* صحّا البطاقتين الأخضران — الحفظُ والمراجعة. حسابٌ واحدٌ تقرؤه البطاقتان
+   وقفلُ القصص معاً، فلا يُفتح الركنُ على صحٍّ لم يخضرّ في الرئيسيّة */
+function goalChecks(){
+  var T=null; try{ T=bqnToday(); }catch(e){}
+  var h=false, r=false, hafizAll=false, dayH=false;
+  try{ hafizAll=isHafiz(); }catch(e){}
+  try{ dayH=(todayBox().hifz===1); }catch(e){}
+  if(hafizAll) h=true;
+  else if(T) h=!!(T.hifzDone || T.dayDone);
+  else { h=dayH; try{ h=goalHifzMet()||dayH; }catch(e){} }
+  try{ r=goalRevMet(); }catch(e){}
+  return { h:h, r:r };
+}
 function renderHomeCards(){
   var hc=$('cardHifz'), rc=$('cardRev');
   if(!hc||!rc) return;
   var T=null; try{ T=bqnToday(); }catch(e){}
+  var G=goalChecks();
 
   /* ١) الحفظ — وما تمّ اليوم يبقى تامّاً ولو زاد بعده وفتح مقطعاً لم يُتمّه */
-  var hTxt, hDone, dayH=false;
-  try{ dayH=(todayBox().hifz===1); }catch(e){}
+  var hTxt, hDone=G.h;
   /* من ختم المصحفَ لا مهمّةَ حفظٍ له: كان يُقال له «أتممتَ ما في نطاقك — وسّع
      الأجزاء»، وهو كلامٌ لمن ضاق نطاقُه لا لمن تمّ له كتابُ الله */
   var hafizAll=false; try{ hafizAll=isHafiz(); }catch(e){}
   if(hafizAll){
     hTxt='لا مهمّةَ حفظٍ اليوم — هنيئاً لك ختمُ القرآن 👑';
-    hDone=true;
   }
   else if(T){
     /* على خطّة: الميزانُ مقرَّرُ يومها نفسُه — أفي محفوظه أم لا — أو إقرارُه
        أنّه أنجز يومه. وكان يُقبل معهما عَلَمُ «hifz» في صندوق اليوم، وهو
        يُرفع متى تمّ مقطعٌ والخطّةُ يومئذٍ لا حفظَ فيها، أو متى تقدّم يومُ
        الخطّة بعد رفعه — فيبقى الصحُّ أخضرَ على مقرَّرٍ لم يُمسّ. */
-    hDone=!!(T.hifzDone || T.dayDone);
     hTxt = !T.h ? 'لا حفظ جديد اليوم'
          : T.hifzDone ? ('أتممتَه — '+bqnLabel(T.h))
          : T.dayDone ? ('أقررتَ إنجازَ يومك — '+bqnLabel(T.h))
          : bqnLabel(T.h);
   } else {
     var nx=null; try{ nx=selfNext(); }catch(e){}
-    hDone=dayH; try{ hDone=goalHifzMet()||dayH; }catch(e){}
     hTxt = !nx ? 'أتممتَ كلَّ ما في نطاقك — وسّع الأجزاء من الإعدادات'
          : (esc(nx.s.name)+' '+arNum(nx.g[0]+1)+' — '+arNum(nx.g[1]));
     if(hDone && nx) hTxt='أتممتَ حفظ اليوم — ولك أن تزيد • التالي: '+esc(nx.s.name)+' '+arNum(nx.g[0]+1)+' — '+arNum(nx.g[1]);
@@ -14387,7 +14399,7 @@ function renderHomeCards(){
   /* ٢) المراجعة — وفيها ثلاثةُ أوجه: مقرَّرُ خطّة، ومستحقٌّ، ووردُ محفوظات */
   var wp=false; try{ revLoad(); wp=wirdPending(); }catch(e){}
   var due=0; try{ due=dueSegs().length; }catch(e){}
-  var rDone=false; try{ rDone=goalRevMet(); }catch(e){}
+  var rDone=G.r;
   var rTxt;
   /* اختار «حفظاً بلا مراجعة»: تقول له البطاقةُ ذلك صريحاً، ولا تعِدُه بمهمّة.
      فإن ضبط مساراً حرّاً عادت البطاقةُ تدعوه إليه */
@@ -15787,19 +15799,31 @@ function storiesOpen(){
     if(ADV_V==='stories' && curScreen()==='scr-games'){ storiesRender(); advSync(); }
   });
 }
+/* القصصُ تُفتح بعد مقرَّر اليوم: حين يخضرّ صحّا الحفظ والمراجعة في الرئيسيّة.
+   وقبلها تبقى ظاهرةً بالأبيض والأسود — يراها فيشتاق إليها، ولا قفلَ يُنفّره.
+   يُرجع ما بقي عليه، أو null إن فُتحت */
+function storiesLeft(){
+  var G=goalChecks();
+  if(G.h && G.r) return null;
+  return (!G.h && !G.r) ? 'الحفظ والمراجعة' : (!G.h ? 'الحفظ' : 'المراجعة');
+}
+function storiesLockedMsg(left){
+  uiBox('ستُفتح القصصُ حين تُنهي مقرَّرَك اليوم\nبقي عليك: '+left, '📚', '🏠 إلى مقرَّري', 'لاحقاً',
+    function(ok){ if(ok){ renderPlayers(); show('scr-start'); } });
+}
 var ST_COVERS=[];                          /* روابطُ الأغلفة المؤقّتة، تُفكّ عند إعادة الرسم */
 function storiesRender(){
   var B=$('storiesBody'); if(!B) return;
   ST_COVERS.forEach(function(u){ try{ URL.revokeObjectURL(u); }catch(e){} });
   ST_COVERS=[];
-  var L=stList(), s=stBox(), h='';
+  var L=stList(), s=stBox(), h='', off=!!storiesLeft();
   if(!L.length){
     h='<p class="gmnote">لا قصصَ بعدُ هنا 📖<br>تظهر حين تصل — ويكفي أن يتّصل التطبيقُ بالإنترنت مرّةً واحدة</p>';
   }else{
     L.forEach(function(x){
       var rv=stRev(x), seen=(s.op[x.id]|0)>0;
       var fresh=(s.op[x.id]|0)<rv, done=(s.read[x.id]|0)>=rv;
-      h+='<button type="button" class="goalcard'+(fresh?' now newdot':(done?' done':''))+'" data-story="'+esc(x.id)+'">'+
+      h+='<button type="button" class="goalcard'+(fresh?' now newdot':(done?' done':''))+(off?' stoff':'')+'" data-story="'+esc(x.id)+'">'+
          '<span class="gcic'+(x.cover?' stcov':'')+'" data-cov="'+esc(stAt(x.cover,rv)||'')+'">'+(x.cover?'':esc(x.ic||'📖'))+'</span>'+
          '<span class="gctx"><b>'+esc(x.t||'قصّة')+'</b><i>'+esc(x.d||'')+
            (fresh?(seen?' • ✨ تجدّدت':' • ✨ جديدة'):(done?' • ✓ قرأتَها':' • ⏳ لم تُتمَّها'))+'</i></span>'+
@@ -15827,6 +15851,8 @@ function storyFree(){
   STORY_BLOBS=[];
 }
 function storyOpen(id){
+  var left=storiesLeft();
+  if(left){ storiesLockedMsg(left); return; }
   var meta=stMeta(id); if(!meta) return;
   var s=stBox();
   var rv=stRev(meta);
