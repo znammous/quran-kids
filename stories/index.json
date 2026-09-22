@@ -1,5 +1,5 @@
 {
-  "v": 17,
+  "v": 27,
   "stories": [
     {
       "id": "kahf",
@@ -55,7 +55,8 @@
       "ic": "⛵",
       "cover": "covers/shiraa.webp",
       "file": "s/shiraa.json",
-      "added": "2026-09-21"
+      "added": "2026-09-21",
+      "rev": 2
     },
     {
       "id": "shah",
@@ -64,7 +65,8 @@
       "ic": "🐑",
       "cover": "covers/shah.webp",
       "file": "s/shah.json",
-      "added": "2026-09-21"
+      "added": "2026-09-21",
+      "rev": 2
     },
     {
       "id": "jidar",
@@ -74,7 +76,7 @@
       "cover": "covers/jidar.webp",
       "file": "s/jidar.json",
       "added": "2026-09-21",
-      "rev": 2
+      "rev": 3
     },
     {
       "id": "kalima",
@@ -83,7 +85,8 @@
       "ic": "🍞",
       "cover": "covers/kalima.webp",
       "file": "s/kalima.json",
-      "added": "2026-09-21"
+      "added": "2026-09-21",
+      "rev": 2
     },
     {
       "id": "jabal",
@@ -93,7 +96,7 @@
       "cover": "covers/jabal.webp",
       "file": "s/jabal.json",
       "added": "2026-09-21",
-      "rev": 2
+      "rev": 3
     },
     {
       "id": "hajar",
@@ -102,7 +105,8 @@
       "ic": "💧",
       "cover": "covers/hajar.webp",
       "file": "s/hajar.json",
-      "added": "2026-09-21"
+      "added": "2026-09-21",
+      "rev": 2
     },
     {
       "id": "tamra",
@@ -111,7 +115,8 @@
       "ic": "⚖️",
       "cover": "covers/tamra.webp",
       "file": "s/tamra.json",
-      "added": "2026-09-21"
+      "added": "2026-09-21",
+      "rev": 2
     },
     {
       "id": "fasila",
@@ -120,7 +125,8 @@
       "ic": "🌴",
       "cover": "covers/fasila.webp",
       "file": "s/fasila.json",
-      "added": "2026-09-21"
+      "added": "2026-09-21",
+      "rev": 2
     },
     {
       "id": "siyaj",
@@ -129,7 +135,8 @@
       "ic": "🐐",
       "cover": "covers/siyaj.webp",
       "file": "s/siyaj.json",
-      "added": "2026-09-21"
+      "added": "2026-09-21",
+      "rev": 2
     },
     {
       "id": "fakhkhar",
@@ -138,7 +145,8 @@
       "ic": "🏺",
       "cover": "covers/fakhkhar.webp",
       "file": "s/fakhkhar.json",
-      "added": "2026-09-21"
+      "added": "2026-09-21",
+      "rev": 2
     }
   ]
 }
