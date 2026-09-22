@@ -1,5 +1,5 @@
 {
-  "v": 32,
+  "v": 34,
   "stories": [
     {
       "id": "kahf",
@@ -153,10 +153,19 @@
       "t": "غِنى",
       "d": "مَثَلٌ في اليد التي لا تسأل",
       "ic": "🌾",
-      "cover": "covers/ghina.webp",
       "file": "s/ghina.json",
       "added": "2026-09-22",
-      "rev": 3
+      "cover": "covers/ghina.webp",
+      "rev": 4
+    },
+    {
+      "id": "ruqayya",
+      "t": "قولاً كريماً",
+      "d": "مَثَلٌ في برّ الأمّ",
+      "ic": "🌙",
+      "cover": "covers/ruqayya.webp",
+      "file": "s/ruqayya.json",
+      "added": "2026-09-22"
     }
   ]
 }
