@@ -1,5 +1,5 @@
 {
-  "v": 27,
+  "v": 28,
   "stories": [
     {
       "id": "kahf",
@@ -146,7 +146,7 @@
       "cover": "covers/fakhkhar.webp",
       "file": "s/fakhkhar.json",
       "added": "2026-09-21",
-      "rev": 2
+      "rev": 3
     }
   ]
 }
