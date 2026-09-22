@@ -1,5 +1,5 @@
 {
-  "v": 31,
+  "v": 32,
   "stories": [
     {
       "id": "kahf",
@@ -156,7 +156,7 @@
       "cover": "covers/ghina.webp",
       "file": "s/ghina.json",
       "added": "2026-09-22",
-      "rev": 2
+      "rev": 3
     }
   ]
 }
