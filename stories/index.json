@@ -1,5 +1,5 @@
 {
-  "v": 34,
+  "v": 35,
   "stories": [
     {
       "id": "kahf",
@@ -166,6 +166,15 @@
       "cover": "covers/ruqayya.webp",
       "file": "s/ruqayya.json",
       "added": "2026-09-22"
+    },
+    {
+      "id": "shatla",
+      "t": "صفُّ الشتلات",
+      "d": "مَثَلٌ في «لا تغضب»",
+      "ic": "🌱",
+      "cover": "covers/shatla.webp",
+      "file": "s/shatla.json",
+      "added": "2026-09-23"
     }
   ]
 }
