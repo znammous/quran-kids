@@ -1,5 +1,5 @@
 {
-  "v": 28,
+  "v": 30,
   "stories": [
     {
       "id": "kahf",
@@ -147,6 +147,15 @@
       "file": "s/fakhkhar.json",
       "added": "2026-09-21",
       "rev": 3
+    },
+    {
+      "id": "ghina",
+      "t": "غِنى",
+      "d": "مَثَلٌ في اليد التي لا تسأل",
+      "ic": "🌾",
+      "cover": "covers/ghina.webp",
+      "file": "s/ghina.json",
+      "added": "2026-09-22"
     }
   ]
 }
