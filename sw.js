@@ -4,7 +4,7 @@
    التنصيب، وخطوطُ صفحات المصحف عند أوّل استعمال فقط فلا نُنزّل ستّة وأربعين ميجابايت دفعةً واحدة.
    البيانات (data/): المخزَّن أوّلاً. ملفّاتُ الآيات والخطط تُطلب برقم إصدارٍ (?v=)
    فإذا تغيّر ملفٌّ رُفع رقمُه في index.html وفي DATA_FILES هنا، فيُجلب الجديدُ ويُحذف القديم. */
-var VER   = 'v5';
+var VER   = 'v6';
 var SHELL = 'nur-shell-' + VER;   /* الصفحة وما يتبعها — يُمسح مع كل إصدار */
 var ASSET = 'nur-assets';         /* خطوط لا تتغيّر — يبقى عبر الإصدارات */
 var DATA  = 'nur-data-1';         /* بياناتُ الآيات والخطط والمعاني */
@@ -33,7 +33,7 @@ function fill(name, list){
 self.addEventListener('install', function(e){
   e.waitUntil(
     Promise.all([
-      fill(SHELL, ['./','./index.html','./manifest.webmanifest',
+      fill(SHELL, ['./','./index.html','./privacy.html','./manifest.webmanifest',
                    './icons/icon-192.png','./icons/icon-512.png']),
       fill(DATA, DATA_FILES),
       fill(ASSET, UI_FONTS)

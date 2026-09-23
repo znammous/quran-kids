@@ -36,6 +36,9 @@ a{color:#7fd4f5}
 .en h2,.en h3,.en p,.en li,.en td,.en th{text-align:left}
 footer{margin-top:40px;padding-top:18px;border-top:2px solid var(--pb);
   color:var(--on3);font-size:13.5px}
+/* داخل التطبيق: لا رابطَ يخرج بالطفل، ومتّسعٌ لزرّ الإغلاق */
+.emb .wrap{padding-top:64px}
+.emb a{color:inherit;text-decoration:none;pointer-events:none}
 </style>
 </head>
 <body>
@@ -97,15 +100,16 @@ footer{margin-top:40px;padding-top:18px;border-top:2px solid var(--pb);
 
 <h2>٤) ما يُنزَّل من الشبكة</h2>
 
-<p>التطبيق يعمل دون إنترنت بعد أوّل فتح. لكنّه يُنزّل بعضَ الملفّات من
-مصادرَ خارجيّة، وهذه — كأيّ تحميلٍ على الإنترنت — يصل إليها عنوانُ IP
-الخاصّ بجهازك:</p>
+<p>التطبيق يعمل دون إنترنت: في نسخة المتجر هو وخطوطُ المصحف داخلَه من
+التثبيت، وعلى الويب بعد أوّل فتح. لكنّه يُنزّل بعضَ الملفّات من مصادرَ
+خارجيّة، وهذه — كأيّ تحميلٍ على الإنترنت — يصل إليها عنوانُ IP الخاصّ
+بجهازك:</p>
 
 <table>
   <tr><th>المصدر</th><th>ما يُنزَّل منه</th><th>متى</th></tr>
-  <tr><td><code>znammous.github.io</code></td><td>التطبيقُ نفسُه والقصص</td><td>عند الفتح والتحديث</td></tr>
-  <tr><td><code>cdn.jsdelivr.net</code></td><td>خطوطُ أوجه المصحف</td><td>عند عرض وجهٍ لأوّل مرّة</td></tr>
-  <tr><td><code>everyayah.com</code></td><td>تلاواتُ القرّاء (صوت)</td><td>عند تشغيل تلاوة</td></tr>
+  <tr><td><code>znammous.github.io</code></td><td>القصص — وعلى الويب التطبيقُ نفسُه أيضاً</td><td>عند فتح القصص، وعلى الويب عند الفتح والتحديث</td></tr>
+  <tr><td><code>everyayah.com</code></td><td>تلاواتُ القرّاء (صوت)</td><td>عند تشغيل تلاوةٍ لم تُسمع من قبل</td></tr>
+  <tr><td><code>cdn.jsdelivr.net</code></td><td>خطوطُ أوجه المصحف</td><td>على الويب فقط، احتياطاً إن تعذّر الخطُّ من المصدر الأوّل</td></tr>
 </table>
 
 <p>هذه <b>تنزيلٌ فقط</b> — لا يُرسل إليها شيءٌ عنك. ولكلٍّ منها سياستُها،
@@ -162,12 +166,13 @@ cannot recover them. Users can export a backup file from
 <b>Settings → Device → Save progress</b>.</p>
 
 <h3>Network</h3>
-<p>The app works offline after first load. It downloads files from
-<code>znammous.github.io</code> (app and stories),
-<code>cdn.jsdelivr.net</code> (Qur'an page fonts) and
-<code>everyayah.com</code> (reciter audio). These are downloads only — no
-data about the user is sent. As with any web request, the device's IP
-address is visible to those hosts.</p>
+<p>The app works offline: the store version ships with the app and its
+Qur'an page fonts built in; the web version works offline after first load.
+It downloads files from <code>znammous.github.io</code> (stories, and on the
+web the app itself) and <code>everyayah.com</code> (reciter audio); on the
+web only, <code>cdn.jsdelivr.net</code> serves as a fallback for Qur'an page
+fonts. These are downloads only — no data about the user is sent. As with
+any web request, the device's IP address is visible to those hosts.</p>
 
 <h3>Children</h3>
 <p>The app contains no ads, no in-app purchases, and no outbound links
@@ -186,5 +191,9 @@ uninstalling the app or clearing site data.</p>
 </footer>
 
 </div>
+<script>
+/* معروضةٌ داخل التطبيق (في إطار): روابطُها نصٌّ لا يُتبع */
+try{ if(window.top!==window) document.body.className+=' emb'; }catch(e){ document.body.className+=' emb'; }
+</script>
 </body>
 </html>
