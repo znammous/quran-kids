@@ -489,6 +489,10 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
 .mfgorow{display:flex;gap:8px;align-items:stretch}
 .mfgorow .btn{flex:1 1 0;min-width:0;padding-inline:10px}
 .mfgorow #mfGoBtn{flex:1.7 1 0}
+/* خلاصةُ الخصوصيّة في الإعدادات: بلونها الأخضر في صفحة السياسة، في الوضعين */
+.privsum{background:#0d3a2c;border:2px solid #4ec98a;border-radius:14px;padding:12px 14px;margin:0 0 10px;
+  color:#eaf2ff;font-size:14.5px;font-weight:700;line-height:1.9}
+.privsum b{color:#8ff0c0}
 .mfq{font-family:"UthmanicHafs","Amiri Quran",serif;font-size:1.2em;font-weight:400;padding:0 .25em;
   border-radius:6px;background:rgba(255,255,255,.12)}
 .mfq.mg0{background:rgba(255,193,7,.45)}
@@ -2588,6 +2592,12 @@ body.hastabs #btnRevQuit{display:none}
       <!-- الخصوصيّة: تُقال في مكانٍ يُرى، لا تُدفن في صفحةٍ بعيدة -->
       <div class="setblock" style="margin-top:12px">
         <label class="lbl">🔒 الخصوصيّة</label>
+        <!-- الخلاصةُ بلونها الأخضر كما هي في صفحة السياسة -->
+        <div class="privsum">
+          <b>الخلاصة في سطر:</b> لا يجمع «نور الوحي» عنك شيئاً، ولا يرفع شيئاً إلى
+          أيّ خادم، ولا يطلب حساباً ولا بريداً ولا اسماً حقيقيّاً. كلُّ ما تصنعه
+          يبقى في جهازك وحده.
+        </div>
         <div class="note" style="line-height:2">
           🎤 <b>تسجيلُك لا يخرج من جهازك</b> — يبقى في ذاكرة الصفحة، تسمعه، ثمّ يُمحى.
           ولا يُحفظ حتى في الجهاز، ولا يُرسل إلى أيّ خادم.<br>
@@ -17286,17 +17296,13 @@ $('btnExport').onclick=function(){
 $('btnImport').onclick=function(){ $('fileInput').click(); };
 /* ===== الخصوصيّة =====
    تُقال مرّةً عند أوّل فتح، وتبقى في الإعدادات لمن أراد مراجعتَها.
-   والسياسةُ كاملةً صفحةٌ على حِدة — تُفتح خلف بوّابة الوالدين، فالخروجُ
-   من تطبيق أطفالٍ لا يكون بضغطةِ طفل. */
+   والسياسةُ كاملةً صفحةٌ على حِدة تُفتح بلا بوّابة — فهي للقراءة وحدها. */
 var PRIV_URL='https://znammous.github.io/quran-kids/privacy.html';
 $('btnPrivacy').onclick=function(){
-  parentGate(function(ok){
-    if(!ok) return;
-    var B=nativePlugin('Browser');
-    if(isNative() && B && B.open){ try{ B.open({ url:PRIV_URL }); return; }catch(e){} }
-    try{ window.open(isNative()?PRIV_URL:'privacy.html','_blank','noopener'); }
-    catch(e){ location.href='privacy.html'; }
-  });
+  var B=nativePlugin('Browser');
+  if(isNative() && B && B.open){ try{ B.open({ url:PRIV_URL }); return; }catch(e){} }
+  try{ window.open(isNative()?PRIV_URL:'privacy.html','_blank','noopener'); }
+  catch(e){ location.href='privacy.html'; }
 };
 /* ===== رسائلُ الفتح =====
    تتتابع ولا تتزاحم: الخصوصيّةُ فهي حقُّه أن يعلمها، ثمّ شرحُ اللعب،
