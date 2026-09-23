@@ -9356,6 +9356,7 @@ function runRound(){
   $('playArea').className='qfill qcenter';
   if(!S) return;
   if(S.i>=S.rounds.length){ finishStage(); return; }
+  if(S.rev==='exam') examSave();            /* عند كلّ سؤال: فإن أُغلق التطبيقُ عاد إليه */
   var r=S.rounds[S.i];
   if(S.review && r.surah){ S.surah=r.surah; S.seg=[r.segFrom,r.segTo]; }
   r=qFit(r);
@@ -13645,6 +13646,19 @@ function examBuild(){
 }
 /* ===== المعالج ===== */
 function examOpen(){
+  var z=examPaused(false);
+  if(z){
+    uiBox('📝 <b>لك اختبارٌ موقوف</b> عند '+examPausedAt(z)+'.'+String.fromCharCode(10)+String.fromCharCode(10)+
+          'أتكمله من حيث وقفت؟ أم تبدأ اختباراً جديداً؟ (الجديدُ يُلغي الموقوف)',
+      '📝', '▶️ أكمِله', '🆕 اختبارٌ جديد', function(ok){
+        if(ok){ if(!examResume(false)) examOpenNew(); }
+        else examOpenNew();
+      });
+    return;
+  }
+  examOpenNew();
+}
+function examOpenNew(){
   if(!EX.init){
     EX.init=1;
     /* يبدأ من نطاق مراجعته إن كان له نطاق، فأغلبُ الظنّ أنّه يختبر ما يتعاهده */
@@ -13904,13 +13918,76 @@ function examWire(k){
     };
   }
 }
-/* الخروجُ من الاختبار خسارتُه كلِّه، فلا يُترك لنقرةٍ عابرة */
+/* ===== إيقافُ الاختبار والعودةُ إليه =====
+   كان الخروجُ من الاختبار يُضيّعه كلَّه. فصار يُحفظ عند كلّ سؤالٍ في ملفّ
+   اللاعب: أسئلتُه كما بُنيت، وموضعُه منها، وما أجاب، ووقتُه — فإن خرج أو
+   أُغلق التطبيقُ عاد إليه من سؤاله نفسِه. وللاختبار حفظُه ولتحدّي اليوم
+   حفظُه، وتحدّي اليوم لا يُستأنف في غير يومه. والسورةُ في الأسئلة كائنٌ
+   كبير، فتُحفظ برقمها وتُردّ عند الاستئناف. */
+function examPauseKey(daily){ return daily ? 'dyPause' : 'exPause'; }
+function examSave(){
+  if(!S || S.rev!=='exam') return;
+  var p; try{ p=curP(); }catch(e){ return; }
+  if(!p) return;
+  /* أجاب ولم يظهر التالي بعدُ (مهلةُ كشف الصواب): يُحفظ على التالي،
+     فلا يُعاد عليه ما أجاب ولا يُحسب مرّتين */
+  var i0=S.i, s;
+  if(EX.log.length>S.i) S.i=EX.log.length;
+  try{
+    s=JSON.stringify(S, function(k,v){
+      if(v && typeof v==='object' && !Array.isArray(v) && v.n!=null && v.name && v.ayat) return { $s:v.n };
+      return v;
+    });
+  } finally { S.i=i0; }
+  p[examPauseKey(S.daily)]={ s:s, log:EX.log.slice(), el:Date.now()-EX.t0, day:todayNum(),
+    ex:{ fromS:EX.fromS, fromA:EX.fromA, toS:EX.toS, toA:EX.toA } };
+  saveDB();
+}
+function examPaused(daily){
+  var p; try{ p=curP(); }catch(e){ return null; }
+  var z=p && p[examPauseKey(daily)];
+  if(!z || !z.s) return null;
+  if(daily && z.day!==todayNum()){ examDrop(true); return null; }   /* تحدٍّ مضى يومُه */
+  return z;
+}
+function examDrop(daily){
+  var p; try{ p=curP(); }catch(e){ return; }
+  if(p && p[examPauseKey(daily)]){ delete p[examPauseKey(daily)]; saveDB(); }
+}
+/* أين وقف: «السؤال ٧ من ٢٠» */
+function examPausedAt(z){
+  try{
+    var o=JSON.parse(z.s);
+    return 'السؤال <b>'+arNum(o.i+1)+'</b> من <b>'+arNum(o.rounds.length)+'</b>';
+  }catch(e){ return ''; }
+}
+function examResume(daily){
+  var z=examPaused(daily); if(!z) return false;
+  var o;
+  try{
+    o=JSON.parse(z.s, function(k,v){
+      if(v && typeof v==='object' && v.$s!=null){ var su=surahBy(v.$s); if(!su) throw new Error('surah'); return su; }
+      return v;
+    });
+  }catch(e){ examDrop(daily); return false; }
+  if(!o || !o.rounds || !o.rounds.length){ examDrop(daily); return false; }
+  EX.log=z.log||[]; EX.t0=Date.now()-(z.el||0);
+  if(z.ex){ EX.fromS=z.ex.fromS; EX.fromA=z.ex.fromA; EX.toS=z.ex.toS; EX.toA=z.ex.toA; }
+  S=o;
+  show('scr-play'); runRound();
+  return true;
+}
+/* الخروجُ إيقاف: يُحفظ ويعود إليه من الموضع نفسِه */
 function examQuitAsk(){
-  uiBox((S&&S.daily ? 'إن خرجتَ الآن ضاع ما أجبتَه، ويبقى تحدّي اليوم ينتظرك حتى تُتمّه.'
-                   : 'إن خرجتَ الآن ضاع اختبارُك كلُّه، وبدأتَه من أوّله.')+
-    String.fromCharCode(10)+'أتخرج؟','⚠️','🚪 نعم، أخرج','↩️ أُكمل الاختبار', function(ok){
+  var daily=!!(S&&S.daily);
+  uiBox('⏸️ <b>أتوقف '+(daily?'تحدّي اليوم':'الاختبار')+' الآن؟</b>'+String.fromCharCode(10)+String.fromCharCode(10)+
+    'يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله متى شئت من زرّ '+(daily?'«تحدّي اليوم»':'«اختبر نفسي»')+
+    (daily?' — اليومَ نفسَه.':'.'),
+    '⏸️', '⏸️ أوقِفه الآن', '↩️ أُكمل', function(ok){
       if(!ok) return;
+      examSave();
       S=null; renderPlayers(); show('scr-start');
+      try{ navToast('⏸️ حُفظ '+(daily?'تحدّيك':'اختبارك')+' — تعود إليه من حيث وقفت'); }catch(e){}
     });
 }
 /* ===== الاختبار نفسه ===== */
@@ -13921,6 +13998,7 @@ function examBegin(){
 }
 /* daily: تحدّي اليوم — أسئلتُه كالاختبار، وخاتمتُه غيرُ خاتمته */
 function examRun(rounds, daily){
+  examDrop(daily);                         /* بدأ جديداً: يُترك الموقوفُ من نوعه */
   EX.log=[]; EX.t0=Date.now();
   var f0=rounds[0];
   S={ surah:f0.surah, seg:[f0.segFrom,f0.segTo], si:0, key:segKey(f0.surah.n,f0.segFrom),
@@ -13949,6 +14027,7 @@ function examWeakest(){
 }
 var EX_LAST=null;   /* آخرُ نتيجةٍ — لتُطبع بعد قراءتها */
 function finishExam(){
+  examDrop(!!(S && S.daily));             /* انتهى: لا موقوفَ بعده */
   if(S && S.daily){ finishDaily(); return; }
   var tot=EX.log.length||1, right=0, i;
   for(i=0;i<EX.log.length;i++) if(EX.log[i].ok) right++;
@@ -14066,6 +14145,7 @@ function dailyRounds(){
 }
 function dailyBegin(){
   if(!dailyOpen()){ dailyRender(); return; }
+  if(examResume(true)) return;             /* تحدّي اليوم الموقوف: يعود إليه بلا سؤال */
   var rounds=dailyRounds();
   if(!rounds.length){ uiAlert('ما حفظتَه لا يكفي لتحدٍّ بعد — احفظ مقطعاً ثمّ عُد','🎯'); return; }
   examRun(rounds, true);
