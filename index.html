@@ -487,9 +487,6 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
 .mfgorow{display:flex;gap:8px;align-items:stretch}
 .mfgorow .btn{flex:1 1 0;min-width:0;padding-inline:10px}
 .mfgorow #mfGoBtn{flex:1.7 1 0}
-/* خانةُ «لا تعرض هذا مرّة أخرى» تحت البيان، خفيفةٌ لا تزاحم زرَّ البدء */
-.mfgoskip{justify-content:center;margin:0;font-size:13px;font-weight:800;color:var(--mute)}
-.mfgonote{font-weight:800;font-size:14px;line-height:1.8;color:var(--ttl);text-align:center}
 .mfq{font-family:"UthmanicHafs","Amiri Quran",serif;font-size:1.2em;font-weight:400;padding:0 .25em;
   border-radius:6px;background:rgba(255,255,255,.12)}
 .mfq.mg0{background:rgba(255,193,7,.45)}
@@ -2030,8 +2027,6 @@ body.hastabs #btnRevQuit{display:none}
   <span class="mfstep" id="mfStep" hidden></span>
   <div class="mfbody" id="mfBody"></div>
   <div class="mfgo" id="mfGo" hidden>
-    <div class="mfgonote" id="mfGoNote"></div>
-    <label class="chk mfgoskip"><input type="checkbox" id="mfGoSkip"> لا تعرض هذا مرّة أخرى</label>
     <!-- الاستماعُ بجانب زرّ البدء: الزرُّ الأخضرُ يخطف العين، فلا يُترك السماعُ
          في شريطٍ صغيرٍ أسفلَ الشاشة لا يُنتبه له -->
     <div class="mfgorow">
@@ -2534,7 +2529,6 @@ body.hastabs #btnRevQuit{display:none}
         </select>
       </div>
       <div class="switchrow"><span>✨ تظليل المتشابهات<br><small style="font-weight:700;color:var(--mute)">في كل وجهٍ من المصحف: ما تشابه أو تكرّر من العبارات والكلمات، لكل مجموعةٍ لونٌ واحد — ويُبدَّل كذلك من شريط المصحف نفسِه 🎨</small></span><input type="checkbox" id="setSimHl"></div>
-      <div class="switchrow"><span>📝 شرحُ المقطع مع وجه المصحف<br><small style="font-weight:700;color:var(--mute)">سطورُ البيان فوق الوجه قبل البدء: موضعُ المقطع وألوانُ المتشابهات والتنبيه عليها — ووجهُ المصحف يُعرض على كلّ حال</small></span><input type="checkbox" id="setPvNote"></div>
       <div class="switchrow"><span>💡 إبقاء الشاشة مضاءة أثناء القراءة<br><small style="font-weight:700;color:var(--mute)">لا تنطفئ الشاشةُ ووجهُ المصحف مفتوحٌ بين يديه، وتعود مهلةُ جهازك حين يُغلق الوجه</small></span><input type="checkbox" id="setWake"></div>
       <div class="setblock">
         <label class="lbl">🔎 حجم خط الآية</label>
@@ -2737,7 +2731,7 @@ function kindAllowed(t){
   var h=LV_HIDE[SET&&SET.level];
   return !(h&&h[t]);
 }
-function defSet(){ return { level:'easy', lv3:true, script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false, simHl:true, pvNote:true, wake:true, qari:'Husary_64kbps', audRep:1 }; }
+function defSet(){ return { level:'easy', lv3:true, script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false, simHl:true, wake:true, qari:'Husary_64kbps', audRep:1 }; }
 /* ثلاث درجات للخطّ لا خمس — ويُردّ القديم إلى أقربها */
 var FONTS=[{v:20,n:'صغير'},{v:24,n:'متوسط'},{v:30,n:'كبير'}];
 function normFont(f){ f=parseInt(f,10)||24; return f<=22?20:(f<=27?24:30); }
@@ -2833,9 +2827,7 @@ function bindPlayer(){
   if(typeof SET.cele!=='boolean') SET.cele=true;
   if(typeof SET.light!=='boolean') SET.light=false;
   if(typeof SET.simHl!=='boolean') SET.simHl=true;   /* مفعَّلٌ افتراضياً */
-  /* كان الخيارُ أوّلَ أمره يُخفي الوجهَ كلَّه، وإنّما المرادُ كتمُ الشرح وحدَه */
-  if(typeof SET.segPv==='boolean' && typeof SET.pvNote!=='boolean'){ SET.pvNote=SET.segPv; delete SET.segPv; }
-  if(typeof SET.pvNote!=='boolean') SET.pvNote=true;   /* شرحُ المقطع مع الوجه، مفعَّلٌ افتراضياً */
+  delete SET.segPv; delete SET.pvNote;   /* شرحُ المقطع فوق الوجه أُزيل، فلا يبقى إعدادُه */
   if(typeof SET.wake!=='boolean') SET.wake=true;       /* وإبقاءُ الشاشة مضاءةً في القراءة */
   if(typeof SET.rec!=='boolean') SET.rec=false;   /* مطفأ افتراضياً */
   if(!SET.segMode) SET.segMode="q";
@@ -3915,41 +3907,15 @@ function mfSpanNote(lastP, curP_, txt){
 function segPreview(pieces, title, btn, go){
   var M=mfMarkSet(pieces);
   if(!M.rg.length){ MF_MARK=null; if(go) go(); return; }
-  if($('mfGoSkip')) $('mfGoSkip').checked=false;
-  var P=pageOfIdx(M.rg[0][0]), P2=pageOfIdx(M.rg[M.rg.length-1][1]-1), q;
-  var html='<b>📖 هذا مقطعك في المصحف</b> — تأمّله قبل أن تبدأ';
-  if(P2>P) html+='<br>↔️ يكمل في الصفحة '+arNum(P2)+' — اسحب الوجه لتراه';
-  if(simOn()){
-    var mine=[], rest=[], any=false;
-    for(q=P;q<=P2;q++){
-      var PM=simPage(q);
-      for(var kk in PM.mk){ any=true; break; }
-      PM.notes.forEach(function(pr){
-        pr.c=PM.mk[pr[0].gi+':'+pr[0].w];
-        (mfInRg(M,pr[0].gi)||mfInRg(M,pr[1].gi) ? mine : rest).push(pr);
-      });
-    }
-    var notes=mine.concat(rest);
-    if(any) html+='<br>🎨 كلُّ لونٍ يجمع ما تشابه أو تكرّر في الصفحة';
-    if(notes.length){
-      html+='<br>🔎 انتبه: '+notes.slice(0,3).map(function(pr){
-        return pr.map(function(x){
-          return 'الآية '+arNum(mLoc(x.gi)[1])+' <span class="mfq'+(pr.c!=null?' mg'+pr.c:'')+'">'+esc(simWord(x.gi,x.w))+'</span>';
-        }).join(' و');
-      }).join(' • ');
-    }
-  }
-  /* الوجهُ يُعرض دائماً كما كان — وإنّما الشرحُ وحدَه هو الذي يُكتم إن طلب ذلك،
-     فيبقى الوجهُ وزرُّ البدء بلا كلامٍ يُقرأ في كلّ مرّة */
-  var note=(SET && SET.pvNote===false);
-  $('mfGoNote').innerHTML=note ? '' : html;
-  $('mfGoNote').hidden=note;
-  if($('mfGoSkip')) $('mfGoSkip').parentNode.hidden=note;
+  var P=pageOfIdx(M.rg[0][0]), P2=pageOfIdx(M.rg[M.rg.length-1][1]-1);
+  /* الوجهُ وزرُّ البدء وحدهما، بلا سطور بيانٍ فوقه — إلّا أنّ المقطعَ إن
+     امتدّ إلى الوجه التالي قيل له ذلك في تنبيهٍ عابر */
   $('mfGoBtn').textContent=btn;
   $('mfGo').hidden=false;
   $('mfSheet').classList.add('pv');
   MF_PV={go:go};
   mushafOpenPage(P, -1, title);
+  mfSpanNote(P2, P, '↔️ مقطعك يكمل في الصفحة ');
 }
 function mushafPageHTML(P, hlGi, glyphs){
   mushafInit();
@@ -7885,13 +7851,6 @@ $('mfGoListen').onclick=function(){
 $('pListen').onclick=function(){
   if(audTap()) return;
   audAsk(audQueueNow());
-};
-/* يُحفظ فورَ تعليمه، فيصحّ وإن خرج من الوجه بالإغلاق أو بزرّ الرجوع لا بزرّ البدء.
-   ولوليّ الأمر أن يعيده من «الإعدادات ← 📖 عرض المقطع في المصحف قبل البدء» */
-if($('mfGoSkip')) $('mfGoSkip').onchange=function(){
-  SET.pvNote=!this.checked; saveDB();
-  try{ navToast(this.checked ? 'لن يُعرض هذا الشرحُ بعدُ — ويبقى الوجهُ كما هو، ويُعاد الشرحُ من الإعدادات'
-                             : 'سيُعرض الشرحُ مع الوجه'); }catch(e){}
 };
 $('mfPg').onchange=function(){ mfGoto(this.value); };
 $('mfPg').onkeydown=function(e){ if(e.key==='Enter'){ this.blur(); this.onchange(); } };
@@ -13477,7 +13436,6 @@ function fillSettings(){
   $('setCele').checked=(SET.cele!==false);
   $('setLight').checked=!!SET.light;
   $('setSimHl').checked=(SET.simHl!==false);
-  if($('setPvNote')) $('setPvNote').checked=(SET.pvNote!==false);
   if($('setWake')) $('setWake').checked=(SET.wake!==false);
   $('setRec').checked=!!SET.rec;
   $('setFree').checked=!!SET.free;
@@ -13531,7 +13489,6 @@ function readSettings(){
   SET.cele=$('setCele').checked;
   SET.light=$('setLight').checked; applyTheme();
   SET.simHl=$('setSimHl').checked;
-  if($('setPvNote')) SET.pvNote=$('setPvNote').checked;
   if($('setWake')){ SET.wake=$('setWake').checked; if(!SET.wake) wakeOff(); }
   SET.rec=$('setRec').checked;
   if(SET.rec) REC.off=false;                 /* إعادة التفعيل تُلغي إيقاف الجلسة */
