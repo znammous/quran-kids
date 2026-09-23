@@ -22,7 +22,9 @@ const all = readdirSync(OUT, { recursive: true, withFileTypes: true })
   .map(e => `${e.parentPath ?? e.path}/${e.name}`.split('\\').join('/'))
   .sort();
 const h = createHash('sha256');
-for (const f of all) { h.update(f.slice(OUT.length + 1)); h.update(readFileSync(f)); }
+/* خطوطُ الأوجه خارجَ البصمة وخارجَ حزمة التحديث: لا تتغيّر، وتصل مع التطبيق مرّةً واحدة */
+const inBundle = f => !f.startsWith(`${OUT}/fonts/pages/`);
+for (const f of all.filter(inBundle)) { h.update(f.slice(OUT.length + 1)); h.update(readFileSync(f)); }
 const id = h.digest('hex').slice(0, 12);
 writeFileSync(`${OUT}/bundle.json`, JSON.stringify({ id }) + '\n');
 console.log(`www/ جاهز: ${all.length} ملفّاً، والحزمة ${id}`);

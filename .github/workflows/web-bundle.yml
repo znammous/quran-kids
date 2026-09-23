@@ -1,7 +1,8 @@
 # حزمةُ التحديث الحيّ: كلُّ تعديلٍ على الصفحة يُنشر إصداراً (web-<بصمة>) في Releases،
 # فيراه تطبيقُ الجوّال عند فتحه ويعرض التحديث — بلا انتظار المتجر.
 # البصمةُ من المحتوى، فما لم يتغيّر فيه شيءٌ لا يُنشر مرّتين.
-# ويُبقى آخرُ ثلاثة إصداراتٍ فقط، فلكلٍّ منها نحو خمسين ميجابايت.
+# وخطوطُ الأوجه ليست فيها (تصل مع التطبيق مرّةً واحدة، وتُحفظ في مخزنه)،
+# فالحزمةُ بضعةُ ميجابايتات. ويُبقى آخرُ ثلاثة إصدارات.
 name: حزمة التحديث
 
 on:
@@ -50,7 +51,7 @@ jobs:
           if gh release view "$TAG" >/dev/null 2>&1; then
             echo "الحزمة $TAG منشورةٌ من قبل"; exit 0
           fi
-          (cd www && zip -qr ../web.zip .)
+          (cd www && zip -qr ../web.zip . -x 'fonts/pages/*')
           SHA=$(sha256sum web.zip | cut -d' ' -f1)
           NOTES=$(printf '{"id":"%s","sha256":"%s","minBuild":%s}' "${{ steps.www.outputs.id }}" "$SHA" "${{ steps.www.outputs.min }}")
           gh release create "$TAG" web.zip --title "تحديث الصفحة ${{ steps.www.outputs.id }}" --notes "$NOTES" --latest
