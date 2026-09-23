@@ -452,7 +452,9 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
    ويملأ ارتفاعَ سطره نفسَه، فلا يزيد الوجهُ على خمسة عشر سطراً. */
 .msura{align-self:stretch;position:relative;display:flex;align-items:center;justify-content:center;
   min-height:1.25em}
-.mushaf.qcf .msura{line-height:1}
+/* والاسمُ على قدر سطره لا على مقاس الحرف وحده: على شاشة الحاسوب العريضة
+   القصيرة يضيق السطرُ إلى ١٫١٢ من الحرف، فكان الاسمُ (١٫٣٥) يفيض على البسملة تحته */
+.mushaf.qcf .msura{line-height:1;font-size:min(1.35em, calc(var(--mlh,1.25em) * .82))}
 /* في معاينة المقطع قبل الأسئلة والمسار يضيق الوجهُ — الشريطُ وزرُّ البدء
    يأخذان من ارتفاعه — فتتلاصق الأسطرُ ويلاصق الإطارُ البسملة. فلسطر العنوان
    هناك وحدَها هامشٌ أعلاه وأسفله يُقتطع من الارتفاع قبل قسمته على الأسطر.
