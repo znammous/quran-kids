@@ -9,6 +9,12 @@
   "plugins": {
     "SystemBars": {
       "style": "DARK"
+    },
+    "LiveUpdate": {
+      "autoUpdateStrategy": "none",
+      "readyTimeout": 10000,
+      "autoDeleteBundles": true,
+      "autoBlockRolledBackBundles": true
     }
   }
 }
