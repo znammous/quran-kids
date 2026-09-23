@@ -145,6 +145,8 @@ h1{font-size:30px;margin:12px 0 4px;color:var(--ttl);text-shadow:0 3px 0 rgba(0,
    والطباعةُ لا تعمل في WebView — تُخفى حتى تُشارَك الشهادةُ صورةً */
 body.native #instBox,body.native #setInstall,body.native #setOffline,
 body.native #qaBar,body.native #btnPrint,body.native #btnTreePrint{display:none!important}
+/* وما لا يكون إلّا في تطبيق الجوّال (التحديثُ الحيّ): الموقعُ يتحدّث وحدَه */
+body:not(.native) .nativeonly{display:none!important}
 .btn{border:0;border-radius:14px;touch-action:manipulation;user-select:none;-webkit-user-select:none;
   padding:14px 18px;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;
   box-shadow:0 4px 0 rgba(0,0,0,.2);transition:.12s;display:inline-flex;align-items:center;justify-content:center;gap:8px}
@@ -2596,6 +2598,11 @@ body.hastabs #btnRevQuit{display:none}
           <button class="btn blue" id="btnImport">📂 فتح ملف</button>
         </div>
         <div class="note" id="bkNote">تقدُّمك محفوظٌ في هذا الجهاز وحده — لا نسخةَ له عندنا. فاحفظْ ملفَّ نسخةٍ بين حينٍ وآخر، تعود إليه إن بدّلتَ الجهازَ أو مُسحت بياناتُه.</div>
+      </div>
+      <div class="setblock nativeonly" style="margin-top:12px">
+        <label class="lbl">🔄 التحديث</label>
+        <button class="btn blue" id="btnUpdCheck" style="width:100%">🔄 تحقّق من وجود تحديث</button>
+        <div class="note" id="updNote">يتحقّق التطبيقُ من التحديث عند فتحه، ويُخبرك إن وُجد.</div>
       </div>
       <input type="file" id="fileInput" accept=".json,application/json" style="display:none">
       <!-- الخصوصيّة: تُقال في مكانٍ يُرى، لا تُدفن في صفحةٍ بعيدة -->
@@ -17408,11 +17415,114 @@ function bootNotes(){
       if(!load(LS.help,0)) $('help').hidden=false;
       whenCalm(function(){
         try{ stBoot(); }catch(e){}
-        whenCalm(function(){ try{ backupNudge(); }catch(e){} });
+        whenCalm(function(){
+          try{ backupNudge(); }catch(e){}
+          whenCalm(function(){ try{ updCheck(false); }catch(e){} });
+        });
       });
     });
   });
 }
+/* ===== التحديثُ الحيّ — تطبيقُ الجوّال وحده =====
+   الموقعُ يتحدّث وحدَه، أمّا التطبيقُ فيحمل صفحتَه في داخله. فكلُّ تعديلٍ يُبنى
+   على GitHub حزمةً منشورةً في Releases (web-<بصمة>)، ويقارن التطبيقُ عند فتحه
+   بصمةَ ما عنده (bundle.json) ببصمة آخرِ حزمة، فإن اختلفتا عرض التحديث.
+   والتقدّمُ باقٍ: الحزمةُ الجديدة تُخدم من الأصل نفسه فتقرأ localStorage نفسَه.
+   وإن تعثّرت فلم تبلغ liveReady() في عشر ثوانٍ عاد التطبيقُ إلى ما قبلها.
+   وما يمسّ الجزءَ الأصليّ (إضافةٌ أو إذن) لا يصل بهذا — minBuild يمنع حزمةً
+   عن تطبيقٍ أقدمَ منها، ويُحال إلى المتجر. */
+var UPD_API='https://api.github.com/repos/znammous/quran-kids/releases/latest';
+var UPD_BUSY=false;
+function liveUpd(){ return isNative() ? nativePlugin('LiveUpdate') : null; }
+function liveReady(){
+  var L=liveUpd();
+  if(L && L.ready){ try{ L.ready()['catch'](function(){}); }catch(e){} }
+}
+/* ما الجديد؟ يُردّ {st:'none'|'new'|'store', ...} أو يُرفض إن لم تكن شبكة */
+function updFetch(){
+  var APPI=nativePlugin('App');
+  return Promise.all([
+    fetch('bundle.json',{cache:'no-store'}).then(function(r){ return r.json(); }),
+    fetch(UPD_API,{cache:'no-store'}).then(function(r){ if(!r.ok) throw new Error('api'); return r.json(); }),
+    (APPI && APPI.getInfo) ? APPI.getInfo()['catch'](function(){ return {}; }) : Promise.resolve({})
+  ]).then(function(x){
+    var have=x[0].id, rel=x[1], build=parseInt(x[2].build,10)||0, meta={};
+    try{ meta=JSON.parse(rel.body||'{}'); }catch(e){}
+    var zip=(rel.assets||[]).filter(function(a){ return a.name==='web.zip'; })[0];
+    if(!meta.id || !zip) throw new Error('meta');
+    if(meta.id===have) return {st:'none'};
+    if(build && meta.minBuild && build<meta.minBuild) return {st:'store'};
+    return {st:'new', id:meta.id, tag:rel.tag_name, url:zip.browser_download_url,
+            sha:meta.sha256, mb:Math.max(1,Math.round((zip.size||0)/1048576))};
+  });
+}
+/* عند الفتح يسكت عمّا لا جديدَ فيه وعن انقطاع الشبكة، ولا يُلحّ:
+   من قال «لاحقاً» لا يُسأل عن الحزمة نفسها في يومه */
+function updCheck(manual){
+  if(!liveUpd() || UPD_BUSY) return;
+  var note=$('updNote');
+  if(manual && note) note.textContent='⏳ جارٍ التحقّق…';
+  updFetch().then(function(u){
+    if(u.st==='none'){ if(manual && note) note.textContent='✅ عندك أحدثُ إصدار.'; return; }
+    if(u.st==='store'){
+      if(manual && note) note.textContent='يوجد إصدارٌ جديد يحتاج تحديثَ التطبيق نفسِه من المتجر.';
+      return;
+    }
+    if(manual && note) note.textContent='🆕 يوجد تحديث.';
+    var later=load('nur_upd_later',null);
+    if(!manual && later && later.id===u.id && later.day===todayNum()) return;
+    uiBox('<b>يوجد تحديثٌ لـ«نور الوحي»</b>\n\n'+
+          'فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو '+arNum(u.mb)+' ميجابايت — '+
+          'ويُستحسن تنزيلُه على شبكة Wi-Fi.\n\n'+
+          'تقدُّمُك وحفظُك باقيان كما هما.',
+          '🔄', '🔄 حدِّث الآن', 'لاحقاً', function(yes){
+            if(yes) updApply(u); else save('nur_upd_later',{id:u.id, day:todayNum()});
+          });
+  })['catch'](function(){
+    if(manual && note) note.textContent='تعذّر التحقّق — تأكّد من الاتصال بالإنترنت ثمّ أعد المحاولة.';
+  });
+}
+/* التنزيلُ بنافذةٍ تُري تقدّمه، ثمّ يُعاد فتحُ التطبيق على الحزمة الجديدة */
+function updApply(u){
+  var L=liveUpd(); if(!L || UPD_BUSY) return;
+  UPD_BUSY=true;
+  var bg=document.createElement('div');
+  bg.className='modal-bg'; bg.id='updBox';
+  bg.innerHTML='<div class="modal" style="max-width:360px;text-align:center">'+
+    '<div style="font-size:42px;line-height:1">🔄</div>'+
+    '<div style="font-size:18px;font-weight:900;margin:8px 0 4px;color:var(--ttl)">جارٍ التحديث</div>'+
+    '<div id="updPct" style="font-size:15px;font-weight:800;color:var(--ttl)">٠٪</div>'+
+    '<div style="height:10px;border-radius:99px;background:var(--pnl2);margin:10px 0 6px;overflow:hidden">'+
+      '<div id="updBar" style="height:100%;width:0;background:var(--gold);transition:width .3s"></div></div>'+
+    '<div style="font-size:13px">أبقِ التطبيقَ مفتوحاً حتى يكتمل.</div></div>';
+  document.body.appendChild(bg);
+  var h=null;
+  try{
+    h=L.addListener('downloadBundleProgress', function(e){
+      var p=Math.round(100*((e && e.progress)||0));
+      if($('updPct')) $('updPct').textContent=arNum(p)+'٪';
+      if($('updBar')) $('updBar').style.width=p+'%';
+    });
+  }catch(e){}
+  function unlisten(){ try{ Promise.resolve(h).then(function(x){ if(x && x.remove) x.remove(); }); }catch(e){} }
+  /* ما نُزّل من قبلُ ثمّ لم يُطبَّق لا يُنزَّل ثانية */
+  L.getBundles().then(function(b){
+    if(((b && b.bundleIds)||[]).indexOf(u.tag)>=0) return;
+    var o={url:u.url, bundleId:u.tag, artifactType:'zip'};
+    if(u.sha) o.checksum=u.sha;
+    return L.downloadBundle(o);
+  }).then(function(){
+    return L.setNextBundle({bundleId:u.tag});
+  }).then(function(){
+    unlisten();
+    return L.reload();
+  })['catch'](function(){
+    unlisten(); UPD_BUSY=false;
+    try{ bg.remove(); }catch(e){}
+    uiAlert('تعذّر التحديث — تأكّد من الاتصال بالإنترنت ثمّ حاول مرّةً أخرى من الإعدادات.');
+  });
+}
+$('btnUpdCheck').onclick=function(){ updCheck(true); };
 function privacyNote(next){
   uiOnce('nur_priv1',
     '🔒 <b>خصوصيّتك في «نور الوحي»</b>\n\n'+
@@ -17819,6 +17929,7 @@ function navToast(msg, ms){
 }
 function navBack(){
   if($('pgate')){ $('pgateNo').click(); return true; }   /* سؤالُ وليّ الأمر: الرجوعُ إلغاؤه */
+  if($('updBox')) return true;                            /* التحديثُ جارٍ: لا يُقطع */
   /* نافذةُ تأكيدٍ أو تنبيه: الرجوعُ جوابُها «لا» (أو «حسناً» إن لم يكن فيها غيرُه).
      كانت تبقى ظاهرةً والشاشةُ تتبدّل تحتها، ثمّ يُنفَّذ «نعم» على غير ما سُئل عنه */
   if($('ask') && !$('ask').hidden){
@@ -17946,6 +18057,8 @@ try{ crownCheck(); }catch(e){}
 try{ checkBadges(true); }catch(e){}      /* ما استُحقّ قبل النظام يُمنح صامتاً */
 if(onbNeeded()){ ONB.edit=false; onbShow(0); }     /* أول مرة: المعالج */
 else{ renderHome(); bootNotes(); }
+/* بلغ الإقلاعُ آخرَه: الحزمةُ سليمة، فلا يُرجَع عنها (التحديثُ الحيّ) */
+liveReady();
 
 /* الستارُ يُرفع بعد أن تستقرّ العناصرُ خلفه: رفعُه على الأثر يكشف
    قفزتَها. فله مكثٌ أدنى منذ فتح الصفحة، ويُنتظر معه استواءُ الخطوط
