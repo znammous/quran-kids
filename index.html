@@ -763,6 +763,9 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 .modal-bg{position:fixed;inset:0;background:var(--ovl);z-index:60;display:flex;align-items:center;
   justify-content:center;padding:16px;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 .modal-bg[hidden]{display:none!important}
+/* سياسةُ الخصوصيّة تُعرض داخل التطبيق: لا يخرج منه الطفل */
+.modal.privm{max-width:760px;height:88vh;padding:0;overflow:hidden}
+.privm iframe{display:block;width:100%;height:100%;border:0}
 .modal{position:relative;background:linear-gradient(180deg,var(--mdl1),var(--mdl2));border-radius:18px;padding:20px;max-width:520px;width:100%;
   box-shadow:0 20px 60px rgba(0,0,0,.55);max-height:88vh;overflow:auto;
   border:3px solid var(--pb);color:var(--on2)}
@@ -2087,6 +2090,12 @@ body.hastabs #btnRevQuit{display:none}
   </div>
 </div>
 
+<div class="modal-bg" id="privBox" hidden>
+  <div class="modal privm">
+    <button class="xbtn" id="xPriv" aria-label="إغلاق">✕</button>
+    <iframe id="privFrame" title="سياسة الخصوصيّة"></iframe>
+  </div>
+</div>
 <div class="modal-bg" id="adab" hidden>
   <div class="modal">
     <button class="xbtn" id="xAdab" aria-label="إغلاق">✕</button>
@@ -17366,14 +17375,14 @@ $('btnExport').onclick=function(){
 $('btnImport').onclick=function(){ $('fileInput').click(); };
 /* ===== الخصوصيّة =====
    تُقال مرّةً عند أوّل فتح، وتبقى في الإعدادات لمن أراد مراجعتَها.
-   والسياسةُ كاملةً صفحةٌ على حِدة تُفتح بلا بوّابة — فهي للقراءة وحدها. */
-var PRIV_URL='https://znammous.github.io/quran-kids/privacy.html';
+   والسياسةُ كاملةً تُعرض في نافذةٍ داخل التطبيق بلا بوّابة — فهي للقراءة وحدها،
+   ولا يخرج بها الطفلُ إلى المتصفّح (وكان يخرج، وهذا ما تمنعه أبل في تطبيقات الأطفال). */
 $('btnPrivacy').onclick=function(){
-  var B=nativePlugin('Browser');
-  if(isNative() && B && B.open){ try{ B.open({ url:PRIV_URL }); return; }catch(e){} }
-  try{ window.open(isNative()?PRIV_URL:'privacy.html','_blank','noopener'); }
-  catch(e){ location.href='privacy.html'; }
+  var f=$('privFrame');
+  if(!f.getAttribute('src')) f.src='privacy.html';
+  $('privBox').hidden=false;
 };
+$('xPriv').onclick=function(){ closeModal('privBox'); };
 /* ===== رسائلُ الفتح =====
    تتتابع ولا تتزاحم: الخصوصيّةُ فهي حقُّه أن يعلمها، ثمّ شرحُ اللعب،
    ثمّ بشارةُ القصّة، ثمّ نصيحةُ النسخة. وكلٌّ ينتظر هدوءَ ما قبله.
@@ -17817,6 +17826,7 @@ function navBack(){
   if($('srPick') && !$('srPick').hidden){ closeModal('srPick'); return true; }
   if($('adab') && !$('adab').hidden){ closeModal('adab'); return true; }
   if($('help') && !$('help').hidden){ closeModal('help'); return true; }
+  if($('privBox') && !$('privBox').hidden){ closeModal('privBox'); return true; }
   var scr=curScreen();
   /* ٢) شاشة التعريف: في التعديل تُحفظ وتُغلق، وفي المعالج خطوة إلى الوراء */
   /* معالجا الخطّة والاختبار: الرجوعُ خطوةٌ لا خروجٌ ما دام له سابق */
