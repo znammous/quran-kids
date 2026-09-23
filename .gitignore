@@ -11,3 +11,10 @@ tools/
 
 # صورُ القصص الأصليّة قبل المعالجة — كبيرة، تبقى على الجهاز
 Raw Images/
+
+# التطبيقُ الأصليّ: ما يُبنى ويُنزَّل لا يُرفع
+node_modules/
+www/
+*.keystore
+*.jks
+keystore.properties

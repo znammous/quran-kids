@@ -1,0 +1,68 @@
+# يبني تطبيقَ أندرويد على خوادم GitHub — فلا حاجةَ إلى Android Studio على الجهاز.
+# يُشغَّل يدويّاً من تبويب Actions (Run workflow)، أو بوسم إصدارٍ مثل v1.0.0.
+# يُخرج:  APK للتجربة على الهاتف مباشرة، وAAB للرفع إلى Google Play.
+# التوقيعُ من أسرار المستودع؛ فإن غابت بُني APK التجربة وحدَه.
+name: أندرويد
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: تجميعُ الصفحة ومزامنتُها مع أندرويد
+        run: |
+          npm ci
+          npm run www
+          npx cap sync android
+
+      - name: مفتاحُ التوقيع
+        id: key
+        env:
+          KS: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KS" ]; then
+            echo "$KS" | base64 -d > "$RUNNER_TEMP/upload.keystore"
+            echo "file=$RUNNER_TEMP/upload.keystore" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::لا مفتاحَ توقيع في الأسرار — يُبنى APK التجربة وحدَه"
+          fi
+
+      - name: البناء
+        working-directory: android
+        env:
+          BUILD_NUMBER: ${{ github.run_number }}
+          ANDROID_KEYSTORE_FILE: ${{ steps.key.outputs.file }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: upload
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          if [ -n "$ANDROID_KEYSTORE_FILE" ]; then
+            ./gradlew --no-daemon assembleRelease bundleRelease
+          else
+            ./gradlew --no-daemon assembleDebug
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nur-alwahy-android-${{ github.run_number }}
+          path: |
+            android/app/build/outputs/apk/**/*.apk
+            android/app/build/outputs/bundle/**/*.aab
+          if-no-files-found: error

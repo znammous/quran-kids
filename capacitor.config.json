@@ -1,0 +1,9 @@
+{
+  "appId": "io.github.znammous.nuralwahy",
+  "appName": "نور الوحي",
+  "webDir": "www",
+  "backgroundColor": "#04173a",
+  "android": {
+    "allowMixedContent": false
+  }
+}
