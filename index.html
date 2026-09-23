@@ -8111,7 +8111,7 @@ function audFree(){
 }
 function audStop(){
   if(AUD.el){ try{ AUD.el.pause(); }catch(e){} }
-  AUD.q=[]; AUD.i=-1; AUD.rep=1; AUD.left=1; AUD.hold=false; audFree(); audSync();
+  AUD.q=[]; AUD.i=-1; AUD.rep=1; AUD.left=1; AUD.hold=false; audFree(); audNxFree(); audSync();
   AUD_GEN++; audLoadHide();
 }
 /* ===== إمساكُ التلاوة =====
@@ -8218,18 +8218,56 @@ function audNext(){
       AUD.i=0;
     } else { audStop(); return; }
   }
-  var it=AUD.q[AUD.i], want=AUD.i;
+  var it=AUD.q[AUD.i], want=AUD.i, u=audUrl(it[0],it[1]);
   audSync();
-  audSrc(audUrl(it[0],it[1])).then(function(src){
+  /* جاهزةٌ من قبل: تُتلى في الحال، في حدث «انتهت» نفسِه بلا انتظار */
+  if(AUD_NX && AUD_NX.u===u){ var nx=AUD_NX; AUD_NX=null; audSet(nx.src); return; }
+  audSrc(u).then(function(src){
     if(want!==AUD.i || !AUD.q.length) return;       /* أُوقف أو تغيّر أثناء الجلب */
-    var el=audEl();
-    audFree(); AUD.url=src; el.src=src;
-    /* أُمسكت وهي تُجلب: يُهيَّأ صوتُها ولا يُبثّ، حتى يأذن بمتابعتها */
-    audAhead();                          /* ما بعدها يُجلب بصمتٍ وهي تُتلى */
-    if(AUD.hold){ audSync(); return; }
-    var p; try{ p=el.play(); }catch(e){ audErr(); return; }
-    if(p && p['catch']) p['catch'](function(){ audErr(); });
+    audSet(src);
   })['catch'](function(){ audErr(); });
+}
+function audSet(src){
+  var el=audEl();
+  audFree(); AUD.url=src; el.src=src;
+  /* أُمسكت وهي تُجلب: يُهيَّأ صوتُها ولا يُبثّ، حتى يأذن بمتابعتها */
+  audAhead();                          /* ما بعدها يُجلب بصمتٍ وهي تُتلى */
+  audNxPrep();
+  if(AUD.hold){ audSync(); return; }
+  var p; try{ p=el.play(); }catch(e){ audPlayErr(); return; }
+  if(p && p['catch']) p['catch'](function(){ audPlayErr(); });
+}
+/* ===== التلاوةُ والشاشةُ مقفلة: لا فجوةَ بين الآيتين =====
+   كانت الآيةُ التالية تُطلب من المخزن بعد انتهاء الجارية، فيسكت العنصرُ
+   لحظةً ثمّ يُطلب تشغيلُه — والمتصفّحُ في الشاشة المقفلة يعدّ ذلك تشغيلاً
+   جديداً بلا لمسةٍ فيأباه، فتنقطع التلاوة. فصار رابطُ التالية يُهيَّأ وهي
+   تُتلى، فإذا انتهت بُدّل المصدرُ وشُغّل في الحدث نفسِه. */
+var AUD_NX=null;                         /* {u: رابطُ الآية، src: رابطُها الجاهز} */
+function audNxFree(){
+  if(AUD_NX && AUD_NX.src.indexOf('blob:')===0){ try{ URL.revokeObjectURL(AUD_NX.src); }catch(e){} }
+  AUD_NX=null;
+}
+function audNxPrep(){
+  var q=AUD.q, j=AUD.i+1;
+  if(j>=q.length){
+    if(q.length && (AUD.rep===0 || AUD.left>1)) j=0; else { audNxFree(); return; }
+  }
+  var u=audUrl(q[j][0], q[j][1]), gen=AUD_GEN;
+  if(AUD_NX && AUD_NX.u===u) return;
+  audNxFree();
+  audSrc(u).then(function(src){
+    if(gen!==AUD_GEN || !AUD.q.length || AUD_NX){
+      if(src.indexOf('blob:')===0){ try{ URL.revokeObjectURL(src); }catch(e){} }
+      return;
+    }
+    AUD_NX={ u:u, src:src };
+  });
+}
+/* رفض المتصفّحُ التشغيلَ والشاشةُ مقفلة: تُمسَك عند موضعها ولا تُلغى،
+   فزرُّ التشغيل في شاشة القفل يتابعها */
+function audPlayErr(){
+  if(document.hidden && AUD.q.length){ AUD.hold=true; audSync(); return; }
+  audErr();
 }
 /* قطعٌ [{s,from,to}] تصير قائمةَ آياتٍ [[سورة,آية]…] */
 function audList(pcs){
