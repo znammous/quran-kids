@@ -1,0 +1,20 @@
+{
+  "name": "nur-alwahy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "نور الوحي — تغليفُ الصفحة تطبيقاً للمتجرين (Capacitor)",
+  "scripts": {
+    "www": "node scripts/build-www.mjs",
+    "sync": "node scripts/build-www.mjs && npx cap sync"
+  },
+  "dependencies": {
+    "@capacitor/app": "^8.1.1",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/filesystem": "^8.1.3",
+    "@capacitor/share": "^8.0.2"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.5.2",
+    "@capacitor/cli": "^8.5.2"
+  }
+}
