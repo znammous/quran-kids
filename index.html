@@ -3642,6 +3642,49 @@ function mushafFace(fam, url){
   var ff=new FontFace(fam, "url('"+url+"') format('woff2')");
   return ff.load().then(function(f){ document.fonts.add(f); return fam; });
 }
+/* خطُّ الوجه من المخزن (بايتاته)، وإلّا فمن الشبكة ويُحفظ تحت اسمه المحلّيّ */
+var MF_STORE='nur-assets';
+function mushafStored(fam, local, cdn){
+  if(!window.caches) return mushafFace(fam,cdn);
+  return caches.open(MF_STORE).then(function(c){
+    return c.match(local).then(function(hit){
+      if(hit) return hit.arrayBuffer();
+      return fetch(cdn).then(function(r){
+        if(!r || !r.ok) throw new Error('net');
+        return c.put(local, r.clone())['catch'](function(){}).then(function(){ return r.arrayBuffer(); });
+      });
+    });
+  }).then(function(buf){
+    var ff=new FontFace(fam, buf);
+    return ff.load().then(function(f){ document.fonts.add(f); return fam; });
+  });
+}
+/* أوّلَ فتحٍ للتطبيق — وخطوطُ الأوجه في حزمته الأصليّة — تُنسخ إلى المخزن بهدوء،
+   فتبقى بعد أن تحلّ محلَّها حزمةُ تحديثٍ خاليةٌ منها. نسخٌ داخل الجهاز بلا شبكة،
+   ويُطلب للمخزن البقاءُ فلا يُمسح عند ضيق المساحة. */
+var MFSEED_P=null;
+function mfSeed(){
+  if(MFSEED_P) return MFSEED_P;                   /* نسخٌ واحدٌ ولو طُلب مرّتين */
+  if(!isNative() || !window.caches || load('nur_mfseed',0)) return (MFSEED_P=Promise.resolve());
+  try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+  return (MFSEED_P=fetch('fonts/pages/p1.woff2',{method:'HEAD'}).then(function(r){
+    if(!r || !r.ok) return;                       /* حزمةُ تحديث: لا خطوطَ فيها تُنسخ */
+    return caches.open(MF_STORE).then(function(c){
+      var P=1;
+      function step(){
+        if(P>604){ save('nur_mfseed',1); return; }
+        var batch=[]; for(var i=0;i<8 && P<=604;i++,P++) batch.push('fonts/pages/p'+P+'.woff2');
+        return Promise.all(batch.map(function(u){
+          return c.match(u).then(function(hit){
+            if(hit) return;
+            return fetch(u).then(function(r){ if(r && r.ok) return c.put(u, r); });
+          });
+        })).then(function(){ return new Promise(function(ok){ setTimeout(ok,60); }); }).then(step);
+      }
+      return step();
+    });
+  })['catch'](function(){}));
+}
 function mushafFont(P){
   if(MFONT[P]) return MFONT[P];
   if(typeof FontFace!=='function' || !document.fonts)
@@ -3651,7 +3694,11 @@ function mushafFont(P){
      إنترنت) يُطفئ المحلّيَّ للجلسة كلّها، فتُعرض حتى الأوجهُ المنزَّلةُ بخطٍّ نصّيّ.
      فلا يُقدَّم المصدرُ الخارجيُّ إلّا إذا تعذّر المحلّيُّ ونجح هو — أي الخطوطُ غيرُ
      مرفوعة — ويبقى المحلّيُّ بعده احتياطاً لما نُزِّل. */
-  if(MFLOCAL) pr=mushafFace(fam,local)['catch'](function(){
+  /* تطبيقُ الجوّال: حزمُ التحديث الحيّ لا تحمل خطوطَ الأوجه (خمسون ميجابايت تُنزَّل
+     مرّةً واحدة مع التطبيق لا مع كلّ تحديث)، فما لم يكن في الحزمة يُقرأ من المخزن
+     الذي نُسخت إليه أوّلَ مرّة (mfSeed)، ثمّ من الشبكة ويُخزَّن لما بعد. */
+  if(isNative()) pr=mushafFace(fam,local)['catch'](function(){ return mushafStored(fam,local,cdn); });
+  else if(MFLOCAL) pr=mushafFace(fam,local)['catch'](function(){
                  return mushafFace(fam,cdn).then(function(f){ MFLOCAL=false; return f; });
                });
   else pr=mushafFace(fam,cdn)['catch'](function(){ return mushafFace(fam,local); });
@@ -17505,8 +17552,9 @@ function updApply(u){
     });
   }catch(e){}
   function unlisten(){ try{ Promise.resolve(h).then(function(x){ if(x && x.remove) x.remove(); }); }catch(e){} }
-  /* ما نُزّل من قبلُ ثمّ لم يُطبَّق لا يُنزَّل ثانية */
-  L.getBundles().then(function(b){
+  /* تُتمّ الخطوطُ نسخَها إلى المخزن أوّلاً: الحزمةُ الجديدة خاليةٌ منها.
+     وما نُزّل من قبلُ ثمّ لم يُطبَّق لا يُنزَّل ثانية */
+  mfSeed().then(function(){ return L.getBundles(); }).then(function(b){
     if(((b && b.bundleIds)||[]).indexOf(u.tag)>=0) return;
     var o={url:u.url, bundleId:u.tag, artifactType:'zip'};
     if(u.sha) o.checksum=u.sha;
@@ -18059,6 +18107,7 @@ if(onbNeeded()){ ONB.edit=false; onbShow(0); }     /* أول مرة: المعا�
 else{ renderHome(); bootNotes(); }
 /* بلغ الإقلاعُ آخرَه: الحزمةُ سليمة، فلا يُرجَع عنها (التحديثُ الحيّ) */
 liveReady();
+setTimeout(mfSeed, 6000);
 
 /* الستارُ يُرفع بعد أن تستقرّ العناصرُ خلفه: رفعُه على الأثر يكشف
    قفزتَها. فله مكثٌ أدنى منذ فتح الصفحة، ويُنتظر معه استواءُ الخطوط
