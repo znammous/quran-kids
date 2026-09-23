@@ -10502,6 +10502,9 @@ function roundRevPage(r){
   $('btnAgainR').onclick=function(){
     revWeak(r.page); reveal(true);
     $('fb').className='fb'; $('fb').textContent='لا بأس — اقرأها ثم أعد التسميع 💚';
+    /* بعد تسجيلٍ جاهز كان زرُّ 🎤 مخفيّاً فلا سبيل إلى إعادة التسميع؛
+       يُعاد ظاهراً والصفحةُ مكشوفةٌ ليقرأها أوّلاً */
+    if(useRec && !REC.off){ recReset(); rUI('idle','اقرأ الصفحة ثم اضغط 🎤 وسمّعها من جديد'); }
   };
   if(!useRec) return;
   function rUI(state,msg){
@@ -10511,7 +10514,7 @@ function roundRevPage(r){
     if(state==='idle'){ b.hidden=false; b.textContent='🎤 سجّل تسميعي'; b.className='btn red big pulse';
       pl.hidden=true; ok.hidden=false; ok.className='btn ghost big'; row.hidden=false; }
     else if(state==='wait'){ b.hidden=false; b.textContent='⏳ في انتظار إذن المايكروفون'; b.className='btn red big';
-      pl.hidden=true; ok.hidden=true; row.hidden=true; }
+      pl.hidden=true; ok.hidden=true; row.hidden=true; reveal(false); }   /* يُسمَّع عن ظهر قلب ولو كُشفت قبلُ */
     else if(state==='rec'){ b.hidden=false; b.className='btn red big reclive';
       recTimerStart(b,'⏹️ انتهيت من التسميع'); pl.hidden=true; ok.hidden=true; row.hidden=true; }
     else if(state==='ready'){ b.hidden=true; pl.hidden=false; ok.hidden=false;
