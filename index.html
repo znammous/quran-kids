@@ -699,9 +699,7 @@ body.glow-off .cele .spk{display:none}
 body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(50%);
   width:max-content;white-space:nowrap;
   bottom:calc(88px + env(safe-area-inset-bottom))}
-@media(max-width:820px){
-  body:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-inset-bottom))}
-}
+body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-inset-bottom))}
 /* اختصارُ الاستماع في شريط الدرس — ويحمرّ ما دام يتلو، فيُعرف كيف يُوقَف */
 .pstat.listenchip{background:linear-gradient(180deg,#7ce9ff,#1fb0ef);border-color:#bde9ff;color:#04263f;
   font-family:inherit;cursor:pointer;padding:5px 9px;font-size:16px;line-height:1}
@@ -1307,9 +1305,7 @@ body.light .sp-lit{fill:#1f92d4}
 .fabbar button:active{transform:scale(.93)}
 .fabbar button b{color:var(--gold)}
 #scr-path{padding-bottom:74px}
-@media(max-width:820px){
-  body.hastabs .fabbar{bottom:calc(72px + env(safe-area-inset-bottom))}
-}
+body.hastabs .fabbar{bottom:calc(72px + env(safe-area-inset-bottom))}
 /* ===== صفّ الجزء في شاشة الاختبارات ===== */
 .jzrow{display:flex;align-items:center;gap:10px;width:100%;text-align:start;
   background:#fff;border:3px solid var(--pb);border-radius:14px;padding:10px 12px;
@@ -1480,10 +1476,8 @@ body.light .examfp{animation:exbreathd 2.8s ease-in-out infinite}
   0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.14), 0 0 0 0 rgba(24,130,190,0)}
   50%{box-shadow:0 4px 0 rgba(0,0,0,.14), 0 0 20px 4px rgba(24,130,190,.42)}
 }
-@media(max-width:820px){
-  /* فوق شريط التنقّل السفليّ لا تحته */
-  .examfp{bottom:calc(72px + env(safe-area-inset-bottom))}
-}
+/* فوق شريط التنقّل السفليّ لا تحته */
+body.hastabs .examfp{bottom:calc(72px + env(safe-area-inset-bottom))}
 .fpwrap{position:relative;display:flex;align-items:center;justify-content:center;
   width:42px;height:42px;transition:transform .12s}
 .examfp:active .fpwrap{transform:scale(.93)}
@@ -1565,9 +1559,7 @@ body.light .dailyfp{animation-name:dfpbreathd}
   0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.14), 0 0 0 0 rgba(170,105,0,0)}
   50%{box-shadow:0 4px 0 rgba(0,0,0,.14), 0 0 20px 4px rgba(170,105,0,.45)}
 }
-@media(max-width:820px){
-  .dailyfp{bottom:calc(72px + env(safe-area-inset-bottom))}
-}
+body.hastabs .dailyfp{bottom:calc(72px + env(safe-area-inset-bottom))}
 .dfpwrap{position:relative;display:flex;align-items:center;justify-content:center;
   width:42px;height:42px;transition:transform .12s}
 .dailyfp:active .dfpwrap{transform:scale(.93)}
@@ -1659,7 +1651,7 @@ body.glow-off .dfpic{animation:none}
 .newdot::after{content:'';position:absolute;top:7px;inset-inline-start:9px;
   width:11px;height:11px;border-radius:50%;background:var(--red);
   box-shadow:0 0 0 2px var(--pnl),0 0 0 3px rgba(0,0,0,.14)}
-@media(max-width:820px){ .tabbar button.newdot::after{box-shadow:0 0 0 2px var(--tabbg)} }
+.tabbar button.newdot::after{box-shadow:0 0 0 2px var(--tabbg)}
 /* ===== القصص: البطاقةُ بغلافها، ثمّ شاشةُ القراءة ===== */
 .goalcard .gcic.stcov{overflow:hidden;padding:0;background:var(--pnl3)}
 .goalcard .gcic.stcov img{width:100%;height:100%;object-fit:cover;display:block}
@@ -1817,34 +1809,38 @@ body.glow-off .dfpic{animation:none}
 .gmgo .gmsum{text-align:center;font-size:13px;font-weight:800;color:var(--mute);margin-bottom:8px}
 .gmgo .btn{width:100%;margin:0}
 .gmgo .gmclr{margin-top:8px}
-@media(max-width:820px){ body.hastabs .gmgo{bottom:calc(98px + env(safe-area-inset-bottom))} }
+body.hastabs .gmgo{bottom:calc(98px + env(safe-area-inset-bottom))}
 /* ===== «رفّ الآيات» و«عصفور الآيات» ===== */
 #shelfCv,#birdCv{display:block;width:100%}
 
-/* ===== قشرة الجوّال: شريط تنقّل سفلي ===== */
-.tabbar{display:none}
+/* ===== شريط تنقّل سفلي — على كلّ الشاشات ===== */
+.tabbar{position:fixed;inset-inline:0;bottom:0;z-index:40;display:flex;gap:2px;
+  background:var(--tabbg);border-top:2px solid var(--pb);
+  /* على الشاشة العريضة تتجمّع الأزرارُ في الوسط بعرضٍ أقصى، ولا تتباعد على طولها */
+  padding:5px max(4px, calc(50% - 360px)) calc(5px + env(safe-area-inset-bottom));
+  box-shadow:0 -8px 24px rgba(0,0,0,.4);
+  /* بلا تغبيشٍ لما خلفه: الخلفيّةُ معتمةٌ ٩٧٪ فلا يُرى، ويُعاد حسابُه مع كلّ حركةٍ تحته */}
+.tabbar.gone{display:none}
+.tabbar button{flex:1;min-width:0;position:relative;background:none;border:0;color:var(--tabfg);font-family:inherit;
+  font-size:11px;font-weight:800;line-height:1.2;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  padding:7px 2px;border-radius:12px;min-height:54px;touch-action:manipulation;transition:.12s}
+.tabbar button .tico{font-size:23px;line-height:1}
+.tabbar button.on{color:var(--ttl);background:var(--psel);box-shadow:inset 0 -3px 0 var(--gold)}
+.tabbar button:active{transform:scale(.93)}
+@media(hover:hover){ .tabbar button:not(.on):hover{background:var(--psel)} }
+/* مكان للشريط حتى لا يغطّي آخر زر في الصفحة */
+body.hastabs .wrap{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+/* ما لا شريطَ فيه لا يُحجز له مكان */
+body.hastabs.tabsgone .wrap{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+/* ما صار في الشريط السفلي لا يتكرّر في الرئيسية */
+body.hastabs #btnBuild,
+body.hastabs #btnShop,
+body.hastabs #btnGames,
+body.hastabs #btnSettings,
+body.hastabs #btnRevHome,
+body.hastabs #btnRevQuit{display:none}
 @media(max-width:820px){
-  .tabbar{position:fixed;inset-inline:0;bottom:0;z-index:40;display:flex;gap:2px;
-    background:var(--tabbg);border-top:2px solid var(--pb);
-    padding:5px 4px calc(5px + env(safe-area-inset-bottom));
-    box-shadow:0 -8px 24px rgba(0,0,0,.4);
-    /* بلا تغبيشٍ لما خلفه: الخلفيّةُ معتمةٌ ٩٧٪ فلا يُرى، ويُعاد حسابُه مع كلّ حركةٍ تحته */}  .tabbar.gone{display:none}
-  .tabbar button{flex:1;min-width:0;position:relative;background:none;border:0;color:var(--tabfg);font-family:inherit;
-    font-size:11px;font-weight:800;line-height:1.2;cursor:pointer;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-    padding:7px 2px;border-radius:12px;min-height:54px;touch-action:manipulation;transition:.12s}
-  .tabbar button .tico{font-size:23px;line-height:1}
-  .tabbar button.on{color:var(--ttl);background:var(--psel);box-shadow:inset 0 -3px 0 var(--gold)}
-  .tabbar button:active{transform:scale(.93)}
-  /* مكان للشريط حتى لا يغطّي آخر زر في الصفحة */
-  body.hastabs .wrap{padding-bottom:calc(92px + env(safe-area-inset-bottom))}
-  /* ما صار في الشريط السفلي لا يتكرّر في الرئيسية */
-  body.hastabs #btnBuild,
-  body.hastabs #btnShop,
-  body.hastabs #btnGames,
-  body.hastabs #btnSettings,
-  body.hastabs #btnRevHome,
-  body.hastabs #btnRevQuit{display:none}
   /* أهداف لمس مريحة */
   .btn{min-height:52px}
   .pchip{min-height:44px}
