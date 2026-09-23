@@ -412,6 +412,7 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
 .mfprow .p{flex:0 0 auto;font-size:12.5px;font-weight:800;color:var(--mute)}
 .mfpmsg{text-align:center;color:var(--mute);font-weight:800;padding:22px 10px}
 /* لوحةُ المعاني: الكلمةُ بخطّ المصحف ومعناها بعدها على سطرها، فتقلّ الحاجةُ إلى التمرير */
+.mfmonly{font-weight:900;font-size:13.5px;color:var(--gold);text-align:center;padding:6px 4px 2px}
 #mfMean .mfplist{padding-top:8px;cursor:pointer}
 .mfmsura{margin:14px 0 2px;padding:6px 10px;border-radius:10px;background:var(--psel);
   text-align:center;font-weight:900;font-size:15px;color:var(--ttl)}
@@ -8597,10 +8598,25 @@ function mfMeanRender(after){
   }
   var rows=GHARIB ? (GHARIB[P-1]||[]) : [], byAyah={}, i, r, k;
   for(i=0;i<rows.length;i++){ r=rows[i]; k=r[0]+':'+r[1]; (byAyah[k]=byAyah[k]||[]).push(r); }
-  var pcs=pagePieces(P), many=pcs.length>1, h='';
+  var pcs=pagePieces(P), h='';
+  /* في الحفظ والمراجعة: معاني المقطع المظلَّل وحده، لا الوجهِ كلِّه. وإن قُلِّب
+     إلى وجهٍ ليس فيه شيءٌ من المقطع عُرض الوجهُ كلُّه كما في المصحف */
+  var M=MF_MARK, only=false;
+  if(M && M.rg && M.rg.length)
+    only=pcs.some(function(p){
+      for(var a=p.from;a<p.to;a++) if(mfInRg(M, GIDX[p.s.n-1]+a)) return true;
+      return false;
+    });
+  var want=function(p,a){ return !only || mfInRg(M, GIDX[p.s.n-1]+a); };
+  pcs=pcs.filter(function(p){
+    for(var a=p.from;a<p.to;a++) if(want(p,a)) return true;
+    return false;
+  });
+  var many=pcs.length>1;
   pcs.forEach(function(p){
     if(many) h+='<div class="mfmsura">سورة '+esc(p.s.name)+'</div>';
     for(var a=p.from;a<p.to;a++){
+      if(!want(p,a)) continue;
       var t=tafOf(p.s.n,a+1), g=byAyah[p.s.n+':'+(a+1)]||[];
       if(!t && !g.length) continue;
       h+='<div class="mfmayah">الآية '+arNum(a+1)+'</div>';
@@ -8608,6 +8624,7 @@ function mfMeanRender(after){
       g.forEach(function(x){ h+='<div class="mfmrow"><span class="w">﴿'+esc(x[2])+'﴾</span>: '+esc(x[3])+'</div>'; });
     }
   });
+  if(h && only) h='<div class="mfmonly">💡 معاني مقطعك المظلَّل</div>'+h;
   if(!h) h='<div class="mfpmsg">لا تفسيرَ ولا كلماتٍ غريبةً مشروحةً لهذه الصفحة</div>';
   box.innerHTML=h+'<div class="mfmsrc">المصدر: التفسير الميسر، والميسر في غريب القرآن الكريم — مجمع الملك فهد لطباعة المصحف الشريف</div>';
   box.scrollTop=0;
