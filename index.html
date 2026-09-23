@@ -6995,6 +6995,9 @@ function recWhy(){
 }
 function recClear(){
   try{ if(REC.audio){ REC.audio.pause(); REC.audio=null; } }catch(e){}
+  /* الإيقافُ هنا لا يُطلق onended، فيُعاد زرُّ الاستماع بيدنا — كان يبقى
+     «⏸️ إيقاف الاستماع» على التسجيل الجديد إن أُعيد التسجيلُ أثناء الاستماع */
+  if(REC.playBtn){ try{ REC.playBtn.textContent=REC.playLabel; }catch(e){} REC.playBtn=null; }
   if(REC.url){ try{ URL.revokeObjectURL(REC.url); }catch(e){} REC.url=null; }
 }
 function recStop(){
@@ -7099,6 +7102,7 @@ function recPlay(btn,label){
   try{
     if(REC.audio && !REC.audio.paused){ REC.audio.pause(); REC.audio.currentTime=0; btn.textContent=label; return; }
     REC.audio=new Audio(REC.url);
+    REC.playBtn=btn; REC.playLabel=label;
     recApplyRate(REC.audio);
     REC.audio.onended=function(){ btn.textContent=label; };
     REC.audio.play();
