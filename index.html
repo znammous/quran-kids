@@ -294,6 +294,10 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
 .mfbtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.10)}
 /* وجه المصحف ملء الشاشة */
 .mfsheet{position:fixed;inset:0;z-index:120;background:var(--paper);display:flex;flex-direction:column}
+/* ملءُ الشاشة: يُترك شريطُ الساعة والبطّاريّة فوقه بكحليّ التطبيق — كانت ترويسةُ
+   السورة تحته على الهاتف (التطبيقُ يرسم تحت الشريط، وenv() مقاسُه) */
+.mfsheet{border-top:env(safe-area-inset-top) solid #04173a;
+  padding-inline:env(safe-area-inset-left) env(safe-area-inset-right)}
 #mfPg{flex:0 0 62px;width:62px;text-align:center;font-family:inherit;font-size:15px;
   font-weight:900;color:var(--ttl);background:var(--pnl2);border:2px solid var(--pb);
   border-radius:10px;padding:7px 2px}
