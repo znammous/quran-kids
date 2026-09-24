@@ -3645,14 +3645,18 @@ function mushafFace(fam, url){
 }
 /* خطُّ الوجه من المخزن (بايتاته)، وإلّا فمن الشبكة ويُحفظ تحت اسمه المحلّيّ */
 var MF_STORE='nur-assets';
+/* مفتاحُ الخطّ في المخزن عنوانٌ كاملٌ بـ https: صفحةُ آيفون تُخدم من capacitor://
+   والمخزنُ يرفض ما ليس http(s)، فكان النسخُ يتعثّر بصمت. وهو على أندرويد
+   (https://localhost) المفتاحُ نفسُه الذي حُفظ به من قبل */
+function mfKey(u){ return 'https://localhost/'+u; }
 function mushafStored(fam, local, cdn){
   if(!window.caches) return mushafFace(fam,cdn);
   return caches.open(MF_STORE).then(function(c){
-    return c.match(local).then(function(hit){
+    return c.match(mfKey(local)).then(function(hit){
       if(hit) return hit.arrayBuffer();
       return fetch(cdn).then(function(r){
         if(!r || !r.ok) throw new Error('net');
-        return c.put(local, r.clone())['catch'](function(){}).then(function(){ return r.arrayBuffer(); });
+        return c.put(mfKey(local), r.clone())['catch'](function(){}).then(function(){ return r.arrayBuffer(); });
       });
     });
   }).then(function(buf){
@@ -3676,9 +3680,9 @@ function mfSeed(){
         if(P>604){ save('nur_mfseed',1); return; }
         var batch=[]; for(var i=0;i<8 && P<=604;i++,P++) batch.push('fonts/pages/p'+P+'.woff2');
         return Promise.all(batch.map(function(u){
-          return c.match(u).then(function(hit){
+          return c.match(mfKey(u)).then(function(hit){
             if(hit) return;
-            return fetch(u).then(function(r){ if(r && r.ok) return c.put(u, r); });
+            return fetch(u).then(function(r){ if(r && r.ok) return c.put(mfKey(u), r); });
           });
         })).then(function(){ return new Promise(function(ok){ setTimeout(ok,60); }); }).then(step);
       }
