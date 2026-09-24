@@ -52,6 +52,15 @@ for p, dirs, files in os.walk(RES):
         mm = moon(s, scale=0.9); im.paste(mm, ((w - s) // 2, (h - s) // 2), mm)
         save(im, f)
 
+# آيفون وآيباد: الأيقونةُ الواحدة ١٠٢٤ بلا شفافيّة، وشاشةُ البداية مربّعُ ٢٧٣٢ يُقصّ
+# من جانبيه على الشاشة (scaleAspectFill)، فالهلالُ في وسطه صغيرٌ لا يطاله القصّ
+IOS = 'ios/App/App/Assets.xcassets'
+if os.path.isdir(IOS):
+    save(moon(1024, bg=BG).convert('RGB'), f'{IOS}/AppIcon.appiconset/AppIcon-512@2x.png')
+    sp = moon(2732, scale=0.55, bg=BG).convert('RGB')
+    for n in ('splash-2732x2732.png', 'splash-2732x2732-1.png', 'splash-2732x2732-2.png'):
+        save(sp, f'{IOS}/Splash.imageset/{n}')
+
 # أيقونةُ المتجرين: آبل ١٠٢٤ بلا شفافيّة، وجوجل ٥١٢
 save(moon(1024, bg=BG).convert('RGB'), 'store/icon-1024.png')
 save(moon(512, bg=BG).convert('RGB'), 'store/play-icon-512.png')

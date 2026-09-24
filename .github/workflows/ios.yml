@@ -1,0 +1,31 @@
+# فحصُ مشروع آيفون على جهاز ماك من GitHub: يُبنى للمحاكي بلا توقيع، ليُعرف أنّه
+# سليمٌ قبل فتحه في Xcode. الرفعُ إلى App Store فمن Xcode على الماك.
+name: آيفون
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: تجميعُ الصفحة ومزامنتُها مع آيفون
+        run: |
+          npm ci
+          npm run www
+          npx cap sync ios
+
+      - name: البناء للمحاكي
+        run: |
+          xcodebuild -version
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Debug \
+            -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build | tail -40
+          test "${PIPESTATUS[0]}" -eq 0
