@@ -14462,7 +14462,7 @@ function qScreenFit(fresh){
   /* يُضبط السؤالُ ما دام يُرسم (أوّلَ ٦٠٠ مث)، ثمّ يُجمَّد حتى السؤال التالي —
      ومن أوّل لمسةٍ يُجمَّد وإن لم تمضِ: لا يتغيّر مقاسٌ ولا موضعٌ والطفلُ يجيب */
   if(fresh){ QT0=Date.now(); QTAP=false; }
-  else if(QTAP || Date.now()-QT0>600) return;
+  else if(QTAP || Date.now()-QT0>600){ qOverflowFix(); return; }
   var pa=$('playArea'), mq=$('mosque'), scr=$('scr-play'), B=document.body, W=document.querySelector('.wrap');
   if(!pa) return;
   var inQ=!!(scr && scr.classList.contains('active') && mq && mq.hasAttribute('hidden') &&
@@ -14490,6 +14490,24 @@ function qScreenFit(fresh){
   pa.style.minHeight=(avail/k).toFixed(1)+'px';          /* zoom يصغّر الارتفاعَ الأدنى معه */
   B.classList.toggle('qlock', need*k<=avail+1);           /* ما لم يسعه ٧٢٪ يُترك يُمرَّر */
 }
+/* السؤالُ المجمَّدُ قد يطول بعدُ: صفحةُ المراجعة تُضبط وهي مخفيّةٌ سطراً واحداً،
+   ثمّ تنكشف كاملةً بعد التسجيل — فكانت أزرارُ الحكم وإعادةِ التسميع تسقط تحت
+   حافّة الشاشة المقفلة. فيقصر صندوقُ النصّ على قدر الزيادة (وهو يُمرَّر من داخله)،
+   فإن لم يكفِ فُكّ القفلُ ليُمرَّر السؤال */
+function qOverflowFix(){
+  var B=document.body, pa=$('playArea');
+  if(!pa || !B.classList.contains('qlock')) return;
+  var over=document.documentElement.scrollHeight-window.innerHeight;
+  if(over<=1) return;
+  var box=pa.querySelector('.ayahbox');
+  if(box && box.offsetHeight){
+    var sc=(box.getBoundingClientRect().height/box.offsetHeight)||1;   /* zoom السؤال */
+    var nh=Math.max(140, Math.floor(box.offsetHeight-(over+2)/sc));
+    if(nh<box.offsetHeight){ box.style.height=''; box.style.minHeight='0'; box.style.maxHeight=nh+'px'; }
+    over=document.documentElement.scrollHeight-window.innerHeight;
+  }
+  if(over>1) B.classList.remove('qlock');
+}
 (function(){
   var pa=$('playArea'), fb=$('fb'), t=0;
   if(!pa || !window.MutationObserver) return;
@@ -14497,7 +14515,8 @@ function qScreenFit(fresh){
     cancelAnimationFrame(t);
     t=requestAnimationFrame(function(){ try{ qScreenFit(false); }catch(e){} });
   });
-  mo.observe(pa, {childList:true, subtree:true, characterData:true});
+  /* وإظهارُ الأزرار وإخفاؤها (hidden) يغيّر الطولَ كذلك */
+  mo.observe(pa, {childList:true, subtree:true, characterData:true, attributes:true, attributeFilter:['hidden']});
   if(fb) mo.observe(fb, {childList:true, subtree:true, characterData:true});
   /* أوّلُ لمسةٍ في السؤال تجمّد ضبطَه */
   function tapped(){ QTAP=true; }
