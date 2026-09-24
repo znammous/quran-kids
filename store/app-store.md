@@ -61,7 +61,8 @@
 ```
 
 - **لقطات الشاشة** (تُسحب إلى الصفحة):
-  - iPhone 6.9": `store/appstore/iphone/` — ثمانٍ، 1290×2796
+  - iPhone 6.5" (ما تطلبه الصفحة): `store/appstore/iphone-6.5/` — ثمانٍ، 1284×2778
+  - iPhone 6.9" إن طُلب: `store/appstore/iphone/` — ثمانٍ، 1290×2796
   - iPad 13": `store/appstore/ipad/` — ثمانٍ، 2048×2732
 - **App Icon**: من داخل التطبيق نفسِه (في مشروع Xcode)، لا يُرفع هنا.
 
