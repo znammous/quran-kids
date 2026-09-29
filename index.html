@@ -130,6 +130,9 @@ body.bgrest #bg *{animation-play-state:paused}
 .screen{display:none;animation:pop .35s ease}
 .screen.active{display:block}
 @keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* الرجوعُ إلى مكانٍ كان فيه (من القصّة إلى قائمتها) لا يُعاد له دخولُ الشاشة:
+   كانت تبهت وتنزل ثمّ تطلع، فترمش تحت عينه وهو يرجع إلى ما تركه */
+.screen.noanim{animation:none}
 /* زرُّ «اختبر نفسي» ثابتٌ (fixed) داخل الرئيسيّة، والأبُ المتحوِّلُ (transform)
    يصير مرجعَ الثابتِ بدل الشاشة — فكان الزرُّ يظهر في منتصف الصفحة ما دامت
    حركةُ الدخول، ثمّ ينزل إلى مكانه. فتُنقل الحركةُ إلى أبناء الرئيسيّة سواه. */
@@ -13635,6 +13638,15 @@ var SET_TABS=[['hifz','📖 الحفظ'],['mushaf','✒️ المصحف'],['play
 var setTab='hifz';
 function renderSetTabs(){
   var el=$('setTabs'); if(!el) return;
+  /* الأزرارُ قائمةٌ؟ فيُنقل التحديدُ بينها ولا تُعاد من جديد — إعادتُها كانت
+     تُرجع الشريطَ إلى أوّل تمريره ثمّ يُصحَّح، فيرمش مع كلّ سحبة */
+  var old=el.querySelectorAll('[data-setp]');
+  if(old.length===SET_TABS.length){
+    for(var q=0;q<old.length;q++) old[q].classList.toggle('sel', old[q].getAttribute('data-setp')===setTab);
+    var ps0=document.querySelectorAll('#scr-settings .setpage');
+    for(q=0;q<ps0.length;q++) ps0[q].hidden=(ps0[q].getAttribute('data-setp')!==setTab);
+    return;
+  }
   el.innerHTML=SET_TABS.map(function(t){
     return '<button type="button" class="onbtab'+(setTab===t[0]?' sel':'')+'" data-setp="'+t[0]+'">'+
            t[1]+'</button>';
@@ -15303,12 +15315,14 @@ $('btnRevQuit').onclick=function(){ startRevPlan(revBackTab()); };   /* إلى �
 /* والمحتوى يتبع الإصبعَ ويخفت بقدر ما سُحب، فإن أفلته قبل الحدّ رجع
    مكانَه — ولا يُحرَّك إلا transform وopacity فلا يُعاد تخطيطُ الصفحة.
    والنفضةُ السريعةُ تكفي ولو قصُرت مسافتُها. */
-function tabSwipe(scrId, barId, boxOf){
+/* opt: أزرارُ شريطٍ غير .onbtab — { tab:محدِّدُها، on:صنفُ المختار } */
+function tabSwipe(scrId, barId, boxOf, opt){
   var scr=$(scrId), doc=document, g=null;
   if(!scr) return;
+  var TAB=(opt&&opt.tab)||'.onbtab', ON=(opt&&opt.on)||'sel';
   var tabsNow=function(){
-    var bs=$(barId).querySelectorAll('.onbtab'), i, cur=-1;
-    for(i=0;i<bs.length;i++) if(bs[i].classList.contains('sel')) cur=i;
+    var bs=$(barId).querySelectorAll(TAB), i, cur=-1;
+    for(i=0;i<bs.length;i++) if(bs[i].classList.contains(ON)) cur=i;
     return { bs:bs, cur:cur };
   };
   var settle=function(box, back){
@@ -15381,6 +15395,9 @@ function tabSwipe(scrId, barId, boxOf){
 tabSwipe('scr-rev', 'revTabs', function(){ return $('revPlan'); });
 tabSwipe('scr-settings', 'setTabs', function(){ return document.querySelector('#scr-settings .card'); });
 tabSwipe('scr-onb', 'onbTabs', function(){ return $('onbBody'); });
+/* ركنُ المغامرة: الألعابُ والقصصُ تبويبان يُسحب بينهما كالإعدادات */
+tabSwipe('scr-games', 'advTabs', function(){ return $(ADV_V==='stories' ? 'storiesBody' : 'gamesBody'); },
+         { tab:'[data-adv]', on:'on' });
 /* خطط «بالقرآن نحيا» الجاهزة */
 $('btnBqnHome').onclick=function(){
   if(BQN_BACK){ bqnReturn(); return; }
@@ -16069,11 +16086,15 @@ function storiesOpen(){
   var back=(curScreen()==='scr-story') ? ST_BACK : null;
   ST_BACK=null;
   ADV_V='stories'; GAME_PICK=null; GAME_LIST=false;
-  storiesRender(); advSync(); show('scr-games');
+  storiesRender(); advSync();
+  $('scr-games').classList.toggle('noanim', !!back);
+  show('scr-games');
   if(back) storiesBackTo(back);
   /* ثمّ يُلتمس الجديدُ في الخلفيّة، فتُعاد القائمةُ إن جاء شيء */
+  /* ولا تُعاد إلّا إن تغيّر الفهرسُ فعلاً: كانت تُرسم مرّتين في كلّ دخولٍ فترمش */
+  var was=JSON.stringify(stList());
   stIdxLoad().then(function(){
-    if(ADV_V==='stories' && curScreen()==='scr-games'){ storiesRender(); advSync(); }
+    if(ADV_V==='stories' && curScreen()==='scr-games' && JSON.stringify(stList())!==was){ storiesRender(); advSync(); }
   });
 }
 /* القصصُ تُفتح بعد مقرَّر اليوم: حين يخضرّ صحّا الحفظ والمراجعة في الرئيسيّة.
@@ -16088,11 +16109,12 @@ function storiesLockedMsg(left){
   uiBox('ستُفتح القصصُ حين تُنهي مقرَّرَك اليوم\nبقي عليك: '+left, '📚', '🏠 إلى مقرَّري', 'لاحقاً',
     function(ok){ if(ok){ renderPlayers(); show('scr-start'); } });
 }
-var ST_COVERS=[];                          /* روابطُ الأغلفة المؤقّتة، تُفكّ عند إعادة الرسم */
+/* روابطُ الأغلفة تبقى ما بقي التطبيقُ مفتوحاً: كانت تُفكّ عند كلّ رسمٍ ثمّ تُجلب
+   من جديد، فتظهر البطاقاتُ بلا صورٍ لحظةً ثمّ تمتلئ — ترمش الشاشةُ كلّما رجع.
+   والآن ما جُلب مرّةً يُرسم مع البطاقة نفسِها */
+var ST_COV={};
 function storiesRender(){
   var B=$('storiesBody'); if(!B) return;
-  ST_COVERS.forEach(function(u){ try{ URL.revokeObjectURL(u); }catch(e){} });
-  ST_COVERS=[];
   var L=stList(), s=stBox(), h='', off=!!storiesLeft();
   if(!L.length){
     h='<p class="gmnote">لا قصصَ بعدُ هنا 📖<br>تظهر حين تصل — ويكفي أن يتّصل التطبيقُ بالإنترنت مرّةً واحدة</p>';
@@ -16101,9 +16123,9 @@ function storiesRender(){
       var rv=stRev(x), seen=(s.op[x.id]|0)>0;
       var fresh=(s.op[x.id]|0)<rv, done=(s.read[x.id]|0)>=rv;
       /* الغلافُ العريض (cw) للبطاقة الكبيرة، والمربّعُ الصغير بديلُه في الفهرس القديم */
-      var cv=x.cw||x.cover;
+      var cv=x.cw||x.cover, cp=stAt(cv,rv)||'', cu=cp && ST_COV[cp];
       h+='<button type="button" class="stcard'+(fresh?' now newdot':(done?' done':''))+(off?' stoff':'')+'" data-story="'+esc(x.id)+'">'+
-         '<span class="stcimg'+(cv?' stcov':'')+'" data-cov="'+esc(stAt(cv,rv)||'')+'">'+(cv?'':esc(x.ic||'📖'))+
+         '<span class="stcimg'+(cv&&!cu?' stcov':'')+'" data-cov="'+esc(cp)+'">'+(cu?'<img alt="" src="'+esc(cu)+'">':(cv?'':esc(x.ic||'📖')))+
            '<span class="stcbadge">'+(fresh?(seen?'✨ تجدّدت':'✨ جديدة'):(done?'✓ قرأتَها':'⏳ لم تُتمَّها'))+'</span></span>'+
          '<span class="stctx"><b>'+esc(x.t||'قصّة')+'</b><i>'+esc(x.d||'')+'</i></span></button>';
     });
@@ -16116,7 +16138,7 @@ function storiesRender(){
   for(i=0;i<cs.length;i++) (function(el){
     var p=el.getAttribute('data-cov'); if(!p) return;
     stImg(p).then(function(u){
-      if(u && u.indexOf('blob:')===0) ST_COVERS.push(u);
+      if(u) ST_COV[p]=u;
       if(el.isConnected && u) el.insertAdjacentHTML('afterbegin','<img alt="" src="'+esc(u)+'">');   /* والشارةُ باقية */
     });
   })(cs[i]);
@@ -16265,6 +16287,7 @@ function stBoot(){
 }
 
 function gamesOpen(){
+  if(curScreen()!=='scr-games') $('scr-games').classList.remove('noanim');
   ADV_V='games';
   GAME_PICK=null; GAME_LIST=false;
   var pool=runPool(), h='';
