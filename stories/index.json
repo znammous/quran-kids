@@ -1,5 +1,5 @@
 {
-  "v": 44,
+  "v": 45,
   "stories": [
     {
       "id": "kahf",
@@ -248,6 +248,15 @@
       "ic": "🐕",
       "cover": "covers/kalb.webp",
       "file": "s/kalb.json",
+      "added": "2026-09-30"
+    },
+    {
+      "id": "qafila",
+      "t": "القافلة",
+      "d": "مَثَلٌ في الشورى",
+      "ic": "🐪",
+      "cover": "covers/qafila.webp",
+      "file": "s/qafila.json",
       "added": "2026-09-30"
     }
   ]
