@@ -1,5 +1,5 @@
 {
-  "v": 39,
+  "v": 40,
   "stories": [
     {
       "id": "kahf",
@@ -201,7 +201,8 @@
       "ic": "⭐",
       "cover": "covers/hilal.webp",
       "file": "s/hilal.json",
-      "added": "2026-09-29"
+      "added": "2026-09-29",
+      "rev": 2
     },
     {
       "id": "sahrij",
@@ -210,7 +211,8 @@
       "ic": "💧",
       "cover": "covers/sahrij.webp",
       "file": "s/sahrij.json",
-      "added": "2026-09-29"
+      "added": "2026-09-29",
+      "rev": 2
     }
   ]
 }
