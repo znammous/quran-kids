@@ -193,6 +193,26 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
 .gbtn.sel{border-color:var(--g2);background:#e2f1ff;color:var(--g1)}
 .gbtn.big2{padding:14px 18px;font-size:18px;flex:1}
 .lookpanel{background:#fff;border:2px solid #e5ecf6;border-radius:14px;padding:12px;margin-top:12px}
+.lookhero{display:flex;align-items:center;justify-content:center;gap:14px}
+.lookhero #bigAvatar{width:118px;height:150px;margin:0;flex:0 0 auto}
+.lookside{flex:1 1 0;min-width:0;max-width:260px;display:flex;flex-direction:column;gap:8px}
+.lookside .pkh{margin:0;padding:9px 10px}
+.lookside .pkh .cur{max-width:62%;overflow:hidden;white-space:nowrap}
+.lookside .pkh .cur span:first-child{overflow:hidden;text-overflow:ellipsis}
+.lookside .pkh.need{border:2px dashed #a6cdf2;background:#f2f9ff}
+#lookGender{margin:0;gap:8px;flex-wrap:nowrap}
+#lookGender .gbtn.big2{padding:9px 6px;font-size:16px}
+.lookside .btn.mini{width:100%;margin:0;padding:8px 10px;font-size:14px;min-height:0}
+/* المعالج: شاشتُه الأولى تُرى كلُّها على الجوال بلا تمرير */
+#scr-onb .onbtop{margin:6px 0 8px}
+#scr-onb .sub{margin-bottom:10px}
+#scr-onb #lookCard{padding:12px;margin-bottom:0}
+#scr-onb .lookpanel{padding:8px 10px;margin-top:10px}
+#scr-onb .lookpanel .pkh{padding:7px 10px;margin-top:6px}
+#scr-onb .lookpanel .lookhead{display:none}
+#scr-onb .lookpanel .pkh:first-of-type{margin-top:0}
+#scr-onb #onbBody{margin-bottom:0}
+#scr-onb .onbnav{margin:14px 0 12px}
 /* ===== «عائلتي»: كلُّ فردٍ يُرسم بصورة الشخصية نفسِها ===== */
 /* شريطُ العائلة يطول بعدد الإخوة، فيُسحب أفقيّاً كتبويبات المعالج
    ولا تتقاسم التبويباتُ عرضَ الشاشة فتضيق أسماؤها */
@@ -2210,6 +2230,7 @@ body.hastabs #btnRevQuit{display:none}
     <p class="sub" id="onbSub"></p>
     <div id="onbBody"></div>
     <div class="onbnav">
+      <button class="btn ghost" id="onbCancel" hidden>✖️ إلغاء</button>
       <button class="btn ghost" id="onbBack" hidden>➡️ السابق</button>
       <span class="onbgap"></span>
       <button class="btn primary pulse" id="onbNext">⬅️ التالي</button>
@@ -2221,10 +2242,21 @@ body.hastabs #btnRevQuit{display:none}
     <h1>👨‍👩‍👧‍👦 عائلتي</h1>
     <div class="onbtabs" id="lookTabs" hidden></div>
     <div class="card" id="lookCard">
-      <div class="ph" id="bigAvatar" style="width:150px;height:190px"></div>
-      <div class="row" id="lookGender" style="margin-top:12px">
-        <button type="button" class="gbtn big2" id="gFemale2">👧 أنثى</button>
-        <button type="button" class="gbtn big2" id="gMale2">👦 ذكر</button>
+      <!-- الصورةُ وبجانبها ما يُختار أوّلاً: الاسمُ (في المعالج) والجنسُ والمظهرُ العشوائيّ،
+           فتتّسع الشاشةُ للّوحة تحتها بلا تمرير -->
+      <div class="lookhero">
+        <div class="ph" id="bigAvatar"></div>
+        <div class="lookside">
+          <button type="button" class="pkh" id="onbNameBtn" hidden>
+            <span class="lbx">✍️ اسمي</span>
+            <span class="cur"><span id="onbNameVal"></span><span style="opacity:.7">✏️</span></span>
+          </button>
+          <div class="row" id="lookGender">
+            <button type="button" class="gbtn big2" id="gFemale2">👧 أنثى</button>
+            <button type="button" class="gbtn big2" id="gMale2">👦 ذكر</button>
+          </div>
+          <button type="button" class="btn ghost mini" id="btnRandomHero" hidden>🎲 مظهر عشوائي</button>
+        </div>
       </div>
       <div class="lookpanel" id="lookPanel"></div>
     </div>
@@ -3314,6 +3346,11 @@ function renderAvatars(){
   var tabs=$('lookTabs');
   if(tabs){ tabs.hidden=!inLook; if(inLook) famTabsRender(tabs); }
   var gr=$('lookGender'); if(gr) gr.hidden=(FAM_TAB!=='me');   /* الذكرُ والأنثى للمستخدم وحدَه */
+  /* وفي المعالج يقوم الاسمُ والمظهرُ العشوائيُّ بجانب الصورة، فتقصر الشاشة؛
+     وفي «عائلتي» الاسمُ صفٌّ في اللوحة كأسماء أهله */
+  var nbh=$('onbNameBtn'); if(nbh) nbh.hidden=inLook;
+  var rbh=$('btnRandomHero'); if(rbh) rbh.hidden=inLook;
+  var sd=document.querySelector('.lookside'); if(sd) sd.hidden=(FAM_TAB!=='me');
   var tb=$('btnFamTree'); if(tb) tb.hidden=!inLook;            /* الشجرةُ من شاشة العائلة لا من المعالج */
   if(FAM_TAB!=='me'){ famRenderMember(); return; }
   var panel=$('lookPanel');
@@ -3329,7 +3366,7 @@ function renderAvatars(){
          '</button>')
       : '';
     panel.innerHTML=lookPanelHTML(meRows(), look, '🎨 اختر شكل شخصيتك', nmRow)+
-      '<button type="button" class="btn ghost mini" id="btnRandomLook" style="width:100%;margin-top:8px">🎲 مظهر عشوائي</button>';
+      (inLook ? '<button type="button" class="btn ghost mini" id="btnRandomLook" style="width:100%;margin-top:8px">🎲 مظهر عشوائي</button>' : '');
     lookPanelWire(panel, look);
     var nb=panel.querySelector('[data-mnm]');
     if(nb) nb.onclick=function(){
@@ -7019,7 +7056,7 @@ function renderPlayers(){
   for(var i=0;i<cs.length;i++){
     cs[i].onclick=function(){
       var v=this.getAttribute('data-p');
-      if(v==='new'){ ONB.edit=false; addPlayer(); onbShow(0); return; }
+      if(v==='new'){ onbAddStart(); return; }
       DB.cur=parseInt(v,10); saveDB(); bindPlayer(); ensureAllSchedules();
       $('pname').value=profile.name||'';
       curSurah=null; openJuz=0;                 /* السورة المفتوحة تخصّ اللاعب السابق */
@@ -7029,6 +7066,29 @@ function renderPlayers(){
     };
   }
   $('btnBoard').hidden = !(DB.app.board && DB.players.length>1);
+}
+/* مستخدمٌ جديدٌ يمرّ بالمعالج، ويُحفظ من كان قبله ليُرجَع إليه إن عدل */
+function onbAddStart(){
+  var prev=DB.cur;
+  ONB.edit=false; addPlayer(); ONB.prev=prev; onbShow(0);
+}
+function onbCanCancel(){
+  var p=ONB.prev;
+  return p!=null && p!==DB.cur && p>=0 && p<DB.players.length && DB.players.length>1;
+}
+/* عدل عن الإضافة: يُحذف الجديدُ ويعود من كان قبله */
+function onbCancel(){
+  if(!onbCanCancel()) return;
+  var prev=ONB.prev; ONB.prev=null;
+  DB.players.splice(DB.cur,1);
+  if(prev>DB.cur) prev--;
+  DB.cur=prev; saveDB(); bindPlayer();
+  $('pname').value=profile.name||'';
+  lookHome(); ensureAllSchedules();
+  curSurah=null; openJuz=0;
+  renderPlayers(); renderAvatars(); fillSettings();
+  try{ renderHome(); }catch(e){}
+  show('scr-start');
 }
 function addPlayer(){
   DB.players.push(newPlayer('','f'));      /* الاسم يُسأل عنه في المعالج لا في نافذة المتصفح */
@@ -12016,10 +12076,10 @@ function onbGate(){
   b.title=m||'';
   b.classList[m?'add':'remove']('waiting');
   if(ONB.i===0){
-    var nt=$('onbNameNote');
-    if(nt) nt.textContent = (profile.name||'').trim()
-      ? 'اسمك يظهر في الشهادة وفي لوحة البيت'
-      : '✍️ اكتب اسمك لنمضي — يظهر في شهاداتك ولوحة البيت';
+    /* لا سطرَ تنبيهٍ تحته: الزرُّ نفسُه يدعوه ما دام الاسمُ فارغاً */
+    var nm=(profile.name||'').trim(), nv=$('onbNameVal'), nb=$('onbNameBtn');
+    if(nv) nv.textContent=nm||'اكتب اسمك';
+    if(nb) nb.classList[nm?'remove':'add']('need');
   }
 }
 /* ---------- ما حفظه قبل التطبيق ----------
@@ -14727,6 +14787,9 @@ function onbShow(i){
   /* في التعديل: تبويبات وزرّ حفظ. وفي المعالج الأوّل: شريط تقدّم وخطوات */
   $('onbTop').hidden=ONB.edit;
   $('onbBack').hidden=ONB.edit||(st===0);
+  /* مستخدمٌ جديدٌ أُضيف وعلى الجهاز غيرُه: له أن يعدل عن الإضافة من أوّل خطوة.
+     أمّا أوّلُ مستخدمٍ فلا شيءَ قبله يُرجَع إليه */
+  $('onbCancel').hidden=ONB.edit||(st!==0)||!onbCanCancel();
   $('onbNext').hidden=ONB.edit;
   $('onbSave').hidden=!ONB.edit;
   $('onbNext').textContent=(st===ONB.n-1)?'✅ يلّا نبدأ':'⬅️ التالي';
@@ -14736,17 +14799,8 @@ function onbShow(i){
 
   if(st===0){                              /* الاسم والشخصية معاً */
     $('onbTitle').textContent='مَن أنت؟';
-    $('onbSub').textContent='اسمك وشكل شخصيتك — يظهران في الشهادة وأعلى الشاشة، وتغيّرهما متى شئت';
-    B.innerHTML=
-      '<div class="card" style="text-align:center;margin-bottom:14px">'+
-        '<button type="button" class="pkh" id="onbNameBtn" style="width:100%">'+
-          '<span class="lbx">✍️ اسمي</span>'+
-          '<span class="cur"><span id="onbNameVal"></span><span style="opacity:.7">✏️</span></span>'+
-        '</button>'+
-        '<div class="note" id="onbNameNote">اسمك يظهر في الشهادة وفي لوحة البيت</div>'+
-      '</div>';
+    $('onbSub').textContent='اسمك وشكلك في شهاداتك، وتغيّرهما متى شئت';
     B.appendChild($('lookCard'));
-    $('onbNameVal').textContent=(profile.name||'').trim()||'اضغط لتكتب اسمك';
     $('onbNameBtn').onclick=onbNameAsk;
     renderAvatars();
     onbGate();
@@ -14795,11 +14849,12 @@ function onbShow(i){
     $('onbFam').innerHTML=DB.players.map(function(p,idx){
       return '<span class="pchip'+(idx===DB.cur?' sel':'')+'">'+esc(p.name||'بلا اسم')+'</span>';
     }).join('');
-    $('onbAdd').onclick=function(){ ONB.edit=false; addPlayer(); onbShow(0); };
+    $('onbAdd').onclick=onbAddStart;
   }
   show('scr-onb');
 }
 function onbFinish(){
+  ONB.prev=null;
   priorCeleFlush();            /* تمّ الإعداد، فتُقال بشارةُ ما سُجّل */
   if(!(profile.name||'').trim()) profile.name='صديقي';
   $('pname').value=profile.name;
@@ -14842,6 +14897,8 @@ $('onbNext').onclick=function(){
 $('onbBack').onclick=function(){ onbShow(ONB.i-1); };
 $('btnEditMe').onclick=function(){ ONB.edit=true; onbShow(0); };
 $('onbSave').onclick=onbEditDone;
+$('onbCancel').onclick=onbCancel;
+$('btnRandomHero').onclick=randomLook;
 $('btnGoMap').onclick=function(){ openBqn(); };
 /* من جاء الفهرسَ من زرّ «شهاداتي» العائم رُدَّ إلى مساره، لا إلى البداية */
 $('btnBackStart').onclick=function(){
@@ -17423,7 +17480,7 @@ window.addEventListener('resize', function(){
   runSize(); if(RUN.state!=='run') runDraw();
 });
 $('btnPathHome').onclick=function(){ renderPlayers(); show('scr-start'); };
-$('btnAddPlayer').onclick=function(){ ONB.edit=false; addPlayer(); onbShow(0); };
+$('btnAddPlayer').onclick=onbAddStart;
 if($('btnOffline')) $('btnOffline').onclick=offlineDownload;
 if($('instGo')) $('instGo').onclick=pwaInstall;
 if($('instHide')) $('instHide').onclick=function(){
@@ -18043,6 +18100,7 @@ function navBack(){
   if(scr==='scr-onb'){
     if(ONB.edit){ onbEditDone(); return true; }
     if($('onbBack') && !$('onbBack').hidden){ $('onbBack').click(); return true; }
+    if($('onbCancel') && !$('onbCancel').hidden){ onbCancel(); return true; }
     return false;
   }
   /* ٣) داخل سؤال: كما لو ضغط ✕ */
@@ -18144,7 +18202,13 @@ if(DB_BAD) whenCalm(function(){
 /* ومن كان محفوظه تامّاً قبل هذه النسخة، يُتوَّج عند أوّل فتحة */
 try{ crownCheck(); }catch(e){}
 try{ checkBadges(true); }catch(e){}      /* ما استُحقّ قبل النظام يُمنح صامتاً */
-if(onbNeeded()){ ONB.edit=false; onbShow(0); }     /* أول مرة: المعالج */
+if(onbNeeded()){                                   /* أول مرة: المعالج */
+  ONB.edit=false;
+  /* وإن كان على الجهاز غيرُه (أُغلق التطبيقُ أثناء إضافة مستخدم) فله أن يلغي */
+  for(var _pi=0;_pi<DB.players.length;_pi++)
+    if(_pi!==DB.cur && (DB.players[_pi].name||'').trim()){ ONB.prev=_pi; break; }
+  onbShow(0);
+}
 else{ renderHome(); bootNotes(); }
 /* بلغ الإقلاعُ آخرَه: الحزمةُ سليمة، فلا يُرجَع عنها (التحديثُ الحيّ) */
 liveReady();
