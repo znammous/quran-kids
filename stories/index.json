@@ -1,5 +1,5 @@
 {
-  "v": 47,
+  "v": 48,
   "stories": [
     {
       "id": "kahf",
@@ -254,7 +254,8 @@
       "cover": "covers/qindil.webp",
       "file": "s/qindil.json",
       "added": "2026-09-29",
-      "cw": "covers/w/qindil.webp"
+      "cw": "covers/w/qindil.webp",
+      "rev": 2
     },
     {
       "id": "tayyara",
