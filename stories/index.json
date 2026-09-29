@@ -1,5 +1,5 @@
 {
-  "v": 40,
+  "v": 41,
   "stories": [
     {
       "id": "kahf",
@@ -213,6 +213,15 @@
       "file": "s/sahrij.json",
       "added": "2026-09-29",
       "rev": 2
+    },
+    {
+      "id": "sibaq",
+      "t": "حَكَمُ السباق",
+      "d": "مَثَلٌ في العدل مع من لا تحبّ",
+      "ic": "🏁",
+      "cover": "covers/sibaq.webp",
+      "file": "s/sibaq.json",
+      "added": "2026-09-29"
     }
   ]
 }
