@@ -16062,9 +16062,15 @@ function stNew(){
   var s=stBox();
   return stList().filter(function(x){ return (s.op[x.id]|0) < stRev(x); });
 }
+/* الرجوعُ من القصّة إلى موضعه من القائمة لا إلى أوّلها: يُحفظ موضعُ التمرير
+   حين تُفتح القصّة، ويُردّ حين يُرجع منها (بالزرّ أو بإتمامها) */
+var ST_BACK=null;
 function storiesOpen(){
+  var back=(curScreen()==='scr-story') ? ST_BACK : null;
+  ST_BACK=null;
   ADV_V='stories'; GAME_PICK=null; GAME_LIST=false;
   storiesRender(); advSync(); show('scr-games');
+  if(back) storiesBackTo(back);
   /* ثمّ يُلتمس الجديدُ في الخلفيّة، فتُعاد القائمةُ إن جاء شيء */
   stIdxLoad().then(function(){
     if(ADV_V==='stories' && curScreen()==='scr-games'){ storiesRender(); advSync(); }
@@ -16116,6 +16122,17 @@ function storiesRender(){
   })(cs[i]);
 }
 
+function storiesBackTo(back){
+  var go=function(){
+    var el=document.querySelector('#storiesBody [data-story="'+back.id+'"]');
+    if(!el) return;
+    /* الموضعُ نفسُه، إلّا أن تكون البطاقةُ قد خرجت منه (تغيّرت القائمة) فتُوسَّط */
+    window.scrollTo(0,back.y);
+    var r=el.getBoundingClientRect();
+    if(r.bottom<0 || r.top>window.innerHeight){ try{ el.scrollIntoView({block:'center'}); }catch(e){} }
+  };
+  go(); requestAnimationFrame(go);
+}
 /* ===== قراءةُ القصّة ===== */
 var STORY=null, STORY_I=0, STORY_BLOBS=[];
 function storyFree(){
@@ -16126,6 +16143,7 @@ function storyOpen(id){
   var left=storiesLeft();
   if(left){ storiesLockedMsg(left); return; }
   var meta=stMeta(id); if(!meta) return;
+  ST_BACK={ id:id, y:window.scrollY||0 };
   var s=stBox();
   var rv=stRev(meta);
   s.op[id]=rv; s.ann[id]=rv; saveDB();    /* فتح هذه المراجعة: لا نقطةَ بعد اليوم ولا إعلان */
