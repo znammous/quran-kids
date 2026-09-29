@@ -1686,6 +1686,32 @@ body.glow-off .dfpic{animation:none}
 .goalcard .gcic.stcov img{width:100%;height:100%;object-fit:cover;display:block}
 /* قبل مقرَّر اليوم: البطاقةُ كلُّها بالأبيض والأسود — بلا قفل */
 .goalcard.stoff{filter:grayscale(1);opacity:.8}
+/* قائمةُ القصص عمودان: الصورةُ ٤:٣ تملأ رأسَ البطاقة، والعنوانُ والوصفُ تحتها،
+   وحالُ القصّة شارةٌ على زاوية الصورة */
+#storiesBody:not([hidden]){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+#storiesBody .gmnote{grid-column:1/-1}
+.stcard{position:relative;display:block;width:100%;padding:0;text-align:start;
+  background:var(--pnl);border:3px solid var(--pb);border-radius:16px;overflow:hidden;
+  cursor:pointer;font-family:inherit;box-shadow:0 5px 0 rgba(0,0,0,.16);transition:.12s;
+  -webkit-tap-highlight-color:transparent}
+.stcard:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.16)}
+.stcard.done{border-color:#9fdcb8}
+.stcard.now{border-color:var(--gold)}
+.stcard.stoff{filter:grayscale(1);opacity:.8}
+.stcard .stcimg{position:relative;display:flex;align-items:center;justify-content:center;
+  width:100%;aspect-ratio:4/3;background:var(--pnl3);font-size:46px;line-height:1}
+.stcard .stcimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.stcard .stcbadge{position:absolute;bottom:7px;inset-inline-end:7px;z-index:1;
+  font-size:12px;font-weight:900;line-height:1;padding:5px 9px;border-radius:999px;
+  background:rgba(255,255,255,.93);color:#333;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.stcard.now .stcbadge{background:var(--gold);color:#3a2a00}
+.stcard.done .stcbadge{background:#e8f8ee;color:#1f7a45}
+.stcard .stctx{display:block;padding:8px 10px 10px}
+.stcard .stctx b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  font-size:15px;font-weight:900;color:var(--ttl);line-height:1.45}
+.stcard .stctx i{display:block;font-style:normal;font-size:12.5px;font-weight:800;color:var(--on2);
+  line-height:1.6;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stcard.newdot::after{z-index:2}
 .sthead{display:flex;align-items:center;gap:10px;margin:2px 0 12px}
 .sttitle{flex:1;min-width:0;font-size:18px;font-weight:900;color:var(--ttl);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -16068,11 +16094,12 @@ function storiesRender(){
     L.forEach(function(x){
       var rv=stRev(x), seen=(s.op[x.id]|0)>0;
       var fresh=(s.op[x.id]|0)<rv, done=(s.read[x.id]|0)>=rv;
-      h+='<button type="button" class="goalcard'+(fresh?' now newdot':(done?' done':''))+(off?' stoff':'')+'" data-story="'+esc(x.id)+'">'+
-         '<span class="gcic'+(x.cover?' stcov':'')+'" data-cov="'+esc(stAt(x.cover,rv)||'')+'">'+(x.cover?'':esc(x.ic||'📖'))+'</span>'+
-         '<span class="gctx"><b>'+esc(x.t||'قصّة')+'</b><i>'+esc(x.d||'')+
-           (fresh?(seen?' • ✨ تجدّدت':' • ✨ جديدة'):(done?' • ✓ قرأتَها':' • ⏳ لم تُتمَّها'))+'</i></span>'+
-         '<span class="gcgo">❮</span></button>';
+      /* الغلافُ العريض (cw) للبطاقة الكبيرة، والمربّعُ الصغير بديلُه في الفهرس القديم */
+      var cv=x.cw||x.cover;
+      h+='<button type="button" class="stcard'+(fresh?' now newdot':(done?' done':''))+(off?' stoff':'')+'" data-story="'+esc(x.id)+'">'+
+         '<span class="stcimg'+(cv?' stcov':'')+'" data-cov="'+esc(stAt(cv,rv)||'')+'">'+(cv?'':esc(x.ic||'📖'))+
+           '<span class="stcbadge">'+(fresh?(seen?'✨ تجدّدت':'✨ جديدة'):(done?'✓ قرأتَها':'⏳ لم تُتمَّها'))+'</span></span>'+
+         '<span class="stctx"><b>'+esc(x.t||'قصّة')+'</b><i>'+esc(x.d||'')+'</i></span></button>';
     });
   }
   B.innerHTML=h;
@@ -16084,7 +16111,7 @@ function storiesRender(){
     var p=el.getAttribute('data-cov'); if(!p) return;
     stImg(p).then(function(u){
       if(u && u.indexOf('blob:')===0) ST_COVERS.push(u);
-      if(el.isConnected) el.innerHTML='<img alt="" src="'+esc(u)+'">';
+      if(el.isConnected && u) el.insertAdjacentHTML('afterbegin','<img alt="" src="'+esc(u)+'">');   /* والشارةُ باقية */
     });
   })(cs[i]);
 }
