@@ -1,5 +1,5 @@
 {
-  "v": 41,
+  "v": 42,
   "stories": [
     {
       "id": "kahf",
@@ -221,6 +221,15 @@
       "ic": "🏁",
       "cover": "covers/sibaq.webp",
       "file": "s/sibaq.json",
+      "added": "2026-09-29"
+    },
+    {
+      "id": "qindil",
+      "t": "القنديل المكسور",
+      "d": "مَثَلٌ في الصدق",
+      "ic": "🏮",
+      "cover": "covers/qindil.webp",
+      "file": "s/qindil.json",
       "added": "2026-09-29"
     }
   ]
