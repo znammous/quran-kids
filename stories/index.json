@@ -1,5 +1,5 @@
 {
-  "v": 45,
+  "v": 46,
   "stories": [
     {
       "id": "kahf",
@@ -257,6 +257,15 @@
       "ic": "🐪",
       "cover": "covers/qafila.webp",
       "file": "s/qafila.json",
+      "added": "2026-09-30"
+    },
+    {
+      "id": "surra",
+      "t": "الصُّرّة المختومة",
+      "d": "مَثَلٌ في الأمانة",
+      "ic": "👝",
+      "cover": "covers/surra.webp",
+      "file": "s/surra.json",
       "added": "2026-09-30"
     }
   ]
