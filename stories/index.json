@@ -1,5 +1,5 @@
 {
-  "v": 38,
+  "v": 39,
   "stories": [
     {
       "id": "kahf",
@@ -201,6 +201,15 @@
       "ic": "⭐",
       "cover": "covers/hilal.webp",
       "file": "s/hilal.json",
+      "added": "2026-09-29"
+    },
+    {
+      "id": "sahrij",
+      "t": "ماءُ الصهريج",
+      "d": "مَثَلٌ في ترك الإسراف",
+      "ic": "💧",
+      "cover": "covers/sahrij.webp",
+      "file": "s/sahrij.json",
       "added": "2026-09-29"
     }
   ]
