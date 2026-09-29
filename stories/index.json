@@ -1,5 +1,5 @@
 {
-  "v": 43,
+  "v": 44,
   "stories": [
     {
       "id": "kahf",
@@ -240,6 +240,15 @@
       "cover": "covers/tayyara.webp",
       "file": "s/tayyara.json",
       "added": "2026-09-29"
+    },
+    {
+      "id": "kalb",
+      "t": "الكلبُ العطشان",
+      "d": "مَثَلٌ في الرحمة بالحيوان",
+      "ic": "🐕",
+      "cover": "covers/kalb.webp",
+      "file": "s/kalb.json",
+      "added": "2026-09-30"
     }
   ]
 }
