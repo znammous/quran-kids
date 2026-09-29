@@ -1,5 +1,5 @@
 {
-  "v": 42,
+  "v": 43,
   "stories": [
     {
       "id": "kahf",
@@ -230,6 +230,15 @@
       "ic": "🏮",
       "cover": "covers/qindil.webp",
       "file": "s/qindil.json",
+      "added": "2026-09-29"
+    },
+    {
+      "id": "tayyara",
+      "t": "طائرةُ الورق",
+      "d": "مَثَلٌ في ترك الحسد",
+      "ic": "🪁",
+      "cover": "covers/tayyara.webp",
+      "file": "s/tayyara.json",
       "added": "2026-09-29"
     }
   ]
