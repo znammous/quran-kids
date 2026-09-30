@@ -1,5 +1,5 @@
 {
-  "v": 62,
+  "v": 63,
   "stories": [
     {
       "id": "kahf",
@@ -402,6 +402,16 @@
       "cover": "covers/tamr.webp",
       "cw": "covers/w/tamr.webp",
       "file": "s/tamr.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "kabir",
+      "t": "الكبيرُ والصغير",
+      "d": "مَثَلٌ في رحمة الصغير وتوقير الكبير",
+      "ic": "🤲",
+      "cover": "covers/kabir.webp",
+      "cw": "covers/w/kabir.webp",
+      "file": "s/kabir.json",
       "added": "2026-10-01"
     }
   ]
