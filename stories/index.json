@@ -1,5 +1,5 @@
 {
-  "v": 72,
+  "v": 73,
   "stories": [
     {
       "id": "kahf",
@@ -502,6 +502,16 @@
       "cover": "covers/faiz.webp",
       "cw": "covers/w/faiz.webp",
       "file": "s/faiz.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "waqt",
+      "t": "الوقتُ الضائع",
+      "d": "مَثَلٌ في اغتنام الوقت",
+      "ic": "⏳",
+      "cover": "covers/waqt.webp",
+      "cw": "covers/w/waqt.webp",
+      "file": "s/waqt.json",
       "added": "2026-10-01"
     }
   ]
