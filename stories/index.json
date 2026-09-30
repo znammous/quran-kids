@@ -1,5 +1,5 @@
 {
-  "v": 57,
+  "v": 58,
   "stories": [
     {
       "id": "kahf",
@@ -370,6 +370,16 @@
       "cover": "covers/namla.webp",
       "cw": "covers/w/namla.webp",
       "file": "s/namla.json",
+      "added": "2026-09-30"
+    },
+    {
+      "id": "yasin",
+      "t": "الرجلُ الذي جاء يسعى",
+      "d": "كلمةُ حقٍّ في مدينةٍ كذّبت",
+      "ic": "🏃",
+      "cover": "covers/yasin.webp",
+      "cw": "covers/w/yasin.webp",
+      "file": "s/yasin.json",
       "added": "2026-09-30"
     }
   ]
