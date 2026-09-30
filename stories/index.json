@@ -1,5 +1,5 @@
 {
-  "v": 50,
+  "v": 51,
   "stories": [
     {
       "id": "kahf",
@@ -315,6 +315,16 @@
       "cover": "covers/dayf.webp",
       "cw": "covers/w/dayf.webp",
       "file": "s/dayf.json",
+      "added": "2026-09-30"
+    },
+    {
+      "id": "zeer",
+      "t": "زيرُ السبيل",
+      "d": "مَثَلٌ في حقّ ابن السبيل",
+      "ic": "🏺",
+      "cover": "covers/zeer.webp",
+      "cw": "covers/w/zeer.webp",
+      "file": "s/zeer.json",
       "added": "2026-09-30"
     }
   ]
