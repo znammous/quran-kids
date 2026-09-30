@@ -2738,12 +2738,6 @@ body.hastabs #btnRevQuit{display:none}
 
   <section class="screen" id="scr-settings">
     <h1>⚙️ الإعدادات</h1>
-    <!-- اللغةُ فوق الأبواب كلِّها: يجدها مَن لا يقرأ العربيّة قبل أن يبحث عنها.
-         واسمُها بلغاتها كلِّها، فلا يُترجَم -->
-    <div class="setblock langbox" translate="no">
-      <label class="lbl" for="setLang">🌐 اللغة · زبان · Language</label>
-      <select id="setLang"></select>
-    </div>
     <div class="onbtabs" id="setTabs"></div>
     <div class="card">
       <div class="setpage" data-setp="hifz">
@@ -2806,6 +2800,12 @@ body.hastabs #btnRevQuit{display:none}
       <button class="btn blue big" id="btnHelp" style="margin:14px 0 0">❓ كيف ألعب</button>
       </div>
       <div class="setpage" data-setp="dev" hidden>
+      <!-- اللغة: زرٌّ يفتح صندوقَ التطبيق بأسمائها بلغاتها. و«Language» بجانبها
+           لمن لا يقرأ لغةَ الواجهة الحاليّة -->
+      <div class="setblock langbox" style="margin-top:12px">
+        <label class="lbl">🌐 <span>اللغة</span> · Language</label>
+        <button type="button" class="btn blue" id="btnLang" style="width:100%">🌐 <span id="langCur" translate="no"></span></button>
+      </div>
       <div class="setblock" id="setInstall" style="margin-top:12px">
         <label class="lbl">📲 تثبيت التطبيق</label>
         <button class="btn blue" id="btnInstall2" style="width:100%">📲 ثبّت «نور الوحي» على جهازي</button>
@@ -2881,20 +2881,22 @@ body.hastabs #btnRevQuit{display:none}
 <script>
 /* قائمةُ اللغات: تُحفظ للجهاز كلِّه لا للّاعب، ويُعاد فتحُ الصفحة بها */
 (function(){
-  var I=NUR_I18N, s=document.getElementById('setLang'); if(!s) return;
-  var n=0;
-  for(var c in I.langs){
-    if(!I.langs[c].ready && c!==I.code) continue;
-    var o=document.createElement('option'); o.value=c; o.textContent=I.langs[c].n; s.appendChild(o); n++;
-  }
-  if(n<2){ s.closest('.langbox').hidden=true; return; }
-  s.value=I.code;
-  s.onchange=function(){
-    try{ localStorage.setItem('nur_lang', s.value); }catch(e){}
+  var I=NUR_I18N, b=document.getElementById('btnLang'); if(!b) return;
+  var list=[];
+  for(var c in I.langs) if(I.langs[c].ready || c===I.code) list.push(c);
+  if(list.length<2){ b.closest('.langbox').hidden=true; return; }
+  document.getElementById('langCur').textContent=I.langs[I.code].n;
+  b.onclick=function(){
+    uiBox(tx('اختر لغة التطبيق')+'\nChoose language', '🌐', null, tx('رجوع'), function(ok, v){
+      if(ok && v && v!==I.code) pick(v);
+    }, null, null, list.map(function(c){ return { n:I.langs[c].n, v:c, sel:c===I.code }; }));
+  };
+  function pick(v){
+    try{ localStorage.setItem('nur_lang', v); }catch(e){}
     /* ‎?lang=‎ في الرابط يغلب المحفوظ: يُحذف، وإلّا عادت اللغةُ القديمة */
     var u=location.href.replace(/([?&#])lang=[a-z]{2}&?/,'$1').replace(/[?&#]$/,'');
     if(u===location.href) location.reload(); else location.replace(u);
-  };
+  }
 })();
 NUR_I18N.start();
 </script>
@@ -10963,7 +10965,8 @@ function roundRecite(r){
   var part=portionOf(s,r.a,pi,np);
   var txt=part.join(' ');
   var hint=part.slice(0,1).join(' ')+' …';
-  var where='الآية '+arNum(r.a+1)+' من '+esc(s.name)+(np>1?(' \u2068(جزء '+arNum(pi+1)+' من '+arNum(np)+')\u2069'):'');
+  var where=tx('الآية {a} من {s}',{a:arNum(r.a+1),s:esc(s.name)})+
+            (np>1?(' \u2068'+tx('(جزء {i} من {n})',{i:arNum(pi+1),n:arNum(np)})+'\u2069'):'');
   if(SET.level==='hard'){
     $('playArea').innerHTML=
       '<div class="hintline">اكتب '+where+' عن ظهر قلب (التشكيل غير مطلوب)</div>'+
@@ -10997,8 +11000,8 @@ function roundRecite(r){
     var useRec=useRecNow();
     $('playArea').innerHTML=
       '<div class="hintline" id="hintR">'+
-        (useRec ? 'سمّع '+where+' — سجّل بـ🎤 لتقارن صوتك بالنص، أو اضغط ✅ إن سمّعتها لمن بجانبك'
-                : 'سمّع '+where+' بصوتك لمن بجانبك 👂')+'</div>'+
+        (useRec ? tx('سمّع {w} — سجّل بـ🎤 لتقارن صوتك بالنص، أو اضغط ✅ إن سمّعتها لمن بجانبك',{w:where})
+                : tx('سمّع {w} بصوتك لمن بجانبك 👂',{w:where}))+'</div>'+
       '<div class="ayahbox"><div class="ayah" id="ayHidden" style="font-size:'+SET.font+'px;color:#9db2c9">'+esc(hint)+'</div></div>'+
       (useRec ? '<button class="btn red big pulse" id="btnRecR">🎤 سجّل تسميعي</button>'+
                 '<div class="row" id="rowPlayR" hidden style="margin:0 0 12px">'+
@@ -14968,7 +14971,8 @@ function renderHomeCards(){
     var nx=null; try{ nx=selfNext(); }catch(e){}
     hTxt = !nx ? 'أتممتَ كلَّ ما في نطاقك — وسّع الأجزاء من الإعدادات'
          : (esc(nx.s.name)+' '+arNum(nx.g[0]+1)+' — '+arNum(nx.g[1]));
-    if(hDone && nx) hTxt='أتممتَ حفظ اليوم — ولك أن تزيد • التالي: '+esc(nx.s.name)+' '+arNum(nx.g[0]+1)+' — '+arNum(nx.g[1]);
+    if(hDone && nx) hTxt=tx('أتممتَ حفظ اليوم — ولك أن تزيد • التالي: {s} {a} — {b}',
+                            {s:esc(nx.s.name),a:arNum(nx.g[0]+1),b:arNum(nx.g[1])});
   }
   $('cardHifzTxt').innerHTML=hTxt;
   $('cardHifzIc').textContent=hafizAll?'👑':(hDone?'✅':'📖');
@@ -14990,14 +14994,14 @@ function renderHomeCards(){
   }catch(e){}
   var duty=!!((T && T.r && !T.revDone) || due || wp);
   if(revOff() && !freeLeft) rTxt='ليس لديك خطة مراجعة مضبوطة';
-  else if(revOff()) rTxt='مسارك الحرّ مفتوح — بقيت '+arCount(freeLeft,C_SESS);
+  else if(revOff()) rTxt=tx('مسارك الحرّ مفتوح — بقيت {n}',{n:arCount(freeLeft,C_SESS)});
   else if(T && T.r && !T.revDone) rTxt=bqnLabel(T.r)+' — '+arCount(T.pages.length,C_PAGE);
   /* أتمّ مقرَّرَ خطّته: تُهنّئه البطاقةُ ولا يُنقضُ صحُّها بمستحقٍّ خارج المقرَّر */
   else if(T && T.r) rTxt='أتممتَ مقرَّر مراجعة اليوم — ولك أن تزيد'+
-       (due?(' • وعندك '+arNum(due)+' مقطعاً حلّ موعدُه'):'');
-  else if(due) rTxt=arNum(due)+' مقطعاً حلّ موعدُه';
-  else if(wp) rTxt='وردُ اليوم: '+arCount(revSize('wird'),C_PAGE)+' من محفوظك';
-  else if(freeLeft) rTxt='مسارك الحرّ مفتوح — بقيت '+arCount(freeLeft,C_SESS);
+       (due?(' • '+tx('وعندك {n} مقطعاً حلّ موعدُه',{n:arNum(due)})):'');
+  else if(due) rTxt=tx('{n} مقطعاً حلّ موعدُه',{n:arNum(due)});
+  else if(wp) rTxt=tx('وردُ اليوم: {p} من محفوظك',{p:arCount(revSize('wird'),C_PAGE)});
+  else if(freeLeft) rTxt=tx('مسارك الحرّ مفتوح — بقيت {n}',{n:arCount(freeLeft,C_SESS)});
   else if(rDone) rTxt='أتممتَ مراجعة اليوم — ولك أن تزيد';
   else rTxt='لا مراجعةَ مستحقّة — تصفّح محفوظاتك';
   /* اجتمع عليه مقرَّرُ اليوم ومسارٌ حرٌّ؟ يُذكر المسارُ ذيلاً فلا يُنسيه المقرَّرُ
@@ -15045,8 +15049,8 @@ function renderHome(){
       ? (hz ? 'هنيئاً لك ختمُ القرآن — ولم تضبط خطّةَ مراجعةٍ بعد 👑'
             : 'ليس لديك خطة مراجعة مضبوطة — والحفظُ ماضٍ 📖')
     : w ? 'ورد المراجعة ينتظرك 📖'
-    : due ? ('عندك '+arNum(due)+' مقطع يحتاج مراجعة اليوم ☀️')
-    : (tb.stages>0 ? ('أنجزت '+arNum(tb.stages)+' مراحل اليوم — أحسنت 🌟')
+    : due ? tx('عندك {n} مقطع يحتاج مراجعة اليوم ☀️',{n:arNum(due)})
+    : (tb.stages>0 ? tx('أنجزت {n} مراحل اليوم — أحسنت 🌟',{n:arNum(tb.stages)})
        : (hz ? 'هنيئاً لك ختمُ القرآن — وتعاهدُه أجملُ ما تصنع 👑'
              : 'مستعدّ لحفظ جديد اليوم؟'));
 }
@@ -18085,7 +18089,7 @@ function parentGate(cb){
   bg.innerHTML='<div class="modal" style="max-width:360px;text-align:center">'+
     '<div style="font-size:42px;line-height:1">👨‍👩‍👧</div>'+
     '<div style="font-size:18px;font-weight:900;margin:8px 0 2px;color:var(--ttl)">سؤالٌ لوليّ الأمر</div>'+
-    '<div style="font-size:15px;font-weight:800;color:var(--ttl);line-height:1.9">كم حاصلُ ضرب <b>'+PGATE_W[a-6]+'</b> في <b>'+PGATE_W[b-6]+'</b>؟</div>'+
+    '<div style="font-size:15px;font-weight:800;color:var(--ttl);line-height:1.9">'+tx('كم حاصلُ ضرب <b>{a}</b> في <b>{b}</b>؟',{a:tx(PGATE_W[a-6]),b:tx(PGATE_W[b-6])})+'</div>'+
     '<input type="number" inputmode="numeric" id="pgateIn" autocomplete="off" aria-label="الناتج" '+
       'style="width:120px;margin-top:10px;font-family:inherit;font-size:22px;font-weight:900;text-align:center;'+
       'color:var(--ttl);background:var(--pnl2);border:2px solid var(--pb);border-radius:12px;padding:8px">'+
