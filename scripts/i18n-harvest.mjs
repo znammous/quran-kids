@@ -128,7 +128,7 @@ const done = s => {
       || (s.includes('<') && (keys.has(c) || keys.has(numKey(c))))  /* «<i>🏠</i>الرئيسية»: تُرجمت كلمتُه */
       || !/[؀-ٟ٪-ۿ]/.test(c) || MONTH.test(t);
 };
-const out = [...miss].filter(s => !isContent(s) && !done(s) &&!/[ٹڈڑکگںھہۃیے]/.test(s));
+const out = [...miss].filter(s => !isContent(s) && !done(s) &&!/[ٹڈڑکگںھہۃیےټډړښږځڅۍېګ]/.test(s));   /* حروفُ الأرديّة والبشتو: نصٌّ مترجَمٌ لا عربيّ */
 writeFileSync(`/tmp/i18n-harvest-${LANG}.json`, JSON.stringify(out, null, 1));
 console.log(`\n\nنصوصٌ ظهرت ولم تُترجَم (${out.length}):`);
 out.forEach(s => console.log('   • ' + (s.length > 140 ? s.slice(0, 140) + '…' : s)));
