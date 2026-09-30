@@ -1,5 +1,5 @@
 {
-  "v": 78,
+  "v": 79,
   "stories": [
     {
       "id": "kahf",
@@ -562,6 +562,16 @@
       "cover": "covers/basma.webp",
       "cw": "covers/w/basma.webp",
       "file": "s/basma.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "ghurfa",
+      "t": "الغرفةُ المرتّبة",
+      "d": "مَثَلٌ في النظافة والترتيب",
+      "ic": "🧹",
+      "cover": "covers/ghurfa.webp",
+      "cw": "covers/w/ghurfa.webp",
+      "file": "s/ghurfa.json",
       "added": "2026-10-01"
     }
   ]
