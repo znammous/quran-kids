@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto';
 
 const OUT = 'www';
 const FILES = ['index.html', 'privacy.html', 'manifest.webmanifest'];
-const DIRS  = ['data', 'fonts', 'icons'];
+const DIRS  = ['data', 'fonts', 'icons', 'lang'];
 
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT);

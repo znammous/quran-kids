@@ -16,6 +16,135 @@
 <link rel="preload" href="fonts/ui/plex-arabic-400-arabic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/ui/plex-arabic-600-arabic.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/ui/plex-arabic-700-arabic.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+/* ===== لغاتُ الواجهة: الأزرارُ والرسائلُ وحدَها — المصحفُ والآياتُ بالعربيّة دائماً =====
+   قاموسُ كلِّ لغةٍ في lang/<رمزها>.js، مفاتيحُه النصُّ العربيُّ نفسُه كما يظهر،
+   فتبقى الشيفرةُ عربيّةً كما هي، وما لم يُترجَم بعدُ يظهر بعربيّته فلا ينكسر شيء.
+   ولا يُمسّ نصٌّ خطُّه خطُّ المصحف: فكلمةٌ من آيةٍ في لعبةٍ لا تُترجَم وإن طابقت زرّاً («لا»).
+   والعربيّةُ لا تُحمِّل شيئاً ولا تراقب شيئاً: التطبيقُ لأهلها كما كان. */
+(function(){
+  /* ready: تُعرض في قائمة الإعدادات. وما لم تكتمل ترجمتُه يُجرَّب بالرابط ‎?lang=ur‎
+     (ويبقى بعده حتى يُعاد إلى العربيّة من القائمة) */
+  var LANGS={
+    ar:{n:'العربيّة', dir:'rtl', ready:true},
+    ur:{n:'اردو',     dir:'rtl', ready:false}
+  };
+  var code='ar', q=/[?&#]lang=([a-z]{2})\b/.exec(location.search+location.hash);
+  try{
+    if(q && LANGS[q[1]]) localStorage.setItem('nur_lang', q[1]);
+    code=localStorage.getItem('nur_lang')||'ar';
+  }catch(e){ if(q) code=q[1]; }
+  if(!LANGS[code]) code='ar';
+  var D={}, AR=/[؀-ۿ]/, NUM=/[0-9٠-٩]+/g;
+  var I={ code:code, langs:LANGS, dict:D, harvest:window.__nurHarvest||null, on:code!=="ar" };
+  window.NUR_I18N=I;
+  document.documentElement.lang=code;
+  document.documentElement.dir=LANGS[code].dir;
+
+  function norm(s){ return s.replace(/\s+/g,' ').trim(); }
+  /* الأرقامُ في النصّ تصير {0} {1}: «الآية 5» و«الآية 7» مفتاحٌ واحد */
+  function byNum(s, html){
+    var h=D[s]; if(h!=null) return h;
+    if(html) return null;
+    var ns=[], k=s.replace(NUM, function(m){ ns.push(m); return '{'+(ns.length-1)+'}'; });
+    if(k===s || D[k]==null) return null;
+    return D[k].replace(/\{(\d+)\}/g, function(m,i){ return ns[+i]!=null ? ns[+i] : m; });
+  }
+  /* الرمزُ في أوّل النصّ وآخره («⚙️ الإعدادات») لا يُترجم: يُفصل ويُعاد كما هو */
+  function look(s){
+    var r=byNum(s); if(r!=null) return r;
+    var m=s.match(/^([^؀-ۿ]*)([\s\S]*?[؀-ۿ])([^؀-ۿ]*)$/);
+    if(!m || (!m[1] && !m[3])) return null;
+    r=byNum(m[2]); return r==null ? null : m[1]+r+m[3];
+  }
+  /* سطرٌ من أجزاءٍ بينها «•» («خلال عشرة أشهر • 300 يوماً»): يُترجم كلُّ جزءٍ وحدَه */
+  function lookParts(s){
+    var r=look(s); if(r!=null || s.indexOf(' • ')<0) return r;
+    var ps=s.split(' • '), hit=false;
+    for(var i=0;i<ps.length;i++){
+      var t=AR.test(ps[i]) ? look(ps[i]) : null;
+      if(t!=null){ ps[i]=t; hit=true; } else if(AR.test(ps[i])) miss(ps[i]);
+    }
+    return hit ? ps.join(' • ') : null;
+  }
+  function quranic(el){
+    try{ return /Amiri Quran|UthmanicHafs/.test(getComputedStyle(el).fontFamily.split(',')[0]); }
+    catch(e){ return false; }
+  }
+  /* ما تُرجم إلى لغةٍ بحرفٍ عربيّ (الأرديّة) يُمرّ عليه ثانيةً فلا يُعدّ ناقصاً:
+     حروفُها هذه لا تكون في العربيّة */
+  var OWN=/[\u0679\u0688\u0691\u06A9\u06AF\u06BA\u06BE\u06C1\u06CC\u06D2]/;
+  var DONE={};
+  function miss(k){ if(I.harvest && !OWN.test(k) && !DONE[k]) I.harvest(k); }
+  function doText(n){
+    var v=n.nodeValue; if(!v || !AR.test(v)) return;
+    var p=n.parentNode;
+    if(p && (SKIPTAG.test(p.nodeName) || (p.closest && p.closest('[translate="no"]')))) return;
+    var k=norm(v); if(DONE[k]) return;   /* مترجَمٌ من قبل: «حفظ» الأرديّةُ غيرُ «حفظ» العربيّة */
+    var r=lookParts(k);
+    if(r==null || r===k){ if(r==null && p && !quranic(p) && k.indexOf(' • ')<0) miss(k); return; }
+    if(p && quranic(p)) return;
+    n.nodeValue=v.match(/^\s*/)[0]+r+v.match(/\s*$/)[0];
+  }
+  /* جملةٌ فيها <b> أو <br>: تُترجم كاملةً، فترتيبُ الكلام يختلف بين اللغات.
+     ولا يُعاد بناءُ ما فيه زرٌّ أو حقلٌ أو عنصرٌ ذو معرِّف: قد تمسكه الشيفرة */
+  var INLINE=/^(B|I|EM|STRONG|SMALL|BR|SPAN|U|SUB|SUP|BDI|BDO|MARK)$/;
+  function mixed(el){
+    var txt=false, kid=false, c;
+    for(c=el.firstChild;c;c=c.nextSibling){
+      if(c.nodeType===3){ if(AR.test(c.nodeValue)) txt=true; }
+      else if(c.nodeType===1){ if(!INLINE.test(c.nodeName)) return false; kid=true; }
+    }
+    return txt && kid && !el.querySelector('[id],button,input,select,textarea,a');
+  }
+  var ATTRS=['placeholder','title','aria-label','alt'];
+  function doAttrs(el){
+    for(var i=0;i<ATTRS.length;i++){
+      var v=el.getAttribute(ATTRS[i]); if(!v || !AR.test(v)) continue;
+      var k=norm(v); if(DONE[k]) continue;
+      var r=look(k);
+      if(r!=null) el.setAttribute(ATTRS[i], r); else miss(k);
+    }
+  }
+  var SKIPTAG=/^(SCRIPT|STYLE|TEMPLATE|NOSCRIPT|svg|SVG|CANVAS)$/;
+  function walk(n){
+    if(n.nodeType===3){ doText(n); return; }
+    if(n.nodeType!==1 || SKIPTAG.test(n.nodeName) || n.getAttribute('translate')==='no') return;
+    if(n.attributes.length) doAttrs(n);
+    if(mixed(n)){
+      var k=norm(n.innerHTML); if(DONE[k]) return;
+      var r=byNum(k, true);
+      if(r!=null){ if(!quranic(n)) n.innerHTML=r; return; }
+      if(quranic(n)) return;
+      miss(k);   /* لا ترجمةَ للجملة كاملةً: تُترجم أجزاؤها («<i>🏠</i>الرئيسية») */
+    }
+    for(var c=n.firstChild;c;){ var nx=c.nextSibling; walk(c); c=nx; }
+  }
+  /* للشيفرة: نصٌّ يُبنى قبل أن يُعرض (بمتغيّرات)، أو لا يمرّ بالصفحة أصلاً */
+  window.tx=function(s, v){
+    var r=I.on ? (D[s]!=null ? D[s] : s) : s;
+    if(v) r=r.replace(/\{(\w+)\}/g, function(m,k){ return v[k]!=null ? v[k] : m; });
+    return r;
+  };
+  I.add=function(c, map){ if(c!==code) return; for(var k in map){ D[norm(k)]=map[k]; DONE[norm(map[k])]=1; } };
+  I.walk=walk;
+  /* تُترجم الصفحةُ الثابتة دفعةً قبل أن تمسك الشيفرةُ عناصرَها،
+     ثمّ يُراقَب ما يُضاف بعدها */
+  I.start=function(){
+    if(!I.on) return;
+    walk(document.body);
+    if(D[norm(document.title)]) document.title=D[norm(document.title)];
+    new MutationObserver(function(ms){
+      for(var i=0;i<ms.length;i++){
+        var a=ms[i].addedNodes;
+        if(ms[i].type==='characterData'){ doText(ms[i].target); continue; }
+        for(var j=0;j<a.length;j++) if(a[j].isConnected) walk(a[j]);
+      }
+    }).observe(document.body, {childList:true, subtree:true, characterData:true});
+  };
+  if(I.on) document.write('<script src="lang/'+code+'.js"><\/script>');
+})();
+</script>
 <style>
 @font-face{font-family:'IBM Plex Sans Arabic';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ui/plex-arabic-400-arabic.woff2) format('woff2');unicode-range:U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;}
 @font-face{font-family:'IBM Plex Sans Arabic';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ui/plex-arabic-400-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
@@ -2163,8 +2292,8 @@ body.hastabs #btnRevQuit{display:none}
     <button class="xbtn" id="xAdab" aria-label="إغلاق">✕</button>
     <h2>قبل أن نبدأ 🤲</h2>
     <p class="adabsay">قل معي:</p>
-    <div class="adab">أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ</div>
-    <div class="adab" id="adabBsm">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+    <div class="adab" translate="no">أَعُوذُ بِاللَّهِ مِنَ الشَّيْطَانِ الرَّجِيمِ</div>
+    <div class="adab" id="adabBsm" translate="no">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
     <button class="btn primary big pulse" id="btnAdabOk" style="margin:6px 0 0">✅ قلتُها، لنبدأ</button>
   </div>
 </div>
@@ -2578,6 +2707,12 @@ body.hastabs #btnRevQuit{display:none}
 
   <section class="screen" id="scr-settings">
     <h1>⚙️ الإعدادات</h1>
+    <!-- اللغةُ فوق الأبواب كلِّها: يجدها مَن لا يقرأ العربيّة قبل أن يبحث عنها.
+         واسمُها بلغاتها كلِّها، فلا يُترجَم -->
+    <div class="setblock langbox" translate="no">
+      <label class="lbl" for="setLang">🌐 اللغة · زبان · Language</label>
+      <select id="setLang"></select>
+    </div>
     <div class="onbtabs" id="setTabs"></div>
     <div class="card">
       <div class="setpage" data-setp="hifz">
@@ -2712,6 +2847,26 @@ body.hastabs #btnRevQuit{display:none}
 
 <!-- البياناتُ الكبيرةُ في ملفّاتٍ مستقلّة: تُخزَّن مرّةً ولا تُنزَّل مع كلّ تعديلٍ في الشيفرة.
      إذا تغيّر ملفٌّ منها يُرفع رقمُ ?v= هنا وفي قائمة DATA_FILES في sw.js -->
+<script>
+/* قائمةُ اللغات: تُحفظ للجهاز كلِّه لا للّاعب، ويُعاد فتحُ الصفحة بها */
+(function(){
+  var I=NUR_I18N, s=document.getElementById('setLang'); if(!s) return;
+  var n=0;
+  for(var c in I.langs){
+    if(!I.langs[c].ready && c!==I.code) continue;
+    var o=document.createElement('option'); o.value=c; o.textContent=I.langs[c].n; s.appendChild(o); n++;
+  }
+  if(n<2){ s.closest('.langbox').hidden=true; return; }
+  s.value=I.code;
+  s.onchange=function(){
+    try{ localStorage.setItem('nur_lang', s.value); }catch(e){}
+    /* ‎?lang=‎ في الرابط يغلب المحفوظ: يُحذف، وإلّا عادت اللغةُ القديمة */
+    var u=location.href.replace(/([?&#])lang=[a-z]{2}&?/,'$1').replace(/[?&#]$/,'');
+    if(u===location.href) location.reload(); else location.replace(u);
+  };
+})();
+NUR_I18N.start();
+</script>
 <script src="data/quran.js?v=1"></script>
 <script src="data/plans.js?v=1"></script>
 <script>
@@ -4759,22 +4914,29 @@ function khatmaSegs(mode){
   KHATMA[mode]=n;
   return n;
 }
-function arYears(y){ return y===1?'سنة':(y===2?'سنتين':(y<=10?y+' سنوات':y+' سنة')); }
-function arMonths(m){ return m===1?'شهر':(m===2?'شهرين':(m<=10?m+' أشهر':m+' شهراً')); }
-function arDays(d){ return d===1?'يوم واحد':(d===2?'يومان':(d<=10?d+' أيام':d+' يوماً')); }
+/* في غير العربيّة: صيغةُ العدد من القاموس («#1 سنة» للواحد، «#n سنة» لما فوقه) */
+function lcount(n, k){
+  if(!NUR_I18N.on) return null;
+  var D=NUR_I18N.dict, one=D['#1 '+k], many=D['#n '+k];
+  if(n===1 && one!=null) return one;
+  return many!=null ? many.replace('{n}', arNum(n)) : null;
+}
+function arYears(y){ var l=lcount(y,'سنة'); if(l!=null) return l; return y===1?'سنة':(y===2?'سنتين':(y<=10?y+' سنوات':y+' سنة')); }
+function arMonths(m){ var l=lcount(m,'شهر'); if(l!=null) return l; return m===1?'شهر':(m===2?'شهرين':(m<=10?m+' أشهر':m+' شهراً')); }
+function arDays(d){ var l=lcount(d,'يوم'); if(l!=null) return l; return d===1?'يوم واحد':(d===2?'يومان':(d<=10?d+' أيام':d+' يوماً')); }
 /* مدّة مقروءة من عدد الأيام */
 function spanText(days){
   if(days<45) return arMonths(Math.max(1,Math.round(days/30.4)));
   if(days<365) return arMonths(Math.round(days/30.4));
   var y=Math.floor(days/365), m=Math.round((days-y*365)/30.4);
   if(m>=12){ y++; m=0; }
-  return arYears(y)+(m?(' و'+arMonths(m)):'');
+  return arYears(y)+(m?((NUR_I18N.on?' '+tx('و')+' ':' و')+arMonths(m)):'');   /* العربيّةُ تصل الواوَ بما بعدها */
 }
 /* النص المختصر بجانب كل خيار */
 function khatmaLabel(mode){
   var n=khatmaSegs(mode);
   if(!n) return '';
-  return 'ختمة في '+spanText(n);          /* مقطع واحد كل يوم */
+  return tx('ختمة في {d}',{d:spanText(n)});          /* مقطع واحد كل يوم */
 }
 function getP(key){
   var p=prog[key];
@@ -5775,9 +5937,9 @@ function gftLook(s){
     if(gftMinted()[s]) return { ok:false, msg:'هذه علبةٌ صنعتَها أنت لأخيك — أرسلها إليه 🤍' };
     var L=gftBoxDec(s);
     if(!L) return { ok:false, msg:'لم أعرف هذا الكود — راجع أرقامه', miss:true };
-    var tx=L.map(function(z){ return gftDesc(z); }).filter(function(z){ return z; });
-    if(!tx.length) return { ok:false, msg:'هذا الكود لا يطابق شيئاً في هذه النسخة', miss:true };
-    return { ok:true, ds:L, txt:tx.join(' • '), code:s, box:true };
+    var dsc=L.map(function(z){ return gftDesc(z); }).filter(function(z){ return z; });
+    if(!dsc.length) return { ok:false, msg:'هذا الكود لا يطابق شيئاً في هذه النسخة', miss:true };
+    return { ok:true, ds:L, txt:dsc.join(' • '), code:s, box:true };
   }
   /* كودٌ أنشأه هو: لا يصرفه لنفسه. جُرّب أن يُؤذن له فيه ارتجاعاً لما خُصم
      منه، فانفتح بابُ الخلق من عدم: يولّده فيُخصَم، ثمّ يرتجعه فيعود إليه،
@@ -9425,6 +9587,7 @@ function buildRounds(s,seg,stage){
 /* تمييز العدد على وجهه: مفردٌ ومثنّى وجمعُ قلّةٍ وجمعُ كثرة */
 function arCount(n,f){
   n=n||0;
+  var l=lcount(n,f[0]); if(l!=null) return l;
   if(n===1) return f[0];
   if(n===2) return f[1];
   if(n>=3 && n<=10) return arNum(n)+' '+f[2];
@@ -9438,6 +9601,7 @@ var C_SURAH=['سورة واحدة','سورتان','سور','سورة'];
 /* عمرُ المهمّة: منذ متى حلّ موعدُها ولم تُؤدَّ — «منذ يومين» لا «منذ يومان» */
 function agoText(n){
   n=Math.max(1, n|0);
+  var l=lcount(n,'منذ يوم'); if(l!=null) return l;
   if(n===1) return 'منذ يوم';
   if(n===2) return 'منذ يومين';
   return 'منذ '+arNum(n)+(n<=10?' أيام':' يوماً');
@@ -9445,6 +9609,7 @@ function agoText(n){
 /* تمييز العدد: مرّة، مرّتين، ثلاث مرّات… */
 function marra(n){
   n=n||1;
+  var l=lcount(n,'مرّة'); if(l!=null) return l;
   if(n===1) return 'مرّة واحدة';
   if(n===2) return 'مرّتين';
   return arNum(n)+(n<=10?' مرّات':' مرّة');
