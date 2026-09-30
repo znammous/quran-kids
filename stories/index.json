@@ -1,5 +1,5 @@
 {
-  "v": 70,
+  "v": 71,
   "stories": [
     {
       "id": "kahf",
@@ -482,6 +482,16 @@
       "cover": "covers/baqara.webp",
       "cw": "covers/w/baqara.webp",
       "file": "s/baqara.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "ibnay",
+      "t": "ابنا آدم",
+      "d": "أوّلُ حسدٍ في الأرض، وغرابٌ يُعلّم",
+      "ic": "🐦‍⬛",
+      "cover": "covers/ibnay.webp",
+      "cw": "covers/w/ibnay.webp",
+      "file": "s/ibnay.json",
       "added": "2026-10-01"
     }
   ]
