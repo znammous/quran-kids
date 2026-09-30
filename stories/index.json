@@ -1,5 +1,5 @@
 {
-  "v": 63,
+  "v": 64,
   "stories": [
     {
       "id": "kahf",
@@ -412,6 +412,16 @@
       "cover": "covers/kabir.webp",
       "cw": "covers/w/kabir.webp",
       "file": "s/kabir.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "kalima2",
+      "t": "الكلمةُ التي لم تُقَل",
+      "d": "مَثَلٌ في حفظ اللسان",
+      "ic": "🤐",
+      "cover": "covers/kalima2.webp",
+      "cw": "covers/w/kalima2.webp",
+      "file": "s/kalima2.json",
       "added": "2026-10-01"
     }
   ]
