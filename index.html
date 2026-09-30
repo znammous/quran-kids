@@ -4979,6 +4979,20 @@ function surahStats(s){
    له شيءٌ منها مهمّةً. وما بُني عليها من نقاطٍ حمراءَ وبطاقاتٍ وهدفِ يومٍ
    يسكت تبعاً لها، فلا موضعَ يُستثنى فيُنسى. ومن ضبط مراجعةً حرّةً رُفع عنه. */
 function revOff(){ try{ return curP().noRev===true; }catch(e){ return false; } }
+/* تصفيرُ المستحقّ: من تراكمت عليه المراجعة يبدأ صفحةً بيضاء — لا يُمحى حفظُه
+   ولا درجتُه في السلّم، وإنّما تُفرَّق مواعيدُ ما فات على الأسبوع المقبل
+   أقدمَها أوّلاً، فلا يبقى عليه اليوم شيء ولا ينهال عليه غداً جملةً */
+function revDueReset(){
+  var t=todayNum(), late=[];
+  Object.keys(prog).forEach(function(k){
+    var p=prog[k]; if(p && p.done && p.due!=null && p.due<=t) late.push(p);
+  });
+  late.sort(function(a,b){ return a.due-b.due; });
+  var per=Math.max(3, Math.ceil(late.length/7));
+  late.forEach(function(p,i){ p.due=t+1+Math.floor(i/per); });
+  saveProg();
+  return late.length;
+}
 function dueSegs(){
   if(revOff()) return [];
   var t=todayNum(), out=[];
@@ -15668,7 +15682,16 @@ $('btnBqnDone').onclick=function(){
   }
   var b=bqnBlocked();
   if(b){ try{ navToast(b.m); }catch(e){} b.go(); return; }
-  bqnReturn();
+  /* إعادةُ ضبط الخطّة لا تمحو ما تراكم من مراجعة — فيُسأل: أيبدأ من جديد؟ */
+  var n=0; try{ n=dueSegs().length; }catch(e){}
+  if(!n){ bqnReturn(); return; }
+  uiAsk('عليك '+arNum(n)+' من المقاطع مستحقّةً للمراجعة.\n'+
+        'هل تريد تصفيرَ المراجعة السابقة ومسحَ المستحقّ عليك؟\n'+
+        'يبقى حفظُك كما هو، وتعود إليك هذه المقاطعُ موزّعةً على الأيّام القادمة.',
+    function(ok){
+      if(ok){ revDueReset(); try{ navToast('🧹 صُفّرت مراجعتك — ابدأ من جديد'); }catch(e){} }
+      bqnReturn();
+    }, '🧹');
 };
 $('btnBadges').onclick=function(){ renderBadges(); show('scr-badges'); };
 $('homeAvaBtn').onclick=function(){ renderBadges(); show('scr-badges'); };
