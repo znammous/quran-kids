@@ -1,5 +1,5 @@
 {
-  "v": 67,
+  "v": 68,
   "stories": [
     {
       "id": "kahf",
@@ -452,6 +452,16 @@
       "cover": "covers/shawk.webp",
       "cw": "covers/w/shawk.webp",
       "file": "s/shawk.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "sirr",
+      "t": "صدقةُ السرّ",
+      "d": "مَثَلٌ في إخفاء الصدقة",
+      "ic": "🤫",
+      "cover": "covers/sirr.webp",
+      "cw": "covers/w/sirr.webp",
+      "file": "s/sirr.json",
       "added": "2026-10-01"
     }
   ]
