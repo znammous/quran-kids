@@ -1,5 +1,5 @@
 {
-  "v": 53,
+  "v": 54,
   "stories": [
     {
       "id": "kahf",
@@ -331,6 +331,16 @@
       "file": "s/zeer.json",
       "added": "2026-09-30",
       "rev": 2
+    },
+    {
+      "id": "bab",
+      "t": "البابُ المغلق",
+      "d": "مَثَلٌ في الاستئذان",
+      "ic": "🚪",
+      "cover": "covers/bab.webp",
+      "cw": "covers/w/bab.webp",
+      "file": "s/bab.json",
+      "added": "2026-09-30"
     }
   ]
 }
