@@ -1,5 +1,5 @@
 {
-  "v": 52,
+  "v": 53,
   "stories": [
     {
       "id": "kahf",
@@ -222,7 +222,7 @@
       "cover": "covers/hilal.webp",
       "file": "s/hilal.json",
       "added": "2026-09-29",
-      "rev": 2,
+      "rev": 3,
       "cw": "covers/w/hilal.webp"
     },
     {
@@ -233,7 +233,7 @@
       "cover": "covers/sahrij.webp",
       "file": "s/sahrij.json",
       "added": "2026-09-29",
-      "rev": 2,
+      "rev": 3,
       "cw": "covers/w/sahrij.webp"
     },
     {
@@ -285,7 +285,8 @@
       "cover": "covers/qafila.webp",
       "file": "s/qafila.json",
       "added": "2026-09-30",
-      "cw": "covers/w/qafila.webp"
+      "cw": "covers/w/qafila.webp",
+      "rev": 2
     },
     {
       "id": "surra",
@@ -317,17 +318,19 @@
       "cover": "covers/dayf.webp",
       "cw": "covers/w/dayf.webp",
       "file": "s/dayf.json",
-      "added": "2026-09-30"
+      "added": "2026-09-30",
+      "rev": 2
     },
     {
       "id": "zeer",
-      "t": "زيرُ السبيل",
+      "t": "جرّةُ السبيل",
       "d": "مَثَلٌ في حقّ ابن السبيل",
       "ic": "🏺",
       "cover": "covers/zeer.webp",
       "cw": "covers/w/zeer.webp",
       "file": "s/zeer.json",
-      "added": "2026-09-30"
+      "added": "2026-09-30",
+      "rev": 2
     }
   ]
 }
