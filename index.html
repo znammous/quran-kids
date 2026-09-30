@@ -3693,12 +3693,18 @@ function mLoc(gi){
   while(lo<=hi){ var m=(lo+hi)>>1; if(GIDX[m]<=gi){ r=m; lo=m+1; } else hi=m-1; }
   return [r+1, gi-GIDX[r]+1];
 }
-/* رموز محارف صفحة: تُفكّ مرّة وتُحفظ */
+/* محارف صفحة: تُفكّ مرّة وتُحفظ، لكلّ وحدةٍ نصُّها. ما بين رمز الوحدة والتي
+   تليها محارفُ تُرسم معها: علامةُ الوقف والسجدة ۩ والحزب ۞، وثانيةُ الكلمتين
+   الموصولتين (MJOIN). وقفزةُ الثلاثة والثلاثين فراغٌ في الخطّ لا يُرسم */
 var MGC={}, MGD={'1':1,'2':2,'3':3,'4':34,'5':35};
 function mushafCodes(P){
   if(MGC[P]) return MGC[P];
-  var s=MUSHAF_G[P-1]||'', c=0xFB51, a=[c];
-  for(var i=0;i<s.length;i++){ c+=MGD[s.charAt(i)]||1; a.push(c); }
+  var s=MUSHAF_G[P-1]||'', c=0xFB51, a=[], i, k, d, g;
+  for(i=0;i<=s.length;i++){
+    d=i<s.length ? MGD[s.charAt(i)]||1 : 1;
+    for(g=String.fromCharCode(c),k=1;k<(d>=34?d-33:d);k++) g+=String.fromCharCode(c+k);
+    a.push(g); c+=d;
+  }
   return (MGC[P]=a);
 }
 /* خطّ الصفحة: من المستودع أوّلاً، فإن لم يكن مرفوعاً فمن مرآة jsDelivr
@@ -4087,15 +4093,13 @@ function mushafPageHTML(P, hlGi, glyphs){
       if(M && inr) hasSeg=true;
       if(on) hasHl=true;
       if(wi>=ws.length){
-        out+='<span class="manum'+(on?' hl':'')+(inr?'':' mout')+'" data-gi="'+gi+'">'+(GC?String.fromCharCode(GC[u]):arNum(loc[1]))+'</span>';
+        out+='<span class="manum'+(on?' hl':'')+(inr?'':' mout')+'" data-gi="'+gi+'">'+(GC?GC[u]:arNum(loc[1]))+'</span>';
         u++; gi++; wi=0; continue;
       }
-      /* علامةُ الحزب ۞ تُدمَج مع كلمتها في رمزٍ واحد عندنا، والخطّ يجعلهما
-         محرفين متتاليين — فيُرسم المحرفان معاً ويُعدّان واحداً. ولولا هذا
-         ضاعت الكلمةُ وحلّت العلامةُ محلّها في مئةٍ وتسعةٍ وتسعين موضعاً. */
-      var wtx=ws[wi], rub=(GC && wtx.indexOf('۞')>=0);
+      /* الكلمةُ وعلاماتُها وحدةٌ واحدة، والخطّ يجعلها محارفَ متتالية —
+         فتُرسم معاً (انظر mushafCodes) وتُعدّ واحدة */
       out+='<span class="mw'+(on?' hl':'')+mfMarkCls(M,PM,inr,gi,wi)+'" data-gi="'+gi+'">'+
-        (GC ? (String.fromCharCode(GC[u])+(rub?String.fromCharCode(GC[u]+1):'')) : esc(wtx))+'</span>';
+        (GC ? GC[u] : esc(ws[wi]))+'</span>';
       u++; wi++;
     }
     html+='<div class="mline'+(hasHl?' hasHl':'')+(hasSeg?' hasSeg':'')+'"><span class="mtxt">'+out+'</span></div>';
