@@ -1,5 +1,5 @@
 {
-  "v": 66,
+  "v": 67,
   "stories": [
     {
       "id": "kahf",
@@ -442,6 +442,16 @@
       "cover": "covers/busat.webp",
       "cw": "covers/w/busat.webp",
       "file": "s/busat.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "shawk",
+      "t": "غصنُ الشوك",
+      "d": "مَثَلٌ في إماطة الأذى عن الطريق",
+      "ic": "🌿",
+      "cover": "covers/shawk.webp",
+      "cw": "covers/w/shawk.webp",
+      "file": "s/shawk.json",
       "added": "2026-10-01"
     }
   ]
