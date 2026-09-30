@@ -14,6 +14,7 @@ on:
       - privacy.html
       - manifest.webmanifest
       - data/**
+      - lang/**
       - fonts/**
       - icons/**
       - scripts/build-www.mjs

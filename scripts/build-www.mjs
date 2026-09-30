@@ -13,7 +13,9 @@ mkdirSync(OUT);
 for (const f of FILES) cpSync(f, `${OUT}/${f}`);
 for (const d of DIRS) {
   if (!existsSync(d)) throw new Error(`مفقود: ${d}/`);
-  cpSync(d, `${OUT}/${d}`, { recursive: true });
+  /* من lang/ القواميسُ وحدَها: الدليلُ وقائمةُ التجاهل لأدوات الفحص لا للتطبيق */
+  cpSync(d, `${OUT}/${d}`, { recursive: true,
+    filter: f => !(d === 'lang' && /\.(md|json)$/.test(f)) });
 }
 /* رقمُ الحزمة: بصمةُ محتواها، لا رقمٌ يُكتب باليد. يقارنه التطبيقُ برقم آخر
    حزمةٍ منشورة فيعرف أنّ عنده تحديثاً (انظر «التحديث الحيّ» في index.html) */
