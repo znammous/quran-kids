@@ -1,5 +1,5 @@
 {
-  "v": 60,
+  "v": 61,
   "stories": [
     {
       "id": "kahf",
@@ -383,6 +383,16 @@
       "file": "s/yasin.json",
       "added": "2026-09-30",
       "rev": 2
+    },
+    {
+      "id": "rabbayani",
+      "t": "كما ربّياني صغيراً",
+      "d": "مَثَلٌ في برّ الجدّ",
+      "ic": "🧓",
+      "cover": "covers/rabbayani.webp",
+      "cw": "covers/w/rabbayani.webp",
+      "file": "s/rabbayani.json",
+      "added": "2026-10-01"
     }
   ]
 }
