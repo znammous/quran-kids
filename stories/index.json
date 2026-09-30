@@ -1,5 +1,5 @@
 {
-  "v": 71,
+  "v": 72,
   "stories": [
     {
       "id": "kahf",
@@ -492,6 +492,16 @@
       "cover": "covers/ibnay.webp",
       "cw": "covers/w/ibnay.webp",
       "file": "s/ibnay.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "faiz",
+      "t": "الفائزُ الثاني",
+      "d": "مَثَلٌ في أن تحبّ لأخيك ما تحبّ لنفسك",
+      "ic": "🥈",
+      "cover": "covers/faiz.webp",
+      "cw": "covers/w/faiz.webp",
+      "file": "s/faiz.json",
       "added": "2026-10-01"
     }
   ]
