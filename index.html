@@ -13007,12 +13007,14 @@ function wirdCalc(size){
 function wirdBody(){
   var on=REV.on, off=revOff(), has=false, h='';
   try{ has=wirdAsk(); }catch(e){}
+  /* «وزِدْ» زيادةٌ على الأوّل لا بديلٌ عنه: من اختار الورد يُراجَع له جديدُه أيضاً */
+  var appSel=(!off && (on===true || revIsWird()));
   h+='<div class="note" style="margin-bottom:10px">المراجعة تُثبّت ما حفظت: '+
      'ما تحفظه في التطبيق يُجدوَل لك فيعود في موعده، '+
      'وما حفظتَه قبلَه يمشي فيه وردٌ يوميّ.</div>'+
      '<div class="onbopts">'+
-     '<button type="button" class="onbopt'+((!off&&on!==true&&revIsWird())?' sel':'')+'" data-wird="0">'+
-       '<span class="oe">'+((!off&&on!==true&&revIsWird())?'✅':'☀️')+'</span>'+
+     '<button type="button" class="onbopt'+(appSel?' sel':'')+'" data-wird="0">'+
+       '<span class="oe">'+(appSel?'✅':'☀️')+'</span>'+
        '<span class="ot"><b>راجِعْ جديدَ ما أحفظه من التطبيق</b>'+
        '<i>كلُّ مقطعٍ تحفظه في التطبيق يعود إليك في موعده</i></span></button>';
   /* الوردُ لا يُعرض إلّا لمن له محفوظٌ سابقٌ يمشي فيه */
