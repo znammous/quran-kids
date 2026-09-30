@@ -1,5 +1,5 @@
 {
-  "v": 64,
+  "v": 66,
   "stories": [
     {
       "id": "kahf",
@@ -422,6 +422,26 @@
       "cover": "covers/kalima2.webp",
       "cw": "covers/w/kalima2.webp",
       "file": "s/kalima2.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "qalam",
+      "t": "القلمُ المستعار",
+      "d": "مَثَلٌ في ردّ الأمانة",
+      "ic": "🖍️",
+      "cover": "covers/qalam.webp",
+      "cw": "covers/w/qalam.webp",
+      "file": "s/qalam.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "busat",
+      "t": "البساطُ الأحمر",
+      "d": "مَثَلٌ في الصبر",
+      "ic": "🧶",
+      "cover": "covers/busat.webp",
+      "cw": "covers/w/busat.webp",
+      "file": "s/busat.json",
       "added": "2026-10-01"
     }
   ]
