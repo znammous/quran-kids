@@ -312,6 +312,9 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--g2);box-shad
 /* لونُ العناوين يتبع الثيم: كان ثابتاً داكناً، والوضعُ الليليُّ هو الأصل —
    فيختفي «كم وجهاً في الجلسة؟» وأمثالُه على الخلفية الداكنة */
 label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:var(--ttl)}
+/* البطاقةُ ورقٌ فاتحٌ في الوضعين: عنوانُ الثيم الأبيضُ ليلاً يختفي عليها (عناوينُ الإعدادات).
+   والعاريةُ (bare) شفّافةٌ فوق السماء، فتبقى على لون الثيم */
+.card:not(.bare) .lbl{color:#3d5b7a}
 
 .ph{width:110px;height:140px;border-radius:12px;overflow:hidden;border:3px solid #d7e2f0;background:#eef5fd;margin:0 auto}
 .ph svg{width:100%;height:100%;display:block}
