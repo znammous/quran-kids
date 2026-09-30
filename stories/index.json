@@ -1,5 +1,5 @@
 {
-  "v": 59,
+  "v": 60,
   "stories": [
     {
       "id": "kahf",
@@ -360,7 +360,8 @@
       "cover": "covers/sabt.webp",
       "cw": "covers/w/sabt.webp",
       "file": "s/sabt.json",
-      "added": "2026-09-30"
+      "added": "2026-09-30",
+      "rev": 2
     },
     {
       "id": "namla",
