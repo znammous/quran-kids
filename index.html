@@ -27,7 +27,10 @@
      (ويبقى بعده حتى يُعاد إلى العربيّة من القائمة) */
   var LANGS={
     ar:{n:'العربيّة', dir:'rtl', ready:true},
-    ur:{n:'اردو',     dir:'rtl', ready:true}
+    /* tr: ترجمةُ معاني الآيات في data/tr/<رمزها>/ — تحلّ في لوحة المعاني محلَّ التفسير
+       الميسَّر والغريب، فهما بالعربيّة. ومصدرُها يُذكر كما هو (شرطُ QuranEnc) */
+    ur:{n:'اردو',     dir:'rtl', ready:true, tr:true,
+        trSrc:'ترجمہ: مولانا محمد جوناگڑھی — مرکز رواد الترجمہ کی نگرانی میں، QuranEnc.com (نسخہ 1.1.3)'}
   };
   var code='ar', q=/[?&#]lang=([a-z]{2})\b/.exec(location.search+location.hash);
   try{
@@ -8877,9 +8880,12 @@ function tafPageJuz(P){
   });
   return out;
 }
+/* لغةٌ لها ترجمةُ معانٍ: تُجلب هي بدل التفسير العربيّ، في المواضع نفسِها */
+function trLang(){ var I=NUR_I18N; return I.on && I.langs[I.code].tr ? I.code : ''; }
 function tafLoad(j){
   if(TAFS[j]) return Promise.resolve(TAFS[j]);
-  if(!TAFS_P[j]) TAFS_P[j]=fetch('data/tafsir/juz-'+(j<10?'0':'')+j+'.json').then(function(r){
+  var dir=trLang() ? 'data/tr/'+trLang()+'/' : 'data/tafsir/';
+  if(!TAFS_P[j]) TAFS_P[j]=fetch(dir+'juz-'+(j<10?'0':'')+j+'.json').then(function(r){
     if(!r.ok) throw new Error(r.status);
     return r.json();
   }).then(function(d){ TAFS[j]=d; return d; })['catch'](function(e){ TAFS_P[j]=null; throw e; });
@@ -8891,22 +8897,22 @@ function tafOf(sn,ay){
 }
 /* لوحةُ الوجه: لكلّ آيةٍ تفسيرُها الميسَّر، وتحته كلماتُها الغريبة */
 function mfMeanRender(after){
-  var P=MF_PAGE, box=$('mfMeanList');
+  var P=MF_PAGE, box=$('mfMeanList'), TR=trLang();
   var need=tafPageJuz(P), miss=need.filter(function(j){ return !TAFS[j]; });
-  if(!after && (!GHARIB || miss.length)){
+  if(!after && ((!GHARIB && !TR) || miss.length)){
     box.innerHTML='<div class="mfpmsg">جارٍ تحميل التفسير والمعاني…</div>';
     var jobs=miss.map(function(j){ return tafLoad(j); });
-    if(!GHARIB) jobs.push(gharibLoad());
+    if(!GHARIB && !TR) jobs.push(gharibLoad());
     Promise.all(jobs.map(function(p){ return p['catch'](function(){}); })).then(function(){
       if(!$('mfMean').hidden) mfMeanRender(true);
     });
     return;
   }
-  if(!GHARIB && !need.some(function(j){ return TAFS[j]; })){
+  if((!GHARIB || TR) && !need.some(function(j){ return TAFS[j]; })){
     box.innerHTML='<div class="mfpmsg">تعذّر التحميل — تأكّد من الاتصال بالإنترنت وأعد المحاولة</div>';
     return;
   }
-  var rows=GHARIB ? (GHARIB[P-1]||[]) : [], byAyah={}, i, r, k;
+  var rows=GHARIB && !TR ? (GHARIB[P-1]||[]) : [], byAyah={}, i, r, k;
   for(i=0;i<rows.length;i++){ r=rows[i]; k=r[0]+':'+r[1]; (byAyah[k]=byAyah[k]||[]).push(r); }
   var pcs=pagePieces(P), h='';
   /* في الحفظ والمراجعة: معاني المقطع المظلَّل وحده، لا الوجهِ كلِّه. وإن قُلِّب
@@ -8930,13 +8936,16 @@ function mfMeanRender(after){
       var t=tafOf(p.s.n,a+1), g=byAyah[p.s.n+':'+(a+1)]||[];
       if(!t && !g.length) continue;
       h+='<div class="mfmayah">الآية '+arNum(a+1)+'</div>';
-      if(t) h+='<div class="mftaf">'+esc(t).replace(/\n+/g,'<br>')+'</div>';
+      if(t) h+='<div class="mftaf"'+(TR?' lang="'+TR+'" translate="no"':'')+'>'+esc(t).replace(/\n+/g,'<br>')+'</div>';
       g.forEach(function(x){ h+='<div class="mfmrow"><span class="w">﴿'+esc(x[2])+'﴾</span>: '+esc(x[3])+'</div>'; });
     }
   });
   if(h && only) h='<div class="mfmonly">💡 معاني مقطعك المظلَّل</div>'+h;
+  if(h && TR) h='<div class="mfmonly">🌐 ترجمة معاني الآيات</div>'+h;
   if(!h) h='<div class="mfpmsg">لا تفسيرَ ولا كلماتٍ غريبةً مشروحةً لهذه الصفحة</div>';
-  box.innerHTML=h+'<div class="mfmsrc">المصدر: التفسير الميسر، والميسر في غريب القرآن الكريم — مجمع الملك فهد لطباعة المصحف الشريف</div>';
+  var src=TR ? esc(NUR_I18N.langs[TR].trSrc)
+             : 'المصدر: التفسير الميسر، والميسر في غريب القرآن الكريم — مجمع الملك فهد لطباعة المصحف الشريف';
+  box.innerHTML=h+'<div class="mfmsrc"'+(TR?' translate="no"':'')+'>'+src+'</div>';
   box.scrollTop=0;
 }
 var MF_IDX_T='s';
