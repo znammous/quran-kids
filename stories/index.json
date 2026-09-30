@@ -1,5 +1,5 @@
 {
-  "v": 73,
+  "v": 74,
   "stories": [
     {
       "id": "kahf",
@@ -512,6 +512,16 @@
       "cover": "covers/waqt.webp",
       "cw": "covers/w/waqt.webp",
       "file": "s/waqt.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "fawq",
+      "t": "فوقَ كلّ عالِم",
+      "d": "مَثَلٌ في التواضع في العلم",
+      "ic": "📚",
+      "cover": "covers/fawq.webp",
+      "cw": "covers/w/fawq.webp",
+      "file": "s/fawq.json",
       "added": "2026-10-01"
     }
   ]
