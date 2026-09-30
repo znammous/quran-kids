@@ -1,5 +1,5 @@
 {
-  "v": 75,
+  "v": 76,
   "stories": [
     {
       "id": "kahf",
@@ -532,6 +532,16 @@
       "cover": "covers/muhra.webp",
       "cw": "covers/w/muhra.webp",
       "file": "s/muhra.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "mawid",
+      "t": "الموعدُ عند البئر",
+      "d": "مَثَلٌ في الوفاء بالوعد",
+      "ic": "🤝",
+      "cover": "covers/mawid.webp",
+      "cw": "covers/w/mawid.webp",
+      "file": "s/mawid.json",
       "added": "2026-10-01"
     }
   ]
