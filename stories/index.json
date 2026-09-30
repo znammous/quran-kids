@@ -1,5 +1,5 @@
 {
-  "v": 76,
+  "v": 77,
   "stories": [
     {
       "id": "kahf",
@@ -542,6 +542,16 @@
       "cover": "covers/mawid.webp",
       "cw": "covers/w/mawid.webp",
       "file": "s/mawid.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "saa",
+      "t": "الساعةُ المعطّلة",
+      "d": "مَثَلٌ في إتقان العمل",
+      "ic": "⏱️",
+      "cover": "covers/saa.webp",
+      "cw": "covers/w/saa.webp",
+      "file": "s/saa.json",
       "added": "2026-10-01"
     }
   ]
