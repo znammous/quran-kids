@@ -1,5 +1,5 @@
 {
-  "v": 48,
+  "v": 49,
   "stories": [
     {
       "id": "kahf",
@@ -296,6 +296,16 @@
       "file": "s/surra.json",
       "added": "2026-09-30",
       "cw": "covers/w/surra.webp"
+    },
+    {
+      "id": "raghif",
+      "t": "الرغيفُ الأخير",
+      "d": "مَثَلٌ في الإيثار",
+      "ic": "🍞",
+      "cover": "covers/raghif.webp",
+      "cw": "covers/w/raghif.webp",
+      "file": "s/raghif.json",
+      "added": "2026-09-30"
     }
   ]
 }
