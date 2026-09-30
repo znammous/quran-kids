@@ -27,7 +27,7 @@
      (ويبقى بعده حتى يُعاد إلى العربيّة من القائمة) */
   var LANGS={
     ar:{n:'العربيّة', dir:'rtl', ready:true},
-    ur:{n:'اردو',     dir:'rtl', ready:false}
+    ur:{n:'اردو',     dir:'rtl', ready:true}
   };
   var code='ar', q=/[?&#]lang=([a-z]{2})\b/.exec(location.search+location.hash);
   try{
@@ -43,12 +43,27 @@
 
   function norm(s){ return s.replace(/\s+/g,' ').trim(); }
   /* الأرقامُ في النصّ تصير {0} {1}: «الآية 5» و«الآية 7» مفتاحٌ واحد */
+  /* أسماءُ السور تبقى عربيّة: تصير {s1} {s2} في المفتاح («من {s1}»، «{s1} — الآية {0}») */
+  var SRE=null;
+  function surahRe(){
+    if(SRE!==null) return SRE;
+    var L=window.SURAHS; if(!L || !L.length) return null;
+    var a=L.map(function(x){ return x.name.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); })
+           .sort(function(x,y){ return y.length-x.length; });
+    return (SRE=new RegExp('(^|[\\s«(>])('+a.join('|')+')(?=$|[\\s»),.:،؛—–<-])','g'));
+  }
   function byNum(s, html){
     var h=D[s]; if(h!=null) return h;
-    if(html) return null;
     var ns=[], k=s.replace(NUM, function(m){ ns.push(m); return '{'+(ns.length-1)+'}'; });
-    if(k===s || D[k]==null) return null;
-    return D[k].replace(/\{(\d+)\}/g, function(m,i){ return ns[+i]!=null ? ns[+i] : m; });
+    var r=k!==s ? D[k] : null, ss=[];
+    if(r==null){
+      var re=surahRe(); if(!re) return null;
+      var k2=k.replace(re, function(m,pre,nm){ ss.push(nm); return pre+'{s'+ss.length+'}'; });
+      if(!ss.length || D[k2]==null) return null;
+      r=D[k2];
+    }
+    return r.replace(/\{(\d+)\}/g, function(m,i){ return ns[+i]!=null ? ns[+i] : m; })
+            .replace(/\{s(\d+)\}/g, function(m,i){ return ss[i-1]!=null ? ss[i-1] : m; });
   }
   /* الرمزُ في أوّل النصّ وآخره («⚙️ الإعدادات») لا يُترجم: يُفصل ويُعاد كما هو */
   function look(s){
@@ -59,7 +74,17 @@
   }
   /* سطرٌ من أجزاءٍ بينها «•» («خلال عشرة أشهر • 300 يوماً»): يُترجم كلُّ جزءٍ وحدَه */
   function lookParts(s){
-    var r=look(s); if(r!=null || s.indexOf(' • ')<0) return r;
+    var r=look(s); if(r!=null) return r;
+    /* «… — …»: يُترجم مقطَّعاً إن تُرجمت أجزاؤه كلُّها — وإلّا بقي كما هو فلا يختلط */
+    if(s.indexOf(' — ')>0){
+      var qs=s.split(' — '), all=true;
+      for(var j=0;j<qs.length && all;j++){
+        if(!AR.test(qs[j])) continue;
+        var u=look(qs[j]); if(u==null) all=false; else qs[j]=u;
+      }
+      if(all) return qs.join(' — ');
+    }
+    if(s.indexOf(' • ')<0) return null;
     var ps=s.split(' • '), hit=false;
     for(var i=0;i<ps.length;i++){
       var t=AR.test(ps[i]) ? look(ps[i]) : null;
@@ -73,7 +98,7 @@
   }
   /* ما تُرجم إلى لغةٍ بحرفٍ عربيّ (الأرديّة) يُمرّ عليه ثانيةً فلا يُعدّ ناقصاً:
      حروفُها هذه لا تكون في العربيّة */
-  var OWN=/[\u0679\u0688\u0691\u06A9\u06AF\u06BA\u06BE\u06C1\u06CC\u06D2]/;
+  var OWN=/[\u0679\u0688\u0691\u06A9\u06AF\u06BA\u06BE\u06C1\u06C3\u06CC\u06D2]/;
   var DONE={};
   function miss(k){ if(I.harvest && !OWN.test(k) && !DONE[k]) I.harvest(k); }
   function doText(n){
@@ -122,7 +147,7 @@
   }
   /* للشيفرة: نصٌّ يُبنى قبل أن يُعرض (بمتغيّرات)، أو لا يمرّ بالصفحة أصلاً */
   window.tx=function(s, v){
-    var r=I.on ? (D[s]!=null ? D[s] : s) : s;
+    var k=I.on ? norm(s) : s, r=I.on && D[k]!=null ? D[k] : s;
     if(v) r=r.replace(/\{(\w+)\}/g, function(m,k){ return v[k]!=null ? v[k] : m; });
     return r;
   };
@@ -12762,8 +12787,8 @@ function renderKhatma(){
   if(k.days<=0){
     el.innerHTML='<div class="kt">🎉 <b>ختمتَ المصحف كاملاً</b> — بارك الله فيك</div>';
   }else{
-    el.innerHTML='<div class="kt">📖 بقي لك <b>'+arDays(k.days)+'</b> لختم القرآن'+
-      (k.days>=45?(' — نحو '+spanText(k.days)):'')+'</div>';
+    el.innerHTML='<div class="kt">'+tx('📖 بقي لك <b>{d}</b> لختم القرآن',{d:arDays(k.days)})+
+      (k.days>=45?(' — '+tx('نحو {s}',{s:spanText(k.days)})):'')+'</div>';
   }
   el.onclick=function(){ openBqn(); };
 }
