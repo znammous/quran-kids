@@ -1,5 +1,5 @@
 {
-  "v": 51,
+  "v": 52,
   "stories": [
     {
       "id": "kahf",
@@ -295,7 +295,8 @@
       "cover": "covers/surra.webp",
       "file": "s/surra.json",
       "added": "2026-09-30",
-      "cw": "covers/w/surra.webp"
+      "cw": "covers/w/surra.webp",
+      "rev": 2
     },
     {
       "id": "raghif",
@@ -305,7 +306,8 @@
       "cover": "covers/raghif.webp",
       "cw": "covers/w/raghif.webp",
       "file": "s/raghif.json",
-      "added": "2026-09-30"
+      "added": "2026-09-30",
+      "rev": 2
     },
     {
       "id": "dayf",
