@@ -1,5 +1,5 @@
 {
-  "v": 56,
+  "v": 57,
   "stories": [
     {
       "id": "kahf",
@@ -360,6 +360,16 @@
       "cover": "covers/sabt.webp",
       "cw": "covers/w/sabt.webp",
       "file": "s/sabt.json",
+      "added": "2026-09-30"
+    },
+    {
+      "id": "namla",
+      "t": "النملة",
+      "d": "كلمةٌ أنقذت قوماً",
+      "ic": "🐜",
+      "cover": "covers/namla.webp",
+      "cw": "covers/w/namla.webp",
+      "file": "s/namla.json",
       "added": "2026-09-30"
     }
   ]
