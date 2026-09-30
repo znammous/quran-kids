@@ -1,5 +1,5 @@
 {
-  "v": 55,
+  "v": 56,
   "stories": [
     {
       "id": "kahf",
@@ -350,6 +350,16 @@
       "cover": "covers/janna.webp",
       "cw": "covers/w/janna.webp",
       "file": "s/janna.json",
+      "added": "2026-09-30"
+    },
+    {
+      "id": "sabt",
+      "t": "أصحابُ السبت",
+      "d": "قريةٌ احتالت على أمر الله",
+      "ic": "🐟",
+      "cover": "covers/sabt.webp",
+      "cw": "covers/w/sabt.webp",
+      "file": "s/sabt.json",
       "added": "2026-09-30"
     }
   ]
