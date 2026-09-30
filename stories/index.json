@@ -1,5 +1,5 @@
 {
-  "v": 69,
+  "v": 70,
   "stories": [
     {
       "id": "kahf",
@@ -473,6 +473,16 @@
       "file": "s/sirr.json",
       "added": "2026-10-01",
       "rev": 2
+    },
+    {
+      "id": "baqara",
+      "t": "بقرةُ بني إسرائيل",
+      "d": "قومٌ أكثروا السؤالَ فشدّدوا على أنفسهم",
+      "ic": "🐄",
+      "cover": "covers/baqara.webp",
+      "cw": "covers/w/baqara.webp",
+      "file": "s/baqara.json",
+      "added": "2026-10-01"
     }
   ]
 }
