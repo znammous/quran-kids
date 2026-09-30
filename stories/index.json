@@ -1,5 +1,5 @@
 {
-  "v": 74,
+  "v": 75,
   "stories": [
     {
       "id": "kahf",
@@ -522,6 +522,16 @@
       "cover": "covers/fawq.webp",
       "cw": "covers/w/fawq.webp",
       "file": "s/fawq.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "muhra",
+      "t": "المُهرةُ العنيدة",
+      "d": "مَثَلٌ في الرفق",
+      "ic": "🐎",
+      "cover": "covers/muhra.webp",
+      "cw": "covers/w/muhra.webp",
+      "file": "s/muhra.json",
       "added": "2026-10-01"
     }
   ]
