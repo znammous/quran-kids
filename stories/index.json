@@ -1,5 +1,5 @@
 {
-  "v": 61,
+  "v": 62,
   "stories": [
     {
       "id": "kahf",
@@ -392,6 +392,16 @@
       "cover": "covers/rabbayani.webp",
       "cw": "covers/w/rabbayani.webp",
       "file": "s/rabbayani.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "tamr",
+      "t": "التمرُ المرصوف",
+      "d": "مَثَلٌ في ترك الغشّ",
+      "ic": "🌴",
+      "cover": "covers/tamr.webp",
+      "cw": "covers/w/tamr.webp",
+      "file": "s/tamr.json",
       "added": "2026-10-01"
     }
   ]
