@@ -3726,7 +3726,7 @@ function reportHTML(){
         var all=revSessions('free').length, dnf=Math.min(REV.done||0, all);
         h+=repRow('المسار الحرّ', arNum(dnf)+' من '+arCount(all,C_SESS));
       }
-      h+=repRow('مستحقٌّ اليوم', arNum((function(){ try{ return dueSegs().length; }catch(e){ return 0; } })())+' مقطع');
+      h+=repRow('مستحقٌّ اليوم', arCount((function(){ try{ return dueSegs().length; }catch(e){ return 0; } })(), C_SEG));
     }
   }catch(e){}
   try{ h+=repRow('راجعتَ اليوم', arCount(todayBox().reviews||0, C_SESS)); }catch(e){}
@@ -7678,7 +7678,7 @@ function renderMap(){
 
   var due=dueSegs();
   $('dueWrap').innerHTML = due.length
-    ? '<div class="duebox"><h3>☀️ مراجعة اليوم</h3><p>عندك '+arNum(due.length)+' مقطع يحتاج مراجعة سريعة'+
+    ? '<div class="duebox"><h3>☀️ مراجعة اليوم</h3><p>'+tx('عندك للمراجعة السريعة {c}',{c:arCount(due.length,C_SEG)})+
       (due.length>REVIEW_CAP?(' — سنراجع '+arNum(REVIEW_CAP)+' منها الآن'):'')+':<br>'+
       due.slice(0,6).map(function(d){ return esc(d.s.name)+' '+arNum(d.from+1)+'-'+arNum(d.to); }).join(' • ')+
       (due.length>6?' …':'')+
@@ -9651,6 +9651,7 @@ var C_SESS=['جلسة واحدة','جلستان','جلسات','جلسة'];
 var C_QUES=['سؤال واحد','سؤالان','أسئلة','سؤالاً'];
 var C_AYAH=['آية واحدة','آيتان','آيات','آية'];
 var C_SURAH=['سورة واحدة','سورتان','سور','سورة'];
+var C_SEG=['مقطع واحد','مقطعان','مقاطع','مقطعاً'];
 /* عمرُ المهمّة: منذ متى حلّ موعدُها ولم تُؤدَّ — «منذ يومين» لا «منذ يومان» */
 function agoText(n){
   n=Math.max(1, n|0);
@@ -12075,7 +12076,7 @@ function selfRevBanner(sfx){
     badge:(age>=1 ? agoText(age) : ''),
     head:'ابدأ مراجعة اليوم — '+arCount(pg.length,C_PAGE),
     sub:(onPlan()?'خارج مقرَّر خطتك • ':'من خطط «نور الوحي» • ')+
-        names+more+' • '+arNum(dl.length)+' مقطع'
+        names+more+' • '+arCount(dl.length,C_SEG)
   });
 }
 /* صندوق الورد: مقرَّرٌ يوميّ مرتّب من محفوظه الراسخ — جلسةٌ في اليوم */
@@ -15049,7 +15050,7 @@ function renderHome(){
       ? (hz ? 'هنيئاً لك ختمُ القرآن — ولم تضبط خطّةَ مراجعةٍ بعد 👑'
             : 'ليس لديك خطة مراجعة مضبوطة — والحفظُ ماضٍ 📖')
     : w ? 'ورد المراجعة ينتظرك 📖'
-    : due ? tx('عندك {n} مقطع يحتاج مراجعة اليوم ☀️',{n:arNum(due)})
+    : due ? tx('عندك للمراجعة اليوم {c} ☀️',{c:arCount(due,C_SEG)})
     : (tb.stages>0 ? tx('أنجزت {n} مراحل اليوم — أحسنت 🌟',{n:arNum(tb.stages)})
        : (hz ? 'هنيئاً لك ختمُ القرآن — وتعاهدُه أجملُ ما تصنع 👑'
              : 'مستعدّ لحفظ جديد اليوم؟'));
