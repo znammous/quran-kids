@@ -1,5 +1,5 @@
 {
-  "v": 58,
+  "v": 59,
   "stories": [
     {
       "id": "kahf",
@@ -380,7 +380,8 @@
       "cover": "covers/yasin.webp",
       "cw": "covers/w/yasin.webp",
       "file": "s/yasin.json",
-      "added": "2026-09-30"
+      "added": "2026-09-30",
+      "rev": 2
     }
   ]
 }
