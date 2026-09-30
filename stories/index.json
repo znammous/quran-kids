@@ -1,5 +1,5 @@
 {
-  "v": 54,
+  "v": 55,
   "stories": [
     {
       "id": "kahf",
@@ -340,6 +340,16 @@
       "cover": "covers/bab.webp",
       "cw": "covers/w/bab.webp",
       "file": "s/bab.json",
+      "added": "2026-09-30"
+    },
+    {
+      "id": "janna",
+      "t": "أصحابُ الجنّة",
+      "d": "إخوةٌ منعوا المسكينَ حقَّه",
+      "ic": "🌾",
+      "cover": "covers/janna.webp",
+      "cw": "covers/w/janna.webp",
+      "file": "s/janna.json",
       "added": "2026-09-30"
     }
   ]
