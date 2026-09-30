@@ -1,5 +1,5 @@
 {
-  "v": 77,
+  "v": 78,
   "stories": [
     {
       "id": "kahf",
@@ -552,6 +552,16 @@
       "cover": "covers/saa.webp",
       "cw": "covers/w/saa.webp",
       "file": "s/saa.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "basma",
+      "t": "ابتسامةٌ في الطريق",
+      "d": "مَثَلٌ في البشاشة",
+      "ic": "😊",
+      "cover": "covers/basma.webp",
+      "cw": "covers/w/basma.webp",
+      "file": "s/basma.json",
       "added": "2026-10-01"
     }
   ]
