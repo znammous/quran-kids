@@ -1,5 +1,5 @@
 {
-  "v": 79,
+  "v": 80,
   "stories": [
     {
       "id": "kahf",
@@ -572,6 +572,16 @@
       "cover": "covers/ghurfa.webp",
       "cw": "covers/w/ghurfa.webp",
       "file": "s/ghurfa.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "ard",
+      "t": "زيتونُ جدّي",
+      "d": "مَثَلٌ في الثبات على الأرض والدفاع عنها",
+      "ic": "🫒",
+      "cover": "covers/ard.webp",
+      "cw": "covers/w/ard.webp",
+      "file": "s/ard.json",
       "added": "2026-10-01"
     }
   ]
