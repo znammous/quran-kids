@@ -1,5 +1,5 @@
 {
-  "v": 49,
+  "v": 50,
   "stories": [
     {
       "id": "kahf",
@@ -305,6 +305,16 @@
       "cover": "covers/raghif.webp",
       "cw": "covers/w/raghif.webp",
       "file": "s/raghif.json",
+      "added": "2026-09-30"
+    },
+    {
+      "id": "dayf",
+      "t": "الضيفُ في المطر",
+      "d": "مَثَلٌ في إكرام الضيف",
+      "ic": "☕",
+      "cover": "covers/dayf.webp",
+      "cw": "covers/w/dayf.webp",
+      "file": "s/dayf.json",
       "added": "2026-09-30"
     }
   ]
