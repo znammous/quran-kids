@@ -21,3 +21,4 @@ keystore.properties
 # صورُ المتجر المولَّدة لكلّ لغة — كبيرة، تُولَّد بـ scripts/store وتبقى على الجهاز
 store/l10n/*/appstore/
 store/l10n/*/play/
+store/l10n/_raw/
