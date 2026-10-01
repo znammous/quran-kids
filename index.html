@@ -33,6 +33,8 @@
        منهج السلف في الإثبات بلا تأويل — فاعتُمدت */
     ur:{n:'اردو',     dir:'rtl', ready:true, tr:true,
         trSrc:'ترجمہ: مولانا محمد جوناگڑھی — مرکز رواد الترجمہ کی نگرانی میں، QuranEnc.com (نسخہ 1.1.3)'},
+    fa:{n:'فارسی (دری)', dir:'rtl', ready:true, tr:true,
+        trSrc:'ترجمه: تیم مرکز ترجمهٔ رواد، با همکاری انجمن دعوت ربوه و IslamHouse.com — QuranEnc.com (نسخهٔ 1.1.3)'},
     ps:{n:'پښتو',     dir:'rtl', ready:true, tr:true,
         trSrc:'ژباړه: د رواد د ژباړې مرکز ټیم، د الربوه د دعوت ټولنې او IslamHouse.com په همکارۍ — QuranEnc.com (نسخه 1.0.1)'},
     /* لغاتُ اليسار: الواجهةُ تنقلب، والقرآنُ يبقى من اليمين (انظر [dir=ltr] في الأنماط) */
@@ -44,6 +46,17 @@
     ms:{n:'Bahasa Melayu', dir:'ltr', ready:true, tr:false},
     bn:{n:'বাংলা',    dir:'ltr', ready:true, tr:true,
         trSrc:'অনুবাদ: রুওয়াদ অনুবাদ কেন্দ্র (Rowwad Translation Center) — QuranEnc.com'},
+    fr:{n:'Français', dir:'ltr', ready:true, tr:true,
+        trSrc:'Traduction : Rachid Maach, développée sous la supervision du Centre de traduction Rowwad — QuranEnc.com (v1.0.3)'},
+    sw:{n:'Kiswahili', dir:'ltr', ready:true, tr:true,
+        trSrc:'Tafsiri: Kituo cha Tafsiri cha Rowwad — QuranEnc.com (toleo 1.0.5)'},
+    ha:{n:'Hausa',    dir:'ltr', ready:true, tr:true,
+        trSrc:'Fassara: Abubakar Mahmud Gumi — QuranEnc.com (1.2.2)'},
+    /* ترجمةُ رواد الأوزبكيّة كيريليّة: حُوِّلت إلى اللاتينيّة الرسميّة لتوافق الواجهة */
+    uz:{n:'Oʻzbekcha', dir:'ltr', ready:true, tr:true,
+        trSrc:'Tarjima: Rowwad tarjima markazi (lotin yozuviga oʻgirildi) — QuranEnc.com (1.0.4)'},
+    so:{n:'Soomaali', dir:'ltr', ready:true, tr:true,
+        trSrc:'Tarjumaad: Cabdullaahi Xasan Yacquub — QuranEnc.com (1.0.26)'},
     tr:{n:'Türkçe',   dir:'ltr', ready:true, tr:true,
         trSrc:'Çeviri: Rowwad Tercüme Merkezi, Rabwah Davet Derneği ve IslamHouse.com iş birliğiyle — QuranEnc.com (s. 1.0.4)'}
   };
@@ -133,7 +146,7 @@
   }
   /* ما تُرجم إلى لغةٍ بحرفٍ عربيّ (الأرديّة، البشتو) يُمرّ عليه ثانيةً فلا يُعدّ ناقصاً:
      حروفُها هذه لا تكون في العربيّة */
-  var OWN=/[\u0679\u0688\u0691\u06A9\u06AF\u06BA\u06BE\u06C1\u06C3\u06CC\u06D2\u067C\u0689\u0693\u069A\u0696\u0681\u0685\u06CD\u06D0\u06AB]/;
+  var OWN=/[\u0679\u0688\u0691\u06A9\u06AF\u06BA\u06BE\u06C1\u06C3\u06CC\u06D2\u067C\u0689\u0693\u069A\u0696\u0681\u0685\u06CD\u06D0\u06AB\u067E\u0686\u0698]/;
   var DONE={};
   function miss(k){ if(I.harvest && !OWN.test(k) && !DONE[k]) I.harvest(k); }
   function doText(n){
@@ -1103,7 +1116,7 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
   .mbas,.adab,.onbsample,.mfbody,.mushaf,.mftaf:not([lang]),.mfmrow){direction:rtl}
 /* لغاتٌ حروفُها خارج خطّ الواجهة (ş ğ İ في التركيّة، والبنغاليّة كلُّها): خطُّ الجهاز
    للواجهة كلِّها، فلا تُكتب الكلمةُ الواحدةُ بخطّين. وخطوطُ المصحف لها أنماطُها فلا تُمسّ */
-html:is([lang=tr],[lang=bn]) body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Bengali",sans-serif}
+html:is([lang=tr],[lang=bn],[lang=ha],[lang=uz]) body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Bengali",sans-serif}
 /* أسهمٌ في عناصرَ مستقلّةٍ بلا نصّ: سهمُ البطاقات، وسهما القصّة، وزرُّ الرجوع منها */
 [dir=ltr] :is(.gcgo,.sar,#btnStoryBack){display:inline-block;transform:scaleX(-1)}
 .onbtop{display:flex;align-items:center;gap:10px;margin:12px 0 14px}
@@ -13659,11 +13672,30 @@ function finishReview(){
 /* ===== الشهادة ===== */
 /* التاريخُ بلغة الواجهة: أسماءُ الأشهر بها (Rabiʻ II، ربیع الثانی…) */
 function dateLoc(ar){ return NUR_I18N.on ? NUR_I18N.code : ar; }
+/* هجريٌّ في كلّ لغة (طلبُ صاحب التطبيق): لغةٌ لا تقويمَ هجريّاً لها في المتصفّح (الهوسا والصوماليّة
+   في كروم) يُرجعها إلى الميلاديّ بصمت — فتُفحص، ويُلجأ إلى الإنجليزيّة ثمّ العربيّة */
 function hijriDate(o){
-  try{ return new Date().toLocaleDateString(dateLoc('ar-SA')+'-u-ca-islamic-umalqura',o||{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return ''; }
+  o=o||{day:'numeric',month:'long',year:'numeric'};
+  var ls=[dateLoc('ar-SA'),'en','ar-SA'], i, f;
+  for(i=0;i<ls.length;i++){
+    try{
+      f=new Intl.DateTimeFormat(ls[i]+'-u-ca-islamic-umalqura',o);
+      if(/^islamic/.test(f.resolvedOptions().calendar)) return f.format(new Date());
+    }catch(e){}
+  }
+  return '';
 }
 function greg(){
-  try{ return new Date().toLocaleDateString(dateLoc('ar-EG')+'-u-ca-gregory',{day:'numeric',month:'long',year:'numeric'}); }
+  /* لغةٌ لا أشهرَ لها في المتصفّح (الأوزبكيّة في كروم: «2026 M10 1») تُرجَع إلى الإنجليزيّة */
+  var ls=[dateLoc('ar-EG'),'en'], i, f;
+  for(i=0;i<ls.length;i++){
+    try{
+      f=new Intl.DateTimeFormat(ls[i]+'-u-ca-gregory',{day:'numeric',month:'long',year:'numeric'});
+      var r=f.format(new Date());
+      if(!/\bM\d/.test(r)) return r;
+    }catch(e){}
+  }
+  try{ return new Date().toLocaleDateString('ar-EG',{day:'numeric',month:'long',year:'numeric'}); }
   catch(e){ var d=new Date(); return d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear(); }
 }
 var certSurah=null;
