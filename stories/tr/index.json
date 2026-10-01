@@ -1,0 +1,305 @@
+{
+ "lang": "tr",
+ "stories": {
+  "kahf": {
+   "t": "Ashab-ı Kehf",
+   "d": "Rablerine iman eden gençler, Allah da hidayetlerini artırdı",
+   "rev": 4
+  },
+  "qarya": {
+   "t": "Bir Köyün Yanından Geçen Adam",
+   "d": "Yüz yıl ölü kaldı, sonra Allah onu diriltti",
+   "rev": 1
+  },
+  "qarun": {
+   "t": "Karun",
+   "d": "Allah'ın yerin dibine geçirdiği hazineler",
+   "rev": 1
+  },
+  "qatil": {
+   "t": "Yüz Kişiyi Öldüren Adam",
+   "d": "Yüz kişiyi öldürdü, sonra affedildi",
+   "rev": 2
+  },
+  "jannatayn": {
+   "t": "İki Bahçe Sahibi",
+   "d": "\"Hiç yok olmaz\" dediği bahçe yok oldu",
+   "rev": 1
+  },
+  "shiraa": {
+   "t": "Yelken",
+   "d": "Anlaşmazlık üzerine bir misal",
+   "rev": 3
+  },
+  "shah": {
+   "t": "Kaybolan Koyun",
+   "d": "Haberi doğrulamak üzerine bir misal",
+   "rev": 2
+  },
+  "jidar": {
+   "t": "Duvarın Ardında",
+   "d": "Gizli kusur aramak üzerine bir misal",
+   "rev": 3
+  },
+  "kalima": {
+   "t": "Yürüyen Söz",
+   "d": "Güzel söz üzerine bir misal",
+   "rev": 2
+  },
+  "jabal": {
+   "t": "Dağ Dönüp Bakmaz",
+   "d": "Kibir üzerine bir misal",
+   "rev": 3
+  },
+  "hajar": {
+   "t": "İlk Taş",
+   "d": "Yardımlaşma üzerine bir misal",
+   "rev": 2
+  },
+  "tamra": {
+   "t": "Fazladan Bir Hurma",
+   "d": "Terazi üzerine bir misal",
+   "rev": 2
+  },
+  "fasila": {
+   "t": "Hurma Fidanı",
+   "d": "Şükür üzerine bir misal",
+   "rev": 2
+  },
+  "siyaj": {
+   "t": "Çit",
+   "d": "Kötülüğe iyilikle karşılık vermek üzerine bir misal",
+   "rev": 2
+  },
+  "fakhkhar": {
+   "t": "Çömlekçinin Kapısında",
+   "d": "İsteyene yumuşak davranmak üzerine bir misal",
+   "rev": 4
+  },
+  "ghina": {
+   "t": "Gına",
+   "d": "İstemeyen el üzerine bir misal",
+   "rev": 5
+  },
+  "ruqayya": {
+   "t": "Güzel Söz",
+   "d": "Anneye iyilik üzerine bir misal",
+   "rev": 1
+  },
+  "shatla": {
+   "t": "Fide Sırası",
+   "d": "\"Öfkelenme\" üzerine bir misal",
+   "rev": 2
+  },
+  "salam": {
+   "t": "İlk Selamı Veren",
+   "d": "Küslüğü bırakmak üzerine bir misal",
+   "rev": 1
+  },
+  "ukhtan": {
+   "t": "İki Kız Kardeş",
+   "d": "Kardeşlik üzerine bir misal",
+   "rev": 2
+  },
+  "hilal": {
+   "t": "Alay Ettikleri Çocuk",
+   "d": "Alay etmemek üzerine bir misal",
+   "rev": 3
+  },
+  "sahrij": {
+   "t": "Sarnıcın Suyu",
+   "d": "İsraf etmemek üzerine bir misal",
+   "rev": 4
+  },
+  "sibaq": {
+   "t": "Yarışın Hakemi",
+   "d": "Sevmediğine karşı da adil olmak üzerine bir misal",
+   "rev": 1
+  },
+  "qindil": {
+   "t": "Kırık Fener",
+   "d": "Doğruluk üzerine bir misal",
+   "rev": 2
+  },
+  "tayyara": {
+   "t": "Uçurtma",
+   "d": "Kıskanmamak üzerine bir misal",
+   "rev": 2
+  },
+  "kalb": {
+   "t": "Susamış Köpek",
+   "d": "Hayvanlara merhamet üzerine bir misal",
+   "rev": 2
+  },
+  "qafila": {
+   "t": "Kervan",
+   "d": "İstişare üzerine bir misal",
+   "rev": 3
+  },
+  "surra": {
+   "t": "Mühürlü Kese",
+   "d": "Emanet üzerine bir misal",
+   "rev": 2
+  },
+  "raghif": {
+   "t": "Son Ekmek",
+   "d": "Başkasını kendine tercih etmek üzerine bir misal",
+   "rev": 3
+  },
+  "dayf": {
+   "t": "Yağmurdaki Misafir",
+   "d": "Misafire ikram üzerine bir misal",
+   "rev": 2
+  },
+  "zeer": {
+   "t": "Yolcu Testisi",
+   "d": "Yolcunun hakkı üzerine bir misal",
+   "rev": 2
+  },
+  "bab": {
+   "t": "Kapalı Kapı",
+   "d": "İzin istemek üzerine bir misal",
+   "rev": 1
+  },
+  "janna": {
+   "t": "Bahçe Sahipleri",
+   "d": "Yoksulun hakkını vermeyen kardeşler",
+   "rev": 1
+  },
+  "sabt": {
+   "t": "Cumartesi Halkı",
+   "d": "Allah'ın emrine hile yapan bir köy",
+   "rev": 2
+  },
+  "namla": {
+   "t": "Karınca",
+   "d": "Bir halkı kurtaran söz",
+   "rev": 1
+  },
+  "yasin": {
+   "t": "Koşarak Gelen Adam",
+   "d": "Yalanlayan bir şehirde hakkı söyleyen ses",
+   "rev": 2
+  },
+  "rabbayani": {
+   "t": "Beni Küçükken Büyüttükleri Gibi",
+   "d": "Dedeye iyilik üzerine bir misal",
+   "rev": 2
+  },
+  "tamr": {
+   "t": "Dizilmiş Hurmalar",
+   "d": "Hile yapmamak üzerine bir misal",
+   "rev": 2
+  },
+  "kabir": {
+   "t": "Büyük ve Küçük",
+   "d": "Küçüğe merhamet, büyüğe saygı üzerine bir misal",
+   "rev": 2
+  },
+  "kalima2": {
+   "t": "Söylenmeyen Söz",
+   "d": "Dili korumak üzerine bir misal",
+   "rev": 2
+  },
+  "qalam": {
+   "t": "Ödünç Kalem",
+   "d": "Emaneti geri vermek üzerine bir misal",
+   "rev": 1
+  },
+  "busat": {
+   "t": "Kırmızı Kilim",
+   "d": "Sabır üzerine bir misal",
+   "rev": 2
+  },
+  "shawk": {
+   "t": "Dikenli Dal",
+   "d": "Yoldan eziyet veren şeyi kaldırmak üzerine bir misal",
+   "rev": 1
+  },
+  "sirr": {
+   "t": "Gizli Sadaka",
+   "d": "Sadakayı gizlemek üzerine bir misal",
+   "rev": 2
+  },
+  "baqara": {
+   "t": "İsrailoğullarının İneği",
+   "d": "Çok soru sorup kendilerine zorlaştıran bir topluluk",
+   "rev": 1
+  },
+  "ibnay": {
+   "t": "Âdem'in İki Oğlu",
+   "d": "Yeryüzündeki ilk kıskançlık ve öğreten bir karga",
+   "rev": 1
+  },
+  "faiz": {
+   "t": "İkinci Olan",
+   "d": "Kendin için istediğini kardeşin için de istemek üzerine bir misal",
+   "rev": 1
+  },
+  "waqt": {
+   "t": "Boşa Geçen Zaman",
+   "d": "Vakti değerlendirmek üzerine bir misal",
+   "rev": 1
+  },
+  "fawq": {
+   "t": "Her Bilenin Üstünde",
+   "d": "İlimde alçakgönüllülük üzerine bir misal",
+   "rev": 1
+  },
+  "muhra": {
+   "t": "İnatçı Tay",
+   "d": "Yumuşaklık üzerine bir misal",
+   "rev": 1
+  },
+  "mawid": {
+   "t": "Kuyu Başındaki Söz",
+   "d": "Sözünde durmak üzerine bir misal",
+   "rev": 1
+  },
+  "saa": {
+   "t": "Bozuk Saat",
+   "d": "İşi güzel yapmak üzerine bir misal",
+   "rev": 1
+  },
+  "basma": {
+   "t": "Yoldaki Gülümseme",
+   "d": "Güler yüzlülük üzerine bir misal",
+   "rev": 1
+  },
+  "ghurfa": {
+   "t": "Derli Toplu Oda",
+   "d": "Temizlik ve düzen üzerine bir misal",
+   "rev": 1
+  },
+  "ard": {
+   "t": "Dedemin Zeytinleri",
+   "d": "Toprağına sahip çıkmak ve onu korumak üzerine bir misal",
+   "rev": 1
+  },
+  "hijra": {
+   "t": "Hicret",
+   "d": "Mekke'den Medine'ye; Allah onlarla birlikteydi",
+   "rev": 1
+  },
+  "dayn": {
+   "t": "Ağır Borç",
+   "d": "Borçluya kolaylık göstermek üzerine bir misal",
+   "rev": 1
+  },
+  "asir": {
+   "t": "Esiri Kurtarmak",
+   "d": "Esirin kurtarılması için çalışmak üzerine bir misal",
+   "rev": 1
+  },
+  "haja": {
+   "t": "Kardeşinin İhtiyacında",
+   "d": "İnsanların ihtiyaçlarını gidermek üzerine bir misal",
+   "rev": 1
+  },
+  "surur": {
+   "t": "Bir Kalbe Sevinç",
+   "d": "Bir Müslümanı sevindirmek üzerine bir misal",
+   "rev": 1
+  }
+ }
+}

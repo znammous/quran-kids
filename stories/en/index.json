@@ -1,0 +1,305 @@
+{
+ "lang": "en",
+ "stories": {
+  "kahf": {
+   "t": "The People of the Cave",
+   "d": "Young men who believed in their Lord, and He increased their guidance",
+   "rev": 4
+  },
+  "qarya": {
+   "t": "The Man Who Passed by a Town",
+   "d": "He died for a hundred years, then Allah brought him back to life",
+   "rev": 1
+  },
+  "qarun": {
+   "t": "Qarun",
+   "d": "Treasures that Allah made the earth swallow",
+   "rev": 1
+  },
+  "qatil": {
+   "t": "The Man Who Killed a Hundred",
+   "d": "He killed a hundred people, then he was forgiven",
+   "rev": 2
+  },
+  "jannatayn": {
+   "t": "The Owner of the Two Gardens",
+   "d": "A garden he said would never perish — and it perished",
+   "rev": 1
+  },
+  "shiraa": {
+   "t": "The Sail",
+   "d": "A parable about quarrelling",
+   "rev": 3
+  },
+  "shah": {
+   "t": "The Lost Sheep",
+   "d": "A parable about checking the facts",
+   "rev": 2
+  },
+  "jidar": {
+   "t": "Behind the Wall",
+   "d": "A parable about spying",
+   "rev": 3
+  },
+  "kalima": {
+   "t": "The Word That Walks",
+   "d": "A parable about kind speech",
+   "rev": 2
+  },
+  "jabal": {
+   "t": "The Mountain Does Not Look Back",
+   "d": "A parable about arrogance",
+   "rev": 3
+  },
+  "hajar": {
+   "t": "The First Stone",
+   "d": "A parable about helping one another",
+   "rev": 2
+  },
+  "tamra": {
+   "t": "The Extra Date",
+   "d": "A parable about honest weighing",
+   "rev": 2
+  },
+  "fasila": {
+   "t": "The Palm Shoot",
+   "d": "A parable about gratitude",
+   "rev": 2
+  },
+  "siyaj": {
+   "t": "The Fence",
+   "d": "A parable about being good to those who wrong you",
+   "rev": 2
+  },
+  "fakhkhar": {
+   "t": "At the Potter's Door",
+   "d": "A parable about gentleness with those who ask",
+   "rev": 4
+  },
+  "ghina": {
+   "t": "Ghina",
+   "d": "A parable about the hand that does not ask",
+   "rev": 5
+  },
+  "ruqayya": {
+   "t": "A Gracious Word",
+   "d": "A parable about honouring your mother",
+   "rev": 1
+  },
+  "shatla": {
+   "t": "The Row of Seedlings",
+   "d": "A parable about \"Do not get angry\"",
+   "rev": 2
+  },
+  "salam": {
+   "t": "The One Who Goes First",
+   "d": "A parable about ending a falling-out",
+   "rev": 1
+  },
+  "ukhtan": {
+   "t": "Two Sisters",
+   "d": "A parable about sisterhood",
+   "rev": 2
+  },
+  "hilal": {
+   "t": "The Boy They Laughed At",
+   "d": "A parable about not mocking others",
+   "rev": 3
+  },
+  "sahrij": {
+   "t": "The Water in the Cistern",
+   "d": "A parable about not wasting",
+   "rev": 4
+  },
+  "sibaq": {
+   "t": "The Race Judge",
+   "d": "A parable about being fair even to those you dislike",
+   "rev": 1
+  },
+  "qindil": {
+   "t": "The Broken Lantern",
+   "d": "A parable about telling the truth",
+   "rev": 2
+  },
+  "tayyara": {
+   "t": "The Paper Kite",
+   "d": "A parable about letting go of envy",
+   "rev": 2
+  },
+  "kalb": {
+   "t": "The Thirsty Dog",
+   "d": "A parable about mercy to animals",
+   "rev": 2
+  },
+  "qafila": {
+   "t": "The Caravan",
+   "d": "A parable about consulting one another",
+   "rev": 3
+  },
+  "surra": {
+   "t": "The Sealed Pouch",
+   "d": "A parable about keeping a trust",
+   "rev": 2
+  },
+  "raghif": {
+   "t": "The Last Loaf",
+   "d": "A parable about putting others first",
+   "rev": 3
+  },
+  "dayf": {
+   "t": "The Guest in the Rain",
+   "d": "A parable about honouring guests",
+   "rev": 2
+  },
+  "zeer": {
+   "t": "The Wayfarer's Jar",
+   "d": "A parable about the right of the traveller",
+   "rev": 2
+  },
+  "bab": {
+   "t": "The Closed Door",
+   "d": "A parable about asking permission",
+   "rev": 1
+  },
+  "janna": {
+   "t": "The Owners of the Garden",
+   "d": "Brothers who kept the poor from their share",
+   "rev": 1
+  },
+  "sabt": {
+   "t": "The People of the Sabbath",
+   "d": "A town that tried to trick its way around Allah's command",
+   "rev": 2
+  },
+  "namla": {
+   "t": "The Ant",
+   "d": "A word that saved a whole people",
+   "rev": 1
+  },
+  "yasin": {
+   "t": "The Man Who Came Running",
+   "d": "A word of truth in a city that denied",
+   "rev": 2
+  },
+  "rabbayani": {
+   "t": "As They Raised Me When I Was Small",
+   "d": "A parable about honouring a grandfather",
+   "rev": 2
+  },
+  "tamr": {
+   "t": "The Neatly Stacked Dates",
+   "d": "A parable about not cheating",
+   "rev": 2
+  },
+  "kabir": {
+   "t": "The Old and the Young",
+   "d": "A parable about mercy to the young and respect for elders",
+   "rev": 2
+  },
+  "kalima2": {
+   "t": "The Word That Was Never Said",
+   "d": "A parable about guarding your tongue",
+   "rev": 2
+  },
+  "qalam": {
+   "t": "The Borrowed Pencil",
+   "d": "A parable about giving back what you borrow",
+   "rev": 1
+  },
+  "busat": {
+   "t": "The Red Rug",
+   "d": "A parable about patience",
+   "rev": 2
+  },
+  "shawk": {
+   "t": "The Thorny Branch",
+   "d": "A parable about removing harm from the road",
+   "rev": 1
+  },
+  "sirr": {
+   "t": "The Secret Sadaqah",
+   "d": "A parable about giving in secret",
+   "rev": 2
+  },
+  "baqara": {
+   "t": "The Cow of the Children of Israel",
+   "d": "People who asked too many questions and made things hard for themselves",
+   "rev": 1
+  },
+  "ibnay": {
+   "t": "The Two Sons of Adam",
+   "d": "The first envy on earth, and a crow that taught a lesson",
+   "rev": 1
+  },
+  "faiz": {
+   "t": "The Second Winner",
+   "d": "A parable about loving for your brother what you love for yourself",
+   "rev": 1
+  },
+  "waqt": {
+   "t": "The Wasted Time",
+   "d": "A parable about making the most of your time",
+   "rev": 1
+  },
+  "fawq": {
+   "t": "Above Everyone Who Knows",
+   "d": "A parable about being humble with knowledge",
+   "rev": 1
+  },
+  "muhra": {
+   "t": "The Stubborn Filly",
+   "d": "A parable about gentleness",
+   "rev": 1
+  },
+  "mawid": {
+   "t": "The Meeting at the Well",
+   "d": "A parable about keeping your promise",
+   "rev": 1
+  },
+  "saa": {
+   "t": "The Broken Watch",
+   "d": "A parable about doing your work well",
+   "rev": 1
+  },
+  "basma": {
+   "t": "A Smile Along the Way",
+   "d": "A parable about a cheerful face",
+   "rev": 1
+  },
+  "ghurfa": {
+   "t": "The Tidy Room",
+   "d": "A parable about cleanliness and order",
+   "rev": 1
+  },
+  "ard": {
+   "t": "My Grandfather's Olive Trees",
+   "d": "A parable about holding on to your land and defending it",
+   "rev": 1
+  },
+  "hijra": {
+   "t": "The Hijrah",
+   "d": "From Makkah to Madinah, with Allah beside them",
+   "rev": 1
+  },
+  "dayn": {
+   "t": "The Heavy Debt",
+   "d": "A parable about making things easy for someone in debt",
+   "rev": 1
+  },
+  "asir": {
+   "t": "Freeing the Captive",
+   "d": "A parable about working to free a captive",
+   "rev": 1
+  },
+  "haja": {
+   "t": "Helping His Brother",
+   "d": "A parable about helping people with what they need",
+   "rev": 1
+  },
+  "surur": {
+   "t": "Bringing Joy",
+   "d": "A parable about making a Muslim happy",
+   "rev": 1
+  }
+ }
+}

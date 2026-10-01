@@ -1,0 +1,305 @@
+{
+ "lang": "id",
+ "stories": {
+  "kahf": {
+   "t": "Ashabul Kahfi",
+   "d": "Para pemuda yang beriman, lalu Allah menambah petunjuk bagi mereka",
+   "rev": 4
+  },
+  "qarya": {
+   "t": "Laki-laki yang Melewati Sebuah Desa",
+   "d": "Dimatikan seratus tahun, lalu dihidupkan kembali oleh Allah",
+   "rev": 1
+  },
+  "qarun": {
+   "t": "Qarun",
+   "d": "Harta berlimpah yang ditenggelamkan Allah ke dalam bumi",
+   "rev": 1
+  },
+  "qatil": {
+   "t": "Pembunuh Seratus Orang",
+   "d": "Membunuh seratus orang, lalu diampuni",
+   "rev": 2
+  },
+  "jannatayn": {
+   "t": "Pemilik Dua Kebun",
+   "d": "Kebun yang katanya tak akan binasa, lalu binasa",
+   "rev": 1
+  },
+  "shiraa": {
+   "t": "Layar Perahu",
+   "d": "Perumpamaan tentang bahaya berselisih",
+   "rev": 3
+  },
+  "shah": {
+   "t": "Kambing yang Tersesat",
+   "d": "Perumpamaan tentang memeriksa kabar",
+   "rev": 2
+  },
+  "jidar": {
+   "t": "Di Balik Dinding",
+   "d": "Perumpamaan tentang larangan memata-matai",
+   "rev": 3
+  },
+  "kalima": {
+   "t": "Kata yang Berjalan",
+   "d": "Perumpamaan tentang kata-kata yang baik",
+   "rev": 2
+  },
+  "jabal": {
+   "t": "Gunung yang Tak Menoleh",
+   "d": "Perumpamaan tentang kesombongan",
+   "rev": 3
+  },
+  "hajar": {
+   "t": "Batu Pertama",
+   "d": "Perumpamaan tentang tolong-menolong",
+   "rev": 2
+  },
+  "tamra": {
+   "t": "Sebutir Kurma Tambahan",
+   "d": "Perumpamaan tentang timbangan yang jujur",
+   "rev": 2
+  },
+  "fasila": {
+   "t": "Tunas Kurma",
+   "d": "Perumpamaan tentang bersyukur",
+   "rev": 2
+  },
+  "siyaj": {
+   "t": "Pagar",
+   "d": "Perumpamaan tentang berbuat baik kepada yang berbuat buruk",
+   "rev": 2
+  },
+  "fakhkhar": {
+   "t": "Di Pintu Toko Gerabah",
+   "d": "Perumpamaan tentang bersikap lembut kepada peminta",
+   "rev": 4
+  },
+  "ghina": {
+   "t": "Ghina",
+   "d": "Perumpamaan tentang tangan yang tidak meminta-minta",
+   "rev": 5
+  },
+  "ruqayya": {
+   "t": "Perkataan yang Mulia",
+   "d": "Perumpamaan tentang berbakti kepada ibu",
+   "rev": 1
+  },
+  "shatla": {
+   "t": "Barisan Bibit",
+   "d": "Perumpamaan tentang \"Jangan marah\"",
+   "rev": 2
+  },
+  "salam": {
+   "t": "Siapa yang Memulai",
+   "d": "Perumpamaan tentang tidak saling mendiamkan",
+   "rev": 1
+  },
+  "ukhtan": {
+   "t": "Dua Bersaudari",
+   "d": "Perumpamaan tentang persaudaraan",
+   "rev": 2
+  },
+  "hilal": {
+   "t": "Anak yang Dulu Ditertawakan",
+   "d": "Perumpamaan tentang larangan mengejek",
+   "rev": 3
+  },
+  "sahrij": {
+   "t": "Air di Tangki",
+   "d": "Perumpamaan tentang tidak boros",
+   "rev": 4
+  },
+  "sibaq": {
+   "t": "Juri Lomba Lari",
+   "d": "Perumpamaan tentang adil kepada orang yang tidak kamu sukai",
+   "rev": 1
+  },
+  "qindil": {
+   "t": "Lentera yang Pecah",
+   "d": "Perumpamaan tentang kejujuran",
+   "rev": 2
+  },
+  "tayyara": {
+   "t": "Layang-layang",
+   "d": "Perumpamaan tentang tidak iri hati",
+   "rev": 2
+  },
+  "kalb": {
+   "t": "Anjing yang Kehausan",
+   "d": "Perumpamaan tentang kasih sayang kepada hewan",
+   "rev": 2
+  },
+  "qafila": {
+   "t": "Kafilah",
+   "d": "Perumpamaan tentang musyawarah",
+   "rev": 3
+  },
+  "surra": {
+   "t": "Kantong yang Disegel",
+   "d": "Perumpamaan tentang menjaga amanah",
+   "rev": 2
+  },
+  "raghif": {
+   "t": "Roti Terakhir",
+   "d": "Perumpamaan tentang mendahulukan orang lain",
+   "rev": 3
+  },
+  "dayf": {
+   "t": "Tamu di Tengah Hujan",
+   "d": "Perumpamaan tentang memuliakan tamu",
+   "rev": 2
+  },
+  "zeer": {
+   "t": "Tempayan untuk Musafir",
+   "d": "Perumpamaan tentang hak ibnu sabil",
+   "rev": 2
+  },
+  "bab": {
+   "t": "Pintu yang Tertutup",
+   "d": "Perumpamaan tentang meminta izin",
+   "rev": 1
+  },
+  "janna": {
+   "t": "Para Pemilik Kebun",
+   "d": "Saudara-saudara yang menghalangi hak orang miskin",
+   "rev": 1
+  },
+  "sabt": {
+   "t": "Ashabus Sabt",
+   "d": "Desa yang mengakali perintah Allah",
+   "rev": 2
+  },
+  "namla": {
+   "t": "Semut",
+   "d": "Satu kalimat yang menyelamatkan satu kaum",
+   "rev": 1
+  },
+  "yasin": {
+   "t": "Laki-laki yang Datang Bergegas",
+   "d": "Kata kebenaran di kota yang mendustakan",
+   "rev": 2
+  },
+  "rabbayani": {
+   "t": "Sebagaimana Mereka Mendidikku Waktu Kecil",
+   "d": "Perumpamaan tentang berbakti kepada kakek",
+   "rev": 2
+  },
+  "tamr": {
+   "t": "Kurma yang Tersusun",
+   "d": "Perumpamaan tentang tidak menipu",
+   "rev": 2
+  },
+  "kabir": {
+   "t": "Yang Tua dan yang Muda",
+   "d": "Perumpamaan tentang menyayangi yang muda dan menghormati yang tua",
+   "rev": 2
+  },
+  "kalima2": {
+   "t": "Kata yang Tak Diucapkan",
+   "d": "Perumpamaan tentang menjaga lisan",
+   "rev": 2
+  },
+  "qalam": {
+   "t": "Pensil Pinjaman",
+   "d": "Perumpamaan tentang mengembalikan amanah",
+   "rev": 1
+  },
+  "busat": {
+   "t": "Permadani Merah",
+   "d": "Perumpamaan tentang kesabaran",
+   "rev": 2
+  },
+  "shawk": {
+   "t": "Dahan Berduri",
+   "d": "Perumpamaan tentang menyingkirkan gangguan dari jalan",
+   "rev": 1
+  },
+  "sirr": {
+   "t": "Sedekah Diam-diam",
+   "d": "Perumpamaan tentang menyembunyikan sedekah",
+   "rev": 2
+  },
+  "baqara": {
+   "t": "Sapi Bani Israil",
+   "d": "Kaum yang terlalu banyak bertanya, lalu mempersulit diri sendiri",
+   "rev": 1
+  },
+  "ibnay": {
+   "t": "Dua Putra Adam",
+   "d": "Iri hati pertama di bumi, dan burung gagak yang mengajari",
+   "rev": 1
+  },
+  "faiz": {
+   "t": "Juara Kedua",
+   "d": "Perumpamaan tentang mencintai untuk saudaramu apa yang kamu cintai untuk dirimu",
+   "rev": 1
+  },
+  "waqt": {
+   "t": "Waktu yang Terbuang",
+   "d": "Perumpamaan tentang memanfaatkan waktu",
+   "rev": 1
+  },
+  "fawq": {
+   "t": "Di Atas Setiap Orang Berilmu",
+   "d": "Perumpamaan tentang rendah hati dalam ilmu",
+   "rev": 1
+  },
+  "muhra": {
+   "t": "Anak Kuda yang Keras Kepala",
+   "d": "Perumpamaan tentang kelembutan",
+   "rev": 1
+  },
+  "mawid": {
+   "t": "Janji di Sumur",
+   "d": "Perumpamaan tentang menepati janji",
+   "rev": 1
+  },
+  "saa": {
+   "t": "Jam yang Rusak",
+   "d": "Perumpamaan tentang mengerjakan sesuatu dengan sempurna",
+   "rev": 1
+  },
+  "basma": {
+   "t": "Senyuman di Jalan",
+   "d": "Perumpamaan tentang wajah yang ceria",
+   "rev": 1
+  },
+  "ghurfa": {
+   "t": "Kamar yang Rapi",
+   "d": "Perumpamaan tentang kebersihan dan kerapian",
+   "rev": 1
+  },
+  "ard": {
+   "t": "Pohon Zaitun Kakek",
+   "d": "Perumpamaan tentang teguh menjaga dan membela tanah air",
+   "rev": 1
+  },
+  "hijra": {
+   "t": "Hijrah",
+   "d": "Dari Makkah ke Madinah, dan Allah bersama mereka berdua",
+   "rev": 1
+  },
+  "dayn": {
+   "t": "Utang yang Berat",
+   "d": "Perumpamaan tentang memberi kemudahan kepada orang yang berutang",
+   "rev": 1
+  },
+  "asir": {
+   "t": "Membebaskan Tawanan",
+   "d": "Perumpamaan tentang berusaha membebaskan tawanan",
+   "rev": 1
+  },
+  "haja": {
+   "t": "Membantu Keperluan Saudara",
+   "d": "Perumpamaan tentang membantu keperluan orang lain",
+   "rev": 1
+  },
+  "surur": {
+   "t": "Kegembiraan yang Kamu Berikan",
+   "d": "Perumpamaan tentang membahagiakan sesama muslim",
+   "rev": 1
+  }
+ }
+}

@@ -2011,6 +2011,8 @@ body.glow-off .dfpic{animation:none}
 /* حصّةٌ ثابتةٌ لكلٍّ منهما، فلا يتراقص الإطارُ بين صفحةٍ وصفحة تبعاً لطول
    النصّ: الصورةُ تأخذ ما بقي، والنصُّ قدرٌ معلومٌ يُمرَّر في صندوقه إن طال */
 #scr-story .stimgbox{flex:0 0 auto;aspect-ratio:4/3;max-height:46%;margin-bottom:0}
+/* آيةٌ في قصّةٍ مترجمة: بخطّ المصحف ومن اليمين وسط نصٍّ بلغةٍ أخرى */
+.sttext .stay{font-family:"Amiri Quran","Traditional Arabic",serif;font-weight:400;font-size:1.08em;unicode-bidi:isolate}
 #scr-story .sttext{flex:1 1 auto;min-height:0;
   overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 #scr-story .stload,#scr-story .gmnote{flex:1 1 auto;display:flex;align-items:center;justify-content:center;margin:0}
@@ -16453,7 +16455,30 @@ function stIdxLoad(){
       if(!j || !j.stories || !j.stories.length) throw new Error('فارغ');
       SIDX=j; save('nur_stidx', j);
       return j;
-    })['catch'](function(){ return SIDX; });
+    })['catch'](function(){ return SIDX; })
+    .then(function(j){ return stLocLoad().then(function(){ stLocApply(); return SIDX || j; }); });
+}
+/* ===== القصصُ بلغة الواجهة =====
+   stories/<لغة>/index.json عناوينُها ووصفُها، وstories/<لغة>/s/<id>.json نصوصُ صفحاتها
+   (الصورُ مشتركة). ولا تُعرض ترجمةٌ إلّا إن كانت لمراجعة القصّة نفسِها (rev): قصّةٌ
+   حُدّثت بعد ترجمتها تُقرأ بالعربيّة حتى تُترجم ثانيةً، فلا يُخالف نصٌّ قديمٌ صوراً جديدة.
+   والآياتُ ﴿…﴾ في النصّ المترجم عربيّةٌ كما هي. */
+var STLOC=null;
+function stLocCode(){ return (window.NUR_I18N && NUR_I18N.on) ? NUR_I18N.code : ''; }
+function stLocLoad(){
+  var c=stLocCode(); if(!c) return Promise.resolve(null);
+  if(!STLOC){ var k=load('nur_stloc_'+c,null); if(k && k.stories) STLOC=k; }
+  return stFetch(stUrl(c+'/index.json')).then(function(r){ return r.json(); })
+    .then(function(j){ if(j && j.stories){ STLOC=j; save('nur_stloc_'+c, j); } return STLOC; })
+    ['catch'](function(){ return STLOC; });
+}
+/* يُكتب العنوانُ المترجم فوق العربيّ في الذاكرة وحدها (المخزَّنُ يبقى عربيّاً) */
+function stLocApply(){
+  if(!SIDX || !SIDX.stories || !STLOC || !STLOC.stories) return;
+  SIDX.stories.forEach(function(x){
+    var t=STLOC.stories[x.id];
+    if(t && (t.rev|0||1)===stRev(x)){ x.t=t.t||x.t; x.d=t.d||x.d; x.loc=1; } else x.loc=0;
+  });
 }
 function stList(){ return (SIDX && SIDX.stories) ? SIDX.stories : []; }
 function stMeta(id){ var m=null; stList().forEach(function(x){ if(x.id===id) m=x; }); return m; }
@@ -16569,16 +16594,32 @@ function storyOpen(id){
   $('stDots').innerHTML='';
   $('stPrev').disabled=true; $('stNext').disabled=true;
   show('scr-story');
-  stJson(stAt(meta.file || ('s/'+id+'.json'), rv)).then(function(j){
+  var lc=meta.loc ? stLocCode() : '';
+  Promise.all([
+    stJson(stAt(meta.file || ('s/'+id+'.json'), rv)),
+    lc ? stJson(stAt(lc+'/s/'+id+'.json', rv))['catch'](function(){ return null; }) : null
+  ]).then(function(r){
+    var j=r[0], L=r[1];
     var pg=(j && j.pages) || [];
     if(!pg.length) throw new Error('فارغة');
-    STORY={ id:id, meta:meta, pages:pg };
+    /* الترجمةُ نصوصٌ بعدد الصفحات: تُوضع مكانَ العربيّ، والصورُ كما هي */
+    var loc=!!(L && L.pages && L.pages.length===pg.length);
+    if(loc) pg=pg.map(function(p,i){ var q={}; for(var k in p) q[k]=p[k]; q.x=L.pages[i]; return q; });
+    STORY={ id:id, meta:meta, pages:pg, loc:loc };
     STORY_I=0;                      /* القصّةُ تُفتح من أوّلها دائماً، كالكتاب يُعاد */
     storyDraw();
   })['catch'](function(){
     $('stPage').innerHTML='<p class="gmnote">تعذّر فتحُ القصّة الآن 🌧️<br>'+
       'تحتاج اتّصالاً بالإنترنت أوّلَ مرّةٍ فقط — ثمّ تبقى معك</p>';
   });
+}
+/* نصُّ الصفحة: العربيُّ في واجهةٍ من اليسار يبقى من اليمين، والآيةُ ﴿…﴾ في نصٍّ مترجَمٍ
+   تُعزل باتّجاهها فلا تتبعثر كلماتُها بين كلماتٍ لاتينيّة */
+function stTextHTML(x){
+  var ar=!(STORY && STORY.loc);
+  var h=esc(x);
+  if(!ar) h=h.replace(/﴿[^﴾]*﴾|«[؀-ۿ\s]+»/g, function(m){ if(m[0]=='«' && (m.match(/[ً-ْ]/g)||[]).length<6) return m; return '<bdi dir="rtl" lang="ar" class="stay">'+m+'</bdi>'; });
+  return '<div class="sttext"'+(ar && stLocCode() ? ' dir="rtl" lang="ar" translate="no"' : '')+'>'+h+'</div>';
 }
 function storyDraw(){
   if(!STORY) return;
@@ -16587,7 +16628,7 @@ function storyDraw(){
   $('stPage').innerHTML=
     (p.img ? '<div class="stimgbox" id="stImgBox"><img id="stImgEl" alt="">'+
              '<button type="button" class="stzoomb" id="stZoomB" aria-label="كبِّر الصورة">🔍</button></div>' : '')+
-    '<div class="sttext">'+esc(p.x||'')+'</div>';
+    stTextHTML(p.x||'');
   /* نافذةُ ٤:٣ من الصورة الواسعة: وسطاً إلّا أن تذكر الصفحةُ موضعاً */
   var ie=$('stImgEl');
   if(ie) ie.style.objectPosition=(p.pos||'50%')+' 50%';
