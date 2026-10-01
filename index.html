@@ -34,7 +34,10 @@
     ur:{n:'اردو',     dir:'rtl', ready:true, tr:true,
         trSrc:'ترجمہ: مولانا محمد جوناگڑھی — مرکز رواد الترجمہ کی نگرانی میں، QuranEnc.com (نسخہ 1.1.3)'},
     ps:{n:'پښتو',     dir:'rtl', ready:true, tr:true,
-        trSrc:'ژباړه: د رواد د ژباړې مرکز ټیم، د الربوه د دعوت ټولنې او IslamHouse.com په همکارۍ — QuranEnc.com (نسخه 1.0.1)'}
+        trSrc:'ژباړه: د رواد د ژباړې مرکز ټیم، د الربوه د دعوت ټولنې او IslamHouse.com په همکارۍ — QuranEnc.com (نسخه 1.0.1)'},
+    /* لغاتُ اليسار: الواجهةُ تنقلب، والقرآنُ يبقى من اليمين (انظر [dir=ltr] في الأنماط) */
+    en:{n:'English',  dir:'ltr', ready:true, tr:true,
+        trSrc:'Translation: Rowwad Translation Center, with Rabwah Da‘wah Association and IslamHouse.com — QuranEnc.com (v1.0.19)'}
   };
   var code='ar', q=/[?&#]lang=([a-z]{2})\b/.exec(location.search+location.hash);
   try{
@@ -69,16 +72,33 @@
       if(!ss.length || D[k2]==null) return null;
       r=D[k2];
     }
-    return r.replace(/\{(\d+)\}/g, function(m,i){ return ns[+i]!=null ? ns[+i] : m; })
-            .replace(/\{s(\d+)\}/g, function(m,i){ return ss[i-1]!=null ? ss[i-1] : m; });
+    return r.replace(/\{(\d+)\}/g, function(m,i){ return ns[+i]!=null ? digits(ns[+i]) : m; })
+            .replace(/\{s(\d+)\}/g, function(m,i){ return ss[i-1]!=null ? sname(ss[i-1]) : m; });
+  }
+  /* اسمُ السورة في لغات اليسار بحروفها اللاتينيّة (Al-Fatihah) من SURAHS — ومن لا يقرأ
+     العربيّة لا يقرأ «الفاتحة». وفي لغات اليمين يبقى عربيّاً. والمصحفُ لا يُمسّ */
+  /* لغاتُ اليسار تكتب 0-9: «٣ مرّات» ← «3 times» */
+  function digits(x){ return LTR ? String(x).replace(/[\u0660-\u0669]/g, function(c){ return c.charCodeAt(0)-0x660; }) : x; }
+  var SEN=null;
+  function sname(n){
+    if(!LTR) return n;
+    if(!SEN){
+      if(!window.SURAHS) return n;          /* قبل تحميل البيانات: لا يُحفظ فارغاً */
+      SEN={}; SURAHS.forEach(function(x){ if(x.en) SEN[x.name]=x.en; });
+    }
+    return SEN[n] || n;
   }
   /* الرمزُ في أوّل النصّ وآخره («⚙️ الإعدادات») لا يُترجم: يُفصل ويُعاد كما هو */
   function look(s){
     var r=byNum(s); if(r!=null) return r;
+    if(LTR && sname(s)!==s) return sname(s);
     var m=s.match(/^([^؀-ۿ]*)([\s\S]*?[؀-ۿ])([^؀-ۿ]*)$/);
     if(!m || (!m[1] && !m[3])) return null;
-    r=byNum(m[2]); return r==null ? null : m[1]+r+m[3];
+    r=byNum(m[2]); return r==null ? null : flip(m[1])+r+flip(m[3]);
   }
+  /* لغاتُ اليسار: سهمٌ في أوّل النصّ وآخره ينعكس («⬅️ التالي» ← «Next ➡️» جهةً) */
+  var LTR=LANGS[code].dir==='ltr', AMAP={'⬅':'➡','➡':'⬅','←':'→','→':'←','◀':'▶','▶':'◀','‹':'›','›':'‹','❮':'❯','❯':'❮','«':'“','»':'”'};
+  function flip(x){ return LTR && x ? x.replace(/[⬅➡←→◀▶‹›❮❯«»]/g, function(c){ return AMAP[c]; }) : x; }
   /* سطرٌ من أجزاءٍ بينها «•» («خلال عشرة أشهر • 300 يوماً»): يُترجم كلُّ جزءٍ وحدَه */
   function lookParts(s){
     var r=look(s); if(r!=null) return r;
@@ -100,7 +120,7 @@
     return hit ? ps.join(' • ') : null;
   }
   function quranic(el){
-    try{ return /Amiri Quran|UthmanicHafs/.test(getComputedStyle(el).fontFamily.split(',')[0]); }
+    try{ return /Amiri Quran|UthmanicHafs|SuraNames/.test(getComputedStyle(el).fontFamily.split(",")[0]); }
     catch(e){ return false; }
   }
   /* ما تُرجم إلى لغةٍ بحرفٍ عربيّ (الأرديّة، البشتو) يُمرّ عليه ثانيةً فلا يُعدّ ناقصاً:
@@ -155,7 +175,7 @@
   /* للشيفرة: نصٌّ يُبنى قبل أن يُعرض (بمتغيّرات)، أو لا يمرّ بالصفحة أصلاً */
   window.tx=function(s, v){
     var k=I.on ? norm(s) : s, r=I.on && D[k]!=null ? D[k] : s;
-    if(v) r=r.replace(/\{(\w+)\}/g, function(m,k){ return v[k]!=null ? v[k] : m; });
+    if(v) r=r.replace(/\{(\w+)\}/g, function(m,k){ return v[k]!=null ? (I.on ? digits(sname(String(v[k]))) : v[k]) : m; });
     return r;
   };
   I.add=function(c, map){ if(c!==code) return; for(var k in map){ D[norm(k)]=map[k]; DONE[norm(map[k])]=1; } };
@@ -1065,6 +1085,16 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 .tabin-prev{animation:tabInPrev .22s ease-out}
 @keyframes tabInNext{from{opacity:.15;transform:translateX(-32px)}to{opacity:1;transform:none}}
 @keyframes tabInPrev{from{opacity:.15;transform:translateX(32px)}to{opacity:1;transform:none}}
+/* ===== لغاتٌ من اليسار (html dir=ltr): الواجهةُ تنقلب، والقرآنُ من اليمين دائماً =====
+   التخطيطُ بخصائصَ منطقيّة (inset-inline، margin-inline) فينقلب وحدَه؛ وهنا ما لا ينقلب:
+   الآياتُ وكلماتُها في الدروس والألعاب، ووجهُ المصحف، وما خطُّه خطُّ المصحف */
+[dir=ltr] .tabin-next{animation-name:tabInPrev}
+[dir=ltr] .tabin-prev{animation-name:tabInNext}
+[dir=ltr] :is(.ayah,.ayahbox,.chip,.chip2,.opt,.acard,.acards,.ansline,.anslines,#playArea .chips,
+  .runline,.runayah,.shelf,.bxlines,.diffline,#reciteInput,.basmala,.mfq,.mfprow .ay,.mfmrow .w,
+  .mbas,.adab,.onbsample,.mfbody,.mushaf){direction:rtl}
+/* أسهمٌ في عناصرَ مستقلّةٍ بلا نصّ: سهمُ البطاقات، وسهما القصّة، وزرُّ الرجوع منها */
+[dir=ltr] :is(.gcgo,.sar,#btnStoryBack){display:inline-block;transform:scaleX(-1)}
 .onbtop{display:flex;align-items:center;gap:10px;margin:12px 0 14px}
 .onbbar{flex:1;height:14px;background:#0a2d5e;border:2px solid var(--pb);border-radius:99px;overflow:hidden}
 .onbbar i{display:block;height:100%;background:linear-gradient(90deg,#37c2f0,#7ef0d5);
@@ -3693,7 +3723,7 @@ function repRow(k,v){
 function repBar(pct){
   pct=Math.max(0,Math.min(100,Math.round(pct)));
   return '<div class="repbar"><i style="width:'+pct+'%"></i></div>'+
-         '<div style="text-align:left;font-size:12px;font-weight:800;color:#8a6100">'+arNum(pct)+'٪</div>';
+         '<div style="text-align:end;font-size:12px;font-weight:800;color:#8a6100">'+arNum(pct)+'٪</div>';
 }
 function reportHTML(){
   var p=curP(), h='', nm=(profile.name||'').trim()||'صديقي';
@@ -8942,7 +8972,7 @@ function mfMeanRender(after){
       var t=tafOf(p.s.n,a+1), g=byAyah[p.s.n+':'+(a+1)]||[];
       if(!t && !g.length) continue;
       h+='<div class="mfmayah">الآية '+arNum(a+1)+'</div>';
-      if(t) h+='<div class="mftaf"'+(TR?' lang="'+TR+'" translate="no"':'')+'>'+esc(t).replace(/\n+/g,'<br>')+'</div>';
+      if(t) h+='<div class="mftaf"'+(TR?' lang="'+TR+'" dir="'+NUR_I18N.langs[TR].dir+'" translate="no"':'')+'>'+esc(t).replace(/\n+/g,'<br>')+'</div>';
       g.forEach(function(x){ h+='<div class="mfmrow"><span class="w">﴿'+esc(x[2])+'﴾</span>: '+esc(x[3])+'</div>'; });
     }
   });
@@ -10836,7 +10866,7 @@ function roundAyat(r){
   for(i=r.from;i<r.to;i++) idx.push(i);
   var order=shuffle(idx.slice()), placed=0;
   $('playArea').innerHTML=
-    '<div class="hintline">رتّب آيات المقطع ('+arNum(r.from+1)+' – '+arNum(r.to)+') من '+esc(s.name)+'</div>'+
+    '<div class="hintline">'+tx('رتّب آيات المقطع ({a} – {b}) من {s}',{a:arNum(r.from+1),b:arNum(r.to),s:esc(s.name)})+'</div>'+
     '<div class="acards" id="acards">'+order.map(function(ai){
       var t=stripMarks(ayahText(s,ai));
       if(t.length>110) t=t.slice(0,110)+'…';
@@ -12089,7 +12119,7 @@ function wirdSetupBanner(){
   if(REV.on!=null || onPlan()) return '';
   var n=0; try{ n=wirdPages().length; }catch(e){}
   if(!n) return '';
-  var h='<div class="revsum" style="margin:0 0 16px;text-align:right">'+
+  var h='<div class="revsum" style="margin:0 0 16px;text-align:start">'+
     '<div style="font-size:15px">🎉 <b>هنيئاً لك ما تحفظ من كتاب الله</b></div>'+
     '<div style="font-size:17px;font-weight:900;margin-top:6px">'+
       'عندك '+arNum(n)+' وجهاً محفوظاً — أفنضع لها ورداً يوميّاً يثبّتها؟</div>'+
@@ -13109,7 +13139,7 @@ function wirdBody(){
        '<span class="ot"><b>من جهة البقرة</b><i>على ترتيب المصحف</i></span></button>'+
      '</div>';
   var c=wirdCalc(revSize('wird'));
-  h+='<div class="revsum" style="margin:16px 0 0;text-align:right">'+
+  h+='<div class="revsum" style="margin:16px 0 0;text-align:start">'+
      '<div style="font-size:15px">🧮 <b>حسبة ورد مراجعتك</b></div>'+
      '<div style="font-size:17px;font-weight:900;margin-top:6px">'+
        arNum(c.pages)+' وجهاً محفوظاً • دورةٌ في '+arNum(c.days)+' يوماً</div>'+
@@ -15039,7 +15069,7 @@ function renderHome(){
   }catch(e){}
   try{ pwaSync(); }catch(e){}
   var n=(profile.name||'').trim();
-  $('homeHi').innerHTML = n ? ('السلام عليكم يا <b>'+esc(n)+'</b> 👋') : 'السلام عليكم 👋';
+  $('homeHi').innerHTML = n ? tx('السلام عليكم يا <b>{n}</b> 👋',{n:esc(n)}) : 'السلام عليكم 👋';
   /* النبضُ على ما بقي من شطرَي اليوم، فلا يبرق زرٌّ قُضي أمرُه */
   try{
     var pH=goalHifzMet(), pR=goalRevMet();
@@ -15617,6 +15647,8 @@ $('btnRevQuit').onclick=function(){ startRevPlan(revBackTab()); };   /* إلى �
    مكانَه — ولا يُحرَّك إلا transform وopacity فلا يُعاد تخطيطُ الصفحة.
    والنفضةُ السريعةُ تكفي ولو قصُرت مسافتُها. */
 /* opt: أزرارُ شريطٍ غير .onbtab — { tab:محدِّدُها، on:صنفُ المختار } */
+/* التبويبُ التالي في جهة القراءة: يُسحب إلى اليمين في العربيّة، وإلى اليسار في لغات اليسار */
+var SWIPE_SGN=document.documentElement.dir==='ltr' ? -1 : 1;
 function tabSwipe(scrId, barId, boxOf, opt){
   var scr=$(scrId), doc=document, g=null;
   if(!scr) return;
@@ -15668,7 +15700,7 @@ function tabSwipe(scrId, barId, boxOf, opt){
     if(now>g.pt) g.vx=(t.clientX-g.px)/(now-g.pt);
     g.px=t.clientX; g.pt=now; g.dx=dx;
     var box=g.box; if(!box) return;
-    var j=g.T.cur+(dx>0?1:-1), edge=(g.T.cur<0 || j<0 || j>=g.T.bs.length);
+    var j=g.T.cur+(dx*SWIPE_SGN>0?1:-1), edge=(g.T.cur<0 || j<0 || j>=g.T.bs.length);
     var k=Math.min(Math.abs(dx)/(box.offsetWidth||360), 1);
     box.style.transition='none';
     /* لا تبويبَ في تلك الجهة: يلين قليلاً ولا يخفت */
@@ -15681,7 +15713,7 @@ function tabSwipe(scrId, barId, boxOf, opt){
     if(!G || G.lock!==1) return;
     var dx=G.dx, vx=(Date.now()-G.pt>90) ? 0 : G.vx;      /* وقف ثمّ رفع: لا نفضة */
     var fast=Math.abs(vx)>0.45 && Math.abs(dx)>25 && (vx>0)===(dx>0);
-    var nx=dx>0, j=G.T.cur+(nx?1:-1);
+    var nx=dx*SWIPE_SGN>0, j=G.T.cur+(nx?1:-1);
     if(!(Math.abs(dx)>70 || fast) || G.T.cur<0 || j<0 || j>=G.T.bs.length){
       settle(G.box, true); return;
     }
