@@ -1,5 +1,5 @@
 {
-  "v": 84,
+  "v": 85,
   "stories": [
     {
       "id": "kahf",
@@ -622,6 +622,16 @@
       "cover": "covers/haja.webp",
       "cw": "covers/w/haja.webp",
       "file": "s/haja.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "surur",
+      "t": "سرورٌ تُدخله",
+      "d": "مَثَلٌ في إدخال السرور على المسلم",
+      "ic": "🎁",
+      "cover": "covers/surur.webp",
+      "cw": "covers/w/surur.webp",
+      "file": "s/surur.json",
       "added": "2026-10-01"
     }
   ]
