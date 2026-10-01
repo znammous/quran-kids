@@ -1,0 +1,305 @@
+{
+ "lang": "sw",
+ "stories": {
+  "kahf": {
+   "t": "Watu wa Pangoni",
+   "d": "Vijana walioamini, Mola wao akawaongezea uongofu",
+   "rev": 4
+  },
+  "qarya": {
+   "t": "Mtu Aliyepita Kijijini",
+   "d": "Alikufa miaka mia, kisha Allah akamfufua",
+   "rev": 1
+  },
+  "qarun": {
+   "t": "Qarun",
+   "d": "Hazina ambazo Allah alizididimiza ardhini",
+   "rev": 1
+  },
+  "qatil": {
+   "t": "Muuaji wa Watu Mia",
+   "d": "Aliua watu mia, kisha akasamehewa",
+   "rev": 2
+  },
+  "jannatayn": {
+   "t": "Mwenye Bustani Mbili",
+   "d": "Bustani aliyosema haitaangamia, ikaangamia",
+   "rev": 1
+  },
+  "shiraa": {
+   "t": "Tanga",
+   "d": "Mfano kuhusu kugombana",
+   "rev": 3
+  },
+  "shah": {
+   "t": "Mbuzi Aliyepotea",
+   "d": "Mfano kuhusu kuhakikisha habari",
+   "rev": 2
+  },
+  "jidar": {
+   "t": "Nyuma ya Ukuta",
+   "d": "Mfano kuhusu kupeleleza",
+   "rev": 3
+  },
+  "kalima": {
+   "t": "Neno Linatembea",
+   "d": "Mfano kuhusu maneno mazuri",
+   "rev": 2
+  },
+  "jabal": {
+   "t": "Mlima Haugeuki",
+   "d": "Mfano kuhusu kiburi",
+   "rev": 3
+  },
+  "hajar": {
+   "t": "Jiwe la Kwanza",
+   "d": "Mfano kuhusu kusaidiana",
+   "rev": 2
+  },
+  "tamra": {
+   "t": "Tende ya Ziada",
+   "d": "Mfano kuhusu mizani",
+   "rev": 2
+  },
+  "fasila": {
+   "t": "Mche wa Mtende",
+   "d": "Mfano kuhusu kushukuru",
+   "rev": 2
+  },
+  "siyaj": {
+   "t": "Uzio",
+   "d": "Mfano kuhusu kumtendea wema aliyekukosea",
+   "rev": 2
+  },
+  "fakhkhar": {
+   "t": "Mlangoni kwa Mfinyanzi",
+   "d": "Mfano kuhusu upole kwa anayeomba",
+   "rev": 4
+  },
+  "ghina": {
+   "t": "Ghina",
+   "d": "Mfano kuhusu mkono usioomba",
+   "rev": 5
+  },
+  "ruqayya": {
+   "t": "Neno la Heshima",
+   "d": "Mfano kuhusu kumtendea wema mama",
+   "rev": 1
+  },
+  "shatla": {
+   "t": "Safu ya Miche",
+   "d": "Mfano kuhusu “Usikasirike”",
+   "rev": 2
+  },
+  "salam": {
+   "t": "Aliyeanza",
+   "d": "Mfano kuhusu kuacha kususana",
+   "rev": 1
+  },
+  "ukhtan": {
+   "t": "Dada Wawili",
+   "d": "Mfano kuhusu udugu",
+   "rev": 2
+  },
+  "hilal": {
+   "t": "Waliyemcheka",
+   "d": "Mfano kuhusu kuacha dhihaka",
+   "rev": 3
+  },
+  "sahrij": {
+   "t": "Maji ya Hodhi",
+   "d": "Mfano kuhusu kuacha israfu",
+   "rev": 4
+  },
+  "sibaq": {
+   "t": "Mwamuzi wa Mbio",
+   "d": "Mfano kuhusu uadilifu hata kwa usiyempenda",
+   "rev": 1
+  },
+  "qindil": {
+   "t": "Taa Iliyovunjika",
+   "d": "Mfano kuhusu ukweli",
+   "rev": 2
+  },
+  "tayyara": {
+   "t": "Tiara ya Karatasi",
+   "d": "Mfano kuhusu kuacha husuda",
+   "rev": 2
+  },
+  "kalb": {
+   "t": "Mbwa Mwenye Kiu",
+   "d": "Mfano kuhusu huruma kwa wanyama",
+   "rev": 2
+  },
+  "qafila": {
+   "t": "Msafara",
+   "d": "Mfano kuhusu kushauriana",
+   "rev": 3
+  },
+  "surra": {
+   "t": "Mfuko Uliotiwa Muhuri",
+   "d": "Mfano kuhusu amana",
+   "rev": 2
+  },
+  "raghif": {
+   "t": "Mkate wa Mwisho",
+   "d": "Mfano kuhusu kumtanguliza mwenzako",
+   "rev": 3
+  },
+  "dayf": {
+   "t": "Mgeni Katika Mvua",
+   "d": "Mfano kuhusu kumkirimu mgeni",
+   "rev": 2
+  },
+  "zeer": {
+   "t": "Mtungi wa Wapita Njia",
+   "d": "Mfano kuhusu haki ya msafiri",
+   "rev": 2
+  },
+  "bab": {
+   "t": "Mlango Uliofungwa",
+   "d": "Mfano kuhusu kuomba ruhusa",
+   "rev": 1
+  },
+  "janna": {
+   "t": "Wenye Bustani",
+   "d": "Ndugu waliomnyima maskini haki yake",
+   "rev": 1
+  },
+  "sabt": {
+   "t": "Watu wa Sabato",
+   "d": "Kijiji kilichofanya hila juu ya amri ya Allah",
+   "rev": 2
+  },
+  "namla": {
+   "t": "Chungu",
+   "d": "Neno lililookoa umati",
+   "rev": 1
+  },
+  "yasin": {
+   "t": "Mtu Aliyekuja Akikimbia",
+   "d": "Neno la haki katika mji uliokadhibisha",
+   "rev": 2
+  },
+  "rabbayani": {
+   "t": "Kama Walivyonilea Utotoni",
+   "d": "Mfano kuhusu kumtendea wema babu",
+   "rev": 2
+  },
+  "tamr": {
+   "t": "Tende Zilizopangwa",
+   "d": "Mfano kuhusu kuacha udanganyifu",
+   "rev": 2
+  },
+  "kabir": {
+   "t": "Mkubwa na Mdogo",
+   "d": "Mfano kuhusu kumhurumia mdogo na kumheshimu mkubwa",
+   "rev": 2
+  },
+  "kalima2": {
+   "t": "Neno Lisilosemwa",
+   "d": "Mfano kuhusu kuuchunga ulimi",
+   "rev": 2
+  },
+  "qalam": {
+   "t": "Kalamu Iliyoazimwa",
+   "d": "Mfano kuhusu kurudisha amana",
+   "rev": 1
+  },
+  "busat": {
+   "t": "Zulia Jekundu",
+   "d": "Mfano kuhusu subira",
+   "rev": 2
+  },
+  "shawk": {
+   "t": "Tawi la Miiba",
+   "d": "Mfano kuhusu kuondoa kero njiani",
+   "rev": 1
+  },
+  "sirr": {
+   "t": "Sadaka ya Siri",
+   "d": "Mfano kuhusu kuficha sadaka",
+   "rev": 2
+  },
+  "baqara": {
+   "t": "Ng'ombe wa Wana wa Israili",
+   "d": "Watu waliouliza maswali mengi wakajitia uzito",
+   "rev": 1
+  },
+  "ibnay": {
+   "t": "Wana Wawili wa Adam",
+   "d": "Husuda ya kwanza duniani, na kunguru anayefundisha",
+   "rev": 1
+  },
+  "faiz": {
+   "t": "Mshindi wa Pili",
+   "d": "Mfano kuhusu kumpendea ndugu yako unachokipenda kwa nafsi yako",
+   "rev": 1
+  },
+  "waqt": {
+   "t": "Wakati Uliopotea",
+   "d": "Mfano kuhusu kutumia wakati vizuri",
+   "rev": 1
+  },
+  "fawq": {
+   "t": "Juu ya Kila Mjuzi",
+   "d": "Mfano kuhusu unyenyekevu katika elimu",
+   "rev": 1
+  },
+  "muhra": {
+   "t": "Farasi Mkaidi",
+   "d": "Mfano kuhusu upole",
+   "rev": 1
+  },
+  "mawid": {
+   "t": "Miadi ya Kisimani",
+   "d": "Mfano kuhusu kutimiza ahadi",
+   "rev": 1
+  },
+  "saa": {
+   "t": "Saa Iliyoharibika",
+   "d": "Mfano kuhusu kufanya kazi kwa ustadi",
+   "rev": 1
+  },
+  "basma": {
+   "t": "Tabasamu Njiani",
+   "d": "Mfano kuhusu uso wa bashasha",
+   "rev": 1
+  },
+  "ghurfa": {
+   "t": "Chumba Kilichopangika",
+   "d": "Mfano kuhusu usafi na mpangilio",
+   "rev": 1
+  },
+  "ard": {
+   "t": "Mizeituni ya Babu Yangu",
+   "d": "Mfano kuhusu kudumu katika ardhi na kuilinda",
+   "rev": 1
+  },
+  "hijra": {
+   "t": "Hijra",
+   "d": "Kutoka Makka hadi Madina, na Allah yu pamoja nao",
+   "rev": 1
+  },
+  "dayn": {
+   "t": "Deni Zito",
+   "d": "Mfano kuhusu kumfanyia wepesi mdaiwa",
+   "rev": 1
+  },
+  "asir": {
+   "t": "Kumkomboa Mateka",
+   "d": "Mfano kuhusu kujitahidi kumwachilia mateka",
+   "rev": 1
+  },
+  "haja": {
+   "t": "Katika Haja ya Ndugu Yake",
+   "d": "Mfano kuhusu kuwatimizia watu mahitaji yao",
+   "rev": 1
+  },
+  "surur": {
+   "t": "Furaha Unayompa Mwenzako",
+   "d": "Mfano kuhusu kumfurahisha Muislamu",
+   "rev": 1
+  }
+ }
+}
