@@ -4,7 +4,7 @@
              node scripts/i18n-check.mjs --accept   يضمّ ما ظهر جديداً إلى قائمة التجاهل
                                                     (بعد مراجعته: نصٌّ ليس للواجهة، أو جزءُ جملة)
 
-   يفحص خمسة أشياء:
+   يفحص:
    ١) نصوصٌ عربيّةٌ في الشيفرة (نصوصُ الصفحة الثابتة، والنصوصُ بين علامات التنصيص
       وما بين وسوم HTML فيها) ليست في قاموس الأرديّة ولا في قائمة التجاهل — أي جديدةٌ
       أو عُدّلت بعد آخر ترجمة. هذا أهمّ ما فيه: تعديلُ نصِّ زرٍّ عربيٍّ يُسقط ترجمتَه بصمت.
@@ -12,6 +12,8 @@
    ٣) قوالبُ tx('…') في الشيفرة لها مدخلٌ في كلّ قاموس.
    ٤) مفاتيحُ في القاموس لم يعد لنصّها أثرٌ في الشيفرة (يتيمة) — تُحذف أو تُحدَّث.
    ٥) كلُّ لغةٍ غير الأرديّة: ما في قاموس الأرديّة (المرجع) ولم يُترجَم فيها بعد.
+   ٦) لغاتُ اليسار: الأسماءُ اللاتينيّة وقوالبُ السور.
+   ٧) القصص: كلُّ قصّةٍ مترجمةٌ بمراجعتها وعددِ صفحاتها وآياتِها.
 
    الفحصُ ثابتٌ لا يشغّل الصفحة، فالجملُ التي تُركَّب من أجزاءٍ تظهر أجزاءً.
    ولما لا يُرى إلا بالتشغيل: scripts/i18n-harvest.mjs */
@@ -184,6 +186,28 @@ if (dicts.en) {
     const miss = extra.filter(k => dicts[c][k] == null);
     head(`٦) ${c}: مفاتيحُ لغات اليسار الناقصة (${miss.length})`);
     if (miss.length) { bad += miss.length; list(miss); }
+  }
+}
+
+/* ---------- ٧) القصص: stories/<رمز>/ لكلّ قصّةٍ في الفهرس، بمراجعتها (rev) وعددِ صفحاتها
+   وآياتِها ﴿…﴾ حرفاً بحرف. قصّةٌ عُدّلت ورُفع rev تُعرض بالعربيّة حتى تُترجم ثانيةً ---------- */
+if (existsSync('stories/index.json')) {
+  const SI = JSON.parse(readFileSync('stories/index.json', 'utf8')).stories;
+  const pages = f => (JSON.parse(readFileSync(f, 'utf8')).pages || []).map(p => typeof p === 'string' ? p : (p.x || ''));
+  const AYA = /﴿[^﴾]*﴾/g;
+  const SL = readdirSync('stories').filter(c => /^[a-z]{2}$/.test(c) && existsSync(`stories/${c}/index.json`));
+  for (const c of SL) {
+    const L = JSON.parse(readFileSync(`stories/${c}/index.json`, 'utf8')).stories || {}, miss = [];
+    for (const x of SI) {
+      const t = L[x.id], f = `stories/${c}/s/${x.id}.json`;
+      if (!t || !existsSync(f)) { miss.push(`${x.id}: لم تُترجم`); continue; }
+      if ((t.rev | 0 || 1) !== (x.rev | 0 || 1)) { miss.push(`${x.id}: عُدّلت بعد ترجمتها (rev ${t.rev | 0 || 1} ← ${x.rev | 0 || 1})`); continue; }
+      const a = pages('stories/' + (x.file || `s/${x.id}.json`)), b = pages(f);
+      if (a.length !== b.length) { miss.push(`${x.id}: عددُ الصفحات ${b.length} لا ${a.length}`); continue; }
+      a.forEach((p, i) => { if (String(p.match(AYA)) !== String(b[i].match(AYA))) miss.push(`${x.id} ص${i + 1}: الآياتُ لا تطابق الأصل`); });
+    }
+    head(`٧) ${c}: القصص (${miss.length})`);
+    miss.length ? (bad += miss.length, list(miss)) : console.log('   لا شيء ✓');
   }
 }
 
