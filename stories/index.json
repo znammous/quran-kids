@@ -1,5 +1,5 @@
 {
-  "v": 83,
+  "v": 84,
   "stories": [
     {
       "id": "kahf",
@@ -612,6 +612,16 @@
       "cover": "covers/asir.webp",
       "cw": "covers/w/asir.webp",
       "file": "s/asir.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "haja",
+      "t": "في حاجة أخيه",
+      "d": "مَثَلٌ في قضاء حاجات الناس",
+      "ic": "🧺",
+      "cover": "covers/haja.webp",
+      "cw": "covers/w/haja.webp",
+      "file": "s/haja.json",
       "added": "2026-10-01"
     }
   ]
