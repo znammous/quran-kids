@@ -1645,6 +1645,7 @@ button.shelf:active{transform:translateY(2px)}
 .pchip{display:flex;align-items:center;gap:6px;border:3px solid #e5ecf6;background:#fff;border-radius:14px;
   padding:6px 10px;font-family:inherit;font-weight:800;color:#3d5b7a;font-size:15px;cursor:pointer}
 .pchip.sel{border-color:var(--g2);background:#e2f1ff;color:var(--g1)}
+.pchip.addp{justify-content:center;min-width:44px;padding:6px}
 /* شارةُ السلسلة موضعُها هدفُ اليوم وحدَه: في الترحيب زحمةٌ لا تُفيد */
 .goalbox .tick.fire{background:#fff1e3;border-color:#f97f31;color:#b8440a}
 .pchip .ph{width:28px;height:34px;border-width:2px;border-radius:7px;margin:0}
@@ -7331,7 +7332,10 @@ function renderPlayers(){
     return '<button class="pchip'+(i===DB.cur?' sel':'')+'" data-p="'+i+'">'+
       esc(p.name||('مستخدم '+arNum(i+1)))+'</button>';
   }).join('');
-  h+='<button class="pchip" data-p="new">➕ مستخدم جديد</button>';
+  /* مستخدمٌ واحدٌ: الزرُّ بكلمته يدعو إلى الإضافة؛ وإن تعدّدوا اكتفى بأيقونته فلا يزاحمهم */
+  h+= DB.players.length>1
+    ? '<button class="pchip addp" data-p="new" title="مستخدم جديد" aria-label="مستخدم جديد">➕</button>'
+    : '<button class="pchip" data-p="new">➕ مستخدم جديد</button>';
   $('players').innerHTML=h;
   applyTheme();                                  /* الأيقونة تصف الوضع فور رسمها */
   var cs=$('players').querySelectorAll('[data-p]');
