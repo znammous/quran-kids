@@ -1,0 +1,305 @@
+{
+ "lang": "fr",
+ "stories": {
+  "kahf": {
+   "t": "Les gens de la Caverne",
+   "d": "Des jeunes qui crurent en leur Seigneur, et Il augmenta leur guidée",
+   "rev": 4
+  },
+  "qarya": {
+   "t": "L'homme qui passa près d'un village",
+   "d": "Il mourut cent ans, puis Allah le ramena à la vie",
+   "rev": 1
+  },
+  "qarun": {
+   "t": "Qaroun",
+   "d": "Des trésors qu'Allah fit engloutir par la terre",
+   "rev": 1
+  },
+  "qatil": {
+   "t": "L'homme aux cent meurtres",
+   "d": "Il tua cent personnes, puis il fut pardonné",
+   "rev": 2
+  },
+  "jannatayn": {
+   "t": "L'homme aux deux jardins",
+   "d": "Un jardin qu'il croyait éternel, et qui disparut",
+   "rev": 1
+  },
+  "shiraa": {
+   "t": "La voile",
+   "d": "Une parabole sur les disputes",
+   "rev": 3
+  },
+  "shah": {
+   "t": "La brebis égarée",
+   "d": "Une parabole sur la vérification des nouvelles",
+   "rev": 2
+  },
+  "jidar": {
+   "t": "Derrière le mur",
+   "d": "Une parabole sur l'espionnage",
+   "rev": 3
+  },
+  "kalima": {
+   "t": "La parole qui voyage",
+   "d": "Une parabole sur les bonnes paroles",
+   "rev": 2
+  },
+  "jabal": {
+   "t": "La montagne ne se retourne pas",
+   "d": "Une parabole sur l'orgueil",
+   "rev": 3
+  },
+  "hajar": {
+   "t": "La première pierre",
+   "d": "Une parabole sur l'entraide",
+   "rev": 2
+  },
+  "tamra": {
+   "t": "La datte en plus",
+   "d": "Une parabole sur la balance juste",
+   "rev": 2
+  },
+  "fasila": {
+   "t": "La jeune pousse",
+   "d": "Une parabole sur la reconnaissance",
+   "rev": 2
+  },
+  "siyaj": {
+   "t": "La clôture",
+   "d": "Une parabole sur le bien rendu pour le mal",
+   "rev": 2
+  },
+  "fakhkhar": {
+   "t": "À la porte du potier",
+   "d": "Une parabole sur la douceur envers celui qui demande",
+   "rev": 4
+  },
+  "ghina": {
+   "t": "Ghina",
+   "d": "Une parabole sur la main qui ne demande pas",
+   "rev": 5
+  },
+  "ruqayya": {
+   "t": "Une parole noble",
+   "d": "Une parabole sur la bonté envers sa mère",
+   "rev": 1
+  },
+  "shatla": {
+   "t": "La rangée de jeunes plants",
+   "d": "Une parabole sur « Ne te mets pas en colère »",
+   "rev": 2
+  },
+  "salam": {
+   "t": "Celui qui fait le premier pas",
+   "d": "Une parabole sur la fin de la bouderie",
+   "rev": 1
+  },
+  "ukhtan": {
+   "t": "Deux sœurs",
+   "d": "Une parabole sur la fraternité",
+   "rev": 2
+  },
+  "hilal": {
+   "t": "Celui dont ils se moquaient",
+   "d": "Une parabole contre la moquerie",
+   "rev": 3
+  },
+  "sahrij": {
+   "t": "L'eau de la citerne",
+   "d": "Une parabole contre le gaspillage",
+   "rev": 4
+  },
+  "sibaq": {
+   "t": "L'arbitre de la course",
+   "d": "Une parabole sur la justice, même envers ceux qu'on n'aime pas",
+   "rev": 1
+  },
+  "qindil": {
+   "t": "La lanterne cassée",
+   "d": "Une parabole sur la sincérité",
+   "rev": 2
+  },
+  "tayyara": {
+   "t": "Le cerf-volant",
+   "d": "Une parabole contre la jalousie",
+   "rev": 2
+  },
+  "kalb": {
+   "t": "Le chien assoiffé",
+   "d": "Une parabole sur la bonté envers les animaux",
+   "rev": 2
+  },
+  "qafila": {
+   "t": "La caravane",
+   "d": "Une parabole sur la concertation",
+   "rev": 3
+  },
+  "surra": {
+   "t": "La bourse scellée",
+   "d": "Une parabole sur le dépôt confié",
+   "rev": 2
+  },
+  "raghif": {
+   "t": "La dernière galette",
+   "d": "Une parabole sur le don de soi",
+   "rev": 3
+  },
+  "dayf": {
+   "t": "L'invité sous la pluie",
+   "d": "Une parabole sur l'hospitalité",
+   "rev": 2
+  },
+  "zeer": {
+   "t": "La jarre des voyageurs",
+   "d": "Une parabole sur le droit du voyageur",
+   "rev": 2
+  },
+  "bab": {
+   "t": "La porte fermée",
+   "d": "Une parabole sur la demande de permission",
+   "rev": 1
+  },
+  "janna": {
+   "t": "Les gens du jardin",
+   "d": "Des frères qui privèrent le pauvre de son droit",
+   "rev": 1
+  },
+  "sabt": {
+   "t": "Les gens du sabbat",
+   "d": "Un village qui ruse avec l'ordre d'Allah",
+   "rev": 2
+  },
+  "namla": {
+   "t": "La fourmi",
+   "d": "Une parole qui sauva tout un peuple",
+   "rev": 1
+  },
+  "yasin": {
+   "t": "L'homme qui vint en courant",
+   "d": "Une parole de vérité dans une ville qui refusait de croire",
+   "rev": 2
+  },
+  "rabbayani": {
+   "t": "Comme ils m'ont élevé petit",
+   "d": "Une parabole sur la bonté envers son grand-père",
+   "rev": 2
+  },
+  "tamr": {
+   "t": "Les dattes bien rangées",
+   "d": "Une parabole contre la tromperie",
+   "rev": 2
+  },
+  "kabir": {
+   "t": "Le grand et le petit",
+   "d": "Une parabole sur la tendresse envers les petits et le respect des grands",
+   "rev": 2
+  },
+  "kalima2": {
+   "t": "La parole qui ne fut pas dite",
+   "d": "Une parabole sur le fait de tenir sa langue",
+   "rev": 2
+  },
+  "qalam": {
+   "t": "Le crayon emprunté",
+   "d": "Une parabole sur la restitution de ce qu'on nous confie",
+   "rev": 1
+  },
+  "busat": {
+   "t": "Le tapis rouge",
+   "d": "Une parabole sur la patience",
+   "rev": 2
+  },
+  "shawk": {
+   "t": "La branche épineuse",
+   "d": "Une parabole sur l'enlèvement de ce qui gêne sur le chemin",
+   "rev": 1
+  },
+  "sirr": {
+   "t": "L'aumône secrète",
+   "d": "Une parabole sur l'aumône donnée en cachette",
+   "rev": 2
+  },
+  "baqara": {
+   "t": "La vache des Enfants d'Israël",
+   "d": "Un peuple qui posa trop de questions et se compliqua la vie",
+   "rev": 1
+  },
+  "ibnay": {
+   "t": "Les deux fils d'Adam",
+   "d": "La première jalousie sur terre, et un corbeau qui enseigne",
+   "rev": 1
+  },
+  "faiz": {
+   "t": "Le deuxième gagnant",
+   "d": "Une parabole : aimer pour son frère ce qu'on aime pour soi",
+   "rev": 1
+  },
+  "waqt": {
+   "t": "Le temps perdu",
+   "d": "Une parabole sur le bon usage du temps",
+   "rev": 1
+  },
+  "fawq": {
+   "t": "Au-dessus de tout savant",
+   "d": "Une parabole sur l'humilité dans le savoir",
+   "rev": 1
+  },
+  "muhra": {
+   "t": "La pouliche têtue",
+   "d": "Une parabole sur la douceur",
+   "rev": 1
+  },
+  "mawid": {
+   "t": "Le rendez-vous au puits",
+   "d": "Une parabole sur la promesse tenue",
+   "rev": 1
+  },
+  "saa": {
+   "t": "La montre en panne",
+   "d": "Une parabole sur le travail bien fait",
+   "rev": 1
+  },
+  "basma": {
+   "t": "Un sourire sur le chemin",
+   "d": "Une parabole sur le visage souriant",
+   "rev": 1
+  },
+  "ghurfa": {
+   "t": "La chambre bien rangée",
+   "d": "Une parabole sur la propreté et l'ordre",
+   "rev": 1
+  },
+  "ard": {
+   "t": "Les oliviers de mon grand-père",
+   "d": "Une parabole sur l'attachement à sa terre et sa défense",
+   "rev": 1
+  },
+  "hijra": {
+   "t": "L'Hégire",
+   "d": "De La Mecque à Médine, et Allah était avec eux",
+   "rev": 1
+  },
+  "dayn": {
+   "t": "La lourde dette",
+   "d": "Une parabole sur la facilité accordée à celui qui doit",
+   "rev": 1
+  },
+  "asir": {
+   "t": "La libération du captif",
+   "d": "Une parabole sur l'effort pour libérer le prisonnier",
+   "rev": 1
+  },
+  "haja": {
+   "t": "Au service de son frère",
+   "d": "Une parabole sur l'aide apportée aux autres",
+   "rev": 1
+  },
+  "surur": {
+   "t": "La joie que tu offres",
+   "d": "Une parabole sur la joie qu'on apporte à un musulman",
+   "rev": 1
+  }
+ }
+}
