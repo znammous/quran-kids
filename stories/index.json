@@ -1,5 +1,5 @@
 {
-  "v": 82,
+  "v": 83,
   "stories": [
     {
       "id": "kahf",
@@ -602,6 +602,16 @@
       "cover": "covers/dayn.webp",
       "cw": "covers/w/dayn.webp",
       "file": "s/dayn.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "asir",
+      "t": "فكُّ الأسير",
+      "d": "مَثَلٌ في السعي لفكّ الأسير",
+      "ic": "🕊️",
+      "cover": "covers/asir.webp",
+      "cw": "covers/w/asir.webp",
+      "file": "s/asir.json",
       "added": "2026-10-01"
     }
   ]
