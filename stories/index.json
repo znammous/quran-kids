@@ -1,5 +1,5 @@
 {
-  "v": 80,
+  "v": 81,
   "stories": [
     {
       "id": "kahf",
@@ -582,6 +582,16 @@
       "cover": "covers/ard.webp",
       "cw": "covers/w/ard.webp",
       "file": "s/ard.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "hijra",
+      "t": "الهجرة",
+      "d": "من مكّة إلى المدينة، والله معهما",
+      "ic": "🐪",
+      "cover": "covers/hijra.webp",
+      "cw": "covers/w/hijra.webp",
+      "file": "s/hijra.json",
       "added": "2026-10-01"
     }
   ]
