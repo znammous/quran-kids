@@ -1,0 +1,305 @@
+{
+ "lang": "so",
+ "stories": {
+  "kahf": {
+   "t": "Asxaabul Kahf (Ehelka Godka)",
+   "d": "Dhallinyaro Rabbigood rumeeyay, wuuna u kordhiyay hanuun",
+   "rev": 4
+  },
+  "qarya": {
+   "t": "Ninkii Tuulada Maray",
+   "d": "Boqol sano ayuu dhintay, kaddib Alle ayaa soo nooleeyay",
+   "rev": 1
+  },
+  "qarun": {
+   "t": "Qaaruun",
+   "d": "Khasnado uu Alle dhulka la liqay",
+   "rev": 1
+  },
+  "qatil": {
+   "t": "Ninkii Boqolka Dilay",
+   "d": "Boqol qof ayuu dilay, kaddib waa loo dembi dhaafay",
+   "rev": 2
+  },
+  "jannatayn": {
+   "t": "Ninkii Labada Beerood Lahaa",
+   "d": "Beer uu yidhi ma baabba'do, way baabba'day",
+   "rev": 1
+  },
+  "shiraa": {
+   "t": "Shiraaca Doonta",
+   "d": "Tusaale ku saabsan isku-dirirka",
+   "rev": 3
+  },
+  "shah": {
+   "t": "Riyihii Lumay",
+   "d": "Tusaale ku saabsan hubsiimada",
+   "rev": 2
+  },
+  "jidar": {
+   "t": "Gidaarka Gadaashiisa",
+   "d": "Tusaale ku saabsan basaasidda",
+   "rev": 3
+  },
+  "kalima": {
+   "t": "Erayga Wuu Socdaa",
+   "d": "Tusaale ku saabsan hadalka wanaagsan",
+   "rev": 2
+  },
+  "jabal": {
+   "t": "Buurtu Ma Jeesato",
+   "d": "Tusaale ku saabsan kibirka",
+   "rev": 3
+  },
+  "hajar": {
+   "t": "Dhagixii Ugu Horreeyay",
+   "d": "Tusaale ku saabsan iskaashiga",
+   "rev": 2
+  },
+  "tamra": {
+   "t": "Timirtii Dheeraadka Ahayd",
+   "d": "Tusaale ku saabsan miisaanka",
+   "rev": 2
+  },
+  "fasila": {
+   "t": "Geedka Timirta ee Yar",
+   "d": "Tusaale ku saabsan shukriga",
+   "rev": 2
+  },
+  "siyaj": {
+   "t": "Xayndaabka",
+   "d": "Tusaale ku saabsan u samaynta wanaagga qofka kuu xumeeyay",
+   "rev": 2
+  },
+  "fakhkhar": {
+   "t": "Albaabka Dheryasameeyaha",
+   "d": "Tusaale ku saabsan u naxariisashada qofka wax weydiista",
+   "rev": 4
+  },
+  "ghina": {
+   "t": "Ghina",
+   "d": "Tusaale ku saabsan gacanta aan wax weydiisan",
+   "rev": 5
+  },
+  "ruqayya": {
+   "t": "Hadal Sharaf Leh",
+   "d": "Tusaale ku saabsan u wanaagsanaanta hooyada",
+   "rev": 1
+  },
+  "shatla": {
+   "t": "Safka Geedaha Yaryar",
+   "d": "Tusaale ku saabsan «Ha cadhoon»",
+   "rev": 2
+  },
+  "salam": {
+   "t": "Kii Bilaabay",
+   "d": "Tusaale ku saabsan ka tagidda iska-goynta",
+   "rev": 1
+  },
+  "ukhtan": {
+   "t": "Laba Walaalo Ah",
+   "d": "Tusaale ku saabsan walaalnimada",
+   "rev": 2
+  },
+  "hilal": {
+   "t": "Kii Lagu Qosli Jiray",
+   "d": "Tusaale ku saabsan ka tagidda jees-jeeska",
+   "rev": 3
+  },
+  "sahrij": {
+   "t": "Biyaha Berkedda",
+   "d": "Tusaale ku saabsan ka tagidda isrogrogga (xad-dhaafka)",
+   "rev": 4
+  },
+  "sibaq": {
+   "t": "Garsooraha Tartanka",
+   "d": "Tusaale ku saabsan caddaaladda xitaa qofka aanad jeclayn",
+   "rev": 1
+  },
+  "qindil": {
+   "t": "Laambaddii Jabtay",
+   "d": "Tusaale ku saabsan runta",
+   "rev": 2
+  },
+  "tayyara": {
+   "t": "Kite-ka Warqadda",
+   "d": "Tusaale ku saabsan ka tagidda xasadka",
+   "rev": 2
+  },
+  "kalb": {
+   "t": "Eeygii Harraadsanaa",
+   "d": "Tusaale ku saabsan u naxariisashada xayawaanka",
+   "rev": 2
+  },
+  "qafila": {
+   "t": "Safarka Qaafilada",
+   "d": "Tusaale ku saabsan wada-tashiga",
+   "rev": 3
+  },
+  "surra": {
+   "t": "Kiishkii Shaabadda Lahaa",
+   "d": "Tusaale ku saabsan aaminnimada",
+   "rev": 2
+  },
+  "raghif": {
+   "t": "Rootigii Ugu Dambeeyay",
+   "d": "Tusaale ku saabsan naftaada ka hormarinta kuwa kale",
+   "rev": 3
+  },
+  "dayf": {
+   "t": "Martida Roobka",
+   "d": "Tusaale ku saabsan sharfidda martida",
+   "rev": 2
+  },
+  "zeer": {
+   "t": "Dheriga Biyaha ee Jidka",
+   "d": "Tusaale ku saabsan xaqa musaafirka",
+   "rev": 2
+  },
+  "bab": {
+   "t": "Albaabka Xidhan",
+   "d": "Tusaale ku saabsan fasax-weydiisiga",
+   "rev": 1
+  },
+  "janna": {
+   "t": "Ehelka Beerta",
+   "d": "Walaalo miskiinka xaqiisa ka celiyay",
+   "rev": 1
+  },
+  "sabt": {
+   "t": "Ehelka Sabtida",
+   "d": "Tuulo amarka Alle khiyaameysay",
+   "rev": 2
+  },
+  "namla": {
+   "t": "Qudhaanjadii",
+   "d": "Eray badbaadiyay qoom dhan",
+   "rev": 1
+  },
+  "yasin": {
+   "t": "Ninkii Ordaya Yimid",
+   "d": "Eray xaq ah oo ka dhacay magaalo beenisay",
+   "rev": 2
+  },
+  "rabbayani": {
+   "t": "Sidii Ay Ii Koriyeen Anigoo Yar",
+   "d": "Tusaale ku saabsan u wanaagsanaanta awoowaha",
+   "rev": 2
+  },
+  "tamr": {
+   "t": "Timirtii La Habeeyay",
+   "d": "Tusaale ku saabsan ka tagidda khiyaanada",
+   "rev": 2
+  },
+  "kabir": {
+   "t": "Kan Weyn iyo Kan Yar",
+   "d": "Tusaale ku saabsan u naxariisashada kan yar iyo ixtiraamka kan weyn",
+   "rev": 2
+  },
+  "kalima2": {
+   "t": "Ereygii Aan La Odhan",
+   "d": "Tusaale ku saabsan ilaalinta carrabka",
+   "rev": 2
+  },
+  "qalam": {
+   "t": "Qalinkii La Amaahday",
+   "d": "Tusaale ku saabsan celinta amaanada",
+   "rev": 1
+  },
+  "busat": {
+   "t": "Rooggii Cas",
+   "d": "Tusaale ku saabsan samirka",
+   "rev": 2
+  },
+  "shawk": {
+   "t": "Laantii Qodaxda Lahayd",
+   "d": "Tusaale ku saabsan ka qaadidda waxa dhiba jidka",
+   "rev": 1
+  },
+  "sirr": {
+   "t": "Sadaqada Qarsoon",
+   "d": "Tusaale ku saabsan qarinta sadaqada",
+   "rev": 2
+  },
+  "baqara": {
+   "t": "Saca Banii Israa'iil",
+   "d": "Dad su'aalo badiyay oo naftooda ku adkeeyay",
+   "rev": 1
+  },
+  "ibnay": {
+   "t": "Labadii Wiil ee Nabi Aadam",
+   "d": "Xasadkii ugu horreeyay ee dhulka, iyo tuke wax bara",
+   "rev": 1
+  },
+  "faiz": {
+   "t": "Kii Labaad ee Guulaystay",
+   "d": "Tusaale ku saabsan inaad walaalkaa u jeclaato waxa aad naftaada u jeceshahay",
+   "rev": 1
+  },
+  "waqt": {
+   "t": "Waqtigii Lumay",
+   "d": "Tusaale ku saabsan ka faa'iidaysiga waqtiga",
+   "rev": 1
+  },
+  "fawq": {
+   "t": "Cilmi Kasta Waxaa Ka Sarreeya",
+   "d": "Tusaale ku saabsan is-hoosaysiinta cilmiga",
+   "rev": 1
+  },
+  "muhra": {
+   "t": "Faraskii Yaraa ee Madax-adkaa",
+   "d": "Tusaale ku saabsan naxariista iyo debecsanaanta",
+   "rev": 1
+  },
+  "mawid": {
+   "t": "Ballanta Ceelka",
+   "d": "Tusaale ku saabsan oofinta ballanka",
+   "rev": 1
+  },
+  "saa": {
+   "t": "Saacaddii Xumaatay",
+   "d": "Tusaale ku saabsan hufnaanta shaqada",
+   "rev": 1
+  },
+  "basma": {
+   "t": "Dhoola-caddayn Jidka Ah",
+   "d": "Tusaale ku saabsan wejiga furan",
+   "rev": 1
+  },
+  "ghurfa": {
+   "t": "Qolka Habaysan",
+   "d": "Tusaale ku saabsan nadaafadda iyo habaynta",
+   "rev": 1
+  },
+  "ard": {
+   "t": "Saytuunkii Awoowgay",
+   "d": "Tusaale ku saabsan ku adkaysiga dhulka iyo difaacistiisa",
+   "rev": 1
+  },
+  "hijra": {
+   "t": "Hijradii",
+   "d": "Makka ilaa Madiina, Allena wuu la jiray labadooda",
+   "rev": 1
+  },
+  "dayn": {
+   "t": "Deyntii Culayd",
+   "d": "Tusaale ku saabsan u fududaynta qofka deynta qaba",
+   "rev": 1
+  },
+  "asir": {
+   "t": "Xoraynta Maxbuuska",
+   "d": "Tusaale ku saabsan ka dadaalidda xoraynta maxbuuska",
+   "rev": 1
+  },
+  "haja": {
+   "t": "Baahida Walaalkii",
+   "d": "Tusaale ku saabsan u gutidda baahiyaha dadka",
+   "rev": 1
+  },
+  "surur": {
+   "t": "Farxad Aad Geliso",
+   "d": "Tusaale ku saabsan farxad gelinta muslimka",
+   "rev": 1
+  }
+ }
+}
