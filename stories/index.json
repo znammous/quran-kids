@@ -1,5 +1,5 @@
 {
-  "v": 81,
+  "v": 82,
   "stories": [
     {
       "id": "kahf",
@@ -592,6 +592,16 @@
       "cover": "covers/hijra.webp",
       "cw": "covers/w/hijra.webp",
       "file": "s/hijra.json",
+      "added": "2026-10-01"
+    },
+    {
+      "id": "dayn",
+      "t": "الدَّينُ الثقيل",
+      "d": "مَثَلٌ في التيسير على المدين",
+      "ic": "🪙",
+      "cover": "covers/dayn.webp",
+      "cw": "covers/w/dayn.webp",
+      "file": "s/dayn.json",
       "added": "2026-10-01"
     }
   ]
