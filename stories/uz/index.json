@@ -1,0 +1,305 @@
+{
+ "lang": "uz",
+ "stories": {
+  "kahf": {
+   "t": "Gʻor egalari",
+   "d": "Robbiga iymon keltirgan yigitlar — Alloh ularning hidoyatini ziyoda qildi",
+   "rev": 4
+  },
+  "qarya": {
+   "t": "Bir qishloq yonidan oʻtgan kishi",
+   "d": "Yuz yil oʻlik holda turdi, soʻng Alloh uni tiriltirdi",
+   "rev": 1
+  },
+  "qarun": {
+   "t": "Qorun",
+   "d": "Alloh yerga yuttirib yuborgan xazinalar",
+   "rev": 1
+  },
+  "qatil": {
+   "t": "Yuz kishini oʻldirgan odam",
+   "d": "Yuz kishini oʻldirdi, soʻng gunohi kechirildi",
+   "rev": 2
+  },
+  "jannatayn": {
+   "t": "Ikki bogʻ egasi",
+   "d": "«Hech qachon yoʻq boʻlmaydi» degan bogʻ yoʻq boʻldi",
+   "rev": 1
+  },
+  "shiraa": {
+   "t": "Yelkan",
+   "d": "Nizolashish haqida ibratli masal",
+   "rev": 3
+  },
+  "shah": {
+   "t": "Adashgan qoʻy",
+   "d": "Aniqlab olish haqida ibratli masal",
+   "rev": 2
+  },
+  "jidar": {
+   "t": "Devor ortida",
+   "d": "Josuslik qilish haqida ibratli masal",
+   "rev": 3
+  },
+  "kalima": {
+   "t": "Yuradigan soʻz",
+   "d": "Shirin soʻz haqida ibratli masal",
+   "rev": 2
+  },
+  "jabal": {
+   "t": "Togʻ qayrilib qaramaydi",
+   "d": "Kibr haqida ibratli masal",
+   "rev": 3
+  },
+  "hajar": {
+   "t": "Birinchi tosh",
+   "d": "Hamkorlik haqida ibratli masal",
+   "rev": 2
+  },
+  "tamra": {
+   "t": "Ortiqcha xurmo",
+   "d": "Tarozi haqida ibratli masal",
+   "rev": 2
+  },
+  "fasila": {
+   "t": "Xurmo niholi",
+   "d": "Shukr haqida ibratli masal",
+   "rev": 2
+  },
+  "siyaj": {
+   "t": "Toʻsiq",
+   "d": "Yomonlikka yaxshilik qilish haqida ibratli masal",
+   "rev": 2
+  },
+  "fakhkhar": {
+   "t": "Kulolning eshigi oldida",
+   "d": "Soʻrovchiga mehribon boʻlish haqida ibratli masal",
+   "rev": 4
+  },
+  "ghina": {
+   "t": "Gʻino",
+   "d": "Soʻramaydigan qoʻl haqida ibratli masal",
+   "rev": 5
+  },
+  "ruqayya": {
+   "t": "Chiroyli soʻz",
+   "d": "Onaga yaxshilik qilish haqida ibratli masal",
+   "rev": 1
+  },
+  "shatla": {
+   "t": "Koʻchatlar qatori",
+   "d": "«Gʻazablanma» haqida ibratli masal",
+   "rev": 2
+  },
+  "salam": {
+   "t": "Kim birinchi boshladi",
+   "d": "Arazlashib yurmaslik haqida ibratli masal",
+   "rev": 1
+  },
+  "ukhtan": {
+   "t": "Opa-singil",
+   "d": "Birodarlik haqida ibratli masal",
+   "rev": 2
+  },
+  "hilal": {
+   "t": "Ustidan kulishgan bola",
+   "d": "Masxara qilmaslik haqida ibratli masal",
+   "rev": 3
+  },
+  "sahrij": {
+   "t": "Sardobadagi suv",
+   "d": "Isrof qilmaslik haqida ibratli masal",
+   "rev": 4
+  },
+  "sibaq": {
+   "t": "Poyga hakami",
+   "d": "Yoqtirmagan odamga ham adolatli boʻlish haqida ibratli masal",
+   "rev": 1
+  },
+  "qindil": {
+   "t": "Singan fonus",
+   "d": "Rostgoʻylik haqida ibratli masal",
+   "rev": 2
+  },
+  "tayyara": {
+   "t": "Qogʻoz varrak",
+   "d": "Hasad qilmaslik haqida ibratli masal",
+   "rev": 2
+  },
+  "kalb": {
+   "t": "Chanqagan it",
+   "d": "Hayvonlarga rahm qilish haqida ibratli masal",
+   "rev": 2
+  },
+  "qafila": {
+   "t": "Karvon",
+   "d": "Maslahatlashish haqida ibratli masal",
+   "rev": 3
+  },
+  "surra": {
+   "t": "Muhrlangan hamyon",
+   "d": "Omonatdorlik haqida ibratli masal",
+   "rev": 2
+  },
+  "raghif": {
+   "t": "Oxirgi non",
+   "d": "Oʻzgalarni oʻzidan ustun qoʻyish haqida ibratli masal",
+   "rev": 3
+  },
+  "dayf": {
+   "t": "Yomgʻirdagi mehmon",
+   "d": "Mehmonni hurmat qilish haqida ibratli masal",
+   "rev": 2
+  },
+  "zeer": {
+   "t": "Yoʻlovchilar xumi",
+   "d": "Yoʻlovchining haqqi haqida ibratli masal",
+   "rev": 2
+  },
+  "bab": {
+   "t": "Yopiq eshik",
+   "d": "Izn soʻrash haqida ibratli masal",
+   "rev": 1
+  },
+  "janna": {
+   "t": "Bogʻ egalari",
+   "d": "Miskinni haqqidan mahrum qilgan aka-ukalar",
+   "rev": 1
+  },
+  "sabt": {
+   "t": "Shanba egalari",
+   "d": "Allohning amriga hiyla qilgan qishloq",
+   "rev": 2
+  },
+  "namla": {
+   "t": "Chumoli",
+   "d": "Butun bir qavmni qutqargan soʻz",
+   "rev": 1
+  },
+  "yasin": {
+   "t": "Shoshilib kelgan kishi",
+   "d": "Inkor qilgan shahardagi haq soʻz",
+   "rev": 2
+  },
+  "rabbayani": {
+   "t": "Meni kichikligimda tarbiyalaganlaridek",
+   "d": "Bobo-buviga yaxshilik qilish haqida ibratli masal",
+   "rev": 2
+  },
+  "tamr": {
+   "t": "Terib qoʻyilgan xurmo",
+   "d": "Aldamaslik haqida ibratli masal",
+   "rev": 2
+  },
+  "kabir": {
+   "t": "Katta va kichik",
+   "d": "Kichikka rahm, kattaga hurmat haqida ibratli masal",
+   "rev": 2
+  },
+  "kalima2": {
+   "t": "Aytilmagan soʻz",
+   "d": "Tilni tiyish haqida ibratli masal",
+   "rev": 2
+  },
+  "qalam": {
+   "t": "Qarzga olingan qalam",
+   "d": "Omonatni qaytarish haqida ibratli masal",
+   "rev": 1
+  },
+  "busat": {
+   "t": "Qizil gilamcha",
+   "d": "Sabr haqida ibratli masal",
+   "rev": 2
+  },
+  "shawk": {
+   "t": "Tikanli shox",
+   "d": "Yoʻldan ozor beruvchi narsani olib tashlash haqida ibratli masal",
+   "rev": 1
+  },
+  "sirr": {
+   "t": "Yashirin sadaqa",
+   "d": "Sadaqani yashirish haqida ibratli masal",
+   "rev": 2
+  },
+  "baqara": {
+   "t": "Bani Isroilning sigiri",
+   "d": "Koʻp savol berib, oʻzlariga qiyinchilik tugʻdirgan qavm",
+   "rev": 1
+  },
+  "ibnay": {
+   "t": "Odamning ikki oʻgʻli",
+   "d": "Yer yuzidagi birinchi hasad va saboq bergan qargʻa",
+   "rev": 1
+  },
+  "faiz": {
+   "t": "Ikkinchi gʻolib",
+   "d": "Birodaring uchun oʻzingga yoqqanni yaxshi koʻrish haqida ibratli masal",
+   "rev": 1
+  },
+  "waqt": {
+   "t": "Behuda oʻtgan vaqt",
+   "d": "Vaqtni gʻanimat bilish haqida ibratli masal",
+   "rev": 1
+  },
+  "fawq": {
+   "t": "Har bir bilimdondan yuqorida",
+   "d": "Ilmda kamtarlik haqida ibratli masal",
+   "rev": 1
+  },
+  "muhra": {
+   "t": "Oʻjar toychoq",
+   "d": "Muloyimlik haqida ibratli masal",
+   "rev": 1
+  },
+  "mawid": {
+   "t": "Quduq boshidagi vaʼda",
+   "d": "Vaʼdaga vafo qilish haqida ibratli masal",
+   "rev": 1
+  },
+  "saa": {
+   "t": "Buzuq soat",
+   "d": "Ishni puxta qilish haqida ibratli masal",
+   "rev": 1
+  },
+  "basma": {
+   "t": "Yoʻldagi tabassum",
+   "d": "Ochiq chehra haqida ibratli masal",
+   "rev": 1
+  },
+  "ghurfa": {
+   "t": "Tartibli xona",
+   "d": "Tozalik va tartib haqida ibratli masal",
+   "rev": 1
+  },
+  "ard": {
+   "t": "Bobomning zaytunlari",
+   "d": "Yerda sobit turish va uni himoya qilish haqida ibratli masal",
+   "rev": 1
+  },
+  "hijra": {
+   "t": "Hijrat",
+   "d": "Makkadan Madinaga — Alloh ular bilan birga",
+   "rev": 1
+  },
+  "dayn": {
+   "t": "Ogʻir qarz",
+   "d": "Qarzdorga yengillik qilish haqida ibratli masal",
+   "rev": 1
+  },
+  "asir": {
+   "t": "Asirni ozod qilish",
+   "d": "Asirni ozod qilishga harakat qilish haqida ibratli masal",
+   "rev": 1
+  },
+  "haja": {
+   "t": "Birodarining hojatida",
+   "d": "Odamlarning hojatini chiqarish haqida ibratli masal",
+   "rev": 1
+  },
+  "surur": {
+   "t": "Koʻngilga quvonch solish",
+   "d": "Musulmonni xursand qilish haqida ibratli masal",
+   "rev": 1
+  }
+ }
+}
