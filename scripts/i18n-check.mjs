@@ -175,6 +175,18 @@ for (const c of langs.filter(c => c !== REF)) {
   if (miss.length) { bad += miss.length; list(miss.slice(0, 15)); if (miss.length > 15) console.log(`   … و${miss.length - 15} غيرُها`); }
 }
 
+/* ---------- ٦) لغاتُ اليسار: مفاتيحُ زائدةٌ في الإنجليزيّة (أسماءٌ بالحروف اللاتينيّة، وقوالبُ
+   أسماء السور) يجب أن تكون في كلِّ لغةٍ من اليسار ---------- */
+const LTRS = [...html.matchAll(/^\s{4}([a-z]{2}):\{n:'[^']*',\s*dir:'ltr'/gm)].map(m => m[1]).filter(c => dicts[c]);
+if (dicts.en) {
+  const extra = Object.keys(dicts.en).filter(k => ref[k] == null);
+  for (const c of LTRS.filter(c => c !== 'en')) {
+    const miss = extra.filter(k => dicts[c][k] == null);
+    head(`٦) ${c}: مفاتيحُ لغات اليسار الناقصة (${miss.length})`);
+    if (miss.length) { bad += miss.length; list(miss); }
+  }
+}
+
 console.log(`\nاللغات: ${langs.join('، ')} — نصوصُ الشيفرة المفحوصة: ${found.size}، وفي قاموس ${REF}: ${Object.keys(ref).length}`);
 
 if (args.has('--accept') && fresh.length) {

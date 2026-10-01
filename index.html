@@ -37,7 +37,15 @@
         trSrc:'ژباړه: د رواد د ژباړې مرکز ټیم، د الربوه د دعوت ټولنې او IslamHouse.com په همکارۍ — QuranEnc.com (نسخه 1.0.1)'},
     /* لغاتُ اليسار: الواجهةُ تنقلب، والقرآنُ يبقى من اليمين (انظر [dir=ltr] في الأنماط) */
     en:{n:'English',  dir:'ltr', ready:true, tr:true,
-        trSrc:'Translation: Rowwad Translation Center, with Rabwah Da‘wah Association and IslamHouse.com — QuranEnc.com (v1.0.19)'}
+        trSrc:'Translation: Rowwad Translation Center, with Rabwah Da‘wah Association and IslamHouse.com — QuranEnc.com (v1.0.19)'},
+    id:{n:'Bahasa Indonesia', dir:'ltr', ready:true, tr:true,
+        trSrc:'Terjemahan: edisi Kompleks Raja Fahd (Kementerian Agama RI), dikembangkan di bawah pengawasan Pusat Terjemah Rowwad — QuranEnc.com (v1.0.1)'},
+    /* الماليزيّة بلا ترجمة معانٍ: ترجمةُ باسميه تؤوّل الصفات (اليد ← القدرة، جاء ربك ← أمره) */
+    ms:{n:'Bahasa Melayu', dir:'ltr', ready:true, tr:false},
+    bn:{n:'বাংলা',    dir:'ltr', ready:true, tr:true,
+        trSrc:'অনুবাদ: রুওয়াদ অনুবাদ কেন্দ্র (Rowwad Translation Center) — QuranEnc.com'},
+    tr:{n:'Türkçe',   dir:'ltr', ready:true, tr:true,
+        trSrc:'Çeviri: Rowwad Tercüme Merkezi, Rabwah Davet Derneği ve IslamHouse.com iş birliğiyle — QuranEnc.com (s. 1.0.4)'}
   };
   var code='ar', q=/[?&#]lang=([a-z]{2})\b/.exec(location.search+location.hash);
   try{
@@ -1092,7 +1100,10 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 [dir=ltr] .tabin-prev{animation-name:tabInNext}
 [dir=ltr] :is(.ayah,.ayahbox,.chip,.chip2,.opt,.acard,.acards,.ansline,.anslines,#playArea .chips,
   .runline,.runayah,.shelf,.bxlines,.diffline,#reciteInput,.basmala,.mfq,.mfprow .ay,.mfmrow .w,
-  .mbas,.adab,.onbsample,.mfbody,.mushaf){direction:rtl}
+  .mbas,.adab,.onbsample,.mfbody,.mushaf,.mftaf:not([lang]),.mfmrow){direction:rtl}
+/* لغاتٌ حروفُها خارج خطّ الواجهة (ş ğ İ في التركيّة، والبنغاليّة كلُّها): خطُّ الجهاز
+   للواجهة كلِّها، فلا تُكتب الكلمةُ الواحدةُ بخطّين. وخطوطُ المصحف لها أنماطُها فلا تُمسّ */
+html:is([lang=tr],[lang=bn]) body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Bengali",sans-serif}
 /* أسهمٌ في عناصرَ مستقلّةٍ بلا نصّ: سهمُ البطاقات، وسهما القصّة، وزرُّ الرجوع منها */
 [dir=ltr] :is(.gcgo,.sar,#btnStoryBack){display:inline-block;transform:scaleX(-1)}
 .onbtop{display:flex;align-items:center;gap:10px;margin:12px 0 14px}
@@ -13646,11 +13657,13 @@ function finishReview(){
 }
 
 /* ===== الشهادة ===== */
-function hijriDate(){
-  try{ return new Date().toLocaleDateString('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return ''; }
+/* التاريخُ بلغة الواجهة: أسماءُ الأشهر بها (Rabiʻ II، ربیع الثانی…) */
+function dateLoc(ar){ return NUR_I18N.on ? NUR_I18N.code : ar; }
+function hijriDate(o){
+  try{ return new Date().toLocaleDateString(dateLoc('ar-SA')+'-u-ca-islamic-umalqura',o||{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return ''; }
 }
 function greg(){
-  try{ return new Date().toLocaleDateString('ar-EG',{day:'numeric',month:'long',year:'numeric'}); }
+  try{ return new Date().toLocaleDateString(dateLoc('ar-EG')+'-u-ca-gregory',{day:'numeric',month:'long',year:'numeric'}); }
   catch(e){ var d=new Date(); return d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear(); }
 }
 var certSurah=null;
@@ -15057,7 +15070,8 @@ function renderHome(){
   try{
     var hj=$('homeHijri'), hd=hijriDate();
     if(hj){
-      hj.textContent = hd ? hd.replace(/\s*هـ\s*$/,'').replace(/\s*\d{4}\s*$/,'').replace(/[٠-٩]{4}\s*$/,'').trim() : '';
+      hj.textContent = !hd ? '' : NUR_I18N.on ? hijriDate({day:'numeric',month:'long'})
+        : hd.replace(/\s*هـ\s*$/,'').replace(/\s*\d{4}\s*$/,'').replace(/[٠-٩]{4}\s*$/,'').trim();
       hj.title = hd || '';
     }
   }catch(e){}
