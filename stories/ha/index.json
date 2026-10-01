@@ -1,0 +1,305 @@
+{
+ "lang": "ha",
+ "stories": {
+  "kahf": {
+   "t": "Ma'abota Kogo",
+   "d": "Samari da suka yi imani da Ubangijinsu, Ya ƙara musu shiriya",
+   "rev": 4
+  },
+  "qarya": {
+   "t": "Mutumin da Ya Wuce Ta Wani Gari",
+   "d": "Ya mutu shekara ɗari, sannan Allah Ya tayar da shi",
+   "rev": 1
+  },
+  "qarun": {
+   "t": "Ƙaruna",
+   "d": "Taskoki da Allah Ya sa ƙasa ta haɗiye",
+   "rev": 1
+  },
+  "qatil": {
+   "t": "Wanda Ya Kashe Mutum Ɗari",
+   "d": "Ya kashe mutum ɗari, sannan aka gafarta masa",
+   "rev": 2
+  },
+  "jannatayn": {
+   "t": "Mai Gonaki Biyu",
+   "d": "Gonar da ya ce ba za ta ƙare ba, sai ta ƙare",
+   "rev": 1
+  },
+  "shiraa": {
+   "t": "Filafilin Jirgi",
+   "d": "Misali kan rigima da jayayya",
+   "rev": 3
+  },
+  "shah": {
+   "t": "Akuyar da Ta Ɓace",
+   "d": "Misali kan tabbatar da labari",
+   "rev": 2
+  },
+  "jidar": {
+   "t": "Abin da Ke Bayan Katanga",
+   "d": "Misali kan leƙen asirin mutane",
+   "rev": 3
+  },
+  "kalima": {
+   "t": "Kalma Tana Tafiya",
+   "d": "Misali kan daɗin magana",
+   "rev": 2
+  },
+  "jabal": {
+   "t": "Dutse Ba Ya Waiwaya",
+   "d": "Misali kan girman kai",
+   "rev": 3
+  },
+  "hajar": {
+   "t": "Dutsen Farko",
+   "d": "Misali kan taimakon juna",
+   "rev": 2
+  },
+  "tamra": {
+   "t": "Ƙarin Dabino Ɗaya",
+   "d": "Misali kan gaskiya a ma'auni",
+   "rev": 2
+  },
+  "fasila": {
+   "t": "Ɗan Dabino",
+   "d": "Misali kan godiya",
+   "rev": 2
+  },
+  "siyaj": {
+   "t": "Shinge",
+   "d": "Misali kan kyautata wa wanda ya munana maka",
+   "rev": 2
+  },
+  "fakhkhar": {
+   "t": "A Ƙofar Maginin Tukwane",
+   "d": "Misali kan tausasawa ga mai roƙo",
+   "rev": 4
+  },
+  "ghina": {
+   "t": "Ghina",
+   "d": "Misali kan hannun da ba ya roƙo",
+   "rev": 5
+  },
+  "ruqayya": {
+   "t": "Magana Mai Daraja",
+   "d": "Misali kan biyayya ga uwa",
+   "rev": 1
+  },
+  "shatla": {
+   "t": "Jerin 'Yan Shuke-Shuke",
+   "d": "Misali kan \"Kada ka yi fushi\"",
+   "rev": 2
+  },
+  "salam": {
+   "t": "Wanda Ya Fara",
+   "d": "Misali kan barin ƙauracewa juna",
+   "rev": 1
+  },
+  "ukhtan": {
+   "t": "'Yan'uwa Mata Biyu",
+   "d": "Misali kan 'yan'uwantaka",
+   "rev": 2
+  },
+  "hilal": {
+   "t": "Wanda Suke Yi wa Dariya",
+   "d": "Misali kan barin yi wa wasu ba'a",
+   "rev": 3
+  },
+  "sahrij": {
+   "t": "Ruwan Babban Tafki",
+   "d": "Misali kan barin ɓarnatarwa",
+   "rev": 4
+  },
+  "sibaq": {
+   "t": "Alƙalin Tsere",
+   "d": "Misali kan adalci ga wanda ba ka so",
+   "rev": 1
+  },
+  "qindil": {
+   "t": "Fitilar da Ta Fashe",
+   "d": "Misali kan faɗin gaskiya",
+   "rev": 2
+  },
+  "tayyara": {
+   "t": "Jirgin Takarda",
+   "d": "Misali kan barin hassada",
+   "rev": 2
+  },
+  "kalb": {
+   "t": "Kare Mai Ƙishirwa",
+   "d": "Misali kan tausayin dabbobi",
+   "rev": 2
+  },
+  "qafila": {
+   "t": "Ayarin Fatake",
+   "d": "Misali kan shawara",
+   "rev": 3
+  },
+  "surra": {
+   "t": "Ƙullin da Aka Hatimce",
+   "d": "Misali kan riƙon amana",
+   "rev": 2
+  },
+  "raghif": {
+   "t": "Gurasa ta Ƙarshe",
+   "d": "Misali kan fifita wasu a kan kai",
+   "rev": 3
+  },
+  "dayf": {
+   "t": "Baƙo a Cikin Ruwan Sama",
+   "d": "Misali kan girmama baƙo",
+   "rev": 2
+  },
+  "zeer": {
+   "t": "Randar Matafiya",
+   "d": "Misali kan haƙƙin matafiyi",
+   "rev": 2
+  },
+  "bab": {
+   "t": "Ƙofar da Aka Rufe",
+   "d": "Misali kan neman izini",
+   "rev": 1
+  },
+  "janna": {
+   "t": "Ma'abota Gona",
+   "d": "'Yan'uwa da suka hana miskini haƙƙinsa",
+   "rev": 1
+  },
+  "sabt": {
+   "t": "Ma'abota Ranar Asabar",
+   "d": "Garin da suka yi wa umarnin Allah dabara",
+   "rev": 2
+  },
+  "namla": {
+   "t": "Tururuwa",
+   "d": "Kalma ɗaya da ta ceci jama'a",
+   "rev": 1
+  },
+  "yasin": {
+   "t": "Mutumin da Ya Zo Yana Gaggawa",
+   "d": "Kalmar gaskiya a birnin da ya ƙaryata",
+   "rev": 2
+  },
+  "rabbayani": {
+   "t": "Kamar Yadda Suka Raine Ni",
+   "d": "Misali kan biyayya ga kaka",
+   "rev": 2
+  },
+  "tamr": {
+   "t": "Dabinon da Aka Jera",
+   "d": "Misali kan barin algus",
+   "rev": 2
+  },
+  "kabir": {
+   "t": "Babba da Ƙarami",
+   "d": "Misali kan tausayin ƙarami da girmama babba",
+   "rev": 2
+  },
+  "kalima2": {
+   "t": "Kalmar da Ba a Faɗa Ba",
+   "d": "Misali kan kiyaye harshe",
+   "rev": 2
+  },
+  "qalam": {
+   "t": "Alƙalamin Aro",
+   "d": "Misali kan mayar da amana",
+   "rev": 1
+  },
+  "busat": {
+   "t": "Jan Darduma",
+   "d": "Misali kan haƙuri",
+   "rev": 2
+  },
+  "shawk": {
+   "t": "Reshen Ƙaya",
+   "d": "Misali kan kawar da cuta daga hanya",
+   "rev": 1
+  },
+  "sirr": {
+   "t": "Sadakar Ɓoye",
+   "d": "Misali kan ɓoye sadaka",
+   "rev": 2
+  },
+  "baqara": {
+   "t": "Saniyar Banu Isra'ila",
+   "d": "Mutanen da suka yawaita tambaya suka tsananta wa kansu",
+   "rev": 1
+  },
+  "ibnay": {
+   "t": "'Ya'yan Adamu Biyu",
+   "d": "Hassada ta farko a duniya, da hankaka mai koyarwa",
+   "rev": 1
+  },
+  "faiz": {
+   "t": "Na Biyu a Gasa",
+   "d": "Misali kan son wa ɗan'uwanka abin da kake so wa kanka",
+   "rev": 1
+  },
+  "waqt": {
+   "t": "Lokacin da Ya Ɓata",
+   "d": "Misali kan amfani da lokaci",
+   "rev": 1
+  },
+  "fawq": {
+   "t": "Sama da Kowane Masani",
+   "d": "Misali kan tawali'u a cikin ilimi",
+   "rev": 1
+  },
+  "muhra": {
+   "t": "Ƙaramar Godiya Mai Taurin Kai",
+   "d": "Misali kan tausasawa",
+   "rev": 1
+  },
+  "mawid": {
+   "t": "Alƙawari a Bakin Rijiya",
+   "d": "Misali kan cika alƙawari",
+   "rev": 1
+  },
+  "saa": {
+   "t": "Agogon da Ya Lalace",
+   "d": "Misali kan kyautata aiki",
+   "rev": 1
+  },
+  "basma": {
+   "t": "Murmushi a Hanya",
+   "d": "Misali kan fara'a",
+   "rev": 1
+  },
+  "ghurfa": {
+   "t": "Ɗaki Mai Tsari",
+   "d": "Misali kan tsafta da tsari",
+   "rev": 1
+  },
+  "ard": {
+   "t": "Zaitun na Kakana",
+   "d": "Misali kan tsayawa a kan ƙasa da kare ta",
+   "rev": 1
+  },
+  "hijra": {
+   "t": "Hijira",
+   "d": "Daga Makka zuwa Madina, kuma Allah yana tare da su",
+   "rev": 1
+  },
+  "dayn": {
+   "t": "Bashi Mai Nauyi",
+   "d": "Misali kan sauƙaƙa wa mai bashi",
+   "rev": 1
+  },
+  "asir": {
+   "t": "'Yanto Fursuna",
+   "d": "Misali kan ƙoƙarin 'yanto fursuna",
+   "rev": 1
+  },
+  "haja": {
+   "t": "A Cikin Buƙatar Ɗan'uwansa",
+   "d": "Misali kan biya wa mutane buƙatunsu",
+   "rev": 1
+  },
+  "surur": {
+   "t": "Farin Cikin da Ka Sa",
+   "d": "Misali kan sa farin ciki a zuciyar musulmi",
+   "rev": 1
+  }
+ }
+}
