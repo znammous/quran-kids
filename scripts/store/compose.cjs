@@ -3,11 +3,11 @@ const {chromium}=require('playwright'); const fs=require('fs'); const path=requi
 const L=process.argv[2]; const ROOT=path.join(__dirname,'../..');
 const RTL=['ur','fa','ps','ar'].includes(L);
 const meta=JSON.parse(fs.readFileSync(ROOT+'/store/l10n/'+L+'/listing.json','utf8'));
-const dict=(()=>{ let d={}; new Function('NUR_I18N',fs.readFileSync(ROOT+'/lang/'+L+'.js','utf8'))({add:(c,m)=>{d=m}}); return d; })();
+const dict=(()=>{ let d={}; const f=ROOT+'/lang/'+L+'.js'; if(fs.existsSync(f)) new Function('NUR_I18N',fs.readFileSync(f,'utf8'))({add:(c,m)=>{d=m}}); return d; })();   /* العربيّةُ بلا قاموس: نصوصُها في listing.json */
 const OUT=ROOT+'/store/l10n/'+L;
 const SIZES=[ {dir:'appstore/iphone-6.5',w:1284,h:2778,raw:'phone'}, {dir:'appstore/iphone-6.9',w:1290,h:2796,raw:'phone'},
               {dir:'appstore/ipad-13',w:2048,h:2732,raw:'ipad'}, {dir:'play/phone',w:1080,h:1920,raw:'phone'} ];
-const SCENES=['1-path','2-games','3-seg','4-rec','5-mean','6-build','7-words','8-board'];
+const SCENES=['1-path','2-games','3-seg','4-rec','5-mean','6-build','7-words','8-board','9-lang'];   /* ما لا لقطةَ خامّةً له يُتخطّى */
 const b64=f=>'data:image/png;base64,'+fs.readFileSync(f).toString('base64');
 const FONT=`@font-face{font-family:P;src:url(http://localhost:8765/fonts/ui/plex-arabic-700-arabic.woff2);font-weight:700}
 @font-face{font-family:P;src:url(http://localhost:8765/fonts/ui/plex-arabic-700-latin.woff2);font-weight:700;unicode-range:U+0000-00FF,U+2000-206F}`;
@@ -31,7 +31,9 @@ function shotHTML(s,sz,img){
 }
 function featureHTML(){
   const name=(meta.play_title||'Nur Al-Wahy').split(':')[0].trim();
-  const chips=[['🗺️',dict['المغامرة']],['📖',dict['المصحف']],['🕌',dict['مسجدي']],['💎',dict['الجواهر']]].filter(c=>c[1]);
+  const chips=meta.feature_chips || [['🗺️',dict['المغامرة']],['📖',dict['المصحف']],['🕌',dict['مسجدي']],['💎',dict['الجواهر']]].filter(c=>c[1]);
+  /* feature_langs: شريطٌ بأسماء اللغات مكانَ الشارات — كلٌّ بخطّه واتّجاهه */
+  const LG=meta.feature_langs;
   return `<!doctype html><html dir="${RTL?'rtl':'ltr'}"><head><meta charset="utf-8"><style>${FONT}
   html,body{margin:0;width:1024px;height:500px;overflow:hidden;background:linear-gradient(160deg,#081a3d,#0f2f6b 60%,#173f8a);font-family:${FAM};font-weight:700;position:relative}
   .st{position:absolute;width:3px;height:3px;border-radius:50%;background:#cfe3ff;opacity:.6}
@@ -40,11 +42,15 @@ function featureHTML(){
   .n{position:absolute;top:95px;${RTL?'right':'left'}:200px;color:#fff;font-size:${name.length>14?62:84}px;line-height:1.1}
   .s{position:absolute;top:${name.length>14?185:205}px;${RTL?'right':'left'}:200px;width:560px;color:#f5c542;font-size:30px}
   .c{position:absolute;bottom:70px;${RTL?"right":"left"}:60px;display:flex;gap:12px;flex-wrap:nowrap;width:640px}
+  .lh{position:absolute;bottom:172px;${RTL?"right":"left"}:60px;color:#f5c542;font-size:24px}
+  .lg{position:absolute;bottom:34px;${RTL?"right":"left"}:60px;width:620px;display:flex;flex-wrap:wrap;gap:8px}
+  .lg bdi{border:1.5px solid rgba(245,197,66,.55);border-radius:999px;padding:4px 11px;color:#fff;font-size:16px;white-space:nowrap;background:rgba(255,255,255,.06);font-family:P,system-ui,sans-serif}
   .c span{border:2px solid rgba(245,197,66,.6);border-radius:999px;padding:7px 14px;color:#fff;font-size:20px;white-space:nowrap;background:rgba(255,255,255,.06)}
   </style></head><body>${Array.from({length:40},(_,i)=>`<i class="st" style="left:${(i*97)%1024}px;top:${(i*53)%500}px"></i>`).join('')}
   <img class="moon" src="${b64(__dirname+'/moon.png')}"><img class="mosq" src="${b64(__dirname+'/mosque.png')}">
   <div class="n">${name}</div><div class="s">${meta.appstore_subtitle||''}</div>
-  <div class="c">${chips.map(c=>`<span>${c[0]} ${c[1]}</span>`).join('')}</div></body></html>`;
+  ${LG ? `<div class="lh">${LG.head}</div><div class="lg">${LG.names.map(n=>`<bdi>${n}</bdi>`).join('')}</div>`
+       : `<div class="c">${chips.map(c=>`<span>${c[0]} ${c[1]}</span>`).join('')}</div>`}</body></html>`;
 }
 (async()=>{
   const b=await chromium.launch({channel:'chrome'}); let n=0;

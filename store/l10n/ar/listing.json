@@ -1,0 +1,29 @@
+{
+ "play_title": "نور الوحي: حفظ القرآن ومراجعته",
+ "appstore_subtitle": "رحلةٌ ممتعة لحفظ القرآن ومراجعته",
+ "screens": {
+  "9-lang": {
+   "title": "بلغتك ولغة أبنائك",
+   "sub": "الواجهة والقصص بأربع عشرة لغة، والمصحف كما أُنزل"
+  }
+ },
+ "feature_langs": {
+  "head": "🌐 بأربع عشرة لغة",
+  "names": [
+   "العربيّة",
+   "English",
+   "اردو",
+   "فارسی",
+   "پښتو",
+   "Türkçe",
+   "Français",
+   "Bahasa Indonesia",
+   "Bahasa Melayu",
+   "বাংলা",
+   "Kiswahili",
+   "Hausa",
+   "Soomaali",
+   "O‘zbekcha"
+  ]
+ }
+}
