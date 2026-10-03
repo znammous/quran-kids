@@ -1607,6 +1607,8 @@ NUR_I18N.add('sw', {
   "ينقصك": "Unakosa",
   "يوجد إصدارٌ جديد يحتاج تحديثَ التطبيق نفسِه من المتجر": "Toleo jipya linahitaji kusasisha programu yenyewe kutoka dukani",
   "يوجد تحديث": "Sasisho linapatikana",
+  "الجديد في «نور الوحي»": "Mapya katika “Nur Al-Wahy”",
+  "التطبيقُ بلغتك: الواجهةُ والقصصُ بأربع عشرة لغة، تختارها من الإعدادات.": "Programu kwa lugha yako: kiolesura na hadithi katika lugha kumi na nne, chagua yako kwenye Mipangilio.",
   "يوجد تحديثٌ لـ«نور الوحي»": "Sasisho la “Nur Al-Wahy” linapatikana",
   "يوم": "Siku",
   "يوماً متتابعاً": "Siku mfululizo",

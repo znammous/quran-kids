@@ -1607,6 +1607,8 @@ NUR_I18N.add('so', {
   "ينقصك": "Waxaa kaa dhiman",
   "يوجد إصدارٌ جديد يحتاج تحديثَ التطبيق نفسِه من المتجر": "Nooc cusub ayaa jira oo u baahan in app-ka laftiisa laga cusboonaysiiyo dukaanka",
   "يوجد تحديث": "Cusboonaysiin ayaa jirta",
+  "الجديد في «نور الوحي»": "Waxa cusub ee “Nur Al-Wahy”",
+  "التطبيقُ بلغتك: الواجهةُ والقصصُ بأربع عشرة لغة، تختارها من الإعدادات.": "Abka luqaddaada: muuqaalka iyo sheekooyinka afar iyo toban luqadood, ka dooro Dejinta.",
   "يوجد تحديثٌ لـ«نور الوحي»": "Cusboonaysiin ayaa u diyaar ah “Nur Al-Wahy”",
   "يوم": "Maalin",
   "يوماً متتابعاً": "Maalmo isku xiga",

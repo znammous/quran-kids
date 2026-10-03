@@ -28,5 +28,20 @@ const h = createHash('sha256');
 const inBundle = f => !f.startsWith(`${OUT}/fonts/pages/`);
 for (const f of all.filter(inBundle)) { h.update(f.slice(OUT.length + 1)); h.update(readFileSync(f)); }
 const id = h.digest('hex').slice(0, 12);
-writeFileSync(`${OUT}/bundle.json`, JSON.stringify({ id }) + '\n');
+/* الجديدُ في هذا التحديث (WHATSNEW في index.html) بترجماته من lang/*.js: يحمله
+   وصفُ الإصدار على GitHub فيقرأه التطبيقُ بلغته قبل أن ينزّل الحزمة. وما لا
+   ترجمةَ له يُترك، فيعود التطبيقُ إلى العربيّة */
+const note = {};
+const m = readFileSync('index.html', 'utf8').match(/^var WHATSNEW='((?:[^'\\]|\\.)*)';/m);
+const ar = m ? m[1].replace(/\\(.)/g, '$1').trim() : '';
+if (ar) {
+  note.ar = ar;
+  const norm = s => s.replace(/\s+/g, ' ').trim();
+  for (const f of readdirSync('lang').filter(f => /^[a-z]{2,3}\.js$/.test(f))) {
+    let d = null;
+    new Function('NUR_I18N', readFileSync(`lang/${f}`, 'utf8'))({ add: (c, map) => { d = map; } });
+    for (const k in d) if (norm(k) === norm(ar)) { note[f.slice(0, -3)] = d[k]; break; }
+  }
+}
+writeFileSync(`${OUT}/bundle.json`, JSON.stringify(ar ? { id, note } : { id }) + '\n');
 console.log(`www/ جاهز: ${all.length} ملفّاً، والحزمة ${id}`);

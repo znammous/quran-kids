@@ -54,7 +54,11 @@ jobs:
           fi
           (cd www && zip -qr ../web.zip . -x 'fonts/pages/*')
           SHA=$(sha256sum web.zip | cut -d' ' -f1)
-          NOTES=$(printf '{"id":"%s","sha256":"%s","minBuild":%s}' "${{ steps.www.outputs.id }}" "$SHA" "${{ steps.www.outputs.min }}")
+          # الوصفُ JSON يقرأه التطبيق: البصمةُ والبصمةُ الأمنيّة وأدنى بناء، والجديدُ بلغاته إن وُجد
+          NOTES=$(node -e '
+            const b = require("./www/bundle.json");
+            console.log(JSON.stringify({ id: b.id, sha256: process.argv[1], minBuild: +process.argv[2], note: b.note }));
+          ' "$SHA" "${{ steps.www.outputs.min }}")
           gh release create "$TAG" web.zip --title "تحديث الصفحة ${{ steps.www.outputs.id }}" --notes "$NOTES" --latest
 
       - name: حذفُ القديم

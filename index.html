@@ -18056,15 +18056,21 @@ $('btnNotesAgain').onclick=function(){
   show('scr-start');
   bootNotes();
 };
+var NEWS_FIRST=false;
 function bootNotes(){
+  NEWS_FIRST=!load('nur_priv1',0);   /* أوّلُ فتح: لا «جديدَ» لمن لا قديمَ عنده */
   whenCalm(function(){
     privacyNote(function(){
       if(!load(LS.help,0)) $('help').hidden=false;
       whenCalm(function(){
-        try{ stBoot(); }catch(e){}
-        whenCalm(function(){
-          try{ backupNudge(); }catch(e){}
-          whenCalm(function(){ try{ updCheck(false); }catch(e){} });
+        newsNote(function(){
+          whenCalm(function(){
+            try{ stBoot(); }catch(e){}
+            whenCalm(function(){
+              try{ backupNudge(); }catch(e){}
+              whenCalm(function(){ try{ updCheck(false); }catch(e){} });
+            });
+          });
         });
       });
     });
@@ -18078,6 +18084,24 @@ function bootNotes(){
    وإن تعثّرت فلم تبلغ liveReady() في عشر ثوانٍ عاد التطبيقُ إلى ما قبلها.
    وما يمسّ الجزءَ الأصليّ (إضافةٌ أو إذن) لا يصل بهذا — minBuild يمنع حزمةً
    عن تطبيقٍ أقدمَ منها، ويُحال إلى المتجر. */
+/* ===== الجديد في هذا التحديث =====
+   جملةٌ واحدةٌ قصيرة تلفت إلى ميزةٍ تستحقّ، وتبقى فارغةً إن كان التحديثُ إصلاحاتٍ
+   لا تُذكر. تُترجم في lang/*.js كأيّ نصّ، ويجمع scripts/build-www.mjs ترجماتِها في
+   bundle.json فتبلغ وصفَ الإصدار على GitHub: فيراها مستخدمُ التطبيق بلغته في نافذة
+   «يوجد تحديث» قبل أن ينزّله (قواميسُه القديمة لا تعرفها). ثمّ تُعرض مرّةً واحدة
+   بعد أن تصل الحزمةُ — أو الصفحةُ على الموقع — لمن لم يرَها، ولا تُعرض لمن فتح
+   التطبيقَ لأوّل مرّة. */
+var WHATSNEW='التطبيقُ بلغتك: الواجهةُ والقصصُ بأربع عشرة لغة، تختارها من الإعدادات.';
+function newsNote(next){
+  var seen=load('nur_news','');
+  if(!WHATSNEW || seen===WHATSNEW || NEWS_FIRST){
+    if(WHATSNEW && seen!==WHATSNEW) save('nur_news',WHATSNEW);
+    if(next) next(); return;
+  }
+  uiBox('<b>الجديد في «نور الوحي»</b>\n\n'+WHATSNEW, '🆕', '✅ فهمت', null, function(){
+    save('nur_news',WHATSNEW); if(next) next();
+  });
+}
 var UPD_API='https://api.github.com/repos/znammous/quran-kids/releases/latest';
 var UPD_BUSY=false;
 function liveUpd(){ return isNative() ? nativePlugin('LiveUpdate') : null; }
@@ -18099,8 +18123,10 @@ function updFetch(){
     if(!meta.id || !zip) throw new Error('meta');
     if(meta.id===have) return {st:'none'};
     if(build && meta.minBuild && build<meta.minBuild) return {st:'store'};
+    var nt=meta.note||{};
     return {st:'new', id:meta.id, tag:rel.tag_name, url:zip.browser_download_url,
-            sha:meta.sha256, mb:Math.max(1,Math.round((zip.size||0)/1048576))};
+            sha:meta.sha256, mb:Math.max(1,Math.round((zip.size||0)/1048576)),
+            note:nt[NUR_I18N.code]||nt.ar||'', noteAr:nt.ar||''};
   });
 }
 /* عند الفتح يسكت عمّا لا جديدَ فيه وعن انقطاع الشبكة، ولا يُلحّ:
@@ -18118,7 +18144,9 @@ function updCheck(manual){
     if(manual && note) note.textContent='🆕 يوجد تحديث.';
     var later=load('nur_upd_later',null);
     if(!manual && later && later.id===u.id && later.day===todayNum()) return;
+    /* الجديدُ سطرٌ وحدَه مترجَمٌ من قبلُ، فلا يمسّ مفاتيحَ ما حولَه */
     uiBox('<b>يوجد تحديثٌ لـ«نور الوحي»</b>\n\n'+
+          (u.note ? '<b>🆕 '+u.note+'</b>\n\n' : '')+
           'فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو '+arNum(u.mb)+' ميجابايت — '+
           'ويُستحسن تنزيلُه على شبكة Wi-Fi.\n\n'+
           'تقدُّمُك وحفظُك باقيان كما هما.',
@@ -18162,6 +18190,7 @@ function updApply(u){
   }).then(function(){
     return L.setNextBundle({bundleId:u.tag});
   }).then(function(){
+    if(u.noteAr) save('nur_news',u.noteAr);   /* قرأه هنا، فلا يُعاد عليه بعد الفتح */
     unlisten();
     return L.reload();
   })['catch'](function(){

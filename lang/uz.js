@@ -1607,6 +1607,8 @@ NUR_I18N.add('uz', {
   "ينقصك": "Senga yetishmaydi:",
   "يوجد إصدارٌ جديد يحتاج تحديثَ التطبيق نفسِه من المتجر": "Yangi versiya uchun ilovaning oʻzini doʻkondan yangilash kerak",
   "يوجد تحديث": "Yangilanish bor",
+  "الجديد في «نور الوحي»": "“Nur Al-Wahy”dagi yangiliklar",
+  "التطبيقُ بلغتك: الواجهةُ والقصصُ بأربع عشرة لغة، تختارها من الإعدادات.": "Ilova sizning tilingizda: interfeys va hikoyalar o‘n to‘rt tilda, Sozlamalardan tilingizni tanlang.",
   "يوجد تحديثٌ لـ«نور الوحي»": "“Nur Al-Wahy” uchun yangilanish bor",
   "يوم": "Kun",
   "يوماً متتابعاً": "Ketma-ket kunlar",
