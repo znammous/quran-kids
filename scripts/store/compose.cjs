@@ -19,6 +19,9 @@ function shotHTML(s,sz,img){
   let ih=Math.round(H-top-H*0.045-pad*2), iw=Math.round(ih*asp);
   const maxW=Math.round(W*(sz.raw==='ipad'?0.80:0.80)); if(iw>maxW){ iw=maxW; ih=Math.round(iw/asp); }
   const t=meta.screens[s]||{title:'',sub:''};
+  /* ipad_flat: إطارُ صور iPad العربيّة الأولى — الشاشةُ عريضةٌ بحافّةٍ رفيعة، بلا هيكل جهاز */
+  const flat=sz.raw==='ipad' && meta.ipad_flat;
+  if(flat){ iw=Math.round(W*0.78); ih=Math.round(iw/asp); }
   return `<!doctype html><html dir="${RTL?'rtl':'ltr'}"><head><meta charset="utf-8"><style>${FONT}
   html,body{margin:0;width:${W}px;height:${H}px;overflow:hidden;background:${BG};font-family:${FAM};font-weight:700}
   .t,.s{white-space:nowrap;overflow:hidden}
@@ -26,6 +29,8 @@ function shotHTML(s,sz,img){
   .s{position:absolute;top:${Math.round(H*0.045+W*(sz.raw==='ipad'?0.075:0.108))}px;left:0;right:0;text-align:center;color:#f5c542;font-size:${Math.round(W*(sz.raw==='ipad'?0.032:0.046))}px;padding:0 ${pad}px}
   .dev{position:absolute;left:50%;top:${top}px;transform:translateX(-50%);padding:${pad}px;background:#11161f;border:${Math.round(W*0.012)}px solid #3a4150;border-radius:${Math.round(iw*0.12)}px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
   .dev img{display:block;width:${iw}px;height:${ih}px;border-radius:${Math.round(iw*0.085)}px;object-fit:cover}
+  ${flat?`.dev{top:${Math.round(H*0.183)}px;padding:0;background:none;border:${Math.round(W*0.004)}px solid #2b3a5c;border-radius:${Math.round(W*0.012)}px}
+  .dev img{border-radius:${Math.round(W*0.009)}px}`:''}
   </style></head><body><div class="t">${t.title}</div><div class="s">${t.sub}</div><div class="dev"><img src="${img}"></div>
   <script>document.querySelectorAll('.t,.s').forEach(function(e){ var f=parseFloat(getComputedStyle(e).fontSize); while(e.scrollWidth>e.clientWidth+1 && f>12){ f-=1; e.style.fontSize=f+'px'; } });</script></body></html>`;
 }
