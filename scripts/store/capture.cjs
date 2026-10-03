@@ -1,6 +1,6 @@
 // يلتقط المشاهد الثمانية بلغةٍ ومقاسٍ من الحساب المزروع: node scripts/store/capture.cjs <lang> <phone|ipad>
 const {chromium}=require('playwright'); const fs=require('fs');
-const L=process.argv[2]||'en', DEV=process.argv[3]||'phone';
+const L=process.argv[2]||'en', DEV=process.argv[3]||'phone', ONLY=process.argv[4];   /* ثالثُها اختياريّ: مشهدٌ واحد، مثل 9-lang */
 const ROOT=require('path').join(__dirname,'../..'); const OUT=ROOT+'/store/l10n/_raw/'+L+'/'+DEV; fs.mkdirSync(OUT,{recursive:true});
 const VP= DEV==='ipad' ? {width:1024,height:1366,dsf:2} : {width:390,height:844,dsf:3};
 const LTR=['en','id','ms','bn','tr','fr','sw','ha','uz','so'];
@@ -26,6 +26,9 @@ const HIDE='#qaBar,#setInstall,[id*="nstallBan"],.instbar,.toast{display:none!im
     await p.waitForTimeout(800); await p.evaluate(()=>{ const s=document.getElementById('mfSheet'); if(s && !s.hidden){ const x=document.getElementById('mfClose'); if(x) x.click(); } }); await p.waitForTimeout(500); };
   const noQA=async p=>p.addStyleTag({content:'#qaSkip,#qaEnd,#qaBar{visibility:hidden!important}'});
   const MULK=()=>{ const s=SURAHS[66]; curSurah=s; startSeg(s,0); };
+  if(ONLY==='9-lang'){   /* صندوقُ اختيار اللغة: اللغاتُ كلُّها بأسمائها */
+    const p=await page(); await p.evaluate(()=>{ show('scr-settings'); document.getElementById('btnLang').click(); }); await snap(p,'9-lang'); await p.close();
+    await b.close(); console.log(L,DEV,'errors',errs.slice(0,3)); return; }
   // 1 path
   { const p=await page(); await p.evaluate(()=>{ curSurah=SURAHS[66]; renderPath(); show('scr-path'); window.scrollTo(0,0); }); await snap(p,'1-path'); await p.close(); }
   // 2 games
