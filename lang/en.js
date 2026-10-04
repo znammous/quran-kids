@@ -1703,4 +1703,9 @@ NUR_I18N.add('en', {
   "أعِد أصوات التطبيق": "Turn app sounds back on",
   "كُتمت أصوات التطبيق حتى تغلقه": "App sounds muted until you close it",
   "عادت أصوات التطبيق": "App sounds are back on",
+  "للتعليم والحفظ": "For learning & memorizing",
+  "أئمّة الحرمين": "Imams of the Two Holy Mosques",
+  "المدرسة المصريّة": "The Egyptian school",
+  "أصوات معاصرة": "Contemporary voices",
+  "الأخيرة": "Recent",
 });

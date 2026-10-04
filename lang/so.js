@@ -1703,4 +1703,9 @@ NUR_I18N.add('so', {
   "أعِد أصوات التطبيق": "Dib u shid codadka barnaamijka",
   "كُتمت أصوات التطبيق حتى تغلقه": "Codadka barnaamijka waa la aamusiyey ilaa aad xidhid",
   "عادت أصوات التطبيق": "Codadka barnaamijka way soo noqdeen",
+  "للتعليم والحفظ": "Waxbarasho iyo xifdin",
+  "أئمّة الحرمين": "Imaamyada Labada Xaram",
+  "المدرسة المصريّة": "Hab-akhriska Masar",
+  "أصوات معاصرة": "Codad casri ah",
+  "الأخيرة": "Kuwii ugu dambeeyay",
 });

@@ -1703,4 +1703,9 @@ NUR_I18N.add('uz', {
   "أعِد أصوات التطبيق": "Ilova ovozlarini qayta yoqish",
   "كُتمت أصوات التطبيق حتى تغلقه": "Ilova ovozlari uni yopguningizcha o‘chirildi",
   "عادت أصوات التطبيق": "Ilova ovozlari qayta yoqildi",
+  "للتعليم والحفظ": "O'rganish va yodlash uchun",
+  "أئمّة الحرمين": "Ikki Haram imomlari",
+  "المدرسة المصريّة": "Misr maktabi",
+  "أصوات معاصرة": "Zamonaviy ovozlar",
+  "الأخيرة": "So'nggilar",
 });

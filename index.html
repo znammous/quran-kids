@@ -190,7 +190,7 @@
     }
     return txt && kid && !el.querySelector('[id],button,input,select,textarea,a');
   }
-  var ATTRS=['placeholder','title','aria-label','alt'];
+  var ATTRS=['placeholder','title','aria-label','alt','label'];   /* «label» عنوانُ optgroup */
   function doAttrs(el){
     for(var i=0;i<ATTRS.length;i++){
       var v=el.getAttribute(ATTRS[i]); if(!v || !AR.test(v)) continue;
@@ -459,6 +459,9 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
 .chipsel.sel{border-color:var(--gold);background:var(--psel);color:var(--ttl);
   box-shadow:0 2px 0 rgba(161,121,26,.35)}
 .chipsel:active{box-shadow:none;transform:translateY(1px)}
+.chiphd{flex-basis:100%;text-align:center;font-size:13px;font-weight:800;color:var(--on2);opacity:.75;margin-top:6px}
+.chiphd:first-child{margin-top:0}
+#askChips .chipsel{white-space:nowrap}   /* «Al-Kurdi» لا ينكسر عند شَرطته */
 
 .topbar{background:var(--pnl);color:var(--gink);border:3px solid var(--pb);border-radius:14px;
   padding:9px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;
@@ -8459,41 +8462,44 @@ var MQ_BASE='https://cdn.mp3quran.net/audio/';
    «s» اسمُ الشهرة — يُعرض في الأزرار والرقاقات، فعشرون رقاقةً بالأسماء
    الكاملة تملأ الشاشة وتُسحب، وبأسماء الشهرة تقع في صفوفٍ قليلةٍ مرتَّبة.
    وما تعدّدت روايتُه — كالحصريّ والمنشاويّ — بقي معه وصفُه، وإلّا التبس. */
+/* «g» مجموعتُه في القائمة (QARI_G)، والقائمةُ مرتّبةٌ بها، وفي كلٍّ الأشهرُ أوّلاً.
+   ومن mp3quran: «m» مجلّدُ القارئ عندهم، و«r» رقمُ تلاوته في توقيت الآيات،
+   و«x» سورٌ توقيتُها عندهم لا يوافق ملفَّها — تُتلى بصوت الحصريّ لا مقطوعةً خطأً.
+   و«المعلِّم» وأيمن سويد قراءتان تعليميّتان: يردّد الأوّلُ للأطفال، ويبيّن الثاني الأحكام. */
+var QARI_G=['للتعليم والحفظ','أئمّة الحرمين','المدرسة المصريّة','أصوات معاصرة'];
+var QARI_DEF='Husary_64kbps';            /* لمن لم يختر، ولما خالف توقيتُه ملفَّه */
 var QARIS=[
-  {f:'Husary_64kbps',             n:'محمود خليل الحصري',        s:'الحصري'},
-  {f:'Minshawy_Teacher_128kbps',  n:'المنشاوي — المعلِّم (يردّد للأطفال)', s:'المنشاوي — المعلِّم'},
-  {f:'Minshawy_Murattal_128kbps', n:'محمد صديق المنشاوي',        s:'المنشاوي'},
-  {f:'Abdul_Basit_Murattal_64kbps', n:'عبد الباسط عبد الصمد',    s:'عبد الباسط'},
-  {f:'Hudhaify_64kbps',           n:'علي الحذيفي',               s:'الحذيفي'},
-  {f:'Alafasy_64kbps',            n:'مشاري راشد العفاسي',        s:'العفاسي'},
-  {f:'Abdurrahmaan_As-Sudais_64kbps', n:'عبد الرحمن السديس',     s:'السديس'},
-  {f:'Saood_ash-Shuraym_64kbps',  n:'سعود الشريم',               s:'الشريم'},
-  {f:'Maher_AlMuaiqly_64kbps',    n:'ماهر المعيقلي',             s:'المعيقلي'},
-  {f:'Abu_Bakr_Ash-Shaatree_64kbps', n:'أبو بكر الشاطري',        s:'الشاطري'},
-  {f:'Muhammad_Ayyoub_128kbps',   n:'محمد أيوب',                 s:'محمد أيوب'},
-  {f:'Mohammad_al_Tablaway_64kbps', n:'محمد الطبلاوي',           s:'الطبلاوي'},
-  {f:'Ghamadi_40kbps',            n:'سعد الغامدي',               s:'الغامدي'},
-  {f:'Nasser_Alqatami_128kbps',   n:'ناصر القطامي',              s:'القطامي'},
-  {f:'Yasser_Ad-Dussary_128kbps', n:'ياسر الدوسري',              s:'الدوسري'},
-  {f:'Ali_Jaber_64kbps',          n:'علي جابر',                  s:'علي جابر'},
-  {f:'ahmed_ibn_ali_al_ajamy_128kbps', n:'أحمد العجمي',          s:'العجمي'},
-  {f:'khalefa_al_tunaiji_64kbps', n:'خليفة الطنيجي',             s:'الطنيجي'},
-  {f:'Muhsin_Al_Qasim_192kbps',   n:'محسن القاسم',               s:'محسن القاسم'},
-  {f:'Salaah_AbdulRahman_Bukhatir_128kbps', n:'صلاح بوخاطر',     s:'بوخاطر'},
-  /* من mp3quran: «m» مجلّدُ القارئ عندهم، و«r» رقمُ تلاوته في توقيت الآيات،
-     و«x» سورٌ توقيتُها عندهم لا يوافق ملفَّها — تُتلى بصوت الأوّل لا مقطوعةً خطأً */
-  {f:'mq-tawfeeq-sayegh',         n:'توفيق الصايغ',              s:'الصايغ',  m:'tawfeeq-sayegh',   r:17},
-  {f:'mq-abdullah-khayyat',       n:'عبد الله خياط',             s:'خياط',    m:'abdullah-khayyat', r:61},
-  {f:'mq-bandar-baleela',         n:'بندر بليلة',                s:'بليلة',   m:'bandar-baleela',   r:217},
-  {f:'mq-raad-kurdi',             n:'رعد محمد الكردي',           s:'الكردي',  m:'raad-kurdi',       r:221, x:[23]},
-  {f:'mq-haitham-dukhain',        n:'هيثم الدخين',               s:'الدخين',  m:'haitham-dukhain',  r:273, x:[40]},
-  {f:'mq-mansour-salimi',         n:'منصور السالمي',             s:'السالمي', m:'mansour-salimi',   r:245},
-  {f:'mq-idrees-abkar',           n:'إدريس أبكر',                s:'أبكر',    m:'idrees-abkar',     r:12},
-  {f:'mq-abdulaziz-zahrani',      n:'عبد العزيز الزهراني',       s:'الزهراني', m:'abdulaziz-zahrani', r:56},
-  {f:'mq-anas-emadi',             n:'أنس العمادي',               s:'العمادي', m:'anas-emadi',       r:314},
-  {f:'mq-majed-zamil',            n:'ماجد الزامل',               s:'الزامل',  m:'majed-zamil',      r:139, x:[3,31]},
-  /* قراءةٌ تعليميّةٌ مبيَّنةُ الأحكام، بابُها بابُ «المعلِّم» */
-  {f:'Ayman_Sowaid_64kbps',       n:'أيمن سويد — تعليم التجويد', s:'أيمن سويد — التجويد'}
+  {f:'Minshawy_Teacher_128kbps',  n:'المنشاوي — المعلِّم (يردّد للأطفال)', s:'المنشاوي — المعلِّم', g:1},
+  {f:'Ayman_Sowaid_64kbps',       n:'أيمن سويد — تعليم التجويد', s:'أيمن سويد — التجويد', g:1},
+  {f:'Husary_64kbps',             n:'محمود خليل الحصري',        s:'الحصري', g:1},
+  {f:'Minshawy_Murattal_128kbps', n:'محمد صديق المنشاوي',        s:'المنشاوي', g:1},
+  {f:'Abdurrahmaan_As-Sudais_64kbps', n:'عبد الرحمن السديس',     s:'السديس', g:2},
+  {f:'Saood_ash-Shuraym_64kbps',  n:'سعود الشريم',               s:'الشريم', g:2},
+  {f:'Maher_AlMuaiqly_64kbps',    n:'ماهر المعيقلي',             s:'المعيقلي', g:2},
+  {f:'Yasser_Ad-Dussary_128kbps', n:'ياسر الدوسري',              s:'الدوسري', g:2},
+  {f:'mq-bandar-baleela',         n:'بندر بليلة',                s:'بليلة',   m:'bandar-baleela',   r:217, g:2},
+  {f:'mq-abdullah-khayyat',       n:'عبد الله خياط',             s:'خياط',    m:'abdullah-khayyat', r:61, g:2},
+  {f:'Hudhaify_64kbps',           n:'علي الحذيفي',               s:'الحذيفي', g:2},
+  {f:'Muhsin_Al_Qasim_192kbps',   n:'محسن القاسم',               s:'محسن القاسم', g:2},
+  {f:'Ali_Jaber_64kbps',          n:'علي جابر',                  s:'علي جابر', g:2},
+  {f:'Muhammad_Ayyoub_128kbps',   n:'محمد أيوب',                 s:'محمد أيوب', g:2},
+  {f:'Abdul_Basit_Murattal_64kbps', n:'عبد الباسط عبد الصمد',    s:'عبد الباسط', g:3},
+  {f:'Mohammad_al_Tablaway_64kbps', n:'محمد الطبلاوي',           s:'الطبلاوي', g:3},
+  {f:'Alafasy_64kbps',            n:'مشاري راشد العفاسي',        s:'العفاسي', g:4},
+  {f:'Ghamadi_40kbps',            n:'سعد الغامدي',               s:'الغامدي', g:4},
+  {f:'Nasser_Alqatami_128kbps',   n:'ناصر القطامي',              s:'القطامي', g:4},
+  {f:'Abu_Bakr_Ash-Shaatree_64kbps', n:'أبو بكر الشاطري',        s:'الشاطري', g:4},
+  {f:'ahmed_ibn_ali_al_ajamy_128kbps', n:'أحمد العجمي',          s:'العجمي', g:4},
+  {f:'khalefa_al_tunaiji_64kbps', n:'خليفة الطنيجي',             s:'الطنيجي', g:4},
+  {f:'Salaah_AbdulRahman_Bukhatir_128kbps', n:'صلاح بوخاطر',     s:'بوخاطر', g:4},
+  {f:'mq-tawfeeq-sayegh',         n:'توفيق الصايغ',              s:'الصايغ',  m:'tawfeeq-sayegh',   r:17, g:4},
+  {f:'mq-raad-kurdi',             n:'رعد محمد الكردي',           s:'الكردي',  m:'raad-kurdi',       r:221, x:[23], g:4},
+  {f:'mq-haitham-dukhain',        n:'هيثم الدخين',               s:'الدخين',  m:'haitham-dukhain',  r:273, x:[40], g:4},
+  {f:'mq-mansour-salimi',         n:'منصور السالمي',             s:'السالمي', m:'mansour-salimi',   r:245, g:4},
+  {f:'mq-idrees-abkar',           n:'إدريس أبكر',                s:'أبكر',    m:'idrees-abkar',     r:12, g:4},
+  {f:'mq-abdulaziz-zahrani',      n:'عبد العزيز الزهراني',       s:'الزهراني', m:'abdulaziz-zahrani', r:56, g:4},
+  {f:'mq-anas-emadi',             n:'أنس العمادي',               s:'العمادي', m:'anas-emadi',       r:314, g:4},
+  {f:'mq-majed-zamil',            n:'ماجد الزامل',               s:'الزامل',  m:'majed-zamil',      r:139, x:[3,31], g:4}
 ];
 var AUD_CACHE='nur-audio';
 var AUD={ el:null, q:[], i:-1, url:'', rep:1, left:1, hold:false };   /* rep=0 يعني بلا توقّف */
@@ -8502,7 +8508,7 @@ var AUD_REPS=[{v:1,n:'مرّة'},{v:3,n:'٣ مرّات'},{v:5,n:'٥ مرّات'}
 function qariF(){
   var f=SET.qari, i;
   for(i=0;i<QARIS.length;i++) if(QARIS[i].f===f) return f;
-  return QARIS[0].f;                       /* اختيارٌ قديمٌ أو تالف: يُردّ إلى الأوّل */
+  return QARI_DEF;                         /* لم يختر، أو اختيارٌ قديمٌ تالف */
 }
 function qariRow(){
   var f=qariF(), i;
@@ -8512,10 +8518,29 @@ function qariRow(){
 /* اسمُ الشهرة للأزرار والرقاقات — وإلى الاسم الكامل إن لم يُذكر له اختصار.
    والاسمُ الكاملُ موضعُه قائمةُ الإعدادات، فسطورُها تتّسع له */
 function qariShort(){ var q=qariRow(); return q?(q.s||q.n):''; }
+/* آخرُ من سُمع من القرّاء، أحدثُهم أوّلاً — فأكثرُ الأطفال يعودون إلى قارئهم */
+function qariUse(f){
+  var r=(SET.qariRec||[]).filter(function(x){ return x!==f; });
+  SET.qariRec=[f].concat(r).slice(0,3);
+}
+/* رقاقاتُ القرّاء: الأخيرون فوق، ثمّ المجموعاتُ بعناوينها */
+function qariChips(){
+  var cur=qariF(), out=[], rec;
+  function chip(q){ return { v:q.f, n:(q.f===cur?'✅ ':'')+(q.s||q.n) }; }
+  rec=[cur].concat((SET.qariRec||[]).filter(function(f){ return f!==cur; }))
+      .map(function(f){ for(var i=0;i<QARIS.length;i++) if(QARIS[i].f===f) return QARIS[i]; })
+      .filter(Boolean).slice(0,3);
+  if(rec.length>1){ out.push({ h:'🕘 '+tx('الأخيرة') }); rec.forEach(function(q){ out.push(chip(q)); }); }
+  QARI_G.forEach(function(g,i){
+    out.push({ h:g });
+    QARIS.forEach(function(q){ if(q.g===i+1) out.push(chip(q)); });
+  });
+  return out;
+}
 function pad3(n){ n=String(n); return n.length>=3 ? n : ('000'+n).slice(-3); }
 function audUrl(sn,ay){
   var q=qariRow();
-  if(q && q.m && q.x && q.x.indexOf(sn)>=0) q=QARIS[0];
+  if(q && q.m && q.x && q.x.indexOf(sn)>=0) q={ f:QARI_DEF };
   if(q && q.m) return MQ_BASE+q.m+'/r1/'+pad3(sn)+'.mp3?r='+q.r+'&a='+ay;
   return QARI_BASE+(q?q.f:qariF())+'/'+pad3(sn)+pad3(ay)+'.mp3';
 }
@@ -9365,11 +9390,10 @@ function audAsk(list){
 }
 /* قائمةُ القرّاء: المختارُ مؤشَّر، والرجوعُ يُعيده إلى سؤاله لا يُخرجه منه */
 function qariAsk(after){
-  var cur=qariF();
-  var list=QARIS.map(function(q){ return { v:q.f, n:(q.f===cur?'✅ ':'')+(q.s||q.n) }; });
+  var list=qariChips();
   uiBox('مَن تحبُّ أن تسمع؟','🎙️',null,'رجوع',function(ok,v){
     if(ok && v){
-      SET.qari=v; saveDB();
+      SET.qari=v; qariUse(v); saveDB();
       /* بُدّل القارئ والتلاوةُ قائمة: تُستأنف من آيتها بصوته هو، ولا تُلغى
          من أوّلها كما كانت — وإن لم تكن قائمةً سكتَ ما بقي من سابقه */
       try{ if(AUD.q.length) audReload(); else audStop(); }catch(e){}
@@ -14192,8 +14216,10 @@ function fillSettings(){
     offNote('أجزاؤك المختارة '+arNum(n)+' وجهاً (~'+mb+' ميجا) — تُحفظ في جهازك فيعمل المصحف بلا شبكة.');
   })();
   if($('setQari')){
-    $('setQari').innerHTML=QARIS.map(function(q){
-      return '<option value="'+q.f+'">'+esc(q.n)+'</option>';
+    $('setQari').innerHTML=QARI_G.map(function(g,i){
+      return '<optgroup label="'+esc(g)+'">'+QARIS.filter(function(q){ return q.g===i+1; }).map(function(q){
+        return '<option value="'+q.f+'">'+esc(q.n)+'</option>';
+      }).join('')+'</optgroup>';
     }).join('');
     $('setQari').value=qariF();
   }
@@ -14258,7 +14284,7 @@ function readSettings(){
     if(s0){ curP().last=s0.n; curSurah=s0; }
   }
   if($('setQari') && $('setQari').value!==SET.qari){
-    SET.qari=$('setQari').value;
+    SET.qari=$('setQari').value; qariUse(SET.qari);
     try{ audStop(); }catch(e){}            /* بُدِّل القارئ: تسكت تلاوةُ سابقه */
   }
   SET.sound=$('setSound').checked;
@@ -18870,6 +18896,7 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
   if(cz){
     cz.hidden=!chips;
     cz.innerHTML = chips ? chips.map(function(o,i){
+      if(o.h) return '<div class="chiphd">'+esc(o.h)+'</div>';   /* عنوانُ مجموعةٍ لا يُختار */
       if(o.sel) pickV=o.v;
       return '<button type="button" class="chipsel'+(o.sel?' sel':'')+'" data-pi="'+i+'">'+esc(o.n)+'</button>';
     }).join('') : '';

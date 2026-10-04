@@ -1703,4 +1703,9 @@ NUR_I18N.add('tr', {
   "أعِد أصوات التطبيق": "Uygulama seslerini yeniden aç",
   "كُتمت أصوات التطبيق حتى تغلقه": "Uygulama sesleri, uygulamayı kapatana kadar kapalı",
   "عادت أصوات التطبيق": "Uygulama sesleri yeniden açık",
+  "للتعليم والحفظ": "Öğrenme ve ezber için",
+  "أئمّة الحرمين": "Harameyn imamları",
+  "المدرسة المصريّة": "Mısır ekolü",
+  "أصوات معاصرة": "Çağdaş sesler",
+  "الأخيرة": "Son kullanılanlar",
 });

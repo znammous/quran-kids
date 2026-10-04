@@ -1703,4 +1703,9 @@ NUR_I18N.add('id', {
   "أعِد أصوات التطبيق": "Nyalakan lagi suara aplikasi",
   "كُتمت أصوات التطبيق حتى تغلقه": "Suara aplikasi dibisukan sampai kamu menutupnya",
   "عادت أصوات التطبيق": "Suara aplikasi menyala lagi",
+  "للتعليم والحفظ": "Untuk belajar dan menghafal",
+  "أئمّة الحرمين": "Imam Dua Masjid Suci",
+  "المدرسة المصريّة": "Aliran Mesir",
+  "أصوات معاصرة": "Suara kontemporer",
+  "الأخيرة": "Terakhir",
 });

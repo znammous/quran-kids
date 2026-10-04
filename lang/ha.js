@@ -1703,4 +1703,9 @@ NUR_I18N.add('ha', {
   "أعِد أصوات التطبيق": "Dawo da sautukan manhaja",
   "كُتمت أصوات التطبيق حتى تغلقه": "An kashe sautukan manhaja har sai ka rufe ta",
   "عادت أصوات التطبيق": "Sautukan manhaja sun dawo",
+  "للتعليم والحفظ": "Don koyo da haddacewa",
+  "أئمّة الحرمين": "Limaman Harami Biyu",
+  "المدرسة المصريّة": "Salon Masar",
+  "أصوات معاصرة": "Muryoyin zamani",
+  "الأخيرة": "Na baya-bayan nan",
 });

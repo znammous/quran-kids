@@ -1703,4 +1703,9 @@ NUR_I18N.add('fr', {
   "أعِد أصوات التطبيق": "Rétablir les sons de l’application",
   "كُتمت أصوات التطبيق حتى تغلقه": "Sons de l’application coupés jusqu’à sa fermeture",
   "عادت أصوات التطبيق": "Les sons de l’application sont rétablis",
+  "للتعليم والحفظ": "Pour apprendre et mémoriser",
+  "أئمّة الحرمين": "Imams des deux Saintes Mosquées",
+  "المدرسة المصريّة": "L'école égyptienne",
+  "أصوات معاصرة": "Voix contemporaines",
+  "الأخيرة": "Récents",
 });

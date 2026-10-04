@@ -1703,4 +1703,9 @@ NUR_I18N.add('sw', {
   "أعِد أصوات التطبيق": "Washa tena sauti za programu",
   "كُتمت أصوات التطبيق حتى تغلقه": "Sauti za programu zimezimwa hadi utakapoifunga",
   "عادت أصوات التطبيق": "Sauti za programu zimerudi",
+  "للتعليم والحفظ": "Kwa kujifunza na kuhifadhi",
+  "أئمّة الحرمين": "Maimamu wa Haram Mbili",
+  "المدرسة المصريّة": "Mtindo wa Misri",
+  "أصوات معاصرة": "Sauti za kisasa",
+  "الأخيرة": "Za karibuni",
 });
