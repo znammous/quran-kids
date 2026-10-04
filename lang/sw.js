@@ -1685,4 +1685,8 @@ NUR_I18N.add('sw', {
   "يفتح تطبيقَ البريد عندك برسالةٍ جاهزة، تكتب فيها ما تشاء ثمّ ترسلها أنت — ويسعدنا أن نسمع منك.": "Hufungua programu yako ya barua pepe na ujumbe ulio tayari — andika unachotaka, kisha uutume mwenyewe. Tunafurahi kusikia kutoka kwako.",
   "اقتراحٌ أو ملاحظة على تطبيق «نور الوحي»": "Pendekezo au maoni kuhusu programu ya “Nur al-Wahy”",
   "اكتب هنا اقتراحَك، أو صِفِ الخطأ وأين ظهر:": "Andika pendekezo lako hapa, au eleza tatizo na lilipotokea:",
+  "اكتم أصوات التطبيق في هذه الجلسة": "Zima sauti za programu kwa kipindi hiki",
+  "أعِد أصوات التطبيق": "Washa tena sauti za programu",
+  "كُتمت أصوات التطبيق حتى تغلقه": "Sauti za programu zimezimwa hadi utakapoifunga",
+  "عادت أصوات التطبيق": "Sauti za programu zimerudi",
 });

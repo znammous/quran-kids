@@ -967,6 +967,9 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
   font-family:inherit;cursor:pointer;padding:5px 9px;font-size:16px;line-height:1}
 .pstat.listenchip:active{transform:scale(.9)}
 .pstat.listenchip.on{background:linear-gradient(180deg,#ff8080,#d63b3b);border-color:#ffc4c4;color:#fff}
+.pstat.sfxchip{font-family:inherit;cursor:pointer;padding:5px 9px;font-size:16px;line-height:1}
+.pstat.sfxchip:active{transform:scale(.9)}
+.pstat.sfxchip.on{background:linear-gradient(180deg,#ffd76a,#e0a312);border-color:#ffe9a8}
 .pstat.combochip{background:linear-gradient(180deg,#f97f31,#b8440a);border-color:#ffb877;color:#fff}
 .pstat.combochip b{color:#fff}
 .pstat.combochip.pop{transform:scale(1.18);transition:.14s}
@@ -2827,6 +2830,8 @@ body.hastabs #btnRevQuit{display:none}
       <div class="pstat" id="pStep">1/1</div>
       <!-- اختصارُ الاستماع: يتلو مقطعَ الدرس بلا فتح وجه المصحف -->
       <button type="button" class="pstat listenchip" id="pListen" title="استمع للمقطع" aria-label="استمع للمقطع">🎧</button>
+      <!-- كتمُ أصوات التفاعل لهذه الجلسة وحدها: في المسجد ونحوه، بلا خفض صوت الجهاز -->
+      <button type="button" class="pstat sfxchip" id="pSfx" title="اكتم أصوات التطبيق في هذه الجلسة" aria-label="اكتم أصوات التطبيق في هذه الجلسة">🔊</button>
       <div class="pstat combochip" id="comboChip" hidden><span class="ico">🔥</span><b id="comboN">0</b></div>
       <button type="button" class="pstat qachip" id="qaSkip" hidden title="تخطّي السؤال — للفحص">⏩</button>
       <button type="button" class="pstat qachip" id="qaEnd" hidden title="إنهاء المرحلة — للفحص">⏭️</button>
@@ -3278,8 +3283,20 @@ function bindPlayer(){
 bindPlayer();
 
 var AC=null, AC_T=0;
+/* كتمُ الجلسة: لا يُحفظ، فيعود الصوتُ إذا أُغلق التطبيقُ وفُتح. والتلاوةُ
+   لا تُكتم به — لا تُتلى إلّا إذا طلبها بنفسه */
+var SFX_MUTE=false;
+function sfxOn(){ return !!SET.sound && !SFX_MUTE; }
+function sfxSync(){
+  var b=$('pSfx'); if(!b) return;
+  b.hidden=!SET.sound;               /* أصواتُه مطفأةٌ من الإعدادات: لا شيءَ يُكتم */
+  b.classList.toggle('on', SFX_MUTE);
+  b.textContent=SFX_MUTE?'🔇':'🔊';
+  var t=SFX_MUTE?'أعِد أصوات التطبيق':'اكتم أصوات التطبيق في هذه الجلسة';
+  b.title=t; b.setAttribute('aria-label',t);
+}
 function beep(freqs,dur){
-  if(!SET.sound) return;
+  if(!sfxOn()) return;
   try{
     AC = AC || new (window.AudioContext||window.webkitAudioContext)();
     if(AC.state==='suspended' && AC.resume) AC.resume();
@@ -7720,6 +7737,7 @@ function show(id){
   /* غادر الإعدادات: يُعتمد ما أشّره من حفظٍ سابق وتُعاد الجدولة، ولو خرج من الشريط */
   if(from==='scr-settings' && id!=='scr-settings'){ try{ settingsCommit(); }catch(e){} }
   if(id==='scr-start'){ try{ renderHome(); }catch(e){} }
+  if(id==='scr-play'){ try{ sfxSync(); }catch(e){} }
   try{ syncTabs(id); }catch(e){}
   try{ $('pathFabs').hidden = (id!=='scr-path'); }catch(e){}
   /* من أين دخل المسارَ؟ من الرئيسيّة غالباً («حفظ اليوم»)، ومن الفهرس أحياناً.
@@ -8399,6 +8417,11 @@ $('mfGoListen').onclick=function(){
 $('pListen').onclick=function(){
   if(audTap()) return;
   audAsk(audQueueNow());
+};
+$('pSfx').onclick=function(){
+  SFX_MUTE=!SFX_MUTE; sfxSync();
+  try{ navToast(SFX_MUTE?'🔇 كُتمت أصوات التطبيق حتى تغلقه':'🔊 عادت أصوات التطبيق'); }catch(e){}
+  if(!SFX_MUTE) beep([660],0.06);
 };
 $('mfPg').onchange=function(){ mfGoto(this.value); };
 $('mfPg').onkeydown=function(e){ if(e.key==='Enter'){ this.blur(); this.onchange(); } };
@@ -10282,7 +10305,7 @@ function celeNext(){
     '<div class="cbar"><i></i></div>';
   el.hidden=false;
   sWin();
-  try{ if(SET.sound!==false && navigator.vibrate) navigator.vibrate([25,40,25]); }catch(e){}
+  try{ if(sfxOn() && navigator.vibrate) navigator.vibrate([25,40,25]); }catch(e){}
   clearTimeout(CELE.tm);
   CELE.tm=setTimeout(celeDone,CELE_MS);
   el.onclick=celeDone;

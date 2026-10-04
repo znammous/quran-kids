@@ -1685,4 +1685,8 @@ NUR_I18N.add('so', {
   "يفتح تطبيقَ البريد عندك برسالةٍ جاهزة، تكتب فيها ما تشاء ثمّ ترسلها أنت — ويسعدنا أن نسمع منك.": "Wuxuu furayaa barnaamijka iimaylkaaga oo fariin diyaar ah leh — qor waxaad rabto, kadibna adigu dir. Waxaan jecelnahay inaan kaa maqalno.",
   "اقتراحٌ أو ملاحظة على تطبيق «نور الوحي»": "Talo ama fikrad ku saabsan barnaamijka “Nur al-Wahy”",
   "اكتب هنا اقتراحَك، أو صِفِ الخطأ وأين ظهر:": "Halkan ku qor taladaada, ama sharax cilladda iyo meesha ay ka muuqatay:",
+  "اكتم أصوات التطبيق في هذه الجلسة": "Aamusi codadka barnaamijka fadhigan",
+  "أعِد أصوات التطبيق": "Dib u shid codadka barnaamijka",
+  "كُتمت أصوات التطبيق حتى تغلقه": "Codadka barnaamijka waa la aamusiyey ilaa aad xidhid",
+  "عادت أصوات التطبيق": "Codadka barnaamijka way soo noqdeen",
 });

@@ -1685,4 +1685,8 @@ NUR_I18N.add('en', {
   "يفتح تطبيقَ البريد عندك برسالةٍ جاهزة، تكتب فيها ما تشاء ثمّ ترسلها أنت — ويسعدنا أن نسمع منك.": "Opens your email app with a ready message — write whatever you like, then send it yourself. We’d love to hear from you.",
   "اقتراحٌ أو ملاحظة على تطبيق «نور الوحي»": "Suggestion or feedback on the “Nur al-Wahy” app",
   "اكتب هنا اقتراحَك، أو صِفِ الخطأ وأين ظهر:": "Write your suggestion here, or describe the problem and where it appeared:",
+  "اكتم أصوات التطبيق في هذه الجلسة": "Mute app sounds for this session",
+  "أعِد أصوات التطبيق": "Turn app sounds back on",
+  "كُتمت أصوات التطبيق حتى تغلقه": "App sounds muted until you close it",
+  "عادت أصوات التطبيق": "App sounds are back on",
 });

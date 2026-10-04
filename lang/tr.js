@@ -1685,4 +1685,8 @@ NUR_I18N.add('tr', {
   "يفتح تطبيقَ البريد عندك برسالةٍ جاهزة، تكتب فيها ما تشاء ثمّ ترسلها أنت — ويسعدنا أن نسمع منك.": "E-posta uygulamanızı hazır bir mesajla açar — dilediğinizi yazın, sonra kendiniz gönderin. Sizden haber almak bizi sevindirir.",
   "اقتراحٌ أو ملاحظة على تطبيق «نور الوحي»": "“Nur al-Wahy” uygulaması hakkında öneri veya görüş",
   "اكتب هنا اقتراحَك، أو صِفِ الخطأ وأين ظهر:": "Önerinizi buraya yazın ya da sorunu ve nerede çıktığını anlatın:",
+  "اكتم أصوات التطبيق في هذه الجلسة": "Bu oturum için uygulama seslerini kapat",
+  "أعِد أصوات التطبيق": "Uygulama seslerini yeniden aç",
+  "كُتمت أصوات التطبيق حتى تغلقه": "Uygulama sesleri, uygulamayı kapatana kadar kapalı",
+  "عادت أصوات التطبيق": "Uygulama sesleri yeniden açık",
 });

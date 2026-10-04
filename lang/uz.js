@@ -1685,4 +1685,8 @@ NUR_I18N.add('uz', {
   "يفتح تطبيقَ البريد عندك برسالةٍ جاهزة، تكتب فيها ما تشاء ثمّ ترسلها أنت — ويسعدنا أن نسمع منك.": "Elektron pochta ilovangizni tayyor xat bilan ochadi — xohlaganingizni yozing, soʻng oʻzingiz yuboring. Sizdan xabar olishdan xursandmiz.",
   "اقتراحٌ أو ملاحظة على تطبيق «نور الوحي»": "“Nur al-Wahy” ilovasi haqida taklif yoki fikr",
   "اكتب هنا اقتراحَك، أو صِفِ الخطأ وأين ظهر:": "Taklifingizni shu yerga yozing yoki xatoni va u qayerda chiqqanini tasvirlang:",
+  "اكتم أصوات التطبيق في هذه الجلسة": "Shu mashg‘ulot uchun ilova ovozlarini o‘chirish",
+  "أعِد أصوات التطبيق": "Ilova ovozlarini qayta yoqish",
+  "كُتمت أصوات التطبيق حتى تغلقه": "Ilova ovozlari uni yopguningizcha o‘chirildi",
+  "عادت أصوات التطبيق": "Ilova ovozlari qayta yoqildi",
 });
