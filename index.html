@@ -1590,8 +1590,12 @@ body.hastabs .fabbar{bottom:calc(72px + env(safe-area-inset-bottom))}
 .jzt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .jzt b{font-size:15px;color:var(--g1)}
 .jzt i{font-style:normal;font-size:11.5px;color:#4d6782}
+/* البطاقةُ بيضاءُ في الوضعين، فألوانُ الشارة ثابتةٌ فاتحة: كانت تأخذ --psel
+   وهو في الليل أزرقُ داكنٌ تحت كتابةٍ كحليّة، فلا تُقرأ النسبة */
 .jzgo{flex:0 0 auto;font-size:12.5px;font-weight:900;color:var(--g1);
-  background:var(--psel);border:2px solid var(--pb);border-radius:999px;padding:5px 10px}
+  background:#eaf4ff;border:2px solid #9cc3e5;border-radius:999px;padding:5px 10px}
+.jzrow.due .jzgo{background:var(--gold);border-color:#d9a21f;color:#3d2a00}
+.jzrow.done .jzgo{background:#dff7e8;border-color:#48d98a;color:#0e5a2e}
 .path{position:relative;padding:6px 0 10px}
 .path::before{content:"";position:absolute;top:0;bottom:0;right:50%;width:0;z-index:0;
   border-right:5px dashed var(--wire);transform:translateX(2.5px)}
@@ -7298,7 +7302,7 @@ function renderJuzTests(){
     h+='<button type="button" class="jzrow '+st+'" data-j="'+j+'">'+
        '<span class="jzic">'+(jp.passed?'✅':(jp.ready?'🏰':'🔒'))+'</span>'+
        '<span class="jzt"><b>الجزء '+arNum(j)+'</b><i>'+juzWhere(j)+' • '+
-         arNum(jp.done)+'/'+arNum(jp.total)+' مقطع</i></span>'+
+         tx('{0}/{1} مقطع', [arNum(jp.done), arNum(jp.total)])+'</i></span>'+
        '<span class="jzgo">'+(jp.passed?'📜 شهادته':(jp.ready?'ابدأ ←':
          arNum(Math.floor(jp.done*100/jp.total))+'٪'))+'</span></button>';
   }

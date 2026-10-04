@@ -1016,7 +1016,7 @@ NUR_I18N.add('ms', {
   "شهادة من «نور الوحي»": "Sijil daripada “Nur Al-Wahy”",
   "شهادة نور الوحي": "Sijil Nur Al-Wahy",
   "شهادةُ الجزء": "Sijil Juzuk",
-  "شهادته": "Sijilnya",
+  "شهادته": "Sijil",
   "ص {0}": "m/s {0}",
   "صابون الغار": "Sabun laurel",
   "صابون بلا طيب": "Sabun tanpa wangian",
@@ -1673,4 +1673,5 @@ NUR_I18N.add('ms', {
   "أحسنت! 🌟": "Syabas! 🌟",
   "أحسنت! 🌟 +{0} 💎": "Syabas! 🌟 +{0} 💎",
   "{0} م": "{0} m",
+  "{0}/{1} مقطع": "{0}/{1} bahagian",
 });

@@ -1016,7 +1016,7 @@ NUR_I18N.add('uz', {
   "شهادة من «نور الوحي»": "“Nur Al-Wahy”dan guvohnoma",
   "شهادة نور الوحي": "Nur Al-Wahy guvohnomasi",
   "شهادةُ الجزء": "Pora guvohnomasi",
-  "شهادته": "Ularning guvohnomasi",
+  "شهادته": "Guvohnoma",
   "ص {0}": "{0}-sahifa",
   "صابون الغار": "Dafna sovuni",
   "صابون بلا طيب": "Hidsiz sovun",
@@ -1673,4 +1673,5 @@ NUR_I18N.add('uz', {
   "أحسنت! 🌟": "Barakalla! 🌟",
   "أحسنت! 🌟 +{0} 💎": "Barakalla! 🌟 +{0} 💎",
   "{0} م": "{0} m",
+  "{0}/{1} مقطع": "{0}/{1} boʻlak",
 });

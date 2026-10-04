@@ -1016,7 +1016,7 @@ NUR_I18N.add('so', {
   "شهادة من «نور الوحي»": "Shahaado ka timid “Nur Al-Wahy”",
   "شهادة نور الوحي": "Shahaadada Nur Al-Wahy",
   "شهادةُ الجزء": "Shahaadada Juz’ka",
-  "شهادته": "Shahaadadiisa",
+  "شهادته": "Shahaadada",
   "ص {0}": "b. {0}",
   "صابون الغار": "Saabuun laurel",
   "صابون بلا طيب": "Saabuun aan cadar lahayn",
@@ -1673,4 +1673,5 @@ NUR_I18N.add('so', {
   "أحسنت! 🌟": "Si fiican ayaad u samaysay! 🌟",
   "أحسنت! 🌟 +{0} 💎": "Si fiican ayaad u samaysay! 🌟 +{0} 💎",
   "{0} م": "{0} m",
+  "{0}/{1} مقطع": "{0}/{1} qaybood",
 });

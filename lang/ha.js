@@ -1016,7 +1016,7 @@ NUR_I18N.add('ha', {
   "شهادة من «نور الوحي»": "Takardar shaida daga “Nur Al-Wahy”",
   "شهادة نور الوحي": "Takardar shaidar Nur Al-Wahy",
   "شهادةُ الجزء": "Takardar shaidar Izu",
-  "شهادته": "Takardar shaidarsa",
+  "شهادته": "Takardar shaida",
   "ص {0}": "sh. {0}",
   "صابون الغار": "Sabulun ganyen laurel",
   "صابون بلا طيب": "Sabulu mara ƙamshi",
@@ -1673,4 +1673,5 @@ NUR_I18N.add('ha', {
   "أحسنت! 🌟": "Madalla! 🌟",
   "أحسنت! 🌟 +{0} 💎": "Madalla! 🌟 +{0} 💎",
   "{0} م": "{0} m",
+  "{0}/{1} مقطع": "{0}/{1} sassa",
 });

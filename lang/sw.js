@@ -1016,7 +1016,7 @@ NUR_I18N.add('sw', {
   "شهادة من «نور الوحي»": "Cheti kutoka “Nur Al-Wahy”",
   "شهادة نور الوحي": "Cheti cha Nur Al-Wahy",
   "شهادةُ الجزء": "Cheti cha Juzuu",
-  "شهادته": "Cheti chake",
+  "شهادته": "Cheti",
   "ص {0}": "uk. {0}",
   "صابون الغار": "Sabuni ya mrihani",
   "صابون بلا طيب": "Sabuni isiyo na manukato",
@@ -1673,4 +1673,5 @@ NUR_I18N.add('sw', {
   "أحسنت! 🌟": "Hongera! 🌟",
   "أحسنت! 🌟 +{0} 💎": "Hongera! 🌟 +{0} 💎",
   "{0} م": "{0} m",
+  "{0}/{1} مقطع": "{0}/{1} sehemu",
 });

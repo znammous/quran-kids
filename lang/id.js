@@ -1016,7 +1016,7 @@ NUR_I18N.add('id', {
   "شهادة من «نور الوحي»": "Sertifikat dari “Nur Al-Wahy”",
   "شهادة نور الوحي": "Sertifikat Nur Al-Wahy",
   "شهادةُ الجزء": "Sertifikat juz",
-  "شهادته": "Sertifikatnya",
+  "شهادته": "Sertifikat",
   "ص {0}": "hlm. {0}",
   "صابون الغار": "Sabun laurel",
   "صابون بلا طيب": "Sabun tanpa wangi",
@@ -1673,4 +1673,5 @@ NUR_I18N.add('id', {
   "أحسنت! 🌟": "Bagus sekali! 🌟",
   "أحسنت! 🌟 +{0} 💎": "Bagus sekali! 🌟 +{0} 💎",
   "{0} م": "{0} m",
+  "{0}/{1} مقطع": "{0}/{1} bagian",
 });
