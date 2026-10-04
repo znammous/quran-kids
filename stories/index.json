@@ -1,5 +1,5 @@
 {
-  "v": 94,
+  "v": 95,
   "stories": [
     {
       "id": "kahf",
@@ -675,6 +675,16 @@
       "cover": "covers/baydar.webp",
       "cw": "covers/w/baydar.webp",
       "file": "s/baydar.json",
+      "added": "2026-10-04"
+    },
+    {
+      "id": "qidr",
+      "t": "القِدرُ الكبيرة",
+      "d": "مَثَلٌ في إعارة الماعون",
+      "ic": "🍲",
+      "cover": "covers/qidr.webp",
+      "cw": "covers/w/qidr.webp",
+      "file": "s/qidr.json",
       "added": "2026-10-04"
     }
   ]
