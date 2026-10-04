@@ -1,5 +1,5 @@
 {
-  "v": 92,
+  "v": 93,
   "stories": [
     {
       "id": "kahf",
@@ -636,6 +636,36 @@
       "file": "s/surur.json",
       "rev": 2,
       "added": "2026-10-01"
+    },
+    {
+      "id": "talut",
+      "t": "طالوت وجالوت",
+      "d": "قلّةٌ صبرت فغلبت كثرةً بإذن الله",
+      "ic": "🛡️",
+      "cover": "covers/talut.webp",
+      "cw": "covers/w/talut.webp",
+      "file": "s/talut.json",
+      "added": "2026-10-04"
+    },
+    {
+      "id": "ghulaman",
+      "t": "غلامان في الصفّ",
+      "d": "صغيران أقدما يومَ بدر",
+      "ic": "⚔️",
+      "cover": "covers/ghulaman.webp",
+      "cw": "covers/w/ghulaman.webp",
+      "file": "s/ghulaman.json",
+      "added": "2026-10-04"
+    },
+    {
+      "id": "sahm",
+      "t": "سهمُ سند",
+      "d": "مَثَلٌ في تجهيز الغازي",
+      "ic": "🏹",
+      "cover": "covers/sahm.webp",
+      "cw": "covers/w/sahm.webp",
+      "file": "s/sahm.json",
+      "added": "2026-10-04"
     }
   ]
 }

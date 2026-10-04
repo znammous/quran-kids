@@ -300,6 +300,21 @@
    "t": "Kegembiraan yang Kamu Berikan",
    "d": "Perumpamaan tentang membahagiakan sesama muslim",
    "rev": 2
+  },
+  "talut": {
+   "t": "Thalut dan Jalut",
+   "d": "Golongan kecil yang sabar mengalahkan golongan besar dengan izin Allah",
+   "rev": 1
+  },
+  "ghulaman": {
+   "t": "Dua Anak di Barisan",
+   "d": "Dua anak kecil yang maju pada hari Perang Badr",
+   "rev": 1
+  },
+  "sahm": {
+   "t": "Anak Panah Sanad",
+   "d": "Perumpamaan tentang membekali orang yang berperang",
+   "rev": 1
   }
  }
 }

@@ -300,6 +300,21 @@
    "t": "Furaha Unayompa Mwenzako",
    "d": "Mfano kuhusu kumfurahisha Muislamu",
    "rev": 2
+  },
+  "talut": {
+   "t": "Talut na Jalut",
+   "d": "Wachache walisubiri wakawashinda wengi kwa idhini ya Allah",
+   "rev": 1
+  },
+  "ghulaman": {
+   "t": "Vijana Wawili Katika Safu",
+   "d": "Wadogo wawili waliosonga mbele siku ya Badr",
+   "rev": 1
+  },
+  "sahm": {
+   "t": "Mshale wa Sanad",
+   "d": "Mfano kuhusu kumwandaa anayekwenda vitani",
+   "rev": 1
   }
  }
 }

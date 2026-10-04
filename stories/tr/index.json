@@ -300,6 +300,21 @@
    "t": "Bir Kalbe Sevinç",
    "d": "Bir Müslümanı sevindirmek üzerine bir misal",
    "rev": 2
+  },
+  "talut": {
+   "t": "Talut ve Calut",
+   "d": "Sabreden az bir topluluk, Allah'ın izniyle çok bir topluluğu yendi",
+   "rev": 1
+  },
+  "ghulaman": {
+   "t": "Saftaki İki Çocuk",
+   "d": "Bedir günü öne atılan iki küçük",
+   "rev": 1
+  },
+  "sahm": {
+   "t": "Sened'in Oku",
+   "d": "Gaziyi donatmak üzerine bir misal",
+   "rev": 1
   }
  }
 }
