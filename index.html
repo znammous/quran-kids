@@ -2970,6 +2970,14 @@ body.hastabs #btnRevQuit{display:none}
         <div class="note" id="updNote">يتحقّق التطبيقُ من التحديث عند فتحه، ويُخبرك إن وُجد.</div>
       </div>
       <input type="file" id="fileInput" accept=".json,application/json" style="display:none">
+      <!-- الاقتراحات والبلاغات: تُكتب في تطبيق البريد ويُرسلها المستخدمُ بنفسه،
+           فلا يجمع التطبيقُ شيئاً — ولا تتغيّر بطاقةُ الخصوصيّة في المتجرين -->
+      <div class="setblock" style="margin-top:12px">
+        <label class="lbl">💬 اقتراحٌ أو ملاحظة</label>
+        <button class="btn blue" id="btnFeedback" style="width:100%">✉️ أرسلْ اقتراحاً أو أبلغْ عن خطأ</button>
+        <div class="note">يفتح تطبيقَ البريد عندك برسالةٍ جاهزة، تكتب فيها ما تشاء ثمّ ترسلها أنت — ويسعدنا أن نسمع منك.</div>
+        <div class="note" dir="ltr" translate="no" style="text-align:center;user-select:text;-webkit-user-select:text">zuhair.nammous@gmail.com</div>
+      </div>
       <!-- الخصوصيّة: تُقال في مكانٍ يُرى، لا تُدفن في صفحةٍ بعيدة -->
       <div class="setblock" style="margin-top:12px">
         <label class="lbl">🔒 الخصوصيّة</label>
@@ -18295,6 +18303,37 @@ $('btnPrivacy').onclick=function(){
   $('privBox').hidden=false;
 };
 $('xPriv').onclick=function(){ closeModal('privBox'); };
+/* ===== اقتراحٌ أو بلاغ =====
+   رابطُ mailto يفتح تطبيقَ البريد (وفي تطبيق الجوّال يُسلِّمه Capacitor للنظام)،
+   والمرسِلُ هو المستخدمُ من بريده — فالتطبيقُ لا ينقل شيئاً. وفي آخر الرسالة سطرٌ
+   بالإصدار والجهاز واللغة يعين على تتبّع الخطأ، يراه قبل الإرسال وله أن يمحوه.
+   وهو خروجٌ من التطبيق، فيمرّ ببوّابة وليّ الأمر كما تشترط أبل في تطبيقات الأطفال. */
+var FEEDBACK_TO='zuhair.nammous@gmail.com';
+function feedbackInfo(){
+  var plat='web';
+  try{ if(isNative()) plat=window.Capacitor.getPlatform(); }catch(e){}
+  var APPI=nativePlugin('App');
+  return Promise.all([
+    fetch('bundle.json',{cache:'no-store'}).then(function(r){ return r.json(); })['catch'](function(){ return {}; }),
+    (APPI && APPI.getInfo) ? APPI.getInfo()['catch'](function(){ return {}; }) : Promise.resolve({})
+  ]).then(function(x){
+    var ver=x[1].version ? x[1].version+' ('+x[1].build+')' : '';
+    return ['Nur al-Wahy', ver, x[0].id||'', plat, NUR_I18N.code, screen.width+'×'+screen.height]
+      .filter(Boolean).join(' · ');
+  });
+}
+$('btnFeedback').onclick=function(){
+  parentGate(function(ok){
+    if(!ok) return;
+    feedbackInfo()['catch'](function(){ return ''; }).then(function(info){
+      var a=document.createElement('a');
+      a.href='mailto:'+FEEDBACK_TO+
+        '?subject='+encodeURIComponent(tx('اقتراحٌ أو ملاحظة على تطبيق «نور الوحي»'))+
+        '&body='+encodeURIComponent(tx('اكتب هنا اقتراحَك، أو صِفِ الخطأ وأين ظهر:')+'\n\n\n\n— — —\n'+info);
+      document.body.appendChild(a); a.click(); a.remove();
+    });
+  });
+};
 /* ===== رسائلُ الفتح =====
    تتتابع ولا تتزاحم: الخصوصيّةُ فهي حقُّه أن يعلمها، ثمّ شرحُ اللعب،
    ثمّ بشارةُ القصّة، ثمّ نصيحةُ النسخة. وكلٌّ ينتظر هدوءَ ما قبله.

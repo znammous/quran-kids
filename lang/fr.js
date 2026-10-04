@@ -1680,4 +1680,9 @@ NUR_I18N.add('fr', {
   "أحسنت! 🌟 +{0} 💎": "Bravo! 🌟 +{0} 💎",
   "{0} م": "{0} m",
   "{0}/{1} مقطع": "{0}/{1} passages",
+  "اقتراحٌ أو ملاحظة": "Suggestion ou remarque",
+  "أرسلْ اقتراحاً أو أبلغْ عن خطأ": "Envoyer une suggestion ou signaler un problème",
+  "يفتح تطبيقَ البريد عندك برسالةٍ جاهزة، تكتب فيها ما تشاء ثمّ ترسلها أنت — ويسعدنا أن نسمع منك.": "Ouvre votre application de messagerie avec un message prêt — écrivez ce que vous voulez, puis envoyez-le vous-même. Nous serons heureux de vous lire.",
+  "اقتراحٌ أو ملاحظة على تطبيق «نور الوحي»": "Suggestion ou remarque sur l’application « Nur al-Wahy »",
+  "اكتب هنا اقتراحَك، أو صِفِ الخطأ وأين ظهر:": "Écrivez ici votre suggestion, ou décrivez le problème et où il est apparu :",
 });

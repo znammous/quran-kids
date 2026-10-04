@@ -1680,4 +1680,9 @@ NUR_I18N.add('sw', {
   "أحسنت! 🌟 +{0} 💎": "Hongera! 🌟 +{0} 💎",
   "{0} م": "{0} m",
   "{0}/{1} مقطع": "{0}/{1} sehemu",
+  "اقتراحٌ أو ملاحظة": "Pendekezo au maoni",
+  "أرسلْ اقتراحاً أو أبلغْ عن خطأ": "Tuma pendekezo au ripoti tatizo",
+  "يفتح تطبيقَ البريد عندك برسالةٍ جاهزة، تكتب فيها ما تشاء ثمّ ترسلها أنت — ويسعدنا أن نسمع منك.": "Hufungua programu yako ya barua pepe na ujumbe ulio tayari — andika unachotaka, kisha uutume mwenyewe. Tunafurahi kusikia kutoka kwako.",
+  "اقتراحٌ أو ملاحظة على تطبيق «نور الوحي»": "Pendekezo au maoni kuhusu programu ya “Nur al-Wahy”",
+  "اكتب هنا اقتراحَك، أو صِفِ الخطأ وأين ظهر:": "Andika pendekezo lako hapa, au eleza tatizo na lilipotokea:",
 });

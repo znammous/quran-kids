@@ -1680,4 +1680,9 @@ NUR_I18N.add('tr', {
   "أحسنت! 🌟 +{0} 💎": "Aferin! 🌟 +{0} 💎",
   "{0} م": "{0} m",
   "{0}/{1} مقطع": "{0}/{1} bölüm",
+  "اقتراحٌ أو ملاحظة": "Öneri veya görüş",
+  "أرسلْ اقتراحاً أو أبلغْ عن خطأ": "Öneri gönder veya sorun bildir",
+  "يفتح تطبيقَ البريد عندك برسالةٍ جاهزة، تكتب فيها ما تشاء ثمّ ترسلها أنت — ويسعدنا أن نسمع منك.": "E-posta uygulamanızı hazır bir mesajla açar — dilediğinizi yazın, sonra kendiniz gönderin. Sizden haber almak bizi sevindirir.",
+  "اقتراحٌ أو ملاحظة على تطبيق «نور الوحي»": "“Nur al-Wahy” uygulaması hakkında öneri veya görüş",
+  "اكتب هنا اقتراحَك، أو صِفِ الخطأ وأين ظهر:": "Önerinizi buraya yazın ya da sorunu ve nerede çıktığını anlatın:",
 });

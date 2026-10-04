@@ -1680,4 +1680,9 @@ NUR_I18N.add('so', {
   "أحسنت! 🌟 +{0} 💎": "Si fiican ayaad u samaysay! 🌟 +{0} 💎",
   "{0} م": "{0} m",
   "{0}/{1} مقطع": "{0}/{1} qaybood",
+  "اقتراحٌ أو ملاحظة": "Talo ama fikrad",
+  "أرسلْ اقتراحاً أو أبلغْ عن خطأ": "Dir talo ama soo sheeg cillad",
+  "يفتح تطبيقَ البريد عندك برسالةٍ جاهزة، تكتب فيها ما تشاء ثمّ ترسلها أنت — ويسعدنا أن نسمع منك.": "Wuxuu furayaa barnaamijka iimaylkaaga oo fariin diyaar ah leh — qor waxaad rabto, kadibna adigu dir. Waxaan jecelnahay inaan kaa maqalno.",
+  "اقتراحٌ أو ملاحظة على تطبيق «نور الوحي»": "Talo ama fikrad ku saabsan barnaamijka “Nur al-Wahy”",
+  "اكتب هنا اقتراحَك، أو صِفِ الخطأ وأين ظهر:": "Halkan ku qor taladaada, ama sharax cilladda iyo meesha ay ka muuqatay:",
 });

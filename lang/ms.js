@@ -1680,4 +1680,9 @@ NUR_I18N.add('ms', {
   "أحسنت! 🌟 +{0} 💎": "Syabas! 🌟 +{0} 💎",
   "{0} م": "{0} m",
   "{0}/{1} مقطع": "{0}/{1} bahagian",
+  "اقتراحٌ أو ملاحظة": "Cadangan atau maklum balas",
+  "أرسلْ اقتراحاً أو أبلغْ عن خطأ": "Hantar cadangan atau laporkan masalah",
+  "يفتح تطبيقَ البريد عندك برسالةٍ جاهزة، تكتب فيها ما تشاء ثمّ ترسلها أنت — ويسعدنا أن نسمع منك.": "Membuka aplikasi e-mel anda dengan mesej yang sedia — tulis apa sahaja, kemudian hantar sendiri. Kami gembira mendengar daripada anda.",
+  "اقتراحٌ أو ملاحظة على تطبيق «نور الوحي»": "Cadangan atau maklum balas untuk aplikasi “Nur al-Wahy”",
+  "اكتب هنا اقتراحَك، أو صِفِ الخطأ وأين ظهر:": "Tulis cadangan anda di sini, atau terangkan masalahnya dan di mana ia muncul:",
 });

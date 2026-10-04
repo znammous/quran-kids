@@ -1680,4 +1680,9 @@ NUR_I18N.add('uz', {
   "أحسنت! 🌟 +{0} 💎": "Barakalla! 🌟 +{0} 💎",
   "{0} م": "{0} m",
   "{0}/{1} مقطع": "{0}/{1} boʻlak",
+  "اقتراحٌ أو ملاحظة": "Taklif yoki fikr",
+  "أرسلْ اقتراحاً أو أبلغْ عن خطأ": "Taklif yuborish yoki xato haqida xabar berish",
+  "يفتح تطبيقَ البريد عندك برسالةٍ جاهزة، تكتب فيها ما تشاء ثمّ ترسلها أنت — ويسعدنا أن نسمع منك.": "Elektron pochta ilovangizni tayyor xat bilan ochadi — xohlaganingizni yozing, soʻng oʻzingiz yuboring. Sizdan xabar olishdan xursandmiz.",
+  "اقتراحٌ أو ملاحظة على تطبيق «نور الوحي»": "“Nur al-Wahy” ilovasi haqida taklif yoki fikr",
+  "اكتب هنا اقتراحَك، أو صِفِ الخطأ وأين ظهر:": "Taklifingizni shu yerga yozing yoki xatoni va u qayerda chiqqanini tasvirlang:",
 });
