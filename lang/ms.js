@@ -1566,6 +1566,7 @@ NUR_I18N.add('ms', {
   "وضع الفحص: مفتوح": "Mod ujian: hidup",
   "وعندك {n} مقطعاً حلّ موعدُه": "dan kamu ada {n} bahagian yang sudah tiba masanya",
   "وقف لله تعالى — صدقة جارية عن والديَّ": "Wakaf kerana Allah Ta‘ala — sedekah jariah untuk kedua ibu bapa saya",
+  "يحتاج": "Perlu",
   "وقف مصحف": "Mewakafkan Mushaf",
   "وكلُّ آيةٍ تُتمّها تعطيك 💎 جواهر، ومن مقرَّر اليوم بالضِّعف": "Setiap ayat yang kamu tamatkan memberi kamu 💎 permata, dan dua kali ganda daripada bahagian hari ini",
   "وكم سؤالاً؟": "Dan berapa soalan?",

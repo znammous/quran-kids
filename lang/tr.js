@@ -1566,6 +1566,7 @@ NUR_I18N.add('tr', {
   "وضع الفحص: مفتوح": "Deneme modu: açık",
   "وعندك {n} مقطعاً حلّ موعدُه": "ve zamanı gelen {n} bölümün var",
   "وقف لله تعالى — صدقة جارية عن والديَّ": "Allah Teâlâ için vakıf — anne babam adına sadaka-i câriye",
+  "يحتاج": "Gerekli",
   "وقف مصحف": "Mushaf vakfetmek",
   "وكلُّ آيةٍ تُتمّها تعطيك 💎 جواهر، ومن مقرَّر اليوم بالضِّعف": "Bitirdiğin her ayet sana 💎 mücevher kazandırır, bugünün dersinden ise iki katı",
   "وكم سؤالاً؟": "Peki kaç soru?",

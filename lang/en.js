@@ -1566,6 +1566,7 @@ NUR_I18N.add('en', {
   "وضع الفحص: مفتوح": "Test mode: on",
   "وعندك {n} مقطعاً حلّ موعدُه": "and you have {n} sections due",
   "وقف لله تعالى — صدقة جارية عن والديَّ": "A waqf for Allah — ongoing charity for my parents",
+  "يحتاج": "Needs",
   "وقف مصحف": "Endowing a Mushaf",
   "وكلُّ آيةٍ تُتمّها تعطيك 💎 جواهر، ومن مقرَّر اليوم بالضِّعف": "Every ayah you finish gives you 💎 gems, and double from today’s portion",
   "وكم سؤالاً؟": "And how many questions?",

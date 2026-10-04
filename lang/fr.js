@@ -1566,6 +1566,7 @@ NUR_I18N.add('fr', {
   "وضع الفحص: مفتوح": "Mode test : activé",
   "وعندك {n} مقطعاً حلّ موعدُه": "et tu as {n} passages à revoir",
   "وقف لله تعالى — صدقة جارية عن والديَّ": "Un waqf pour Allah — une sadaqa continue pour mes parents",
+  "يحتاج": "Il faut",
   "وقف مصحف": "Offrir un Mushaf en waqf",
   "وكلُّ آيةٍ تُتمّها تعطيك 💎 جواهر، ومن مقرَّر اليوم بالضِّعف": "Chaque verset que tu finis te donne des 💎 pierres précieuses, et le double depuis la portion du jour",
   "وكم سؤالاً؟": "Et combien de questions ?",

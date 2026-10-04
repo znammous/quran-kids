@@ -1566,6 +1566,7 @@ NUR_I18N.add('so', {
   "وضع الفحص: مفتوح": "Habka tijaabada: shidan",
   "وعندك {n} مقطعاً حلّ موعدُه": "waxaadna haysataa {n} qaybood oo waqtigoodii yimid",
   "وقف لله تعالى — صدقة جارية عن والديَّ": "Waqf Alle Sarreeye dartii — sadaqo socota oo loo bixiyay waalidkay",
+  "يحتاج": "Waxay u baahan tahay",
   "وقف مصحف": "Waqfinta Mushaf",
   "وكلُّ آيةٍ تُتمّها تعطيك 💎 جواهر، ومن مقرَّر اليوم بالضِّعف": "Aayad kasta oo aad dhammeyso waxay ku siinaysaa 💎 dhagxaan qaali ah, qaybta maantana laban-laab",
   "وكم سؤالاً؟": "Immisa su’aalood?",

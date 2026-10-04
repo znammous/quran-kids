@@ -1566,6 +1566,7 @@ NUR_I18N.add('ha', {
   "وضع الفحص: مفتوح": "Yanayin gwaji: a kunne",
   "وعندك {n} مقطعاً حلّ موعدُه": "kuma kana da sassa {n} da lokacinsu ya yi",
   "وقف لله تعالى — صدقة جارية عن والديَّ": "Wakafi don Allah Maɗaukaki — sadaka mai gudana ga iyayena",
+  "يحتاج": "Ana bukatar",
   "وقف مصحف": "Wakafin Mushafi",
   "وكلُّ آيةٍ تُتمّها تعطيك 💎 جواهر، ومن مقرَّر اليوم بالضِّعف": "Kowace aya da ka gama tana ba ka 💎 duwatsu masu daraja, kuma ninki biyu daga rabon yau",
   "وكم سؤالاً؟": "Kuma tambayoyi nawa?",

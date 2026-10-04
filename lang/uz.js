@@ -1566,6 +1566,7 @@ NUR_I18N.add('uz', {
   "وضع الفحص: مفتوح": "Sinov rejimi: yoqilgan",
   "وعندك {n} مقطعاً حلّ موعدُه": "va vaqti kelgan {n} ta boʻlaging bor",
   "وقف لله تعالى — صدقة جارية عن والديَّ": "Alloh uchun vaqf — ota-onam uchun sadaqai joriya",
+  "يحتاج": "Kerak",
   "وقف مصحف": "Mushaf vaqf qilish",
   "وكلُّ آيةٍ تُتمّها تعطيك 💎 جواهر، ومن مقرَّر اليوم بالضِّعف": "Tugatgan har bir oyating senga 💎 javohir beradi, bugungi ulushdan esa ikki baravar",
   "وكم سؤالاً؟": "Nechta savol boʻlsin?",

@@ -1566,6 +1566,7 @@ NUR_I18N.add('sw', {
   "وضع الفحص: مفتوح": "Hali ya majaribio: imewashwa",
   "وعندك {n} مقطعاً حلّ موعدُه": "na una sehemu {n} zilizofika wakati wake",
   "وقف لله تعالى — صدقة جارية عن والديَّ": "Wakfu kwa ajili ya Allah — sadaka inayoendelea kwa ajili ya wazazi wangu",
+  "يحتاج": "Inahitaji",
   "وقف مصحف": "Kutoa Msahafu wakfu",
   "وكلُّ آيةٍ تُتمّها تعطيك 💎 جواهر، ومن مقرَّر اليوم بالضِّعف": "Kila aya unayomaliza inakupa 💎 vito, na mara mbili kutoka sehemu ya leo",
   "وكم سؤالاً؟": "Na maswali mangapi?",
