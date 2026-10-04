@@ -1,5 +1,5 @@
 {
-  "v": 85,
+  "v": 86,
   "stories": [
     {
       "id": "kahf",
@@ -632,6 +632,7 @@
       "cover": "covers/surur.webp",
       "cw": "covers/w/surur.webp",
       "file": "s/surur.json",
+      "rev": 2,
       "added": "2026-10-01"
     }
   ]
