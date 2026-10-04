@@ -1,5 +1,5 @@
 {
-  "v": 93,
+  "v": 94,
   "stories": [
     {
       "id": "kahf",
@@ -665,6 +665,16 @@
       "cover": "covers/sahm.webp",
       "cw": "covers/w/sahm.webp",
       "file": "s/sahm.json",
+      "added": "2026-10-04"
+    },
+    {
+      "id": "baydar",
+      "t": "عامُ القمح وعامُ البَرَد",
+      "d": "مَثَلٌ في السَّعة والضيق",
+      "ic": "🌾",
+      "cover": "covers/baydar.webp",
+      "cw": "covers/w/baydar.webp",
+      "file": "s/baydar.json",
       "added": "2026-10-04"
     }
   ]
