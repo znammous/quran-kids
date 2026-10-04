@@ -1258,6 +1258,10 @@ html[lang=ur] .sttext:not([lang=ar]){font-family:"Noto Nastaliq Urdu","IBM Plex 
   font-family:inherit;box-shadow:0 3px 0 rgba(0,0,0,.18);
   display:flex;align-items:center;justify-content:center;transition:.12s}
 .themebtn:active{transform:translateY(-50%) scale(.92);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+/* زرُّ اللغة في نسخة الموقع وحدها، بجانب زرّ الوضع: زائرُ الموقع يبحث عن اللغة قبل كلّ شيء.
+   وفي التطبيق تكفيه الإعدادات. والعنوانُ يُفسح له على الجانبين ليبقى في الوسط */
+.themebtn.langtop{inset-inline-start:48px}
+.htop:has(.langtop:not([hidden])) h1{margin-inline:90px}
 
 /* ===== شريط الحالة (المواظبة، الجواهر، الهدف) ===== */
 /* شريط الحالة: سطر واحد، والشرح عند الضغط */
@@ -2462,6 +2466,7 @@ body.hastabs #btnRevQuit{display:none}
       <h1>نور الوحي 🕌</h1>
       <div class="hijri" id="homeHijri" aria-label="التاريخ الهجري"></div>
       <button type="button" class="themebtn" id="btnTheme" title="تبديل الوضع" aria-label="تبديل الوضع">🌤️</button>
+      <button type="button" class="themebtn langtop" id="btnLangTop" title="اللغة · Language" aria-label="اللغة · Language" hidden>🌐</button>
     </div>
     <p class="sub">احفظ القرآن مقطعاً مقطعاً — وابنِ مسجدك نجمةً نجمة</p>
     <div class="instbox" id="instBox" hidden>
@@ -3037,6 +3042,10 @@ body.hastabs #btnRevQuit{display:none}
   if(!I.multi){ b.closest('.langbox').hidden=true; return; }
   document.getElementById('langCur').textContent=I.langs[I.code].n;
   b.onclick=function(){ I.choose(false); };
+  /* نسخةُ الموقع: زرٌّ ظاهرٌ في الرئيسيّة. وCapacitor يُحقن قبل الشيفرة فيُعرف التطبيقُ هنا */
+  var t=document.getElementById('btnLangTop'), nat=false;
+  try{ nat=!!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()); }catch(e){}
+  if(t && !nat){ t.hidden=false; t.onclick=function(){ I.choose(false); }; }
 })();
 NUR_I18N.start();
 </script>
