@@ -304,27 +304,27 @@
   "talut": {
    "t": "Talut na Jalut",
    "d": "Wachache walisubiri wakawashinda wengi kwa idhini ya Allah",
-   "rev": 3
+   "rev": 4
   },
   "ghulaman": {
    "t": "Vijana Wawili Katika Safu",
    "d": "Wadogo wawili waliosonga mbele siku ya Badr",
-   "rev": 2
+   "rev": 3
   },
   "sahm": {
    "t": "Mshale wa Sanad",
    "d": "Mfano kuhusu kumwandaa anayekwenda vitani",
-   "rev": 1
+   "rev": 2
   },
   "baydar": {
    "t": "Mwaka wa Ngano na Mwaka wa Mvua ya Mawe",
    "d": "Mfano kuhusu wasaa na dhiki",
-   "rev": 3
+   "rev": 4
   },
   "qidr": {
    "t": "Sufuria Kubwa",
    "d": "Mfano kuhusu kuazimana vyombo vya matumizi",
-   "rev": 1
+   "rev": 2
   }
  }
 }

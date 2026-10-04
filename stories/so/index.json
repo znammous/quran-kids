@@ -304,27 +304,27 @@
   "talut": {
    "t": "Taaluut iyo Jaaluut",
    "d": "Tiro yar oo samirtay ayaa ka adkaatay tiro badan, idanka Alle",
-   "rev": 3
+   "rev": 4
   },
   "ghulaman": {
    "t": "Laba Wiil oo Safka Ku Jira",
    "d": "Laba yar oo hore u dhiirraday maalintii Badr",
-   "rev": 2
+   "rev": 3
   },
   "sahm": {
    "t": "Fallaadha Sanad",
    "d": "Tusaale ku saabsan u diyaarinta qofka dagaalka jidka Alle u baxaya",
-   "rev": 1
+   "rev": 2
   },
   "baydar": {
    "t": "Sannadkii Sarreenka iyo Sannadkii Roobdhagaxa",
    "d": "Tusaale ku saabsan barwaaqada iyo cidhiidhiga",
-   "rev": 3
+   "rev": 4
   },
   "qidr": {
    "t": "Dheriga Weyn",
    "d": "Tusaale ku saabsan amaahinta agabka guriga",
-   "rev": 1
+   "rev": 2
   }
  }
 }

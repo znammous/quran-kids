@@ -1,5 +1,5 @@
 {
-  "v": 99,
+  "v": 100,
   "stories": [
     {
       "id": "kahf",
@@ -646,7 +646,7 @@
       "cw": "covers/w/talut.webp",
       "file": "s/talut.json",
       "added": "2026-10-04",
-      "rev": 3
+      "rev": 4
     },
     {
       "id": "ghulaman",
@@ -657,7 +657,7 @@
       "cw": "covers/w/ghulaman.webp",
       "file": "s/ghulaman.json",
       "added": "2026-10-04",
-      "rev": 2
+      "rev": 3
     },
     {
       "id": "sahm",
@@ -667,7 +667,8 @@
       "cover": "covers/sahm.webp",
       "cw": "covers/w/sahm.webp",
       "file": "s/sahm.json",
-      "added": "2026-10-04"
+      "added": "2026-10-04",
+      "rev": 2
     },
     {
       "id": "baydar",
@@ -678,7 +679,7 @@
       "cw": "covers/w/baydar.webp",
       "file": "s/baydar.json",
       "added": "2026-10-04",
-      "rev": 3
+      "rev": 4
     },
     {
       "id": "qidr",
@@ -688,7 +689,8 @@
       "cover": "covers/qidr.webp",
       "cw": "covers/w/qidr.webp",
       "file": "s/qidr.json",
-      "added": "2026-10-04"
+      "added": "2026-10-04",
+      "rev": 2
     }
   ]
 }

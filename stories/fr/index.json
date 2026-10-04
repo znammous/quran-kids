@@ -304,27 +304,27 @@
   "talut": {
    "t": "Talout et Jalout",
    "d": "Une petite troupe patiente vainquit une grande, par la permission d'Allah",
-   "rev": 3
+   "rev": 4
   },
   "ghulaman": {
    "t": "Deux garçons dans le rang",
    "d": "Deux jeunes qui s'avancèrent le jour de Badr",
-   "rev": 2
+   "rev": 3
   },
   "sahm": {
    "t": "La flèche de Sanad",
    "d": "Une parabole sur l'équipement du combattant",
-   "rev": 1
+   "rev": 2
   },
   "baydar": {
    "t": "L'année du blé et l'année de la grêle",
    "d": "Une parabole sur l'abondance et la gêne",
-   "rev": 3
+   "rev": 4
   },
   "qidr": {
    "t": "La grande marmite",
    "d": "Une parabole sur le prêt des ustensiles",
-   "rev": 1
+   "rev": 2
   }
  }
 }

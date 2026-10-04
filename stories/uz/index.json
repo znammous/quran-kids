@@ -304,27 +304,27 @@
   "talut": {
    "t": "Tolut va Jolut",
    "d": "Sabr qilgan oz guruh Allohning izni bilan koʻp guruhni yengdi",
-   "rev": 3
+   "rev": 4
   },
   "ghulaman": {
    "t": "Safdagi ikki oʻsmir",
    "d": "Badr kuni jasorat bilan oldinga intilgan ikki kichkintoy",
-   "rev": 2
+   "rev": 3
   },
   "sahm": {
    "t": "Sanadning oʻqi",
    "d": "Gʻoziyni jihozlash haqida ibratli masal",
-   "rev": 1
+   "rev": 2
   },
   "baydar": {
    "t": "Bugʻdoy yili va doʻl yili",
    "d": "Kenglik va tanglik haqida ibratli masal",
-   "rev": 3
+   "rev": 4
   },
   "qidr": {
    "t": "Katta qozon",
    "d": "Roʻzgʻor buyumlarini berib turish haqida ibratli masal",
-   "rev": 1
+   "rev": 2
   }
  }
 }

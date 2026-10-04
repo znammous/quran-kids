@@ -304,27 +304,27 @@
   "talut": {
    "t": "Ɗalutu da Jalutu",
    "d": "'Yan kaɗan sun yi haƙuri suka rinjayi masu yawa da izinin Allah",
-   "rev": 3
+   "rev": 4
   },
   "ghulaman": {
    "t": "Yara Biyu a Cikin Sahu",
    "d": "Ƙananan yara biyu da suka yi gaba a ranar Badar",
-   "rev": 2
+   "rev": 3
   },
   "sahm": {
    "t": "Kibiyar Sanad",
    "d": "Misali kan tanadar wa mayaƙi kayansa",
-   "rev": 1
+   "rev": 2
   },
   "baydar": {
    "t": "Shekarar Alkama da Shekarar Ƙanƙara",
    "d": "Misali kan yalwa da ƙunci",
-   "rev": 3
+   "rev": 4
   },
   "qidr": {
    "t": "Babbar Tukunya",
    "d": "Misali kan ara wa mutane kayan amfani",
-   "rev": 1
+   "rev": 2
   }
  }
 }
