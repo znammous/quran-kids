@@ -1,5 +1,5 @@
 {
-  "v": 96,
+  "v": 97,
   "stories": [
     {
       "id": "kahf",
@@ -645,7 +645,8 @@
       "cover": "covers/talut.webp",
       "cw": "covers/w/talut.webp",
       "file": "s/talut.json",
-      "added": "2026-10-04"
+      "added": "2026-10-04",
+      "rev": 2
     },
     {
       "id": "ghulaman",
@@ -655,7 +656,8 @@
       "cover": "covers/ghulaman.webp",
       "cw": "covers/w/ghulaman.webp",
       "file": "s/ghulaman.json",
-      "added": "2026-10-04"
+      "added": "2026-10-04",
+      "rev": 2
     },
     {
       "id": "sahm",
