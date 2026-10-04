@@ -15007,6 +15007,18 @@ function homeFit(){
     if(need>has) W.style.paddingBottom=need+'px';
   }
 }
+/* ويُعاد الضبطُ كلّما تبدّل نصُّ الرئيسيّة أو اكتمل خطّ: كان يُضبط عند فتحها ثمّ بعد
+   لحظة، فإن طال نصٌّ بعدهما (ترجمةٌ تحلّ محلّ العربيّة، خطٌّ يصل متأخّراً) نزلت بطاقةُ
+   المراجعة تحت الزرّين العائمين. وتغييرُ homeFit نفسِه صفاتٌ لا تُراقَب، فلا يدور */
+(function(){
+  var s=$('scr-start'), T=null;
+  function later(){
+    if(!s || !s.classList.contains('active')) return;
+    clearTimeout(T); T=setTimeout(function(){ try{ homeFit(); }catch(e){} }, 120);
+  }
+  try{ if(s && window.MutationObserver) new MutationObserver(later).observe(s, {childList:true, subtree:true, characterData:true}); }catch(e){}
+  try{ if(document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', later); }catch(e){}
+})();
 /* ===== شاشاتُ النتيجة على قدر الجوال =====
    شاشةُ اللعب واحدة: أسئلةٌ ثمّ نتيجةٌ بمسجدٍ وأزرار، والنتيجةُ أطولُ من
    الهاتف. فإذا ظهر المسجدُ (علامةُ النتيجة) رُتّبت الأزرارُ عمودين، ثمّ
