@@ -13434,7 +13434,13 @@ function bqnReturn(){
       REV_TAB='free'; renderRevPlan(); show('scr-rev'); return;
     }
   }catch(e){}
-  if(b==='onb'){ onbShow(ONB.i); return; }
+  /* تمّت خطّتُه في المعالج الأوّل: يمضي إلى الخطوة التالية. وكان يُردّ إلى ملخّص
+     «ما خطة حفظك؟» فيظنّه سؤالاً يُعاد عليه ولا يرى «التالي» تحته. وفي التعديل
+     يُردّ إلى الملخّص بين تبويباته كما كان */
+  if(b==='onb'){
+    if(!ONB.edit && ONB.i===1 && !onbBlocked()){ onbShow(2); return; }
+    onbShow(ONB.i); return;
+  }
   if(b==='set'){ fillSettings(); show('scr-settings'); return; }
   if(b==='rev'){ REV_TAB='mine'; renderRevPlan(); show('scr-rev'); return; }
   openBqn();
