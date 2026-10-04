@@ -1668,4 +1668,5 @@ NUR_I18N.add('en', {
   "{s1} {0} — {1}": "{s1} {0} — {1}",
   "{0} مرّة": "{0} times",
   "رتّب آيات المقطع ({a} – {b}) من {s}": "Order the ayahs of the section ({a} – {b}) from {s}",
+  "✅ متابعة": "✅ Continue",
 });

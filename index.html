@@ -60,14 +60,34 @@
     tr:{n:'Türkçe',   dir:'ltr', ready:true, tr:true,
         trSrc:'Çeviri: Rowwad Tercüme Merkezi, Rabwah Davet Derneği ve IslamHouse.com iş birliğiyle — QuranEnc.com (s. 1.0.4)'}
   };
-  var code='ar', q=/[?&#]lang=([a-z]{2})\b/.exec(location.search+location.hash);
+  var code='ar', q=/[?&#]lang=([a-z]{2})\b/.exec(location.search+location.hash), ask=null;
   try{
     if(q && LANGS[q[1]]) localStorage.setItem('nur_lang', q[1]);
-    code=localStorage.getItem('nur_lang')||'ar';
+    code=localStorage.getItem('nur_lang');
+    /* أوّلُ تشغيل: لا لغةَ محفوظة. فمن على جهازه لاعبٌ باسمه فهو من أهل العربيّة
+       قبل أن تكون للتطبيق لغات: تُحفظ له صامتاً. وإلّا قُرئت لغةُ الجهاز: فالعربيّةُ
+       تُحفظ بلا سؤال، وغيرُها تُعرض بها الواجهةُ ويُسأل عنها قبل المعالج (ask)،
+       ولا تُحفظ حتى يُقرّها — فإن أُغلق التطبيقُ قبلها سُئل ثانيةً */
+    if(!code){
+      var d0=JSON.parse(localStorage.getItem('nur_db')||'null'), old=false;
+      if(d0 && d0.players) for(var i=0;i<d0.players.length;i++)
+        if(d0.players[i] && String(d0.players[i].name||'').trim()) old=true;
+      if(old) localStorage.setItem('nur_lang', code='ar');
+      else{
+        var dl=navigator.languages&&navigator.languages.length ? navigator.languages : [navigator.language||''];
+        var AL={'in':'id', prs:'fa', zsm:'ms'}, g=null;   /* رموزٌ قديمةٌ أو أدقّ لِلُغةٍ عندنا */
+        for(var j=0;j<dl.length && !g;j++){
+          var c2=String(dl[j]||'').toLowerCase().split(/[-_]/)[0]; c2=AL[c2]||c2;
+          if(LANGS[c2] && LANGS[c2].ready) g=c2;
+        }
+        if(g==='ar') localStorage.setItem('nur_lang', code='ar');
+        else{ code=g||'ar'; ask={guess:g}; }
+      }
+    }
   }catch(e){ if(q) code=q[1]; }
   if(!LANGS[code]) code='ar';
   var D={}, AR=/[؀-ۿ]/, NUM=/[0-9٠-٩]+/g;
-  var I={ code:code, langs:LANGS, dict:D, harvest:window.__nurHarvest||null, on:code!=="ar" };
+  var I={ code:code, langs:LANGS, dict:D, harvest:window.__nurHarvest||null, on:code!=="ar", ask:ask };
   window.NUR_I18N=I;
   document.documentElement.lang=code;
   document.documentElement.dir=LANGS[code].dir;
@@ -1126,6 +1146,7 @@ html:is([lang=tr],[lang=bn],[lang=ha],[lang=uz]) body{font-family:system-ui,-app
 .onbnum{font-weight:900;color:#bfe6ff;font-size:14px;flex:0 0 auto;min-width:46px;text-align:center}
 .onbopts{display:flex;flex-direction:column;gap:10px}
 .steplb{color:var(--ttl)}
+.onblang{display:block;margin:10px auto 0}
 .onbopt{display:flex;align-items:center;gap:12px;text-align:start;width:100%;cursor:pointer;
   background:#fff;border:3px solid #e5ecf6;border-radius:16px;padding:12px 14px;
   font-family:inherit;box-shadow:0 4px 0 #dfe8f3}
@@ -2942,22 +2963,36 @@ body.hastabs #btnRevQuit{display:none}
 <script>
 /* قائمةُ اللغات: تُحفظ للجهاز كلِّه لا للّاعب، ويُعاد فتحُ الصفحة بها */
 (function(){
-  var I=NUR_I18N, b=document.getElementById('btnLang'); if(!b) return;
+  var I=NUR_I18N, b=document.getElementById('btnLang');
   var list=[];
   for(var c in I.langs) if(I.langs[c].ready || c===I.code) list.push(c);
-  if(list.length<2){ b.closest('.langbox').hidden=true; return; }
-  document.getElementById('langCur').textContent=I.langs[I.code].n;
-  b.onclick=function(){
-    uiBox(tx('اختر لغة التطبيق')+'\nChoose language', '🌐', null, tx('رجوع'), function(ok, v){
-      if(ok && v && v!==I.code) pick(v);
-    }, null, null, list.map(function(c){ return { n:I.langs[c].n, v:c, sel:c===I.code }; }));
+  /* الصندوقُ نفسُه للإعدادات وللمعالج ولأوّل تشغيل (I.ask) */
+  I.multi=list.length>1;
+  I.choose=function(first, done){
+    var top=first ? (I.ask.guess||null) : I.code, ls=list.slice();
+    if(top){ ls.splice(ls.indexOf(top),1); ls.unshift(top); }   /* لغةُ الجهاز أوّلاً */
+    var chips=ls.map(function(c){ return { n:I.langs[c].n, v:c, sel:c===top }; });
+    /* أوّلُ تشغيل: لا «رجوع»، ويُنتقى ثمّ يُقرّ. والإغلاقُ بالنقر خارجه إقرارٌ لِما يُعرض */
+    if(first) uiBox(tx('اختر لغة التطبيق')+(I.code!=='en'?'\nChoose the app language':''), '🌐',
+      tx('✅ متابعة'), null, function(ok, v){ pick(v||I.code, done); }, null, null, chips);
+    else uiBox(tx('اختر لغة التطبيق')+'\nChoose language', '🌐', null, tx('رجوع'), function(ok, v){
+      if(ok && v && v!==I.code) pick(v, done);
+    }, null, null, chips);
   };
-  function pick(v){
+  /* done: يُنادى إن بقيت اللغةُ كما هي فلا إعادةَ فتح، وله أن يُعِدّ لما بعد الإعادة */
+  function pick(v, done){
     try{ localStorage.setItem('nur_lang', v); }catch(e){}
+    I.ask=null;
+    if(v===I.code){ if(done) done(false); return; }
+    if(done) done(true);
     /* ‎?lang=‎ في الرابط يغلب المحفوظ: يُحذف، وإلّا عادت اللغةُ القديمة */
     var u=location.href.replace(/([?&#])lang=[a-z]{2}&?/,'$1').replace(/[?&#]$/,'');
     if(u===location.href) location.reload(); else location.replace(u);
   }
+  if(!b) return;
+  if(!I.multi){ b.closest('.langbox').hidden=true; return; }
+  document.getElementById('langCur').textContent=I.langs[I.code].n;
+  b.onclick=function(){ I.choose(false); };
 })();
 NUR_I18N.start();
 </script>
@@ -15222,6 +15257,18 @@ function onbShow(i){
     $('onbTitle').textContent='مَن أنت؟';
     $('onbSub').textContent='اسمك وشكلك في شهاداتك، وتغيّرهما متى شئت';
     B.appendChild($('lookCard'));
+    /* اللغةُ في متناوله من أوّل خطوة، لا مخبوءةً في الإعدادات */
+    if(NUR_I18N.multi){
+      var lb=document.createElement('button');
+      lb.type='button'; lb.className='btn ghost mini onblang';
+      lb.innerHTML='🌐 <span translate="no">'+esc(NUR_I18N.langs[NUR_I18N.code].n)+'</span>';
+      lb.onclick=function(){
+        NUR_I18N.choose(false, function(re){
+          if(re) try{ sessionStorage.setItem('nur_onb_lang','1'); }catch(e){}
+        });
+      };
+      B.appendChild(lb);
+    }
     $('onbNameBtn').onclick=onbNameAsk;
     renderAvatars();
     onbGate();
@@ -18733,12 +18780,17 @@ if(DB_BAD) whenCalm(function(){
 /* ومن كان محفوظه تامّاً قبل هذه النسخة، يُتوَّج عند أوّل فتحة */
 try{ crownCheck(); }catch(e){}
 try{ checkBadges(true); }catch(e){}      /* ما استُحقّ قبل النظام يُمنح صامتاً */
-if(onbNeeded()){                                   /* أول مرة: المعالج */
+/* لغةٌ بُدِّلت من المعالج: أُعيد فتحُ الصفحة بها، فيُكمَل المعالجُ وإن كُتب الاسم */
+var _onbAgain=false;
+try{ _onbAgain=!!sessionStorage.getItem('nur_onb_lang'); sessionStorage.removeItem('nur_onb_lang'); }catch(e){}
+if(onbNeeded() || _onbAgain){                      /* أول مرة: المعالج */
   ONB.edit=false;
   /* وإن كان على الجهاز غيرُه (أُغلق التطبيقُ أثناء إضافة مستخدم) فله أن يلغي */
   for(var _pi=0;_pi<DB.players.length;_pi++)
     if(_pi!==DB.cur && (DB.players[_pi].name||'').trim()){ ONB.prev=_pi; break; }
-  onbShow(0);
+  /* أوّلُ تشغيلٍ على جهازٍ بغير العربيّة: تُسأل اللغةُ قبل كلّ شيء، والواجهةُ بلغة الجهاز */
+  if(NUR_I18N.ask && NUR_I18N.choose) NUR_I18N.choose(true, function(){ onbShow(0); });
+  else onbShow(0);
 }
 else{ renderHome(); bootNotes(); }
 /* بلغ الإقلاعُ آخرَه: الحزمةُ سليمة، فلا يُرجَع عنها (التحديثُ الحيّ) */
