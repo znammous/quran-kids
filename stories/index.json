@@ -1,5 +1,5 @@
 {
-  "v": 89,
+  "v": 90,
   "stories": [
     {
       "id": "kahf",
@@ -165,13 +165,13 @@
     },
     {
       "id": "ghina",
-      "t": "غِنى",
+      "t": "سلمى",
       "d": "مَثَلٌ في اليد التي لا تسأل",
       "ic": "🌾",
       "file": "s/ghina.json",
       "added": "2026-09-22",
       "cover": "covers/ghina.webp",
-      "rev": 5,
+      "rev": 6,
       "cw": "covers/w/ghina.webp"
     },
     {
