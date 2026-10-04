@@ -2961,7 +2961,7 @@ body.hastabs #btnRevQuit{display:none}
       </div>
       <div class="setblock nativeonly" style="margin-top:12px">
         <label class="lbl">🔄 التحديث</label>
-        <button class="btn blue" id="btnUpdCheck" style="width:100%">🔄 تحقّق من وجود تحديث</button>
+        <button class="btn blue" id="btnUpdCheck" style="width:100%;position:relative">🔄 تحقّق من وجود تحديث</button>
         <div class="note" id="updNote">يتحقّق التطبيقُ من التحديث عند فتحه، ويُخبرك إن وُجد.</div>
       </div>
       <input type="file" id="fileInput" accept=".json,application/json" style="display:none">
@@ -14071,6 +14071,7 @@ function renderSetTabs(){
     for(var q=0;q<old.length;q++) old[q].classList.toggle('sel', old[q].getAttribute('data-setp')===setTab);
     var ps0=document.querySelectorAll('#scr-settings .setpage');
     for(q=0;q<ps0.length;q++) ps0[q].hidden=(ps0[q].getAttribute('data-setp')!==setTab);
+    try{ updDot(); }catch(e){}
     return;
   }
   el.innerHTML=SET_TABS.map(function(t){
@@ -14083,6 +14084,7 @@ function renderSetTabs(){
   };
   var ps=document.querySelectorAll('#scr-settings .setpage');
   for(i=0;i<ps.length;i++) ps[i].hidden=(ps[i].getAttribute('data-setp')!==setTab);
+  try{ updDot(); }catch(e){}
 }
 function readSettings(){
   SET.level=$('setLevel').value;
@@ -16516,6 +16518,7 @@ function tabDot(){
   var b=bar.querySelector('[data-tab="'+idx+'"]'); if(!b) return;
   var fresh=0; try{ fresh=stNew().length; }catch(e){}
   if(fresh) b.classList.add('newdot'); else b.classList.remove('newdot');
+  try{ updDot(); }catch(e){}
 }
 
 /* ===== القصص =====
@@ -18267,6 +18270,29 @@ function updFetch(){
             note:nt[NUR_I18N.code]||nt.ar||'', noteAr:nt.ar||''};
   });
 }
+/* ===== نقطةُ التحديث =====
+   كنقطة القصّة الجديدة: على زرّ الإعدادات في الشريط السفليّ، ثمّ على تبويب
+   «الجهاز» فيها، ثمّ على زرّ التحقّق — فيبلغ الطفلُ مكانَ التحديث بتتبّعها.
+   وتبقى ما بقي التحديثُ لم يُنزَّل ولو قال «لاحقاً»، وتُذكر بين فتحةٍ وأخرى
+   فتظهر من أوّل الشاشة لا بعد أن يجيب الخادم. وتزول حين يقول: لا جديد. */
+function updMark(id){
+  if(id) save('nur_upd_new',id); else { try{ localStorage.removeItem('nur_upd_new'); }catch(e){} }
+  updDot();
+}
+function updDot(){
+  var on=!!(liveUpd() && load('nur_upd_new',null));
+  var bar=$('tabbar'), i;
+  if(bar) for(i=0;i<TABS.length;i++) if(TABS[i].id==='scr-settings'){
+    var b=bar.querySelector('[data-tab="'+i+'"]'); if(b) b.classList.toggle('newdot', on);
+  }
+  var t=document.querySelector('#setTabs [data-setp="dev"]');
+  if(t){
+    var d=t.querySelector('.tabdot');
+    if(on && !d) t.insertAdjacentHTML('beforeend','<span class="tabdot" aria-label="يوجد تحديث"></span>');
+    if(!on && d) d.remove();
+  }
+  var u=$('btnUpdCheck'); if(u) u.classList.toggle('newdot', on);
+}
 /* عند الفتح يسكت عمّا لا جديدَ فيه وعن انقطاع الشبكة، ولا يُلحّ:
    من قال «لاحقاً» لا يُسأل عن الحزمة نفسها في يومه */
 function updCheck(manual){
@@ -18274,12 +18300,13 @@ function updCheck(manual){
   var note=$('updNote');
   if(manual && note) note.textContent='⏳ جارٍ التحقّق…';
   updFetch().then(function(u){
+    updMark(u.st==='none' ? null : (u.id||u.st));
     if(u.st==='none'){ if(manual && note) note.textContent='✅ عندك أحدثُ إصدار.'; return; }
     if(u.st==='store'){
-      if(manual && note) note.textContent='يوجد إصدارٌ جديد يحتاج تحديثَ التطبيق نفسِه من المتجر.';
+      if(note) note.textContent='يوجد إصدارٌ جديد يحتاج تحديثَ التطبيق نفسِه من المتجر.';
       return;
     }
-    if(manual && note) note.textContent='🆕 يوجد تحديث.';
+    if(note) note.textContent='🆕 يوجد تحديث.';
     var later=load('nur_upd_later',null);
     if(!manual && later && later.id===u.id && later.day===todayNum()) return;
     /* الجديدُ سطرٌ وحدَه مترجَمٌ من قبلُ، فلا يمسّ مفاتيحَ ما حولَه */
@@ -18328,6 +18355,7 @@ function updApply(u){
     return L.setNextBundle({bundleId:u.tag});
   }).then(function(){
     if(u.noteAr) save('nur_news',u.noteAr);   /* قرأه هنا، فلا يُعاد عليه بعد الفتح */
+    try{ localStorage.removeItem('nur_upd_new'); }catch(e){}
     unlisten();
     return L.reload();
   })['catch'](function(){
