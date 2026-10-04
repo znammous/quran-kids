@@ -532,6 +532,14 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
 /* خط المصحف مُضمَّن، فلا يختلف الرسم من جهاز لآخر — وثبات الشكل أصل في الحفظ */
 @font-face{font-family:'Amiri Quran';font-style:normal;font-weight:400;font-display:swap;
   src:url(fonts/ui/amiri-quran.woff2) format("woff2")}
+/* خطُّ اللغات اللاتينيّة (Nunito متغيّرُ الوزن ٢٠٠–١٠٠٠)، وخطُّ نصّ القصص في الأرديّة (النستعليق).
+   لا يُنزَّلان إلّا لمن يختار لغتَهما، فلا يحملهما مستخدمُ العربيّة */
+@font-face{font-family:'Nunito';font-style:normal;font-weight:200 1000;font-display:swap;
+  src:url(fonts/ui/nunito-latin.woff2) format("woff2");unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Nunito';font-style:normal;font-weight:200 1000;font-display:swap;
+  src:url(fonts/ui/nunito-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Noto Nastaliq Urdu';font-style:normal;font-weight:400 700;font-display:swap;
+  src:url(fonts/ui/nastaliq-urdu.woff2) format("woff2")}
 .ayah{font-family:"Amiri Quran","Traditional Arabic","Scheherazade New","IBM Plex Sans Arabic","Segoe UI",serif;
   font-size:34px;line-height:2.1;text-align:center;color:#102b4a;padding:10px 6px;word-spacing:2px}
 
@@ -1134,9 +1142,17 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 [dir=ltr] :is(.ayah,.ayahbox,.chip,.chip2,.opt,.acard,.acards,.ansline,.anslines,#playArea .chips,
   .runline,.runayah,.shelf,.bxlines,.diffline,#reciteInput,.basmala,.mfq,.mfprow .ay,.mfmrow .w,
   .mbas,.adab,.onbsample,.mfbody,.mushaf,.mftaf:not([lang]),.mfmrow){direction:rtl}
-/* لغاتٌ حروفُها خارج خطّ الواجهة (ş ğ İ في التركيّة، والبنغاليّة كلُّها): خطُّ الجهاز
-   للواجهة كلِّها، فلا تُكتب الكلمةُ الواحدةُ بخطّين. وخطوطُ المصحف لها أنماطُها فلا تُمسّ */
-html:is([lang=tr],[lang=bn],[lang=ha],[lang=uz]) body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Bengali",sans-serif}
+/* اللغاتُ اللاتينيّة: Nunito، مستديرٌ ودودٌ كأزرار التطبيق، وفيه حروفُ التركيّة والأوزبكيّة.
+   وما فيها من عربيّ (أسماءُ السور وغيرُها) يقع على خطّ الواجهة بعده */
+html[dir=ltr] body{font-family:Nunito,"IBM Plex Sans Arabic","Segoe UI",system-ui,sans-serif}
+/* لغاتٌ حروفُها خارج Nunito (ƙ في الهوسا، والبنغاليّة كلُّها): خطُّ الجهاز للواجهة كلِّها،
+   فلا تُكتب الكلمةُ الواحدةُ بخطّين. وخطوطُ المصحف لها أنماطُها فلا تُمسّ */
+html:is([lang=bn],[lang=ha]) body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Bengali",sans-serif}
+/* نصُّ القصّة: تباعدُ ٢٫١ مضبوطٌ للعربيّة وتشكيلها، واسعٌ على الحروف اللاتينيّة */
+[dir=ltr] .sttext:not([lang=ar]){line-height:1.65}   /* والقصّةُ التي لم تُترجم تبقى على تباعدها */
+/* والأرديّة تُقرأ في كتب أطفالها بالنستعليق؛ وهو أعلى سطراً، فيحتاج تباعداً أكبر.
+   للقصص وحدها، والواجهةُ تبقى بالنسخ. و«» ليستا فيه فتقعان على خطّ الواجهة */
+html[lang=ur] .sttext:not([lang=ar]){font-family:"Noto Nastaliq Urdu","IBM Plex Sans Arabic",serif;font-weight:500;line-height:2.55}
 /* أسهمٌ في عناصرَ مستقلّةٍ بلا نصّ: سهمُ البطاقات، وسهما القصّة، وزرُّ الرجوع منها،
    وسهمُ «انتقل» بجانب رقم الصفحة (رسمٌ لا حرفٌ، فلا يقلبه المترجم) */
 [dir=ltr] :is(.gcgo,.sar,#btnStoryBack,#mfGoPgBtn svg){display:inline-block;transform:scaleX(-1)}
