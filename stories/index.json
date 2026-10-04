@@ -1,5 +1,5 @@
 {
-  "v": 87,
+  "v": 88,
   "stories": [
     {
       "id": "kahf",
@@ -419,7 +419,7 @@
       "cw": "covers/w/kabir.webp",
       "file": "s/kabir.json",
       "added": "2026-10-01",
-      "rev": 2
+      "rev": 3
     },
     {
       "id": "kalima2",
