@@ -1,5 +1,5 @@
 {
-  "v": 95,
+  "v": 96,
   "stories": [
     {
       "id": "kahf",
@@ -675,7 +675,8 @@
       "cover": "covers/baydar.webp",
       "cw": "covers/w/baydar.webp",
       "file": "s/baydar.json",
-      "added": "2026-10-04"
+      "added": "2026-10-04",
+      "rev": 2
     },
     {
       "id": "qidr",
