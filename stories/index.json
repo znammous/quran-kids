@@ -1,5 +1,5 @@
 {
-  "v": 88,
+  "v": 89,
   "stories": [
     {
       "id": "kahf",
@@ -451,7 +451,7 @@
       "cw": "covers/w/busat.webp",
       "file": "s/busat.json",
       "added": "2026-10-01",
-      "rev": 2
+      "rev": 3
     },
     {
       "id": "shawk",
