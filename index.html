@@ -8480,10 +8480,17 @@ var QARIS=[
   {f:'khalefa_al_tunaiji_64kbps', n:'خليفة الطنيجي',             s:'الطنيجي'},
   {f:'Muhsin_Al_Qasim_192kbps',   n:'محسن القاسم',               s:'محسن القاسم'},
   {f:'Salaah_AbdulRahman_Bukhatir_128kbps', n:'صلاح بوخاطر',     s:'بوخاطر'},
-  /* من mp3quran: «m» مجلّدُ القارئ عندهم، و«r» رقمُ تلاوته في توقيت الآيات */
+  /* من mp3quran: «m» مجلّدُ القارئ عندهم، و«r» رقمُ تلاوته في توقيت الآيات،
+     و«x» سورٌ توقيتُها عندهم لا يوافق ملفَّها — تُتلى بصوت الأوّل لا مقطوعةً خطأً */
   {f:'mq-tawfeeq-sayegh',         n:'توفيق الصايغ',              s:'الصايغ',  m:'tawfeeq-sayegh',   r:17},
   {f:'mq-abdullah-khayyat',       n:'عبد الله خياط',             s:'خياط',    m:'abdullah-khayyat', r:61},
   {f:'mq-bandar-baleela',         n:'بندر بليلة',                s:'بليلة',   m:'bandar-baleela',   r:217},
+  {f:'mq-raad-kurdi',             n:'رعد محمد الكردي',           s:'الكردي',  m:'raad-kurdi',       r:221, x:[23]},
+  {f:'mq-haitham-dukhain',        n:'هيثم الدخين',               s:'الدخين',  m:'haitham-dukhain',  r:273, x:[40]},
+  {f:'mq-mansour-salimi',         n:'منصور السالمي',             s:'السالمي', m:'mansour-salimi',   r:245},
+  {f:'mq-idrees-abkar',           n:'إدريس أبكر',                s:'أبكر',    m:'idrees-abkar',     r:12},
+  {f:'mq-abdulaziz-zahrani',      n:'عبد العزيز الزهراني',       s:'الزهراني', m:'abdulaziz-zahrani', r:56},
+  {f:'mq-anas-emadi',             n:'أنس العمادي',               s:'العمادي', m:'anas-emadi',       r:314},
   /* قراءةٌ تعليميّةٌ مبيَّنةُ الأحكام، بابُها بابُ «المعلِّم» */
   {f:'Ayman_Sowaid_64kbps',       n:'أيمن سويد — تعليم التجويد', s:'أيمن سويد — التجويد'}
 ];
@@ -8507,8 +8514,9 @@ function qariShort(){ var q=qariRow(); return q?(q.s||q.n):''; }
 function pad3(n){ n=String(n); return n.length>=3 ? n : ('000'+n).slice(-3); }
 function audUrl(sn,ay){
   var q=qariRow();
+  if(q && q.m && q.x && q.x.indexOf(sn)>=0) q=QARIS[0];
   if(q && q.m) return MQ_BASE+q.m+'/r1/'+pad3(sn)+'.mp3?r='+q.r+'&a='+ay;
-  return QARI_BASE+qariF()+'/'+pad3(sn)+pad3(ay)+'.mp3';
+  return QARI_BASE+(q?q.f:qariF())+'/'+pad3(sn)+pad3(ay)+'.mp3';
 }
 /* ===== الآيةُ من ملفّ السورة (mp3quran) =====
    رابطُها ملفُّ السورة ومعه رقمُ التلاوة والآية، وهو مفتاحُها في المخزن لا
