@@ -13716,15 +13716,43 @@ function finishReview(){
 function dateLoc(ar){ return NUR_I18N.on ? NUR_I18N.code : ar; }
 /* هجريٌّ في كلّ لغة (طلبُ صاحب التطبيق): لغةٌ لا تقويمَ هجريّاً لها في المتصفّح (الهوسا والصوماليّة
    في كروم) يُرجعها إلى الميلاديّ بصمت — فتُفحص، ويُلجأ إلى الإنجليزيّة ثمّ العربيّة */
+/* وبعضُ الأجهزة تُعطي سنةً هجريّةً باسم شهرٍ ميلاديّ («April 1448»): فيُردّ ما فيه اسمُ
+   شهرٍ ميلاديٍّ من لغته، ويُبنى التاريخ آخرَ الأمر من أرقامه بأسماء الأشهر الهجريّة */
+var HIJRI_MONTHS={
+  ar:['محرّم','صفر','ربيع الأوّل','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوّال','ذو القعدة','ذو الحجّة'],
+  en:['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani','Jumada al-Ula','Jumada al-Akhirah','Rajab','Shaban','Ramadan','Shawwal','Dhu al-Qadah','Dhu al-Hijjah']
+};
+function hijriGregNames(loc){
+  var n=[], m, f;
+  try{
+    f=new Intl.DateTimeFormat(loc+'-u-ca-gregory',{month:'long'});
+    for(m=0;m<12;m++) n.push(f.format(new Date(2024,m,15)).toLowerCase());
+  }catch(e){}
+  return n;
+}
 function hijriDate(o){
   o=o||{day:'numeric',month:'long',year:'numeric'};
-  var ls=[dateLoc('ar-SA'),'en','ar-SA'], i, f;
+  var ls=[dateLoc('ar-SA'),'en','ar-SA'], i, f, r, g;
   for(i=0;i<ls.length;i++){
     try{
       f=new Intl.DateTimeFormat(ls[i]+'-u-ca-islamic-umalqura',o);
-      if(/^islamic/.test(f.resolvedOptions().calendar)) return f.format(new Date());
+      if(!/^islamic/.test(f.resolvedOptions().calendar)) continue;
+      r=f.format(new Date());
+      if(!o.month) return r;
+      g=hijriGregNames(ls[i]).concat(hijriGregNames('en'));
+      if(!r.toLowerCase().split(/[\s,.،]+/).some(function(w){ return w && g.indexOf(w)>=0; })) return r;
     }catch(e){}
   }
+  /* الأرقامُ هجريّةٌ صحيحةٌ وإن خاب اسمُ الشهر، فيُركَّب منها */
+  try{
+    var p={};
+    new Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-latn',{day:'numeric',month:'numeric',year:'numeric'})
+      .formatToParts(new Date()).forEach(function(x){ p[x.type]=parseInt(x.value,10); });
+    if(!p.month || !p.year || p.year<1300) return '';
+    var ar=!NUR_I18N.on || NUR_I18N.code==='ar';
+    var mn=(ar?HIJRI_MONTHS.ar:HIJRI_MONTHS.en)[p.month-1];
+    return [o.day?arNum(p.day):'', mn, o.year?(arNum(p.year)+(ar?' هـ':' AH')):''].join(' ').trim();
+  }catch(e){}
   return '';
 }
 function greg(){
