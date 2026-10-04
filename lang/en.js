@@ -1669,4 +1669,8 @@ NUR_I18N.add('en', {
   "{0} مرّة": "{0} times",
   "رتّب آيات المقطع ({a} – {b}) من {s}": "Order the ayahs of the section ({a} – {b}) from {s}",
   "✅ متابعة": "✅ Continue",
+  "فاتتك «{w}» — ستعود": "You missed “{w}” — it will come back",
+  "أحسنت! 🌟": "Well done! 🌟",
+  "أحسنت! 🌟 +{0} 💎": "Well done! 🌟 +{0} 💎",
+  "{0} م": "{0} m",
 });

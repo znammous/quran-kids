@@ -1669,4 +1669,8 @@ NUR_I18N.add('so', {
   "{s1} {0}-{1}": "{s1} {0}-{1}",
   "{s1} {0} — {1}": "{s1} {0} — {1}",
   "✅ متابعة": "✅ Sii wad",
+  "فاتتك «{w}» — ستعود": "“{w}” waa kaa dhaaftay — way soo noqon doontaa",
+  "أحسنت! 🌟": "Si fiican ayaad u samaysay! 🌟",
+  "أحسنت! 🌟 +{0} 💎": "Si fiican ayaad u samaysay! 🌟 +{0} 💎",
+  "{0} م": "{0} m",
 });
