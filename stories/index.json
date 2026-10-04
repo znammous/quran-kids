@@ -1,5 +1,5 @@
 {
-  "v": 91,
+  "v": 92,
   "stories": [
     {
       "id": "kahf",
@@ -613,6 +613,7 @@
       "cover": "covers/asir.webp",
       "cw": "covers/w/asir.webp",
       "file": "s/asir.json",
+      "rev": 2,
       "added": "2026-10-01"
     },
     {
