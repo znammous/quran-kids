@@ -1122,7 +1122,7 @@ NUR_I18N.add('ha', {
   "في هديّتك": "A cikin kyautarka",
   "في هذا الجهاز وحده": "A wannan na’ura kawai",
   "في 🕌 «مسجدي» تبني بها مسجدك الكبير قطعةً قطعة، ولا تكتمل أعمدته ونوافذه إلا بالمراجعة": "A cikin 🕌 “Masallaci” kana gina babban masallacinka gunda-gunda, kuma ginshiƙansa da tagoginsa ba sa kammaluwa sai da bita",
-  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {0}.{1} ميجابايت": "Tana ɗauke da abin da aka ƙara aka gyara tun sigarka. Girmanta kusan {0}.{1} MB",
+  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {mb} ميجابايت — ويُستحسن تنزيلُه على شبكة Wi-Fi.": "Tana ɗauke da abin da aka ƙara aka gyara tun sigarka. Girmanta kusan {mb} MB — Ya fi kyau a sauke shi ta Wi-Fi.",
   "قبل أن نبدأ": "Kafin mu fara",
   "قبل كل مقطع يُعرض <b>وجهُه من المصحف</b>، وفي كل وجهٍ يُلوَّن ما تشابه أو تكرّر — <b>لكل مجموعةٍ لون</b>": "Kafin kowane sashe, ana nuna <b>shafinsa a Mushafi</b>, kuma a kowane shafi ana yi wa jumloli masu kama ko masu maimaituwa launi — <b>kowane rukuni da launinsa</b>",
   "قد أتمّ بفضل الله تعالى حفظ": "ya kammala, da falalar Allah Maɗaukaki, haddar",

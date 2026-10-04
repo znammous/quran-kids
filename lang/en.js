@@ -1122,7 +1122,7 @@ NUR_I18N.add('en', {
   "في هديّتك": "In your gift",
   "في هذا الجهاز وحده": "On this device only",
   "في 🕌 «مسجدي» تبني بها مسجدك الكبير قطعةً قطعة، ولا تكتمل أعمدته ونوافذه إلا بالمراجعة": "In 🕌 “My mosque” you build your big mosque piece by piece, and its pillars and windows are completed only by review",
-  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {0}.{1} ميجابايت": "It has what was added and fixed since your version. Its size is about {0}.{1} MB",
+  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {mb} ميجابايت — ويُستحسن تنزيلُه على شبكة Wi-Fi.": "It has what was added and fixed since your version. Its size is about {mb} MB — Better to download it on Wi-Fi.",
   "قبل أن نبدأ": "Before we start",
   "قبل كل مقطع يُعرض <b>وجهُه من المصحف</b>، وفي كل وجهٍ يُلوَّن ما تشابه أو تكرّر — <b>لكل مجموعةٍ لون</b>": "Before each section, <b>its page in the Mushaf</b> is shown, and on each page similar or repeated phrases are colored — <b>one color per group</b>",
   "قد أتمّ بفضل الله تعالى حفظ": "has, by the grace of Allah, completed memorizing",

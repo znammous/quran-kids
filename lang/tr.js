@@ -1122,7 +1122,7 @@ NUR_I18N.add('tr', {
   "في هديّتك": "Hediyende",
   "في هذا الجهاز وحده": "Yalnızca bu cihazda",
   "في 🕌 «مسجدي» تبني بها مسجدك الكبير قطعةً قطعة، ولا تكتمل أعمدته ونوافذه إلا بالمراجعة": "🕌 “Camim”de onlarla büyük camini parça parça inşa edersin; sütunları ve pencereleri ancak tekrarla tamamlanır",
-  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {0}.{1} ميجابايت": "Senin sürümünden bu yana eklenenler ve düzeltilenler var. Boyutu yaklaşık {0}.{1} MB",
+  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {mb} ميجابايت — ويُستحسن تنزيلُه على شبكة Wi-Fi.": "Senin sürümünden bu yana eklenenler ve düzeltilenler var. Boyutu yaklaşık {mb} MB — Wi-Fi ile indirmen daha iyi olur.",
   "قبل أن نبدأ": "Başlamadan önce",
   "قبل كل مقطع يُعرض <b>وجهُه من المصحف</b>، وفي كل وجهٍ يُلوَّن ما تشابه أو تكرّر — <b>لكل مجموعةٍ لون</b>": "Her bölümden önce <b>Mushaf’taki sayfası</b> gösterilir; her sayfada benzer ya da tekrar eden ifadeler renklendirilir — <b>her gruba bir renk</b>",
   "قد أتمّ بفضل الله تعالى حفظ": "Allah Teâlâ’nın lütfuyla şunun ezberini tamamlamıştır:",

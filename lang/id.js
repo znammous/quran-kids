@@ -1122,7 +1122,7 @@ NUR_I18N.add('id', {
   "في هديّتك": "Di dalam hadiahmu",
   "في هذا الجهاز وحده": "Hanya di perangkat ini",
   "في 🕌 «مسجدي» تبني بها مسجدك الكبير قطعةً قطعة، ولا تكتمل أعمدته ونوافذه إلا بالمراجعة": "Di 🕌 “Masjidku” kamu membangun masjid besarmu sedikit demi sedikit, dan tiang serta jendelanya hanya selesai dengan murajaah",
-  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {0}.{1} ميجابايت": "Berisi tambahan dan perbaikan sejak versimu. Ukurannya sekitar {0}.{1} MB",
+  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {mb} ميجابايت — ويُستحسن تنزيلُه على شبكة Wi-Fi.": "Berisi tambahan dan perbaikan sejak versimu. Ukurannya sekitar {mb} MB — Lebih baik diunduh lewat Wi-Fi.",
   "قبل أن نبدأ": "Sebelum kita mulai",
   "قبل كل مقطع يُعرض <b>وجهُه من المصحف</b>، وفي كل وجهٍ يُلوَّن ما تشابه أو تكرّر — <b>لكل مجموعةٍ لون</b>": "Sebelum setiap bagian, <b>halamannya di Mushaf</b> ditampilkan, dan di setiap halaman ayat-ayat yang mirip atau berulang diberi warna — <b>satu warna untuk setiap kelompok</b>",
   "قد أتمّ بفضل الله تعالى حفظ": "dengan karunia Allah telah menyelesaikan hafalan",

@@ -532,6 +532,14 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
 /* خط المصحف مُضمَّن، فلا يختلف الرسم من جهاز لآخر — وثبات الشكل أصل في الحفظ */
 @font-face{font-family:'Amiri Quran';font-style:normal;font-weight:400;font-display:swap;
   src:url(fonts/ui/amiri-quran.woff2) format("woff2")}
+/* خطُّ اللغات اللاتينيّة (Nunito متغيّرُ الوزن ٢٠٠–١٠٠٠)، وخطُّ نصّ القصص في الأرديّة (النستعليق).
+   لا يُنزَّلان إلّا لمن يختار لغتَهما، فلا يحملهما مستخدمُ العربيّة */
+@font-face{font-family:'Nunito';font-style:normal;font-weight:200 1000;font-display:swap;
+  src:url(fonts/ui/nunito-latin.woff2) format("woff2");unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}
+@font-face{font-family:'Nunito';font-style:normal;font-weight:200 1000;font-display:swap;
+  src:url(fonts/ui/nunito-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF}
+@font-face{font-family:'Noto Nastaliq Urdu';font-style:normal;font-weight:400 700;font-display:swap;
+  src:url(fonts/ui/nastaliq-urdu.woff2) format("woff2")}
 .ayah{font-family:"Amiri Quran","Traditional Arabic","Scheherazade New","IBM Plex Sans Arabic","Segoe UI",serif;
   font-size:34px;line-height:2.1;text-align:center;color:#102b4a;padding:10px 6px;word-spacing:2px}
 
@@ -1134,9 +1142,17 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 [dir=ltr] :is(.ayah,.ayahbox,.chip,.chip2,.opt,.acard,.acards,.ansline,.anslines,#playArea .chips,
   .runline,.runayah,.shelf,.bxlines,.diffline,#reciteInput,.basmala,.mfq,.mfprow .ay,.mfmrow .w,
   .mbas,.adab,.onbsample,.mfbody,.mushaf,.mftaf:not([lang]),.mfmrow){direction:rtl}
-/* لغاتٌ حروفُها خارج خطّ الواجهة (ş ğ İ في التركيّة، والبنغاليّة كلُّها): خطُّ الجهاز
-   للواجهة كلِّها، فلا تُكتب الكلمةُ الواحدةُ بخطّين. وخطوطُ المصحف لها أنماطُها فلا تُمسّ */
-html:is([lang=tr],[lang=bn],[lang=ha],[lang=uz]) body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Bengali",sans-serif}
+/* اللغاتُ اللاتينيّة: Nunito، مستديرٌ ودودٌ كأزرار التطبيق، وفيه حروفُ التركيّة والأوزبكيّة.
+   وما فيها من عربيّ (أسماءُ السور وغيرُها) يقع على خطّ الواجهة بعده */
+html[dir=ltr] body{font-family:Nunito,"IBM Plex Sans Arabic","Segoe UI",system-ui,sans-serif}
+/* لغاتٌ حروفُها خارج Nunito (ƙ في الهوسا، والبنغاليّة كلُّها): خطُّ الجهاز للواجهة كلِّها،
+   فلا تُكتب الكلمةُ الواحدةُ بخطّين. وخطوطُ المصحف لها أنماطُها فلا تُمسّ */
+html:is([lang=bn],[lang=ha]) body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Bengali",sans-serif}
+/* نصُّ القصّة: تباعدُ ٢٫١ مضبوطٌ للعربيّة وتشكيلها، واسعٌ على الحروف اللاتينيّة */
+[dir=ltr] .sttext{line-height:1.65}
+/* والأرديّة تُقرأ في كتب أطفالها بالنستعليق؛ وهو أعلى سطراً، فيحتاج تباعداً أكبر.
+   للقصص وحدها، والواجهةُ تبقى بالنسخ. و«» ليستا فيه فتقعان على خطّ الواجهة */
+html[lang=ur] .sttext{font-family:"Noto Nastaliq Urdu","IBM Plex Sans Arabic",serif;font-weight:500;line-height:2.55}
 /* أسهمٌ في عناصرَ مستقلّةٍ بلا نصّ: سهمُ البطاقات، وسهما القصّة، وزرُّ الرجوع منها،
    وسهمُ «انتقل» بجانب رقم الصفحة (رسمٌ لا حرفٌ، فلا يقلبه المترجم) */
 [dir=ltr] :is(.gcgo,.sar,#btnStoryBack,#mfGoPgBtn svg){display:inline-block;transform:scaleX(-1)}
@@ -2154,7 +2170,7 @@ body.hastabs #btnRevHome,
 body.hastabs #btnRevQuit{display:none}
 @media screen and (max-width:820px){
   /* نسخةُ الجوال المختصرة (certFit يضع .compact): الصورةُ والمسجدُ أصغر، والتوقيعان
-     للورق وحدَه — فتبقى بعرض الشاشة أو قريباً منه. والطباعةُ والصورةُ المشارَكةُ كاملتان */
+     للورق وحدَه — فتبقى بعرض الشاشة أو قريباً منه. والطباعةُ كاملة */
   .cert.compact{border-width:9px;padding:12px 12px}
   .cert.compact .orn{font-size:16px;letter-spacing:6px}
   .cert.compact h2{font-size:28px;margin:2px 0}
@@ -15643,11 +15659,9 @@ function certImage(){
   if(CERT_IMG && CERT_IMG.el===c) return Promise.resolve(CERT_IMG);
   var ready=(document.fonts && document.fonts.ready) ? document.fonts.ready : Promise.resolve();
   return ready.then(function(){
-    /* الصورةُ من النسخة الكاملة لا المختصرة: تُرفع .compact لحظةَ القياس وتُردّ قبل أن تُرسم الشاشة */
-    var cp=c.classList.contains('compact'); if(cp) c.classList.remove('compact');
+    /* الصورةُ هي ما يراه على الشاشة: في الجوال النسخةُ المختصرة، أكثرُ تناسقاً من الكاملة الطويلة */
     var C=c.getBoundingClientRect(), W=c.offsetWidth, H=c.offsetHeight, k=(C.width/W)||1;
     var ops=[]; certWalk(c, C, k, ops);
-    if(cp) c.classList.add('compact');
     var P=18, R=Math.max(2, Math.min(4, 1080/(W+2*P)));
     var cv=document.createElement('canvas');
     cv.width=Math.round((W+2*P)*R); cv.height=Math.round((H+2*P)*R);
@@ -18200,7 +18214,7 @@ function bootNotes(){
    «يوجد تحديث» قبل أن ينزّله (قواميسُه القديمة لا تعرفها). ثمّ تُعرض مرّةً واحدة
    بعد أن تصل الحزمةُ — أو الصفحةُ على الموقع — لمن لم يرَها، ولا تُعرض لمن فتح
    التطبيقَ لأوّل مرّة. */
-var WHATSNEW='التطبيقُ بلغتك: الواجهةُ والقصصُ بأربع عشرة لغة، تختارها من الإعدادات.';
+var WHATSNEW='';
 function newsNote(next){
   var seen=load('nur_news','');
   if(!WHATSNEW || seen===WHATSNEW || NEWS_FIRST){
@@ -18256,8 +18270,7 @@ function updCheck(manual){
     /* الجديدُ سطرٌ وحدَه مترجَمٌ من قبلُ، فلا يمسّ مفاتيحَ ما حولَه */
     uiBox('<b>يوجد تحديثٌ لـ«نور الوحي»</b>\n\n'+
           (u.note ? '<b>🆕 '+u.note+'</b>\n\n' : '')+
-          'فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو '+arNum(u.mb)+' ميجابايت — '+
-          'ويُستحسن تنزيلُه على شبكة Wi-Fi.\n\n'+
+          tx('فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {mb} ميجابايت — ويُستحسن تنزيلُه على شبكة Wi-Fi.', {mb:arNum(u.mb)})+'\n\n'+
           'تقدُّمُك وحفظُك باقيان كما هما.',
           '🔄', '🔄 حدِّث الآن', 'لاحقاً', function(yes){
             if(yes) updApply(u); else save('nur_upd_later',{id:u.id, day:todayNum()});

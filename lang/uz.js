@@ -1122,7 +1122,7 @@ NUR_I18N.add('uz', {
   "في هديّتك": "Sovgʻangda",
   "في هذا الجهاز وحده": "Faqat shu qurilmada",
   "في 🕌 «مسجدي» تبني بها مسجدك الكبير قطعةً قطعة، ولا تكتمل أعمدته ونوافذه إلا بالمراجعة": "🕌 “Masjid”da katta masjidingni boʻlakma-boʻlak qurasan, uning ustunlari va derazalari faqat takrorlash bilan tugallanadi",
-  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {0}.{1} ميجابايت": "Unda sening versiyangdan beri qoʻshilgan va tuzatilgan narsalar bor. Hajmi taxminan {0}.{1} MB",
+  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {mb} ميجابايت — ويُستحسن تنزيلُه على شبكة Wi-Fi.": "Unda sening versiyangdan beri qoʻshilgan va tuzatilgan narsalar bor. Hajmi taxminan {mb} MB — Uni Wi-Fi orqali yuklab olgan maʼqul.",
   "قبل أن نبدأ": "Boshlashdan oldin",
   "قبل كل مقطع يُعرض <b>وجهُه من المصحف</b>، وفي كل وجهٍ يُلوَّن ما تشابه أو تكرّر — <b>لكل مجموعةٍ لون</b>": "Har bir boʻlakdan oldin <b>uning Mushafdagi sahifasi</b> koʻrsatiladi, har bir sahifada oʻxshash yoki takrorlanuvchi iboralar rangga boʻyalgan — <b>har bir guruhga bitta rang</b>",
   "قد أتمّ بفضل الله تعالى حفظ": "Allohning fazli bilan quyidagini yodlashni tamomladi:",

@@ -1122,7 +1122,7 @@ NUR_I18N.add('sw', {
   "في هديّتك": "Katika zawadi yako",
   "في هذا الجهاز وحده": "Kwenye kifaa hiki tu",
   "في 🕌 «مسجدي» تبني بها مسجدك الكبير قطعةً قطعة، ولا تكتمل أعمدته ونوافذه إلا بالمراجعة": "Katika 🕌 “Msikiti” unajenga msikiti wako mkubwa kipande kwa kipande, na nguzo zake na madirisha yake yanakamilika tu kwa kurudia",
-  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {0}.{1} ميجابايت": "Ina yaliyoongezwa na kurekebishwa tangu toleo lako. Ukubwa wake ni takriban {0}.{1} MB",
+  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {mb} ميجابايت — ويُستحسن تنزيلُه على شبكة Wi-Fi.": "Ina yaliyoongezwa na kurekebishwa tangu toleo lako. Ukubwa wake ni takriban {mb} MB — Ni bora kuipakua kwa Wi-Fi.",
   "قبل أن نبدأ": "Kabla hatujaanza",
   "قبل كل مقطع يُعرض <b>وجهُه من المصحف</b>، وفي كل وجهٍ يُلوَّن ما تشابه أو تكرّر — <b>لكل مجموعةٍ لون</b>": "Kabla ya kila sehemu, <b>ukurasa wake katika Msahafu</b> unaonyeshwa, na katika kila ukurasa maneno yanayofanana au yanayojirudia yanapakwa rangi — <b>rangi moja kwa kila kundi</b>",
   "قد أتمّ بفضل الله تعالى حفظ": "kwa fadhila ya Allah, amekamilisha kuhifadhi",

@@ -1122,7 +1122,7 @@ NUR_I18N.add('fr', {
   "في هديّتك": "Dans ton cadeau",
   "في هذا الجهاز وحده": "Sur cet appareil seulement",
   "في 🕌 «مسجدي» تبني بها مسجدك الكبير قطعةً قطعة، ولا تكتمل أعمدته ونوافذه إلا بالمراجعة": "Dans 🕌 « Mosquée », tu construis ta grande mosquée pièce par pièce, et ses piliers et fenêtres ne s’achèvent que par la révision",
-  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {0}.{1} ميجابايت": "Elle contient ce qui a été ajouté et corrigé depuis ta version. Sa taille est d’environ {0}.{1} Mo",
+  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {mb} ميجابايت — ويُستحسن تنزيلُه على شبكة Wi-Fi.": "Elle contient ce qui a été ajouté et corrigé depuis ta version. Sa taille est d’environ {mb} Mo — Mieux vaut le télécharger en Wi-Fi.",
   "قبل أن نبدأ": "Avant de commencer",
   "قبل كل مقطع يُعرض <b>وجهُه من المصحف</b>، وفي كل وجهٍ يُلوَّن ما تشابه أو تكرّر — <b>لكل مجموعةٍ لون</b>": "Avant chaque passage, <b>sa page dans le Mushaf</b> s’affiche, et sur chaque page les passages semblables ou répétés sont colorés — <b>une couleur par groupe</b>",
   "قد أتمّ بفضل الله تعالى حفظ": "a, par la grâce d’Allah, terminé la mémorisation de",

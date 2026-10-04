@@ -1122,7 +1122,7 @@ NUR_I18N.add('so', {
   "في هديّتك": "Hadiyaddaada gudaheeda",
   "في هذا الجهاز وحده": "Qalabkan oo keliya",
   "في 🕌 «مسجدي» تبني بها مسجدك الكبير قطعةً قطعة، ولا تكتمل أعمدته ونوافذه إلا بالمراجعة": "🕌 “Masjid” waxaad ku dhisaysaa masjidkaaga weyn gabal gabal, tiirarkiisa iyo daaqadihiisuna waxay ku dhammaystirmaan muraajacada oo keliya",
-  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {0}.{1} ميجابايت": "Waxaa ku jira waxyaabaha lagu daray iyo wixii la hagaajiyay tan iyo noocaagii. Cabbirkiisu waa qiyaas {0}.{1} MB",
+  "فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {mb} ميجابايت — ويُستحسن تنزيلُه على شبكة Wi-Fi.": "Waxaa ku jira waxyaabaha lagu daray iyo wixii la hagaajiyay tan iyo noocaagii. Cabbirkiisu waa qiyaas {mb} MB — Waxaa fiican in lagu soo dejiyo Wi-Fi.",
   "قبل أن نبدأ": "Intaanan bilaabin",
   "قبل كل مقطع يُعرض <b>وجهُه من المصحف</b>، وفي كل وجهٍ يُلوَّن ما تشابه أو تكرّر — <b>لكل مجموعةٍ لون</b>": "Qayb kasta ka hor waxaa la tusaa <b>bogga Mushafka ee ay ku jirto</b>, bog kastana waxaa lagu midabeeyaa weedhaha isu eg ama soo noqnoqda — <b>koox kasta midab</b>",
   "قد أتمّ بفضل الله تعالى حفظ": "ayaa, fadliga Alle Sarreeye, dhammeystay xifdiga",
