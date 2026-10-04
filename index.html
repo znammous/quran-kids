@@ -1137,8 +1137,9 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 /* لغاتٌ حروفُها خارج خطّ الواجهة (ş ğ İ في التركيّة، والبنغاليّة كلُّها): خطُّ الجهاز
    للواجهة كلِّها، فلا تُكتب الكلمةُ الواحدةُ بخطّين. وخطوطُ المصحف لها أنماطُها فلا تُمسّ */
 html:is([lang=tr],[lang=bn],[lang=ha],[lang=uz]) body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Bengali",sans-serif}
-/* أسهمٌ في عناصرَ مستقلّةٍ بلا نصّ: سهمُ البطاقات، وسهما القصّة، وزرُّ الرجوع منها */
-[dir=ltr] :is(.gcgo,.sar,#btnStoryBack){display:inline-block;transform:scaleX(-1)}
+/* أسهمٌ في عناصرَ مستقلّةٍ بلا نصّ: سهمُ البطاقات، وسهما القصّة، وزرُّ الرجوع منها،
+   وسهمُ «انتقل» بجانب رقم الصفحة (رسمٌ لا حرفٌ، فلا يقلبه المترجم) */
+[dir=ltr] :is(.gcgo,.sar,#btnStoryBack,#mfGoPgBtn svg){display:inline-block;transform:scaleX(-1)}
 .onbtop{display:flex;align-items:center;gap:10px;margin:12px 0 14px}
 .onbbar{flex:1;height:14px;background:#0a2d5e;border:2px solid var(--pb);border-radius:99px;overflow:hidden}
 .onbbar i{display:block;height:100%;background:linear-gradient(90deg,#37c2f0,#7ef0d5);
