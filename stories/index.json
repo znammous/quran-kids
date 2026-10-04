@@ -1,5 +1,5 @@
 {
-  "v": 86,
+  "v": 87,
   "stories": [
     {
       "id": "kahf",
@@ -572,6 +572,7 @@
       "cover": "covers/ghurfa.webp",
       "cw": "covers/w/ghurfa.webp",
       "file": "s/ghurfa.json",
+      "rev": 2,
       "added": "2026-10-01"
     },
     {
