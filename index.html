@@ -2978,6 +2978,14 @@ body.hastabs #btnRevQuit{display:none}
         <select id="setQari"></select>
         <div class="note">يُتلى المقطعُ بزرّ «استمع» — في وجه المصحف وفي الدرس. ويُحفظ ما سُمع في الجهاز فيُعاد بلا إنترنت، ولا يُنزَّل شيءٌ قبل أن تسمعه.</div>
       </div>
+      <!-- التلاواتُ المحفوظة: تُحذف وحدَها لتوفير المساحة، ولا يمسّها تصفيرُ التقدّم -->
+      <div class="setblock" id="audBox" hidden>
+        <label class="lbl">💾 التلاوات المحفوظة في جهازك</label>
+        <div class="note" id="audNote"></div>
+        <button class="btn blue" id="btnAudOthers" style="width:100%;margin-top:8px" hidden>🧹 احذف تلاوات القرّاء الآخرين</button>
+        <button class="btn red" id="btnAudAll" style="width:100%;margin-top:8px" hidden>🗑️ احذف كلّ التلاوات</button>
+        <div class="note">حذفُها يوفّر المساحة ولا يمسّ حفظَك ولا تقدّمَك، وتُنزَّل الآيةُ من جديدٍ حين تسمعها.</div>
+      </div>
       <div class="setblock">
         <label class="lbl">✒️ رسم المصحف</label>
         <select id="setScript">
@@ -8736,6 +8744,82 @@ function audSrc(url){
     return url;
   });
 }
+/* ===== التلاواتُ المحفوظة: حجمُها وحذفُها =====
+   تُجمع بالقارئ (مجلّدُه في الرابط)، فيُحذف ما سواه ويبقى صوتُه دون إنترنت.
+   ومن خالف توقيتُ بعض سوره ملفَّها تُتلى تلك بصوت الحصريّ، فيبقى الحصريُّ معه. */
+function audOwner(url){
+  var b=mqIs(url) ? MQ_BASE : QARI_BASE;
+  if(url.indexOf(b)!==0) return '';
+  return b+url.slice(b.length).split('/')[0]+'/';
+}
+function audKeep(){
+  var f=$('setQari') && $('setQari').value || qariF(), q=null, i, out;
+  for(i=0;i<QARIS.length;i++) if(QARIS[i].f===f) q=QARIS[i];
+  if(!q) q={ f:QARI_DEF };
+  out=[q.m ? MQ_BASE+q.m+'/' : QARI_BASE+q.f+'/'];
+  if(q.m && q.x) out.push(QARI_BASE+QARI_DEF+'/');
+  return out;
+}
+/* يُعيد { all, cur, reqs, keep } — الحجمان بالبايت */
+function audScan(){
+  var keep=audKeep();
+  return caches.open(AUD_CACHE).then(function(c){
+    return c.keys().then(function(reqs){
+      return Promise.all(reqs.map(function(r){
+        return c.match(r).then(function(res){
+          if(!res) return 0;
+          var n=+res.headers.get('Content-Length');
+          return n>0 ? n : res.blob().then(function(b){ return b.size; });
+        })['catch'](function(){ return 0; });
+      })).then(function(sz){
+        var o={ all:0, cur:0, reqs:reqs, keep:keep, c:c, mine:[] };
+        sz.forEach(function(n, i){
+          var mine=keep.indexOf(audOwner(reqs[i].url))>=0;
+          o.mine[i]=mine; o.all+=n; if(mine) o.cur+=n;
+        });
+        return o;
+      });
+    });
+  });
+}
+function audMB(n){ var m=n/1048576; return m<10 ? m.toFixed(1) : String(Math.round(m)); }
+var AUD_SCAN=0;
+function audStoreNote(){
+  var box=$('audBox'); if(!box) return;
+  if(!window.caches){ box.hidden=true; return; }
+  box.hidden=false;
+  var me=++AUD_SCAN;
+  $('audNote').textContent='يُحسب حجمُها…';
+  audScan().then(function(o){
+    if(me!==AUD_SCAN) return;
+    var oth=o.all-o.cur;
+    $('audNote').textContent = !o.reqs.length ? 'لا تلاواتَ محفوظةً بعد.'
+      : tx('حجمُها {mb} ميجابايت، منها {cur} ميجابايت بصوت قارئك الحاليّ.', {mb:audMB(o.all), cur:audMB(o.cur)});
+    $('btnAudAll').hidden=!o.reqs.length;
+    $('btnAudOthers').hidden=!(oth>0);
+  })['catch'](function(){ if(me===AUD_SCAN) box.hidden=true; });
+}
+function audDrop(others){
+  audScan().then(function(o){
+    var n=others ? o.all-o.cur : o.all;
+    if(others ? !(n>0) : !o.reqs.length) return;
+    uiAsk(others
+      ? tx('تُحذف تلاواتُ القرّاء الآخرين ({mb} ميجابايت)، ويبقى صوتُ قارئك الحاليّ.', {mb:audMB(n)})
+      : tx('تُحذف كلُّ التلاوات المحفوظة ({mb} ميجابايت).', {mb:audMB(n)})+'\n'+
+        tx('يبقى حفظُك وتقدّمُك كما هما، وتحتاج الإنترنت لتسمع الآياتِ من جديد.'),
+    function(ok){
+      if(!ok) return;
+      Promise.all(o.reqs.map(function(r, i){
+        if(others && o.mine[i]) return;
+        delete AUD_HAVE[r.url];
+        return o.c['delete'](r)['catch'](function(){});
+      })).then(function(){
+        audStoreNote();
+        uiAlert(tx('حُذف {mb} ميجابايت من التلاوات.', {mb:audMB(n)}), '🧹');
+      });
+    }, '🗑️');
+  })['catch'](function(){});
+}
 /* ===== تهيئةُ التلاوة وجلبُها المسبق =====
    كانت الآياتُ تُجلب واحدةً عند بلوغها، فأوّلَ مرّةٍ يسكت القارئُ بين الآية
    والآية ريثما تصل. فصار الوجهُ الذي يبدأ منه يُجلب كلُّه قبل أن يُتلى،
@@ -10660,6 +10744,16 @@ function crownRowHTML(){
         '📜 شهادة ختم القرآن</button>':'')+
     '</div>';
 }
+/* شريطُ العائلة تحت رتبها الأربع: لكلّ رتبةٍ ربعُه، فيقف الامتلاءُ تحت الرتبة
+   التي يسعى إليها — كان يُقاس على الرتبة التالية وحدها فيمتدّ تحت الأربع كلّها،
+   فيبدو من بلغ ٤٤ من ٥٠ على وشك الماسيّة وهي مئة */
+function badgeFill(t,v){
+  var n=t.length, i, lo;
+  for(i=0;i<n;i++) if(v<t[i]) break;
+  if(i>=n) return 100;
+  lo=i ? t[i-1] : 0;
+  return Math.max(3, Math.min(100, Math.round(100*(i+(v-lo)/(t[i]-lo))/n)));
+}
 function renderBadges(){
   tal();                                              /* تُصحَّح شاراتُ «بلا خطأ» القديمة قبل أن تُعدّ */
   var p=curP(), h=crownRowHTML();
@@ -10678,7 +10772,7 @@ function renderBadges(){
                 '<div class="bn">'+TIERS[k].n+'</div></div>';
        }).join('')+'</div>'+
        (next!=null ? '<div class="bbar"><i style="width:'+
-          Math.max(3,Math.min(100,Math.round(100*v/next)))+'%"></i></div>' : '')+
+          badgeFill(F.t,v)+'%"></i></div>' : '')+
        '</div>';
   });
   h+='<div class="bfam"><div class="fh"><span>✨ شارات مميّزة</span>'+
@@ -14437,6 +14531,7 @@ function renderSetTabs(){
     var ps0=document.querySelectorAll('#scr-settings .setpage');
     for(q=0;q<ps0.length;q++) ps0[q].hidden=(ps0[q].getAttribute('data-setp')!==setTab);
     try{ updDot(); }catch(e){}
+    if(setTab==='mushaf') audStoreNote();
     return;
   }
   el.innerHTML=SET_TABS.map(function(t){
@@ -14450,6 +14545,7 @@ function renderSetTabs(){
   var ps=document.querySelectorAll('#scr-settings .setpage');
   for(i=0;i<ps.length;i++) ps[i].hidden=(ps[i].getAttribute('data-setp')!==setTab);
   try{ updDot(); }catch(e){}
+  if(setTab==='mushaf') audStoreNote();
 }
 function readSettings(){
   SET.level=$('setLevel').value;
@@ -18527,6 +18623,9 @@ window.addEventListener('resize', function(){
 $('btnPathHome').onclick=function(){ renderPlayers(); show('scr-start'); };
 $('btnAddPlayer').onclick=onbAddStart;
 if($('btnOffline')) $('btnOffline').onclick=offlineDownload;
+if($('btnAudAll')) $('btnAudAll').onclick=function(){ audDrop(false); };
+if($('btnAudOthers')) $('btnAudOthers').onclick=function(){ audDrop(true); };
+if($('setQari')) $('setQari').addEventListener('change', audStoreNote);
 if($('instGo')) $('instGo').onclick=pwaInstall;
 if($('instHide')) $('instHide').onclick=function(){
   save('nur_inst_off',1); $('instBox').hidden=true;
