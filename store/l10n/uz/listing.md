@@ -7,9 +7,9 @@ Nur Al-Wahy: Qurʼon yodlash
 <sub>27/30</sub>
 
 ### Subtitle
-Oila uchun hifz va takrorlash
+Hifzga qiziqarli sayohat
 
-<sub>29/30</sub>
+<sub>24/30</sub>
 
 ### Promotional Text
 Qurʼonni Madina Mushafi sahifasida boʻlakma-boʻlak yodla, oʻz vaqtida takrorla va masjidingni qur. Bepul, reklamasiz.

@@ -7,9 +7,9 @@ Nur Al-Wahy: Kuhifadhi Qurani
 <sub>29/30</sub>
 
 ### Subtitle
-Hifdh na kurudia kwa familia
+Safari tamu ya hifdh ya Qurani
 
-<sub>28/30</sub>
+<sub>30/30</sub>
 
 ### Promotional Text
 Hifadhi Qurani sehemu kwa sehemu kwenye ukurasa wa Msahafu wa Madina, rudia kwa wakati wake, na ujenge msikiti wako. Bure, bila matangazo.

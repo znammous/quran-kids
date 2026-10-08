@@ -7,9 +7,9 @@ Nur Al-Wahy: Quran Memorizing
 <sub>29/30</sub>
 
 ### Subtitle
-Hifz & review for all ages
+A fun journey memorizing Quran
 
-<sub>26/30</sub>
+<sub>30/30</sub>
 
 ### Promotional Text
 Memorize the Quran on the real Madinah Mushaf page, section by section, with famous reciters, spaced review and games. Free, no ads, no accounts.

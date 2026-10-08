@@ -7,7 +7,7 @@ Nur Al-Wahy: Coran par cœur
 <sub>27/30</sub>
 
 ### Subtitle
-Mémoriser le Coran en famille
+Un voyage joyeux dans le hifz
 
 <sub>29/30</sub>
 
