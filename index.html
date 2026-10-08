@@ -10292,7 +10292,7 @@ function comboNext(c){
 }
 function tal(){
   var p=curP(), T;
-  if(!p.tal) p.tal={combo:0,perfect:0,revpg:0,pv:2};
+  if(!p.tal) p.tal={combo:0,perfect:0,revpg:0,pv:3};
   T=p.tal;
   /* كان «بلا خطأ» يُعدّ كلَّ مرحلةٍ لا كلَّ جلسة — ومرحلةُ «اقرأ وردّد» لا سؤال فيها
      فتُحسب دائماً — فتضخّم ستّة أضعاف. يُقسَم ما مضى مرّةً، ويُسحب ما لم يُستحقّ بعدُ */
@@ -10301,6 +10301,13 @@ function tal(){
     var b=p.badges||{}, F=null, k;
     for(k=0;k<BADGE_FAM.length;k++) if(BADGE_FAM[k].f==='perf') F=BADGE_FAM[k];
     if(F) for(k=0;k<F.t.length;k++) if(T.perfect<F.t[k]) delete b['b:perf:'+k];
+  }
+  /* سُلّمُ «الإتقان» صار ٥ ٢٠ ٥٠ ١٠٠ بعد ٥ ١٠ ٢٠ ٥٠: الرتبةُ بموضعها، فيُسحب ما علا شرطُه عمّا بلغه */
+  if((T.pv||0)<3){
+    T.pv=3;
+    var b3=p.badges||{}, C=null, j;
+    for(j=0;j<BADGE_FAM.length;j++) if(BADGE_FAM[j].f==='combo') C=BADGE_FAM[j];
+    if(C) for(j=0;j<C.t.length;j++) if((T.combo||0)<C.t[j]) delete b3['b:combo:'+j];
   }
   return T;
 }
@@ -10396,7 +10403,7 @@ function celeDone(){ clearTimeout(CELE.tm); $('cele').hidden=true; $('cele').onc
 /* ===== الشارات ===== */
 var TIERS=[{n:'برونزية',i:'🥉'},{n:'فضّية',i:'🥈'},{n:'ذهبية',i:'🥇'},{n:'ماسيّة',i:'💠'}];
 var BADGE_FAM=[
-  {f:'combo', ic:'🔥', n:'الإتقان',  u:'إجابة متتالية', t:[5,10,20,50],
+  {f:'combo', ic:'🔥', n:'الإتقان',  u:'إجابة متتالية', t:[5,20,50,100],
    v:function(){ return tal().combo||0; }},
   {f:'ayat',  ic:'📖', n:'الحفظ',    u:'آية',           t:[100,564,3118,6236],
    v:function(){ return memTotal(); }},
