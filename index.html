@@ -16954,7 +16954,6 @@ var GAME_LIST=false;                   /* وفهرسُ السور مفتوحٌ �
    وآخرُ تبويبٍ فُتح يُذكر، فيعود الطفلُ إلى حيث كان. */
 var ADV_V='games';
 var ADV_SUB={
-  games:'العبْ وراجِعْ — من مقرَّر يومك أو من محفوظك أو من سورةٍ تختارها<br><small>وكلُّ آيةٍ تُتمّها تعطيك 💎 جواهر، ومن مقرَّر اليوم بالضِّعف</small>',
   stories:'قصصُ من سبقوا، بالصُّور — وفي كلِّ واحدةٍ عبرةٌ تبقى<br><small>وما فُتح مرّةً بقي معك ولو انقطع الإنترنت</small>'
 };
 function advSync(){
@@ -16968,6 +16967,7 @@ function advSync(){
   }
   T.hidden=deep;
   $('advSub').innerHTML = deep ? '' : (ADV_SUB[ADV_V]||'');
+  $('advSub').hidden = !$('advSub').innerHTML;   /* لا عنوانَ فرعيّاً للألعاب: لا يبقى سطرُه فارغاً */
   $('gamesBody').hidden   = (ADV_V!=='games');
   $('storiesBody').hidden = (ADV_V!=='stories');
   try{ tabDot(); }catch(e){}
