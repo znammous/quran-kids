@@ -4970,7 +4970,10 @@ function pageOfIdx(gi){
   return r+1;
 }
 function ayahPage(s,i){ return pageOfIdx(GIDX[s.n-1]+i); }
-function ayahWords(s,i){ return WC[GIDX[s.n-1]+i]; }
+/* كلماتُ الآية بعدِّ PW نفسِه (مع علامات الوقف) — للتقطيع وحده. وكان اسمها ayahWords
+   فحجبتها دالّةُ الأسئلة بالاسم نفسه، فعُدّت الآيةُ بلا علامات والصفحةُ بها،
+   فتضخّمت المقاطع: نصفُ الوجه صار وجهاً كاملاً (الأنعام ٩١–٩٤) */
+function ayahWC(s,i){ return WC[GIDX[s.n-1]+i]; }
 /* min = أقل عدد كلمات معقول للمقطع، حتى لا تُقطَّع السور القصيرة في الصفحات المتفرّقة */
 var MODES={ q:{n:'ربع صفحة', f:0.25, min:22}, h:{n:'نصف صفحة', f:0.5, min:44}, p:{n:'صفحة كاملة (وجه)', f:1, min:88} };
 /* خطط «بالقرآن نحيا» نمطُ تقطيعٍ أيضاً: مقاطعها أيّامُ الخطة نفسها.
@@ -5005,7 +5008,7 @@ function segsOf(s){
     return out;
   }
   var total=0;
-  for(i=0;i<s.ayat.length;i++) total+=ayahWords(s,i);
+  for(i=0;i<s.ayat.length;i++) total+=ayahWC(s,i);
   var target0=segTarget(s,0);
   /* السورة القصيرة لا تُقسَّم أبداً — الناس والإخلاص وأمثالها مقطع واحد */
   if(total<=target0*1.6) return [[0,s.ayat.length]];
@@ -5020,7 +5023,7 @@ function segsOf(s){
     var target=Math.max(MODES[m].min, Math.round(PW[G[2]]*MODES[m].f));
     var from=G[0], acc=0;
     for(var q=G[0];q<G[1];q++){
-      var w=ayahWords(s,q);
+      var w=ayahWC(s,q);
       /* آية طويلة تبدأ مقطعاً جديداً بدل أن تضخّم المقطع الحالي */
       if(acc>0 && acc+w>target*1.5){ out.push([from,q]); from=q; acc=0; }
       acc+=w;
@@ -5030,7 +5033,7 @@ function segsOf(s){
   /* الفتات (أقل من ٤٠٪ من الهدف) يُضمّ إلى المقطع الذي قبله */
   for(i=out.length-1;i>0;i--){
     var w=0;
-    for(k=out[i][0];k<out[i][1];k++) w+=ayahWords(s,k);
+    for(k=out[i][0];k<out[i][1];k++) w+=ayahWC(s,k);
     if(w < segTarget(s,out[i][0])*0.4){ out[i-1][1]=out[i][1]; out.splice(i,1); }
   }
   return out;
