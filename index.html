@@ -2148,6 +2148,7 @@ body.glow-off .dfpic{animation:none}
 #scr-story.wide .stimgbox:hover .starr{opacity:.95}
 #scr-story.wide .starr:hover{background:rgba(4,23,58,.75);transform:translateY(-50%) scale(1.08)}
 #scr-story.wide .starr[hidden]{display:none}
+#scr-story.wide .starr svg{display:block}
 #scr-story.wide .starr.p{inset-inline-start:14px}      /* السابقةُ من جهة ابتداء القراءة: يميناً في العربيّة */
 #scr-story.wide .starr.n{inset-inline-end:14px}
 /* ===== وضعُ القراءة الأفقيّ في الجوّال =====
@@ -17366,6 +17367,10 @@ function stTextHTML(x){
   h=h.split(/\n[ \t]*\n/).map(function(t){ return '<div class="stp">'+t.replace(/^\n+|\n+$/g,'')+'</div>'; }).join('');
   return '<div class="sttext"'+(ar && stLocCode() ? ' dir="rtl" lang="ar" translate="no"' : '')+'>'+h+'</div>';
 }
+function stArrSvg(right){
+  return '<svg viewBox="0 0 24 24" width="55%" height="55%" aria-hidden="true"'+(right?'':' style="transform:scaleX(-1)"')+
+         '><path d="M4 12h15M13 5.5l6.5 6.5-6.5 6.5" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
 function storyDraw(){
   if(!STORY) return;
   var pg=STORY.pages, n=pg.length, p=pg[STORY_I]||{}, rv=stRev(STORY.meta);
@@ -17374,9 +17379,10 @@ function storyDraw(){
   $('stPage').innerHTML=
     (p.img ? '<div class="stimgbox" id="stImgBox"><img id="stImgEl" alt="">'+
              '<button type="button" class="stzoomb" id="stZoomB" aria-label="كبِّر الصورة">🔍</button>'+
-             /* السهمُ حرفٌ لا ينعكس، فيُختار بحسب اتّجاه الصفحة */
-             '<button type="button" class="starr p" id="stArrP" aria-label="السابق"'+(STORY_I<=0?' hidden':'')+'>'+(ltr?'←':'→')+'</button>'+
-             '<button type="button" class="starr n" id="stArrN" aria-label="التالي">'+(STORY_I>=n-1?'✨':(ltr?'→':'←'))+'</button></div>' : '')+
+             /* السهمُ رسمٌ لا حرف: حرفا ← → يجلسان على سطر الخطّ فيبدوان نازلَين في
+                الدائرة. ويُختار اتّجاهُه بحسب اتّجاه الصفحة */
+             '<button type="button" class="starr p" id="stArrP" aria-label="السابق"'+(STORY_I<=0?' hidden':'')+'>'+stArrSvg(!ltr)+'</button>'+
+             '<button type="button" class="starr n" id="stArrN" aria-label="التالي">'+(STORY_I>=n-1?'✨':stArrSvg(ltr))+'</button></div>' : '')+
     stTextHTML(p.x||'')+
     (STORY.note && STORY_I>=n-1 ? '<button type="button" class="btn ghost stnoteb" id="stNoteB">🌱 وقفةٌ لوليّ الأمر</button>' : '');
   var nb=$('stNoteB');
