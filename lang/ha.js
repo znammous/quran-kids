@@ -1724,7 +1724,6 @@ NUR_I18N.add('ha', {
   "{0}/{1} مقطع": "{0}/{1} sassa",
   "اقتراحٌ أو ملاحظة": "Shawara ko ra’ayi",
   "أرسلْ اقتراحاً أو أبلغْ عن خطأ": "Aika shawara ko kai rahoton matsala",
-  "يفتح تطبيقَ البريد عندك برسالةٍ جاهزة، تكتب فيها ما تشاء ثمّ ترسلها أنت — ويسعدنا أن نسمع منك.": "Yana buɗe manhajar imel ɗinka da saƙo a shirye — rubuta abin da kake so, sannan ka aika da kanka. Muna farin cikin jin daga gare ka.",
   "اقتراحٌ أو ملاحظة على تطبيق «نور الوحي»": "Shawara ko ra’ayi game da manhajar “Nur al-Wahy”",
   "اكتب هنا اقتراحَك، أو صِفِ الخطأ وأين ظهر:": "Rubuta shawararka a nan, ko ka bayyana matsalar da inda ta bayyana:",
   "اكتم أصوات التطبيق في هذه الجلسة": "Kashe sautukan manhaja a wannan zama",

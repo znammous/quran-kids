@@ -1724,7 +1724,6 @@ NUR_I18N.add('id', {
   "{0}/{1} مقطع": "{0}/{1} bagian",
   "اقتراحٌ أو ملاحظة": "Saran atau masukan",
   "أرسلْ اقتراحاً أو أبلغْ عن خطأ": "Kirim saran atau laporkan masalah",
-  "يفتح تطبيقَ البريد عندك برسالةٍ جاهزة، تكتب فيها ما تشاء ثمّ ترسلها أنت — ويسعدنا أن نسمع منك.": "Membuka aplikasi email Anda dengan pesan siap pakai — tulis apa saja, lalu kirim sendiri. Kami senang mendengar dari Anda.",
   "اقتراحٌ أو ملاحظة على تطبيق «نور الوحي»": "Saran atau masukan untuk aplikasi “Nur al-Wahy”",
   "اكتب هنا اقتراحَك، أو صِفِ الخطأ وأين ظهر:": "Tulis saran Anda di sini, atau jelaskan masalahnya dan di mana muncul:",
   "اكتم أصوات التطبيق في هذه الجلسة": "Bisukan suara aplikasi untuk sesi ini",
