@@ -1,5 +1,5 @@
 {
-  "v": 101,
+  "v": 102,
   "stories": [
     {
       "id": "kahf",
@@ -10,7 +10,8 @@
       "file": "s/kahf.json",
       "rev": 4,
       "added": "2026-09-19",
-      "cw": "covers/w/kahf.webp"
+      "cw": "covers/w/kahf.webp",
+      "n": 1
     },
     {
       "id": "qarya",
@@ -20,7 +21,8 @@
       "cover": "covers/qarya.webp",
       "file": "s/qarya.json",
       "added": "2026-09-20",
-      "cw": "covers/w/qarya.webp"
+      "cw": "covers/w/qarya.webp",
+      "n": 1
     },
     {
       "id": "qarun",
@@ -30,7 +32,8 @@
       "cover": "covers/qarun.webp",
       "file": "s/qarun.json",
       "added": "2026-09-20",
-      "cw": "covers/w/qarun.webp"
+      "cw": "covers/w/qarun.webp",
+      "n": 1
     },
     {
       "id": "qatil",
@@ -41,7 +44,8 @@
       "file": "s/qatil.json",
       "added": "2026-09-20",
       "rev": 2,
-      "cw": "covers/w/qatil.webp"
+      "cw": "covers/w/qatil.webp",
+      "n": 1
     },
     {
       "id": "jannatayn",
@@ -51,7 +55,8 @@
       "cover": "covers/jannatayn.webp",
       "file": "s/jannatayn.json",
       "added": "2026-09-20",
-      "cw": "covers/w/jannatayn.webp"
+      "cw": "covers/w/jannatayn.webp",
+      "n": 1
     },
     {
       "id": "shiraa",
@@ -62,7 +67,8 @@
       "file": "s/shiraa.json",
       "added": "2026-09-21",
       "rev": 3,
-      "cw": "covers/w/shiraa.webp"
+      "cw": "covers/w/shiraa.webp",
+      "n": 1
     },
     {
       "id": "shah",
@@ -73,7 +79,8 @@
       "file": "s/shah.json",
       "added": "2026-09-21",
       "rev": 2,
-      "cw": "covers/w/shah.webp"
+      "cw": "covers/w/shah.webp",
+      "n": 1
     },
     {
       "id": "jidar",
@@ -84,7 +91,8 @@
       "file": "s/jidar.json",
       "added": "2026-09-21",
       "rev": 3,
-      "cw": "covers/w/jidar.webp"
+      "cw": "covers/w/jidar.webp",
+      "n": 1
     },
     {
       "id": "kalima",
@@ -95,7 +103,8 @@
       "file": "s/kalima.json",
       "added": "2026-09-21",
       "rev": 2,
-      "cw": "covers/w/kalima.webp"
+      "cw": "covers/w/kalima.webp",
+      "n": 1
     },
     {
       "id": "jabal",
@@ -106,7 +115,8 @@
       "file": "s/jabal.json",
       "added": "2026-09-21",
       "rev": 3,
-      "cw": "covers/w/jabal.webp"
+      "cw": "covers/w/jabal.webp",
+      "n": 1
     },
     {
       "id": "hajar",
@@ -117,7 +127,8 @@
       "file": "s/hajar.json",
       "added": "2026-09-21",
       "rev": 2,
-      "cw": "covers/w/hajar.webp"
+      "cw": "covers/w/hajar.webp",
+      "n": 1
     },
     {
       "id": "tamra",
@@ -128,7 +139,8 @@
       "file": "s/tamra.json",
       "added": "2026-09-21",
       "rev": 2,
-      "cw": "covers/w/tamra.webp"
+      "cw": "covers/w/tamra.webp",
+      "n": 1
     },
     {
       "id": "fasila",
@@ -139,7 +151,8 @@
       "file": "s/fasila.json",
       "added": "2026-09-21",
       "rev": 2,
-      "cw": "covers/w/fasila.webp"
+      "cw": "covers/w/fasila.webp",
+      "n": 1
     },
     {
       "id": "siyaj",
@@ -150,7 +163,8 @@
       "file": "s/siyaj.json",
       "added": "2026-09-21",
       "rev": 2,
-      "cw": "covers/w/siyaj.webp"
+      "cw": "covers/w/siyaj.webp",
+      "n": 1
     },
     {
       "id": "fakhkhar",
@@ -161,7 +175,8 @@
       "file": "s/fakhkhar.json",
       "added": "2026-09-21",
       "rev": 4,
-      "cw": "covers/w/fakhkhar.webp"
+      "cw": "covers/w/fakhkhar.webp",
+      "n": 1
     },
     {
       "id": "ghina",
@@ -172,7 +187,8 @@
       "added": "2026-09-22",
       "cover": "covers/ghina.webp",
       "rev": 7,
-      "cw": "covers/w/ghina.webp"
+      "cw": "covers/w/ghina.webp",
+      "n": 1
     },
     {
       "id": "ruqayya",
@@ -182,7 +198,8 @@
       "cover": "covers/ruqayya.webp",
       "file": "s/ruqayya.json",
       "added": "2026-09-22",
-      "cw": "covers/w/ruqayya.webp"
+      "cw": "covers/w/ruqayya.webp",
+      "n": 1
     },
     {
       "id": "shatla",
@@ -193,7 +210,8 @@
       "file": "s/shatla.json",
       "added": "2026-09-23",
       "cw": "covers/w/shatla.webp",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "salam",
@@ -203,7 +221,8 @@
       "cover": "covers/salam.webp",
       "file": "s/salam.json",
       "added": "2026-09-23",
-      "cw": "covers/w/salam.webp"
+      "cw": "covers/w/salam.webp",
+      "n": 1
     },
     {
       "id": "ukhtan",
@@ -214,7 +233,8 @@
       "file": "s/ukhtan.json",
       "added": "2026-09-23",
       "cw": "covers/w/ukhtan.webp",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "hilal",
@@ -225,7 +245,8 @@
       "file": "s/hilal.json",
       "added": "2026-09-29",
       "rev": 3,
-      "cw": "covers/w/hilal.webp"
+      "cw": "covers/w/hilal.webp",
+      "n": 1
     },
     {
       "id": "sahrij",
@@ -236,7 +257,8 @@
       "file": "s/sahrij.json",
       "added": "2026-09-29",
       "rev": 4,
-      "cw": "covers/w/sahrij.webp"
+      "cw": "covers/w/sahrij.webp",
+      "n": 1
     },
     {
       "id": "sibaq",
@@ -246,7 +268,8 @@
       "cover": "covers/sibaq.webp",
       "file": "s/sibaq.json",
       "added": "2026-09-29",
-      "cw": "covers/w/sibaq.webp"
+      "cw": "covers/w/sibaq.webp",
+      "n": 1
     },
     {
       "id": "qindil",
@@ -257,7 +280,8 @@
       "file": "s/qindil.json",
       "added": "2026-09-29",
       "cw": "covers/w/qindil.webp",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "tayyara",
@@ -268,7 +292,8 @@
       "file": "s/tayyara.json",
       "added": "2026-09-29",
       "cw": "covers/w/tayyara.webp",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "kalb",
@@ -279,7 +304,8 @@
       "file": "s/kalb.json",
       "added": "2026-09-30",
       "cw": "covers/w/kalb.webp",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "qafila",
@@ -290,7 +316,8 @@
       "file": "s/qafila.json",
       "added": "2026-09-30",
       "cw": "covers/w/qafila.webp",
-      "rev": 3
+      "rev": 3,
+      "n": 1
     },
     {
       "id": "surra",
@@ -301,7 +328,8 @@
       "file": "s/surra.json",
       "added": "2026-09-30",
       "cw": "covers/w/surra.webp",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "raghif",
@@ -312,7 +340,8 @@
       "cw": "covers/w/raghif.webp",
       "file": "s/raghif.json",
       "added": "2026-09-30",
-      "rev": 3
+      "rev": 3,
+      "n": 1
     },
     {
       "id": "dayf",
@@ -323,7 +352,8 @@
       "cw": "covers/w/dayf.webp",
       "file": "s/dayf.json",
       "added": "2026-09-30",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "zeer",
@@ -334,7 +364,8 @@
       "cw": "covers/w/zeer.webp",
       "file": "s/zeer.json",
       "added": "2026-09-30",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "bab",
@@ -344,7 +375,8 @@
       "cover": "covers/bab.webp",
       "cw": "covers/w/bab.webp",
       "file": "s/bab.json",
-      "added": "2026-09-30"
+      "added": "2026-09-30",
+      "n": 1
     },
     {
       "id": "janna",
@@ -354,7 +386,8 @@
       "cover": "covers/janna.webp",
       "cw": "covers/w/janna.webp",
       "file": "s/janna.json",
-      "added": "2026-09-30"
+      "added": "2026-09-30",
+      "n": 1
     },
     {
       "id": "sabt",
@@ -365,7 +398,8 @@
       "cw": "covers/w/sabt.webp",
       "file": "s/sabt.json",
       "added": "2026-09-30",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "namla",
@@ -375,7 +409,8 @@
       "cover": "covers/namla.webp",
       "cw": "covers/w/namla.webp",
       "file": "s/namla.json",
-      "added": "2026-09-30"
+      "added": "2026-09-30",
+      "n": 1
     },
     {
       "id": "yasin",
@@ -386,7 +421,8 @@
       "cw": "covers/w/yasin.webp",
       "file": "s/yasin.json",
       "added": "2026-09-30",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "rabbayani",
@@ -397,7 +433,8 @@
       "cw": "covers/w/rabbayani.webp",
       "file": "s/rabbayani.json",
       "added": "2026-10-01",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "tamr",
@@ -408,7 +445,8 @@
       "cw": "covers/w/tamr.webp",
       "file": "s/tamr.json",
       "added": "2026-10-01",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "kabir",
@@ -419,7 +457,8 @@
       "cw": "covers/w/kabir.webp",
       "file": "s/kabir.json",
       "added": "2026-10-01",
-      "rev": 3
+      "rev": 3,
+      "n": 1
     },
     {
       "id": "kalima2",
@@ -430,7 +469,8 @@
       "cw": "covers/w/kalima2.webp",
       "file": "s/kalima2.json",
       "added": "2026-10-01",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "qalam",
@@ -440,7 +480,8 @@
       "cover": "covers/qalam.webp",
       "cw": "covers/w/qalam.webp",
       "file": "s/qalam.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "busat",
@@ -451,7 +492,8 @@
       "cw": "covers/w/busat.webp",
       "file": "s/busat.json",
       "added": "2026-10-01",
-      "rev": 3
+      "rev": 3,
+      "n": 1
     },
     {
       "id": "shawk",
@@ -461,7 +503,8 @@
       "cover": "covers/shawk.webp",
       "cw": "covers/w/shawk.webp",
       "file": "s/shawk.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "sirr",
@@ -472,7 +515,8 @@
       "cw": "covers/w/sirr.webp",
       "file": "s/sirr.json",
       "added": "2026-10-01",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "baqara",
@@ -482,7 +526,8 @@
       "cover": "covers/baqara.webp",
       "cw": "covers/w/baqara.webp",
       "file": "s/baqara.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "ibnay",
@@ -492,7 +537,8 @@
       "cover": "covers/ibnay.webp",
       "cw": "covers/w/ibnay.webp",
       "file": "s/ibnay.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "faiz",
@@ -502,7 +548,8 @@
       "cover": "covers/faiz.webp",
       "cw": "covers/w/faiz.webp",
       "file": "s/faiz.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "waqt",
@@ -512,7 +559,8 @@
       "cover": "covers/waqt.webp",
       "cw": "covers/w/waqt.webp",
       "file": "s/waqt.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "fawq",
@@ -522,7 +570,8 @@
       "cover": "covers/fawq.webp",
       "cw": "covers/w/fawq.webp",
       "file": "s/fawq.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "muhra",
@@ -532,7 +581,8 @@
       "cover": "covers/muhra.webp",
       "cw": "covers/w/muhra.webp",
       "file": "s/muhra.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "mawid",
@@ -542,7 +592,8 @@
       "cover": "covers/mawid.webp",
       "cw": "covers/w/mawid.webp",
       "file": "s/mawid.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "saa",
@@ -552,7 +603,8 @@
       "cover": "covers/saa.webp",
       "cw": "covers/w/saa.webp",
       "file": "s/saa.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "basma",
@@ -562,7 +614,8 @@
       "cover": "covers/basma.webp",
       "cw": "covers/w/basma.webp",
       "file": "s/basma.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "ghurfa",
@@ -573,7 +626,8 @@
       "cw": "covers/w/ghurfa.webp",
       "file": "s/ghurfa.json",
       "rev": 2,
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "ard",
@@ -583,7 +637,8 @@
       "cover": "covers/ard.webp",
       "cw": "covers/w/ard.webp",
       "file": "s/ard.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "hijra",
@@ -593,7 +648,8 @@
       "cover": "covers/hijra.webp",
       "cw": "covers/w/hijra.webp",
       "file": "s/hijra.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "dayn",
@@ -603,7 +659,8 @@
       "cover": "covers/dayn.webp",
       "cw": "covers/w/dayn.webp",
       "file": "s/dayn.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "asir",
@@ -614,7 +671,8 @@
       "cw": "covers/w/asir.webp",
       "file": "s/asir.json",
       "rev": 2,
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "haja",
@@ -624,7 +682,8 @@
       "cover": "covers/haja.webp",
       "cw": "covers/w/haja.webp",
       "file": "s/haja.json",
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "surur",
@@ -635,7 +694,8 @@
       "cw": "covers/w/surur.webp",
       "file": "s/surur.json",
       "rev": 2,
-      "added": "2026-10-01"
+      "added": "2026-10-01",
+      "n": 1
     },
     {
       "id": "talut",
@@ -646,7 +706,8 @@
       "cw": "covers/w/talut.webp",
       "file": "s/talut.json",
       "added": "2026-10-04",
-      "rev": 4
+      "rev": 4,
+      "n": 1
     },
     {
       "id": "ghulaman",
@@ -657,7 +718,8 @@
       "cw": "covers/w/ghulaman.webp",
       "file": "s/ghulaman.json",
       "added": "2026-10-04",
-      "rev": 3
+      "rev": 3,
+      "n": 1
     },
     {
       "id": "sahm",
@@ -668,7 +730,8 @@
       "cw": "covers/w/sahm.webp",
       "file": "s/sahm.json",
       "added": "2026-10-04",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "baydar",
@@ -679,7 +742,8 @@
       "cw": "covers/w/baydar.webp",
       "file": "s/baydar.json",
       "added": "2026-10-04",
-      "rev": 4
+      "rev": 4,
+      "n": 1
     },
     {
       "id": "qidr",
@@ -690,7 +754,8 @@
       "cw": "covers/w/qidr.webp",
       "file": "s/qidr.json",
       "added": "2026-10-04",
-      "rev": 2
+      "rev": 2,
+      "n": 1
     },
     {
       "id": "safwan",
@@ -701,7 +766,7 @@
       "cw": "covers/w/safwan.webp",
       "file": "s/safwan.json",
       "added": "2026-10-08",
-      "n": 1
+      "n": 2
     }
   ]
 }
