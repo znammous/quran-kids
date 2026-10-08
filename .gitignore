@@ -22,3 +22,6 @@ keystore.properties
 store/l10n/*/appstore/
 store/l10n/*/play/
 store/l10n/_raw/
+
+# ملفّاتُ macOS — يُنشئها Finder في كلّ مجلّد
+.DS_Store
