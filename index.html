@@ -2188,6 +2188,12 @@ body.glow-off .dfpic{animation:none}
 .runovl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
   padding:10px;background:rgba(1,10,26,.58);color:#fff;text-align:center}
 .runovl[hidden]{display:none}
+/* العدّاءُ والعصفور في الجوّال: المشهدُ من حافّة الشاشة إلى حافّتها، بلا إطارٍ جانبيّ،
+   فيبدو الطريقُ والسماءُ ممتدّين خارجها. (الرفُّ يبقى لوحةً بإطارها) */
+@media (max-width:700px){
+  #runStage,#birdStage{margin-inline:calc(-14px - env(safe-area-inset-left)) calc(-14px - env(safe-area-inset-right));
+    border-inline:0;border-radius:0}
+}
 .runovl .ot{font-size:22px;font-weight:900}
 .runovl p{margin:0;font-size:14.5px;font-weight:700;line-height:1.75}
 .runovl .btn{margin:0;min-height:44px;padding:10px 18px;font-size:16px}
