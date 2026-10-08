@@ -1739,4 +1739,5 @@ NUR_I18N.add('id', {
   "الأخيرة": "Terakhir",
   "وقفةٌ لوليّ الأمر": "Renungan untuk orang tua",
   "عودةٌ إلى القصّة": "Kembali ke cerita",
+  "التلاوة": "Bacaan",
 });

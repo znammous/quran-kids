@@ -1739,4 +1739,5 @@ NUR_I18N.add('ms', {
   "الأخيرة": "Terkini",
   "وقفةٌ لوليّ الأمر": "Renungan untuk ibu bapa",
   "عودةٌ إلى القصّة": "Kembali ke cerita",
+  "التلاوة": "Bacaan",
 });

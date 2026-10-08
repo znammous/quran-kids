@@ -1739,4 +1739,5 @@ NUR_I18N.add('en', {
   "الأخيرة": "Recent",
   "وقفةٌ لوليّ الأمر": "A pause for parents",
   "عودةٌ إلى القصّة": "Back to the story",
+  "التلاوة": "Recitation",
 });

@@ -1739,4 +1739,5 @@ NUR_I18N.add('ha', {
   "الأخيرة": "Na baya-bayan nan",
   "وقفةٌ لوليّ الأمر": "Tsayawa ga iyaye",
   "عودةٌ إلى القصّة": "Koma ga labarin",
+  "التلاوة": "Karatu",
 });

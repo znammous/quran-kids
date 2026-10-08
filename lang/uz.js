@@ -1739,4 +1739,5 @@ NUR_I18N.add('uz', {
   "الأخيرة": "So'nggilar",
   "وقفةٌ لوليّ الأمر": "Ota-onalar uchun to‘xtam",
   "عودةٌ إلى القصّة": "Hikoyaga qaytish",
+  "التلاوة": "Tilovat",
 });

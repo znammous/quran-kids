@@ -1739,4 +1739,5 @@ NUR_I18N.add('tr', {
   "الأخيرة": "Son kullanılanlar",
   "وقفةٌ لوليّ الأمر": "Ebeveynler için bir durak",
   "عودةٌ إلى القصّة": "Hikâyeye dön",
+  "التلاوة": "Tilavet",
 });

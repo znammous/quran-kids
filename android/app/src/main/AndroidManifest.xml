@@ -34,6 +34,12 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths"></meta-data>
         </provider>
+
+        <!-- التلاوةُ والشاشةُ مقفلة: تُبقي التطبيقَ حيّاً ما دام يتلو -->
+        <service
+            android:name=".TilawaService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback" />
     </application>
 
     <!-- Permissions -->
@@ -42,4 +48,7 @@
     <!-- تسميعُ الطفل نفسَه: يُطلب عند تفعيل التسجيل وحده، والتطبيقُ يعمل بدونه -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <!-- التلاوةُ والشاشةُ مقفلة -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 </manifest>

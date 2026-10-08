@@ -1739,4 +1739,5 @@ NUR_I18N.add('sw', {
   "الأخيرة": "Za karibuni",
   "وقفةٌ لوليّ الأمر": "Kituo kwa mzazi",
   "عودةٌ إلى القصّة": "Rudi kwenye hadithi",
+  "التلاوة": "Kisomo",
 });

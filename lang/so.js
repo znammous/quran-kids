@@ -1739,4 +1739,5 @@ NUR_I18N.add('so', {
   "الأخيرة": "Kuwii ugu dambeeyay",
   "وقفةٌ لوليّ الأمر": "Hakad loogu talagalay waalidka",
   "عودةٌ إلى القصّة": "Ku noqo sheekada",
+  "التلاوة": "Akhris",
 });
