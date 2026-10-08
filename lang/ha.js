@@ -727,7 +727,7 @@ NUR_I18N.add('ha', {
   "تعرف به نبيّك": "Ka san Annabinka ﷺ da shi",
   "تعود إليه من حيث وقفت": "Ka koma gare shi daga inda ka tsaya",
   "تعود غداً": "Zai dawo gobe",
-  "إن عرضتَ الوجه أو أخطأتَ فيه أو في أسئلته عاد إليك غداً": "Idan ka bayyana shafin ko ka yi kuskure a ciki ko a tambayoyinsa, zai dawo gobe",
+  "إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً": "Idan ka bayyana shafin ko ka yi kuskure a ciki, ko ka yi kuskure sau biyu a tambayoyinsa, zai dawo gobe",
   "تعود غداً ونزلت درجة": "Zai dawo gobe, ya sauka mataki ɗaya",
   "رسخت فانتقلت إلى وردك": "Ya kafu — ya koma cikin wirdinka",
   "رسخت — ولا ورد لك يتعاهدها": "Ya kafu — amma ba ka da wirdin da zai kiyaye shi",

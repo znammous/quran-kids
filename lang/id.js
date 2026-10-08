@@ -727,7 +727,7 @@ NUR_I18N.add('id', {
   "تعرف به نبيّك": "Kenali Nabimu ﷺ",
   "تعود إليه من حيث وقفت": "Kembali ke tempat kamu berhenti",
   "تعود غداً": "Kembali besok",
-  "إن عرضتَ الوجه أو أخطأتَ فيه أو في أسئلته عاد إليك غداً": "Jika kamu membuka halaman atau salah di dalamnya atau dalam soal-soalnya, halaman itu kembali besok",
+  "إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً": "Jika kamu membuka halaman atau salah di dalamnya, atau dua kali salah dalam soal-soalnya, halaman itu kembali besok",
   "تعود غداً ونزلت درجة": "Kembali besok, turun satu tingkat",
   "رسخت فانتقلت إلى وردك": "Sudah kuat — pindah ke murajaah rutinmu",
   "رسخت — ولا ورد لك يتعاهدها": "Sudah kuat — tapi kamu tidak punya murajaah rutin untuk menjaganya",

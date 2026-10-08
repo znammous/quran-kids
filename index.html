@@ -10247,9 +10247,13 @@ function nextRound(ok){
   if(miss){ comboMiss(); S.miss=(S.miss||0)+1; }   /* تنقطع السلسلةُ ويُعلَم، ولا يُخصم */
   else if(ok===false){ S.errors++; comboMiss(); }
   else comboHit();
-  /* في أسئلة المراجعة: خطأٌ في سؤال الوجه يُعيده غداً ولو أصاب بعده — كان
-     الخطأُ يُعدّ ثمّ يُعاد السؤالُ فيُصاب، فيُحسب الوجهُ سليماً كأن لم يخطئ */
-  if(S && S.rev==='quiz' && S.errors>(S.e0||0)){ var rr=S.rounds[S.i]; if(rr) revWeak(rr.page); }
+  /* في أسئلة المراجعة: خطآن فأكثر في أسئلة الوجه تُعيده غداً ولو أصاب بعدهما —
+     كان الخطأُ يُعدّ ثمّ يُعاد السؤالُ فيُصاب، فيُحسب الوجهُ سليماً كأن لم يخطئ.
+     والخطأُ الواحد يُغتفر: ضغطةٌ عابرةٌ لا تُنزل وجهاً درجة (قرارُ صاحب التطبيق) */
+  if(S && S.rev==='quiz' && S.errors>(S.e0||0)){
+    var rr=S.rounds[S.i], qe=REV.qerr||(REV.qerr={});
+    if(rr){ qe[rr.page]=(qe[rr.page]||0)+(S.errors-(S.e0||0)); if(qe[rr.page]>=REV_QERR_MAX) revWeak(rr.page); }
+  }
   S.i++;
   if(CELE.on){                                       /* يمضي فور انتهاء الاحتفال أو تخطّيه */
     var s0=S;
@@ -11259,7 +11263,7 @@ function roundRevPage(r){
       '<button class="btn ghost" id="btnShow">📖 اعرض الوجه</button>'+
       '<button class="btn ghost" id="btnAgainR">🔁 أخطأتُ فيها</button></div>'+
     /* القاعدةُ قبل أن يبدأ: كان يكشف الوجهَ ليتثبّت من كلمة، ولا يدري أنّه أعاده بها غداً */
-    '<div class="revrule">💡 إن عرضتَ الوجه أو أخطأتَ فيه أو في أسئلته عاد إليك غداً</div>'+
+    '<div class="revrule">💡 إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً</div>'+
     (useRec ? '<button class="btn ghost big" id="btnNoMic3">🔇 لا أستطيع التسجيل الآن</button>' : '')+
     /* التخطّي يعني قفز الصفحات الباقية، وفي آخر صفحة لا يزيد شيئاً على ✅ فيُخفى */
     ((REV.pages && REV.pi < REV.pages.length-1)
@@ -13734,6 +13738,10 @@ function beginDueSession(){
 function revStartPage(){
   /* من أين جاء إلى التسميع؟ يُحفظ ليُردّ إليه عند الخروج بـ✕ لا إلى الفهرس */
   try{ if(curScreen()!=='scr-play') REV.back=curScreen(); }catch(e){}
+  /* أوّلُ الجلسة: يُحكم على أوجهها بما يكون فيها وحدها. كانت علامةُ الضعف
+     تُحفظ ولا تُمحى، فالوجهُ الذي ضعُف مرّةً يُحسب ضعيفاً في كلّ مراجعةٍ بعدها
+     ولو أتقنه — فيعود غداً أبداً */
+  if(REV.pi===0){ REV.pages.forEach(function(x){ delete REV.weak[x]; }); REV.qerr={}; }
   var P=REV.pages[REV.pi];
   if(P==null){ beginRevQuiz(); return; }
   var pcs=pageScopePieces(P);
@@ -13932,6 +13940,7 @@ function finishRevQuiz(){
   $('btnRevHome2').onclick=function(){ renderPlayers(); show('scr-start'); };
 }
 function revWeak(P){ if(P) REV.weak[P]=true; }
+var REV_QERR_MAX=2;      /* كم خطأً في أسئلة الوجه يُعيده غداً */
 /* ما صار إليه كلُّ ما رُوجع، مجموعاً بحاله: متى يعود، وهل نزل درجة، وهل رسخ —
    وكان يُقال «تباعد موعدها» ولا يُقال إلى متى.
    list: [{ r:{bad,drop,grad,next,n}, tag }] — وtag وجهٌ أو مقطع، وpfx رمزٌ قبل القائمة */

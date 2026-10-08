@@ -727,7 +727,7 @@ NUR_I18N.add('so', {
   "تعرف به نبيّك": "Ku baro Nabigaaga ﷺ",
   "تعود إليه من حيث وقفت": "Kaga soo noqo meeshii aad joogsatay",
   "تعود غداً": "Berrito ayuu soo noqonayaa",
-  "إن عرضتَ الوجه أو أخطأتَ فيه أو في أسئلته عاد إليك غداً": "Haddii aad bogga muujiso ama aad ku khaldanto isaga ama su'aalihiisa, berrito ayuu soo noqonayaa",
+  "إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً": "Haddii aad bogga muujiso ama aad ku khaldanto, ama aad laba jeer ku khaldanto su'aalihiisa, berrito ayuu soo noqonayaa",
   "تعود غداً ونزلت درجة": "Berrito ayuu soo noqonayaa, hal heer ayuu hoos u dhacay",
   "رسخت فانتقلت إلى وردك": "Wuu xoogaystay — wuxuu u wareegay muraajacadaada maalinlaha ah",
   "رسخت — ولا ورد لك يتعاهدها": "Wuu xoogaystay — laakiin ma lihid muraajaco maalinle ah oo ilaalisa",

@@ -727,7 +727,7 @@ NUR_I18N.add('tr', {
   "تعرف به نبيّك": "Onunla Peygamberini ﷺ tanırsın",
   "تعود إليه من حيث وقفت": "Kaldığın yerden ona dönersin",
   "تعود غداً": "Yarın geri gelir",
-  "إن عرضتَ الوجه أو أخطأتَ فيه أو في أسئلته عاد إليك غداً": "Sayfayı açarsan ya da onda veya sorularında hata yaparsan yarın geri gelir",
+  "إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً": "Sayfayı açarsan ya da onda hata yaparsan, veya sorularında iki hata yaparsan yarın geri gelir",
   "تعود غداً ونزلت درجة": "Yarın geri gelir, bir basamak aşağı",
   "رسخت فانتقلت إلى وردك": "Pekişti — tekrar virdine geçti",
   "رسخت — ولا ورد لك يتعاهدها": "Pekişti — ama onu taze tutacak bir tekrar virdin yok",

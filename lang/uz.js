@@ -727,7 +727,7 @@ NUR_I18N.add('uz', {
   "تعرف به نبيّك": "Paygʻambaringni ﷺ tanib ol",
   "تعود إليه من حيث وقفت": "Toʻxtagan joyingga qayt",
   "تعود غداً": "Ertaga qaytadi",
-  "إن عرضتَ الوجه أو أخطأتَ فيه أو في أسئلته عاد إليك غداً": "Sahifani ochsang yoki unda yoxud savollarida xato qilsang, ertaga qaytadi",
+  "إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً": "Sahifani ochsang yoki unda xato qilsang, yoxud savollarida ikki marta xato qilsang, ertaga qaytadi",
   "تعود غداً ونزلت درجة": "Ertaga qaytadi, bir pogʻona pastga tushdi",
   "رسخت فانتقلت إلى وردك": "Mustahkamlandi — takrorlash davrangga oʻtdi",
   "رسخت — ولا ورد لك يتعاهدها": "Mustahkamlandi — lekin uni yangilab turadigan takrorlash davrang yoʻq",
