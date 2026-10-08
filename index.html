@@ -1430,6 +1430,14 @@ body.light .sp-lit{fill:#1f92d4}
 .revtot{margin-top:9px;padding-top:9px;border-top:2px dashed var(--pb3);font-size:15px}
 .revtot b{font-size:18px;color:var(--warm2)}
 .revrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* نتيجةُ الجلسة: سطرٌ لكلّ حالٍ وأوجهُه، وقاعدةُ الإعادة تحت أزرار التسميع */
+.revout{display:grid;gap:6px;max-width:440px;margin:0 auto 12px;text-align:start}
+.revout>div{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 10px;
+  background:#f2f9ff;border:2px solid #c9e0f7;border-radius:10px;padding:7px 10px;font-size:14.5px;color:#3d5b7a}
+.revout b{color:#102b4a;font-weight:900}
+.revout span{font-weight:800}
+.revrule{font-size:13px;font-weight:800;color:#6a809b;text-align:center;margin:2px 0 10px}
+.card.bare .revrule{color:var(--on3)}
 .revrow select{flex:1;min-width:130px}
 #scr-revpath .card.bare{border:3px solid var(--pb);border-radius:14px;padding:12px}
 .pnode .lbl.wide{max-width:250px;line-height:1.5}
@@ -9992,6 +10000,8 @@ var C_QUES=['سؤال واحد','سؤالان','أسئلة','سؤالاً'];
 var C_AYAH=['آية واحدة','آيتان','آيات','آية'];
 var C_SURAH=['سورة واحدة','سورتان','سور','سورة'];
 var C_SEG=['مقطع واحد','مقطعان','مقاطع','مقطعاً'];
+/* بعد حرف جرّ: «بعد يومين» لا «بعد يومان» — وصيغُه في القواميس صيغُ «يوم» */
+var C_DAYS=['يوم','يومين','أيام','يوماً'];
 /* عمرُ المهمّة: منذ متى حلّ موعدُها ولم تُؤدَّ — «منذ يومين» لا «منذ يومان» */
 function agoText(n){
   n=Math.max(1, n|0);
@@ -10235,10 +10245,11 @@ function nextRound(ok){
   var clean = (ok===true) && !!S && (S.errors===S.e0);
   if(S && S.rev==='exam'){ try{ examNote(S.rounds[S.i], clean); }catch(e){} }
   if(miss){ comboMiss(); S.miss=(S.miss||0)+1; }   /* تنقطع السلسلةُ ويُعلَم، ولا يُخصم */
-  else if(ok===false){
-    S.errors++; comboMiss();
-    if(S && S.rev==='quiz'){ var rr=S.rounds[S.i]; if(rr) revWeak(rr.page); }
-  } else comboHit();
+  else if(ok===false){ S.errors++; comboMiss(); }
+  else comboHit();
+  /* في أسئلة المراجعة: خطأٌ في سؤال الوجه يُعيده غداً ولو أصاب بعده — كان
+     الخطأُ يُعدّ ثمّ يُعاد السؤالُ فيُصاب، فيُحسب الوجهُ سليماً كأن لم يخطئ */
+  if(S && S.rev==='quiz' && S.errors>(S.e0||0)){ var rr=S.rounds[S.i]; if(rr) revWeak(rr.page); }
   S.i++;
   if(CELE.on){                                       /* يمضي فور انتهاء الاحتفال أو تخطّيه */
     var s0=S;
@@ -11240,6 +11251,8 @@ function roundRevPage(r){
     '<div class="row" id="rowR">'+
       '<button class="btn ghost" id="btnShow">📖 اعرض الوجه</button>'+
       '<button class="btn ghost" id="btnAgainR">🔁 أخطأتُ فيها</button></div>'+
+    /* القاعدةُ قبل أن يبدأ: كان يكشف الوجهَ ليتثبّت من كلمة، ولا يدري أنّه أعاده بها غداً */
+    '<div class="revrule">💡 إن عرضتَ الوجه أو أخطأتَ فيه أو في أسئلته عاد إليك غداً</div>'+
     (useRec ? '<button class="btn ghost big" id="btnNoMic3">🔇 لا أستطيع التسجيل الآن</button>' : '')+
     /* التخطّي يعني قفز الصفحات الباقية، وفي آخر صفحة لا يزيد شيئاً على ✅ فيُخفى */
     ((REV.pages && REV.pi < REV.pages.length-1)
@@ -13825,11 +13838,21 @@ function beginRevQuiz(){
 function finishRevPage(){ REV.pi++; revStartPage(); }
 /* نهاية الأسئلة: الجدولة لكل صفحة على حدة */
 function finishRevQuiz(){
-  var weakList=[], donePages=REV.pages.slice(), onPath=!REV.due;
+  var weakList=[], donePages=REV.pages.slice(), onPath=!REV.due, t0=todayNum(), res={};
   donePages.forEach(function(P){
-    var bad=!!REV.weak[P];
+    var bad=!!REV.weak[P], ks=pageSegKeys(P), r={bad:bad, drop:false, grad:false, next:null, n:ks.length};
     if(bad) weakList.push(P);
-    pageSegKeys(P).forEach(function(k){ scheduleNext(k, !bad); });      /* الضعيفة تعود غداً */
+    ks.forEach(function(k){
+      var p=prog[k], b0=p.box||0, d0=p.due;
+      /* مقطعٌ طريٌّ لم يحِن موعدُه لا يتقدّم بنجاح وجهٍ شاركه فيه — كان يُقفز
+         موعداً كاملاً قبل أوانه. والضعفُ يعمّ ما على الوجه، إذ سُمّع كلُّه */
+      if(!bad && d0!=null && d0>t0) return;
+      scheduleNext(k, !bad);                                        /* الضعيفة تعود غداً */
+      if(bad && (p.box||0)<b0) r.drop=true;
+      if(!bad && d0!=null && p.due==null) r.grad=true;
+    });
+    ks.forEach(function(k){ var d=prog[k].due; if(d!=null && (r.next==null || d<r.next)) r.next=d; });
+    res[P]=r;
   });
   saveProg();
   /* وهنا يُحتسب مقرَّرُ الخطّة: تمّت الجلسةُ بأسئلتها */
@@ -13872,6 +13895,8 @@ function finishRevQuiz(){
       rew:'＋ 100 💎 و'+arNum(wg)+' ✨ ذهب' }); }catch(e){}
   }
 
+  var outH=revOutHTML(donePages.map(function(P){ return { r:res[P], tag:arNum(P) }; }), '📄 ');
+
   var ss=revSessions(md), more = onPath && !freeEnded && revDone(md)<ss.length;
   $('playCard').classList.remove('bare');
   $('mosque').removeAttribute('hidden');
@@ -13885,9 +13910,8 @@ function finishRevQuiz(){
       (weakList.length?'أحسنت — وبقيت صفحات تحتاج تثبيتاً':(more?'أتممتَ الجلسة!':'أتممتَ النطاق كله! 🏁'))+'</h2>'+
     '<p style="color:#3d5b7a;font-size:15px;margin:0 0 10px">'+
       'راجعتَ '+arCount(donePages.length,C_PAGE)+
-      (onPath? ('<br>الجلسة '+arNum(REV.si+1)+' من '+arNum(ss.length)) : '')+
-      (weakList.length? ('<br>تعود غداً: '+weakList.map(function(P){ return 'صفحة '+arNum(P); }).join(' • ')) :
-                        '<br>كل الصفحات تباعد موعدها 👌')+'</p>'+
+      (onPath? ('<br>الجلسة '+arNum(REV.si+1)+' من '+arNum(ss.length)) : '')+'</p>'+
+    outH+
     '<div style="color:#8a6100;font-weight:800;margin-bottom:12px">+'+arNum(10*donePages.length)+' 💎 و '+arNum(2*donePages.length)+' ⚙️'+
       (weakList.length?'':' و '+arNum(2*donePages.length)+' 🔷')+'</div>'+
     (more? '<button class="btn primary big pulse" id="btnRevNext">▶️ الجلسة التالية ('+arNum(revDone(md)+1)+' من '+arNum(ss.length)+')</button>' : '')+
@@ -13901,6 +13925,32 @@ function finishRevQuiz(){
   $('btnRevHome2').onclick=function(){ renderPlayers(); show('scr-start'); };
 }
 function revWeak(P){ if(P) REV.weak[P]=true; }
+/* ما صار إليه كلُّ ما رُوجع، مجموعاً بحاله: متى يعود، وهل نزل درجة، وهل رسخ —
+   وكان يُقال «تباعد موعدها» ولا يُقال إلى متى.
+   list: [{ r:{bad,drop,grad,next,n}, tag }] — وtag وجهٌ أو مقطع، وpfx رمزٌ قبل القائمة */
+function revOutHTML(list, pfx){
+  var grp=[], gi={}, t0=todayNum();
+  function put(lab,rank,tag){
+    if(gi[lab]==null){ gi[lab]=grp.length; grp.push({lab:lab, rank:rank, tags:[]}); }
+    grp[gi[lab]].tags.push(tag);
+  }
+  list.forEach(function(it){
+    var r=it.r, dd;
+    if(!r || !r.n) return;                             /* لا محفوظَ عليه بعد: لا موعدَ له */
+    if(r.bad) put(r.drop?'↩ تعود غداً ونزلت درجة':'↩ تعود غداً', r.drop?0:1, it.tag);
+    else if(r.grad) put(wirdOn()?'🎓 رسخت فانتقلت إلى وردك':'🎓 رسخت — ولا ورد لك يتعاهدها', 9000, it.tag);
+    else if(r.next!=null){
+      dd=Math.max(1, r.next-t0);
+      put('⏳ '+tx('موعدها بعد {d}',{d:arCount(dd,C_DAYS)}), 2+dd, it.tag);
+    }
+    else put(wirdOn()?'✓ راسخة في وردك':'✓ راسخة', 9001, it.tag);
+  });
+  if(!grp.length) return '';
+  grp.sort(function(a,b){ return a.rank-b.rank; });
+  return '<div class="revout">'+grp.map(function(g){
+    return '<div><b>'+g.lab+'</b><span>'+(pfx||'')+g.tags.join(' • ')+'</span></div>';
+  }).join('')+'</div>';
+}
 
 /* ===== المراجعة واختبار الجزء ===== */
 function startJuzTest(j){ adabAsk({ review:true, juz:j }); }
@@ -13939,9 +13989,15 @@ function beginReview(j){
 }
 function finishReview(){
   var ok = S.errors<=Math.max(1,Math.floor(S.rounds.length/4));
-  var isTest=!!S.juzTest, j=S.juzTest;
+  var isTest=!!S.juzTest, j=S.juzTest, outH='';
   if(!isTest){
-    S.due.forEach(function(d){ scheduleNext(d.key, ok); });
+    /* ومعها ما صار إليه كلُّ مقطع، كما في مراجعة الأوجه */
+    outH=revOutHTML(S.due.map(function(d){
+      var p=getP(d.key), b0=p.box||0, d0=p.due;
+      scheduleNext(d.key, ok);
+      return { tag:esc(d.s.name)+' '+arNum(d.from+1)+'–'+arNum(d.to),
+               r:{ n:1, bad:!ok, drop:!ok && (p.box||0)<b0, grad:ok && d0!=null && p.due==null, next:p.due } };
+    }));
     saveProg();
     noteReview(S.errors===0, segsPages(S.due));   /* بالأوجه كالورد، لا بالجلسة */
   } else if(ok){
@@ -13968,7 +14024,7 @@ function finishReview(){
   $('playArea').innerHTML=
     '<div style="text-align:center"><div style="font-size:52px">'+(ok?(isTest?'🏆':'🌟'):'💪')+'</div>'+
     '<h2 style="color:var(--g1);margin:6px 0">'+head+'</h2>'+
-    '<p style="color:#3d5b7a;margin:0 0 12px">'+body+'</p>'+
+    '<p style="color:#3d5b7a;margin:0 0 12px">'+body+'</p>'+outH+
     (isTest&&ok?'<button class="btn primary big pulse" id="btnJuzCert">📜 شهادة الجزء</button>':'')+
     '<button class="btn ghost big" id="btnMapNow2" style="margin:0">➡️ رجوع</button></div>';
   $('fb').textContent='';
