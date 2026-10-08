@@ -399,9 +399,12 @@ body:not(.native) .nativeonly{display:none!important}
 .card .row:last-child{margin-bottom:0}
 .row .btn{padding:15px 16px}
 .row>*{flex:1}
-input[type=text],select{width:100%;padding:14px;border-radius:12px;border:2px solid #d7e2f0;
+input[type=text],select,.qaribtn{width:100%;padding:14px;border-radius:12px;border:2px solid #d7e2f0;
   font-size:17px;appearance:none;-webkit-appearance:none;font-family:inherit;background:#fff;color:var(--ink)}
 input[type=text]:focus,select:focus{outline:none;border-color:var(--g2);box-shadow:0 0 0 4px rgba(30,139,106,.15)}
+/* زرُّ القارئ في الإعدادات: يبدو قائمةً، ويفتح صندوقَ القرّاء الذي يُختار منه في الدرس */
+.qaribtn{display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:start;cursor:pointer;font-weight:700}
+.qaribtn::after{content:'▾';color:var(--mute)}
 /* لونُ العناوين يتبع الثيم: كان ثابتاً داكناً، والوضعُ الليليُّ هو الأصل —
    فيختفي «كم وجهاً في الجلسة؟» وأمثالُه على الخلفية الداكنة */
 label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color:var(--ttl)}
@@ -2975,7 +2978,8 @@ body.hastabs #btnRevQuit{display:none}
       <div class="setpage" data-setp="mushaf" hidden>
       <div class="setblock">
         <label class="lbl">🎧 صوت القارئ</label>
-        <select id="setQari"></select>
+        <button type="button" class="qaribtn" id="btnSetQari"></button>
+        <select id="setQari" hidden></select>
         <div class="note">يُتلى المقطعُ بزرّ «استمع» — في وجه المصحف وفي الدرس. ويُحفظ ما سُمع في الجهاز فيُعاد بلا إنترنت، ولا يُنزَّل شيءٌ قبل أن تسمعه.</div>
       </div>
       <!-- التلاواتُ المحفوظة: تُحذف وحدَها لتوفير المساحة، ولا يمسّها تصفيرُ التقدّم -->
@@ -14500,6 +14504,7 @@ function fillSettings(){
       }).join('')+'</optgroup>';
     }).join('');
     $('setQari').value=qariF();
+    qariSetBtn();
   }
   $('setSound').checked=!!SET.sound;
   $('setGlow').checked=!!SET.glow;
@@ -18626,6 +18631,17 @@ if($('btnOffline')) $('btnOffline').onclick=offlineDownload;
 if($('btnAudAll')) $('btnAudAll').onclick=function(){ audDrop(false); };
 if($('btnAudOthers')) $('btnAudOthers').onclick=function(){ audDrop(true); };
 if($('setQari')) $('setQari').addEventListener('change', audStoreNote);
+/* القارئُ في الإعدادات يُختار من صندوق القرّاء نفسِه، والقائمةُ المخفيّةُ تتبعه */
+function qariSetBtn(){
+  var b=$('btnSetQari'), q=qariRow(); if(!b) return;
+  b.textContent='🎙️ '+(q ? q.n : '');
+}
+if($('btnSetQari')) $('btnSetQari').onclick=function(){
+  qariAsk(function(){
+    if($('setQari')) $('setQari').value=qariF();
+    qariSetBtn(); audStoreNote();
+  });
+};
 if($('instGo')) $('instGo').onclick=pwaInstall;
 if($('instHide')) $('instHide').onclick=function(){
   save('nur_inst_off',1); $('instBox').hidden=true;
