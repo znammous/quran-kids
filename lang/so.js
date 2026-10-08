@@ -1709,4 +1709,6 @@ NUR_I18N.add('so', {
   "المدرسة المصريّة": "Hab-akhriska Masar",
   "أصوات معاصرة": "Codad casri ah",
   "الأخيرة": "Kuwii ugu dambeeyay",
+  "وقفةٌ لوليّ الأمر": "Hakad loogu talagalay waalidka",
+  "عودةٌ إلى القصّة": "Ku noqo sheekada",
 });

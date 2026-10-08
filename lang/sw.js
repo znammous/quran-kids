@@ -1709,4 +1709,6 @@ NUR_I18N.add('sw', {
   "المدرسة المصريّة": "Mtindo wa Misri",
   "أصوات معاصرة": "Sauti za kisasa",
   "الأخيرة": "Za karibuni",
+  "وقفةٌ لوليّ الأمر": "Kituo kwa mzazi",
+  "عودةٌ إلى القصّة": "Rudi kwenye hadithi",
 });

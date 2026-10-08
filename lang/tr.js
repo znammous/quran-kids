@@ -1709,4 +1709,6 @@ NUR_I18N.add('tr', {
   "المدرسة المصريّة": "Mısır ekolü",
   "أصوات معاصرة": "Çağdaş sesler",
   "الأخيرة": "Son kullanılanlar",
+  "وقفةٌ لوليّ الأمر": "Ebeveynler için bir durak",
+  "عودةٌ إلى القصّة": "Hikâyeye dön",
 });

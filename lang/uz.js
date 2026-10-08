@@ -1709,4 +1709,6 @@ NUR_I18N.add('uz', {
   "المدرسة المصريّة": "Misr maktabi",
   "أصوات معاصرة": "Zamonaviy ovozlar",
   "الأخيرة": "So'nggilar",
+  "وقفةٌ لوليّ الأمر": "Ota-onalar uchun to‘xtam",
+  "عودةٌ إلى القصّة": "Hikoyaga qaytish",
 });

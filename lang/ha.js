@@ -1709,4 +1709,6 @@ NUR_I18N.add('ha', {
   "المدرسة المصريّة": "Salon Masar",
   "أصوات معاصرة": "Muryoyin zamani",
   "الأخيرة": "Na baya-bayan nan",
+  "وقفةٌ لوليّ الأمر": "Tsayawa ga iyaye",
+  "عودةٌ إلى القصّة": "Koma ga labarin",
 });

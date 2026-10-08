@@ -1709,4 +1709,6 @@ NUR_I18N.add('ms', {
   "المدرسة المصريّة": "Aliran Mesir",
   "أصوات معاصرة": "Suara semasa",
   "الأخيرة": "Terkini",
+  "وقفةٌ لوليّ الأمر": "Renungan untuk ibu bapa",
+  "عودةٌ إلى القصّة": "Kembali ke cerita",
 });

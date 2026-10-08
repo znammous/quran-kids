@@ -1709,4 +1709,6 @@ NUR_I18N.add('en', {
   "المدرسة المصريّة": "The Egyptian school",
   "أصوات معاصرة": "Contemporary voices",
   "الأخيرة": "Recent",
+  "وقفةٌ لوليّ الأمر": "A pause for parents",
+  "عودةٌ إلى القصّة": "Back to the story",
 });

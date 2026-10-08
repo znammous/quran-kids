@@ -1,5 +1,5 @@
 {
-  "v": 100,
+  "v": 101,
   "stories": [
     {
       "id": "kahf",
@@ -691,6 +691,16 @@
       "file": "s/qidr.json",
       "added": "2026-10-04",
       "rev": 2
+    },
+    {
+      "id": "safwan",
+      "t": "الصخرةُ الملساء",
+      "d": "مَثَلٌ في الإخلاص وترك الرياء",
+      "ic": "🪨",
+      "cover": "covers/safwan.webp",
+      "cw": "covers/w/safwan.webp",
+      "file": "s/safwan.json",
+      "added": "2026-10-08"
     }
   ]
 }

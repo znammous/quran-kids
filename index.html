@@ -2068,6 +2068,22 @@ body.glow-off .dfpic{animation:none}
 #scr-story .sttext{flex:1 1 auto;min-height:0;
   overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 #scr-story .stload,#scr-story .gmnote{flex:1 1 auto;display:flex;align-items:center;justify-content:center;margin:0}
+/* ===== وقفةٌ لوليّ الأمر =====
+   شرحٌ وحوارٌ وتمرينٌ للكبير، لا صفحةٌ من الحكاية: زرٌّ تحت نصّ آخر صفحة
+   يفتح بطاقةً فوق القصّة، فيبقى الطفلُ في حكايته ويجدها من أرادها */
+.stnoteb{flex:0 0 auto;margin:0;width:100%;padding:11px 14px;font-size:15.5px;font-weight:900}
+.stnote{position:fixed;inset:0;z-index:60;background:rgba(4,23,58,.6);display:flex;
+  align-items:center;justify-content:center;
+  padding:calc(14px + env(safe-area-inset-top)) 14px calc(14px + env(safe-area-inset-bottom))}
+.stnote[hidden]{display:none}
+.stnotebox{width:100%;max-width:600px;max-height:100%;display:flex;flex-direction:column;gap:12px;
+  background:var(--pnl);border:3px solid var(--pb);border-radius:20px;padding:16px}
+.stnoteh{flex:0 0 auto;font-size:18px;font-weight:900;color:var(--ttl);text-align:center}
+.stnotetx{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+  font-size:16px;font-weight:700;line-height:2;color:var(--on1);white-space:pre-wrap}
+.stnotetx b{color:var(--ttl);font-weight:900}
+.stnotetx .stay{font-family:"Amiri Quran","Traditional Arabic",serif;font-weight:400;font-size:1.08em;unicode-bidi:isolate}
+.stnotebox .btn{flex:0 0 auto;margin:0}
 #scr-story .stnav{flex:0 0 auto;margin:12px 0 0}
 /* ===== الألعاب: «عدّاء الآيات» ===== */
 .gmlist .goalcard{margin-bottom:12px}
@@ -2787,6 +2803,14 @@ body.hastabs #btnRevQuit{display:none}
   <div class="stzoom" id="stZoom" hidden>
     <img id="stZoomImg" alt="">
     <div class="stzhint" id="stZoomHint" hidden>🔄 أدِرْ هاتفك</div>
+  </div>
+  <!-- وقفةٌ لوليّ الأمر بعد القصّة (حقلُ note في ملفّها) -->
+  <div class="stnote" id="stNote" hidden>
+    <div class="stnotebox">
+      <div class="stnoteh">🌱 وقفةٌ لوليّ الأمر</div>
+      <div class="stnotetx" id="stNoteTx"></div>
+      <button type="button" class="btn primary" id="stNoteX">عودةٌ إلى القصّة</button>
+    </div>
   </div>
 
   <section class="screen" id="scr-runner">
@@ -16946,7 +16970,9 @@ function storyOpen(id){
     /* الترجمةُ نصوصٌ بعدد الصفحات: تُوضع مكانَ العربيّ، والصورُ كما هي */
     var loc=!!(L && L.pages && L.pages.length===pg.length);
     if(loc) pg=pg.map(function(p,i){ var q={}; for(var k in p) q[k]=p[k]; q.x=L.pages[i]; return q; });
-    STORY={ id:id, meta:meta, pages:pg, loc:loc };
+    /* والوقفةُ بلغته إن تُرجمت، وإلّا فبالعربيّة */
+    var note=(loc && L.note) || j.note || '';
+    STORY={ id:id, meta:meta, pages:pg, loc:loc, note:note, noteLoc:!!(loc && L.note) };
     STORY_I=0;                      /* القصّةُ تُفتح من أوّلها دائماً، كالكتاب يُعاد */
     storyDraw();
   })['catch'](function(){
@@ -16969,7 +16995,10 @@ function storyDraw(){
   $('stPage').innerHTML=
     (p.img ? '<div class="stimgbox" id="stImgBox"><img id="stImgEl" alt="">'+
              '<button type="button" class="stzoomb" id="stZoomB" aria-label="كبِّر الصورة">🔍</button></div>' : '')+
-    stTextHTML(p.x||'');
+    stTextHTML(p.x||'')+
+    (STORY.note && STORY_I>=n-1 ? '<button type="button" class="btn ghost stnoteb" id="stNoteB">🌱 وقفةٌ لوليّ الأمر</button>' : '');
+  var nb=$('stNoteB');
+  if(nb) nb.onclick=function(e){ e.stopPropagation(); stNoteOpen(); };
   /* نافذةُ ٤:٣ من الصورة الواسعة: وسطاً إلّا أن تذكر الصفحةُ موضعاً */
   var ie=$('stImgEl');
   if(ie) ie.style.objectPosition=(p.pos||'50%')+' 50%';
@@ -17012,6 +17041,24 @@ function stZoomClose(){
   z.hidden=true;
   var im=$('stZoomImg'); if(im) im.removeAttribute('src');   /* لا يُمسك رابطَ blob بعد إغلاقه */
   return true;
+}
+/* الوقفة: نصٌّ عاديّ، و**…** عنوانٌ صغيرٌ فيه، والآيةُ ﴿…﴾ بخطّ المصحف.
+   والعربيّةُ في واجهةٍ بلغةٍ أخرى تبقى من اليمين ولا يمسّها المترجم */
+function stNoteOpen(){
+  var z=$('stNote'), t=$('stNoteTx');
+  if(!z || !t || !STORY || !STORY.note) return;
+  var ar=!STORY.noteLoc;
+  var h=esc(STORY.note).replace(/\*\*([^*\n]+)\*\*/g,'<b>$1</b>')
+                       .replace(/﴿[^﴾]*﴾/g,function(m){ return '<bdi dir="rtl" lang="ar" class="stay">'+m+'</bdi>'; });
+  t.innerHTML=h;
+  if(ar && stLocCode()){ t.setAttribute('dir','rtl'); t.setAttribute('lang','ar'); t.setAttribute('translate','no'); }
+  else { t.removeAttribute('dir'); t.removeAttribute('lang'); t.removeAttribute('translate'); }
+  t.scrollTop=0;
+  z.hidden=false;
+}
+function stNoteClose(){
+  var z=$('stNote'); if(!z || z.hidden) return false;
+  z.hidden=true; return true;
 }
 function storyStep(d){
   if(!STORY) return;
@@ -18293,11 +18340,13 @@ $('stNext').onclick=function(){ storyStep(1); };
 /* وزرُّ الرجوع في الجهاز يضغط هذا الزرَّ نيابةً عن الطفل (NAV_BACK)، فأوّلُ
    ضغطةٍ تُغلق الصورةَ المكبَّرة لا القصّةَ كلَّها */
 $('btnStoryBack').onclick=function(){
-  if(stZoomClose()) return;
+  if(stZoomClose() || stNoteClose()) return;
   storyFree(); STORY=null; storiesOpen();
 };
 $('stZoom').onclick=stZoomClose;
-document.addEventListener('keydown', function(e){ if(e.key==='Escape') stZoomClose(); });
+$('stNoteX').onclick=stNoteClose;
+$('stNote').onclick=function(e){ if(e.target===this) stNoteClose(); };
+document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ if(!stZoomClose()) stNoteClose(); } });
 /* رجوعٌ من اختيار المصدر إلى قائمة الألعاب، ومن القائمة إلى الرئيسيّة.
    والزرُّ مخفيٌّ في الشاشة — الشريطُ السفليّ يُغني عنه — ويبقى موصولاً
    ليضغطه زرُّ الرجوع في الجهاز على درجاته */
