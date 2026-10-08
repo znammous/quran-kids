@@ -2154,6 +2154,14 @@ body.glow-off .dfpic{animation:none}
 .runlv button.on{background:#ffd23f;border-color:#ffd23f;color:#3b2a00}
 .runlv button:active{transform:scale(.95)}
 .runtip{text-align:center;color:var(--on3);font-size:13px;font-weight:700;margin-top:6px}
+/* أزرارُ اللوحة تحت المسرح في الجوّال (ovlActs): على خلفيّة الصفحة لا على المشهد الداكن */
+.runacts{display:flex;flex-direction:column;align-items:center;gap:12px;margin:16px 0 10px}
+.runacts[hidden]{display:none}
+.runacts .btn{margin:0;min-height:52px;padding:12px 34px;font-size:18px}
+.runacts .runbtns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.runacts .runlv{gap:8px;margin:0}
+.runacts .runlv button{font-size:16px;padding:9px 18px;color:var(--ttl);background:var(--pnl);border-color:var(--pb)}
+.runacts .runlv button.on{background:#ffd23f;border-color:#ffd23f;color:#3b2a00}
 /* ===== مصدرُ الآيات قبل اللعب: من المحفوظ أو من سورةٍ بعينها ===== */
 .gmsrch{text-align:center;font-size:21px;font-weight:900;color:var(--ttl);margin:2px 0 4px}
 /* فهرسُ السور على لوحةٍ كفهرس المصحف، تُمرَّر مع الصفحة */
@@ -16770,6 +16778,23 @@ function gameFlash(c, txt, W, y, big){
 function gameLv(id){ var l=gameStats(id).lvl; return RUN_LEVELS[l] ? l : 'mid'; }
 function gameK(id){ return RUN_LEVELS[gameLv(id)].k; }
 function gameBests(id){ var st=gameStats(id); if(!st.bests) st.bests={ mid:st.best||0 }; return st.bests; }
+/* أزرارُ اللوحة (المستوى، وابدأ، ومرّةً أخرى) تنزل تحت المسرح في الجوّال:
+   هناك فراغٌ تحته، وهي فوق المشهد تزحم الشرحَ وتحجب الأرض. وتُنقل بعقدها
+   فتبقى أحداثُها موصولة، ويُترك في اللوحة العنوانُ والشرحُ وحدهما */
+function ovlActs(ov){
+  var st=ov.parentNode, a=st.nextElementSibling, i, k, free;
+  if(!a || !a.classList.contains('runacts')){
+    a=document.createElement('div'); a.className='runacts';
+    st.parentNode.insertBefore(a, st.nextSibling);
+  }
+  a.innerHTML=''; a.hidden=true;
+  if(ov.hidden) return;
+  free=window.innerHeight-st.getBoundingClientRect().bottom;
+  if(window.innerWidth>700 || free<150) return;
+  k=ov.querySelectorAll(':scope>.runlv, :scope>.btn, :scope>.runbtns');
+  for(i=0;i<k.length;i++) a.appendChild(k[i]);
+  a.hidden=!k.length;
+}
 function gameLvHTML(id){
   var cur=gameLv(id);
   return '<div class="runlv" role="group" aria-label="المستوى">'+Object.keys(RUN_LEVELS).map(function(k){
@@ -17531,9 +17556,10 @@ function runOverlay(kind, nb){
   if($('runAgain')) $('runAgain').onclick=function(){ runReset(); runGo(); };
   if($('runBack')) $('runBack').onclick=function(){ $('btnRunQuit').click(); };
   runLvWire(kind);
+  ovlActs(ov);
 }
 function runGo(){
-  $('runOvl').hidden=true;
+  $('runOvl').hidden=true; ovlActs($('runOvl'));
   RUN.state='run'; RUN.prev=0;
   cancelAnimationFrame(RUN.raf); RUN.raf=requestAnimationFrame(runFrame);
 }
@@ -17906,8 +17932,9 @@ function shelfOverlay(kind, nb){
   if($('shelfStart')) $('shelfStart').onclick=shelfGo;
   if($('shelfAgain')) $('shelfAgain').onclick=function(){ shelfReset(); shelfGo(); };
   if($('shelfBack')) $('shelfBack').onclick=function(){ $('btnShelfQuit').click(); };
+  ovlActs(ov);
 }
-function shelfGo(){ $('shelfOvl').hidden=true; SH.state='run'; shelfKick(); }
+function shelfGo(){ $('shelfOvl').hidden=true; ovlActs($('shelfOvl')); SH.state='run'; shelfKick(); }
 function shelfPause(){
   if(SH.state!=='run') return;
   cancelAnimationFrame(SH.raf); SH.raf=0;
@@ -18300,9 +18327,10 @@ function birdOverlay(kind, nb){
     if(kind==='ready'){ birdReset(); birdDraw(); }        /* الطبقاتُ والسرعةُ تتبعان المستوى */
     birdOverlay(kind, false);
   });
+  ovlActs(ov);
 }
 function birdGo(){
-  $('birdOvl').hidden=true;
+  $('birdOvl').hidden=true; ovlActs($('birdOvl'));
   BD.state='run'; BD.prev=0;
   cancelAnimationFrame(BD.raf); BD.raf=requestAnimationFrame(birdFrame);
 }
