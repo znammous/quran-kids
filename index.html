@@ -1056,6 +1056,15 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 .modal .note{background:var(--mnote);border-color:var(--pb3);color:var(--on2)}
 .modal .note b{color:var(--ttl)}
 .modal .chk{color:var(--on1)}
+.rhelp h3{margin:16px 0 6px;font-size:17px;color:var(--ttl)}
+.rhelp p{margin:0 0 8px;line-height:1.9;font-size:15px}
+.rhelp .rhlead{font-weight:800;text-align:center}
+.rhelp .rhsteps,.rhelp .rhrule{margin:0 0 8px;line-height:1.9;font-size:15px;color:var(--on2)}
+.rhelp .rhsteps li{font-weight:800}
+.rhelp .rhrule{padding-inline-start:20px}
+.rhelp .rhrule li{margin-bottom:6px}
+.rhelp .note{margin:4px 0 8px}
+.rhelp .rhwarn::before{content:"⚠️ "}   /* خارجَ النصّ: فيبقى مفتاحُه في القاموس بلا رمز */
 .chk{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:10px;font-size:14px;color:#3d5b7a;font-weight:700}
 .switchrow{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#fff;
   border:2px solid #e5ecf6;border-radius:12px;padding:11px 13px;margin-bottom:9px;font-weight:800;color:#2c4055;font-size:15px}
@@ -2380,7 +2389,7 @@ body.hastabs #btnRevQuit{display:none}
       <li>في 🕌 «مسجدي» تبني بها مسجدك الكبير قطعةً قطعة، ولا تكتمل أعمدته ونوافذه إلا بالمراجعة</li>
       <li>إذا أتممت كل مقاطع السورة تُطبع <b>شهادة الحفظ</b> 📜</li>
       <li>قبل كل مقطع يُعرض <b>وجهُه من المصحف</b>، وفي كل وجهٍ يُلوَّن ما تشابه أو تكرّر — <b>لكل مجموعةٍ لون</b></li>
-      <li>كل مقطع تُتمّه يعود في <b>☀️ مراجعة اليوم</b> غداً، ثم بعد ٣ أيام، فأسبوع، فأسبوعين، فشهر</li>
+      <li>كل مقطع تُتمّه يعود في <b>☀️ مراجعة اليوم</b> غداً، ثم بعد ٣ أيام، فأسبوع، فأسبوعين — ثمّ يرسخ فينتقل إلى وردك</li>
     </ol>
     <div class="note">
       <b>ملاحظة:</b> اللعبة <b>لا تتلو الآيات بصوت آلي</b> حتى لا يترسّخ نطق خاطئ؛
@@ -2389,6 +2398,37 @@ body.hastabs #btnRevQuit{display:none}
       النص من quran.com (مصحف المدينة) ومُطابَق آية بآية مع alquran.cloud.
     </div>
     <button class="btn primary big" id="btnHelpOk" style="margin:12px 0 0">✅ فهمت</button>
+  </div>
+</div>
+
+<!-- كيف تعمل المراجعة: لمن أراد أن يعرف لماذا تعود إليه مقاطعُه، ومتى تتباعد -->
+<div class="modal-bg" id="revHelp" hidden>
+  <div class="modal rhelp">
+    <button class="xbtn" id="xRevHelp" aria-label="إغلاق">✕</button>
+    <h2>☀️ كيف تعمل المراجعة؟</h2>
+    <p class="rhlead">لكلّ ما تحفظه مراجعةٌ تناسب عمره: الجديدُ يُراجَع كثيراً، والراسخُ يتعاهده وردٌ يوميّ.</p>
+    <h3>🌱 الحفظ الجديد: قريبٌ ثمّ أبعد</h3>
+    <p>كلّ مقطعٍ تُتمّ حفظه يعود إليك في «مراجعة اليوم» أربع مرّات:</p>
+    <ol class="rhsteps"><li>غداً</li><li>ثمّ بعد ثلاثة أيام</li><li>ثمّ بعد أسبوع</li><li>ثمّ بعد أسبوعين</li></ol>
+    <p>ثمّ يرسخ، فينتقل إلى وردك.</p>
+    <p>الحفظ الجديد يُنسى سريعاً، فتتقارب مراجعته أوّلاً ثمّ تتباعد كلّما ثبت. لذلك تجد في مراجعة كلّ يومٍ أحدثَ ما حفظت — وهذا مقصود.</p>
+    <h3>✅ متى ينجح الوجه؟</h3>
+    <p>تسمّع الوجه عن ظهر قلب، ثمّ تجيب عن أسئلةٍ منه.</p>
+    <ul class="rhrule">
+      <li>سمّعته صحيحاً ولم تخطئ في أسئلته أكثر من مرّة: يتباعد موعده إلى الخطوة التالية.</li>
+      <li>عرضتَ الوجه، أو ضغطتَ «أخطأتُ فيها»، أو أخطأتَ مرّتين فأكثر في أسئلته ولو أصبتَ بعدهما: يعود إليك غداً، وينزل خطوةً.</li>
+    </ul>
+    <p>وفي آخر كلّ جلسة ترى ما صار إليه كلُّ وجه: متى يعود، وهل نزل خطوة، وهل رسخ.</p>
+    <h3>📖 الورد: لما رسخ من محفوظك</h3>
+    <p>مقدارٌ ثابتٌ كلّ يوم تختاره أنت، وجهٌ أو أكثر، يمشي في محفوظك الراسخ من أوّله إلى آخره ثمّ يعود من أوّله. وما ضعُف فيه يعود إلى المراجعة القريبة حتى يثبت.</p>
+    <div class="note rhwarn">من لم يضع لنفسه ورداً لا يُراجَع ما رسخ من حفظه. ويُفعَّل من «محفوظاتي» في شاشة المراجعة.</div>
+    <h3>📅 خطط «بالقرآن نحيا»</h3>
+    <p>إن اخترتَ إحداها فمراجعةُ يومك من جدول الخطّة نفسِه كما وضعه البرنامج، ويظهر معها ما استحقّ من محفوظك.</p>
+    <h3>🎛️ مراجعة حرّة</h3>
+    <p>تختار نطاقاً من المصحف بنفسك، وتمشي عليه جلسةً جلسة — لمن أراد الزيادة.</p>
+    <h3>🧹 إن تراكمت عليك المراجعة</h3>
+    <p>عند تغيير خطّة الحفظ تُسأل عن تصفير ما تراكم: يبقى حفظك كما هو، وتُوزَّع المقاطع المتأخّرة على الأيّام القادمة فلا تنهال عليك مرّةً واحدة.</p>
+    <button class="btn primary big" id="btnRevHelpOk" style="margin:12px 0 0">✅ فهمت</button>
   </div>
 </div>
 
@@ -2917,6 +2957,7 @@ body.hastabs #btnRevQuit{display:none}
         <div class="note" id="bqnNote" style="font-weight:800;color:#1a4f8f"></div>
         <button type="button" class="btn blue mini" id="btnBqnOpen" style="width:100%;margin-top:10px">🧭 غيّر خطة الحفظ</button>
         <button type="button" class="btn ghost mini" id="btnReport" style="width:100%;margin-top:8px">🧾 تقريرُ خطّتي — أين وصلتُ وماذا راجعت</button>
+        <button type="button" class="btn ghost mini" id="btnRevHelp" style="width:100%;margin-top:8px">☀️ كيف تعمل المراجعة؟</button>
       </div>
       <div class="setblock">
         <label class="lbl">🔓 الأجزاء المتاحة</label>
@@ -9657,7 +9698,7 @@ $('mfFindList').onclick=function(e){
     mfPickAt(null, e.clientX, e.clientY);
   });
 })();
-['help','adab','srPick'].forEach(function(id){
+['help','adab','srPick','revHelp'].forEach(function(id){
   $(id).addEventListener('click', function(e){ if(e.target===this) closeModal(id); });
 });
 document.addEventListener('keydown', function(e){
@@ -9667,6 +9708,7 @@ document.addEventListener('keydown', function(e){
   if(!$('srPick').hidden) closeModal('srPick');
   else if(!$('adab').hidden) closeModal('adab');
   else if(!$('help').hidden) closeModal('help');
+  else if(!$('revHelp').hidden) closeModal('revHelp');
 });
 $('xAdab').onclick=function(){ closeModal('adab'); };
 $('xSrPick').onclick=function(){ closeModal('srPick'); };
@@ -9680,7 +9722,7 @@ $('srGoRead').onclick=function(){
 (function(){
   var mo=window.MutationObserver;
   if(!mo) return;
-  ['help','adab','srPick'].forEach(function(id){
+  ['help','adab','srPick','revHelp'].forEach(function(id){
     var e=$(id); if(!e) return;
     new mo(function(){ if(!e.hidden){ try{ navGuard(); }catch(x){} } })
       .observe(e,{attributes:true,attributeFilter:['hidden']});
@@ -16110,6 +16152,8 @@ var SET_T=0, SET_TOAST=0;
   });
 })();
 $('btnHelp').onclick=function(){ $('help').hidden=false; };
+$('btnRevHelp').onclick=function(){ var m=$('revHelp'); m.hidden=false; m.querySelector('.modal').scrollTop=0; };
+$('xRevHelp').onclick=$('btnRevHelpOk').onclick=function(){ closeModal('revHelp'); };
 $('btnIndex').onclick=function(){ if(!openJuz) openJuz=(curSurah?curSurah.juz:Math.max(SET.juzFrom,SET.juzTo)); renderMap(); show('scr-map'); };
 $('btnShop').onclick=function(){ shopFrom(''); shopCat=''; renderShop(); show('scr-shop'); };
 /* من الرئيسية: مَن له خطّة محفوظة يذهب إلى مساره، ومَن لا فإلى شاشة الخطة */
@@ -19147,6 +19191,7 @@ function navBack(){
   if($('srPick') && !$('srPick').hidden){ closeModal('srPick'); return true; }
   if($('adab') && !$('adab').hidden){ closeModal('adab'); return true; }
   if($('help') && !$('help').hidden){ closeModal('help'); return true; }
+  if($('revHelp') && !$('revHelp').hidden){ closeModal('revHelp'); return true; }
   if($('privBox') && !$('privBox').hidden){ closeModal('privBox'); return true; }
   var scr=curScreen();
   /* ٢) شاشة التعريف: في التعديل تُحفظ وتُغلق، وفي المعالج خطوة إلى الوراء */
