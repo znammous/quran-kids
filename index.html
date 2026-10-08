@@ -10255,7 +10255,20 @@ function comboNext(c){
   var last=COMBO_STEPS[COMBO_STEPS.length-1];
   return last+COMBO_ON*(Math.floor((c-last)/COMBO_ON)+1);
 }
-function tal(){ var p=curP(); if(!p.tal) p.tal={combo:0,perfect:0,revpg:0}; return p.tal; }
+function tal(){
+  var p=curP(), T;
+  if(!p.tal) p.tal={combo:0,perfect:0,revpg:0,pv:2};
+  T=p.tal;
+  /* كان «بلا خطأ» يُعدّ كلَّ مرحلةٍ لا كلَّ جلسة — ومرحلةُ «اقرأ وردّد» لا سؤال فيها
+     فتُحسب دائماً — فتضخّم ستّة أضعاف. يُقسَم ما مضى مرّةً، ويُسحب ما لم يُستحقّ بعدُ */
+  if(!T.pv){
+    T.perfect=Math.floor((T.perfect||0)/STAGES.length); T.pv=2;
+    var b=p.badges||{}, F=null, k;
+    for(k=0;k<BADGE_FAM.length;k++) if(BADGE_FAM[k].f==='perf') F=BADGE_FAM[k];
+    if(F) for(k=0;k<F.t.length;k++) if(T.perfect<F.t[k]) delete b['b:perf:'+k];
+  }
+  return T;
+}
 /* السلسلة الجارية: مع اللاعب لا مع المرحلة، فتعبر المراحل والجلسات */
 function comboNow(){ return tal().cur||0; }
 function comboSet(n){
@@ -10448,6 +10461,7 @@ var BADGE_SP=[
 var BADGE_GEMS=15;
 /* أغلى شارة نالها: أعلى رتبة في العائلات، وإلا فشارة خاصّة */
 function topBadge(){
+  tal();
   var b=curP().badges||{}, best=null, i, k;
   for(i=0;i<BADGE_FAM.length;i++){
     var F=BADGE_FAM[i];
@@ -10536,6 +10550,7 @@ function crownRowHTML(){
     '</div>';
 }
 function renderBadges(){
+  tal();                                              /* تُصحَّح شاراتُ «بلا خطأ» القديمة قبل أن تُعدّ */
   var p=curP(), h=crownRowHTML();
   try{ renderHUDInto('badgeHud'); }catch(e){}
   $('badgeSub').textContent='نلتَ '+arNum(badgeCount())+' من '+arNum(badgeTotal())+' شارة — اضغط أيّ شارةٍ لتعرف شرطَها';
@@ -11423,6 +11438,7 @@ function diffHTML(user,correct){
 }
 
 /* ===== نهاية المرحلة / المقطع ===== */
+var SEGRUN=null;                                      /* جولةُ المقطع الجارية: من مرحلته الأولى، أنظيفةٌ هي؟ */
 function finishStage(){
   if(S.rev==='exam'){ finishExam(); return; }
   if(S.rev==='quiz'){ finishRevQuiz(); return; }
@@ -11434,7 +11450,14 @@ function finishStage(){
   if(S.stage+1>p.stars) p.stars=S.stage+1;
   p.stage=Math.min(S.stage+1, stagesN());
   sWin();
-  if(!S.errors && !S.miss) tal().perfect++;           /* مرحلة بلا خطأ واحد */
+  /* «بلا خطأ» جلسةٌ لا مرحلة: مقطعٌ بمراحله كلّها من أوّلها على التوالي، لم يُخطئ في شيءٍ منها */
+  if(S.stage===0) SEGRUN={ key:S.key, next:0, ok:true };
+  if(!SEGRUN || SEGRUN.key!==S.key || SEGRUN.next!==S.stage) SEGRUN=null;
+  else{
+    if(S.errors || S.miss) SEGRUN.ok=false;
+    SEGRUN.next++;
+    if(last){ if(SEGRUN.ok) tal().perfect++; SEGRUN=null; }
+  }
   if(first) noteStage();                              /* التثبيت لا يُكسب جواهر مكرّرة */
   if(last){
     p.done=true;
