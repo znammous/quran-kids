@@ -9080,6 +9080,7 @@ function audSync(){
   var pl=$('pListen');
   if(pl){ pl.classList.toggle('on', on); pl.textContent=ic; }
   audMedia(on, hold);
+  audKeep(on && !hold);
   var b=$('mfDockPlay'); if(!b) return;
   var t=b.querySelector('.tico'), l=$('mfPlayLbl');
   b.classList.toggle('on', on);
@@ -9124,6 +9125,25 @@ function audMedia(on, hold){
     }
     ms.playbackState = hold ? 'paused' : 'playing';
   }catch(e){}
+}
+/* ===== التلاوةُ والشاشةُ مقفلة في أندرويد =====
+   أندرويد يجمّد التطبيقَ في الخلفيّة: تُتمّ الآيةُ الجارية صوتَها ثمّ لا يجري
+   ما يُشغّل التالية. فما دام يتلو تعمل خدمةٌ أماميّة (Tilawa) تُبقيه حيّاً،
+   وإشعارُها يقول ما يُتلى. وتُطلب عند بدء التلاوة وحده — والتطبيقُ أمامه —
+   لا مع كلّ آية، فأندرويد يأبى بدءَ خدمةٍ أماميّةٍ من الخلفيّة. */
+var AUD_KEEP=false;
+function audKeep(want){
+  if(want===AUD_KEEP) return;
+  var pl=nativePlugin('Tilawa');
+  if(!pl) return;
+  AUD_KEEP=want;
+  try{
+    if(want){
+      var it=AUD.q[Math.max(0, AUD.i)], su=surahBy(it[0]);
+      var p=pl.start({ title:'', text:(su ? tx('سورة {s1}', {s1:su.name}) : ''), channel:tx('التلاوة') });
+      if(p && p['catch']) p['catch'](function(){ AUD_KEEP=false; });
+    } else pl.stop();
+  }catch(e){ AUD_KEEP=false; }
 }
 /* ===== نطاقُ الاستماع من المصحف =====
    صندوقٌ كصندوق «كم مرّةً تريد سماعه» سواءً بسواء: رقاقاتٌ تُضغط بإصبعٍ
@@ -17062,6 +17082,17 @@ function storyFree(){
   STORY_BLOBS.forEach(function(u){ if(u && u.indexOf('blob:')===0) try{ URL.revokeObjectURL(u); }catch(e){} });
   STORY_BLOBS=[];
 }
+/* ===== وقفةٌ لوليّ الأمر =====
+   في ملفٍّ مستقلٍّ n/<id>.json ({note}) ورقمُه `n` في الفهرس، لا في ملفّ القصّة:
+   فالقصّةُ مخزّنةٌ عند من قرأها، ورفعُ rev لإضافة وقفةٍ يجعلها «جديدة» ويُسقط
+   ترجماتها. ورفعُ `n` وحده يجلب الوقفةَ الجديدة. والمترجمةُ <لغة>/n/<id>.json
+   بالرقم نفسه، فإن لم تكن بعدُ عُرضت العربيّة. */
+function stNoteLoad(meta){
+  var n=(meta && meta.n)|0; if(!n) return Promise.resolve(null);
+  var q='n/'+meta.id+'.json?n='+n, lc=stLocCode();
+  function one(p){ return stJson(p).then(function(j){ return (j && j.note) || ''; })['catch'](function(){ return ''; }); }
+  return Promise.all([one(q), lc ? one(lc+'/'+q) : '']).then(function(r){ return { ar:r[0], loc:r[1] }; });
+}
 function storyOpen(id){
   var left=storiesLeft();
   if(left){ storiesLockedMsg(left); return; }
@@ -17081,17 +17112,17 @@ function storyOpen(id){
   var lc=meta.loc ? stLocCode() : '';
   Promise.all([
     stJson(stAt(meta.file || ('s/'+id+'.json'), rv)),
-    lc ? stJson(stAt(lc+'/s/'+id+'.json', rv))['catch'](function(){ return null; }) : null
+    lc ? stJson(stAt(lc+'/s/'+id+'.json', rv))['catch'](function(){ return null; }) : null,
+    stNoteLoad(meta)
   ]).then(function(r){
-    var j=r[0], L=r[1];
+    var j=r[0], L=r[1], N=r[2]||{};
     var pg=(j && j.pages) || [];
     if(!pg.length) throw new Error('فارغة');
     /* الترجمةُ نصوصٌ بعدد الصفحات: تُوضع مكانَ العربيّ، والصورُ كما هي */
     var loc=!!(L && L.pages && L.pages.length===pg.length);
     if(loc) pg=pg.map(function(p,i){ var q={}; for(var k in p) q[k]=p[k]; q.x=L.pages[i]; return q; });
     /* والوقفةُ بلغته إن تُرجمت، وإلّا فبالعربيّة */
-    var note=(loc && L.note) || j.note || '';
-    STORY={ id:id, meta:meta, pages:pg, loc:loc, note:note, noteLoc:!!(loc && L.note) };
+    STORY={ id:id, meta:meta, pages:pg, loc:loc, note:N.loc || N.ar || '', noteLoc:!!N.loc };
     STORY_I=0;                      /* القصّةُ تُفتح من أوّلها دائماً، كالكتاب يُعاد */
     storyDraw();
   })['catch'](function(){
