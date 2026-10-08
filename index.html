@@ -2105,6 +2105,34 @@ body.glow-off .dfpic{animation:none}
 .stnotetx .stay{font-family:"Amiri Quran","Traditional Arabic",serif;font-weight:400;font-size:1.08em;unicode-bidi:isolate}
 .stnotebox .btn{flex:0 0 auto;margin:0}
 #scr-story .stnav{flex:0 0 auto;margin:12px 0 0}
+/* سهما التقليب على جانبَي الصورة: للشاشة العريضة وحدها (انظر تحت) */
+.starr{display:none}
+/* ===== القصّةُ على الشاشة العريضة (حاسوب، لوحيٌّ بالعرض) =====
+   الصورةُ ١٦:٩ كاملةً بلا قصّ، بأكبر ما يتّسع مع بقاء النصّ تحتها بلا تمرير
+   للصفحة: عرضُها من ارتفاع النافذة بعد حصّة الترويسة والنصّ والنقاط (٣٠٠).
+   والكتلةُ كلُّها في وسط الشاشة، فتأتي النقاطُ تحت النصّ لا في قاع النافذة.
+   والتقليبُ بسهمين على جانبَيها وبأسهم لوحة المفاتيح، فيُستغنى عن زرَّي الأسفل */
+@media (min-aspect-ratio:5/4) and (min-width:900px){
+  #scr-story.active{justify-content:center}
+  #scr-story.active > *{max-width:min(1500px, calc((100vh - 300px) * 16 / 9));
+    max-width:min(1500px, calc((100dvh - 300px) * 16 / 9))}
+  #scr-story #stPage{flex:0 1 auto}
+  #scr-story .stimgbox{aspect-ratio:16/9;max-height:none}
+  #scr-story .stimgbox img{object-position:50% 50% !important}
+  #scr-story .sttext{flex:0 1 auto;font-size:19px;line-height:1.95;padding:16px 22px}
+  #scr-story .stnav{margin:10px 0 0}
+  #scr-story .stnav .btn{display:none}
+  .starr{display:flex;position:absolute;top:50%;z-index:2;transform:translateY(-50%);
+    width:58px;height:58px;border-radius:50%;border:2px solid rgba(255,255,255,.55);
+    background:rgba(4,23,58,.45);color:#fff;font-size:26px;font-weight:900;font-family:inherit;
+    align-items:center;justify-content:center;cursor:pointer;line-height:1;
+    opacity:.6;transition:opacity .2s, background .2s, transform .2s}
+  .stimgbox:hover .starr{opacity:.95}
+  .starr:hover{background:rgba(4,23,58,.75);transform:translateY(-50%) scale(1.08)}
+  .starr[hidden]{display:none}
+  .starr.p{inset-inline-start:14px}      /* السابقةُ من جهة ابتداء القراءة: يميناً في العربيّة */
+  .starr.n{inset-inline-end:14px}
+}
 /* ===== الألعاب: «عدّاء الآيات» ===== */
 .gmlist .goalcard{margin-bottom:12px}
 .gmnote{text-align:center;color:var(--on3);font-size:13.5px;font-weight:700;margin:2px 0 14px;line-height:1.7}
@@ -17263,10 +17291,14 @@ function stTextHTML(x){
 function storyDraw(){
   if(!STORY) return;
   var pg=STORY.pages, n=pg.length, p=pg[STORY_I]||{}, rv=stRev(STORY.meta);
+  var ltr=(document.documentElement.dir==='ltr');
   $('stCount').textContent=arNum(STORY_I+1)+' / '+arNum(n);
   $('stPage').innerHTML=
     (p.img ? '<div class="stimgbox" id="stImgBox"><img id="stImgEl" alt="">'+
-             '<button type="button" class="stzoomb" id="stZoomB" aria-label="كبِّر الصورة">🔍</button></div>' : '')+
+             '<button type="button" class="stzoomb" id="stZoomB" aria-label="كبِّر الصورة">🔍</button>'+
+             /* السهمُ حرفٌ لا ينعكس، فيُختار بحسب اتّجاه الصفحة */
+             '<button type="button" class="starr p" id="stArrP" aria-label="السابق"'+(STORY_I<=0?' hidden':'')+'>'+(ltr?'←':'→')+'</button>'+
+             '<button type="button" class="starr n" id="stArrN" aria-label="التالي">'+(STORY_I>=n-1?'✨':(ltr?'→':'←'))+'</button></div>' : '')+
     stTextHTML(p.x||'')+
     (STORY.note && STORY_I>=n-1 ? '<button type="button" class="btn ghost stnoteb" id="stNoteB">🌱 وقفةٌ لوليّ الأمر</button>' : '');
   var nb=$('stNoteB');
@@ -17276,6 +17308,11 @@ function storyDraw(){
   if(ie) ie.style.objectPosition=(p.pos||'50%')+' 50%';
   var zb=$('stZoomB');
   if(zb) zb.onclick=function(e){ e.stopPropagation(); stZoomOpen(); };
+  [['stArrP',-1],['stArrN',1]].forEach(function(a){
+    var b=$(a[0]); if(!b) return;
+    b.onpointerdown=function(e){ e.stopPropagation(); };     /* لا يُحسب بدءَ سحبة */
+    b.onclick=function(e){ e.stopPropagation(); storyStep(a[1]); };
+  });
   if(p.img) stImg(stAt(p.img,rv)).then(function(u){
     var e=$('stImgEl'); if(!e) return;
     STORY_BLOBS.push(u);
@@ -18622,6 +18659,18 @@ $('stZoom').onclick=stZoomClose;
 $('stNoteX').onclick=stNoteClose;
 $('stNote').onclick=function(e){ if(e.target===this) stNoteClose(); };
 document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ if(!stZoomClose()) stNoteClose(); } });
+/* وعلى الحاسوب تُقلَّب بأسهم لوحة المفاتيح: في العربيّة الأيسرُ إلى التالية كالسحب
+   وسهمِ الصورة، وفي لغات اليسار بالعكس — ولا تعمل والصورةُ مكبَّرةٌ أو الوقفةُ مفتوحة */
+document.addEventListener('keydown', function(e){
+  if(e.key!=='ArrowLeft' && e.key!=='ArrowRight') return;
+  if(curScreen()!=='scr-story' || !STORY || e.ctrlKey || e.altKey || e.metaKey) return;
+  if(($('stZoom') && !$('stZoom').hidden) || ($('stNote') && !$('stNote').hidden)) return;
+  var t=(e.target && e.target.tagName||'').toUpperCase();
+  if(t==='INPUT' || t==='TEXTAREA' || t==='SELECT') return;
+  var d=(e.key==='ArrowLeft') ? 1 : -1;
+  if(document.documentElement.dir==='ltr') d=-d;
+  e.preventDefault(); storyStep(d);
+});
 /* رجوعٌ من اختيار المصدر إلى قائمة الألعاب، ومن القائمة إلى الرئيسيّة.
    والزرُّ مخفيٌّ في الشاشة — الشريطُ السفليّ يُغني عنه — ويبقى موصولاً
    ليضغطه زرُّ الرجوع في الجهاز على درجاته */
