@@ -4,7 +4,7 @@
   "kahf": {
    "t": "Les gens de la Caverne",
    "d": "Des jeunes qui crurent en leur Seigneur, et Il augmenta leur guidée",
-   "rev": 4
+   "rev": 5
   },
   "qarya": {
    "t": "L'homme qui passa près d'un village",
@@ -199,7 +199,7 @@
   "kalima2": {
    "t": "La parole qui ne fut pas dite",
    "d": "Une parabole sur le fait de tenir sa langue",
-   "rev": 2
+   "rev": 3
   },
   "qalam": {
    "t": "Le crayon emprunté",
@@ -259,7 +259,7 @@
   "saa": {
    "t": "La montre en panne",
    "d": "Une parabole sur le travail bien fait",
-   "rev": 1
+   "rev": 2
   },
   "basma": {
    "t": "Un sourire sur le chemin",
@@ -279,7 +279,7 @@
   "hijra": {
    "t": "L'Hégire",
    "d": "De La Mecque à Médine, et Allah était avec eux",
-   "rev": 1
+   "rev": 2
   },
   "dayn": {
    "t": "La lourde dette",
@@ -299,7 +299,7 @@
   "surur": {
    "t": "La joie que tu offres",
    "d": "Une parabole sur la joie qu'on apporte à un musulman",
-   "rev": 2
+   "rev": 3
   },
   "talut": {
    "t": "Talout et Jalout",

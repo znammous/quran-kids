@@ -4,7 +4,7 @@
   "kahf": {
    "t": "Watu wa Pangoni",
    "d": "Vijana walioamini, Mola wao akawaongezea uongofu",
-   "rev": 4
+   "rev": 5
   },
   "qarya": {
    "t": "Mtu Aliyepita Kijijini",
@@ -199,7 +199,7 @@
   "kalima2": {
    "t": "Neno Lisilosemwa",
    "d": "Mfano kuhusu kuuchunga ulimi",
-   "rev": 2
+   "rev": 3
   },
   "qalam": {
    "t": "Kalamu Iliyoazimwa",
@@ -259,7 +259,7 @@
   "saa": {
    "t": "Saa Iliyoharibika",
    "d": "Mfano kuhusu kufanya kazi kwa ustadi",
-   "rev": 1
+   "rev": 2
   },
   "basma": {
    "t": "Tabasamu Njiani",
@@ -279,7 +279,7 @@
   "hijra": {
    "t": "Hijra",
    "d": "Kutoka Makka hadi Madina, na Allah yu pamoja nao",
-   "rev": 1
+   "rev": 2
   },
   "dayn": {
    "t": "Deni Zito",
@@ -299,7 +299,7 @@
   "surur": {
    "t": "Furaha Unayompa Mwenzako",
    "d": "Mfano kuhusu kumfurahisha Muislamu",
-   "rev": 2
+   "rev": 3
   },
   "talut": {
    "t": "Talut na Jalut",

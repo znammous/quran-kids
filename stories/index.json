@@ -1,5 +1,5 @@
 {
-  "v": 103,
+  "v": 104,
   "stories": [
     {
       "id": "kahf",
@@ -8,10 +8,10 @@
       "ic": "🏔️",
       "cover": "covers/kahf.webp",
       "file": "s/kahf.json",
-      "rev": 4,
+      "rev": 5,
       "added": "2026-09-19",
       "cw": "covers/w/kahf.webp",
-      "n": 1
+      "n": 2
     },
     {
       "id": "qarya",
@@ -469,7 +469,7 @@
       "cw": "covers/w/kalima2.webp",
       "file": "s/kalima2.json",
       "added": "2026-10-01",
-      "rev": 2,
+      "rev": 3,
       "n": 1
     },
     {
@@ -604,7 +604,8 @@
       "cw": "covers/w/saa.webp",
       "file": "s/saa.json",
       "added": "2026-10-01",
-      "n": 1
+      "n": 2,
+      "rev": 2
     },
     {
       "id": "basma",
@@ -649,7 +650,8 @@
       "cw": "covers/w/hijra.webp",
       "file": "s/hijra.json",
       "added": "2026-10-01",
-      "n": 1
+      "n": 1,
+      "rev": 2
     },
     {
       "id": "dayn",
@@ -693,7 +695,7 @@
       "cover": "covers/surur.webp",
       "cw": "covers/w/surur.webp",
       "file": "s/surur.json",
-      "rev": 2,
+      "rev": 3,
       "added": "2026-10-01",
       "n": 1
     },

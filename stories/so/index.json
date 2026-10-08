@@ -4,7 +4,7 @@
   "kahf": {
    "t": "Asxaabul Kahf (Ehelka Godka)",
    "d": "Dhallinyaro Rabbigood rumeeyay, wuuna u kordhiyay hanuun",
-   "rev": 4
+   "rev": 5
   },
   "qarya": {
    "t": "Ninkii Tuulada Maray",
@@ -199,7 +199,7 @@
   "kalima2": {
    "t": "Ereygii Aan La Odhan",
    "d": "Tusaale ku saabsan ilaalinta carrabka",
-   "rev": 2
+   "rev": 3
   },
   "qalam": {
    "t": "Qalinkii La Amaahday",
@@ -259,7 +259,7 @@
   "saa": {
    "t": "Saacaddii Xumaatay",
    "d": "Tusaale ku saabsan hufnaanta shaqada",
-   "rev": 1
+   "rev": 2
   },
   "basma": {
    "t": "Dhoola-caddayn Jidka Ah",
@@ -279,7 +279,7 @@
   "hijra": {
    "t": "Hijradii",
    "d": "Makka ilaa Madiina, Allena wuu la jiray labadooda",
-   "rev": 1
+   "rev": 2
   },
   "dayn": {
    "t": "Deyntii Culayd",
@@ -299,7 +299,7 @@
   "surur": {
    "t": "Farxad Aad Geliso",
    "d": "Tusaale ku saabsan farxad gelinta muslimka",
-   "rev": 2
+   "rev": 3
   },
   "talut": {
    "t": "Taaluut iyo Jaaluut",
