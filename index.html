@@ -2124,12 +2124,14 @@ body.glow-off .dfpic{animation:none}
   #scr-story .stimgbox{position:absolute;inset:0;z-index:0;width:auto;max-height:none;aspect-ratio:auto;
     border:0;border-radius:0;background:#020b1c}
   #scr-story .stzoomb{display:none}
-  #scr-story .sttext{position:relative;z-index:1;flex:0 1 auto;width:100%;max-width:1100px;max-height:36vh;
-    font-size:20px;line-height:1.95;padding:16px 24px;color:#fff;
+  #scr-story .sttext{position:relative;z-index:1;flex:0 1 auto;width:100%;max-width:1500px;max-height:30vh;
+    font-size:20px;line-height:1.8;padding:12px 26px;color:#fff;
     background:rgba(2,11,28,.66);border:2px solid rgba(255,255,255,.18);
     -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
     text-shadow:0 1px 3px rgba(0,0,0,.45)}
-  #scr-story .sttext .stp+.stp{margin-top:.55em}
+  /* الفقراتُ متتابعةً في السطر نفسه: يُستغلّ عرضُ الصندوق فيقصر ارتفاعُه ولا يحجب المشهد */
+  #scr-story .sttext .stp{display:inline;margin-inline-end:.45em}
+  #scr-story .sttext .stp+.stp{margin-top:0}
   #scr-story .stnoteb{position:relative;z-index:1;width:auto;max-width:1100px;padding:9px 22px}
   #scr-story .stload,#scr-story .gmnote{position:relative;z-index:1;color:#fff;align-self:center;margin:auto}
   #scr-story .stnav{position:absolute;bottom:0;inset-inline:0;z-index:2;margin:0;
