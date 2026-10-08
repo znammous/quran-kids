@@ -9456,6 +9456,20 @@ function mfPanel(id){
   if($('mfDockMean')) $('mfDockMean').classList.toggle('on', id==='mfMean');
 }
 function mfPanelOpen(){ return ['mfIdx','mfFind','mfMean'].some(function(k){ return $(k) && !$(k).hidden; }); }
+/* اللوحةُ تقف عند أعلى الشريط السفليّ، وارتفاعُه يتغيّر وهي مفتوحة: حين يظهر الكيبورد
+   في أندرويد يختفي شريطُ التنقّل تحته فيذهب هامشُه (safe-area-inset-bottom) ويقصر
+   الشريط، وكانت اللوحةُ واقفةً عند ارتفاعه القديم فتظهر صفحةُ المصحف بينهما */
+(function(){
+  var d=$('mfDock'); if(!d) return;
+  function fit(){
+    ['mfIdx','mfFind','mfMean'].forEach(function(k){
+      var e=$(k); if(e && !e.hidden) e.style.bottom=d.offsetHeight+'px';
+    });
+  }
+  if(window.ResizeObserver){ try{ new ResizeObserver(fit).observe(d); }catch(e){} }
+  window.addEventListener('resize', fit);
+  if(window.visualViewport) window.visualViewport.addEventListener('resize', fit);
+})();
 /* ===== معاني الكلمات: «الميسر في غريب القرآن الكريم» (مجمع الملك فهد) =====
    مقطَّعٌ على أوجه مصحف المدينة: GHARIB[P-1] = [[سورة، آية، الكلمة، معناها]، …].
    يُحمَّل عند أوّل فتحٍ للّوحة مرّةً واحدة، ويخزّنه عاملُ الخدمة فيعمل دون إنترنت. */
