@@ -2112,44 +2112,64 @@ body.glow-off .dfpic{animation:none}
    الصورةُ ملءُ الشاشة كلِّها، والنصُّ في صندوقٍ شفيفٍ داخلها أسفلَها، والترويسةُ
    والنقاطُ فوقها كذلك — فالمشهدُ هو الصفحة. والتقليبُ بسهمين على جانبَيها
    وبأسهم لوحة المفاتيح، فيُستغنى عن زرَّي الأسفل */
-@media (min-aspect-ratio:5/4) and (min-width:900px){
-  #scr-story.active{padding:0;background:#020b1c}
-  #scr-story.active > *{max-width:none}
-  #scr-story .sthead{position:absolute;top:0;inset-inline:0;z-index:3;margin:0;
-    padding:calc(12px + env(safe-area-inset-top)) 18px 26px;
-    background:linear-gradient(rgba(2,11,28,.6),rgba(2,11,28,0))}
-  #scr-story .sttitle{color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.6)}
-  #scr-story #stPage{position:absolute;inset:0;z-index:1;gap:10px;
-    justify-content:flex-end;align-items:center;padding:0 96px 46px}
-  #scr-story .stimgbox{position:absolute;inset:0;z-index:0;width:auto;max-height:none;aspect-ratio:auto;
-    border:0;border-radius:0;background:#020b1c}
-  #scr-story .stzoomb{display:none}
-  #scr-story .sttext{position:relative;z-index:1;flex:0 1 auto;width:100%;max-width:1500px;max-height:30vh;
-    font-size:20px;line-height:1.8;padding:12px 26px;color:#fff;
-    background:rgba(2,11,28,.66);border:2px solid rgba(255,255,255,.18);
-    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
-    text-shadow:0 1px 3px rgba(0,0,0,.45)}
-  /* الفقراتُ متتابعةً في السطر نفسه: يُستغلّ عرضُ الصندوق فيقصر ارتفاعُه ولا يحجب المشهد */
-  #scr-story .sttext .stp{display:inline;margin-inline-end:.45em}
-  #scr-story .sttext .stp+.stp{margin-top:0}
-  #scr-story .stnoteb{position:relative;z-index:1;width:auto;max-width:1100px;padding:9px 22px}
-  #scr-story .stload,#scr-story .gmnote{position:relative;z-index:1;color:#fff;align-self:center;margin:auto}
-  #scr-story .stnav{position:absolute;bottom:0;inset-inline:0;z-index:2;margin:0;
-    padding:0 0 calc(16px + env(safe-area-inset-bottom));justify-content:center;pointer-events:none}
-  #scr-story .stnav .btn{display:none}
-  #scr-story .stdots i{background:rgba(255,255,255,.4)}
-  #scr-story .stdots i.on{background:var(--gold)}
-  .starr{display:flex;position:absolute;top:50%;z-index:2;transform:translateY(-50%);
-    width:58px;height:58px;border-radius:50%;border:2px solid rgba(255,255,255,.55);
-    background:rgba(4,23,58,.45);color:#fff;font-size:26px;font-weight:900;font-family:inherit;
-    align-items:center;justify-content:center;cursor:pointer;line-height:1;
-    opacity:.6;transition:opacity .2s, background .2s, transform .2s}
-  .stimgbox:hover .starr{opacity:.95}
-  .starr:hover{background:rgba(4,23,58,.75);transform:translateY(-50%) scale(1.08)}
-  .starr[hidden]{display:none}
-  .starr.p{inset-inline-start:14px}      /* السابقةُ من جهة ابتداء القراءة: يميناً في العربيّة */
-  .starr.n{inset-inline-end:14px}
-}
+#scr-story.wide.active{padding:0;background:#020b1c}
+#scr-story.wide.active > *{max-width:none}
+#scr-story.wide .sthead{position:absolute;top:0;inset-inline:0;z-index:3;margin:0;
+  padding:calc(12px + env(safe-area-inset-top)) 18px 26px;
+  background:linear-gradient(rgba(2,11,28,.6),rgba(2,11,28,0))}
+#scr-story.wide .sttitle{color:#fff;text-shadow:0 1px 6px rgba(0,0,0,.6)}
+#scr-story.wide #stPage{position:absolute;inset:0;z-index:1;gap:10px;
+  justify-content:flex-end;align-items:center;padding:0 96px 46px}
+#scr-story.wide .stimgbox{position:absolute;inset:0;z-index:0;width:auto;max-height:none;aspect-ratio:auto;
+  border:0;border-radius:0;background:#020b1c}
+#scr-story.wide .stzoomb{display:none}
+#scr-story.wide .sttext{position:relative;z-index:1;flex:0 1 auto;width:100%;max-width:1500px;max-height:30vh;
+  font-size:20px;line-height:1.8;padding:12px 26px;color:#fff;
+  background:rgba(2,11,28,.66);border:2px solid rgba(255,255,255,.18);
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+  text-shadow:0 1px 3px rgba(0,0,0,.45)}
+/* الفقراتُ متتابعةً في السطر نفسه: يُستغلّ عرضُ الصندوق فيقصر ارتفاعُه ولا يحجب المشهد */
+#scr-story.wide .sttext .stp{display:inline;margin-inline-end:.45em}
+#scr-story.wide .sttext .stp+.stp{margin-top:0}
+#scr-story.wide .stnoteb{position:relative;z-index:1;width:auto;max-width:1100px;padding:9px 22px}
+#scr-story.wide .stload,#scr-story.wide .gmnote{position:relative;z-index:1;color:#fff;align-self:center;margin:auto}
+#scr-story.wide .stnav{position:absolute;bottom:0;inset-inline:0;z-index:2;margin:0;
+  padding:0 0 calc(16px + env(safe-area-inset-bottom));justify-content:center;pointer-events:none}
+#scr-story.wide .stnav .btn{display:none}
+#scr-story.wide .stdots i{background:rgba(255,255,255,.4)}
+#scr-story.wide .stdots i.on{background:var(--gold)}
+#scr-story.wide .starr{display:flex;position:absolute;top:50%;z-index:2;transform:translateY(-50%);
+  width:58px;height:58px;border-radius:50%;border:2px solid rgba(255,255,255,.55);
+  background:rgba(4,23,58,.45);color:#fff;font-size:26px;font-weight:900;font-family:inherit;
+  align-items:center;justify-content:center;cursor:pointer;line-height:1;
+  opacity:.6;transition:opacity .2s, background .2s, transform .2s}
+#scr-story.wide .stimgbox:hover .starr{opacity:.95}
+#scr-story.wide .starr:hover{background:rgba(4,23,58,.75);transform:translateY(-50%) scale(1.08)}
+#scr-story.wide .starr[hidden]{display:none}
+#scr-story.wide .starr.p{inset-inline-start:14px}      /* السابقةُ من جهة ابتداء القراءة: يميناً في العربيّة */
+#scr-story.wide .starr.n{inset-inline-end:14px}
+/* ===== وضعُ القراءة الأفقيّ في الجوّال =====
+   التطبيقُ رأسيٌّ مقفول، فتُدار شاشةُ القصّة نفسُها ربعَ دورة (كالصورة المكبَّرة)
+   ويُدير الطفلُ هاتفَه فيقرأ بالعرض الواسع ذاتِه: الصورةُ كاملةً (contain، فالشاشةُ
+   أعرضُ من الصورة والقصُّ يذهب بالرؤوس) والنصُّ أصغرُ في صندوقه. ولمسُ الصورة
+   يُخفي النصَّ ويُظهره، فيُرى المشهدُ كاملاً */
+#scr-story.land.active{inset:auto;top:50%;left:50%;width:100vh;height:100vw;width:100dvh;height:100dvw;
+  transform:translate(-50%,-50%) rotate(90deg)}
+#scr-story.land .stimgbox img{object-fit:contain;object-position:50% 50% !important}   /* لا موضعَ قصٍّ والصورةُ كاملة */
+#scr-story.land .sthead{padding:8px 12px 18px}
+#scr-story.land .sttitle{font-size:16px}
+#scr-story.land #stPage{padding:0 62px 28px;touch-action:none}
+#scr-story.land .sttext{font-size:14.5px;line-height:1.7;max-height:42%;padding:7px 16px;touch-action:pan-x}
+#scr-story.land .stnoteb{padding:6px 16px;font-size:14px}
+#scr-story.land .stnav{padding-bottom:9px}
+#scr-story.land .starr{width:44px;height:44px;font-size:20px;opacity:.85}
+#scr-story.land .starr.p{inset-inline-start:9px}
+#scr-story.land .starr.n{inset-inline-end:9px}
+#scr-story.land.notext .sttext,#scr-story.land.notext .stnoteb{display:none}
+.stlhint{position:fixed;top:calc(18px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:40;
+  padding:8px 18px;border-radius:999px;background:rgba(2,11,28,.8);color:#fff;font-size:15px;font-weight:800;
+  pointer-events:none}
+.stlhint[hidden]{display:none}
 /* ===== الألعاب: «عدّاء الآيات» ===== */
 .gmlist .goalcard{margin-bottom:12px}
 .gmnote{text-align:center;color:var(--on3);font-size:13.5px;font-weight:700;margin:2px 0 14px;line-height:1.7}
@@ -2908,6 +2928,7 @@ body.hastabs #btnRevQuit{display:none}
 
   <!-- صورةُ القصّة مكبَّرةً: تُدار ربعَ دورةٍ فتملأ الشاشةَ، ويُدير الطفلُ
        هاتفَه. مقصورٌ على قارئ القصص، ويُغلق بأيّ نقرة -->
+  <div class="stlhint" id="stLandHint" hidden>🔄 أدِرْ هاتفك</div>
   <div class="stzoom" id="stZoom" hidden>
     <img id="stZoomImg" alt="">
     <div class="stzhint" id="stZoomHint" hidden>🔄 أدِرْ هاتفك</div>
@@ -17249,7 +17270,32 @@ function storiesBackTo(back){
 }
 /* ===== قراءةُ القصّة ===== */
 var STORY=null, STORY_I=0, STORY_BLOBS=[];
+/* العرضُ الواسع: شاشةٌ عريضةٌ أصلاً، أو وضعُ القراءة الأفقيّ في الجوّال (STLAND) */
+var STLAND=false, ST_SWIPE_T=0;
+var ST_WIDE_MQ=window.matchMedia ? window.matchMedia('(min-aspect-ratio:5/4) and (min-width:900px)') : null;
+function stWideSync(){
+  var sc=$('scr-story'); if(!sc) return;
+  sc.classList.toggle('wide', STLAND || !!(ST_WIDE_MQ && ST_WIDE_MQ.matches));
+  sc.classList.toggle('land', STLAND);
+  if(!STLAND) sc.classList.remove('notext');
+}
+if(ST_WIDE_MQ){ try{ ST_WIDE_MQ.addEventListener('change', stWideSync); }catch(e){ try{ ST_WIDE_MQ.addListener(stWideSync); }catch(_){} } }
+function stLandOpen(){
+  STLAND=true; stWideSync();
+  var h=$('stLandHint');
+  if(h && !load('nur_stland_hint',0)){
+    save('nur_stland_hint',1); h.hidden=false;
+    setTimeout(function(){ h.hidden=true; }, 2600);
+  }
+}
+function stLandClose(){
+  if(!STLAND) return false;
+  STLAND=false; stWideSync();
+  var h=$('stLandHint'); if(h) h.hidden=true;
+  return true;
+}
 function storyFree(){
+  stLandClose();
   STORY_BLOBS.forEach(function(u){ if(u && u.indexOf('blob:')===0) try{ URL.revokeObjectURL(u); }catch(e){} });
   STORY_BLOBS=[];
 }
@@ -17329,8 +17375,19 @@ function storyDraw(){
   /* نافذةُ ٤:٣ من الصورة الواسعة: وسطاً إلّا أن تذكر الصفحةُ موضعاً */
   var ie=$('stImgEl');
   if(ie) ie.style.objectPosition=(p.pos||'50%')+' 50%';
+  stWideSync();
+  /* في الجوّال الرأسيّ يفتح الزرُّ وضعَ القراءة الأفقيّ (الصورةُ والنصُّ معاً)،
+     وفي غيره يكبّر الصورةَ وحدَها */
   var zb=$('stZoomB');
-  if(zb) zb.onclick=function(e){ e.stopPropagation(); stZoomOpen(); };
+  if(zb) zb.onclick=function(e){
+    e.stopPropagation();
+    if(window.innerWidth<window.innerHeight) stLandOpen(); else stZoomOpen();
+  };
+  var ib=$('stImgBox');
+  if(ib) ib.onclick=function(e){
+    if(!STLAND || e.target.closest('button') || Date.now()-ST_SWIPE_T<500) return;
+    $('scr-story').classList.toggle('notext');
+  };
   [['stArrP',-1],['stArrN',1]].forEach(function(a){
     var b=$(a[0]); if(!b) return;
     b.onpointerdown=function(e){ e.stopPropagation(); };     /* لا يُحسب بدءَ سحبة */
@@ -18653,11 +18710,12 @@ $('stNext').onclick=function(){ storyStep(1); };
   function end(){
     if(!live) return;
     live=false;
-    var d=0; try{ d=mfSwipeDir(lx,ly); }catch(e){}   /* عتبةُ المصحف نفسُها */
+    /* في الوضع الأفقيّ الشاشةُ مُدارةٌ ربعَ دورة: أفقيُّ ما يراه الطفلُ رأسيُّ الجهاز */
+    var d=0; try{ d=STLAND ? mfSwipeDir(ly,-lx) : mfSwipeDir(lx,ly); }catch(e){}   /* عتبةُ المصحف نفسُها */
     /* والقصّةُ المترجمة إلى لغةٍ من اليسار تُقلَّب ككتابها: السحبُ إلى اليسار
        يمضي إلى التالية. والمصحفُ وحده يبقى من اليمين في كلّ لغة */
     if(d && document.documentElement.dir==='ltr') d=-d;
-    if(d) storyStep(d);                              /* +١: التالية */
+    if(d){ ST_SWIPE_T=Date.now(); storyStep(d); }    /* +١: التالية */
   }
   /* اللمسُ هو الأصل هنا لا المؤشّر: إن وقعت السحبةُ على صندوق النصّ بدأ
      المتصفّحُ يُمرّره فألغى المؤشّرَ بعد أوّل حركة — فكانت السحبةُ تضيع.
@@ -18675,7 +18733,7 @@ $('stNext').onclick=function(){ storyStep(1); };
 /* وزرُّ الرجوع في الجهاز يضغط هذا الزرَّ نيابةً عن الطفل (NAV_BACK)، فأوّلُ
    ضغطةٍ تُغلق الصورةَ المكبَّرة لا القصّةَ كلَّها */
 $('btnStoryBack').onclick=function(){
-  if(stZoomClose() || stNoteClose()) return;
+  if(stZoomClose() || stNoteClose() || stLandClose()) return;
   storyFree(); STORY=null; storiesOpen();
 };
 $('stZoom').onclick=stZoomClose;
