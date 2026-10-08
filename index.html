@@ -15979,6 +15979,9 @@ function onbShow(i){
     }).join('');
     $('onbAdd').onclick=onbAddStart;
   }
+  /* وفي كلّ خطوة: علامةُ الانتظار (waiting) تُحسب لهذه الخطوة نفسِها. كانت الخطوتان
+     الأخيرتان لا تحسبانها، فيبقى «التالي» باهتاً بعلامةٍ ورثها من خطوة الخطّة وهو يعمل */
+  onbGate();
   show('scr-onb');
 }
 function onbFinish(){
