@@ -2156,15 +2156,20 @@ body.glow-off .dfpic{animation:none}
 #scr-story.land.active{inset:auto;top:50%;left:50%;width:100vh;height:100vw;width:100dvh;height:100dvw;
   transform:translate(-50%,-50%) rotate(90deg)}
 #scr-story.land .stimgbox img{object-fit:contain;object-position:50% 50% !important}   /* لا موضعَ قصٍّ والصورةُ كاملة */
-#scr-story.land .sthead{padding:8px 12px 18px}
+/* ما على الحافّتين — السهمان والرجوعُ والعدّاد — يدخل إلى الصورة نفسِها: الشريطان
+   الداكنان على جانبَيها هما طرفا الهاتف، تحت تجويف الكاميرا وشريطِ الرئيسيّة.
+   --stin: بُعدُ حافّة الصورة عن حافّة الشاشة (الصورةُ ١٦:٩ بارتفاعها كلِّه) */
+#scr-story.land{--stin:max(0px, calc((100vh - 100vw * 16 / 9) / 2));
+  --stin:max(0px, calc((100dvh - 100dvw * 16 / 9) / 2))}
+#scr-story.land .sthead{padding:8px calc(var(--stin) + 10px) 18px}
 #scr-story.land .sttitle{font-size:16px}
-#scr-story.land #stPage{padding:0 62px 28px;touch-action:none}
+#scr-story.land #stPage{padding:0 calc(var(--stin) + 62px) 28px;touch-action:none}
 #scr-story.land .sttext{font-size:14.5px;line-height:1.7;max-height:42%;padding:7px 16px;touch-action:pan-x}
 #scr-story.land .stnoteb{padding:6px 16px;font-size:14px}
 #scr-story.land .stnav{padding-bottom:9px}
 #scr-story.land .starr{width:44px;height:44px;font-size:20px;opacity:.85}
-#scr-story.land .starr.p{inset-inline-start:9px}
-#scr-story.land .starr.n{inset-inline-end:9px}
+#scr-story.land .starr.p{inset-inline-start:calc(var(--stin) + 9px)}
+#scr-story.land .starr.n{inset-inline-end:calc(var(--stin) + 9px)}
 #scr-story.land.notext .sttext,#scr-story.land.notext .stnoteb{display:none}
 .stlhint{position:fixed;top:calc(18px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:40;
   padding:8px 18px;border-radius:999px;background:rgba(2,11,28,.8);color:#fff;font-size:15px;font-weight:800;
