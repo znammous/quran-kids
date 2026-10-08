@@ -1746,4 +1746,6 @@ NUR_I18N.add('sw', {
   "تُحذف كلُّ التلاوات المحفوظة ({mb} ميجابايت).": "Visomo vyote vilivyohifadhiwa vitafutwa (MB {mb}).",
   "يبقى حفظُك وتقدّمُك كما هما، وتحتاج الإنترنت لتسمع الآياتِ من جديد.": "Hifdhi na maendeleo yako yatabaki kama yalivyo, na utahitaji intaneti kusikiliza aya tena.",
   "حُذف {mb} ميجابايت من التلاوات.": "MB {mb} za visomo zimefutwa.",
+  "المس الصورة لتُخفي صندوقَ النصّ وترى المشهدَ كاملاً، والمسها مرّةً أخرى ليعود": "Gusa picha ili kuficha kisanduku cha maandishi na kuona tukio lote, na uiguse tena ili kirudi",
+  "قرأتُها — لا تُظهرها مرّةً أخرى": "Nimesoma — usionyeshe tena",
 });

@@ -1746,4 +1746,6 @@ NUR_I18N.add('ms', {
   "تُحذف كلُّ التلاوات المحفوظة ({mb} ميجابايت).": "Semua bacaan yang disimpan akan dipadam ({mb} MB).",
   "يبقى حفظُك وتقدّمُك كما هما، وتحتاج الإنترنت لتسمع الآياتِ من جديد.": "Hafalan dan kemajuan anda kekal seperti sedia ada, dan anda memerlukan internet untuk mendengar ayat-ayat semula.",
   "حُذف {mb} ميجابايت من التلاوات.": "{mb} MB bacaan telah dipadam.",
+  "المس الصورة لتُخفي صندوقَ النصّ وترى المشهدَ كاملاً، والمسها مرّةً أخرى ليعود": "Sentuh gambar untuk menyembunyikan kotak teks dan melihat keseluruhan adegan, dan sentuh sekali lagi untuk memaparkannya semula",
+  "قرأتُها — لا تُظهرها مرّةً أخرى": "Saya sudah baca — jangan paparkan lagi",
 });

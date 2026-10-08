@@ -1746,4 +1746,6 @@ NUR_I18N.add('en', {
   "تُحذف كلُّ التلاوات المحفوظة ({mb} ميجابايت).": "All saved recitations will be deleted ({mb} MB).",
   "يبقى حفظُك وتقدّمُك كما هما، وتحتاج الإنترنت لتسمع الآياتِ من جديد.": "Your memorization and progress stay as they are, and you will need the internet to hear the ayahs again.",
   "حُذف {mb} ميجابايت من التلاوات.": "{mb} MB of recitations deleted.",
+  "المس الصورة لتُخفي صندوقَ النصّ وترى المشهدَ كاملاً، والمسها مرّةً أخرى ليعود": "Touch the picture to hide the text box and see the whole scene, and touch it again to bring it back",
+  "قرأتُها — لا تُظهرها مرّةً أخرى": "I read it — don't show it again",
 });

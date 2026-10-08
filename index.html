@@ -2181,6 +2181,14 @@ body.glow-off .dfpic{animation:none}
   padding:8px 18px;border-radius:999px;background:rgba(2,11,28,.8);color:#fff;font-size:15px;font-weight:800;
   pointer-events:none}
 .stlhint[hidden]{display:none}
+.stltip{display:none}
+#scr-story.land .stltip{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;
+  padding:16px calc(var(--stin) + 16px);background:rgba(2,11,28,.55)}
+#scr-story.land .stltip[hidden]{display:none}
+.stltipbox{max-width:460px;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center;
+  background:var(--pnl);border:3px solid var(--pb);border-radius:18px;padding:16px 18px}
+.stltipt{font-size:15.5px;font-weight:800;line-height:1.8;color:var(--on1)}
+.stltipbox .btn{margin:0;padding:10px 16px;font-size:15px}
 /* ===== الألعاب: «عدّاء الآيات» ===== */
 .gmlist .goalcard{margin-bottom:12px}
 .gmnote{text-align:center;color:var(--on3);font-size:13.5px;font-weight:700;margin:2px 0 14px;line-height:1.7}
@@ -2927,6 +2935,14 @@ body.hastabs #btnRevQuit{display:none}
       <div class="stcount" id="stCount">—</div>
     </div>
     <div class="stpage" id="stPage"></div>
+    <!-- تعريفُ وضع القراءة الأفقيّ: داخل الشاشة المُدارة فيُقرأ والهاتفُ مقلوب،
+         ويبقى يظهر عند كلّ دخولٍ حتى يُقرّ الطفلُ بأنّه قرأه -->
+    <div class="stltip" id="stLandTip" hidden>
+      <div class="stltipbox">
+        <div class="stltipt">👆 المس الصورة لتُخفي صندوقَ النصّ وترى المشهدَ كاملاً، والمسها مرّةً أخرى ليعود.</div>
+        <button type="button" class="btn primary" id="stLandTipOk">✅ قرأتُها — لا تُظهرها مرّةً أخرى</button>
+      </div>
+    </div>
     <div class="stnav">
       <!-- الاتّجاهُ عربيّ: «السابق» يميناً بسهمٍ يمين، و«التالي» يساراً بسهمٍ يسار.
            والسهمُ في عنصرٍ مستقلٍّ بحرفٍ لا ينعكس (← →) — فحرفا ❮ ❯ من
@@ -17295,6 +17311,7 @@ function stWideSync(){
 if(ST_WIDE_MQ){ try{ ST_WIDE_MQ.addEventListener('change', stWideSync); }catch(e){ try{ ST_WIDE_MQ.addListener(stWideSync); }catch(_){} } }
 function stLandOpen(){
   STLAND=true; stWideSync();
+  var tp=$('stLandTip'); if(tp) tp.hidden=!!load('nur_stland_tip',0);
   var h=$('stLandHint');
   if(h && !load('nur_stland_hint',0)){
     save('nur_stland_hint',1); h.hidden=false;
@@ -17305,6 +17322,7 @@ function stLandClose(){
   if(!STLAND) return false;
   STLAND=false; stWideSync();
   var h=$('stLandHint'); if(h) h.hidden=true;
+  var tp=$('stLandTip'); if(tp) tp.hidden=true;
   return true;
 }
 function storyFree(){
@@ -18755,6 +18773,7 @@ $('btnStoryBack').onclick=function(){
   storyFree(); STORY=null; storiesOpen();
 };
 $('stZoom').onclick=stZoomClose;
+$('stLandTipOk').onclick=function(){ save('nur_stland_tip',1); $('stLandTip').hidden=true; };
 $('stNoteX').onclick=stNoteClose;
 $('stNote').onclick=function(e){ if(e.target===this) stNoteClose(); };
 document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ if(!stZoomClose()) stNoteClose(); } });

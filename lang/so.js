@@ -1746,4 +1746,6 @@ NUR_I18N.add('so', {
   "تُحذف كلُّ التلاوات المحفوظة ({mb} ميجابايت).": "Dhammaan akhrisyada la kaydiyay waa la tirtiri doonaa ({mb} MB).",
   "يبقى حفظُك وتقدّمُك كما هما، وتحتاج الإنترنت لتسمع الآياتِ من جديد.": "Xifdigaaga iyo horumarkaagu sidooda ayay ahaanayaan, waxaadna u baahan doontaa internet si aad aayadaha mar kale u maqasho.",
   "حُذف {mb} ميجابايت من التلاوات.": "{mb} MB oo akhris ah ayaa la tirtiray.",
+  "المس الصورة لتُخفي صندوقَ النصّ وترى المشهدَ كاملاً، والمسها مرّةً أخرى ليعود": "Taabo sawirka si aad u qariso sanduuqa qoraalka oo aad u aragto muuqaalka oo dhan, mar kale taabo si uu u soo noqdo",
+  "قرأتُها — لا تُظهرها مرّةً أخرى": "Waan akhriyay — mar dambe ha i tusin",
 });
