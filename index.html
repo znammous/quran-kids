@@ -399,6 +399,8 @@ body:not(.native) .nativeonly{display:none!important}
 .card .row:last-child{margin-bottom:0}
 .row .btn{padding:15px 16px}
 .row>*{flex:1}
+.plrow{gap:10px;margin-bottom:0}
+.plrow .btn{flex:1 1 220px;padding:12px 14px;font-size:16px;white-space:nowrap}
 input[type=text],select,.qaribtn{width:100%;padding:14px;border-radius:12px;border:2px solid #d7e2f0;
   font-size:17px;appearance:none;-webkit-appearance:none;font-family:inherit;background:#fff;color:var(--ink)}
 input[type=text]:focus,select:focus{outline:none;border-color:var(--g2);box-shadow:0 0 0 4px rgba(30,139,106,.15)}
@@ -3124,7 +3126,9 @@ body.hastabs #btnRevQuit{display:none}
       </div>
       <div class="setblock" style="margin-top:12px">
         <label class="lbl">👧👦 المستخدمون في هذا الجهاز</label>
-        <div class="row">
+        <!-- في سطرٍ واحدٍ تضيق الزرّان في الجوّال فيلتفّ نصّاهما ثلاثةَ أسطر: فوق بعضهما
+             بعرضٍ كامل وارتفاعٍ عاديّ، وبجانب بعضهما حين يتّسع العرض -->
+        <div class="row plrow">
           <button class="btn blue" id="btnAddPlayer">➕ مستخدم جديد</button>
           <button class="btn red" id="btnDelPlayer">🗑️ حذف المستخدم الحالي</button>
         </div>
