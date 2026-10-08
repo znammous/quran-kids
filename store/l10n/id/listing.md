@@ -7,9 +7,9 @@ Nur Al-Wahy: Hafalan Al-Quran
 <sub>29/30</sub>
 
 ### Subtitle
-Tahfidz anak & murajaah
+Tahfidz & murajaah keluarga
 
-<sub>23/30</sub>
+<sub>27/30</sub>
 
 ### Promotional Text
 Hafalan Al-Qur'an di halaman Mushaf Madinah, bagian demi bagian, dengan qari terkenal, murajaah terjadwal, dan permainan. Gratis, tanpa iklan, tanpa akun.

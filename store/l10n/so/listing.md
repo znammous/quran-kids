@@ -7,9 +7,9 @@ Nur Al-Wahy: Xifdi Qur’aan
 <sub>26/30</sub>
 
 ### Subtitle
-Xifdiga carruurta iyo qoyska
+Xifdiga iyo muraajacada qoyska
 
-<sub>28/30</sub>
+<sub>30/30</sub>
 
 ### Promotional Text
 Qur’aanka qayb qayb ugu xifdi bogga Mushafka Madiina, muraajaco waqtigeeda, oo dhiso masjidkaaga. Bilaash, xayaysiis la’aan.

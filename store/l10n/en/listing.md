@@ -7,7 +7,7 @@ Nur Al-Wahy: Quran Memorizing
 <sub>29/30</sub>
 
 ### Subtitle
-Hifz for kids and families
+Hifz & review for all ages
 
 <sub>26/30</sub>
 

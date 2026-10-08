@@ -7,9 +7,9 @@ Nur Al-Wahy: Hafazan Al-Quran
 <sub>29/30</sub>
 
 ### Subtitle
-Tahfiz kanak-kanak & keluarga
+Tahfiz & murajaah sekeluarga
 
-<sub>29/30</sub>
+<sub>28/30</sub>
 
 ### Promotional Text
 Hafazan al-Quran pada halaman Mushaf Madinah, bahagian demi bahagian, dengan qari terkenal, ulang kaji berjadual dan permainan. Percuma, tiada iklan.

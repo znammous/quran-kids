@@ -7,9 +7,9 @@ Nur Al-Wahy: Kuran Ezberleme
 <sub>28/30</sub>
 
 ### Subtitle
-Çocuklar ve aile için hafızlık
+Her yaşa hafızlık ve tekrar
 
-<sub>30/30</sub>
+<sub>27/30</sub>
 
 ### Promotional Text
 Kur'an'ı gerçek Medine Mushafı sayfasında bölüm bölüm ezberle; ünlü kariler, aralıklı tekrar ve oyunlarla. Ücretsiz, reklamsız, hesap gerektirmez.

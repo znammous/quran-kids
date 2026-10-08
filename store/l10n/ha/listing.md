@@ -7,9 +7,9 @@ Nur Al-Wahy: Haddar Alƙur’ani
 <sub>29/30</sub>
 
 ### Subtitle
-Hizifi ga yara da iyali
+Hizifi da bita ga dukan iyali
 
-<sub>23/30</sub>
+<sub>29/30</sub>
 
 ### Promotional Text
 Haddace Alƙur’ani sashe-sashe a kan shafin Mushafin Madina, yi bita a lokacinta, ka gina masallacinka. Kyauta, babu talla.
