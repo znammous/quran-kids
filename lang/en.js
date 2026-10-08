@@ -231,7 +231,6 @@ NUR_I18N.add('en', {
   "احذف أختي": "Remove my sister",
   "احذف أخي": "Remove my brother",
   "احفظ": "Memorize",
-  "احفظ القرآن مقطعاً مقطعاً — وابنِ مسجدك نجمةً نجمة": "Memorize the Quran section by section — and build your mosque star by star",
   "احفظ النسخة أو أرسلها": "Save or send the copy",
   "احفظ فتكسب الحجر، وراجع فتكسب الحديد والزجاج — وابنِ مسجدك قطعةً قطعة": "Memorize to earn stone, review to earn iron and glass — and build your mosque piece by piece",
   "احفظْ الآن": "Save now",

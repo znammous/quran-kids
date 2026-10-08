@@ -231,7 +231,6 @@ NUR_I18N.add('so', {
   "احذف أختي": "Ka saar walaashay",
   "احذف أخي": "Ka saar walaalkay",
   "احفظ": "Xifdi",
-  "احفظ القرآن مقطعاً مقطعاً — وابنِ مسجدك نجمةً نجمة": "Qur’aanka qayb qayb u xifdi — masjidkaagana xiddig xiddig u dhis",
   "احفظ النسخة أو أرسلها": "Kaydi nuqulka ama dir",
   "احفظ فتكسب الحجر، وراجع فتكسب الحديد والزجاج — وابنِ مسجدك قطعةً قطعة": "Xifdi si aad dhagax u hesho, muraajaco si aad bir iyo quraarad u hesho — masjidkaagana gabal gabal u dhis",
   "احفظْ الآن": "Hadda kaydi",

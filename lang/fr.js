@@ -231,7 +231,6 @@ NUR_I18N.add('fr', {
   "احذف أختي": "Retirer ma sœur",
   "احذف أخي": "Retirer mon frère",
   "احفظ": "Apprendre",
-  "احفظ القرآن مقطعاً مقطعاً — وابنِ مسجدك نجمةً نجمة": "Apprends le Coran passage par passage — et construis ta mosquée étoile par étoile",
   "احفظ النسخة أو أرسلها": "Enregistrer ou envoyer la copie",
   "احفظ فتكسب الحجر، وراجع فتكسب الحديد والزجاج — وابنِ مسجدك قطعةً قطعة": "Apprends pour gagner de la pierre, révise pour gagner du fer et du verre — et construis ta mosquée pièce par pièce",
   "احفظْ الآن": "Enregistrer maintenant",

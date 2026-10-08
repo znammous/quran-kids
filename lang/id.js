@@ -231,7 +231,6 @@ NUR_I18N.add('id', {
   "احذف أختي": "Hapus saudara perempuanku",
   "احذف أخي": "Hapus saudara laki-lakiku",
   "احفظ": "Hafalkan",
-  "احفظ القرآن مقطعاً مقطعاً — وابنِ مسجدك نجمةً نجمة": "Hafalkan Al-Qur'an bagian demi bagian — dan bangun masjidmu bintang demi bintang",
   "احفظ النسخة أو أرسلها": "Simpan atau kirim salinannya",
   "احفظ فتكسب الحجر، وراجع فتكسب الحديد والزجاج — وابنِ مسجدك قطعةً قطعة": "Menghafal memberimu batu, murajaah memberimu besi dan kaca — dan bangun masjidmu sedikit demi sedikit",
   "احفظْ الآن": "Simpan sekarang",

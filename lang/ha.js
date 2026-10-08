@@ -231,7 +231,6 @@ NUR_I18N.add('ha', {
   "احذف أختي": "Cire ʼyar’uwata",
   "احذف أخي": "Cire ɗan’uwana",
   "احفظ": "Haddace",
-  "احفظ القرآن مقطعاً مقطعاً — وابنِ مسجدك نجمةً نجمة": "Haddace Alƙur’ani sashe-sashe — ka gina masallacinka tauraro-tauraro",
   "احفظ النسخة أو أرسلها": "Ajiye kwafin ko ka aika",
   "احفظ فتكسب الحجر، وراجع فتكسب الحديد والزجاج — وابنِ مسجدك قطعةً قطعة": "Haddace ka samu dutse, yi bita ka samu ƙarfe da gilashi — ka gina masallacinka gunda-gunda",
   "احفظْ الآن": "Ajiye yanzu",

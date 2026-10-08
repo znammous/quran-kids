@@ -231,7 +231,6 @@ NUR_I18N.add('sw', {
   "احذف أختي": "Mwondoe dada yangu",
   "احذف أخي": "Mwondoe kaka yangu",
   "احفظ": "Hifadhi",
-  "احفظ القرآن مقطعاً مقطعاً — وابنِ مسجدك نجمةً نجمة": "Hifadhi Qurani sehemu kwa sehemu — na ujenge msikiti wako nyota kwa nyota",
   "احفظ النسخة أو أرسلها": "Hifadhi au tuma nakala",
   "احفظ فتكسب الحجر، وراجع فتكسب الحديد والزجاج — وابنِ مسجدك قطعةً قطعة": "Hifadhi upate mawe, rudia upate chuma na kioo — na ujenge msikiti wako kipande kwa kipande",
   "احفظْ الآن": "Hifadhi sasa",

@@ -231,7 +231,6 @@ NUR_I18N.add('uz', {
   "احذف أختي": "Opamni olib tashlash",
   "احذف أخي": "Akamni olib tashlash",
   "احفظ": "Yodla",
-  "احفظ القرآن مقطعاً مقطعاً — وابنِ مسجدك نجمةً نجمة": "Qurʼonni boʻlakma-boʻlak yodla — masjidingni esa yulduzma-yulduz qur",
   "احفظ النسخة أو أرسلها": "Nusxani saqlash yoki yuborish",
   "احفظ فتكسب الحجر، وراجع فتكسب الحديد والزجاج — وابنِ مسجدك قطعةً قطعة": "Tosh olish uchun yodla, temir va shisha olish uchun takrorla — masjidingni esa boʻlakma-boʻlak qur",
   "احفظْ الآن": "Hozir saqlash",

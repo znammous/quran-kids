@@ -231,7 +231,6 @@ NUR_I18N.add('tr', {
   "احذف أختي": "Kız kardeşimi kaldır",
   "احذف أخي": "Erkek kardeşimi kaldır",
   "احفظ": "Ezberle",
-  "احفظ القرآن مقطعاً مقطعاً — وابنِ مسجدك نجمةً نجمة": "Kur’an’ı bölüm bölüm ezberle — camini yıldız yıldız inşa et",
   "احفظ النسخة أو أرسلها": "Kopyayı kaydet ya da gönder",
   "احفظ فتكسب الحجر، وراجع فتكسب الحديد والزجاج — وابنِ مسجدك قطعةً قطعة": "Ezberle taş kazan, tekrar et demir ve cam kazan — camini parça parça inşa et",
   "احفظْ الآن": "Şimdi kaydet",
