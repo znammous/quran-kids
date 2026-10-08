@@ -9164,7 +9164,7 @@ function audSync(){
   var pl=$('pListen');
   if(pl){ pl.classList.toggle('on', on); pl.textContent=ic; }
   audMedia(on, hold);
-  audKeep(on && !hold);
+  audAlive(on && !hold);
   var b=$('mfDockPlay'); if(!b) return;
   var t=b.querySelector('.tico'), l=$('mfPlayLbl');
   b.classList.toggle('on', on);
@@ -9216,7 +9216,7 @@ function audMedia(on, hold){
    وإشعارُها يقول ما يُتلى. وتُطلب عند بدء التلاوة وحده — والتطبيقُ أمامه —
    لا مع كلّ آية، فأندرويد يأبى بدءَ خدمةٍ أماميّةٍ من الخلفيّة. */
 var AUD_KEEP=false;
-function audKeep(want){
+function audAlive(want){
   if(want===AUD_KEEP) return;
   var pl=nativePlugin('Tilawa');
   if(!pl) return;
