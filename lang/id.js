@@ -1747,5 +1747,4 @@ NUR_I18N.add('id', {
   "يبقى حفظُك وتقدّمُك كما هما، وتحتاج الإنترنت لتسمع الآياتِ من جديد.": "Hafalan dan kemajuan Anda tetap seperti semula, dan Anda memerlukan internet untuk mendengar ayat-ayat lagi.",
   "حُذف {mb} ميجابايت من التلاوات.": "{mb} MB bacaan telah dihapus.",
   "المس الصورة لتُخفي صندوقَ النصّ وترى المشهدَ كاملاً، والمسها مرّةً أخرى ليعود": "Sentuh gambar untuk menyembunyikan kotak teks dan melihat seluruh adegan, lalu sentuh lagi untuk memunculkannya kembali",
-  "قرأتُها — لا تُظهرها مرّةً أخرى": "Sudah saya baca — jangan tampilkan lagi",
 });

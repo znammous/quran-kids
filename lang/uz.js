@@ -1747,5 +1747,4 @@ NUR_I18N.add('uz', {
   "يبقى حفظُك وتقدّمُك كما هما، وتحتاج الإنترنت لتسمع الآياتِ من جديد.": "Yodlaganingiz va yutuqlaringiz oʻz holicha qoladi, oyatlarni qayta tinglash uchun internet kerak boʻladi.",
   "حُذف {mb} ميجابايت من التلاوات.": "{mb} MB tilovat oʻchirildi.",
   "المس الصورة لتُخفي صندوقَ النصّ وترى المشهدَ كاملاً، والمسها مرّةً أخرى ليعود": "Matn qutisini yashirib, butun manzarani koʻrish uchun rasmga teging, qaytarish uchun yana teging",
-  "قرأتُها — لا تُظهرها مرّةً أخرى": "Oʻqidim — boshqa koʻrsatmang",
 });

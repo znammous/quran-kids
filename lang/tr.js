@@ -1747,5 +1747,4 @@ NUR_I18N.add('tr', {
   "يبقى حفظُك وتقدّمُك كما هما، وتحتاج الإنترنت لتسمع الآياتِ من جديد.": "Ezberiniz ve ilerlemeniz olduğu gibi kalır; ayetleri yeniden dinlemek için internet gerekir.",
   "حُذف {mb} ميجابايت من التلاوات.": "{mb} MB tilavet silindi.",
   "المس الصورة لتُخفي صندوقَ النصّ وترى المشهدَ كاملاً، والمسها مرّةً أخرى ليعود": "Metin kutusunu gizleyip sahnenin tamamını görmek için resme dokunun, geri getirmek için tekrar dokunun",
-  "قرأتُها — لا تُظهرها مرّةً أخرى": "Okudum — bir daha gösterme",
 });

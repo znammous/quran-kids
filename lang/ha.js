@@ -1747,5 +1747,4 @@ NUR_I18N.add('ha', {
   "يبقى حفظُك وتقدّمُك كما هما، وتحتاج الإنترنت لتسمع الآياتِ من جديد.": "Haddarka da cigabanka za su kasance yadda suke, kuma za ka buƙaci intanet don sake jin ayoyin.",
   "حُذف {mb} ميجابايت من التلاوات.": "An share MB {mb} na karatu.",
   "المس الصورة لتُخفي صندوقَ النصّ وترى المشهدَ كاملاً، والمسها مرّةً أخرى ليعود": "Taɓa hoton don ɓoye akwatin rubutu ka ga dukan wurin, sannan ka sake taɓa shi don ya dawo",
-  "قرأتُها — لا تُظهرها مرّةً أخرى": "Na karanta — kada a sake nuna shi",
 });

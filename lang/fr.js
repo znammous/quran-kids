@@ -1747,5 +1747,4 @@ NUR_I18N.add('fr', {
   "يبقى حفظُك وتقدّمُك كما هما، وتحتاج الإنترنت لتسمع الآياتِ من جديد.": "Votre mémorisation et votre progression restent intactes, et il vous faudra Internet pour réécouter les versets.",
   "حُذف {mb} ميجابايت من التلاوات.": "{mb} Mo de récitations supprimés.",
   "المس الصورة لتُخفي صندوقَ النصّ وترى المشهدَ كاملاً، والمسها مرّةً أخرى ليعود": "Touchez l'image pour masquer le texte et voir toute la scène, puis touchez-la à nouveau pour le faire revenir",
-  "قرأتُها — لا تُظهرها مرّةً أخرى": "Je l'ai lu — ne plus l'afficher",
 });

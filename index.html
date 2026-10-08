@@ -2189,6 +2189,8 @@ body.glow-off .dfpic{animation:none}
   background:var(--pnl);border:3px solid var(--pb);border-radius:18px;padding:16px 18px}
 .stltipt{font-size:15.5px;font-weight:800;line-height:1.8;color:var(--on1)}
 .stltipbox .btn{margin:0;padding:10px 16px;font-size:15px}
+.stltipbox .chk{margin:0;color:var(--on2);cursor:pointer}
+.stltipbox .chk input{width:20px;height:20px}
 /* ===== الألعاب: «عدّاء الآيات» ===== */
 .gmlist .goalcard{margin-bottom:12px}
 .gmnote{text-align:center;color:var(--on3);font-size:13.5px;font-weight:700;margin:2px 0 14px;line-height:1.7}
@@ -2936,11 +2938,12 @@ body.hastabs #btnRevQuit{display:none}
     </div>
     <div class="stpage" id="stPage"></div>
     <!-- تعريفُ وضع القراءة الأفقيّ: داخل الشاشة المُدارة فيُقرأ والهاتفُ مقلوب،
-         ويبقى يظهر عند كلّ دخولٍ حتى يُقرّ الطفلُ بأنّه قرأه -->
+         ويعود عند كلّ دخولٍ إلّا أن يُعلّم خانةَ «لا تُظهر» قبل «فهمت» -->
     <div class="stltip" id="stLandTip" hidden>
       <div class="stltipbox">
         <div class="stltipt">👆 المس الصورة لتُخفي صندوقَ النصّ وترى المشهدَ كاملاً، والمسها مرّةً أخرى ليعود.</div>
-        <button type="button" class="btn primary" id="stLandTipOk">✅ قرأتُها — لا تُظهرها مرّةً أخرى</button>
+        <label class="chk"><input type="checkbox" id="stLandTipChk"> لا تُظهر هذه الرسالة مرّة أخرى</label>
+        <button type="button" class="btn primary" id="stLandTipOk">✅ فهمت</button>
       </div>
     </div>
     <div class="stnav">
@@ -18773,7 +18776,10 @@ $('btnStoryBack').onclick=function(){
   storyFree(); STORY=null; storiesOpen();
 };
 $('stZoom').onclick=stZoomClose;
-$('stLandTipOk').onclick=function(){ save('nur_stland_tip',1); $('stLandTip').hidden=true; };
+$('stLandTipOk').onclick=function(){
+  if($('stLandTipChk').checked) save('nur_stland_tip',1);
+  $('stLandTip').hidden=true;
+};
 $('stNoteX').onclick=stNoteClose;
 $('stNote').onclick=function(e){ if(e.target===this) stNoteClose(); };
 document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ if(!stZoomClose()) stNoteClose(); } });
