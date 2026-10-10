@@ -280,6 +280,7 @@ NUR_I18N.add('uz', {
   "استمع لصوتك، فإن أعجبك احسبها مرة": "Ovozingni tingla; yoqsa, bir marta hisobla",
   "استمع لصوتي": "Ovozimni tinglash",
   "استمع للمقطع": "Boʻlakni tinglash",
+  "استمع إليها": "Uni tinglang",
   "اسحب الوجه لتراه": "Koʻrish uchun sahifani tort",
   "اسمك وشكلك في شهاداتك، وتغيّرهما متى شئت": "Isming va koʻrinishing guvohnomalaringda chiqadi, ularni xohlagan paytda oʻzgartirishing mumkin",
   "اسمي": "Ism",

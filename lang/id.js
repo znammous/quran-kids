@@ -280,6 +280,7 @@ NUR_I18N.add('id', {
   "استمع لصوتك، فإن أعجبك احسبها مرة": "Dengarkan suaramu; kalau kamu suka, hitung sekali",
   "استمع لصوتي": "Dengarkan suaraku",
   "استمع للمقطع": "Dengarkan bagian ini",
+  "استمع إليها": "Dengarkan",
   "اسحب الوجه لتراه": "Geser halamannya untuk melihat",
   "اسمك وشكلك في شهاداتك، وتغيّرهما متى شئت": "Nama dan penampilanmu muncul di sertifikatmu, dan bisa kamu ubah kapan saja",
   "اسمي": "Namaku",

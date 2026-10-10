@@ -280,6 +280,7 @@ NUR_I18N.add('sw', {
   "استمع لصوتك، فإن أعجبك احسبها مرة": "Sikiliza sauti yako; ikikupendeza, ihesabu mara moja",
   "استمع لصوتي": "Sikiliza sauti yangu",
   "استمع للمقطع": "Sikiliza sehemu",
+  "استمع إليها": "Isikilize",
   "اسحب الوجه لتراه": "Buruta ukurasa ili uuone",
   "اسمك وشكلك في شهاداتك، وتغيّرهما متى شئت": "Jina lako na mwonekano wako vinaonekana kwenye vyeti vyako, na unaweza kuvibadilisha wakati wowote",
   "اسمي": "Jina",

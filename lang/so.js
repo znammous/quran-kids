@@ -280,6 +280,7 @@ NUR_I18N.add('so', {
   "استمع لصوتك، فإن أعجبك احسبها مرة": "Dhegayso codkaaga; haddii uu kugu farxiyo, hal mar u tiri",
   "استمع لصوتي": "Dhegayso codkayga",
   "استمع للمقطع": "Dhegayso qaybta",
+  "استمع إليها": "Dhegayso",
   "اسحب الوجه لتراه": "Jiid bogga si aad u aragto",
   "اسمك وشكلك في شهاداتك، وتغيّرهما متى شئت": "Magacaaga iyo muuqaalkaagu waxay ka muuqdaan shahaadooyinkaaga, waadna beddeli kartaa goor kasta",
   "اسمي": "Magac",

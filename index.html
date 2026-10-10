@@ -553,11 +553,14 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
 
 /* ===== وجه المصحف: الكلمة في موضعها من مصحف المدينة ===== */
 /* أيقونة «موضعها في المصحف» تحت الآية */
-.mfbtnrow{display:flex;justify-content:center;margin:-2px 0 12px}
+.mfbtnrow{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin:-2px 0 12px}
 .mfbtn{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:14px;font-weight:800;
   color:#8a6b2a;background:#fdf6e4;border:2px solid #e0cfa4;border-radius:999px;padding:7px 15px;
   cursor:pointer;touch-action:manipulation;transition:.12s;box-shadow:0 3px 0 rgba(0,0,0,.10)}
 .mfbtn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.10)}
+/* «استمع إليها» بجانبه — ويحمرّ ما دام يتلو، فيُعرف أنّ لمستَه توقفها */
+.mfbtn.lsn{color:#0b4f7d;background:#e8f5ff;border-color:#a6cdf2}
+.mfbtn.lsn.on{color:#fff;background:#e04848;border-color:#ffb0b0}
 /* وجه المصحف ملء الشاشة */
 .mfsheet{position:fixed;inset:0;z-index:120;background:var(--paper);display:flex;flex-direction:column}
 /* ملءُ الشاشة: يُترك شريطُ الساعة والبطّاريّة فوقه بكحليّ التطبيق — كانت ترويسةُ
@@ -974,11 +977,6 @@ body:has(#scr-start.active) #qaBar{inset-inline-start:50%;transform:translateX(5
   width:max-content;white-space:nowrap;
   bottom:calc(88px + env(safe-area-inset-bottom))}
 body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-inset-bottom))}
-/* اختصارُ الاستماع في شريط الدرس — ويحمرّ ما دام يتلو، فيُعرف كيف يُوقَف */
-.pstat.listenchip{background:linear-gradient(180deg,#7ce9ff,#1fb0ef);border-color:#bde9ff;color:#04263f;
-  font-family:inherit;cursor:pointer;padding:5px 9px;font-size:16px;line-height:1}
-.pstat.listenchip:active{transform:scale(.9)}
-.pstat.listenchip.on{background:linear-gradient(180deg,#ff8080,#d63b3b);border-color:#ffc4c4;color:#fff}
 .pstat.sfxchip{font-family:inherit;cursor:pointer;padding:5px 9px;font-size:16px;line-height:1}
 .pstat.sfxchip:active{transform:scale(.9)}
 .pstat.sfxchip.on{background:linear-gradient(180deg,#ffd76a,#e0a312);border-color:#ffe9a8}
@@ -3045,8 +3043,6 @@ body.hastabs #btnRevQuit{display:none}
       <div class="onbbar"><i id="barFill" style="width:0%"></i></div>
       <div class="pstat"><span class="ico">⭐</span><b id="pStars">0</b></div>
       <div class="pstat" id="pStep">1/1</div>
-      <!-- اختصارُ الاستماع: يتلو مقطعَ الدرس بلا فتح وجه المصحف -->
-      <button type="button" class="pstat listenchip" id="pListen" title="استمع للمقطع" aria-label="استمع للمقطع">🎧</button>
       <!-- كتمُ أصوات التفاعل لهذه الجلسة وحدها: في المسجد ونحوه، بلا خفض صوت الجهاز -->
       <button type="button" class="pstat sfxchip" id="pSfx" title="اكتم أصوات التطبيق في هذه الجلسة" aria-label="اكتم أصوات التطبيق في هذه الجلسة">🔊</button>
       <div class="pstat combochip" id="comboChip" hidden><span class="ico">🔥</span><b id="comboN">0</b></div>
@@ -8687,17 +8683,18 @@ $('mfGoListen').onclick=function(){
   if(audTap()) return;              /* تتلو الآن: تُمسك ويُفتح صندوقُها */
   audAsk(audQueueSeg());
 };
-/* اختصارٌ في الدرس نفسِه لمن لم يفتح وجهَ المصحف: يتلو آيتَه التي هو فيها،
-   وإن لم تكن جولتُه آيةً بعينها (كتسميع صفحة) فمقطعَه.
+/* «استمع إليها» في «اقرأ وردّد» تحت الآية — كان في شريط الدرس فلا يُرى.
+   يتلو آيتَه التي هو فيها، وإن لم تكن جولتُه آيةً بعينها فمقطعَه.
    لمسةٌ تتلو مرّةً بلا سؤالٍ عن التكرار، ولمسةٌ توقفها — بلا صندوق. وتسكت
-   وحدَها إذا انتقل إلى السؤال التالي (runRound) */
-$('pListen').onclick=function(){
+   وحدَها إذا انتقل إلى السؤال التالي (runRound). ولا يظهر في غير «اقرأ وردّد»:
+   في الترتيب والفراغ والتسميع يسمع الجوابَ فيضيع السؤال */
+function lessonListen(){
   if(AUD.q.length){ audStop(); return; }
   var q=audQueueNow();
   if(!q.length){ try{ navToast('لا آياتِ في هذا الوجه لتُتلى'); }catch(e){} return; }
   audPlay(q, 1);
   AUD.les=S ? S.i : -1;
-};
+}
 $('pSfx').onclick=function(){
   SFX_MUTE=!SFX_MUTE; sfxSync();
   try{ navToast(SFX_MUTE?'🔇 كُتمت أصوات التطبيق حتى تغلقه':'🔊 عادت أصوات التطبيق'); }catch(e){}
@@ -9354,8 +9351,8 @@ function audSync(){
   /* الأيقونةُ تقول ما تفعله الضغطةُ التالية: تُمسك إن كانت تتلو، وتتابع إن أُمسكت */
   var ic = !on ? '🎧' : (hold ? '▶️' : '⏸️');
   /* زرُّ الدرس: يُظهر أنّه يتلو، ولمستُه توقفها */
-  var pl=$('pListen');
-  if(pl){ pl.classList.toggle('on', on); pl.textContent=on ? '⏹️' : '🎧'; }
+  var pl=$('btnListen');
+  if(pl){ pl.classList.toggle('on', on); pl.innerHTML=on ? '⏹️ <b>أوقِفْ</b>' : '🎧 <b>استمع إليها</b>'; }
   audMedia(on, hold);
   audAlive(on && !hold);
   var b=$('mfDockPlay'); if(!b) return;
@@ -10485,9 +10482,6 @@ function runRound(){
   var r=S.rounds[S.i];
   if(S.review && r.surah){ S.surah=r.surah; S.seg=[r.segFrom,r.segTo]; }
   r=qFit(r);
-  /* زرُّ الاستماع لـ«اقرأ وردّد» وحدَه: في سؤال الترتيب والفراغ والتسميع يسمع
-     الجوابَ فيضيع السؤال */
-  $('pListen').hidden=(r.t!=='read');
   /* مراجعةُ اليوم: يُعرض وجهُ المقطع قبل تسميعه، مرّةً لكلّ مقطع */
   if(r.t==='recite' && S.review && !S.rev && !S.juzTest && r.surah){
     var pvk=r.surah.n+':'+r.segFrom;
@@ -11025,7 +11019,8 @@ function roundRead(r){
     '<div class="ayahbox"><div class="ayah" style="font-size:'+SET.font+'px">'+esc(txt)+
     '<span class="anum">'+arNum(r.a+1)+'</span></div></div>'+
     /* أيقونة تفتح وجه المصحف ملء الشاشة، فيرى الطفل موضع الآية متى شاء */
-    '<div class="mfbtnrow"><button class="mfbtn" id="btnMushaf" aria-label="اعرض موضعها في وجه المصحف">📖 <b>موضعها في المصحف</b></button></div>'+
+    '<div class="mfbtnrow"><button class="mfbtn" id="btnMushaf" aria-label="اعرض موضعها في وجه المصحف">📖 <b>موضعها في المصحف</b></button>'+
+    '<button class="mfbtn lsn" id="btnListen">🎧 <b>استمع إليها</b></button></div>'+
     '<div class="reps" id="repDots"></div>'+
     (useRec ? '<button class="btn red big pulse" id="btnRec">🎤 سجّل قراءتي</button>'+
               '<div class="row" id="recRow" hidden style="margin:0 0 12px">'+
@@ -11065,6 +11060,8 @@ function roundRead(r){
   lockHeight($('playArea').querySelector('.ayahbox'), stageAyahHTMLs(SET.font,false),
              Math.round(innerHeight*0.46));
   $('btnMushaf').onclick=function(){ mushafOpen(s, r.a); };
+  $('btnListen').onclick=lessonListen;
+  try{ audSync(); }catch(e){}
   function dots(){ var d=''; for(var i=0;i<need;i++) d+=(i<got?'●':'○'); $('repDots').textContent=d; }
   dots();
   function countOne(){

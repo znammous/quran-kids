@@ -280,6 +280,7 @@ NUR_I18N.add('ha', {
   "استمع لصوتك، فإن أعجبك احسبها مرة": "Saurari muryarka; idan ta burge ka, ƙidaya ta sau ɗaya",
   "استمع لصوتي": "Saurari muryata",
   "استمع للمقطع": "Saurari sashen",
+  "استمع إليها": "Saurare ta",
   "اسحب الوجه لتراه": "Ja shafin don ka gan shi",
   "اسمك وشكلك في شهاداتك، وتغيّرهما متى شئت": "Sunanka da kamanninka suna bayyana a takardun shaidarka, kuma za ka iya canza su a kowane lokaci",
   "اسمي": "Suna",

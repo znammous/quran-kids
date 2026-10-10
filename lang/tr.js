@@ -280,6 +280,7 @@ NUR_I18N.add('tr', {
   "استمع لصوتك، فإن أعجبك احسبها مرة": "Sesini dinle; beğendiysen bir kez say",
   "استمع لصوتي": "Sesimi dinle",
   "استمع للمقطع": "Bölümü dinle",
+  "استمع إليها": "Dinle",
   "اسحب الوجه لتراه": "Görmek için sayfayı sürükle",
   "اسمك وشكلك في شهاداتك، وتغيّرهما متى شئت": "Adın ve görünümün belgelerinde yer alır; istediğin zaman değiştirebilirsin",
   "اسمي": "Adım",

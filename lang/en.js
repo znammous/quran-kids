@@ -280,6 +280,7 @@ NUR_I18N.add('en', {
   "استمع لصوتك، فإن أعجبك احسبها مرة": "Listen to your voice; if you like it, count it once",
   "استمع لصوتي": "Listen to my voice",
   "استمع للمقطع": "Listen to the section",
+  "استمع إليها": "Listen to it",
   "اسحب الوجه لتراه": "Drag the page to see it",
   "اسمك وشكلك في شهاداتك، وتغيّرهما متى شئت": "Your name and look appear on your certificates, and you can change them any time",
   "اسمي": "Name",

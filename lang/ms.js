@@ -280,6 +280,7 @@ NUR_I18N.add('ms', {
   "استمع لصوتك، فإن أعجبك احسبها مرة": "Dengar suara kamu; jika kamu suka, kira sekali",
   "استمع لصوتي": "Dengar suara saya",
   "استمع للمقطع": "Dengar bahagian ini",
+  "استمع إليها": "Dengarkan",
   "اسحب الوجه لتراه": "Seret muka surat untuk melihatnya",
   "اسمك وشكلك في شهاداتك، وتغيّرهما متى شئت": "Nama dan rupa kamu tertera pada sijil kamu, dan kamu boleh menukarnya bila-bila masa",
   "اسمي": "Nama",
