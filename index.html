@@ -8688,10 +8688,15 @@ $('mfGoListen').onclick=function(){
   audAsk(audQueueSeg());
 };
 /* اختصارٌ في الدرس نفسِه لمن لم يفتح وجهَ المصحف: يتلو آيتَه التي هو فيها،
-   وإن لم تكن جولتُه آيةً بعينها (كتسميع صفحة) فمقطعَه */
+   وإن لم تكن جولتُه آيةً بعينها (كتسميع صفحة) فمقطعَه.
+   لمسةٌ تتلو مرّةً بلا سؤالٍ عن التكرار، ولمسةٌ توقفها — بلا صندوق. وتسكت
+   وحدَها إذا انتقل إلى السؤال التالي (runRound) */
 $('pListen').onclick=function(){
-  if(audTap()) return;
-  audAsk(audQueueNow());
+  if(AUD.q.length){ audStop(); return; }
+  var q=audQueueNow();
+  if(!q.length){ try{ navToast('لا آياتِ في هذا الوجه لتُتلى'); }catch(e){} return; }
+  audPlay(q, 1);
+  AUD.les=S ? S.i : -1;
 };
 $('pSfx').onclick=function(){
   SFX_MUTE=!SFX_MUTE; sfxSync();
@@ -8774,7 +8779,7 @@ var QARIS=[
   {f:'mq-majed-zamil',            n:'ماجد الزامل',               s:'الزامل',  m:'majed-zamil',      r:139, x:[3,31], g:4}
 ];
 var AUD_CACHE='nur-audio';
-var AUD={ el:null, q:[], i:-1, url:'', rep:1, left:1, hold:false };   /* rep=0 يعني بلا توقّف */
+var AUD={ el:null, q:[], i:-1, url:'', rep:1, left:1, hold:false, les:-1 };   /* rep=0 يعني بلا توقّف؛ les سؤالُ الدرس الذي بدأها زرُّه */
 var AUD_REPS=[{v:1,n:'مرّة'},{v:3,n:'٣ مرّات'},{v:5,n:'٥ مرّات'},
               {v:7,n:'٧ مرّات'},{v:10,n:'١٠ مرّات'},{v:0,n:'♾️ بلا توقّف'}];
 function qariF(){
@@ -9124,7 +9129,7 @@ function audFree(){
 }
 function audStop(){
   if(AUD.el){ try{ AUD.el.pause(); }catch(e){} }
-  AUD.q=[]; AUD.i=-1; AUD.rep=1; AUD.left=1; AUD.hold=false; audFree(); audNxFree(); audSync();
+  AUD.q=[]; AUD.i=-1; AUD.rep=1; AUD.left=1; AUD.hold=false; AUD.les=-1; audFree(); audNxFree(); audSync();
   AUD_GEN++; audLoadHide();
 }
 /* ===== إمساكُ التلاوة =====
@@ -9348,9 +9353,9 @@ function audSync(){
   var rp = (AUD.rep===0) ? ' ♾️' : (AUD.rep>1 ? (' ×'+arNum(AUD.left)) : '');
   /* الأيقونةُ تقول ما تفعله الضغطةُ التالية: تُمسك إن كانت تتلو، وتتابع إن أُمسكت */
   var ic = !on ? '🎧' : (hold ? '▶️' : '⏸️');
-  /* زرُّ الدرس: يُظهر أنّه يتلو ليعرف كيف يُمسكه */
+  /* زرُّ الدرس: يُظهر أنّه يتلو، ولمستُه توقفها */
   var pl=$('pListen');
-  if(pl){ pl.classList.toggle('on', on); pl.textContent=ic; }
+  if(pl){ pl.classList.toggle('on', on); pl.textContent=on ? '⏹️' : '🎧'; }
   audMedia(on, hold);
   audAlive(on && !hold);
   var b=$('mfDockPlay'); if(!b) return;
@@ -9785,7 +9790,7 @@ function qariAsk(after){
   },null,null,list);
 }
 function audPlay(list, rep){
-  AUD.q=list; AUD.i=-1; AUD.hold=false;
+  AUD.q=list; AUD.i=-1; AUD.hold=false; AUD.les=-1;
   AUD.rep=(rep==null?1:rep); AUD.left=AUD.rep;
   if(AUD.el){ try{ AUD.el.pause(); }catch(e){} }
   audUnlock();
@@ -10469,6 +10474,8 @@ function qaEndStage(){
 }
 function runRound(){
   recReset();
+  /* تلاوةُ زرِّ الدرس لسؤالها: تسكت إذا انتقل إلى غيره */
+  try{ if(AUD.q.length && AUD.les>=0 && (!S || AUD.les!==S.i)) audStop(); }catch(e){}
   if(S) S.e0=S.errors;      /* ليُعرف السؤالُ الذي أُصيب من أوّل محاولة */
   qaSync();
   $('playArea').className='qfill qcenter';
