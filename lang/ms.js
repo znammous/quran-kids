@@ -1625,7 +1625,6 @@ NUR_I18N.add('ms', {
   "ياسمين دمشق": "Melati Damsyik",
   "يبقى حفظُك كما هو، وتعود إليك هذه المقاطعُ موزّعةً على الأيّام القادمة": "Hafazan kamu kekal seperti sedia ada, dan bahagian-bahagian ini akan kembali kepada kamu secara berperingkat pada hari-hari akan datang",
   "يبقى في ذاكرة الصفحة، تسمعه، ثمّ يُمحى — ولا يُحفظ حتى في جهازك، ولا يمرّ بأيّ خادم": "Ia kekal dalam memori halaman; kamu mendengarnya, kemudian ia dipadam — tidak disimpan walaupun dalam peranti kamu, dan tidak pernah melalui mana-mana pelayan",
-  "يتحقّق التطبيقُ من التحديث عند فتحه، ويُخبرك إن وُجد": "Aplikasi menyemak kemas kini apabila dibuka dan memberitahu kamu jika ada",
   "يتدلّى فوق الباب": "Tergantung di atas pintu",
   "يتسلّق جدران البيت الشاميّ": "Memanjat dinding rumah Syam",
   "يحتاج فتح التطبيق من الإنترنت لا من ملفّ على الجهاز": "Aplikasi perlu dibuka dari internet, bukan dari fail dalam peranti",
@@ -1765,4 +1764,6 @@ NUR_I18N.add('ms', {
   "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "Kemajuan terdahulu dipadam — permata dan masjid kamu kekal",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Kamu ada kemajuan hafazan terdahulu dalam aplikasi selain yang baru kamu rekodkan: {n}.",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Kamu ada kemajuan hafazan terdahulu dalam aplikasi: {n}.",
+  "يُنزَّل التحديثُ وحدَه في الخلفيّة، ويعمل في الفتحة التالية للتطبيق": "Kemas kini dimuat turun sendiri di latar belakang dan berkuat kuasa apabila aplikasi dibuka seterusnya",
+  "نُزّل التحديث، ويعمل في الفتحة التالية للتطبيق": "Kemas kini telah dimuat turun — berkuat kuasa apabila aplikasi dibuka seterusnya",
 });

@@ -1625,7 +1625,6 @@ NUR_I18N.add('fr', {
   "ياسمين دمشق": "Jasmin de Damas",
   "يبقى حفظُك كما هو، وتعود إليك هذه المقاطعُ موزّعةً على الأيّام القادمة": "Ta mémorisation reste telle quelle, et ces passages te reviennent répartis sur les jours suivants",
   "يبقى في ذاكرة الصفحة، تسمعه، ثمّ يُمحى — ولا يُحفظ حتى في جهازك، ولا يمرّ بأيّ خادم": "Il reste dans la mémoire de la page ; tu l’écoutes, puis il est effacé — pas même gardé sur ton appareil, et il ne passe jamais par aucun serveur",
-  "يتحقّق التطبيقُ من التحديث عند فتحه، ويُخبرك إن وُجد": "L’application vérifie les mises à jour à l’ouverture et te prévient s’il y en a une",
   "يتدلّى فوق الباب": "Suspendue au-dessus de la porte",
   "يتسلّق جدران البيت الشاميّ": "Grimpe sur les murs d’une maison du Levant",
   "يحتاج فتح التطبيق من الإنترنت لا من ملفّ على الجهاز": "L’application doit être ouverte depuis internet, pas depuis un fichier sur l’appareil",
@@ -1765,4 +1764,6 @@ NUR_I18N.add('fr', {
   "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "Progression précédente effacée — tes joyaux et ta mosquée restent",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Tu as dans l'application une progression de mémorisation antérieure, en dehors de ce que tu viens d'enregistrer : {n}.",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Tu as dans l'application une progression de mémorisation antérieure : {n}.",
+  "يُنزَّل التحديثُ وحدَه في الخلفيّة، ويعمل في الفتحة التالية للتطبيق": "Les mises à jour se téléchargent seules en arrière-plan et s'appliquent à la prochaine ouverture de l'application",
+  "نُزّل التحديث، ويعمل في الفتحة التالية للتطبيق": "Mise à jour téléchargée — elle s'appliquera à la prochaine ouverture de l'application",
 });

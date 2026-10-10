@@ -1625,7 +1625,6 @@ NUR_I18N.add('sw', {
   "ياسمين دمشق": "Yasmini ya Damasko",
   "يبقى حفظُك كما هو، وتعود إليك هذه المقاطعُ موزّعةً على الأيّام القادمة": "Kuhifadhi kwako kunabaki kama kulivyo, na sehemu hizi zinarudi kwako zikigawanywa katika siku zijazo",
   "يبقى في ذاكرة الصفحة، تسمعه، ثمّ يُمحى — ولا يُحفظ حتى في جهازك، ولا يمرّ بأيّ خادم": "Inabaki katika kumbukumbu ya ukurasa; unaisikia, kisha inafutwa — haihifadhiwi hata kwenye kifaa chako, wala haipiti kwenye seva yoyote",
-  "يتحقّق التطبيقُ من التحديث عند فتحه، ويُخبرك إن وُجد": "Programu inaangalia kama kuna sasisho inapofunguliwa na inakuambia likiwepo",
   "يتدلّى فوق الباب": "Inaning'inia juu ya mlango",
   "يتسلّق جدران البيت الشاميّ": "Inapanda kuta za nyumba ya Sham",
   "يحتاج فتح التطبيق من الإنترنت لا من ملفّ على الجهاز": "Programu inahitaji kufunguliwa kutoka intaneti, si kutoka faili kwenye kifaa",
@@ -1765,4 +1764,6 @@ NUR_I18N.add('sw', {
   "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "Maendeleo ya awali yamefutwa — vito na msikiti wako vimebaki",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Una maendeleo ya awali ya kuhifadhi katika programu nje ya uliyosajili sasa: {n}.",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Una maendeleo ya awali ya kuhifadhi katika programu: {n}.",
+  "يُنزَّل التحديثُ وحدَه في الخلفيّة، ويعمل في الفتحة التالية للتطبيق": "Sasisho hupakuliwa lenyewe chinichini na hufanya kazi programu inapofunguliwa tena",
+  "نُزّل التحديث، ويعمل في الفتحة التالية للتطبيق": "Sasisho limepakuliwa — litafanya kazi programu itakapofunguliwa tena",
 });

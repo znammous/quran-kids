@@ -1625,7 +1625,6 @@ NUR_I18N.add('uz', {
   "ياسمين دمشق": "Damashq yasmini",
   "يبقى حفظُك كما هو، وتعود إليك هذه المقاطعُ موزّعةً على الأيّام القادمة": "Yodlaganlaring oʻz holicha qoladi, bu boʻlaklar esa keyingi kunlarga taqsimlanib senga qaytadi",
   "يبقى في ذاكرة الصفحة، تسمعه، ثمّ يُمحى — ولا يُحفظ حتى في جهازك، ولا يمرّ بأيّ خادم": "U sahifa xotirasida qoladi; sen uni eshitasan, keyin oʻchiriladi — hatto qurilmangda ham saqlanmaydi va hech qachon biror serverdan oʻtmaydi",
-  "يتحقّق التطبيقُ من التحديث عند فتحه، ويُخبرك إن وُجد": "Ilova ochilganda yangilanishlarni tekshiradi va bor boʻlsa, senga aytadi",
   "يتدلّى فوق الباب": "Eshik ustiga osiladi",
   "يتسلّق جدران البيت الشاميّ": "Shomdagi uy devorlariga chirmashib chiqadi",
   "يحتاج فتح التطبيق من الإنترنت لا من ملفّ على الجهاز": "Ilova qurilmadagi fayldan emas, internetdan ochilishi kerak",
@@ -1765,4 +1764,6 @@ NUR_I18N.add('uz', {
   "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "Oldingi yutuq o'chirildi — javohirlaring va masjiding qoldi",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Ilovada hozir qayd etganingdan tashqari oldingi yodlash yutug'ing bor: {n}.",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Ilovada oldingi yodlash yutug'ing bor: {n}.",
+  "يُنزَّل التحديثُ وحدَه في الخلفيّة، ويعمل في الفتحة التالية للتطبيق": "Yangilanish fonda o'zi yuklab olinadi va ilova keyingi safar ochilganda ishga tushadi",
+  "نُزّل التحديث، ويعمل في الفتحة التالية للتطبيق": "Yangilanish yuklab olindi — ilova keyingi safar ochilganda ishga tushadi",
 });

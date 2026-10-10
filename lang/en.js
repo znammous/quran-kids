@@ -1625,7 +1625,6 @@ NUR_I18N.add('en', {
   "ياسمين دمشق": "Damascus jasmine",
   "يبقى حفظُك كما هو، وتعود إليك هذه المقاطعُ موزّعةً على الأيّام القادمة": "Your memorization stays as it is, and these sections come back to you spread over the coming days",
   "يبقى في ذاكرة الصفحة، تسمعه، ثمّ يُمحى — ولا يُحفظ حتى في جهازك، ولا يمرّ بأيّ خادم": "It stays in the page’s memory; you hear it, then it’s erased — not even saved on your device, and it never passes through any server",
-  "يتحقّق التطبيقُ من التحديث عند فتحه، ويُخبرك إن وُجد": "The app checks for updates when it opens and tells you if there is one",
   "يتدلّى فوق الباب": "Hangs above the door",
   "يتسلّق جدران البيت الشاميّ": "Climbs the walls of a Levantine home",
   "يحتاج فتح التطبيق من الإنترنت لا من ملفّ على الجهاز": "The app must be opened from the internet, not from a file on the device",
@@ -1765,4 +1764,6 @@ NUR_I18N.add('en', {
   "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "Previous progress erased — your gems and mosque remain",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "You have earlier memorization progress in the app beyond what you just registered: {n}.",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "You have earlier memorization progress in the app: {n}.",
+  "يُنزَّل التحديثُ وحدَه في الخلفيّة، ويعمل في الفتحة التالية للتطبيق": "Updates download by themselves in the background and take effect the next time the app opens",
+  "نُزّل التحديث، ويعمل في الفتحة التالية للتطبيق": "Update downloaded — it takes effect the next time the app opens",
 });

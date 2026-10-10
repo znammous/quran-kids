@@ -1625,7 +1625,6 @@ NUR_I18N.add('id', {
   "ياسمين دمشق": "Melati Damaskus",
   "يبقى حفظُك كما هو، وتعود إليك هذه المقاطعُ موزّعةً على الأيّام القادمة": "Hafalanmu tetap seperti semula, dan bagian-bagian ini kembali kepadamu tersebar di hari-hari berikutnya",
   "يبقى في ذاكرة الصفحة، تسمعه، ثمّ يُمحى — ولا يُحفظ حتى في جهازك، ولا يمرّ بأيّ خادم": "Rekaman tetap di memori halaman; kamu mendengarnya, lalu dihapus — bahkan tidak disimpan di perangkatmu, dan tidak pernah melewati server mana pun",
-  "يتحقّق التطبيقُ من التحديث عند فتحه، ويُخبرك إن وُجد": "Aplikasi memeriksa pembaruan saat dibuka dan memberitahumu kalau ada",
   "يتدلّى فوق الباب": "Digantung di atas pintu",
   "يتسلّق جدران البيت الشاميّ": "Merambat di dinding rumah Syam",
   "يحتاج فتح التطبيق من الإنترنت لا من ملفّ على الجهاز": "Aplikasi harus dibuka dari internet, bukan dari file di perangkat",
@@ -1765,4 +1764,6 @@ NUR_I18N.add('id', {
   "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "Kemajuan sebelumnya dihapus — permata dan masjidmu tetap ada",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Kamu punya kemajuan hafalan sebelumnya di aplikasi selain yang baru kamu catat: {n}.",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Kamu punya kemajuan hafalan sebelumnya di aplikasi: {n}.",
+  "يُنزَّل التحديثُ وحدَه في الخلفيّة، ويعمل في الفتحة التالية للتطبيق": "Pembaruan diunduh sendiri di latar belakang dan berlaku saat aplikasi dibuka berikutnya",
+  "نُزّل التحديث، ويعمل في الفتحة التالية للتطبيق": "Pembaruan sudah diunduh — berlaku saat aplikasi dibuka berikutnya",
 });

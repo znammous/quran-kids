@@ -1625,7 +1625,6 @@ NUR_I18N.add('so', {
   "ياسمين دمشق": "Yaasamiin Dimishiq",
   "يبقى حفظُك كما هو، وتعود إليك هذه المقاطعُ موزّعةً على الأيّام القادمة": "Xifdigaagu sidiisa ayuu ahaanayaa, qaybahanna waxay kuugu soo noqonayaan iyagoo loo qaybiyay maalmaha soo socda",
   "يبقى في ذاكرة الصفحة، تسمعه، ثمّ يُمحى — ولا يُحفظ حتى في جهازك، ولا يمرّ بأيّ خادم": "Wuxuu ku jiraa xusuusta bogga; waad maqlaysaa, kadibna waa la tirtiraa — xataa qalabkaaga laguma kaydiyo, mana maro server kasta",
-  "يتحقّق التطبيقُ من التحديث عند فتحه، ويُخبرك إن وُجد": "App-ku wuxuu hubiyaa cusboonaysiinta markii la furo, wuxuuna ku ogeysiiyaa haddii ay jirto",
   "يتدلّى فوق الباب": "Albaabka dushiisa ayuu ka laalaada",
   "يتسلّق جدران البيت الشاميّ": "Wuxuu fuulaa darbiyada guriga Shaamiga ah",
   "يحتاج فتح التطبيق من الإنترنت لا من ملفّ على الجهاز": "App-ka waa in laga furo internetka, ee ma aha fayl qalabka ku jira",
@@ -1765,4 +1764,6 @@ NUR_I18N.add('so', {
   "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "Horumarkii hore waa la tirtiray — dahabkaaga iyo masaajidkaagu way harsan yihiin",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Waxaad app-ka ku leedahay horumar xifdi oo hore, oo ka baxsan waxa aad hadda diiwaangelisay: {n}.",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Waxaad app-ka ku leedahay horumar xifdi oo hore: {n}.",
+  "يُنزَّل التحديثُ وحدَه في الخلفيّة، ويعمل في الفتحة التالية للتطبيق": "Cusboonaysiintu iskeed ayay gadaal ugu soo degtaa, waxayna shaqaysaa marka xigta ee app-ka la furo",
+  "نُزّل التحديث، ويعمل في الفتحة التالية للتطبيق": "Cusboonaysiinta waa la soo dejiyey — waxay shaqayn doontaa marka xigta ee app-ka la furo",
 });

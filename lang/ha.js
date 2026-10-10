@@ -1625,7 +1625,6 @@ NUR_I18N.add('ha', {
   "ياسمين دمشق": "Yasmin na Dimashƙ",
   "يبقى حفظُك كما هو، وتعود إليك هذه المقاطعُ موزّعةً على الأيّام القادمة": "Haddarka tana nan yadda take, kuma waɗannan sassan za su dawo gare ka a rarrabe a kwanaki masu zuwa",
   "يبقى في ذاكرة الصفحة، تسمعه، ثمّ يُمحى — ولا يُحفظ حتى في جهازك، ولا يمرّ بأيّ خادم": "Yana zama a ƙwaƙwalwar shafin; kana jin sa, sannan a goge shi — ba a ajiye shi ko a na’urarka, kuma ba ya wucewa ta kowace sabar",
-  "يتحقّق التطبيقُ من التحديث عند فتحه، ويُخبرك إن وُجد": "Manhajar tana duba sabuntawa idan ta buɗe, kuma tana sanar da kai idan akwai",
   "يتدلّى فوق الباب": "Yana rataye a saman ƙofa",
   "يتسلّق جدران البيت الشاميّ": "Yana hawa bangon gidan Sham",
   "يحتاج فتح التطبيق من الإنترنت لا من ملفّ على الجهاز": "Dole a buɗe manhajar daga intanet, ba daga fayil a na’ura ba",
@@ -1765,4 +1764,6 @@ NUR_I18N.add('ha', {
   "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "An goge cigaban da ya gabata — duwatsunka da masallacinka suna nan",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Kana da cigaban haddar da ya gabata a manhajar, ban da abin da ka yi rajista yanzu: {n}.",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Kana da cigaban haddar da ya gabata a manhajar: {n}.",
+  "يُنزَّل التحديثُ وحدَه في الخلفيّة، ويعمل في الفتحة التالية للتطبيق": "Sabuntawa tana saukowa da kanta a bayan fage, kuma tana aiki idan aka sake buɗe manhajar",
+  "نُزّل التحديث، ويعمل في الفتحة التالية للتطبيق": "An sauko da sabuntawa — za ta yi aiki idan aka sake buɗe manhajar",
 });

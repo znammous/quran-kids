@@ -1625,7 +1625,6 @@ NUR_I18N.add('tr', {
   "ياسمين دمشق": "Şam yasemini",
   "يبقى حفظُك كما هو، وتعود إليك هذه المقاطعُ موزّعةً على الأيّام القادمة": "Ezberin olduğu gibi kalır; bu bölümler önümüzdeki günlere dağıtılarak sana geri döner",
   "يبقى في ذاكرة الصفحة، تسمعه، ثمّ يُمحى — ولا يُحفظ حتى في جهازك، ولا يمرّ بأيّ خادم": "Sayfanın belleğinde kalır; onu dinlersin, sonra silinir — cihazına bile kaydedilmez ve hiçbir sunucudan geçmez",
-  "يتحقّق التطبيقُ من التحديث عند فتحه، ويُخبرك إن وُجد": "Uygulama açılırken güncelleme olup olmadığını kontrol eder, varsa sana haber verir",
   "يتدلّى فوق الباب": "Kapının üstünde asılı durur",
   "يتسلّق جدران البيت الشاميّ": "Şam evlerinin duvarlarına tırmanır",
   "يحتاج فتح التطبيق من الإنترنت لا من ملفّ على الجهاز": "Uygulamanın cihazdaki bir dosyadan değil, internetten açılması gerekir",
@@ -1765,4 +1764,6 @@ NUR_I18N.add('tr', {
   "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "Önceki ilerleme silindi — mücevherlerin ve camin duruyor",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Uygulamada az önce kaydettiğin dışında önceki ezber ilerlemen var: {n}.",
   "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Uygulamada önceki ezber ilerlemen var: {n}.",
+  "يُنزَّل التحديثُ وحدَه في الخلفيّة، ويعمل في الفتحة التالية للتطبيق": "Güncelleme arka planda kendiliğinden indirilir ve uygulama bir sonraki açılışında devreye girer",
+  "نُزّل التحديث، ويعمل في الفتحة التالية للتطبيق": "Güncelleme indirildi — uygulama bir sonraki açılışında devreye girecek",
 });

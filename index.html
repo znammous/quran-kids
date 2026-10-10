@@ -3195,7 +3195,7 @@ body.hastabs #btnRevQuit{display:none}
       <div class="setblock nativeonly" style="margin-top:12px">
         <label class="lbl">🔄 التحديث</label>
         <button class="btn blue" id="btnUpdCheck" style="width:100%;position:relative">🔄 تحقّق من وجود تحديث</button>
-        <div class="note" id="updNote">يتحقّق التطبيقُ من التحديث عند فتحه، ويُخبرك إن وُجد.</div>
+        <div class="note" id="updNote">يُنزَّل التحديثُ وحدَه في الخلفيّة، ويعمل في الفتحة التالية للتطبيق.</div>
       </div>
       <input type="file" id="fileInput" accept=".json,application/json" style="display:none">
       <!-- الاقتراحات والبلاغات: تُكتب في تطبيق البريد ويُرسلها المستخدمُ بنفسه،
@@ -19375,29 +19375,84 @@ function updDot(){
   }
   var u=$('btnUpdCheck'); if(u) u.classList.toggle('newdot', on);
 }
-/* عند الفتح يسكت عمّا لا جديدَ فيه وعن انقطاع الشبكة، ولا يُلحّ:
-   من قال «لاحقاً» لا يُسأل عن الحزمة نفسها في يومه */
+/* ===== التحديثُ الصامت =====
+   كان يُسأل عند الفتح «حدِّث الآن / لاحقاً»، فيؤجّله الطفلُ يوماً بعد يوم.
+   فصار يُنزَّل في الخلفيّة بلا نافذة، ويُعيَّن حزمةً تاليةً تعمل في الفتحة
+   القادمة — لا لحظةَ تنزيله، فلا ينقطع درسٌ بدأه. ومن عاد إلى التطبيق بعد
+   غيبةٍ طويلة فهي كفتحةٍ جديدة، فيُطبَّق ساعتَها. و«الجديدُ» يُعرض بعد الوصول
+   بنافذته المعتادة. ومن فعّل «توفيرَ البيانات» أو كان على بيانات الجوّال
+   (حيث يُعرف ذلك) لا يُنزَّل له، وتبقى النقطةُ وزرُّ التحقّق. */
+var UPD_AWAY=30*60*1000;                 /* غيبةٌ تُعدّ بعدها العودةُ فتحةً جديدة */
+/* ما عُيّن تاليًا يعمل في أيّ فتحةٍ جديدة. فإن وجدناه عند الفتح ما زال هو
+   الجديدَ المعروض فقد تعثّر ورُدّ عنه: لا يُنزَّل ثانيةً بصمت، ويبقى بابُ «تحقّق» */
+var UPD_PREV=load('nur_upd_next','');
+try{ localStorage.removeItem('nur_upd_next'); }catch(e){}
+function updMetered(){
+  var c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  return !!(c && (c.saveData || c.type==='cellular'));
+}
+/* تنزيلُ الحزمة وتعيينُها تاليةً — يشترك فيه الصامتُ و«حدِّث الآن» */
+function updFetchBundle(u){
+  var L=liveUpd();
+  /* تُتمّ الخطوطُ نسخَها إلى المخزن أوّلاً: الحزمةُ الجديدة خاليةٌ منها.
+     وما نُزّل من قبلُ ثمّ لم يُطبَّق لا يُنزَّل ثانية */
+  return mfSeed().then(function(){ return L.getBundles(); }).then(function(b){
+    if(((b && b.bundleIds)||[]).indexOf(u.tag)>=0) return;
+    var o={url:u.url, bundleId:u.tag, artifactType:'zip'};
+    if(u.sha) o.checksum=u.sha;
+    return L.downloadBundle(o);
+  }).then(function(){
+    return L.setNextBundle({bundleId:u.tag});
+  });
+}
+function updSilent(u){
+  if(UPD_BUSY || updMetered()) return;
+  if(load('nur_upd_next','')===u.id) return;          /* نُزّل وينتظر الفتحةَ القادمة */
+  if(UPD_PREV===u.id) return;                          /* عُيّن من قبلُ فتعثّر */
+  UPD_BUSY=true;
+  updFetchBundle(u).then(function(){
+    UPD_BUSY=false;
+    save('nur_upd_next',u.id);
+    updMark(null);
+    var note=$('updNote');
+    if(note) note.textContent='✅ نُزّل التحديث، ويعمل في الفتحة التالية للتطبيق.';
+  })['catch'](function(){ UPD_BUSY=false; });       /* يُعاد في الفتحة القادمة */
+}
+(function(){
+  var away=0;
+  document.addEventListener('visibilitychange', function(){
+    if(document.hidden){ away=Date.now(); return; }
+    var L=liveUpd();
+    if(!L || !away || Date.now()-away<UPD_AWAY || !load('nur_upd_next','') || UPD_BUSY) return;
+    try{ localStorage.removeItem('nur_upd_next'); }catch(e){}
+    try{ saveDBNow(); }catch(e){}
+    try{ L.reload(); }catch(e){}
+  });
+})();
+/* عند الفتح يسكت عمّا لا جديدَ فيه وعن انقطاع الشبكة، ولا نافذةَ فيه:
+   الجديدُ يُنزَّل بصمت. والنافذةُ لمن ضغط «تحقّق» بيده */
 function updCheck(manual){
   if(!liveUpd() || UPD_BUSY) return;
   var note=$('updNote');
   if(manual && note) note.textContent='⏳ جارٍ التحقّق…';
   updFetch().then(function(u){
-    updMark(u.st==='none' ? null : (u.id||u.st));
+    var ready=(u.st==='new' && load('nur_upd_next','')===u.id);
+    updMark((u.st==='none'||ready) ? null : (u.id||u.st));
     if(u.st==='none'){ if(manual && note) note.textContent='✅ عندك أحدثُ إصدار.'; return; }
     if(u.st==='store'){
       if(note) note.textContent='يوجد إصدارٌ جديد يحتاج تحديثَ التطبيق نفسِه من المتجر.';
       return;
     }
-    if(note) note.textContent='🆕 يوجد تحديث.';
-    var later=load('nur_upd_later',null);
-    if(!manual && later && later.id===u.id && later.day===todayNum()) return;
+    if(ready && note) note.textContent='✅ نُزّل التحديث، ويعمل في الفتحة التالية للتطبيق.';
+    else if(note) note.textContent='🆕 يوجد تحديث.';
+    if(!manual){ updSilent(u); return; }
     /* الجديدُ سطرٌ وحدَه مترجَمٌ من قبلُ، فلا يمسّ مفاتيحَ ما حولَه */
     uiBox('<b>يوجد تحديثٌ لـ«نور الوحي»</b>\n\n'+
           (u.note ? '<b>🆕 '+u.note+'</b>\n\n' : '')+
           tx('فيه ما أُضيف وأُصلح منذ نسختك. حجمُه نحو {mb} ميجابايت — ويُستحسن تنزيلُه على شبكة Wi-Fi.', {mb:arNum(u.mb)})+'\n\n'+
           'تقدُّمُك وحفظُك باقيان كما هما.',
           '🔄', '🔄 حدِّث الآن', 'لاحقاً', function(yes){
-            if(yes) updApply(u); else save('nur_upd_later',{id:u.id, day:todayNum()});
+            if(yes) updApply(u); else updSilent(u);   /* «لاحقاً»: يُنزَّل ويعمل في الفتحة القادمة */
           });
   })['catch'](function(){
     if(manual && note) note.textContent='تعذّر التحقّق — تأكّد من الاتصال بالإنترنت ثمّ أعد المحاولة.';
@@ -19426,16 +19481,8 @@ function updApply(u){
     });
   }catch(e){}
   function unlisten(){ try{ Promise.resolve(h).then(function(x){ if(x && x.remove) x.remove(); }); }catch(e){} }
-  /* تُتمّ الخطوطُ نسخَها إلى المخزن أوّلاً: الحزمةُ الجديدة خاليةٌ منها.
-     وما نُزّل من قبلُ ثمّ لم يُطبَّق لا يُنزَّل ثانية */
-  mfSeed().then(function(){ return L.getBundles(); }).then(function(b){
-    if(((b && b.bundleIds)||[]).indexOf(u.tag)>=0) return;
-    var o={url:u.url, bundleId:u.tag, artifactType:'zip'};
-    if(u.sha) o.checksum=u.sha;
-    return L.downloadBundle(o);
-  }).then(function(){
-    return L.setNextBundle({bundleId:u.tag});
-  }).then(function(){
+  updFetchBundle(u).then(function(){
+    try{ localStorage.removeItem('nur_upd_next'); }catch(e){}
     if(u.noteAr) save('nur_news',u.noteAr);   /* قرأه هنا، فلا يُعاد عليه بعد الفتح */
     try{ localStorage.removeItem('nur_upd_new'); }catch(e){}
     unlisten();
