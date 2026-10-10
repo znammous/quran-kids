@@ -10485,6 +10485,9 @@ function runRound(){
   var r=S.rounds[S.i];
   if(S.review && r.surah){ S.surah=r.surah; S.seg=[r.segFrom,r.segTo]; }
   r=qFit(r);
+  /* زرُّ الاستماع لـ«اقرأ وردّد» وحدَه: في سؤال الترتيب والفراغ والتسميع يسمع
+     الجوابَ فيضيع السؤال */
+  $('pListen').hidden=(r.t!=='read');
   /* مراجعةُ اليوم: يُعرض وجهُ المقطع قبل تسميعه، مرّةً لكلّ مقطع */
   if(r.t==='recite' && S.review && !S.rev && !S.juzTest && r.surah){
     var pvk=r.surah.n+':'+r.segFrom;
