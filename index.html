@@ -1149,6 +1149,14 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 .reprow .repk{flex:0 0 auto;white-space:nowrap}
 .reprow .repv{flex:1 1 auto;min-width:0;color:#102b4a;text-align:end;
   white-space:normal;overflow-wrap:anywhere}
+/* ملخّصُ «خطتي» في «مَن أنت؟»: الصفوفُ نفسُها على لوحةٍ من ألوان الثيم لا على
+   ورقة التقرير — كانت ألوانُها الداكنةُ الثابتة تذوب في الوضع الليليّ */
+.revbox .reprow{color:var(--on1)}
+.revbox .reprow .repv{color:var(--on2)}
+.revbox .reprow .repv.ok{color:#5fe08f}
+.revbox .reprow .repv.wait{color:var(--gold)}
+body.light .revbox .reprow .repv.ok{color:#147c40}
+body.light .revbox .reprow .repv.wait{color:#a06a12}
 .repbar{height:11px;border-radius:99px;background:#e8e0c6;overflow:hidden;margin:8px 0 4px}
 .repbar i{display:block;height:100%;background:linear-gradient(90deg,#d9a441,#8a6100)}
 .cert .waqf{margin-top:10px;font-size:12.5px;font-weight:800;color:#8a6a1e;line-height:1.9}
@@ -13139,7 +13147,7 @@ function onbPlanHTML(){
   var line=function(ic,k,v,done){
     return '<div class="reprow" style="padding:7px 0">'+
       '<span class="repk">'+ic+' '+esc(k)+'</span>'+
-      '<span class="repv" style="color:'+(done?'#147c40':'#a06a12')+'">'+
+      '<span class="repv '+(done?'ok':'wait')+'">'+
         (done?'✅ ':'⌛ ')+esc(v)+'</span></div>';
   };
   h+='<div class="revbox" style="margin:0 0 16px">';
