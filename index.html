@@ -10330,6 +10330,8 @@ var C_QUES=['سؤال واحد','سؤالان','أسئلة','سؤالاً'];
 var C_AYAH=['آية واحدة','آيتان','آيات','آية'];
 var C_SURAH=['سورة واحدة','سورتان','سور','سورة'];
 var C_SEG=['مقطع واحد','مقطعان','مقاطع','مقطعاً'];
+/* معدودُ «مقطع» بعد رقمٍ مكتوب: «٧ مقاطع» و«١١ مقطعاً» — لا «٧ مقطعاً» */
+function segWord(n){ return (n>=3 && n<=10) ? 'مقاطع' : 'مقطعاً'; }
 /* بعد حرف جرّ: «بعد يومين» لا «بعد يومان» — وصيغُه في القواميس صيغُ «يوم» */
 var C_DAYS=['يوم','يومين','أيام','يوماً'];
 /* عمرُ المهمّة: منذ متى حلّ موعدُها ولم تُؤدَّ — «منذ يومين» لا «منذ يومان» */
@@ -11993,7 +11995,7 @@ function finishStage(){
              PATH_BTN;
       }else if(!mR){
         note='<p style="color:#146b3f;font-size:15px;font-weight:800;margin:0 0 12px">'+
-             '✅ تمّ حفظ اليوم — وبقيت مراجعتك: '+arNum(dueN)+' مقطعاً</p>';
+             tx('✅ تمّ حفظ اليوم — وبقيت مراجعتك: {n}',{n:arCount(dueN,C_SEG)})+'</p>';
         btns='<button class="btn primary big pulse" id="btnDayRev">☀️ ابدأ مراجعة اليوم</button>'+
              PATH_BTN+(more?MORE_BTN:'');
       }else{
@@ -13071,7 +13073,7 @@ function planTitle(){
 function planSubtitle(){
   var st=bqnState(), pl=st.id?bqnPlan(st.id):null;
   return pl ? ('أنت في اليوم '+arNum(Math.min(st.day+1,pl.n))+' من '+arNum(pl.n))
-            : ('أتممت '+arNum(doneSegsCountFor(segMode()))+' من '+arNum(khatmaSegs(segMode()))+' مقطعاً');
+            : ('أتممت '+arNum(doneSegsCountFor(segMode()))+' من '+arNum(khatmaSegs(segMode()))+' '+segWord(khatmaSegs(segMode())));
 }
 function fillBqnSelect(){
   var el=$('bqnNote');
@@ -13697,7 +13699,8 @@ function priorCeleFlush(){
   try{ celeShow({ ic:'📌', kick:'✅ سُجّل حفظك السابق',
     title:'أُضيفت '+arNum(c.n)+' آية إلى رصيدك',
     sub:'ستدخل المراجعة، وأُعيد حساب الأيام المتبقّية',
-    rew:'＋ '+arNum(c.added)+' مقطعاً جديداً' }); }catch(e){}
+    rew:'＋ '+(c.added===1 ? 'مقطعٌ جديد' : c.added===2 ? 'مقطعان جديدان'
+             : arNum(c.added)+(c.added<=10 ? ' مقاطع جديدة' : ' مقطعاً جديداً')) }); }catch(e){}
 }
 /* هل أشّر شيئاً من حفظه السابق؟ الأمرُ يُحفظ مع كلّ نقرةٍ لا عند الاعتماد،
    فيُعرف ما نواه قبل أن يُعتمد. */
@@ -13834,7 +13837,7 @@ function renderBqnList(){
     selfBody+='<button type="button" class="onbopt'+(on?' sel':'')+'" data-self="'+z[0]+'">'+
        '<span class="oe">'+(on?'✅':z[1])+'</span>'+
        '<span class="ot"><b>'+esc(z[2])+'</b><i>'+esc(khatmaLabel(z[0]))+
-       (dn?(' • أتممت '+arNum(dn)+' من '+arNum(tot)+' مقطعاً'):'')+'</i></span></button>';
+       (dn?(' • أتممت '+arNum(dn)+' من '+arNum(tot)+' '+segWord(tot)):'')+'</i></span></button>';
   });
   selfBody+='</div>';
   bqnBody+='<div class="revsum" style="margin:0 0 12px">منقولة عن <b>'+esc(BQN_SRC_T)+'</b><br>'+
@@ -14493,7 +14496,8 @@ function finishReview(){
     ? ('أسئلة الاختبار: '+arNum(S.rounds.length)+' • أخطاؤك: '+arNum(S.errors)+
        (ok?(S.juzFirst?(' • +100 💎 و'+arNum(JUZ_GOLD)+' ✨')
                       :' • تثبيتٌ لا جائزة — نلتَ جائزتَه أوّلَ مرّة'):''))
-    : ('راجعت '+arNum(S.due.length)+' مقطعاً، وأخطاؤك: '+arNum(S.errors)+' • +20 💎');
+    : ('راجعت '+(S.due.length===1 ? 'مقطعاً واحداً' : S.due.length===2 ? 'مقطعين'
+                : arNum(S.due.length)+' '+segWord(S.due.length))+'، وأخطاؤك: '+arNum(S.errors)+' • +20 💎');
   $('playArea').innerHTML=
     '<div style="text-align:center"><div style="font-size:52px">'+(ok?(isTest?'🏆':'🌟'):'💪')+'</div>'+
     '<h2 style="color:var(--g1);margin:6px 0">'+head+'</h2>'+
@@ -15967,8 +15971,8 @@ function renderHomeCards(){
   else if(T && T.r && !T.revDone) rTxt=bqnLabel(T.r)+' — '+arCount(T.pages.length,C_PAGE);
   /* أتمّ مقرَّرَ خطّته: تُهنّئه البطاقةُ ولا يُنقضُ صحُّها بمستحقٍّ خارج المقرَّر */
   else if(T && T.r) rTxt='أتممتَ مقرَّر مراجعة اليوم — ولك أن تزيد'+
-       (due?(' • '+tx('وعندك {n} مقطعاً حلّ موعدُه',{n:arNum(due)})):'');
-  else if(due) rTxt=tx('{n} مقطعاً حلّ موعدُه',{n:arNum(due)});
+       (due?(' • '+tx('عندك للمراجعة السريعة {c}',{c:arCount(due,C_SEG)})):'');
+  else if(due) rTxt=tx('عندك للمراجعة السريعة {c}',{c:arCount(due,C_SEG)});
   else if(wp) rTxt=tx('وردُ اليوم: {p} من محفوظك',{p:arCount(revSize('wird'),C_PAGE)});
   else if(freeLeft) rTxt=tx('مسارك الحرّ مفتوح — بقيت {n}',{n:arCount(freeLeft,C_SESS)});
   else if(rDone) rTxt='أتممتَ مراجعة اليوم — ولك أن تزيد';
