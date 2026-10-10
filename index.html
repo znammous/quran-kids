@@ -11372,17 +11372,53 @@ function morphIndex(lv){
   }
   return (MORPH_IX[id]=ix);
 }
-/* كلماتُ المقطع ثمّ السورة التي تطابق المفتاحَ في درجته */
-function morphLocal(s,key,lv){
+/* كلماتُ الآيات [from,to) ثمّ بقيّةِ السورة التي تطابق المفتاحَ في درجته */
+function morphLocal(s,key,lv,from,to){
   var out=[], i, ks, ws, k;
   var each=function(i){
     ks=morphKeys(s,i); if(!ks) return;
     ws=wordsOf(ayahText(s,i));
     for(k=0;k<ws.length;k++) if(ks[k] && morphAt(ks[k],lv)===key) out.push(ws[k]);
   };
-  for(i=S.seg[0];i<S.seg[1];i++) each(i);
-  for(i=0;i<s.ayat.length;i++) if(i<S.seg[0] || i>=S.seg[1]) each(i);
+  for(i=from;i<to;i++) each(i);
+  for(i=0;i<s.ayat.length;i++) if(i<from || i>=to) each(i);
   return out;
+}
+/* كلماتٌ من نوع الكلمة wi في الآية a، الأشبهُ أوّلاً: لكلّ درجةٍ آياتُ [from,to)
+   والسورةُ ثمّ القرآنُ كلُّه، وفي الدرجة الواحدة الأقربُ طولاً مع شيءٍ من التنويع.
+   no(w) ما يُستثنى. وما لا نوعَ له، أو قبل وصول الملفّ: [] */
+function morphLike(s,a,wi,no,need,from,to){
+  var ks=morphKeys(s,a), key=ks && ks[wi];
+  if(!key) return [];
+  var want=wordsOf(ayahText(s,a))[wi]||'', out=[], taken={};
+  var take=function(list){
+    var c=[], k, w;
+    for(k=0;k<list.length;k++){ w=list[k]; if(!no(w) && !taken[norm(w)]){ taken[norm(w)]=1; c.push(w); } }
+    c=shuffle(c).sort(function(x,y){
+      return Math.abs(x.length-want.length)-Math.abs(y.length-want.length); }).slice(0,6);
+    shuffle(c);
+    while(out.length<need && c.length) out.push(c.shift());
+  };
+  for(var lv=0; lv<MORPH_LV && out.length<need; lv++){
+    var kk=morphAt(key,lv);
+    take(morphLocal(s,kk,lv,from,to));
+    if(out.length<need) take(morphIndex(lv)[kk]||[]);
+  }
+  return out;
+}
+/* ===== الكلمةُ الخطأ في العدّاء والعصفور: من نوع الكلمة المطلوبة الآن =====
+   G هو RUN أو BD: آيتُه G.ay، وما يُخفى عنها G.hide (الجوابُ وما ظهر من الآية)،
+   وقائمةُ كلّ كلمةٍ مطلوبةٍ تُحسب مرّةً في G.mc. والمصدرُ الآياتُ المجاورة ثمّ السورة ثمّ القرآن.
+   أربعٌ لا أكثر: ما زاد يأتي غالباً من درجةٍ أبعدَ شبهاً */
+function gameDecoy(G){
+  var ay=G.ay; if(!ay || !MORPH) return null;
+  /* «أوّلُ الآية»: بقيّةُ كلماتها تُربك من لم يضبط ترتيبها، فلها نصفُ المرّات */
+  if(ay.kind==='start' && Math.random()<0.5) return null;
+  var i=ay.i, c=G.mc||(G.mc={});
+  if(!(i in c)) c[i]=morphLike(ay.s, ay.a, ay.tg[i], function(w){ return !!(G.hide||{})[norm(w)]; },
+                               4, Math.max(0,ay.a-2), Math.min(ay.s.ayat.length,ay.a+3));
+  var L=c[i];
+  return L.length ? L[Math.floor(Math.random()*L.length)] : null;
 }
 
 /* المشتّتاتُ من نوع الكلمة نفسه: من المقطع والسورة أوّلاً، ثمّ من القرآن كلّه،
@@ -11407,14 +11443,8 @@ function missOptions(s, correct, skip, twin, a, wi){
     shuffle(c);
     while(opts.length<nOpts-1 && c.length) opts.push(c.shift());
   };
-  var ks=(a!=null) ? morphKeys(s,a) : null, key=ks && ks[wi];
-  if(key){
-    for(var lv=0; lv<MORPH_LV && opts.length<nOpts-1; lv++){
-      var kk=morphAt(key,lv);
-      take(morphLocal(s,kk,lv));
-      if(opts.length<nOpts-1) take(morphIndex(lv)[kk]||[]);
-    }
-  }
+  if(a!=null) take(morphLike(s, a, wi, function(w){ return no(w) || !!taken[norm(w)]; },
+                             nOpts-1-opts.length, S.seg[0], S.seg[1]));
   if(opts.length<nOpts-1){
     for(i=S.seg[0];i<S.seg[1];i++) wordsOf(ayahText(s,i)).forEach(function(w){ if(!no(w)) bank[w]=1; });
     if(Object.keys(bank).length<6){
@@ -16878,6 +16908,7 @@ function runPickAyah(){
     for(k=from;k<to;k++) seen[norm(ws[k])]=1;
     tg.forEach(function(i){ try{ var tw=simTwin(s,a,a+1,a,i); if(tw) add(tw,tws); }catch(e){} });
   }
+  RUN.hide={}; for(k in seen) RUN.hide[k]=1; RUN.mc={};              /* لـ gameDecoy */
   for(k=Math.max(0,a-2);k<=Math.min(s.ayat.length-1,a+2);k++) if(k!==a) wordsOf(ayahText(s,k)).forEach(function(w){ add(w,rest); });
   for(k=0;k<40 && rest.length<10;k++){ var o=P[Math.floor(Math.random()*P.length)]; wordsOf(ayahText(o.s,o.a)).forEach(function(w){ add(w,rest); }); }
   RUN.decoys=tws.concat(shuffle(rest)); RUN.nTw=tws.length; RUN.di=0;
@@ -16889,6 +16920,7 @@ function runPickAyah(){
 function runDecoy(){
   var D=RUN.decoys, ay=RUN.ay, want=ay.ws[ay.tg[ay.i]]||'', best=null, k, w;
   if(RUN.di<RUN.nTw) return D[RUN.di++];
+  if((w=gameDecoy(RUN))) return w;                    /* من نوع الكلمة المطلوبة */
   if(D.length<=RUN.nTw) return D[Math.floor(Math.random()*D.length)];
   for(k=0;k<4;k++){
     w=D[RUN.nTw+Math.floor(Math.random()*(D.length-RUN.nTw))];
@@ -18157,6 +18189,14 @@ function shelfParts(ws, decoyW){
 function shelfDecoy(ay){
   var seen={}, out=[], k, s=ay.s, a=ay.a, P=SH.pool.items, c=shelfCtx();
   ay.ws.forEach(function(w){ seen[norm(w)]=1; });
+  /* من نوع إحدى كلمات الجزء، فتلتبس بها — لا كلمةً عشوائيّةً يُعرف غريبُها بنوعها */
+  var idx=shuffle(ay.parts[ay.p].slice()), m, j;
+  for(j=0;j<idx.length;j++){
+    m=morphLike(s, a, idx[j], function(w){ return !!seen[norm(w)]; },
+                4, Math.max(0,a-2), Math.min(s.ayat.length,a+3))
+      .filter(function(w){ return shelfBoxW(w, c)<=90; });
+    if(m.length) return m[Math.floor(Math.random()*m.length)];
+  }
   function add(w){ var m=norm(w); if(m && !seen[m]){ seen[m]=1; out.push(w); } }
   for(k=Math.max(0,a-2);k<=Math.min(s.ayat.length-1,a+2);k++) if(k!==a) wordsOf(ayahText(s,k)).forEach(add);
   for(k=0;k<20 && out.length<6;k++){ var o=P[Math.floor(Math.random()*P.length)]; wordsOf(ayahText(o.s,o.a)).forEach(add); }
@@ -18555,6 +18595,7 @@ function birdPickAyah(){
     for(k=from;k<to;k++) seen[norm(ws[k])]=1;
     tg.forEach(function(i){ try{ var tw=simTwin(s,a,a+1,a,i); if(tw) add(tw,tws); }catch(e){} });
   }
+  BD.hide={}; for(k in seen) BD.hide[k]=1; BD.mc={}; BD.nTw=tws.length; BD.ti=0;
   for(k=Math.max(0,a-2);k<=Math.min(s.ayat.length-1,a+2);k++) if(k!==a) wordsOf(ayahText(s,k)).forEach(function(w){ add(w,rest); });
   for(k=0;k<40 && rest.length<10;k++){ var o=P[Math.floor(Math.random()*P.length)]; wordsOf(ayahText(o.s,o.a)).forEach(function(w){ add(w,rest); }); }
   BD.decoys=tws.concat(shuffle(rest)); BD.di=0;
@@ -18712,7 +18753,10 @@ function birdSpawn(){
   /* غيمةٌ فيها كلمة: الصحيحةُ لا تغيب طويلاً، وبينها كلماتٌ تُترك */
   var want=ay.ws[ay.tg[ay.i]];
   var good=!goodOn && (BD.decoySince>=1 || !BD.decoys.length || Math.random()<0.4);
-  var t=good ? want : birdWords(want, 2)[0];
+  /* الخطأُ: كلمةُ الآية الشبيهة أوّلاً، ثمّ من نوع المطلوبة، وإلّا فمن المجاورات */
+  var t=good ? want
+        : BD.ti<BD.nTw ? BD.decoys[BD.ti++]
+        : (gameDecoy(BD) || birdWords(want, 2)[0]);
   var w=birdCloudW(t, c), h=52;
   var y=top+22+Math.random()*Math.max(12, (G-top-56));
   BD.items.push({ kind:'cloud', x:-w-10, w:w, h:h, y:Math.round(y), t:t, good:good, ph:Math.random()*6 });
