@@ -1642,7 +1642,6 @@ NUR_I18N.add('fr', {
   "يوجد إصدارٌ جديد يحتاج تحديثَ التطبيق نفسِه من المتجر": "Une nouvelle version demande de mettre à jour l’application elle-même depuis le store",
   "يوجد تحديث": "Mise à jour disponible",
   "الجديد في «نور الوحي»": "Nouveautés de « Nur Al-Wahy »",
-  "التطبيقُ بلغتك: الواجهةُ والقصصُ بأربع عشرة لغة، تختارها من الإعدادات.": "L’application dans votre langue : l’interface et les histoires en quatorze langues, à choisir dans les Réglages.",
   "يوجد تحديثٌ لـ«نور الوحي»": "Une mise à jour de « Nur Al-Wahy » est disponible",
   "يوم": "Jour",
   "يوماً متتابعاً": "Jours d’affilée",

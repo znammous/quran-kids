@@ -1642,7 +1642,6 @@ NUR_I18N.add('ms', {
   "يوجد إصدارٌ جديد يحتاج تحديثَ التطبيق نفسِه من المتجر": "Versi baharu memerlukan aplikasi itu sendiri dikemas kini dari kedai aplikasi",
   "يوجد تحديث": "Ada kemas kini",
   "الجديد في «نور الوحي»": "Apa yang baharu dalam “Nur Al-Wahy”",
-  "التطبيقُ بلغتك: الواجهةُ والقصصُ بأربع عشرة لغة، تختارها من الإعدادات.": "Aplikasi dalam bahasa anda: antara muka dan cerita dalam empat belas bahasa, pilih di Tetapan.",
   "يوجد تحديثٌ لـ«نور الوحي»": "Ada kemas kini untuk “Nur Al-Wahy”",
   "يوم": "Hari",
   "يوماً متتابعاً": "Hari berturut-turut",

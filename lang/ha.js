@@ -1642,7 +1642,6 @@ NUR_I18N.add('ha', {
   "يوجد إصدارٌ جديد يحتاج تحديثَ التطبيق نفسِه من المتجر": "Akwai sabuwar siga da ke bukatar sabunta manhajar kanta daga shago",
   "يوجد تحديث": "Akwai sabuntawa",
   "الجديد في «نور الوحي»": "Sabon abu a “Nur Al-Wahy”",
-  "التطبيقُ بلغتك: الواجهةُ والقصصُ بأربع عشرة لغة، تختارها من الإعدادات.": "Manhajar da harshenka: fuska da labarai a cikin harsuna goma sha huɗu, zaɓi naka a Saituna.",
   "يوجد تحديثٌ لـ«نور الوحي»": "Akwai sabuntawa ga “Nur Al-Wahy”",
   "يوم": "Rana",
   "يوماً متتابعاً": "Kwanaki a jere",

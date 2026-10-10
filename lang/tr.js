@@ -1642,7 +1642,6 @@ NUR_I18N.add('tr', {
   "يوجد إصدارٌ جديد يحتاج تحديثَ التطبيق نفسِه من المتجر": "Yeni bir sürüm var; uygulamanın kendisinin mağazadan güncellenmesi gerekiyor",
   "يوجد تحديث": "Güncelleme var",
   "الجديد في «نور الوحي»": "“Nur Al-Wahy”de yenilikler",
-  "التطبيقُ بلغتك: الواجهةُ والقصصُ بأربع عشرة لغة، تختارها من الإعدادات.": "Uygulama senin dilinde: arayüz ve hikâyeler on dört dilde, Ayarlar’dan dilini seç.",
   "يوجد تحديثٌ لـ«نور الوحي»": "“Nur Al-Wahy” için bir güncelleme var",
   "يوم": "Gün",
   "يوماً متتابعاً": "Art arda gün",
