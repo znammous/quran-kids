@@ -1761,5 +1761,4 @@ NUR_I18N.add('so', {
   "برنامج «بالقرآن نحيا»، Quranlives.com": "Barnaamijka “Bil-Quran Nahya”, Quranlives.com",
   "نوعُ كلّ كلمةٍ في القرآن": "Nooca eray kasta oo Qur’aanka ku jira",
   "خطوط الواجهة": "Farta muuqaalka",
-  "بناء التطبيق": "Aasaaska barnaamijka",
 });

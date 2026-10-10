@@ -1761,5 +1761,4 @@ NUR_I18N.add('uz', {
   "برنامج «بالقرآن نحيا»، Quranlives.com": "“Bil-Quran Nahya” dasturi, Quranlives.com",
   "نوعُ كلّ كلمةٍ في القرآن": "Qurʼondagi har bir soʻzning turi",
   "خطوط الواجهة": "Interfeys shriftlari",
-  "بناء التطبيق": "Ilova asosi",
 });

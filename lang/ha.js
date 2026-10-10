@@ -1761,5 +1761,4 @@ NUR_I18N.add('ha', {
   "برنامج «بالقرآن نحيا»، Quranlives.com": "Shirin “Bil-Quran Nahya”, Quranlives.com",
   "نوعُ كلّ كلمةٍ في القرآن": "Nau’in kowace kalma a cikin Alƙur’ani",
   "خطوط الواجهة": "Haruffan manhaja",
-  "بناء التطبيق": "Ginin manhaja",
 });

@@ -1761,5 +1761,4 @@ NUR_I18N.add('sw', {
   "برنامج «بالقرآن نحيا»، Quranlives.com": "Mpango wa “Bil-Quran Nahya”, Quranlives.com",
   "نوعُ كلّ كلمةٍ في القرآن": "Aina ya kila neno katika Qur’ani",
   "خطوط الواجهة": "Fonti za kiolesura",
-  "بناء التطبيق": "Msingi wa programu",
 });

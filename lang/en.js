@@ -1761,5 +1761,4 @@ NUR_I18N.add('en', {
   "برنامج «بالقرآن نحيا»، Quranlives.com": "The “Bil-Quran Nahya” program, Quranlives.com",
   "نوعُ كلّ كلمةٍ في القرآن": "Type of every word in the Quran",
   "خطوط الواجهة": "Interface fonts",
-  "بناء التطبيق": "App framework",
 });
