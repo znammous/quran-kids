@@ -1,5 +1,5 @@
 // يلتقط الألعابَ وهي تُلعب، لمربّعات صفحة الهبوط: node scripts/store/capture-games.cjs <lang>
-// ← store/l10n/_raw/<lang>/games/ — runner وshelf وbird في منتصف اللعب، وgift وfam شاشتاهما
+// ← store/l10n/_raw/<lang>/games/ — runner وshelf وbird في منتصف اللعب، وgift وfam شاشتاهما، وstories قائمةُ القصص
 const {chromium}=require('playwright'); const fs=require('fs');
 const L=process.argv[2]||'ar';
 const ROOT=require('path').join(__dirname,'../..'); const OUT=ROOT+'/store/l10n/_raw/'+L+'/games'; fs.mkdirSync(OUT,{recursive:true});
@@ -34,5 +34,7 @@ const HIDE='#qaBar,#setInstall,[id*="nstallBan"],.instbar,.toast{display:none!im
   // اصنع هديّتك وعائلتي: من قائمة الألعاب
   { const p=await page(); await p.evaluate(()=>{ gamesOpen(); $('gmGift').click(); window.scrollTo(0,0); }); await p.waitForTimeout(1200); await snap(p,'gift'); await p.close(); }
   { const p=await page(); await p.evaluate(()=>{ gamesOpen(); $('gmFam').click(); window.scrollTo(0,0); }); await p.waitForTimeout(1200); await snap(p,'fam'); await p.close(); }
+  // قائمةُ القصص في ركن المغامرة: يُنتظر الفهرسُ وأغلفتُه
+  { const p=await page(); await p.evaluate(()=>{ goalChecks=function(){ return {h:true,r:true}; }; storiesOpen(); window.scrollTo(0,0); });   /* كما يراها بعد إتمام مقرَّره: ملوّنةً مفتوحة */ await p.waitForTimeout(4500); await snap(p,'stories'); await p.close(); }
   await b.close(); console.log(L,'games errors',errs.slice(0,3));
 })();

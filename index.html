@@ -2013,6 +2013,11 @@ body.glow-off .dfpic{animation:none}
 .stcard .stctx i{display:block;font-style:normal;font-size:12.5px;font-weight:800;color:var(--on2);
   line-height:1.6;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .stcard.newdot::after{z-index:2}
+/* بطاقاتُ الألعاب في ركن المغامرة: على هيئة بطاقات القصص، والأولى بعرض الشاشة */
+.gmgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.gmgrid .stcard:first-child{grid-column:1/-1}
+.gmgrid .stcard:first-child .stcimg{aspect-ratio:2/1}
+.gmgrid .stcard .stctx i{white-space:normal}
 .sthead{display:flex;align-items:center;gap:10px;margin:2px 0 12px}
 .sttitle{flex:1;min-width:0;font-size:18px;font-weight:900;color:var(--ttl);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -17226,10 +17231,11 @@ function gameSrcLabel(pool){
   if(pool && pool.sura) return '📖 من سورة '+pool.sura.name;
   return (pool && pool.mem) ? '📚 من محفوظك' : '📚 من الفاتحة وقصار السور';
 }
+/* cov: غلافٌ مرسومٌ بأسلوب أغلفة القصص؛ رقمُه في الاسم لأنّ icons/ تُخزَّن بلا تجديد — يُرفع إن تغيّرت الصورة */
 var GAMES=[
-  { id:'runner', ic:'🏃', n:'عدّاء الآيات', d:'اقفزْ إلى الكلمة التي تملأ الفراغ',      open:function(src){ runOpen(src); } },
-  { id:'shelf',  ic:'🧺', n:'رفّ الآيات',   d:'رتّبْ صناديقَ كلمات الآية على الرفّ', open:function(src){ shelfOpen(src); } },
-  { id:'bird',   ic:'🐦', n:'عصفور الآيات', d:'التقطْ كلمةَ الآية من الغيمة وتجنّبِ العوائق', open:function(src){ birdOpen(src); } }
+  { id:'runner', ic:'🏃', n:'عدّاء الآيات', d:'اقفزْ إلى الكلمة التي تملأ الفراغ',      cov:'icons/games/runner-1.webp', open:function(src){ runOpen(src); } },
+  { id:'shelf',  ic:'🧺', n:'رفّ الآيات',   d:'رتّبْ صناديقَ كلمات الآية على الرفّ', cov:'icons/games/shelf-1.webp', open:function(src){ shelfOpen(src); } },
+  { id:'bird',   ic:'🐦', n:'عصفور الآيات', d:'التقطْ كلمةَ الآية من الغيمة وتجنّبِ العوائق', cov:'icons/games/bird-1.webp', open:function(src){ birdOpen(src); } }
 ];
 var GAME_PICK=null;                    /* لعبةٌ يُختار لها المصدرُ الآن */
 var GAME_LIST=false;                   /* وفهرسُ السور مفتوحٌ لها */
@@ -17697,12 +17703,15 @@ function gamesOpen(){
   ADV_V='games';
   GAME_PICK=null; GAME_LIST=false;
   var pool=runPool(), h='';
+  /* الألعابُ بطاقاتٌ بأغلفتها كبطاقات القصص: الأولى عريضةٌ وحدها، والأخريان جنباً إلى جنب */
+  h+='<div class="gmgrid">';
   GAMES.forEach(function(g){
     var st=gameStats(g.id);
-    h+='<button type="button" class="goalcard now" data-game="'+g.id+'"><span class="gcic">'+g.ic+'</span>'+
-       '<span class="gctx"><b>'+g.n+'</b><i>'+g.d+(st.best?' • أفضلُ نتيجة ⭐ '+arNum(st.best):'')+'</i></span>'+
-       '<span class="gcgo">❮</span></button>';
+    h+='<button type="button" class="stcard now" data-game="'+g.id+'">'+
+       '<span class="stcimg"><img alt="" src="'+g.cov+'"></span>'+
+       '<span class="stctx"><b>'+g.n+'</b><i>'+g.d+'</i>'+(st.best?'<i>أفضلُ نتيجة ⭐ '+arNum(st.best)+'</i>':'')+'</span></button>';
   });
+  h+='</div>';
   /* وبابُ العائلة: ليس لعبةً ولا مصدرَ آياتٍ له — يفتح محرِّرَ الشخصية نفسَه
      الذي في معالج إنشاء المستخدم، وفيه تبويبٌ لك ولأبيك وأمّك وإخوتك */
   /* وغرفةُ الهدايا: لعبةٌ كسائر الألعاب وإن كان مقرُّها المتجر — يمشي فيها
