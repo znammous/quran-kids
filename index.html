@@ -2950,7 +2950,6 @@ body.hastabs #btnRevQuit{display:none}
       <button type="button" data-adv="games"><span class="ati">🎮</span>الألعاب</button>
       <button type="button" data-adv="stories"><span class="ati">📚</span>القصص</button>
     </div>
-    <p class="sub" id="advSub"></p>
     <div class="gmlist" id="gamesBody"></div>
     <div class="gmlist" id="storiesBody" hidden></div>
     <!-- مخفيٌّ: الشريطُ السفليّ يُغني عنه، ويبقى ليضغطه زرُّ الرجوع في الجهاز -->
@@ -17323,9 +17322,6 @@ var GAME_LIST=false;                   /* وفهرسُ السور مفتوحٌ �
    تبويبان يتقاسمان شاشةً واحدة — ألعابٌ وقصص — فلا يزدحم الشريطُ السفليّ بسابع.
    وآخرُ تبويبٍ فُتح يُذكر، فيعود الطفلُ إلى حيث كان. */
 var ADV_V='games';
-var ADV_SUB={
-  stories:'قصصُ من سبقوا، بالصُّور — وفي كلِّ واحدةٍ عبرةٌ تبقى<br><small>وما فُتح مرّةً بقي معك ولو انقطع الإنترنت</small>'
-};
 function advSync(){
   var T=$('advTabs'); if(!T) return;
   var deep=!!GAME_PICK;                    /* داخل اختيار مصدر اللعبة: تنحّى التبويبان */
@@ -17336,8 +17332,6 @@ function advSync(){
     if(v==='stories' && fresh) bs[i].classList.add('newdot'); else bs[i].classList.remove('newdot');
   }
   T.hidden=deep;
-  $('advSub').innerHTML = deep ? '' : (ADV_SUB[ADV_V]||'');
-  $('advSub').hidden = !$('advSub').innerHTML;   /* لا عنوانَ فرعيّاً للألعاب: لا يبقى سطرُه فارغاً */
   $('gamesBody').hidden   = (ADV_V!=='games');
   $('storiesBody').hidden = (ADV_V!=='stories');
   try{ tabDot(); }catch(e){}
