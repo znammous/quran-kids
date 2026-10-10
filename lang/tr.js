@@ -1759,4 +1759,10 @@ NUR_I18N.add('tr', {
   "برنامج «بالقرآن نحيا»، Quranlives.com": "“Bil-Quran Nahya” programı, Quranlives.com",
   "نوعُ كلّ كلمةٍ في القرآن": "Kur’an’daki her kelimenin türü",
   "خطوط الواجهة": "Arayüz yazı tipleri",
+  "وجواهرُك ومسجدُك وأوسمتُك باقيةٌ لك على كلّ حال": "Mücevherlerin, camin ve rozetlerin her durumda senin kalır",
+  "أتمسحه وتعتمد خطّتك الجديدة من أوّلها؟": "Silip yeni planını baştan başlatmak ister misin?",
+  "وإن أبقيتَه بقي محسوباً لك محفوظاً": "Saklarsan ezberlenmiş sayılmaya devam eder",
+  "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "Önceki ilerleme silindi — mücevherlerin ve camin duruyor",
+  "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Uygulamada az önce kaydettiğin dışında önceki ezber ilerlemen var: {n}.",
+  "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Uygulamada önceki ezber ilerlemen var: {n}.",
 });

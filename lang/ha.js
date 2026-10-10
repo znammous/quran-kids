@@ -1759,4 +1759,10 @@ NUR_I18N.add('ha', {
   "برنامج «بالقرآن نحيا»، Quranlives.com": "Shirin “Bil-Quran Nahya”, Quranlives.com",
   "نوعُ كلّ كلمةٍ في القرآن": "Nau’in kowace kalma a cikin Alƙur’ani",
   "خطوط الواجهة": "Haruffan manhaja",
+  "وجواهرُك ومسجدُك وأوسمتُك باقيةٌ لك على كلّ حال": "Duwatsunka masu daraja, masallacinka da lambobin yabonka suna nan naka ko yaya",
+  "أتمسحه وتعتمد خطّتك الجديدة من أوّلها؟": "Ka goge shi ka karɓi sabon tsarinka daga farko?",
+  "وإن أبقيتَه بقي محسوباً لك محفوظاً": "Idan ka bar shi, za a ci gaba da ƙirga shi a matsayin haddace",
+  "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "An goge cigaban da ya gabata — duwatsunka da masallacinka suna nan",
+  "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Kana da cigaban haddar da ya gabata a manhajar, ban da abin da ka yi rajista yanzu: {n}.",
+  "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Kana da cigaban haddar da ya gabata a manhajar: {n}.",
 });

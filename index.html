@@ -13393,16 +13393,29 @@ function priorModeHTML(){
    إشارتُه. وأمّا سجلُّ محفوظه فلا يُمحى بلا إذنه — إبقاؤه يجعل المصحفَ كلَّه
    محسوباً محفوظاً وهو يمشي في خطّة، ومحوُه قد يُذهب حفظاً حقيقيّاً سجّله
    قبلَه. فيُسأل، ويمضي على الوجهين. */
+/* محوُ تقدّم الحفظ وحدَه: سجلُّ الآيات، ونجومُ المقاطع ومواعيدُها، وأيّامُ
+   الخطط. وكان يُمحى السجلُّ وتبقى النجوم، فتبقى المقاطعُ منجَزةً في مساره وقد
+   قيل له «مُسح». وما كسبه بحفظه لا يُنزع منه — الجواهرُ والموادُّ والمسجدُ
+   والأوسمةُ والمواظبة — فهي أجرُ عملٍ عمله، وتبديلُ الخطّة لا يُبطله. */
+function hifzWipe(){
+  var p=curP(), k;
+  p.mem={}; p.crowned=0;
+  for(k in prog) delete prog[k];          /* prog هو p.prog نفسُه، فيُفرَّغ ولا يُستبدل */
+  for(k in (p.plans||{})) if(p.plans[k]) p.plans[k]={day:0, rp:0};
+  try{ clearScope(); }catch(e){}
+  saveDB();
+}
 function hafizClear(after){
   var p=curP();
   if(p.priorMode!=='all'){ if(after) after(); return; }
   p.priorMode=''; p.priorJ={}; saveDB();
   uiAsk('كنتَ قد سجّلتَ المصحفَ كاملاً محفوظاً، والآن اخترتَ خطّةَ حفظ.\n'+
         'أتمسح ذلك السجلَّ لتبدأ بخطّتك من أوّلها؟\n'+
-        'وإن أبقيتَه بقي كلُّ المصحف محسوباً محفوظاً.',
+        'وإن أبقيتَه بقي كلُّ المصحف محسوباً محفوظاً.\n'+
+        'وجواهرُك ومسجدُك وأوسمتُك باقيةٌ لك على كلّ حال.',
     function(ok){
       if(ok){
-        p.mem={}; p.crowned=0;
+        hifzWipe();
         try{ ensureAllSchedules(); }catch(e){}
         saveDB();
         try{ navToast('🗑️ مُسح سجلُّ المحفوظ — وخطّتُك تبدأ من أوّلها'); }catch(e){}
@@ -13421,12 +13434,13 @@ function priorModeSet(v, after){
     var t=0; try{ t=memTotal(); }catch(e){}
     if(t>0){
       uiAsk('وجدنا لك سجلَّ محفوظاتٍ سابقاً — '+arNum(t)+' آية.\n'+
+            'وجواهرُك ومسجدُك وأوسمتُك باقيةٌ لك على كلّ حال.\n'+
             '«أبدأ من جديد» يمسح هذا السجلَّ ويُعيد ضبطَ تقدّمك.\nأتوافق؟',
         function(ok){
           if(!ok){ if(after) after(); return; }
           p.priorMode='new';
-          p.priorJ={}; p.priorS={}; p.priorP=[];
-          p.mem={}; p.crowned=0;
+          p.priorJ={}; p.priorS={}; p.priorP=[]; p.priorR=[];
+          hifzWipe();
           try{ ensureAllSchedules(); }catch(e){}
           try{ navToast('🗑️ مُسح سجلُّ المحفوظ — وبدأتَ من جديد'); }catch(e){}
           fin();
@@ -14030,8 +14044,50 @@ function bqnBlocked(){
 var BQN_BACK='';            /* من أين جئنا إلى شاشة الاختيار: '' أو 'onb' أو 'set' */
 /* يُفتح على خطوةٍ بعينها متى عُرف المقصود — فمن جاء يسجّل حفظَه السابق
    لا يُستأنف به المعالجُ من أوّله ولا يُسأل عن خطّةٍ قد اختارها. */
+/* بصمةُ خطّة الحفظ: المسارُ وتقطيعُه وما سجّله من حفظٍ سابق. تُؤخذ عند دخول
+   المعالج وتُقارَن عند تمامه، فيُعرف أهي خطّةٌ جديدة أم مرورٌ لم يغيّر شيئاً */
+function bqnSig(){
+  var p=curP();
+  return planStore().planId+'|'+String(SET.segMode)+'|'+
+    JSON.stringify([p.priorJ||{}, p.priorS||{}, p.priorP||[], p.priorR||[]]);
+}
+/* ما في سجلّ حفظه من آياتٍ ليست ممّا سجّله الآن حفظاً سابقاً: هو تقدّمُه القديم */
+function bqnOldAyat(){
+  var seen=(curP().priorMode==='has') ? priorSeen() : {}, m=memAll(), n=0, sn, i, g;
+  for(sn in m){
+    var base=GIDX[parseInt(sn,10)-1], r=m[sn]||[];
+    for(i=0;i<r.length;i++) for(g=r[i][0]; g<r[i][1]; g++) if(!seen[base+g]) n++;
+  }
+  return n;
+}
+/* اعتمد خطّةَ حفظٍ جديدة وله تقدّمٌ قديمٌ خارجها: لا يُمحى بلا إذنه، ولا يُترك
+   بلا سؤال كما يُسأل من وضع خطّةَ مراجعةٍ جديدة. ومن قال «حافظٌ كاملاً» أو
+   «أبدأ من جديد» سُئل ساعةَ اختياره، فلا يُعاد عليه */
+function bqnFreshAsk(after){
+  var p=curP(), was=BQ.snap, n=0;
+  if(was==null || was===bqnSig() || p.priorMode==='all'){ after(); return; }
+  try{ n=bqnOldAyat(); }catch(e){}
+  if(!n){ after(); return; }
+  uiAsk((p.priorMode==='has'
+          ? tx('لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.', {n:arCount(n,C_AYAH)})
+          : tx('لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.', {n:arCount(n,C_AYAH)}))+'\n'+
+        'أتمسحه وتعتمد خطّتك الجديدة من أوّلها؟\n'+
+        'وإن أبقيتَه بقي محسوباً لك محفوظاً.\n'+
+        'وجواهرُك ومسجدُك وأوسمتُك باقيةٌ لك على كلّ حال.',
+    function(ok){
+      if(ok){
+        hifzWipe();
+        if(p.priorMode==='has'){ try{ priorApply(); }catch(e){} }   /* ويبقى ما سجّله الآن */
+        try{ ensureAllSchedules(); }catch(e){}
+        saveDB();
+        try{ navToast('🗑️ مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية'); }catch(e){}
+      }
+      after();
+    },'🗑️');
+}
 function startBqn(from, step){
   BQN_BACK=from||'';
+  if(BQ.snap==null) BQ.snap=bqnSig();     /* أوّلُ الدخول، لا كلُّ عودةٍ إليه في أثنائه */
   show('scr-bqn');
   if(step){
     var at=bqnSteps().indexOf(step);
@@ -14042,6 +14098,7 @@ function startBqn(from, step){
   bqnShow(b?b.i:0);
 }
 function bqnReturn(){
+  BQ.snap=null;
   priorCeleFlush();            /* الآن تمّت الخطّة، فتُقال البشارة */
   setTimeout(crownFlush, 60);  /* وتتويجُ الحافظ إن اكتمل مصحفُه في الإعداد */
   var b=BQN_BACK; BQN_BACK='';
@@ -16752,6 +16809,7 @@ tabSwipe('scr-games', 'advTabs', function(){ return $(ADV_V==='stories' ? 'stori
 /* خطط «بالقرآن نحيا» الجاهزة */
 $('btnBqnHome').onclick=function(){
   if(BQN_BACK){ bqnReturn(); return; }
+  BQ.snap=null;
   renderPlayers(); show('scr-start');
 };
 $('bqnNext').onclick=function(){
@@ -16775,16 +16833,19 @@ $('btnBqnDone').onclick=function(){
   }
   var b=bqnBlocked();
   if(b){ try{ navToast(b.m); }catch(e){} b.go(); return; }
-  /* إعادةُ ضبط الخطّة لا تمحو ما تراكم من مراجعة — فيُسأل: أيبدأ من جديد؟ */
-  var n=0; try{ n=dueSegs().length; }catch(e){}
-  if(!n){ bqnReturn(); return; }
-  uiAsk('عليك '+arNum(n)+' من المقاطع مستحقّةً للمراجعة.\n'+
-        'هل تريد تصفيرَ المراجعة السابقة ومسحَ المستحقّ عليك؟\n'+
-        'يبقى حفظُك كما هو، وتعود إليك هذه المقاطعُ موزّعةً على الأيّام القادمة.',
-    function(ok){
-      if(ok){ revDueReset(); try{ navToast('🧹 صُفّرت مراجعتك — ابدأ من جديد'); }catch(e){} }
-      bqnReturn();
-    }, '🧹');
+  /* خطّةُ حفظٍ جديدة وله تقدّمٌ قديم: يُسأل أيمحوه، ثمّ عن مراجعته */
+  bqnFreshAsk(function(){
+    /* إعادةُ ضبط الخطّة لا تمحو ما تراكم من مراجعة — فيُسأل: أيبدأ من جديد؟ */
+    var n=0; try{ n=dueSegs().length; }catch(e){}
+    if(!n){ bqnReturn(); return; }
+    uiAsk('عليك '+arNum(n)+' من المقاطع مستحقّةً للمراجعة.\n'+
+          'هل تريد تصفيرَ المراجعة السابقة ومسحَ المستحقّ عليك؟\n'+
+          'يبقى حفظُك كما هو، وتعود إليك هذه المقاطعُ موزّعةً على الأيّام القادمة.',
+      function(ok){
+        if(ok){ revDueReset(); try{ navToast('🧹 صُفّرت مراجعتك — ابدأ من جديد'); }catch(e){} }
+        bqnReturn();
+      }, '🧹');
+  });
 };
 $('btnBadges').onclick=function(){ renderBadges(); show('scr-badges'); };
 $('homeAvaBtn').onclick=function(){ renderBadges(); show('scr-badges'); };

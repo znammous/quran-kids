@@ -1759,4 +1759,10 @@ NUR_I18N.add('ms', {
   "برنامج «بالقرآن نحيا»، Quranlives.com": "Program “Bil-Quran Nahya”, Quranlives.com",
   "نوعُ كلّ كلمةٍ في القرآن": "Jenis setiap perkataan dalam al-Quran",
   "خطوط الواجهة": "Fon antara muka",
+  "وجواهرُك ومسجدُك وأوسمتُك باقيةٌ لك على كلّ حال": "Permata, masjid dan lencana kamu kekal milik kamu walau apa pun",
+  "أتمسحه وتعتمد خطّتك الجديدة من أوّلها؟": "Padamkannya dan guna pelan baharu kamu dari awal?",
+  "وإن أبقيتَه بقي محسوباً لك محفوظاً": "Jika kamu simpan, ia kekal dikira sudah dihafal",
+  "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "Kemajuan terdahulu dipadam — permata dan masjid kamu kekal",
+  "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Kamu ada kemajuan hafazan terdahulu dalam aplikasi selain yang baru kamu rekodkan: {n}.",
+  "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Kamu ada kemajuan hafazan terdahulu dalam aplikasi: {n}.",
 });

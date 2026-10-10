@@ -1759,4 +1759,10 @@ NUR_I18N.add('sw', {
   "برنامج «بالقرآن نحيا»، Quranlives.com": "Mpango wa “Bil-Quran Nahya”, Quranlives.com",
   "نوعُ كلّ كلمةٍ في القرآن": "Aina ya kila neno katika Qur’ani",
   "خطوط الواجهة": "Fonti za kiolesura",
+  "وجواهرُك ومسجدُك وأوسمتُك باقيةٌ لك على كلّ حال": "Vito vyako, msikiti na beji zako vinabaki kuwa vyako kwa hali yoyote",
+  "أتمسحه وتعتمد خطّتك الجديدة من أوّلها؟": "Uifute na uanze mpango wako mpya tangu mwanzo?",
+  "وإن أبقيتَه بقي محسوباً لك محفوظاً": "Ukiiweka, itaendelea kuhesabiwa kuwa umehifadhi",
+  "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "Maendeleo ya awali yamefutwa — vito na msikiti wako vimebaki",
+  "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Una maendeleo ya awali ya kuhifadhi katika programu nje ya uliyosajili sasa: {n}.",
+  "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Una maendeleo ya awali ya kuhifadhi katika programu: {n}.",
 });

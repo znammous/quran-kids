@@ -1759,4 +1759,10 @@ NUR_I18N.add('fr', {
   "برنامج «بالقرآن نحيا»، Quranlives.com": "Le programme « Bil-Quran Nahya », Quranlives.com",
   "نوعُ كلّ كلمةٍ في القرآن": "Nature de chaque mot du Coran",
   "خطوط الواجهة": "Polices de l’interface",
+  "وجواهرُك ومسجدُك وأوسمتُك باقيةٌ لك على كلّ حال": "Tes joyaux, ta mosquée et tes badges te restent quoi qu'il arrive",
+  "أتمسحه وتعتمد خطّتك الجديدة من أوّلها؟": "L'effacer et adopter ton nouveau plan depuis le début ?",
+  "وإن أبقيتَه بقي محسوباً لك محفوظاً": "Si tu le gardes, il reste compté comme mémorisé",
+  "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "Progression précédente effacée — tes joyaux et ta mosquée restent",
+  "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Tu as dans l'application une progression de mémorisation antérieure, en dehors de ce que tu viens d'enregistrer : {n}.",
+  "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Tu as dans l'application une progression de mémorisation antérieure : {n}.",
 });

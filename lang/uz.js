@@ -1759,4 +1759,10 @@ NUR_I18N.add('uz', {
   "برنامج «بالقرآن نحيا»، Quranlives.com": "“Bil-Quran Nahya” dasturi, Quranlives.com",
   "نوعُ كلّ كلمةٍ في القرآن": "Qurʼondagi har bir soʻzning turi",
   "خطوط الواجهة": "Interfeys shriftlari",
+  "وجواهرُك ومسجدُك وأوسمتُك باقيةٌ لك على كلّ حال": "Javohirlaring, masjiding va nishonlaring har holda o'zingda qoladi",
+  "أتمسحه وتعتمد خطّتك الجديدة من أوّلها؟": "Uni o'chirib, yangi rejangni boshidan boshlaysanmi?",
+  "وإن أبقيتَه بقي محسوباً لك محفوظاً": "Saqlasang, yod olingan deb hisoblanaveradi",
+  "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "Oldingi yutuq o'chirildi — javohirlaring va masjiding qoldi",
+  "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Ilovada hozir qayd etganingdan tashqari oldingi yodlash yutug'ing bor: {n}.",
+  "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Ilovada oldingi yodlash yutug'ing bor: {n}.",
 });

@@ -1759,4 +1759,10 @@ NUR_I18N.add('so', {
   "برنامج «بالقرآن نحيا»، Quranlives.com": "Barnaamijka “Bil-Quran Nahya”, Quranlives.com",
   "نوعُ كلّ كلمةٍ في القرآن": "Nooca eray kasta oo Qur’aanka ku jira",
   "خطوط الواجهة": "Farta muuqaalka",
+  "وجواهرُك ومسجدُك وأوسمتُك باقيةٌ لك على كلّ حال": "Dahabkaaga, masaajidkaaga iyo calaamadahaagu adigay kuu harayaan si kasta ha ahaatee",
+  "أتمسحه وتعتمد خطّتك الجديدة من أوّلها؟": "Ma tirtiraysaa oo ma qaadanaysaa qorshahaaga cusub bilowgiisa?",
+  "وإن أبقيتَه بقي محسوباً لك محفوظاً": "Haddii aad haysato, waxa sii ahaanaya mid xafidan",
+  "مُسح التقدّمُ السابق — وجواهرُك ومسجدُك باقية": "Horumarkii hore waa la tirtiray — dahabkaaga iyo masaajidkaagu way harsan yihiin",
+  "لك في التطبيق تقدّمٌ سابقٌ في الحفظ غيرُ ما سجّلتَه الآن: {n}.": "Waxaad app-ka ku leedahay horumar xifdi oo hore, oo ka baxsan waxa aad hadda diiwaangelisay: {n}.",
+  "لك في التطبيق تقدّمٌ سابقٌ في الحفظ: {n}.": "Waxaad app-ka ku leedahay horumar xifdi oo hore: {n}.",
 });
