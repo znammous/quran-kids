@@ -14478,13 +14478,15 @@ function segSize(d){
    وجده ينتظره كأن لم يراجعه. فإذا انتهت أسئلةُ مقطعٍ حُسم وحده — بأخطائه هو — ونال جائزتَه.
    والخطأُ الواحدُ يُغتفر في وجهٍ فأكثر لا فيما دونه: في ربع وجهٍ نسبتُه كبيرة،
    وفي الوجه زلّةٌ عابرة (قرارُ صاحب التطبيق). ومقطعُ «صفحة كاملة» يقف عند آيةٍ
-   فقد ينقص عن الوجه قليلاً، فما بلغ أربعة أخماسه وجه */
+   فقد ينقص عن الوجه قليلاً، فما بلغ أربعة أخماسه وجه.
+   وخطأٌ واحدٌ فوق المغتفَر يُعيده غداً بدرجته، ولا ينزل درجةً إلا بما زاد عليه */
 function revSegDone(d){
   if(d.r) return;
-  var e=S.errors-(S.segE0||0), ok=e<=(segSize(d)>=0.8 ? 1 : 0);
+  var e=S.errors-(S.segE0||0), lim=(segSize(d)>=0.8 ? 1 : 0), ok=e<=lim;
   S.segE0=S.errors;
   var p=getP(d.key), b0=p.box||0, d0=p.due;
-  scheduleNext(d.key, ok);
+  if(e===lim+1) p.due=todayNum()+1;                 /* يُعاد غداً ولا ينزل */
+  else scheduleNext(d.key, ok);
   d.r={ n:1, bad:!ok, drop:!ok && (p.box||0)<b0, grad:ok && d0!=null && p.due==null, next:p.due };
   saveProg();
   noteReview(e===0, segsPages([d]), !S.revCounted);   /* بالأوجه كالورد، والجلسةُ تُعدّ مرّة */
