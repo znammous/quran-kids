@@ -5646,9 +5646,11 @@ function noteSeg(){
   try{ var T=bqnToday(); if(T ? T.hifzDone : goalHifzMet()) todayBox().hifz=1; }catch(e){}
 }
 /* الأجر بالأوجه المراجَعة لا بعدد الجلسات — فلا يربح من قسّم وردَه قِطعاً صغيرة */
-function noteReview(perfect,pages){
+/* sess=false: جزءٌ من جلسةٍ عُدّت من قبل — يُكافأ ولا تُعدّ جلسةً ثانية */
+function noteReview(perfect,pages,sess){
   var n=Math.max(1, pages||1);
-  todayBox().reviews++; addGems(25*n); addMat("iron",2*n);
+  if(sess!==false) todayBox().reviews++;
+  addGems(25*n); addMat("iron",2*n);
   if(perfect) addMat("glass",2*n);
   creditDay(); checkBadges(); }
 function totals(){
@@ -10587,6 +10589,7 @@ function nextRound(ok){
     if(rr){ qe[rr.page]=(qe[rr.page]||0)+(S.errors-(S.e0||0)); if(qe[rr.page]>=REV_QERR_MAX) revWeak(rr.page); }
   }
   S.i++;
+  if(S && S.review && !S.juzTest && S.due && S.due.length){ try{ revSegCheck(); }catch(e){} }
   if(CELE.on){                                       /* يمضي فور انتهاء الاحتفال أو تخطّيه */
     var s0=S;
     CELE.then=function(){ if(S===s0 && curScreen()==='scr-play') runRound(); };
@@ -14463,19 +14466,38 @@ function beginReview(j){
   show('scr-play');
   runRound();
 }
+/* ===== المراجعة السريعة تُحفظ مقطعاً مقطعاً =====
+   كان موعدُ كلّ مقطعٍ لا يُكتب إلا في آخر الجلسة: فمن راجع مقطعاً من سبعةٍ وخرج
+   وجده ينتظره كأن لم يراجعه. فإذا انتهت أسئلةُ مقطعٍ حُسم وحده — بأخطائه هو،
+   على ميزان الجلسة (خطأٌ واحدٌ يُغتفر، أو ربعُ أسئلته) — ونال جائزتَه */
+function revSegDone(d){
+  if(d.r) return;
+  var n=0, k;
+  for(k=0;k<S.rounds.length;k++){ var q=S.rounds[k]; if(q.surah===d.s && q.segFrom===d.from) n++; }
+  var e=S.errors-(S.segE0||0), ok=e<=Math.max(1,Math.floor(n/4));
+  S.segE0=S.errors;
+  var p=getP(d.key), b0=p.box||0, d0=p.due;
+  scheduleNext(d.key, ok);
+  d.r={ n:1, bad:!ok, drop:!ok && (p.box||0)<b0, grad:ok && d0!=null && p.due==null, next:p.due };
+  saveProg();
+  noteReview(e===0, segsPages([d]), !S.revCounted);   /* بالأوجه كالورد، والجلسةُ تُعدّ مرّة */
+  S.revCounted=true;
+}
+/* بعد كلّ سؤال: إن كان آخرَ أسئلة مقطعه (التالي من غيره أو لا تالي) حُسم المقطع */
+function revSegCheck(){
+  var prev=S.rounds[S.i-1], next=S.rounds[S.i], k;
+  if(!prev || (next && next.surah===prev.surah && next.segFrom===prev.segFrom)) return;
+  for(k=0;k<S.due.length;k++) if(S.due[k].s===prev.surah && S.due[k].from===prev.segFrom) revSegDone(S.due[k]);
+}
 function finishReview(){
   var ok = S.errors<=Math.max(1,Math.floor(S.rounds.length/4));
   var isTest=!!S.juzTest, j=S.juzTest, outH='';
   if(!isTest){
-    /* ومعها ما صار إليه كلُّ مقطع، كما في مراجعة الأوجه */
+    /* ومعها ما صار إليه كلُّ مقطع، كما في مراجعة الأوجه — وكلٌّ حُسم عند آخر أسئلته */
+    S.due.forEach(revSegDone);
     outH=revOutHTML(S.due.map(function(d){
-      var p=getP(d.key), b0=p.box||0, d0=p.due;
-      scheduleNext(d.key, ok);
-      return { tag:esc(d.s.name)+' '+arNum(d.from+1)+'–'+arNum(d.to),
-               r:{ n:1, bad:!ok, drop:!ok && (p.box||0)<b0, grad:ok && d0!=null && p.due==null, next:p.due } };
+      return { tag:esc(d.s.name)+' '+arNum(d.from+1)+'–'+arNum(d.to), r:d.r };
     }));
-    saveProg();
-    noteReview(S.errors===0, segsPages(S.due));   /* بالأوجه كالورد، لا بالجلسة */
   } else if(ok){
     /* الجائزةُ لأوّل اجتيازٍ وحدَه: كان الاختبارُ يُعاد على جزءٍ اجتازه
        فيُغَلّ الذهبُ والجواهرُ بلا حدّ، فينهار اقتصادُ المسجد */
