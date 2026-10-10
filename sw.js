@@ -21,7 +21,7 @@ var NET_WAIT = 4000;
 
 /* ما لا تعمل الصفحةُ بدونه: يُخزَّن عند التنصيب، فيفتح التطبيقُ دون إنترنت من ثاني مرّة.
    (أوّلُ فتحٍ يسبق عاملَ الخدمة، فلا يمرّ ما يُطلب فيه من هنا) */
-var DATA_FILES = ['./data/quran.js?v=1', './data/plans.js?v=1'];
+var DATA_FILES = ['./data/quran.js?v=1', './data/plans.js?v=1', './data/morph.json?v=1'];
 var UI_FONTS = ['400','600','700'].reduce(function(a,w){
   return a.concat(['./fonts/ui/plex-arabic-'+w+'-arabic.woff2', './fonts/ui/plex-arabic-'+w+'-latin.woff2']);
 }, ['./fonts/ui/amiri-quran.woff2']);

@@ -11254,29 +11254,116 @@ function roundEdge(r){
   }
 }
 
-/* المشتّتات من كلمات المقطع نفسه ثم السورة، بطول متقارب.
+/* ===== نوعُ الكلمة: «Quranic Arabic Corpus» ‏(corpus.quran.com) =====
+   لكلّ كلمةٍ مفتاحٌ «النوع|السوابق|الصيغة|اللواحق» (يبنيه scripts/morph-build.mjs)،
+   فيكون مشتّتُ حرفِ الجرّ حرفَ جرّ، ومشتّتُ صفةِ الله صفةً لله، ومشتّتُ «يَعْلَمُونَ»
+   مضارعاً لجماعةٍ مثلَه. حرفان لكلّ كلمة، و«~~» لما لا نوعَ له.
+   يُحمَّل في الخلفيّة، وما سُئل قبل وصوله يُختار بالطريقة القديمة. */
+var MORPH=null, MORPH_P=null, MORPH_IX={};
+function morphLoad(){
+  if(MORPH) return Promise.resolve(MORPH);
+  if(!MORPH_P) MORPH_P=fetch('data/morph.json?v=1').then(function(r){
+    if(!r.ok) throw new Error(r.status);
+    return r.json();
+  }).then(function(d){ MORPH=d; return d; })['catch'](function(e){ MORPH_P=null; });
+  return MORPH_P;
+}
+setTimeout(morphLoad, 3000);
+/* مفاتيحُ كلمات الآية بالرسم المعروض، أو null — تُفكّ مرّةً وتُحفظ */
+var MORPH_C={};
+function morphKeys(s,i){
+  if(!MORPH) return null;
+  var id=(SET.script?'u':'s')+s.n+':'+i;
+  if(id in MORPH_C) return MORPH_C[id];
+  var c=(!SET.script && MORPH.x[s.n+':'+i]) || (MORPH.u[s.n-1]||'').split(' ')[i];
+  if(!c) return (MORPH_C[id]=null);
+  var ab=MORPH.ab, out=[], k;
+  for(k=0;k<c.length;k+=2)
+    out.push(c[k]==='~' ? null : MORPH.k[ab.indexOf(c[k])*ab.length+ab.indexOf(c[k+1])]);
+  return (MORPH_C[id]=out);
+}
+/* المفتاحُ بعد التنازل: ٠ كلُّه، ١ اللواحقُ وجوداً لا عيناً، ٢ بلا لواحق،
+   ٣ النوعُ والسوابق، ٤ النوعُ وحده، ٥ بابُه: حرفٌ أو فعلٌ أو اسمٌ أو اسمٌ مبنيّ
+   (حرفُ الجرّ والأداة p، والأسماءُ المبنيّة كالضمير والموصول n) */
+var MORPH_LV=6;
+function morphAt(k,lv){
+  var f=k.split('|');
+  if(lv===0) return k;
+  if(lv===1) return f[0]+'|'+f[1]+'|'+f[2]+'|'+(f[3]?'+':'');
+  if(lv===2) return f[0]+'|'+f[1]+'|'+f[2];
+  if(lv===3) return f[0]+'|'+f[1];
+  if(lv===4) return f[0];
+  var c=f[0].charAt(0);
+  return c==='P' ? 'p' : (c==='p' || c==='n' || c==='V') ? c : 'N';
+}
+/* فهرسُ القرآن كلِّه بمفاتيح درجةٍ واحدة — يُبنى عند أوّل حاجة لكلّ رسم */
+function morphIndex(lv){
+  var id=SET.script+':'+lv;
+  if(MORPH_IX[id]) return MORPH_IX[id];
+  var ix={}, seen={}, s, i, ks, ws, k, key;
+  for(s=0;s<SURAHS.length;s++) for(i=0;i<SURAHS[s].ayat.length;i++){
+    ks=morphKeys(SURAHS[s],i); if(!ks) continue;
+    ws=wordsOf(ayahText(SURAHS[s],i));
+    for(k=0;k<ws.length;k++){
+      if(!ks[k] || seen[ws[k]+'\u0001'+lv]) continue;
+      key=morphAt(ks[k],lv);
+      seen[ws[k]+'\u0001'+lv]=1;
+      (ix[key]||(ix[key]=[])).push(ws[k]);
+    }
+  }
+  return (MORPH_IX[id]=ix);
+}
+/* كلماتُ المقطع ثمّ السورة التي تطابق المفتاحَ في درجته */
+function morphLocal(s,key,lv){
+  var out=[], i, ks, ws, k;
+  var each=function(i){
+    ks=morphKeys(s,i); if(!ks) return;
+    ws=wordsOf(ayahText(s,i));
+    for(k=0;k<ws.length;k++) if(ks[k] && morphAt(ks[k],lv)===key) out.push(ws[k]);
+  };
+  for(i=S.seg[0];i<S.seg[1];i++) each(i);
+  for(i=0;i<s.ayat.length;i++) if(i<S.seg[0] || i>=S.seg[1]) each(i);
+  return out;
+}
+
+/* المشتّتاتُ من نوع الكلمة نفسه: من المقطع والسورة أوّلاً، ثمّ من القرآن كلّه،
+   ثمّ يُتنازل عن الشبه درجةً درجة. وما لا نوعَ له فمن كلمات المقطع ثم السورة بطولٍ متقارب.
    وتُستثنى كلماتٌ بعينها: في الفراغين لا يصحّ أن يكون مشتّتُ أحدهما جوابَ الآخر. */
-function missOptions(s, correct, skip, twin){
+function missOptions(s, correct, skip, twin, a, wi){
   var bank={}, i;
   var no=function(w){
     if(norm(w)===norm(correct)) return true;
     if(skip){ for(var k=0;k<skip.length;k++) if(norm(w)===norm(skip[k])) return true; }
     return false;
   };
-  for(i=S.seg[0];i<S.seg[1];i++) wordsOf(ayahText(s,i)).forEach(function(w){ if(!no(w)) bank[w]=1; });
-  if(Object.keys(bank).length<6){
-    for(i=0;i<s.ayat.length && Object.keys(bank).length<14;i++)
-      wordsOf(ayahText(s,i)).forEach(function(w){ if(!no(w)) bank[w]=1; });
-  }
-  var cand=Object.keys(bank).sort(function(a,b){
-    return Math.abs(a.length-correct.length)-Math.abs(b.length-correct.length);
-  }).slice(0,10);
-  var nOpts=SET.level==='hard'?4:3, opts;
+  var nOpts=SET.level==='hard'?4:3, opts=[], taken={};
   /* كلمةُ الآية الشبيهة بين الخيارات: هي التي يلتبس بها الحافظ */
-  if(twin && !no(twin)){
-    cand=cand.filter(function(w){ return norm(w)!==norm(twin); });
-    opts=shuffle(cand).slice(0,nOpts-2); opts.push(twin);
-  } else opts=shuffle(cand).slice(0,nOpts-1);
+  if(twin && !no(twin)){ opts.push(twin); taken[norm(twin)]=1; }
+  var take=function(list){
+    var c=[], k, w;
+    for(k=0;k<list.length;k++){ w=list[k]; if(!no(w) && !taken[norm(w)]){ taken[norm(w)]=1; c.push(w); } }
+    /* من الأقرب طولاً، وفيه شيءٌ من التنويع لئلّا تتكرّر الخياراتُ نفسُها */
+    c=shuffle(c).sort(function(x,y){
+      return Math.abs(x.length-correct.length)-Math.abs(y.length-correct.length); }).slice(0,6);
+    shuffle(c);
+    while(opts.length<nOpts-1 && c.length) opts.push(c.shift());
+  };
+  var ks=(a!=null) ? morphKeys(s,a) : null, key=ks && ks[wi];
+  if(key){
+    for(var lv=0; lv<MORPH_LV && opts.length<nOpts-1; lv++){
+      var kk=morphAt(key,lv);
+      take(morphLocal(s,kk,lv));
+      if(opts.length<nOpts-1) take(morphIndex(lv)[kk]||[]);
+    }
+  }
+  if(opts.length<nOpts-1){
+    for(i=S.seg[0];i<S.seg[1];i++) wordsOf(ayahText(s,i)).forEach(function(w){ if(!no(w)) bank[w]=1; });
+    if(Object.keys(bank).length<6){
+      for(i=0;i<s.ayat.length && Object.keys(bank).length<14;i++)
+        wordsOf(ayahText(s,i)).forEach(function(w){ if(!no(w)) bank[w]=1; });
+    }
+    take(Object.keys(bank));
+  }
   opts.push(correct);
   return shuffle(opts);
 }
@@ -11284,7 +11371,7 @@ function roundMissing(r){
   var s=S.surah, ws=wordsOf(ayahText(s,r.a));
   if(r.wi>=ws.length) r.wi=ws.length-1;
   var correct=ws[r.wi];
-  var opts=missOptions(s, correct, null, simTwin(s,S.seg[0],S.seg[1],r.a,r.wi));
+  var opts=missOptions(s, correct, null, simTwin(s,S.seg[0],S.seg[1],r.a,r.wi), r.a, r.wi);
   var html='';
   ws.forEach(function(w,i){ html += (i===r.wi ? '<span class="blank" id="blk">'+esc(w)+'</span>' : esc(w))+' '; });
   $('playArea').innerHTML=
@@ -11321,8 +11408,8 @@ function roundMiss2(r){
   if(i2<0) i2=ws.length-1;
   if(i1>i2){ var t=i1; i1=i2; i2=t; }
   var w1=ws[i1], w2=ws[i2];
-  var o1=missOptions(s,w1,[w2],simTwin(s,S.seg[0],S.seg[1],r.a,i1)),
-      o2=missOptions(s,w2,[w1],simTwin(s,S.seg[0],S.seg[1],r.a,i2));
+  var o1=missOptions(s,w1,[w2],simTwin(s,S.seg[0],S.seg[1],r.a,i1),r.a,i1),
+      o2=missOptions(s,w2,[w1],simTwin(s,S.seg[0],S.seg[1],r.a,i2),r.a,i2);
   var step=0, answered=false;
   var html='';
   ws.forEach(function(w,i){
