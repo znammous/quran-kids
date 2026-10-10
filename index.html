@@ -5393,7 +5393,34 @@ function revDueReset(){
   saveProg();
   return late.length;
 }
+/* ساعةُ المراجعة لا تمضي في يومٍ لم يُتمَّ مستحقُّه: من انقطع ثلاثاً وجد ما فاته
+   وحدَه، وما كان سيحلّ في غيبته ينتظر بعدد أيّامها — فتبقى المسافاتُ بين
+   المراجعات بأيّام نشاطه هو. وخطط «بالقرآن نحيا» تمضي بيومها، فلا تمسّها.
+   revClk: أوّلُ يومٍ لم يُحسم بعد. وفي الغيبة لا يتغيّر شيء، فأوّلُ يومٍ بقي
+   فيه مستحقّ (d0) يبقى كذلك إلى اليوم، وكلُّ ما بعده يُؤجَّل (t-d0) يوماً. */
+function revHold(){
+  var p=curP(), t=todayNum(), L=p.revClk;
+  if(L==null || L>t){ p.revClk=t; saveDB(); return; }
+  if(L===t) return;
+  p.revClk=t;
+  if(revOff() || onPlan()){ saveDB(); return; }
+  var m=null;
+  Object.keys(prog).forEach(function(k){
+    var r=/^(\d+)_(\d+)_([a-z\d]+)$/.exec(k); if(!r || r[3]!==segMode()) return;
+    var q=prog[k]; if(!q.done || q.due==null) return;
+    var s=surahBy(parseInt(r[1],10)); if(!s || !inRange(s)) return;
+    if(m==null || q.due<m) m=q.due;
+  });
+  var d0=(m==null) ? t : Math.max(L,m);
+  if(d0<t){
+    Object.keys(prog).forEach(function(k){
+      var q=prog[k]; if(q && q.done && q.due!=null && q.due>d0) q.due+=t-d0;
+    });
+  }
+  saveDB();
+}
 function dueSegs(){
+  try{ revHold(); }catch(e){}
   if(revOff()) return [];
   var t=todayNum(), out=[];
   Object.keys(prog).forEach(function(k){
@@ -5515,7 +5542,8 @@ function goalRevMet(){
     var T=bqnToday();
     if(T && T.r) return !!(T.revDone || T.dayDone);
   }catch(e){}
-  if(todayBox().reviews>=1) return true;
+  /* كانت مراجعةٌ واحدةٌ تكفي فيُعلَّم اليومُ تامّاً وسبعةُ مقاطعَ تنتظر،
+     فتُرحَّل إلى الغد وتتراكم. فلا يتمّ حتى يفرغ مستحقُّه كلُّه */
   try{
     if(wirdPending()) return false;               /* ورده لم يُؤدَّ بعد */
     return dueSegs().length===0;                  /* ولا مقطعٌ استحقّ اليوم */
@@ -5680,8 +5708,7 @@ function renderHUD(){
     var wp=false; try{ wp=wirdPending(); }catch(e){}
     var revTxt = wp ? 'ورد المراجعة اليوم: <b>'+arNum(revSize('wird'))+' وجه</b> من محفوظك'
                : due===0 ? 'لا مراجعة متبقية اليوم'
-               : mR ? ('أتممت مراجعة اليوم — وبقي '+arNum(due)+' مقطعاً إن أردت الزيادة')
-                    : ('راجع: <b>'+names+'</b>'+rest);
+               : ('راجع: <b>'+names+'</b>'+rest);
     lines='<div class="gline"><span class="tick'+(mH?' on':'')+'">'+
         (mH?'✓':'📖')+'</span> '+hifz+'</div>'+
       '<div class="gline"><span class="tick'+(mR?' on':'')+'">'+(mR?'✓':'☀️')+'</span> '+
