@@ -16915,11 +16915,15 @@ function runPickAyah(){
   for(k=Math.max(0,a-2);k<=Math.min(s.ayat.length-1,a+2);k++) if(k!==a) wordsOf(ayahText(s,k)).forEach(function(w){ add(w,rest); });
   for(k=0;k<40 && rest.length<10;k++){ var o=P[Math.floor(Math.random()*P.length)]; wordsOf(ayahText(o.s,o.a)).forEach(function(w){ add(w,rest); }); }
   RUN.decoys=tws.concat(shuffle(rest)); RUN.nTw=tws.length; RUN.di=0;
-  RUN.decoySince=9;                                   /* تأتي الكلمةُ الأولى سريعاً */
+  RUN.wait=0;                                         /* تأتي الكلمةُ الأولى سريعاً */
   RUN.dist=0; RUN.gap=RUN.speed*0.9;
   runHud();
 }
 /* الكلمةُ الخطأ: الشبيهةُ أوّلاً، ثمّ أقربُ أربعٍ عشوائيّةٍ طولاً إلى الجواب */
+/* كم كلمةً خطأً قبل أن تعود الصحيحة (العدّاء والعصفور): من min إلى ثلاث عشوائيّاً.
+   كانت تتناوب معها بانتظام، وتعود فورَ أن تفوت — فيُعرف موضعُها بالعدّ، ويلتقطها
+   من لاحظ أنّها الكلمةُ التي تتكرّر لا من تذكّر الآية. بعد الصحيحة min=1، وبعد فواتها 2 */
+function gameGap(min){ return min+Math.floor(Math.random()*(4-min)); }
 function runDecoy(){
   var D=RUN.decoys, ay=RUN.ay, want=ay.ws[ay.tg[ay.i]]||'', best=null, k, w;
   if(RUN.di<RUN.nTw) return D[RUN.di++];
@@ -18013,13 +18017,13 @@ function runSpawn(){
     w=im.width*RUN_PX;
     o={ kind:'obs', img:im, x:-w-4, w:w, h:im.height*RUN_PX };
   } else {
-    var good=!goodOn && (RUN.decoySince>=1 || !RUN.decoys.length || Math.random()<0.4);
+    var good=!goodOn && (RUN.wait<=0 || !RUN.decoys.length);
     var txt=good ? ay.ws[ay.tg[ay.i]] : runDecoy();
     var c=$('runCv').getContext('2d');
     c.font=RUN_FONT;
     w=Math.max(58, Math.ceil(c.measureText(txt).width)+28);
     o={ kind:'word', good:good, t:txt, x:-w-4, w:w, ph:Math.random()*6 };
-    RUN.decoySince=good ? 0 : RUN.decoySince+1;
+    RUN.wait=good ? gameGap(1) : RUN.wait-1;
   }
   RUN.items.push(o); RUN.lastKind=kind;
   RUN.dist=0; RUN.gap=w+sp*(1.05+Math.random()*0.6);
@@ -18048,7 +18052,7 @@ function runUpdate(dt){
       if(b.x0<cb.x1 && b.x1>cb.x0 && b.y0<cb.y1 && b.y1>cb.y0){ runTouch(o); if(RUN.state!=='run') return; }
     }
     if(o.x>RUN.W+20){
-      if(o.kind==='word' && o.good && !o.dead){ RUN.decoySince=9; runSay('فاتتك «{w}» — ستعود', {w:o.t}); }
+      if(o.kind==='word' && o.good && !o.dead){ RUN.wait=gameGap(2); runSay('فاتتك «{w}» — ستعود', {w:o.t}); }
       RUN.items.splice(i,1);
     } else if(o.dead) RUN.items.splice(i,1);
   }
@@ -18657,7 +18661,7 @@ function birdSize(){
 }
 function birdReset(){
   BD.hearts=BIRD_HEARTS; BD.score=0; BD.done=0; BD.items=[]; BD.parts=[]; BD.last=null;
-  BD.speed=BIRD_V0*gameK('bird'); BD.y=birdMidY(); BD.vy=0; BD.decoySince=9;
+  BD.speed=BIRD_V0*gameK('bird'); BD.y=birdMidY(); BD.vy=0; BD.wait=0;
   BD.t=0; BD.off=0; BD.inv=0; BD.shake=0; BD.rest=0; BD.dist=0; BD.gap=BD.speed*1.1;
   BD.toast=''; BD.toastT=0; BD.flashT=0; BD.lastObs=0; BD.gems=0; BD.flash='';
   birdPickAyah();
@@ -18755,7 +18759,7 @@ function birdSpawn(){
   }
   /* غيمةٌ فيها كلمة: الصحيحةُ لا تغيب طويلاً، وبينها كلماتٌ تُترك */
   var want=ay.ws[ay.tg[ay.i]];
-  var good=!goodOn && (BD.decoySince>=1 || !BD.decoys.length || Math.random()<0.4);
+  var good=!goodOn && (BD.wait<=0 || !BD.decoys.length);
   /* الخطأُ: كلمةُ الآية الشبيهة أوّلاً، ثمّ من نوع المطلوبة، وإلّا فمن المجاورات */
   var t=good ? want
         : BD.ti<BD.nTw ? BD.decoys[BD.ti++]
@@ -18763,7 +18767,7 @@ function birdSpawn(){
   var w=birdCloudW(t, c), h=52;
   var y=top+22+Math.random()*Math.max(12, (G-top-56));
   BD.items.push({ kind:'cloud', x:-w-10, w:w, h:h, y:Math.round(y), t:t, good:good, ph:Math.random()*6 });
-  BD.decoySince=good ? 0 : BD.decoySince+1;
+  BD.wait=good ? gameGap(1) : BD.wait-1;
   BD.lastObs++;
   BD.dist=0; BD.gap=w+BD.speed*(0.95+Math.random()*0.5);
 }
@@ -18828,7 +18832,7 @@ function birdUpdate(dt){
         o.y-o.h/2<BD.y+11 && o.y+o.h/2>BD.y-11);
     if(hit){ birdTouch(o); if(BD.state!=='run') return; }
     if(o.x>BD.W+30){
-      if(o.kind==='cloud' && o.good && !o.taken){ BD.decoySince=9; birdSay('فاتتك «{w}» — ستعود', {w:o.t}); }
+      if(o.kind==='cloud' && o.good && !o.taken){ BD.wait=gameGap(2); birdSay('فاتتك «{w}» — ستعود', {w:o.t}); }
       BD.items.splice(i,1);
     }
     else if(o.kind==='cloud' && o.taken && o.fade<=0) BD.items.splice(i,1);
