@@ -9989,7 +9989,8 @@ $('mfFindList').onclick=function(e){
     if(Date.now()-wq<450) return;
     wq=Date.now();
     if(e.cancelable) e.preventDefault();
-    mfGoto(mfPage() + (e.deltaX>0 ? 1 : -1));
+    /* أصابعُ لوحة اللمس إلى اليمين تُعطي deltaX سالبة: كالسحب إلى اليمين على الجوّال، يأتي التالي */
+    mfGoto(mfPage() + (e.deltaX<0 ? 1 : -1));
   }, {passive:false});
   /* النقرُ هو بابُ الالتقاط: يصل في كلّ موضعٍ من الوجه، ولا يُولَّد من سحب */
   b.addEventListener('click', function(e){
