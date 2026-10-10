@@ -14587,7 +14587,8 @@ function hijriDate(o){
     new Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-latn',{day:'numeric',month:'numeric',year:'numeric'})
       .formatToParts(new Date()).forEach(function(x){ p[x.type]=parseInt(x.value,10); });
     if(!p.month || !p.year || p.year<1300) return '';
-    var ar=!NUR_I18N.on || NUR_I18N.code==='ar';
+    /* الأسماءُ عربيّةٌ في كلّ لغة: بحرفها لمن يكتب به (الأرديّة والفارسيّة والبشتو)، وباللاتينيّ لغيرهم */
+    var ar=!NUR_I18N.on || NUR_I18N.code==='ar' || (NUR_I18N.langs[NUR_I18N.code]||{}).dir==='rtl';
     var mn=(ar?HIJRI_MONTHS.ar:HIJRI_MONTHS.en)[p.month-1];
     return [o.day?arNum(p.day):'', mn, o.year?(arNum(p.year)+(ar?' هـ':' AH')):''].join(' ').trim();
   }catch(e){}
