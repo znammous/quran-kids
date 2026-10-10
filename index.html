@@ -5323,13 +5323,22 @@ function pageLabel(P){
 }
 /* المقاطع (بمقياس الحفظ الحالي) التي تلمس هذه الصفحة وقد أُتمّت */
 function pageSegKeys(P){
-  var keys=[];
-  pagePieces(P).forEach(function(p){
+  var keys=[], pcs=pagePieces(P), mode=segMode();
+  pcs.forEach(function(p){
     segsOf(p.s).forEach(function(g){
       if(g[1]<=p.from || g[0]>=p.to) return;            /* لا تقاطع */
       var k=gk(p.s.n,g);
       if(prog[k] && prog[k].done && keys.indexOf(k)<0) keys.push(k);
     });
+  });
+  /* ومقطعٌ باسمٍ من تقسيمٍ قديم (تغيّرت حدودُ الأنصاف مثلاً) يبدأ في هذا الوجه:
+     يراه dueSegs مستحقّاً فيُدخل الوجهَ في المراجعة، ولا يُخرجه منها إلا أن
+     يُجدوَل معه — وكان لا يُرى هنا، فيبقى الوجهُ مستحقّاً مهما رُوجع */
+  Object.keys(prog).forEach(function(k){
+    var m=/^(\d+)_(\d+)_([a-z\d]+)$/.exec(k);
+    if(!m || m[3]!==mode || !prog[k].done || keys.indexOf(k)>=0) return;
+    var n=parseInt(m[1],10), a=parseInt(m[2],10);
+    for(var i=0;i<pcs.length;i++) if(pcs[i].s.n===n && a>=pcs[i].from && a<pcs[i].to){ keys.push(k); return; }
   });
   return keys;
 }
