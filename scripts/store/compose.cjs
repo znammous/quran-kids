@@ -7,7 +7,7 @@ const dict=(()=>{ let d={}; const f=ROOT+'/lang/'+L+'.js'; if(fs.existsSync(f)) 
 const OUT=ROOT+'/store/l10n/'+L;
 const SIZES=[ {dir:'appstore/iphone-6.5',w:1284,h:2778,raw:'phone'}, {dir:'appstore/iphone-6.9',w:1290,h:2796,raw:'phone'},
               {dir:'appstore/ipad-13',w:2048,h:2732,raw:'ipad'}, {dir:'play/phone',w:1080,h:1920,raw:'phone'} ];
-const SCENES=['1-path','2-games','3-seg','4-rec','5-mean','6-build','7-words','8-board','9-lang'];   /* ما لا لقطةَ خامّةً له يُتخطّى */
+const SCENES=['1-path','2-games','3-seg','4-rec','5-mean','6-build','7-words','7-story','8-board','9-lang'];   /* 7-story: قائمةُ القصص من capture-games (العربيّة) */   /* ما لا لقطةَ خامّةً له يُتخطّى */
 const b64=f=>'data:image/png;base64,'+fs.readFileSync(f).toString('base64');
 const FONT=`@font-face{font-family:P;src:url(http://localhost:8765/fonts/ui/plex-arabic-700-arabic.woff2);font-weight:700}
 @font-face{font-family:P;src:url(http://localhost:8765/fonts/ui/plex-arabic-700-latin.woff2);font-weight:700;unicode-range:U+0000-00FF,U+2000-206F}`;
