@@ -446,6 +446,24 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
 #scr-onb .lookpanel .pkh:first-of-type{margin-top:0}
 #scr-onb #onbBody{margin-bottom:0}
 #scr-onb .onbnav{margin:14px 0 12px}
+/* «مَن أنت؟» من القلم في الرئيسيّة: تبويباتٌ وزرُّ حفظ. كانت الصفحةُ أطولَ من
+   شاشة الجوّال فلا يُرى «حفظ» إلّا بتمرير — فتضيق قليلاً، ويبقى صفُّ الحفظ
+   ظاهراً في أسفلها كصفّ خطّة الحفظ، والصفحةُ تُمرَّر تحته إن طالت */
+#scr-onb.editing h1{margin-bottom:4px}
+#scr-onb.editing .onbtabs{margin:6px 0 8px}
+#scr-onb.editing .sub{margin-bottom:8px}
+#scr-onb.editing.s0 .sub{display:none}      /* «اسمك وشكلك…»: الصورةُ تقوله */
+#scr-onb.editing .onblang{display:none}
+#scr-onb.editing #lookCard{padding:10px}
+#scr-onb.editing .lookpanel{padding:6px 8px;margin-top:8px}
+#scr-onb.editing .lookpanel .pkh{padding:5px 10px;margin-top:5px}
+#scr-onb.editing .lookpanel .pkh:first-of-type{margin-top:0}
+#scr-onb.editing .onbnav .onbgap{display:none}
+#scr-onb.editing #onbSave{flex:1 1 auto;min-width:0}
+#scr-onb.editing .onbnav{position:sticky;bottom:10px;z-index:3;margin:8px 0 4px;
+  background:var(--pnl);border:2px solid var(--pb);border-radius:16px;padding:8px;
+  box-shadow:0 10px 26px rgba(0,0,0,.3)}
+body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe-area-inset-bottom))}
 /* ===== «عائلتي»: كلُّ فردٍ يُرسم بصورة الشخصية نفسِها ===== */
 /* شريطُ العائلة يطول بعدد الإخوة، فيُسحب أفقيّاً كتبويبات المعالج
    ولا تتقاسم التبويباتُ عرضَ الشاشة فتضيق أسماؤها */
@@ -16156,6 +16174,14 @@ function onbTabs(){
   var bar=$('onbTabs');
   if(!ONB.edit){ bar.hidden=true; return; }
   bar.hidden=false;
+  /* الأزرارُ قائمةٌ؟ يُنقل التحديدُ بينها ولا تُعاد — إعادتُها تُرجع الشريطَ إلى
+     أوّل تمريره ثمّ يُصحَّح، فيرمش مع كلّ تبويب (كما عُولج في الإعدادات) */
+  var old=bar.querySelectorAll('.onbtab'), j;
+  if(old.length===ONB_TABS.length){
+    for(j=0;j<old.length;j++) old[j].classList.toggle('sel', j===ONB.i);
+    try{ old[ONB.i].scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'}); }catch(e){}
+    return;
+  }
   bar.innerHTML=ONB_TABS.map(function(n,k){
     return '<button type="button" class="onbtab'+(k===ONB.i?' sel':'')+'" data-t="'+k+'">'+n+'</button>';
   }).join('');
@@ -16208,6 +16234,8 @@ function onbShow(i){
   ONB.i=Math.max(0,Math.min(ONB.n-1,i));
   lookHome();
   var st=ONB.i, B=$('onbBody');
+  $('scr-onb').classList.toggle('editing', !!ONB.edit);
+  $('scr-onb').classList.toggle('s0', st===0);
   $('onbFill').style.width=Math.round(100*(st+1)/ONB.n)+'%';
   $('onbCount').textContent=arNum(st+1)+' من '+arNum(ONB.n);
   /* في التعديل: تبويبات وزرّ حفظ. وفي المعالج الأوّل: شريط تقدّم وخطوات */
@@ -16292,7 +16320,10 @@ function onbShow(i){
   /* وفي كلّ خطوة: علامةُ الانتظار (waiting) تُحسب لهذه الخطوة نفسِها. كانت الخطوتان
      الأخيرتان لا تحسبانها، فيبقى «التالي» باهتاً بعلامةٍ ورثها من خطوة الخطّة وهو يعمل */
   onbGate();
-  show('scr-onb');
+  /* التنقّلُ بين تبويباتها لا يُعيد دخولَ الشاشة: كان كلُّ تبويبٍ يُعيد حركةَ
+     دخولها ويدفع موضعاً في سجلّ الرجوع، فترمش — كما لا ترمش الإعدادات */
+  if($('scr-onb').classList.contains('active')) window.scrollTo(0,0);
+  else show('scr-onb');
 }
 function onbFinish(){
   ONB.prev=null;
