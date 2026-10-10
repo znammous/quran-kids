@@ -14466,15 +14466,22 @@ function beginReview(j){
   show('scr-play');
   runRound();
 }
+/* حجمُ المقطع بالأوجه: كلماتُ كلّ آيةٍ إلى كلمات وجهها — فيصحّ في كلّ تقسيم
+   (ربعٌ ونصفٌ وعددُ آياتٍ وأيّامُ الخطط)، والآيةُ في وجهين تُحسب على وجه أوّلها */
+function segSize(d){
+  var n=0, a, P;
+  for(a=d.from;a<d.to;a++){ P=ayahPage(d.s,a); n+=(WC[GIDX[d.s.n-1]+a]||0)/(PW[P]||1); }
+  return n;
+}
 /* ===== المراجعة السريعة تُحفظ مقطعاً مقطعاً =====
    كان موعدُ كلّ مقطعٍ لا يُكتب إلا في آخر الجلسة: فمن راجع مقطعاً من سبعةٍ وخرج
-   وجده ينتظره كأن لم يراجعه. فإذا انتهت أسئلةُ مقطعٍ حُسم وحده — بأخطائه هو،
-   على ميزان الجلسة (خطأٌ واحدٌ يُغتفر، أو ربعُ أسئلته) — ونال جائزتَه */
+   وجده ينتظره كأن لم يراجعه. فإذا انتهت أسئلةُ مقطعٍ حُسم وحده — بأخطائه هو — ونال جائزتَه.
+   والخطأُ الواحدُ يُغتفر في وجهٍ فأكثر لا فيما دونه: في ربع وجهٍ نسبتُه كبيرة،
+   وفي الوجه زلّةٌ عابرة (قرارُ صاحب التطبيق). ومقطعُ «صفحة كاملة» يقف عند آيةٍ
+   فقد ينقص عن الوجه قليلاً، فما بلغ أربعة أخماسه وجه */
 function revSegDone(d){
   if(d.r) return;
-  var n=0, k;
-  for(k=0;k<S.rounds.length;k++){ var q=S.rounds[k]; if(q.surah===d.s && q.segFrom===d.from) n++; }
-  var e=S.errors-(S.segE0||0), ok=e<=Math.max(1,Math.floor(n/4));
+  var e=S.errors-(S.segE0||0), ok=e<=(segSize(d)>=0.8 ? 1 : 0);
   S.segE0=S.errors;
   var p=getP(d.key), b0=p.box||0, d0=p.due;
   scheduleNext(d.key, ok);
@@ -14495,6 +14502,7 @@ function finishReview(){
   if(!isTest){
     /* ومعها ما صار إليه كلُّ مقطع، كما في مراجعة الأوجه — وكلٌّ حُسم عند آخر أسئلته */
     S.due.forEach(revSegDone);
+    ok=S.due.every(function(d){ return !d.r.bad; });   /* العنوانُ على حكم المقاطع */
     outH=revOutHTML(S.due.map(function(d){
       return { tag:esc(d.s.name)+' '+arNum(d.from+1)+'–'+arNum(d.to), r:d.r };
     }));
