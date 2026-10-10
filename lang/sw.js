@@ -413,6 +413,7 @@ NUR_I18N.add('sw', {
   "الجدران": "Kuta",
   "الجزء": "Juzuu",
   "الجزء {0}": "Juzuu {0}",
+  "{0} جزءاً": "Juzuu {0}",
   "الجلسة": "Kikao",
   "الجلسة التالية": "Kikao kinachofuata",
   "الجهاز": "Kifaa",

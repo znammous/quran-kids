@@ -413,6 +413,7 @@ NUR_I18N.add('ms', {
   "الجدران": "Dinding",
   "الجزء": "Juzuk",
   "الجزء {0}": "Juzuk {0}",
+  "{0} جزءاً": "{0} juzuk",
   "الجلسة": "Sesi",
   "الجلسة التالية": "Sesi seterusnya",
   "الجهاز": "Peranti",

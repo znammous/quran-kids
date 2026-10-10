@@ -413,6 +413,7 @@ NUR_I18N.add('uz', {
   "الجدران": "Devorlar",
   "الجزء": "Pora",
   "الجزء {0}": "{0}-pora",
+  "{0} جزءاً": "{0} pora",
   "الجلسة": "Mashgʻulot",
   "الجلسة التالية": "Keyingi mashgʻulot",
   "الجهاز": "Qurilma",
