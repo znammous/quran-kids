@@ -745,13 +745,15 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
   vertical-align:.35em;white-space:nowrap}
 /* المتشابهاتُ في الوجه: لكلّ مجموعةٍ لونٌ واحد. وفي عرض المقطع ما حوله باهت */
 .mushaf .mout{opacity:.35}
-.mushaf .mg0,.mushaf .mg1,.mushaf .mg2,.mushaf .mg3,.mushaf .mg4,.mushaf .mg5{border-radius:4px}
+.mushaf .mg0,.mushaf .mg1,.mushaf .mg2,.mushaf .mg3,.mushaf .mg4,.mushaf .mg5,.mushaf .mg6,.mushaf .mg7{border-radius:4px}
 .mushaf .mg0{background:rgba(255,193,7,.32)}
 .mushaf .mg1{background:rgba(66,153,255,.26)}
 .mushaf .mg2{background:rgba(46,196,96,.26)}
 .mushaf .mg3{background:rgba(255,92,158,.24)}
 .mushaf .mg4{background:rgba(155,100,255,.25)}
 .mushaf .mg5{background:rgba(255,128,32,.28)}
+.mushaf .mg6{background:rgba(0,184,184,.26)}
+.mushaf .mg7{background:rgba(160,110,60,.26)}
 .mfgo{flex:0 0 auto;display:flex;flex-direction:column;align-items:stretch;gap:8px;
   padding:10px 14px 12px;background:var(--pnl);border-top:2px solid var(--pb)}   /* تحته الشريطُ السفليّ، وفيه حاشيةُ الشاشة */
 .mfgo[hidden]{display:none!important}
@@ -768,6 +770,8 @@ label.lbl,.lbl{display:block;font-weight:800;margin:0 0 6px;font-size:14px;color
 .mfq.mg3{background:rgba(255,92,158,.42)}
 .mfq.mg4{background:rgba(155,100,255,.45)}
 .mfq.mg5{background:rgba(255,128,32,.45)}
+.mfq.mg6{background:rgba(0,184,184,.45)}
+.mfq.mg7{background:rgba(160,110,60,.45)}
 .manum.hl{color:#8a6b2a;border-color:#c8a84f}
 .ayahbox{background:#f2f9ff;border:3px dashed #a6cdf2;border-radius:16px;padding:10px;margin-bottom:12px;
   min-height:110px;max-height:46vh;overflow-y:auto;display:flex;justify-content:center;
@@ -4480,7 +4484,7 @@ function simScan(toks,all){
 function simOn(){ return !(SET && SET.simHl===false); }
 
 /* ---------- وجهُ المصحف: مجموعاتٌ ملوّنة ---------- */
-var SIM_NCOL=6, SIMP={};
+var SIM_NCOL=8, SIMP={};
 /* كلماتُ الوجه P الظاهرةُ فيه آيةً آية: [{gi, w0, toks}] — فآيةٌ تبدأ في وجهٍ
    وتتمّ في تاليه لا يُحسب منها إلّا ما يُرى */
 function simPageItems(P){
