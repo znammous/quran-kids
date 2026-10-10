@@ -1053,6 +1053,11 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 .xbtn:active{transform:translateY(3px) scale(1);box-shadow:0 2px 0 rgba(0,0,0,.22)}
 .modal ol{padding-inline-start:20px;line-height:1.9;font-size:15px;color:var(--on2)}
 .modal ol b{color:var(--ttl)}
+.srcin{text-align:center;margin:0 0 10px;font-size:14px;font-weight:700;color:var(--on2)}
+.srclist{list-style:none;margin:0;padding:0}
+.srclist li{padding:9px 2px;border-top:1px solid var(--pb);line-height:1.7}
+.srclist b{display:block;color:var(--ttl);font-size:15px}
+.srclist span{display:block;font-size:13.5px;color:var(--on2);overflow-wrap:anywhere}
 .modal p,.modal .sub{color:var(--on1)}
 /* كان لونُها مكتوباً في السطر: أزرقُ شاحبٌ يصلح لليل ويغيب في النهار */
 .modal .adabsay{text-align:center;color:var(--ttl2);font-size:15px;margin:0}
@@ -2613,6 +2618,26 @@ body.hastabs #btnRevQuit{display:none}
   </div>
 </div>
 
+<!-- المصادر: كلُّ ما بُني عليه التطبيقُ يُذكر أهلُه. الاسمُ وحده بالحروف اللاتينيّة لا يُترجم،
+     فكلُّ سطرٍ عنوانٌ وصاحبُه في عنصرين، يُترجم كلٌّ منهما وحدَه -->
+<div class="modal-bg" id="srcBox" hidden>
+  <div class="modal">
+    <button class="xbtn" id="xSrc" aria-label="إغلاق">✕</button>
+    <h2>📚 المصادر والشكر</h2>
+    <p class="srcin">جزى اللهُ خيراً كلَّ من أتاح هذه المصادر خدمةً لكتابه</p>
+    <ul class="srclist">
+      <li><b>📖 نصّ المصحف</b><span>quran.com (مصحف المدينة)، ومطابَقٌ آيةً بآية مع alquran.cloud</span></li>
+      <li><b>🖋️ خطوط المصحف وصفحاته</b><span>مجمع الملك فهد لطباعة المصحف الشريف، عبر quran.com</span></li>
+      <li><b>💡 التفسير الميسّر والميسّر في غريب القرآن الكريم</b><span>مجمع الملك فهد لطباعة المصحف الشريف</span></li>
+      <li><b>🌍 ترجمات معاني القرآن</b><span>موسوعة القرآن الكريم QuranEnc.com ومركز رواد للترجمة، ومصدرُ كلّ ترجمةٍ مذكورٌ معها</span></li>
+      <li><b>🎧 التلاوات</b><span>everyayah.com · mp3quran.net</span></li>
+      <li><b>🗓️ خطط الحفظ</b><span>برنامج «بالقرآن نحيا»، Quranlives.com</span></li>
+      <li><b>🧩 نوعُ كلّ كلمةٍ في القرآن</b><span>Quranic Arabic Corpus (corpus.quran.com) · github.com/mustafa0x/quran-morphology</span></li>
+      <li><b>🔤 خطوط الواجهة</b><span>IBM Plex Sans Arabic · Amiri Quran · Nunito · Noto Nastaliq Urdu</span></li>
+      <li><b>🛠️ بناء التطبيق</b><span>Capacitor</span></li>
+    </ul>
+  </div>
+</div>
 <div class="modal-bg" id="privBox" hidden>
   <div class="modal privm">
     <button class="xbtn" id="xPriv" aria-label="إغلاق">✕</button>
@@ -3187,6 +3212,7 @@ body.hastabs #btnRevQuit{display:none}
           🌐 ويُنزَّل من الشبكة: التطبيقُ والقصصُ وخطوطُ المصحف وتلاواتُ القرّاء — تنزيلٌ فقط.
         </div>
         <button class="btn" id="btnPrivacy" style="width:100%;margin-top:8px">📄 سياسةُ الخصوصيّة كاملةً</button>
+        <button class="btn" id="btnSources" style="width:100%;margin-top:8px">📚 المصادر والشكر</button>
         <!-- مخفيٌّ عن المستخدم: لا حاجةَ به إليه، وإنّما هو للفحص.
              يظهر في وضع الفحص (Ctrl+Shift+Q) -->
         <button class="btn" id="btnNotesAgain" hidden style="width:100%;margin-top:8px">🔁 أعِدْ إظهار رسائل التعريف</button>
@@ -9952,7 +9978,7 @@ $('mfFindList').onclick=function(e){
     mfPickAt(null, e.clientX, e.clientY);
   });
 })();
-['help','adab','srPick','revHelp'].forEach(function(id){
+['help','adab','srPick','revHelp','srcBox'].forEach(function(id){
   $(id).addEventListener('click', function(e){ if(e.target===this) closeModal(id); });
 });
 document.addEventListener('keydown', function(e){
@@ -9963,6 +9989,7 @@ document.addEventListener('keydown', function(e){
   else if(!$('adab').hidden) closeModal('adab');
   else if(!$('help').hidden) closeModal('help');
   else if(!$('revHelp').hidden) closeModal('revHelp');
+  else if(!$('srcBox').hidden) closeModal('srcBox');
 });
 $('xAdab').onclick=function(){ closeModal('adab'); };
 $('xSrPick').onclick=function(){ closeModal('srPick'); };
@@ -9976,7 +10003,7 @@ $('srGoRead').onclick=function(){
 (function(){
   var mo=window.MutationObserver;
   if(!mo) return;
-  ['help','adab','srPick','revHelp'].forEach(function(id){
+  ['help','adab','srPick','revHelp','srcBox'].forEach(function(id){
     var e=$(id); if(!e) return;
     new mo(function(){ if(!e.hidden){ try{ navGuard(); }catch(x){} } })
       .observe(e,{attributes:true,attributeFilter:['hidden']});
@@ -19031,6 +19058,8 @@ $('btnPrivacy').onclick=function(){
   $('privBox').hidden=false;
 };
 $('xPriv').onclick=function(){ closeModal('privBox'); };
+$('btnSources').onclick=function(){ $('srcBox').hidden=false; };
+$('xSrc').onclick=function(){ closeModal('srcBox'); };
 /* ===== اقتراحٌ أو بلاغ =====
    رابطُ mailto يفتح تطبيقَ البريد (وفي تطبيق الجوّال يُسلِّمه Capacitor للنظام)،
    والمرسِلُ هو المستخدمُ من بريده — فالتطبيقُ لا ينقل شيئاً. وفي آخر الرسالة سطرٌ
@@ -19666,6 +19695,7 @@ function navBack(){
   if($('help') && !$('help').hidden){ closeModal('help'); return true; }
   if($('revHelp') && !$('revHelp').hidden){ closeModal('revHelp'); return true; }
   if($('privBox') && !$('privBox').hidden){ closeModal('privBox'); return true; }
+  if($('srcBox') && !$('srcBox').hidden){ closeModal('srcBox'); return true; }
   var scr=curScreen();
   /* ٢) شاشة التعريف: في التعديل تُحفظ وتُغلق، وفي المعالج خطوة إلى الوراء */
   /* معالجا الخطّة والاختبار: الرجوعُ خطوةٌ لا خروجٌ ما دام له سابق */

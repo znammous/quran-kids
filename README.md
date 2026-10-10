@@ -66,6 +66,22 @@
 
 التفاصيل في [سياسة الخصوصيّة](https://znammous.github.io/quran-kids/privacy.html).
 
+## 🙏 المصادر والشكر
+
+جزى اللهُ خيراً كلَّ من أتاح هذه المصادر خدمةً لكتابه:
+
+| | المصدر |
+|---|---|
+| 📖 نصّ المصحف | [quran.com](https://quran.com) (مصحف المدينة)، ومطابَقٌ آيةً بآية مع [alquran.cloud](https://alquran.cloud) |
+| 🖋️ خطوط المصحف وصفحاته | [مجمع الملك فهد لطباعة المصحف الشريف](https://qurancomplex.gov.sa)، عبر [quran.com](https://github.com/quran/quran.com-frontend-next) |
+| 💡 التفسير الميسّر، والميسّر في غريب القرآن الكريم | [مجمع الملك فهد لطباعة المصحف الشريف](https://qurancomplex.gov.sa) |
+| 🌍 ترجمات معاني القرآن | [موسوعة القرآن الكريم QuranEnc.com](https://quranenc.com) ومركز رواد للترجمة، ومصدرُ كلّ ترجمةٍ ورقمُ إصدارها مذكوران معها في التطبيق |
+| 🎧 التلاوات | [everyayah.com](https://everyayah.com) و[mp3quran.net](https://mp3quran.net) |
+| 🗓️ خطط الحفظ | برنامج «بالقرآن نحيا» — [Quranlives.com](https://quranlives.com) |
+| 🧩 نوعُ كلّ كلمةٍ في القرآن (لخيارات «أكمل الآية») | [Quranic Arabic Corpus](https://corpus.quran.com) (رخصة GPL)، بنسخته المنقّحة [mustafa0x/quran-morphology](https://github.com/mustafa0x/quran-morphology) |
+| 🔤 خطوط الواجهة | [IBM Plex Sans Arabic](https://github.com/IBM/plex) · [Amiri Quran](https://github.com/aliftype/amiri) · [Nunito](https://github.com/googlefonts/nunito) · [Noto Nastaliq Urdu](https://github.com/notofonts/nastaliq) |
+| 🛠️ بناء التطبيق | [Capacitor](https://capacitorjs.com) |
+
 <br>
 
 <p align="center">
