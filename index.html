@@ -4431,8 +4431,10 @@ function simBase(w){
 }
 /* toks[k] كلماتُ القطعة k مطبّعة. الناتج:
    mk[k][wi] = {t:'s'|'d', o:[k2,wi2], n:قريبة} — للفراغ وخياراته
-   links     = [[k,wi,k2,wi2]…] كلُّ كلمتين تقابلتا في عبارةٍ متشابهة — ومنها المجموعات */
-function simScan(toks){
+   links     = [[k,wi,k2,wi2]…] كلُّ كلمتين تقابلتا في عبارةٍ متشابهة — ومنها المجموعات
+   all: العبارةُ المطابقةُ تُقبل ولو كانت كلماتُها شائعةً كلُّها («وهو الذي» مرّتين) —
+   للتلوين وحدَه، أمّا الفراغُ فلا يُبنى على مثلها */
+function simScan(toks,all){
   var n=toks.length, mk=[], links=[], i, j;
   for(i=0;i<n;i++) mk[i]={};
   function put(k,w,t,k2,w2,nr){
@@ -4455,7 +4457,7 @@ function simScan(toks){
           if(v[t]===2) S++; else if(v[t]===1) N++; else G++;
           if(v[t] && !simStop(A[x0+t])) NS++;
         }
-        var ok = (N+G) ? (S>=2 && S+N>=3) : (S>=2 && NS>=2);
+        var ok = (N+G) ? (S>=2 && S+N>=3) : (S>=2 && (all || NS>=2));
         if(self && e-s+1>d) ok=false;              /* عبارةٌ لا تقابل نفسها متداخلة */
         if(ok){
           for(t=s;t<=e;t++){
@@ -4497,7 +4499,7 @@ function simPageItems(P){
 /* {mk:{'gi:wi':لون}, notes:[[{gi,w},{gi,w}]…]} */
 function simPage(P){
   if(SIMP[P]) return SIMP[P];
-  var it=simPageItems(P), sc=simScan(it.map(function(x){ return x.toks; })), par={};
+  var it=simPageItems(P), sc=simScan(it.map(function(x){ return x.toks; }),true), par={};
   function key(k,w){ return it[k].gi+':'+(it[k].w0+w); }
   function find(x){ while(par[x]!==x){ par[x]=par[par[x]]; x=par[x]; } return x; }
   function uni(a,b){
