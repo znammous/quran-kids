@@ -2,6 +2,7 @@
    mean: ترجمةُ معنى آية الخاتمة (القمر ١٧) من data/tr — والماليزيّة بلا ترجمةٍ معتمدة فلا سطرَ لها */
 var L10N = {
  en: {
+   "apk_b": "Android file",
    "apk_q": "No Google Play on your device?",
    "apk_a": "Download the APK",
    "title": "Nur Al-Wahy — memorizing the Quran is a fun journey",
@@ -65,6 +66,7 @@ var L10N = {
    "mean": "We have certainly made the Qur’an easy to understand and remember; is there anyone to take heed?"
   },
  ur: {
+   "apk_b": "اینڈرائیڈ فائل",
    "apk_q": "آپ کے آلے پر Google Play نہیں ہے؟",
    "apk_a": "APK فائل ڈاؤن لوڈ کریں",
    "title": "نور الوحي — حفظِ قرآن ایک پُرلطف سفر",
@@ -128,6 +130,7 @@ var L10N = {
    "mean": "اور بیشک ہم نے قرآن کو سمجھنے کے لیے آسان کر دیا ہے ۔ پس کیا کوئی نصیحت حاصل کرنے والا ہے؟"
   },
  fa: {
+   "apk_b": "فایل اندروید",
    "apk_q": "Google Play روی دستگاه شما نیست؟",
    "apk_a": "فایل APK را دانلود کنید",
    "title": "نور الوحي — حفظ قرآن، سفری شیرین",
@@ -191,6 +194,7 @@ var L10N = {
    "mean": "به راستی که قرآن را براى پند گرفتن آسان ساختیم؛ آیا پندپذیرى هست؟"
   },
  ps: {
+   "apk_b": "د اندروید فایل",
    "apk_q": "ستاسو په وسیله Google Play نشته؟",
    "apk_a": "د APK فایل ډاونلوډ کړئ",
    "title": "نور الوحي — د قرآن حفظ، یو خوندور سفر",
@@ -254,6 +258,7 @@ var L10N = {
    "mean": "او بېشكه موږ قرآن د پوهېدلو (تلاوت) لپاره آسان كړى نو آيا څوک نصيحت اخيستونكى شته؟"
   },
  tr: {
+   "apk_b": "Android dosyası",
    "apk_q": "Cihazınızda Google Play yok mu?",
    "apk_a": "APK dosyasını indirin",
    "title": "Nur Al-Wahy — Kur'an ezberlemek keyifli bir yolculuk",
@@ -317,6 +322,7 @@ var L10N = {
    "mean": "Andolsun ki, Kur'an'ı öğüt alınması için kolaylaştırdık. Fakat öğüt alan var mı?"
   },
  fr: {
+   "apk_b": "Fichier Android",
    "apk_q": "Pas de Google Play sur votre appareil ?",
    "apk_a": "Télécharger l’APK",
    "title": "Nur Al-Wahy — apprendre le Coran par cœur, un voyage joyeux",
@@ -380,6 +386,7 @@ var L10N = {
    "mean": "Nous avons rendu le Coran aisé à comprendre. Y a-t-il quelqu’un pour en méditer les enseignements?"
   },
  id: {
+   "apk_b": "File Android",
    "apk_q": "Tidak ada Google Play di perangkat Anda?",
    "apk_a": "Unduh file APK",
    "title": "Nur Al-Wahy — menghafal Al-Qur'an jadi perjalanan seru",
@@ -443,6 +450,7 @@ var L10N = {
    "mean": "Dan sesungguhnya telah Kami mudahkan Al-Qur`ān untuk pelajaran, maka adakah orang yang mengambil pelajaran?"
   },
  ms: {
+   "apk_b": "Fail Android",
    "apk_q": "Tiada Google Play pada peranti anda?",
    "apk_a": "Muat turun fail APK",
    "title": "Nur Al-Wahy — menghafaz al-Quran, satu perjalanan yang seronok",
@@ -505,6 +513,7 @@ var L10N = {
    "webv": "Versi web"
   },
  bn: {
+   "apk_b": "অ্যান্ড্রয়েড ফাইল",
    "apk_q": "আপনার ডিভাইসে Google Play নেই?",
    "apk_a": "APK ফাইল ডাউনলোড করুন",
    "title": "Nur Al-Wahy — কুরআন হিফজ এক আনন্দময় যাত্রা",
@@ -568,6 +577,7 @@ var L10N = {
    "mean": "আর অবশ্যই আমি উপদেশ গ্রহণের জন্য আল-কুরআনকে সহজ করে দিয়েছি। অতএব (এর থেকে) কোন উপদেশ গ্রহণকারী আছে কি?"
   },
  sw: {
+   "apk_b": "Faili la Android",
    "apk_q": "Huna Google Play kwenye kifaa chako?",
    "apk_a": "Pakua faili la APK",
    "title": "Nur Al-Wahy — kuhifadhi Qurani ni safari ya kufurahisha",
@@ -631,6 +641,7 @@ var L10N = {
    "mean": "Na bila ya shaka Sisi tumeifanya Qur-ani iwe nyepesi kufahamika. Lakini yupo anayekumbuka?"
   },
  ha: {
+   "apk_b": "Fayil ɗin Android",
    "apk_q": "Babu Google Play a wayarka?",
    "apk_a": "Sauke fayil ɗin APK",
    "title": "Nur Al-Wahy — haddar Alƙur’ani tafiya ce mai daɗi",
@@ -694,6 +705,7 @@ var L10N = {
    "mean": "Kuma lalle ne, haƙĩkƙa, Mun sauƙaƙe Alƙur'ãni, dõmin tunãwa. To, shin, akwai mai tunãwa?"
   },
  so: {
+   "apk_b": "Faylka Android",
    "apk_q": "Google Play kuma jiro qalabkaaga?",
    "apk_a": "Soo deji faylka APK",
    "title": "Nur Al-Wahy — xifdiga Qur’aanku waa safar xiiso leh",
@@ -757,6 +769,7 @@ var L10N = {
    "mean": "Waxaanu dhabtii sahalnay Qur’aanka si loo xusuusto, mase jiraa cid waantoobi?"
   },
  uz: {
+   "apk_b": "Android fayli",
    "apk_q": "Qurilmangda Google Play yoʻqmi?",
    "apk_a": "APK faylni yuklab ol",
    "title": "Nur Al-Wahy — Qurʼon yodlash qiziqarli sayohat",
