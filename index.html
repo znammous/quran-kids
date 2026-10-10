@@ -19380,17 +19380,12 @@ function updDot(){
    فصار يُنزَّل في الخلفيّة بلا نافذة، ويُعيَّن حزمةً تاليةً تعمل في الفتحة
    القادمة — لا لحظةَ تنزيله، فلا ينقطع درسٌ بدأه. ومن عاد إلى التطبيق بعد
    غيبةٍ طويلة فهي كفتحةٍ جديدة، فيُطبَّق ساعتَها. و«الجديدُ» يُعرض بعد الوصول
-   بنافذته المعتادة. ومن فعّل «توفيرَ البيانات» أو كان على بيانات الجوّال
-   (حيث يُعرف ذلك) لا يُنزَّل له، وتبقى النقطةُ وزرُّ التحقّق. */
+   بنافذته المعتادة. ويُنزَّل على أيّ اتّصالٍ ولو بيانات الجوّال، فحجمُه صغير. */
 var UPD_AWAY=30*60*1000;                 /* غيبةٌ تُعدّ بعدها العودةُ فتحةً جديدة */
 /* ما عُيّن تاليًا يعمل في أيّ فتحةٍ جديدة. فإن وجدناه عند الفتح ما زال هو
    الجديدَ المعروض فقد تعثّر ورُدّ عنه: لا يُنزَّل ثانيةً بصمت، ويبقى بابُ «تحقّق» */
 var UPD_PREV=load('nur_upd_next','');
 try{ localStorage.removeItem('nur_upd_next'); }catch(e){}
-function updMetered(){
-  var c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;
-  return !!(c && (c.saveData || c.type==='cellular'));
-}
 /* تنزيلُ الحزمة وتعيينُها تاليةً — يشترك فيه الصامتُ و«حدِّث الآن» */
 function updFetchBundle(u){
   var L=liveUpd();
@@ -19406,7 +19401,7 @@ function updFetchBundle(u){
   });
 }
 function updSilent(u){
-  if(UPD_BUSY || updMetered()) return;
+  if(UPD_BUSY) return;
   if(load('nur_upd_next','')===u.id) return;          /* نُزّل وينتظر الفتحةَ القادمة */
   if(UPD_PREV===u.id) return;                          /* عُيّن من قبلُ فتعثّر */
   UPD_BUSY=true;
