@@ -135,6 +135,10 @@ h2{font-size:clamp(26px,4.2vw,38px);color:#fff}
 .step .n{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;
   background:var(--gold);color:#0a1f45;font-weight:700;font-size:14px;margin-bottom:6px}
 
+.games{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin:56px 0 0}
+.games figure{margin:0;text-align:center}
+.games img{width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;object-position:top;border-radius:22px;border:3px solid #ffffff22;box-shadow:0 18px 40px -16px #000a}
+.games figcaption{font-size:17px;font-weight:700;color:#fff;margin-top:10px}
 /* القصص */
 .tales{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:26px;max-width:480px}
 .tales img{width:100%;aspect-ratio:1;border-radius:18px;border:3px solid #ffffff22;object-fit:cover}
@@ -197,6 +201,8 @@ html:is([lang=tr],[lang=bn],[lang=ha],[lang=uz]) body{font-family:system-ui,-app
   .lpick{max-width:140px}
   .store{flex:1 1 100%;justify-content:center}
   .step .phone{max-width:150px}
+  .games{display:flex;overflow-x:auto;margin:40px -16px 0;padding:0 16px 8px;gap:14px;scrollbar-width:none}
+  .games figure{flex:none;width:230px}
   .tales{display:flex;overflow-x:auto;max-width:none;margin-inline:-16px;padding:0 16px 6px;scrollbar-width:none}
   .tales img{width:120px;flex:none}
   .trust div{padding:16px 10px}
@@ -218,7 +224,7 @@ html:is([lang=tr],[lang=bn],[lang=ha],[lang=uz]) body{font-family:system-ui,-app
     <div class="hero">
       <div>
         <h1><span data-t="h1a">حفظُ القرآن</span><br><em data-t="h1b">رحلةٌ ممتعة</em></h1>
-        <p class="lead" data-t="lead">تتقدّم فيها وجهاً بعد وجه على مصحفٍ كمصحفك، تجمع الجواهر وتفتح القلاع وتبني مسجدك آيةً بعد آية — ولا تريد أن تتوقّف. للصغار والكبار، ولكلّ فردٍ في البيت.</p>
+        <p class="lead" data-t="lead">تتقدّم فيها خطوةً خطوة، تجمع الجواهر وتفتح القلاع وتبني مسجدك آيةً بعد آية — ولا تريد أن تتوقّف. للصغار والكبار، ولكلّ فردٍ في البيت.</p>
         <div class="stores" data-stores></div>
         <ul class="pills">
           <li data-t="p1">مجّانيّ تماماً</li>
@@ -268,6 +274,11 @@ html:is([lang=tr],[lang=bn],[lang=ha],[lang=uz]) body{font-family:system-ui,-app
         </ul>
       </div>
       <div class="phone"><img src="img/6-build.webp" data-shot="6-build" alt="" loading="lazy" width="540" height="1169"></div>
+    </div>
+    <div class="games">
+      <figure><img src="img/g-runner.webp" data-gshot="runner" alt="" loading="lazy" width="540" height="723"><figcaption data-t="gm_runner">عدّاء الآيات</figcaption></figure>
+      <figure><img src="img/g-shelf.webp" data-gshot="shelf" alt="" loading="lazy" width="540" height="723"><figcaption data-t="gm_shelf">رفّ الآيات</figcaption></figure>
+      <figure><img src="img/g-bird.webp" data-gshot="bird" alt="" loading="lazy" width="540" height="723"><figcaption data-t="gm_bird">عصفور الآيات</figcaption></figure>
     </div>
 
     <div class="row flip">
@@ -381,6 +392,7 @@ if(D){
   if(D.desc) document.querySelector('meta[name=description]').content = D.desc;
   /* لقطاتُ التطبيق بلغته */
   document.querySelectorAll('[data-shot]').forEach(function(img){ img.src='img/'+LANG+'/'+img.getAttribute('data-shot')+'.webp'; });
+  document.querySelectorAll('[data-gshot]').forEach(function(img){ var ar=img.src; img.onerror=function(){ img.onerror=null; img.src=ar; }; img.src='img/'+LANG+'/g-'+img.getAttribute('data-gshot')+'.webp'; });   /* لغةٌ لم تُلتقط ألعابُها بعد: العربيّة */
   if(D.mean){ var m=document.querySelector('[data-mean]'); m.textContent=D.mean; m.hidden=false; }
   var DIG = RTL[LANG] ? '۰۱۲۳۴۵۶۷۸۹' : '0123456789';
   document.querySelectorAll('.step .n').forEach(function(n,i){ n.textContent=DIG[i+1]; });

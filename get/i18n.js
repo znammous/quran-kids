@@ -2,6 +2,9 @@
    mean: ترجمةُ معنى آية الخاتمة (القمر ١٧) من data/tr — والماليزيّة بلا ترجمةٍ معتمدة فلا سطرَ لها */
 var L10N = {
  en: {
+   "gm_runner": "Ayah Runner",
+   "gm_shelf": "Ayah shelf",
+   "gm_bird": "Ayah Bird",
    "apk_b": "Android file",
    "apk_q": "No Google Play on your device?",
    "apk_a": "Download the APK",
@@ -11,7 +14,7 @@ var L10N = {
    "web": "Try it in your browser",
    "h1a": "Memorizing the Quran",
    "h1b": "a fun journey",
-   "lead": "Move forward page by page on a Mushaf just like yours, collect gems, open castles and build your mosque ayah by ayah — and you won't want to stop. For young and old, and for everyone at home.",
+   "lead": "Move forward step by step, collect gems, open castles and build your mosque ayah by ayah — and you won't want to stop. For young and old, and for everyone at home.",
    "p1": "Completely free",
    "p2": "No ads",
    "p3": "Works offline",
@@ -66,6 +69,9 @@ var L10N = {
    "mean": "We have certainly made the Qur’an easy to understand and remember; is there anyone to take heed?"
   },
  ur: {
+   "gm_runner": "آیات کا دوڑنے والا",
+   "gm_shelf": "آیات کی الماری",
+   "gm_bird": "آیات کی چڑیا",
    "apk_b": "اینڈرائیڈ فائل",
    "apk_q": "آپ کے آلے پر Google Play نہیں ہے؟",
    "apk_a": "APK فائل ڈاؤن لوڈ کریں",
@@ -75,7 +81,7 @@ var L10N = {
    "web": "براؤزر میں آزمائیں",
    "h1a": "حفظِ قرآن",
    "h1b": "ایک پُرلطف سفر",
-   "lead": "آپ اپنے مصحف جیسے مصحف پر صفحہ بہ صفحہ آگے بڑھتے ہیں، جواہر جمع کرتے ہیں، قلعے کھولتے ہیں اور آیت بہ آیت اپنی مسجد بناتے ہیں — اور رکنے کو جی نہیں چاہتا۔ چھوٹوں اور بڑوں کے لیے، گھر کے ہر فرد کے لیے۔",
+   "lead": "آپ قدم بہ قدم آگے بڑھتے ہیں، جواہر جمع کرتے ہیں، قلعے کھولتے ہیں اور آیت بہ آیت اپنی مسجد بناتے ہیں — اور رکنے کو جی نہیں چاہتا۔ چھوٹوں اور بڑوں کے لیے، گھر کے ہر فرد کے لیے۔",
    "p1": "بالکل مفت",
    "p2": "بغیر اشتہار",
    "p3": "انٹرنیٹ کے بغیر چلتی ہے",
@@ -130,6 +136,9 @@ var L10N = {
    "mean": "اور بیشک ہم نے قرآن کو سمجھنے کے لیے آسان کر دیا ہے ۔ پس کیا کوئی نصیحت حاصل کرنے والا ہے؟"
   },
  fa: {
+   "gm_runner": "دوندهٔ آیات",
+   "gm_shelf": "طاقچهٔ آیات",
+   "gm_bird": "گنجشکِ آیات",
    "apk_b": "فایل اندروید",
    "apk_q": "Google Play روی دستگاه شما نیست؟",
    "apk_a": "فایل APK را دانلود کنید",
@@ -139,7 +148,7 @@ var L10N = {
    "web": "در مرورگر امتحانش کنید",
    "h1a": "حفظ قرآن",
    "h1b": "سفری شیرین",
-   "lead": "روی مصحفی درست مانند مصحف خودت صفحه به صفحه پیش می‌روی، جواهر جمع می‌کنی، قلعه‌ها را باز می‌کنی و مسجدت را آیه به آیه می‌سازی — و دلت نمی‌خواهد دست بکشی. برای خُرد و بزرگ، و برای هر کسی در خانه.",
+   "lead": "قدم به قدم پیش می‌روی، جواهر جمع می‌کنی، قلعه‌ها را باز می‌کنی و مسجدت را آیه به آیه می‌سازی — و دلت نمی‌خواهد دست بکشی. برای خُرد و بزرگ، و برای هر کسی در خانه.",
    "p1": "کاملاً رایگان",
    "p2": "بدون اعلان",
    "p3": "بدون انترنت هم کار می‌کند",
@@ -194,6 +203,9 @@ var L10N = {
    "mean": "به راستی که قرآن را براى پند گرفتن آسان ساختیم؛ آیا پندپذیرى هست؟"
   },
  ps: {
+   "gm_runner": "د آیتونو منډه وهونکی",
+   "gm_shelf": "د آیتونو المارۍ",
+   "gm_bird": "د آیتونو مرغۍ",
    "apk_b": "د اندروید فایل",
    "apk_q": "ستاسو په وسیله Google Play نشته؟",
    "apk_a": "د APK فایل ډاونلوډ کړئ",
@@ -203,7 +215,7 @@ var L10N = {
    "web": "په براوزر کې یې وازمویئ",
    "h1a": "د قرآن حفظ",
    "h1b": "یو خوندور سفر",
-   "lead": "د خپل مصحف په څېر مصحف کې مخ په مخ وړاندې ځئ، جواهر راټولوئ، کلاوې پرانیزئ او خپل جومات آیت په آیت جوړوئ — او زړه مو نه غواړي چې ودرېږئ. د ماشومانو او لویانو لپاره، د کور د هر غړي لپاره.",
+   "lead": "ګام په ګام وړاندې ځئ، جواهر راټولوئ، کلاوې پرانیزئ او خپل جومات آیت په آیت جوړوئ — او زړه مو نه غواړي چې ودرېږئ. د ماشومانو او لویانو لپاره، د کور د هر غړي لپاره.",
    "p1": "بشپړ وړیا",
    "p2": "بې اعلانه",
    "p3": "بې انټرنېټه کار کوي",
@@ -258,6 +270,9 @@ var L10N = {
    "mean": "او بېشكه موږ قرآن د پوهېدلو (تلاوت) لپاره آسان كړى نو آيا څوک نصيحت اخيستونكى شته؟"
   },
  tr: {
+   "gm_runner": "Ayet Koşucusu",
+   "gm_shelf": "Ayet rafı",
+   "gm_bird": "Ayet Kuşu",
    "apk_b": "Android dosyası",
    "apk_q": "Cihazınızda Google Play yok mu?",
    "apk_a": "APK dosyasını indirin",
@@ -267,7 +282,7 @@ var L10N = {
    "web": "Tarayıcında dene",
    "h1a": "Kur'an ezberlemek",
    "h1b": "keyifli bir yolculuk",
-   "lead": "Tıpkı seninki gibi bir Mushaf üzerinde sayfa sayfa ilerlersin; mücevher toplar, kaleler açar, camini ayet ayet inşa edersin — ve durmak istemezsin. Küçükler ve büyükler için, evdeki herkes için.",
+   "lead": "Adım adım ilerlersin; mücevher toplar, kaleler açar, camini ayet ayet inşa edersin — ve durmak istemezsin. Küçükler ve büyükler için, evdeki herkes için.",
    "p1": "Tamamen ücretsiz",
    "p2": "Reklamsız",
    "p3": "İnternetsiz çalışır",
@@ -322,6 +337,9 @@ var L10N = {
    "mean": "Andolsun ki, Kur'an'ı öğüt alınması için kolaylaştırdık. Fakat öğüt alan var mı?"
   },
  fr: {
+   "gm_runner": "Le coureur des versets",
+   "gm_shelf": "Étagère des versets",
+   "gm_bird": "L’oiseau des versets",
    "apk_b": "Fichier Android",
    "apk_q": "Pas de Google Play sur votre appareil ?",
    "apk_a": "Télécharger l’APK",
@@ -331,7 +349,7 @@ var L10N = {
    "web": "L'essayer dans le navigateur",
    "h1a": "Apprendre le Coran par cœur,",
    "h1b": "un voyage joyeux",
-   "lead": "On avance page après page sur un Mushaf identique au vôtre, on gagne des pierres précieuses, on ouvre des châteaux et on bâtit sa mosquée verset après verset — et on n'a plus envie de s'arrêter. Pour les petits comme pour les grands, et pour toute la maison.",
+   "lead": "On avance pas à pas, on gagne des pierres précieuses, on ouvre des châteaux et on bâtit sa mosquée verset après verset — et on n'a plus envie de s'arrêter. Pour les petits comme pour les grands, et pour toute la maison.",
    "p1": "Entièrement gratuit",
    "p2": "Sans publicité",
    "p3": "Fonctionne hors ligne",
@@ -386,6 +404,9 @@ var L10N = {
    "mean": "Nous avons rendu le Coran aisé à comprendre. Y a-t-il quelqu’un pour en méditer les enseignements?"
   },
  id: {
+   "gm_runner": "Pelari Ayat",
+   "gm_shelf": "Rak ayat",
+   "gm_bird": "Burung Ayat",
    "apk_b": "File Android",
    "apk_q": "Tidak ada Google Play di perangkat Anda?",
    "apk_a": "Unduh file APK",
@@ -395,7 +416,7 @@ var L10N = {
    "web": "Coba di browser",
    "h1a": "Menghafal Al-Qur'an,",
    "h1b": "perjalanan yang seru",
-   "lead": "Maju halaman demi halaman di Mushaf yang sama seperti milikmu, kumpulkan permata, buka benteng, dan bangun masjidmu ayat demi ayat — sampai tidak ingin berhenti. Untuk anak-anak dan orang dewasa, untuk semua orang di rumah.",
+   "lead": "Maju selangkah demi selangkah, kumpulkan permata, buka benteng, dan bangun masjidmu ayat demi ayat — sampai tidak ingin berhenti. Untuk anak-anak dan orang dewasa, untuk semua orang di rumah.",
    "p1": "Gratis sepenuhnya",
    "p2": "Tanpa iklan",
    "p3": "Bisa tanpa internet",
@@ -450,6 +471,9 @@ var L10N = {
    "mean": "Dan sesungguhnya telah Kami mudahkan Al-Qur`ān untuk pelajaran, maka adakah orang yang mengambil pelajaran?"
   },
  ms: {
+   "gm_runner": "Pelari Ayat",
+   "gm_shelf": "Rak ayat",
+   "gm_bird": "Burung Ayat",
    "apk_b": "Fail Android",
    "apk_q": "Tiada Google Play pada peranti anda?",
    "apk_a": "Muat turun fail APK",
@@ -459,7 +483,7 @@ var L10N = {
    "web": "Cuba dalam pelayar",
    "h1a": "Menghafaz al-Quran,",
    "h1b": "perjalanan yang seronok",
-   "lead": "Maju halaman demi halaman pada Mushaf yang sama seperti mushaf kamu, kumpul permata, buka kubu dan bina masjid kamu ayat demi ayat — sampai tidak mahu berhenti. Untuk kecil dan besar, untuk semua di rumah.",
+   "lead": "Maju selangkah demi selangkah, kumpul permata, buka kubu dan bina masjid kamu ayat demi ayat — sampai tidak mahu berhenti. Untuk kecil dan besar, untuk semua di rumah.",
    "p1": "Percuma sepenuhnya",
    "p2": "Tiada iklan",
    "p3": "Boleh tanpa internet",
@@ -513,6 +537,9 @@ var L10N = {
    "webv": "Versi web"
   },
  bn: {
+   "gm_runner": "আয়াতের দৌড়বিদ",
+   "gm_shelf": "আয়াতের তাক",
+   "gm_bird": "আয়াতের পাখি",
    "apk_b": "অ্যান্ড্রয়েড ফাইল",
    "apk_q": "আপনার ডিভাইসে Google Play নেই?",
    "apk_a": "APK ফাইল ডাউনলোড করুন",
@@ -522,7 +549,7 @@ var L10N = {
    "web": "ব্রাউজারে চালিয়ে দেখুন",
    "h1a": "কুরআন হিফজ",
    "h1b": "এক আনন্দময় যাত্রা",
-   "lead": "আপনার মুসহাফের মতোই এক মুসহাফে পৃষ্ঠার পর পৃষ্ঠা এগিয়ে যান, রত্ন জমান, দুর্গ খুলুন আর আয়াতে আয়াতে নিজের মসজিদ গড়ুন — থামতেই ইচ্ছা করবে না। ছোট-বড় সবার জন্য, ঘরের প্রত্যেকের জন্য।",
+   "lead": "ধাপে ধাপে এগিয়ে যান, রত্ন জমান, দুর্গ খুলুন আর আয়াতে আয়াতে নিজের মসজিদ গড়ুন — থামতেই ইচ্ছা করবে না। ছোট-বড় সবার জন্য, ঘরের প্রত্যেকের জন্য।",
    "p1": "সম্পূর্ণ বিনামূল্যে",
    "p2": "বিজ্ঞাপন নেই",
    "p3": "ইন্টারনেট ছাড়াও চলে",
@@ -577,6 +604,9 @@ var L10N = {
    "mean": "আর অবশ্যই আমি উপদেশ গ্রহণের জন্য আল-কুরআনকে সহজ করে দিয়েছি। অতএব (এর থেকে) কোন উপদেশ গ্রহণকারী আছে কি?"
   },
  sw: {
+   "gm_runner": "Mkimbiaji wa Aya",
+   "gm_shelf": "Rafu ya aya",
+   "gm_bird": "Ndege wa Aya",
    "apk_b": "Faili la Android",
    "apk_q": "Huna Google Play kwenye kifaa chako?",
    "apk_a": "Pakua faili la APK",
@@ -586,7 +616,7 @@ var L10N = {
    "web": "Ijaribu kwenye kivinjari",
    "h1a": "Kuhifadhi Qurani",
    "h1b": "ni safari ya kufurahisha",
-   "lead": "Songa mbele ukurasa baada ya ukurasa kwenye Msahafu kama ule ulio nao, kusanya vito, fungua ngome na ujenge msikiti wako aya baada ya aya — hutataka kuacha. Kwa wadogo na wakubwa, na kwa kila mtu nyumbani.",
+   "lead": "Songa mbele hatua kwa hatua, kusanya vito, fungua ngome na ujenge msikiti wako aya baada ya aya — hutataka kuacha. Kwa wadogo na wakubwa, na kwa kila mtu nyumbani.",
    "p1": "Bure kabisa",
    "p2": "Bila matangazo",
    "p3": "Inafanya kazi bila intaneti",
@@ -641,6 +671,9 @@ var L10N = {
    "mean": "Na bila ya shaka Sisi tumeifanya Qur-ani iwe nyepesi kufahamika. Lakini yupo anayekumbuka?"
   },
  ha: {
+   "gm_runner": "Mai Gudun Ayoyi",
+   "gm_shelf": "Kantar ayoyi",
+   "gm_bird": "Tsuntsun Ayoyi",
    "apk_b": "Fayil ɗin Android",
    "apk_q": "Babu Google Play a wayarka?",
    "apk_a": "Sauke fayil ɗin APK",
@@ -650,7 +683,7 @@ var L10N = {
    "web": "Gwada ta a burauza",
    "h1a": "Haddar Alƙur’ani",
    "h1b": "tafiya ce mai daɗi",
-   "lead": "Ka ci gaba shafi bayan shafi a kan Mushafi irin naka, ka tara duwatsu masu daraja, ka buɗe ganuwoyi, ka gina masallacinka aya bayan aya — ba za ka so ka tsaya ba. Ga yara da manya, da kowa a gida.",
+   "lead": "Ka ci gaba mataki-mataki, ka tara duwatsu masu daraja, ka buɗe ganuwoyi, ka gina masallacinka aya bayan aya — ba za ka so ka tsaya ba. Ga yara da manya, da kowa a gida.",
    "p1": "Kyauta ce gaba ɗaya",
    "p2": "Babu talla",
    "p3": "Tana aiki ba tare da intanet ba",
@@ -705,6 +738,9 @@ var L10N = {
    "mean": "Kuma lalle ne, haƙĩkƙa, Mun sauƙaƙe Alƙur'ãni, dõmin tunãwa. To, shin, akwai mai tunãwa?"
   },
  so: {
+   "gm_runner": "Orodyahanka Aayadaha",
+   "gm_shelf": "Khaanadda aayadaha",
+   "gm_bird": "Shimbirta Aayadaha",
    "apk_b": "Faylka Android",
    "apk_q": "Google Play kuma jiro qalabkaaga?",
    "apk_a": "Soo deji faylka APK",
@@ -714,7 +750,7 @@ var L10N = {
    "web": "Ku tijaabi biraawsarka",
    "h1a": "Xifdiga Qur’aanku",
    "h1b": "waa safar xiiso leh",
-   "lead": "Bog bog ugu gudub Mushaf la mid ah kaaga, ururi dhagxaan qaali ah, fur qalcado oo masjidkaaga aayad aayad u dhis — mana doonaysid inaad joojiso. Yar iyo weyn, iyo qof kasta oo guriga jooga.",
+   "lead": "Tallaabo tallaabo u gudub, ururi dhagxaan qaali ah, fur qalcado oo masjidkaaga aayad aayad u dhis — mana doonaysid inaad joojiso. Yar iyo weyn, iyo qof kasta oo guriga jooga.",
    "p1": "Gebi ahaanba bilaash",
    "p2": "Xayaysiis la’aan",
    "p3": "Internet la’aan ayuu ku shaqeeyaa",
@@ -769,6 +805,9 @@ var L10N = {
    "mean": "Waxaanu dhabtii sahalnay Qur’aanka si loo xusuusto, mase jiraa cid waantoobi?"
   },
  uz: {
+   "gm_runner": "Oyat yuguruvchisi",
+   "gm_shelf": "Oyat javoni",
+   "gm_bird": "Oyat qushi",
    "apk_b": "Android fayli",
    "apk_q": "Qurilmangda Google Play yoʻqmi?",
    "apk_a": "APK faylni yuklab ol",
@@ -778,7 +817,7 @@ var L10N = {
    "web": "Brauzerda sinab koʻr",
    "h1a": "Qurʼon yodlash",
    "h1b": "qiziqarli sayohat",
-   "lead": "Oʻzingnikidek Mushafda sahifama-sahifa oldinga yur, javohirlar yigʻ, qalʼalarni och va masjidingni oyatma-oyat qur — toʻxtagining kelmaydi. Kichigu katta, uydagi har bir kishi uchun.",
+   "lead": "Qadamma-qadam oldinga yur, javohirlar yigʻ, qalʼalarni och va masjidingni oyatma-oyat qur — toʻxtagining kelmaydi. Kichigu katta, uydagi har bir kishi uchun.",
    "p1": "Butunlay bepul",
    "p2": "Reklamasiz",
    "p3": "Internetsiz ishlaydi",
