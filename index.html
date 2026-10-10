@@ -4423,8 +4423,12 @@ function simStop(w){
   if(w.length>2 && /^[وف]/.test(w)){ var r=w.slice(1); return SIM_STOPN.indexOf(' '+r+' ')>=0; }
   return false;
 }
-/* «وقالوا» و«قالوا» كلمةٌ واحدة في عدّ التكرار */
-function simBase(w){ return (w.length>=4 && /^[وف]/.test(w)) ? w.slice(1) : w; }
+/* «وقالوا» و«قالوا» كلمةٌ واحدة في عدّ التكرار، و«الهدى» و«هدى» و«بالحق» و«حق» كذلك */
+function simBase(w){
+  if(w.length>=4 && /^[وف]/.test(w)) w=w.slice(1);
+  var m=/^(?:[بكل]?ال|لل)(.+)$/.exec(w);
+  return (m && m[1].length>=2) ? m[1] : w;
+}
 /* toks[k] كلماتُ القطعة k مطبّعة. الناتج:
    mk[k][wi] = {t:'s'|'d', o:[k2,wi2], n:قريبة} — للفراغ وخياراته
    links     = [[k,wi,k2,wi2]…] كلُّ كلمتين تقابلتا في عبارةٍ متشابهة — ومنها المجموعات */
@@ -4507,7 +4511,9 @@ function simPage(P){
   it.forEach(function(x,k){ x.toks.forEach(function(w,wi){
     var kk=key(k,wi);
     if((kk in par) || simStop(w)) return;
-    b=simBase(w); (byW[b]=byW[b]||[]).push(kk);
+    b=simBase(w);
+    if(b!==w.replace(/^[وف]/,'') && simStop('ال'+b)) return;   /* «بالله» و«للذين» شائعةٌ كأصلها */
+    (byW[b]=byW[b]||[]).push(kk);
   }); });
   for(b in byW) if(byW[b].length>1) for(var z=0;z<byW[b].length;z++) uni(byW[b][0], byW[b][z]);
   /* ألوانُ المجموعات بترتيب أوّل ظهورها في الوجه */
