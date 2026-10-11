@@ -771,15 +771,18 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .manum{font-family:"IBM Plex Sans Arabic","Segoe UI",sans-serif;font-size:.42em;font-weight:800;
   color:#b9a67d;border:1.5px solid #ddc99b;border-radius:50%;padding:.15em .45em;margin:0 .12em;
   vertical-align:.35em;white-space:nowrap}
-/* المتشابهاتُ في الوجه: لكلّ مجموعةٍ لونٌ واحد. وفي عرض المقطع ما حوله باهت */
+/* المتشابهاتُ في الوجه: لكلّ مجموعةٍ لونٌ واحد. وفي عرض المقطع ما حوله باهت —
+   إلّا تظليلَه: يبقى بلونه كاملاً فيُرى شبيهُ ما في المقطع ولو كان خارجه،
+   والكلمةُ نفسُها باهتةٌ كجاراتها فلا تُحسب منه */
 .mushaf .mout{opacity:.35}
+.mushaf .mw.mout[class*=" mg"]{opacity:1;color:rgba(76,86,104,.35)}
 .mushaf .mg0,.mushaf .mg1,.mushaf .mg2,.mushaf .mg3,.mushaf .mg4,.mushaf .mg5,.mushaf .mg6,.mushaf .mg7{border-radius:4px}
-.mushaf .mg0{background:rgba(255,193,7,.32)}
+.mushaf .mg0{background:rgba(255,222,0,.38)}
 .mushaf .mg1{background:rgba(66,153,255,.26)}
 .mushaf .mg2{background:rgba(46,196,96,.26)}
 .mushaf .mg3{background:rgba(255,92,158,.24)}
 .mushaf .mg4{background:rgba(155,100,255,.25)}
-.mushaf .mg5{background:rgba(255,128,32,.28)}
+.mushaf .mg5{background:rgba(255,84,24,.27)}
 .mushaf .mg6{background:rgba(0,184,184,.26)}
 .mushaf .mg7{background:rgba(160,110,60,.26)}
 .mfgo{flex:0 0 auto;display:flex;flex-direction:column;align-items:stretch;gap:8px;
@@ -791,12 +794,12 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .mfgorow .btn{flex:1 1 0;min-width:0;padding-inline:10px}
 .mfq{font-family:"UthmanicHafs","Amiri Quran",serif;font-size:1.2em;font-weight:400;padding:0 .25em;
   border-radius:6px;background:rgba(255,255,255,.12)}
-.mfq.mg0{background:rgba(255,193,7,.45)}
+.mfq.mg0{background:rgba(255,222,0,.5)}
 .mfq.mg1{background:rgba(66,153,255,.45)}
 .mfq.mg2{background:rgba(46,196,96,.45)}
 .mfq.mg3{background:rgba(255,92,158,.42)}
 .mfq.mg4{background:rgba(155,100,255,.45)}
-.mfq.mg5{background:rgba(255,128,32,.45)}
+.mfq.mg5{background:rgba(255,84,24,.42)}
 .mfq.mg6{background:rgba(0,184,184,.45)}
 .mfq.mg7{background:rgba(160,110,60,.45)}
 .manum.hl{color:#8a6b2a;border-color:#c8a84f}
