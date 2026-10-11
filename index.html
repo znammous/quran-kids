@@ -485,6 +485,10 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .chiphd{flex-basis:100%;text-align:center;font-size:13px;font-weight:800;color:var(--on2);opacity:.75;margin-top:6px}
 .chiphd:first-child{margin-top:0}
 #askChips .chipsel{white-space:nowrap}   /* «Al-Kurdi» لا ينكسر عند شَرطته */
+/* ثلاثُ رقاقاتٍ في صفٍّ واحد، وما طال منها ينكسر سطرين ولا يُنزَل وحده */
+#askChips.three{display:grid;grid-template-columns:repeat(3,1fr)}
+#askChips.three .chipsel:first-child{white-space:normal}
+#askX{width:32px;height:32px;font-size:15px;top:10px;inset-inline-start:10px;box-shadow:0 3px 0 rgba(0,0,0,.22)}
 
 .topbar{background:var(--pnl);color:var(--gink);border:3px solid var(--pb);border-radius:14px;
   padding:9px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;
@@ -2495,6 +2499,8 @@ body.hastabs #btnRevQuit{display:none}
 <!-- صندوق التنبيه والتأكيد بثيمة التطبيق — يخلف نوافذ المتصفّح الباردة -->
 <div class="modal-bg" id="ask" hidden>
   <div class="modal" style="max-width:400px;text-align:center">
+    <!-- إغلاقٌ صغيرٌ في الزاوية: لصندوقٍ زرّاه في أسفله غيرُ «لا» (صندوقُ التلاوة) -->
+    <button class="xbtn" id="askX" hidden aria-label="إغلاق">✕</button>
     <div id="askIc" style="font-size:46px;line-height:1;margin-bottom:6px">💚</div>
     <div id="askMsg" style="font-size:17px;font-weight:800;line-height:1.9;color:var(--ttl)"></div>
     <!-- حقلُ الاسم: لا يظهر إلّا حين يُطلب اسمٌ (أسماءُ الأهل في «عائلتي») -->
@@ -9177,28 +9183,30 @@ function audBox(){
   if(!AUD.q.length) return;
   var rp = (AUD.rep===0) ? '♾️ بلا توقّف'
          : (AUD.rep>1 ? (arNum(AUD.left)+' من '+arNum(AUD.rep)) : 'مرّة واحدة');
-  /* الرقاقاتُ أبوابٌ تُفتح، وأمّا الإيقافُ فهو خاتمةُ التلاوة — فمكانُه صفُّ
-     الأزرار أسفلَ الصندوق بجانب «إغلاق»، لا رقاقةٌ تضيع بين الرقاقات */
+  /* الرقاقاتُ أبوابٌ تُفتح، وأمّا المتابعةُ والإيقافُ فهما جوابا الصندوق —
+     فمكانُهما صفُّ الأزرار أسفلَه، والإغلاقُ علامةٌ صغيرةٌ في زاويته */
   var list=[
-    { v:'go',    n:'▶️ تابِعْ',        act:true },
+    { v:'rep',   n:'🔂 التكرار: '+rp,  act:true },
     { v:'again', n:'🔁 من أوّله',      act:true },
-    { v:'qari',  n:'🎙️ '+qariShort(), act:true },
-    { v:'rep',   n:'🔂 التكرار: '+rp,  act:true }
+    { v:'qari',  n:'🎙️ '+qariShort(), act:true }
   ];
+  UI_XBTN=true;
   uiBox('⏸️ التلاوةُ ممسَكة عند الآية <b>'+arNum(AUD.i+1)+'</b> من <b>'+arNum(AUD.q.length)+'</b>',
-    '🎧', '⏹️ أوقِفْ', '✖️ إغلاق', function(ok,v){
-      /* زرُّ الأسفل: لا قيمةَ معه — وهو الإيقاف */
+    '🎧', '⏹️ أوقِفْ', '▶️ تابِعْ', function(ok,v){
+      /* زرّا الأسفل: الإيقافُ «نعم»، والمتابعةُ «لا» */
       if(ok && v==null){ audStop(); return; }
-      if(!ok || v==null) return;        /* أُغلق: تبقى ممسَكةً، ولمسةٌ تتابعها */
-      if(v==='go'){ audToggle(); return; }
+      if(!ok && v==='x') return;        /* أُغلق: تبقى ممسَكةً، ولمسةٌ تتابعها */
+      if(!ok){ audToggle(); return; }
       if(v==='again'){ audRestart(); return; }
       /* بدّل القارئ فاستُؤنفت التلاوة: لا يُعاد صندوقُ الإمساك على تلاوةٍ
          تجري. وإن رجع عن التبديل فهي ممسَكةٌ بعدُ، فيعود إليه */
       if(v==='qari'){ qariAsk(function(){ if(AUD.hold) audBox(); }); return; }
       if(v==='rep'){ audRepAsk(); return; }
     }, null, null, list);
-  /* والإيقافُ أحمرُ لا ينبض: خاتمةٌ لا دعوة */
+  /* والإيقافُ أحمرُ لا ينبض: خاتمةٌ لا دعوة. والمتابعةُ هي الدعوة */
   var ys=$('askYes'); if(ys) ys.className='btn red';
+  var ns=$('askNo'); if(ns) ns.className='btn primary';
+  var cz=$('askChips'); if(cz) cz.className='row three';
 }
 /* من أوّل القائمة، وتكرارُه يُستأنف عدَدُه كاملاً */
 function audRestart(){
@@ -19813,6 +19821,9 @@ function curScreen(){ var e=document.querySelector('.screen.active'); return e?e
    uiAlert(نصّ) — خبرٌ يُقرأ ثم يُغلق.  uiAsk(نصّ, دالّة) — نعم أو لا. */
 /* تُرفع قبل صندوقٍ حقلُه اختياريّ، فلا يُفتح على لوحة مفاتيح. وتُخفض بعد كلّ صندوق */
 var UI_NOFOCUS=false;
+/* تُرفع قبل صندوقٍ يُغلق من زاويته: «لا» فيه جوابٌ لا إغلاق، فالإغلاقُ
+   (الزاويةُ أو الضغطُ خارجه أو الرجوع) يُردّ (false, 'x') */
+var UI_XBTN=false;
 function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
   var bg=$('ask'); if(!bg){ if(cb) cb(!!no?false:true); return; }
   var cw=$('askChkWrap'), ck=$('askChk');
@@ -19845,7 +19856,7 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
      بنقرتها. وما وُسم «act» فبابٌ يُفتح لا قيمةٌ تُختار، فينفذ في الحالين */
   var cz=$('askChips'), pickV=null, confirmMode=!!(chips && yes);
   if(cz){
-    cz.hidden=!chips;
+    cz.hidden=!chips; cz.className='row';
     cz.innerHTML = chips ? chips.map(function(o,i){
       if(o.h) return '<div class="chiphd">'+esc(o.h)+'</div>';   /* عنوانُ مجموعةٍ لا يُختار */
       if(o.sel) pickV=o.v;
@@ -19861,12 +19872,16 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
   y.className='btn primary pulse';                    /* هيئتُه الأصل، ولمن أراد أن يصبغه بعد الفتح */
   y.hidden=(!!chips && !confirmMode);                  /* خياراتٌ بلا إقرار: تُغني عن زرّه */
   n.hidden=!no; if(no) n.textContent=no;
+  n.className='btn ghost';
+  var xb=$('askX'), wantX=UI_XBTN;
+  if(xb) xb.hidden=!wantX;
   var done=function(v,pv){
     if(muteKey && ck && ck.checked) save(muteKey,1);   /* رغبتُه تُحفظ فلا يُكرَّر عليه */
     var val=(pv!==undefined) ? pv
           : wantPair ? [($('askInpA')||{}).value, ($('askInpB')||{}).value]
           : ((ip && wantInp)?ip.value:undefined);
     bg.hidden=true; y.onclick=null; n.onclick=null; bg.onclick=null;
+    if(xb){ xb.onclick=null; xb.hidden=true; }
     if(ip) ip.onkeydown=null;
     if($('askInpA')) $('askInpA').onkeydown=null;
     if($('askInpB')) $('askInpB').onkeydown=null;
@@ -19874,7 +19889,8 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
   };
   y.onclick=function(){ done(true, confirmMode?pickV:undefined); };
   n.onclick=function(){ done(false); };
-  bg.onclick=function(e){ if(e.target===bg) done(false); };   /* الضغط خارجه إلغاء */
+  bg.onclick=function(e){ if(e.target===bg) done(false, wantX?'x':undefined); };   /* الضغط خارجه إلغاء */
+  if(xb && wantX) xb.onclick=function(){ done(false,'x'); };
   bg.hidden=false;
   if(cz && chips){
     var bs=cz.querySelectorAll('[data-pi]'), z;
@@ -19898,7 +19914,7 @@ function uiBox(msg,ic,yes,no,cb,muteKey,inp,chips){
     });
     if(!UI_NOFOCUS) setTimeout(function(){ try{ $('askInpA').focus(); $('askInpA').select(); }catch(e){} }, 40);
   }
-  UI_NOFOCUS=false;
+  UI_NOFOCUS=false; UI_XBTN=false;
 }
 function uiAlert(msg,ic){ uiBox(msg,ic||'💚',null,null,null); }
 /* تنبيهٌ يُقال مرّةً، ولصاحبه أن يكتمه */
@@ -19939,7 +19955,8 @@ function navBack(){
   /* نافذةُ تأكيدٍ أو تنبيه: الرجوعُ جوابُها «لا» (أو «حسناً» إن لم يكن فيها غيرُه).
      كانت تبقى ظاهرةً والشاشةُ تتبدّل تحتها، ثمّ يُنفَّذ «نعم» على غير ما سُئل عنه */
   if($('ask') && !$('ask').hidden){
-    if(!$('askNo').hidden) $('askNo').click(); else $('askYes').click();
+    if($('askX') && !$('askX').hidden) $('askX').click();
+    else if(!$('askNo').hidden) $('askNo').click(); else $('askYes').click();
     return true;
   }
   /* وجه المصحف مفتوح: تُطوى لوحتُه إن كانت، ثمّ يُغلق */
