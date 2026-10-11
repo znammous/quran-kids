@@ -4329,7 +4329,9 @@ function mushafCodes(P){
   var s=MUSHAF_G[P-1]||'', c=0xFB51, a=[], i, k, d, g;
   for(i=0;i<=s.length;i++){
     d=i<s.length ? MGD[s.charAt(i)]||1 : 1;
-    for(g=String.fromCharCode(c),k=1;k<(d>=34?d-33:d);k++) g+=String.fromCharCode(c+k);
+    /* ومحارفُ الوحدة ما بين رمزها والتالي إلّا الفراغ: «ٱللَّهُ ۗ» (الأنعام ٩٣)
+       كلمتُها FBB1 وعلامتُها FBD3 بعد الفراغ، لا FBB2 الذي يُرسم معيَّناً */
+    for(g='',k=0;k<d;k++) if(c+k<0xFBB2 || c+k>0xFBD2) g+=String.fromCharCode(c+k);
     a.push(g); c+=d;
   }
   return (MGC[P]=a);
@@ -9408,6 +9410,12 @@ function audSync(){
   /* زرُّ الدرس: يُظهر أنّه يتلو، ولمستُه توقفها */
   var pl=$('btnListen');
   if(pl){ pl.classList.toggle('on', on); pl.innerHTML=on ? '⏹️ <b>أوقِفْ</b>' : '🎧 <b>استمع إليها</b>'; }
+  /* و«استمع» بجانب «ابدأ»: يقول ما تفعله لمستُه — توقفها وهي تتلو، وتتابعها إن أُمسكت */
+  var gl=$('mfGoListen');
+  if(gl){
+    gl.textContent = !on ? '🎧 استمع' : (hold ? '▶️ تابِعْ' : '⏸️ أوقِفْ');
+    gl.classList.toggle('red', on && !hold); gl.classList.toggle('blue', !(on && !hold));
+  }
   audMedia(on, hold);
   audAlive(on && !hold);
   var b=$('mfDockPlay'); if(!b) return;
