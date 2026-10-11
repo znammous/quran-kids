@@ -11787,7 +11787,7 @@ function roundRevPage(r){
       '<button class="btn ghost" id="btnShow">📖 اعرض الوجه</button>'+
       '<button class="btn ghost" id="btnAgainR">🔁 أخطأتُ فيها</button></div>'+
     /* القاعدةُ قبل أن يبدأ: كان يكشف الوجهَ ليتثبّت من كلمة، ولا يدري أنّه أعاده بها غداً */
-    '<div class="revrule">💡 إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً</div>'+
+    '<div class="revrule" id="revRule">💡 إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً</div>'+
     (useRec ? '<button class="btn ghost big" id="btnNoMic3">🔇 لا أستطيع التسجيل الآن</button>' : '')+
     /* التخطّي يعني قفز الصفحات الباقية، وفي آخر صفحة لا يزيد شيئاً على ✅ فيُخفى */
     ((REV.pages && REV.pi < REV.pages.length-1)
@@ -11823,6 +11823,10 @@ function roundRevPage(r){
     var b=$('btnRecR'), pl=$('rowPlayR'), ok=$('btnOkR'), row=$('rowR'), h=$('hintR');
     if(!b||!pl||!ok||!row) return;
     recTimerStop(); b.disabled=false; b.classList.remove('reclive');
+    /* بعد التسجيل تُكشف الصفحةُ للمقارنة، فلا معنى لـ«اعرض الوجه» ولا لقاعدته —
+       كان يرى النصَّ أمامه ثمّ يُحذَّر من عرضه. وهكذا هو في تسميع الآيات */
+    var after=(state==='ready');
+    $('btnShow').hidden=after; if($('revRule')) $('revRule').hidden=after;
     if(state==='idle'){ b.hidden=false; b.textContent='🎤 سجّل تسميعي'; b.className='btn red big pulse';
       pl.hidden=true; ok.hidden=false; ok.className='btn ghost big'; row.hidden=false; }
     else if(state==='wait'){ b.hidden=false; b.textContent='⏳ في انتظار إذن المايكروفون'; b.className='btn red big';
