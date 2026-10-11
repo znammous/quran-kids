@@ -11793,6 +11793,7 @@ function roundRevPage(r){
     ((REV.pages && REV.pi < REV.pages.length-1)
       ? '<button class="btn ghost big" id="btnSkipQuiz">⏭️ سمّعتُها كلها — إلى الأسئلة</button>'
       : '');
+  var recDone=false;                  /* سجّل تسميعه والصفحةُ مكشوفةٌ للمقارنة */
   function reveal(on){
     $('ayHidden').innerHTML = on?esc(full):('صفحة '+arNum(r.page)+' …');
     $('ayHidden').style.color = on?'#102b4a':'#9db2c9';
@@ -11809,7 +11810,8 @@ function roundRevPage(r){
     if(sc) mfMarkGi(sc[0], sc[1]); else mfMarkSet(r.pieces);
     mushafOpenPage(r.page, -1, '📖 صفحة '+arNum(r.page));
     if(sc){ try{ mfSpanNote(pageOfIdx(sc[1]), r.page); }catch(e){} }
-    reveal(true); revWeak(r.page);
+    reveal(true);
+    if(!recDone) revWeak(r.page);   /* بعد التسجيل يفتحه ليقابل تسميعه بالمصحف، لا استعانةً */
   };
   $('btnAgainR').onclick=function(){
     revWeak(r.page); reveal(true);
@@ -11823,10 +11825,10 @@ function roundRevPage(r){
     var b=$('btnRecR'), pl=$('rowPlayR'), ok=$('btnOkR'), row=$('rowR'), h=$('hintR');
     if(!b||!pl||!ok||!row) return;
     recTimerStop(); b.disabled=false; b.classList.remove('reclive');
-    /* بعد التسجيل تُكشف الصفحةُ للمقارنة، فلا معنى لـ«اعرض الوجه» ولا لقاعدته —
-       كان يرى النصَّ أمامه ثمّ يُحذَّر من عرضه. وهكذا هو في تسميع الآيات */
-    var after=(state==='ready');
-    $('btnShow').hidden=after; if($('revRule')) $('revRule').hidden=after;
+    /* بعد التسجيل تُكشف الصفحةُ للمقارنة، فيبقى «اعرض الوجه» ليراجع قراءته في المصحف
+       ولا يُحسب عليه، وتُخفى قاعدتُه — كان يرى النصَّ أمامه ثمّ يُحذَّر من عرضه */
+    recDone=(state==='ready');
+    if($('revRule')) $('revRule').hidden=recDone;
     if(state==='idle'){ b.hidden=false; b.textContent='🎤 سجّل تسميعي'; b.className='btn red big pulse';
       pl.hidden=true; ok.hidden=false; ok.className='btn ghost big'; row.hidden=false; }
     else if(state==='wait'){ b.hidden=false; b.textContent='⏳ في انتظار إذن المايكروفون'; b.className='btn red big';
