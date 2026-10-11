@@ -11963,7 +11963,7 @@ function roundRecite(r){
         row.hidden=false; show.hidden=false; again.hidden=false;
         if($('btnNoMic2')) $('btnNoMic2').hidden=true; }
       else if(state==='wait'){ b.hidden=false; b.textContent='⏳ في انتظار إذن المايكروفون'; b.className='btn red big';
-        pl.hidden=true; ok.hidden=true; row.hidden=true; }
+        pl.hidden=true; ok.hidden=true; row.hidden=true; reveal(false); }   /* يُسمَّع عن ظهر قلب ولو كُشفت قبلُ */
       /* أثناء التسجيل الفعلي يبقى الاختيار مخفيّاً حتى ينتهي */
       else if(state==='rec'){ b.hidden=false; b.className='btn red big reclive';
         recTimerStart(b,'⏹️ انتهيت من التسميع');
