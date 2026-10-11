@@ -11772,10 +11772,13 @@ function roundRevPage(r){
     for(var a=p.from;a<p.to;a++) out.push(ayahText(p.s,a)+' \u2066('+arNum(a+1)+')\u2069');
     return out.join(' ');
   }).join(' ');
+  /* رقمُ الصفحة وحدَه لا يدلّه على ما يسمّع، فيُعطى أوّلَ كلماتها مفتاحاً */
+  var ws=pcs.length ? wordsOf(ayahText(pcs[0].s,pcs[0].from)) : [];
+  var cue=ws.length ? esc(ws.slice(0,EDGE_WORDS).join(' '))+' …' : 'صفحة '+arNum(r.page)+' …';
   recReset();
   $('playArea').innerHTML=
     '<div class="hintline" id="hintR">سمّع <b>صفحة '+arNum(r.page)+'</b> عن ظهر قلب — '+names+'</div>'+
-    '<div class="ayahbox pagebox" id="pageBox"><div class="ayah" id="ayHidden" style="font-size:'+Math.min(SET.font,28)+'px;color:#9db2c9">صفحة '+arNum(r.page)+' …</div></div>'+
+    '<div class="ayahbox pagebox" id="pageBox"><div class="ayah" id="ayHidden" style="font-size:'+Math.min(SET.font,28)+'px;color:#9db2c9">'+cue+'</div></div>'+
     (useRec ? '<button class="btn red big pulse" id="btnRecR">🎤 سجّل تسميعي</button>'+
               '<div class="row" id="rowPlayR" hidden style="margin:0 0 12px">'+
                 '<button class="btn blue" id="btnPlayR">▶️ استمع لتسميعي</button>'+
@@ -11794,7 +11797,7 @@ function roundRevPage(r){
       : '');
   var recDone=false;                  /* سجّل تسميعه والصفحةُ مكشوفةٌ للمقارنة */
   function reveal(on){
-    $('ayHidden').innerHTML = on?esc(full):('صفحة '+arNum(r.page)+' …');
+    $('ayHidden').innerHTML = on?esc(full):cue;
     $('ayHidden').style.color = on?'#102b4a':'#9db2c9';
     var box=$('pageBox'); if(box) box.scrollTop=0;        /* نبدأ من أوّل الصفحة دائماً */
   }
@@ -14366,9 +14369,10 @@ function revQuestion(it,P,k){
   var kind=REV_KINDS[k%REV_KINDS.length];
   if(!kindAllowed(kind)) kind='missing';
   if(kind==='ayat' && (it.to-it.from)<3) kind='missing';      /* الترتيب يحتاج ثلاث آيات فأكثر */
+  /* أوّلُ الوجه عُرض له مفتاحاً للتسميع، فلا يُسأل عنه — يُسأل عن آخره */
   if(kind==='edge'){
     var eq = edgeOK(P,!revFree())
-      ? edgeRound(P, Math.random()<0.5?'first':'last')
+      ? edgeRound(P,'last')
       : null;
     if(eq) return eq;
     kind='missing';                                           /* صفحة لا تصلح: نعود للناقصة */
