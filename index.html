@@ -4555,13 +4555,29 @@ function simPage(P){
     (byW[b]=byW[b]||[]).push(kk);
   }); });
   for(b in byW) if(byW[b].length>1) for(var z=0;z<byW[b].length;z++) uni(byW[b][0], byW[b][z]);
-  /* ألوانُ المجموعات بترتيب أوّل ظهورها في الوجه */
-  var mk={}, col={}, nc=0;
+  /* ألوانُ المجموعات بترتيب أوّل ظهورها في الوجه. والوجهُ قد تكثر مجموعاتُه
+     على الألوان، فتُعطى المجموعةُ اللونَ الأبعدَ كلماتٍ عن كلماتها، لا التاليَ
+     دوراً — وإلّا وقعت التاسعةُ بلون الأولى ولو جاورتها («الحقّ» و«كنتم») */
+  var pos={}, grp={}, order=[], n=0;
   it.forEach(function(x,k){ x.toks.forEach(function(w,wi){
-    var kk=key(k,wi); if(!(kk in par)) return;
-    var r=find(kk); if(!(r in col)) col[r]=(nc++)%SIM_NCOL;
-    mk[kk]=col[r];
+    var kk=key(k,wi), p=n++; if(!(kk in par)) return;
+    var r=find(kk); pos[kk]=p;
+    if(!grp[r]){ grp[r]=[]; order.push(r); }
+    grp[r].push(p);
   }); });
+  var col={}, used=[];
+  for(var c=0;c<SIM_NCOL;c++) used.push([]);
+  order.forEach(function(r){
+    var best=0, bestD=-1;
+    for(var c=0;c<SIM_NCOL;c++){
+      var d=Infinity;
+      used[c].forEach(function(q){ grp[r].forEach(function(p){ d=Math.min(d, Math.abs(p-q)); }); });
+      if(d>bestD){ bestD=d; best=c; }
+    }
+    col[r]=best; used[best]=used[best].concat(grp[r]);
+  });
+  var mk={};
+  for(var kk in pos) mk[kk]=col[find(kk)];
   /* أزواجُ التنبيه: كلمتان قريبتان في عبارتين متشابهتين (أرأيتم/أرأيتكم) */
   var notes=[], seen={};
   sc.mk.forEach(function(m,k){
