@@ -11932,9 +11932,11 @@ function roundRecite(r){
       $('ayHidden').style.color = on?'#102b4a':'#9db2c9';
     }
     $('btnOkR').onclick=function(){ recReset(); sGood(); $('fb').className='fb good'; $('fb').textContent='أحسنت 🌟'; nextRound(true); };
+    var recDone=false;                         /* سجّل تسميعه والنصُّ مكشوفٌ للمقارنة */
     $('btnShow').onclick=function(){
       mushafOpen(s, r.a);                      /* يرى موضعها في الوجه لا نصّها وحده */
-      reveal(true); S.errors++; comboMiss();
+      reveal(true);
+      if(!recDone){ S.errors++; comboMiss(); } /* بعد التسجيل يقابل قراءته بالمصحف، لا استعانةً */
     };
     $('btnAgainR').onclick=function(){
       reveal(false);
@@ -11949,6 +11951,7 @@ function roundRecite(r){
       if(!b||!pl||!ok||!row) return;
       recTimerStop(); b.disabled=false; b.classList.remove('reclive');
       var show=$('btnShow'), again=$('btnAgainR');
+      recDone=(state==='ready');
       if(state==='idle'){ b.hidden=false; b.textContent='🎤 سجّل تسميعي'; b.className='btn red big pulse';
         pl.hidden=true;
         ok.hidden=false; ok.className='btn ghost big';
@@ -11965,7 +11968,7 @@ function roundRecite(r){
         pl.hidden=true; ok.hidden=true; row.hidden=true; }
       else if(state==='ready'){ b.hidden=true; pl.hidden=false;
         ok.hidden=false; ok.className='btn green big pulse';
-        row.hidden=false; show.hidden=true; again.hidden=false; reveal(true); }
+        row.hidden=false; show.hidden=false; again.hidden=false; reveal(true); }
       else if(state==='fail'){ b.hidden=false; b.textContent='🎤 حاول التسجيل مرة أخرى'; b.className='btn red big';
         pl.hidden=true; ok.hidden=false; ok.className='btn green big pulse';
         row.hidden=false; show.hidden=false; again.hidden=false; }
