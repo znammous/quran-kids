@@ -399,9 +399,9 @@ body:not(.native) .nativeonly{display:none!important}
 .card .row:last-child{margin-bottom:0}
 .row .btn{padding:15px 16px}
 .row>*{flex:1}
-/* أزرارُ التسميع المتجاورة بخطّ ‎.btn.big‎ الذي فوقها وتحتها، لا أصغر منه */
-#rowR .btn,#rowPlayR .btn{font-size:20px}
-#rowR .btn .ico{font-size:1.35em}
+/* أزرارُ التسجيل المتجاورة (في القراءة والتسميع) بخطّ ‎.btn.big‎ الذي فوقها وتحتها، لا أصغر منه */
+#rowR .btn,#rowPlayR .btn,#recRow .btn{font-size:20px}
+#rowR .btn .ico,#rowPlayR .btn .ico,#recRow .btn .ico{font-size:1.35em}
 .plrow{gap:10px;margin-bottom:0}
 .plrow .btn{flex:1 1 220px;padding:12px 14px;font-size:16px;white-space:nowrap}
 input[type=text],select,.qaribtn{width:100%;padding:14px;border-radius:12px;border:2px solid #d7e2f0;
@@ -2404,7 +2404,7 @@ body.hastabs #btnRevQuit{display:none}
   body.resfit #playArea .btn.big{flex:1 1 calc(50% - 4px);width:auto;min-width:0;min-height:50px;
     margin:0 0 8px!important;padding:12px 8px;font-size:16px;line-height:1.35}
   body.resfit #playArea .btn.big.pulse{flex-basis:100%}
-  body.resfit #rowR .btn,body.resfit #rowPlayR .btn{font-size:16px}
+  body.resfit #rowR .btn,body.resfit #rowPlayR .btn,body.resfit #recRow .btn{font-size:16px}
   /* ما لا شريطَ فيه لا يُحجز له مكان: كان الدرسُ يُمرَّر ٩٢px فارغة */
   body.hastabs.tabsgone .wrap{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
   /* السؤالُ على قدر الشاشة (qScreenFit): لا تمرير */
@@ -11889,7 +11889,7 @@ function roundRecite(r){
       '<div class="ayahbox"><div class="ayah" style="font-size:'+SET.font+'px;color:#9db2c9">'+esc(hint)+'</div></div>'+
       '<input type="text" id="reciteInput" placeholder="اكتب هنا…" autocomplete="off" spellcheck="false">'+
       '<button class="btn green big" id="btnCheck" style="margin-top:10px">✅ تحقّق</button>'+
-      '<button class="btn ghost mini" id="btnShow" style="width:100%">📖 اعرض الوجه</button>';
+      '<button class="btn ghost big" id="btnShow">📖 اعرض الوجه</button>';
     var tries=0;
     $('reciteInput').focus();
     $('reciteInput').onkeydown=function(e){ if(e.key==='Enter') $('btnCheck').click(); };
