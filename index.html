@@ -3224,10 +3224,10 @@ body.hastabs #btnRevQuit{display:none}
       <div class="setblock" style="margin-top:12px">
         <label class="lbl">💾 نسخةُ تقدّمك</label>
         <div class="row">
-          <button class="btn blue" id="btnExport">💾 حفظ التقدّم</button>
-          <button class="btn blue" id="btnImport">📂 فتح ملف</button>
+          <button class="btn blue" id="btnExport">💾 حفظ نسخة</button>
+          <button class="btn blue" id="btnImport">📂 استعادة نسخة</button>
         </div>
-        <div class="note" id="bkNote">تقدُّمك محفوظٌ في هذا الجهاز وحده — لا نسخةَ له عندنا. فاحفظْ ملفَّ نسخةٍ بين حينٍ وآخر، تعود إليه إن بدّلتَ الجهازَ أو مُسحت بياناتُه.</div>
+        <div class="note" id="bkNote">تُحفظ نسخةٌ من تقدّمك في هذا الجهاز كلَّ يوم، وتبقى آخرُ ثلاثٍ منها. لكنّها تذهب إن حُذف التطبيق — ولا نسخةَ له عندنا — فاحفظْ نسخةً خارج الجهاز بين حينٍ وآخر.</div>
       </div>
       <div class="setblock nativeonly" style="margin-top:12px">
         <label class="lbl">🔄 التحديث</label>
@@ -3367,7 +3367,7 @@ function saveFailed(){
   SAVE_WARNED=true;
   whenCalm(function(){
     uiAlert('تعذّر حفظ التقدّم على هذا الجهاز — قد تكون ذاكرتُه ممتلئة، أو الحفظُ ممنوعاً في المتصفّح.\n'+
-            'ما يُنجَز الآن قد يضيع عند إغلاق التطبيق: احفظ نسخةً من «الإعدادات ← 💾 حفظ التقدّم»، ثمّ أفرغ شيئاً من مساحة الجهاز.','⚠️');
+            'ما يُنجَز الآن قد يضيع عند إغلاق التطبيق: احفظ نسخةً من «الإعدادات ← 💾 حفظ نسخة»، ثمّ أفرغ شيئاً من مساحة الجهاز.','⚠️');
   });
 }
 /* تنبيهٌ لا يُزاحم: ينتظر ارتفاعَ ستار التحميل، ولا يحلّ محلَّ سؤالٍ مفتوح فيضيعَ جوابُه */
@@ -19274,6 +19274,7 @@ $('btnDelPlayer').onclick=function(){
   if(DB.players.length<2){ uiAlert('لا يمكن حذف المستخدم الوحيد','👤'); return; }
   uiAsk('حذف المستخدم «'+(profile.name||'بلا اسم')+'» وكلّ نجومه؟',function(ok){
     if(!ok) return;
+    bkSave(true)['catch'](function(){});
     DB.players.splice(DB.cur,1); DB.cur=0; saveDB(); bindPlayer();
     $('pname').value=profile.name||''; fillSettings(); renderPlayers(); renderAvatars();
   },'🗑️');
@@ -19284,24 +19285,184 @@ $('q').oninput=function(){ renderMap(); };
 $('btnReset').onclick=function(){
   uiAsk('هل تريد مسح كلّ التقدّم والنجوم؟\nلا يمكن التراجع عن هذا.',function(ok){
     if(!ok) return;
+    bkSave(true)['catch'](function(){});      /* تُحفظ قبل المسح، فيُرجَع إليها من «استعادة نسخة» */
     curP().prog={}; curP().mem={}; curP().gems=0; curP().owned={}; curP().badges={}; curP().built={}; curP().mat={};
     curP().streak={count:0,last:null,freezes:0}; curP().today={d:null,stages:0,segs:0,reviews:0};
     bindPlayer(); saveDB(); renderMap(); show('scr-map');
   },'🗑️');
 };
-$('btnExport').onclick=function(){
-  try{ curP().bk=todayNum(); }catch(e){}     /* يُؤرَّخ الحفظُ فلا يُلحّ عليه بعده */
+/* ===== النسخُ في الجهاز =====
+   يُكتب التقدّمُ ملفَّ نسخةٍ داخل التطبيق بصمت: مرّةً عند الفتح وكلّما غاب عن الشاشة
+   (لا أكثرَ من مرّةٍ في عشر دقائق)، وبضغطة «حفظ نسخة». نسخةٌ لكلّ يوم، تبقى آخرُ ثلاثٍ منها.
+   وقبل ما لا يُتراجع عنه (تصفيرُ التقدّم، وحذفُ مستخدم، والاستعادة) تُحفظ «قبل التغيير»
+   في خانةٍ وحدها، فلا تطردها النسخُ اليوميّةُ التي تأتي بعده فارغة.
+   وموضعُها في آيفون مجلّدُ المستندات (يدخل نسخةَ iCloud، ويظهر في «الملفّات»)، وفي أندرويد
+   ذاكرةُ التطبيق (تدخل نسخةَ Google)، وفي المتصفّح IndexedDB. وكلُّها تذهب بحذف التطبيق،
+   فيبقى «احفظها خارج الجهاز» بالمشاركة كما كان. */
+var BK_KEEP=3, BK_DIR='backups', BK_RX=/^nur-alwahy-backup-(\d{4}-\d\d-\d\d|before)\.json$/;
+function bkName(pre){
+  var d=new Date();
+  return 'nur-alwahy-backup-'+(pre ? 'before'
+    : d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2))+'.json';
+}
+var BK=(function(){
+  var FS=nativePlugin('Filesystem');
+  if(isNative() && FS){
+    var dir='DATA';
+    try{ if(window.Capacitor.getPlatform()==='ios') dir='DOCUMENTS'; }catch(e){}
+    return {
+      list:function(){
+        return FS.readdir({ path:BK_DIR, directory:dir }).then(function(r){
+          return (r.files||[]).map(function(f){ return typeof f==='string' ? f : f.name; });
+        })['catch'](function(){ return []; });
+      },
+      read:function(n){
+        return FS.readFile({ path:BK_DIR+'/'+n, directory:dir, encoding:'utf8' }).then(function(r){ return r.data; });
+      },
+      write:function(n,s){
+        return FS.writeFile({ path:BK_DIR+'/'+n, data:s, directory:dir, encoding:'utf8', recursive:true });
+      },
+      del:function(n){ return FS.deleteFile({ path:BK_DIR+'/'+n, directory:dir }); }
+    };
+  }
+  /* المتصفّح: مخزنٌ واحدٌ اسمُ الملفّ مفتاحُه */
+  function idb(mode, fn){
+    return new Promise(function(res, rej){
+      var o=indexedDB.open('nur_bk', 1);
+      o.onupgradeneeded=function(){ o.result.createObjectStore('f'); };
+      o.onerror=function(){ rej(o.error); };
+      o.onsuccess=function(){
+        var t=o.result.transaction('f', mode), q=fn(t.objectStore('f'));
+        t.oncomplete=function(){ o.result.close(); res(q && q.result); };
+        t.onerror=t.onabort=function(){ o.result.close(); rej(t.error); };
+      };
+    });
+  }
+  return {
+    list:function(){ return idb('readonly', function(st){ return st.getAllKeys(); })['catch'](function(){ return []; }); },
+    read:function(n){ return idb('readonly', function(st){ return st.get(n); }); },
+    write:function(n,s){ return idb('readwrite', function(st){ st.put(s, n); }); },
+    del:function(n){ return idb('readwrite', function(st){ st['delete'](n); }); }
+  };
+})();
+/* هل في القاعدة ما يُخسر؟ — قاعدةٌ فارغةٌ لا تُكتب نسخةً فتطردَ نسخةً فيها تقدّم */
+function bkWorth(){
+  var w=0;
+  try{ DB.players.forEach(function(p){ w+=Object.keys(p.prog||{}).length+Object.keys(p.mem||{}).length; }); }catch(e){}
+  return w;
+}
+/* تُحوَّل القاعدةُ نصّاً في اللحظة نفسها، فما يُغيَّر بعدها لا يدخل النسخة */
+function bkSave(pre){
+  if(QA_DAYS!==0 || (pre && !bkWorth())) return Promise.resolve(false);
+  var s;
+  try{ s=JSON.stringify({ app:'nur-alhifz', v:3, at:Date.now(), db:DB }); }catch(e){ return Promise.reject(e); }
+  return BK.write(bkName(pre), s).then(function(){
+    if(pre) return true;
+    return BK.list().then(function(L){
+      var days=L.filter(function(n){ return BK_RX.test(n) && n.indexOf('before')<0; }).sort().reverse();
+      return Promise.all(days.slice(BK_KEEP).map(function(n){ return BK.del(n)['catch'](function(){}); }));
+    }).then(function(){ return true; });
+  });
+}
+var BK_AT=0;
+function bkAuto(){
+  if(QA_DAYS!==0 || !bkWorth() || Date.now()-BK_AT<600000) return;
+  BK_AT=Date.now();
+  bkSave(false)['catch'](function(){});
+}
+document.addEventListener('visibilitychange', function(){ if(document.hidden) bkAuto(); });
+setTimeout(bkAuto, 5000);
+/* النسخُ كلُّها مقروءةً، الأحدثُ أوّلاً — وما لا يُقرأ يُترك */
+function bkAll(){
+  return BK.list().then(function(L){
+    return Promise.all(L.filter(function(n){ return BK_RX.test(n); }).map(function(n){
+      return BK.read(n).then(function(s){
+        var d=JSON.parse(s), db=importShape(d);
+        return db ? { n:n, at:d.at||0, pre:n.indexOf('before')>=0, db:db } : null;
+      })['catch'](function(){ return null; });
+    }));
+  }).then(function(L){
+    return L.filter(Boolean).sort(function(a,b){ return b.at-a.at; });
+  });
+}
+function bkDate(at){
+  var ls=[dateLoc('ar-EG'),'en'], i;
+  for(i=0;i<ls.length;i++){
+    try{
+      var r=new Intl.DateTimeFormat(ls[i]+'-u-ca-gregory',{ weekday:'long', day:'numeric', month:'long',
+        hour:'numeric', minute:'2-digit' }).format(new Date(at));
+      if(!/\bM\d/.test(r)) return r;
+    }catch(e){}
+  }
+  return new Date(at).toLocaleString();
+}
+function bkNames(db){ return db.players.map(function(p){ return p.name||tx('بلا اسم'); }).join('، '); }
+/* تُستبدل القاعدةُ بما في النسخة: يُجرَّب ربطُ الجديد قبل حفظه، فإن رمى خطأً عاد القديمُ
+   كما كان ولا يُكتب في المخزون ما يُعطّل التشغيل */
+function bkApply(nd, okMsg){
+  var old=DB;
+  try{
+    DB=nd;
+    for(var i=0;i<DB.players.length;i++){ DB.cur=i; bindPlayer(); }
+    DB.cur=nd.cur0; delete DB.cur0;           /* علامةٌ للفتح وحده، لا تُحفظ */
+    bindPlayer(); ensureAllSchedules();
+  }catch(e){
+    DB=old; try{ bindPlayer(); }catch(e2){}
+    uiAlert('الملفّ غير صالح، فلم يُغيَّر شيء.','⚠️');
+    return;
+  }
+  saveDB();
+  try{
+    $("pname").value=profile.name||"";
+    fillSettings(); renderPlayers(); renderAvatars(); renderMap(); show("scr-map");
+  }catch(e){}
+  uiAlert(okMsg,'✅');
+}
+/* نسخةٌ من الجهاز: قد سُئل عنها قبل، فلا يُسأل ثانية */
+function bkUse(b){
+  bkSave(true)['catch'](function(){}).then(function(){ bkApply(b.db, 'استُعيدت النسخة'); });
+}
+/* أيُّ النسخ: اليوميّةُ بتاريخها، و«قبل التغيير» موسومةٌ بذلك */
+function bkOlder(L){
+  uiPick('اختر النسخةَ التي تستعيدها:', L.map(function(b,i){
+    return { v:i, n:(b.pre ? tx('{d} — قبل آخر مسحٍ أو استعادة',{d:bkDate(b.at)}) : bkDate(b.at))+' • '+bkNames(b.db) };
+  }), function(i){ bkUse(L[i]); }, '🗂️');
+}
+/* «استعادة نسخة»: تُقرأ آخرُ نسخةٍ في الجهاز وتُعرض بتاريخها ومن فيها، فلا يُبحث عن ملفّ.
+   وفتحُ ملفٍّ من خارج التطبيق خيارٌ معها، يُضغط فيُفتح المنتقي في النقرة نفسها */
+function bkRestore(lead){
+  bkAll().then(function(L){
+    if(!L.length){
+      uiBox((lead ? lead+'\n\n' : '')+'لا نسخةَ محفوظةً في هذا الجهاز بعد.\n'+'وإن كان معك ملفُّ نسخةٍ فافتحه.',
+        '📂', '📂 اختر ملفاً', 'إلغاء', function(ok){ if(ok) $('fileInput').click(); });
+      return;
+    }
+    var b=L[0], chips=[{ n:'✅ استعِدها', v:'r' }];
+    if(L.length>1) chips.push({ n:'🗂️ نسخة أقدم', v:'o' });
+    chips.push({ n:'📂 من ملفّ', v:'f' });
+    uiBox((lead ? lead+'\n\n' : '')+'آخرُ نسخةٍ في هذا الجهاز:\n<b>'+bkDate(b.at)+'</b>\n'+
+          tx('وفيها: {names}',{names:bkNames(b.db)})+'\n\n'+
+          'استعادتُها تستبدل كلَّ المستخدمين وتقدّمَهم الآن بما فيها.',
+      '💾', null, 'إلغاء', function(ok, v){
+        if(v==='r') bkUse(b);
+        else if(v==='o') bkOlder(L);
+        else if(v==='f') $('fileInput').click();
+      }, null, null, chips);
+  });
+}
+/* خارج الجهاز: داخل تطبيق الجوّال لا يعمل رابطُ التنزيل (يُهمَل بصمت)، فيُكتب الملفُّ في ذاكرة
+   التطبيق ثمّ تُفتح له قائمةُ المشاركة، فيحفظه في «الملفّات» أو يرسله لنفسه */
+function bkShare(){
   saveDBNow();
-  var data={ app:'nur-alhifz', v:3, db:DB };
-  /* داخل تطبيق الجوّال لا يعمل رابطُ التنزيل (يُهمَل بصمت): يُكتب الملفُّ في ذاكرة
-     التطبيق ثمّ تُفتح له قائمةُ المشاركة، فيحفظه في «الملفّات» أو يرسله لنفسه */
+  var data={ app:'nur-alhifz', v:3, at:Date.now(), db:DB };
+  var mark=function(){ try{ curP().bk=todayNum(); saveDB(); }catch(e){} };   /* يُؤرَّخ فلا يُلحّ عليه بعده */
   var FS=nativePlugin('Filesystem'), SH=nativePlugin('Share');
   if(isNative() && FS && SH){
     var fname='nur-alwahy-backup-'+new Date().toISOString().slice(0,10)+'.json';
     FS.writeFile({ path:fname, data:JSON.stringify(data), directory:'CACHE', encoding:'utf8' })
       .then(function(r){
         return SH.share({ title:'نسخة تقدّم «نور الوحي»', dialogTitle:'احفظ النسخة أو أرسلها', files:[r.uri] });
-      })['catch'](function(e){
+      }).then(mark)['catch'](function(e){
         if(/cancel/i.test(String(e && (e.message||e)))) return;      /* أغلق قائمةَ المشاركة بنفسه */
         uiAlert('تعذّر حفظ النسخة، حاول مرّةً أخرى.','⚠️');
       });
@@ -19312,8 +19473,21 @@ $('btnExport').onclick=function(){
   a.href=URL.createObjectURL(b); a.download='تقدم-نور-الوحي.json';
   document.body.appendChild(a); a.click();
   setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); },500);
+  mark();
+}
+$('btnExport').onclick=function(){
+  saveDBNow(); BK_AT=Date.now();
+  bkSave(false).then(function(){
+    uiBox('✅ حُفظت نسخةٌ من تقدّمك في هذا الجهاز.\n\n'+
+          'لكنّها تذهب إن حُذف التطبيقُ أو ضاع الجهاز، فاحفظها خارجه أيضاً: في «الملفّات» أو أرسلها لنفسك.',
+      '💾', '📤 احفظها خارج الجهاز', 'تمّ', function(ok){ if(ok) bkShare(); });
+  })['catch'](function(){
+    /* لم تُكتب في الجهاز: يبقى الحفظُ خارجه */
+    uiBox('تعذّر حفظ النسخة في هذا الجهاز.\n'+'احفظها خارجه: في «الملفّات» أو أرسلها لنفسك.',
+      '⚠️', '📤 احفظها خارج الجهاز', 'إلغاء', function(ok){ if(ok) bkShare(); });
+  });
 };
-$('btnImport').onclick=function(){ $('fileInput').click(); };
+$('btnImport').onclick=function(){ bkRestore(); };
 /* ===== الخصوصيّة =====
    تُقال مرّةً عند أوّل فتح، وتبقى في الإعدادات لمن أراد مراجعتَها.
    والسياسةُ كاملةً تُعرض في نافذةٍ داخل التطبيق بلا بوّابة — فهي للقراءة وحدها،
@@ -19600,14 +19774,10 @@ function backupNudge(){
   if(p.bk && tn-p.bk<45) return;                     /* حفِظ نسختَه قريباً */
   if(p.bkAsk && tn-p.bkAsk<10) return;               /* قيل له قريباً */
   p.bkAsk=tn; saveDB();
-  uiBox('💾 <b>احفظْ نسخةً من تقدّمك</b>\n\n'+
-        'تقدُّمُك في هذا الجهاز وحده — لا نسخةَ له عندنا، ولا نستطيع ردَّه إن ضاع.\n\n'+
-        'احفظْ ملفَّ نسخةٍ الآن، تعود إليه إن بدّلتَ الجهازَ أو مُسحت بياناتُه.',
-        '💾', '💾 احفظْ الآن', 'لاحقاً', function(yes){
-          if(!yes) return;
-          setTab='dev'; renderSetTabs(); show('scr-settings');
-          setTimeout(function(){ try{ $('btnExport').click(); }catch(e){} }, 450);
-        });
+  uiBox('💾 <b>احفظْ نسخةً خارج الجهاز</b>\n\n'+
+        'تُحفظ نسخةٌ من تقدّمك في هذا الجهاز كلَّ يوم، لكنّها تذهب إن حُذف التطبيقُ أو ضاع الجهاز — ولا نسخةَ له عندنا.\n\n'+
+        'احفظها الآن في «الملفّات» أو أرسلها لنفسك، تعود إليها إن بدّلتَ الجهاز.',
+        '💾', '📤 احفظها الآن', 'لاحقاً', function(yes){ if(yes) bkShare(); });
 }
 /* ===== بوابةُ وليّ الأمر =====
    ما لا يُتراجع عنه (حذفُ مستخدم، وتصفيرُ التقدّم، وفتحُ ملفٍّ يستبدل الجميع) وتشغيلُ
@@ -19700,24 +19870,7 @@ $('fileInput').onchange=function(){
     /* فتحُ الملفّ يستبدل كلَّ اللاعبين: كان يجري بلا سؤال، فملفٌّ خاطئٌ يمسح تقدّمَ الإخوة جميعاً */
     uiAsk('فتحُ هذا الملفّ يستبدل كلَّ المستخدمين وتقدّمَهم على هذا الجهاز بما فيه:\n<b>'+names+'</b>\n\nهل تريد المتابعة؟', function(ok){
       if(!ok) return;
-      var old=DB;
-      /* يُجرَّب ربطُ الجديد قبل حفظه: فإن رمى خطأً عاد القديمُ كما كان، ولا يُكتب في المخزون ما يُعطّل التشغيل */
-      try{
-        DB=nd;
-        for(var i=0;i<DB.players.length;i++){ DB.cur=i; bindPlayer(); }
-        DB.cur=nd.cur0; delete DB.cur0;           /* علامةٌ للفتح وحده، لا تُحفظ */
-        bindPlayer(); ensureAllSchedules();
-      }catch(e){
-        DB=old; try{ bindPlayer(); }catch(e2){}
-        uiAlert('الملفّ غير صالح، فلم يُغيَّر شيء.','⚠️');
-        return;
-      }
-      saveDB();
-      try{
-        $("pname").value=profile.name||"";
-        fillSettings(); renderPlayers(); renderAvatars(); renderMap(); show("scr-map");
-      }catch(e){}
-      uiAlert('تمّ فتح الملفّ','✅');
+      bkSave(true)['catch'](function(){}).then(function(){ bkApply(nd, 'تمّ فتح الملفّ'); });
     },'📂');
   };
   rd.readAsText(f); this.value='';
@@ -20116,9 +20269,10 @@ renderAvatars();
 renderPlayers();
 ensureAllSchedules();
 /* تلف التقدّمُ المحفوظ فبدأ التطبيقُ من جديد: يُخبَر بذلك، فنسختُه باقيةٌ جانباً ولعلّ عنده ملفَّه */
+/* وإن كانت في الجهاز نسخةٌ عُرضت للاستعادة مكانَه */
 if(DB_BAD) whenCalm(function(){
-  uiAlert('تعذّرت قراءة التقدّم المحفوظ على هذا الجهاز، فبدأ التطبيق من جديد.\n'+
-          'حُفظت نسخةٌ من المحفوظ القديم جانباً ولم تُمسح. وإن كان عندك ملفُّ نسخةٍ احتياطيّة فافتحه من «الإعدادات ← 📂 فتح ملف».','⚠️');
+  bkRestore('⚠️ تعذّرت قراءة التقدّم المحفوظ على هذا الجهاز، فبدأ التطبيق من جديد.\n'+
+            'حُفظت نسخةٌ من المحفوظ القديم جانباً ولم تُمسح.');
 });
 /* ومن كان محفوظه تامّاً قبل هذه النسخة، يُتوَّج عند أوّل فتحة */
 try{ crownCheck(); }catch(e){}
