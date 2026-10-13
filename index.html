@@ -5274,8 +5274,9 @@ function segsOf(s){
     var from=G[0], acc=0;
     for(var q=G[0];q<G[1];q++){
       var w=ayahWC(s,q);
-      /* آية طويلة تبدأ مقطعاً جديداً بدل أن تضخّم المقطع الحالي */
-      if(acc>0 && acc+w>target*1.5){ out.push([from,q]); from=q; acc=0; }
+      /* آيةٌ تتخطّى الهدف تبدأ مقطعاً جديداً إن كان القطعُ قبلها أقربَ إليه من القطع بعدها —
+         وكان لا يُقطع قبلها إلا أن تتخطّى ١٫٥ منه، فصار نصفُ الوجه ثلثيه (الأنعام ٩٥–٩٩) */
+      if(acc>0 && acc+w>target && target-acc < acc+w-target){ out.push([from,q]); from=q; acc=0; }
       acc+=w;
       if(acc>=target || q===G[1]-1){ out.push([from,q+1]); from=q+1; acc=0; }
     }
