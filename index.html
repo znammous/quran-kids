@@ -223,6 +223,7 @@
   };
   I.add=function(c, map){ if(c!==code) return; for(var k in map){ D[norm(k)]=map[k]; DONE[norm(map[k])]=1; } };
   I.walk=walk;
+  I.sname=sname;   /* اسمُ السورة بحروف اللغة: لما يُركَّب في الشيفرة قبل العرض */
   /* تُترجم الصفحةُ الثابتة دفعةً قبل أن تمسك الشيفرةُ عناصرَها،
      ثمّ يُراقَب ما يُضاف بعدها */
   I.start=function(){
@@ -3423,6 +3424,20 @@ var DAY_SHIFT=(function(){
 function todayNum(){ var d=new Date(); return Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000+DAY_SHIFT+QA_DAYS; }
 /* أرقام لاتينية (23، 123) في كل الواجهة */
 function arNum(n){ return String(n); }
+/* اسمُ السورة بلغة الواجهة (Al-Fatihah في لغات اليسار)، وفاصلُ القائمة على عادتها */
+function snm(n){ return (window.NUR_I18N && NUR_I18N.sname) ? NUR_I18N.sname(n) : n; }
+function lsep(){ var I=window.NUR_I18N; return (I && I.on && I.langs[I.code].dir==='ltr') ? ', ' : '، '; }
+/* «من <b>الفاتحة ١</b> إلى <b>الناس ٦</b>» — جملةٌ واحدةٌ تُترجم كاملة */
+function fromToHTML(a,x,b,y){
+  return tx('من <b>{a}</b> إلى <b>{b}</b>',{a:tx('{s1} {0}',{s1:a.name,0:arNum(x)}), b:tx('{s1} {0}',{s1:b.name,0:arNum(y)})});
+}
+/* «الفاتحة ١ ← الناس ٦»: والسهمُ يتّجه في لغات اليسار بقالبه */
+function rangeTx(a,x,b,y){ return tx('{s1} {0} ← {s2} {1}',{s1:a,0:arNum(x),s2:b,1:arNum(y)}); }
+/* سطرُ العطاء: «+٣٠ 💎 و ٦ ⚙️ و ٦ 🔷» */
+function matLine(g,i,gl){
+  return gl ? tx('+{g} 💎 و {i} ⚙️ و {gl} 🔷',{g:arNum(g),i:arNum(i),gl:arNum(gl)})
+            : tx('+{g} 💎 و {i} ⚙️',{g:arNum(g),i:arNum(i)});
+}
 
 /* ===== اللاعبون: لكل لاعب تقدّمه ومواظبته وجواهره وإعداداته ===== */
 /* ===== درجاتُ الصعوبة الثلاث =====
@@ -3797,8 +3812,8 @@ function crownCheck(){
   try{ renderAvatars(); }catch(e){}
   try{ celeShow({ ic:'👑', kick:'🎉 تمّ لك كتاب الله',
     title:'تُوِّجتَ حافظاً لكتاب الله',
-    sub:'ستّة آلاف ومئتان وستٌّ وثلاثون آية — ولا يفارق التاجُ رأسك بعد اليوم.'+
-        String.fromCharCode(10)+'وإنّما التمام تعاهدٌ لا وقوف، فدُم على وردك.',
+    sub:tx('ستّة آلاف ومئتان وستٌّ وثلاثون آية — ولا يفارق التاجُ رأسك بعد اليوم')+'.'+
+        String.fromCharCode(10)+tx('وإنّما التمام تعاهدٌ لا وقوف، فدُم على وردك')+'.',
     rew:'👑 تاج الحافظ' }); }catch(e){}
   try{ CELE.then=function(){ showQuranCert(); }; }catch(e){}   /* ثمّ تُعرض شهادته */
   return true;
@@ -4149,11 +4164,11 @@ function reportHTML(){
   h+='</div>';
   /* ٢) الحفظ */
   h+='<div class="repsec"><h3>📖 الحفظ</h3>'+
-     repRow('المحفوظ', arNum(mem)+' آية — نحو '+arCount(pages,C_PAGE));
+     repRow('المحفوظ', tx('{a} — نحو {p}',{a:arCount(mem,C_AYAH), p:arCount(pages,C_PAGE)}));
   try{ h+=repRow('من المصحف', arNum(Math.round(mem/QURAN_AYAT*100))+'٪'); }catch(e){}
   try{
     var dn=doneSegsCountFor(segMode()), tt=khatmaSegs(segMode());
-    h+=repRow('المقاطع المُتمّة', arNum(dn)+' من '+arNum(tt)+' ('+esc(segModeName())+')');
+    h+=repRow('المقاطع المُتمّة', esc(tx('{d} من {t} ({m})',{d:arNum(dn), t:arNum(tt), m:segModeName()})));
   }catch(e){}
   h+=repBar(mem/QURAN_AYAT*100)+'</div>';
   /* ٣) المراجعة */
@@ -4161,10 +4176,10 @@ function reportHTML(){
   try{
     if(revOff()) h+=repRow('خطّةُ المراجعة','لا مراجعةَ في خطّتك');
     else{
-      h+=repRow('وردُ المحفوظ', wirdOn()? ('نعم — '+arCount(revSize('wird'),C_PAGE)+' في اليوم') : 'لا');
+      h+=repRow('وردُ المحفوظ', wirdOn()? tx('نعم — {p} في اليوم',{p:arCount(revSize('wird'),C_PAGE)}) : 'لا');
       if(!!p.rev && !revIsWird()){
         var all=revSessions('free').length, dnf=Math.min(REV.done||0, all);
-        h+=repRow('المسار الحرّ', arNum(dnf)+' من '+arCount(all,C_SESS));
+        h+=repRow('المسار الحرّ', tx('{0} من {1}',{0:arNum(dnf), 1:arCount(all,C_SESS)}));
       }
       h+=repRow('مستحقٌّ اليوم', arCount((function(){ try{ return dueSegs().length; }catch(e){ return 0; } })(), C_SEG));
     }
@@ -4173,7 +4188,7 @@ function reportHTML(){
   h+='</div>';
   /* ٤) الهمّة */
   h+='<div class="repsec"><h3>🔥 الهمّة</h3>';
-  try{ h+=repRow('المواظبة', arNum(streakNow(p))+' يوماً'); }catch(e){}
+  try{ h+=repRow('المواظبة', arDays(streakNow(p))); }catch(e){}
   try{ h+=repRow('الجواهر', arNum(p.gems||0)); }catch(e){}
   try{ h+=repRow('الشارات', arNum(Object.keys(p.badges||{}).length)); }catch(e){}
   try{ if(isHafiz(p)) h+=repRow('التاج','👑 حافظٌ لكتاب الله'); }catch(e){}
@@ -4223,7 +4238,7 @@ function famRenderMember(){
   };
   var nb=panel.querySelector('[data-fnm]');
   if(nb) nb.onclick=function(){
-    uiPrompt('اسمُ '+K.n+':', L.nm||'', function(v){
+    uiPrompt(tx('اسمُ {k}:',{k:tx(K.n)}), L.nm||'', function(v){
       L.nm=String(v||'').slice(0,14); saveDB(); renderAvatars();
     }, '✏️');
   };
@@ -5721,7 +5736,7 @@ function celeDay(){
     ic:'🌟', kick:'✅ مهمّة اليوم',
     title:(T?'أتممتَ مقرَّر اليوم':'أتممتَ مهمّة اليوم'),
     sub:sub,
-    rew:(n>1?('🏮 مواظبة '+arNum(n)+' يوماً متتابعاً'):'🏮 بدأتَ مواظبتك — لا تنقطع')
+    rew:(n>1?('🏮 '+tx('مواظبة {d} بلا انقطاع',{d:arCount(n,C_DAYS)})):'🏮 بدأتَ مواظبتك — لا تنقطع')
   });
 }
 function addGems(n){ curP().gems=(curP().gems||0)+n; saveDB(); }
@@ -7234,18 +7249,18 @@ function renderMine(){
     var own=c.items.filter(function(it){ return c.give ? S2[it.k] : o[it.k]; });
     if(!c.give){ tot+=shopItems(c).length; n+=own.length; }
     if(!own.length) return;
-    h+='<div class="rl" style="margin:16px 0 8px">'+c.ic+' '+esc(c.n)+
-         (c.give ? (' — بذلتَ '+arNum(sadTotal())+' مرّة')
-                 : (' — '+arNum(own.length)+' من '+arNum(shopItems(c).length)))+'</div>'+
+    h+='<div class="rl" style="margin:16px 0 8px">'+c.ic+' '+esc(tx(c.n))+
+         (c.give ? (' — '+tx('بذلتَ {m}',{m:marra(sadTotal())}))
+                 : (' — '+tx('{0} من {1}',{0:arNum(own.length), 1:arNum(shopItems(c).length)})))+'</div>'+
        '<div class="shopgrid">'+own.map(function(it){
          return '<div class="item owned"><div class="ic">'+it.ic+'</div>'+
            '<div class="nm2">'+esc(it.n)+'</div>'+
            '<div class="ds">'+esc(it.d||'')+'</div>'+
-           '<div class="pr">'+(c.give ? ('🤲 بذلتَها '+arNum(S2[it.k])+' مرّة') : 'مملوك ✅')+'</div>'+
+           '<div class="pr">'+(c.give ? ('🤲 '+tx('بذلتَها {m}',{m:marra(S2[it.k])})) : 'مملوك ✅')+'</div>'+
          '</div>';
        }).join('')+'</div>';
   });
-  $('shopSub').textContent = n ? ('خزانتك: '+arNum(n)+' من '+arNum(tot)+' غرض')
+  $('shopSub').textContent = n ? tx('خزانتك: {n} من {t}',{n:arNum(n), t:arCount(tot,C_ITEM)})
                                : 'خزانتك فارغة بعدُ';
   if(!n && !ms.length)
     h+='<div class="shelf"><div class="non">لم تقتنِ شيئاً بعدُ — ادخل الأقسام وابدأ بالسواك 🪥</div></div>';
@@ -7309,7 +7324,7 @@ function renderShop(){
       (sadTotal()
         ? '<div class="its">'+cat.items.filter(function(it){ return S2[it.k]; })
             .map(function(it){ return it.ic+(S2[it.k]>1?'<small style="font-size:13px">×'+arNum(S2[it.k])+'</small>':''); }).join(' ')+'</div>'+
-          '<div class="non">بذلتَ '+arNum(sadTotal())+' مرّة في '+arNum(sadKinds())+' باباً — تقبّل الله</div>'
+          '<div class="non">'+tx('بذلتَ {m} في {b} — تقبّل الله',{m:marra(sadTotal()), b:arCount(sadKinds(),C_DOOR)})+'</div>'
         : '<div class="non">القسيمة هنا رمزيّة داخل اللعبة، تُعوّدك أن تبذل ممّا تحبّ 🤍</div>')+
       '</div>' : '')+
     '<div class="shopgrid">'+shopItems(cat).map(function(it){
@@ -7327,7 +7342,7 @@ function renderShop(){
         '<div class="nm2">'+esc(it.n)+'</div>'+
         '<div class="ds">'+esc(it.d||'')+'</div>'+
         '<div class="pr">'+(gv
-            ? ('💎 '+arNum(it.p)+(times? ' • بذلتَ '+arNum(times)+' مرّة':''))
+            ? ('💎 '+arNum(it.p)+(times? ' • '+tx('بذلتَ {m}',{m:marra(times)}):''))
             : (own?'مملوك ✅':('💎 '+arNum(it.p))))+'</div>'+
         (gv
           ? '<button class="btn '+((p.gems||0)>=it.p?'green':'ghost')+' mini" data-give="'+it.k+'" style="width:100%">🤲 تبرّع</button>'
@@ -7364,8 +7379,8 @@ function renderShop(){
       var got=checkBadges('defer');
       celeShow({ ic:it.ic, kick:'🤲 قسيمة خير',
         title:it.n,
-        sub:'بذلتَ '+arNum(it.p)+' جوهرة — تقبّل الله منك'+
-            (got.length?'\n🎖️ ونلتَ: '+badgeLine(got):''),
+        sub:tx('بذلتَ {g} — تقبّل الله منك',{g:arCount(it.p,C_GEM)})+
+            (got.length?'\n🎖️ '+tx('ونلتَ: {b}',{b:badgeLine(got)}):''),
         rew:got.length?('+'+arNum(BADGE_GEMS*got.length)+' 💎'):'' });
       renderShop();
     };
@@ -7458,7 +7473,7 @@ function buildShort(i){
     if(x.k==='stone'||x.k==='wood') buy.push(line);
     else earn.push(line+(m?(' — '+m.from):' — من الحفظ والمراجعة'));
   });
-  var msg='لبناء «'+it.n+'» ينقصك:\n\n';
+  var msg=tx('لبناء «{n}» ينقصك:',{n:tx(it.n)})+'\n\n';
   if(buy.length) msg+='🛒 '+buy.join('  و')+'\nتشتريه من 💎 متجري ← 🧱 مواد البناء، ثم تعود فتبني.\n\n';
   if(earn.length) msg+='📖 '+earn.join('\n📖 ')+'\n';
   if(buy.length){
@@ -7725,7 +7740,7 @@ function renderJuzTests(){
   $('juzTestList').innerHTML=h;
   $('juzTestSub').innerHTML='✅ اجتزتَ '+arNum(pass)+' • 🏰 مفتوحٌ لك '+arNum(open)+
     ' • 🔒 لم يكتمل '+arNum(rest)+
-    (open?'<br><small>ابدأ بما فُتح — وكلُّ جزءٍ تجتازه أوّلَ مرّة يعطيك '+arNum(JUZ_GOLD)+' ✨ ذهب</small>':'');
+    (open?'<br><small>'+tx('ابدأ بما فُتح — وكلُّ جزءٍ تجتازه أوّلَ مرّة يعطيك {g} ✨ ذهب',{g:arNum(JUZ_GOLD)})+'</small>':'');
   var rs=$('juzTestList').querySelectorAll('.jzrow'), z;
   for(z=0;z<rs.length;z++) rs[z].onclick=function(){
     var jn=parseInt(this.getAttribute('data-j'),10), q=juzProgress(jn);
@@ -8227,7 +8242,7 @@ function renderMap(){
     var locked = j<Math.min(SET.juzFrom,SET.juzTo) || j>Math.max(SET.juzFrom,SET.juzTo);
     h+='<div class="juz"><button class="juzhead'+(openJuz===j?' open':'')+(locked?' locked':'')+'" data-j="'+j+'">'+
        '<span>'+(locked?'🔒 ':'')+'الجزء '+arNum(j)+'</span>'+
-       '<span class="names">'+list.slice(0,4).map(function(s){ return esc(s.name); }).join('، ')+(list.length>4?' …':'')+'</span>'+
+       '<span class="names">'+list.slice(0,4).map(function(s){ return esc(snm(s.name)); }).join(lsep())+(list.length>4?' …':'')+'</span>'+
        '</button><div class="juzbody'+(openJuz===j?' open':'')+'" data-body="'+j+'">'+
        (openJuz===j ? list.map(surahRowHTML).join('') : '')+
        '</div></div>';
@@ -9594,7 +9609,7 @@ function numOf(v){
 /* من وجهٍ إلى وجه: حقلان، وأوّلُهما الوجهُ المفتوحُ فمن رضيه لم يكتبه */
 function audPageAsk(){
   var P=MF_PAGE;
-  uiBox('من أيِّ وجهٍ إلى أيِّ وجه؟\nأرقامُ الأوجه من ١ إلى ٦٠٤','📚','✅ استمع','رجوع',
+  uiBox('من أيِّ وجهٍ إلى أيِّ وجه؟\n'+tx('أرقامُ الأوجه من {a} إلى {b}',{a:'١', b:'٦٠٤'}),'📚','✅ استمع','رجوع',
     function(ok,v){
       if(!ok){ audScopeAsk(); return; }
       var a=numOf(v&&v[0]), b=numOf(v&&v[1]);
@@ -10438,6 +10453,14 @@ var C_QUES=['سؤال واحد','سؤالان','أسئلة','سؤالاً'];
 var C_AYAH=['آية واحدة','آيتان','آيات','آية'];
 var C_SURAH=['سورة واحدة','سورتان','سور','سورة'];
 var C_SEG=['مقطع واحد','مقطعان','مقاطع','مقطعاً'];
+/* «وجه» المصحف: «٣ أوجه في اليوم»، «١٢ وجهاً» */
+var C_FACE=['وجه واحد','وجهان','أوجه','وجهاً'];
+/* بعد فعلٍ أو حرفِ جرّ: «أتممتَ دورتين»، «بذلتَ جوهرتين»، «في بابين»، «من غرضين» */
+var C_CYCLE=['دورة واحدة','دورتين','دورات','دورة'];
+var C_GEM=['جوهرة واحدة','جوهرتين','جواهر','جوهرة'];
+var C_DOOR=['باب واحد','بابين','أبواب','باباً'];
+var C_ITEM=['غرض واحد','غرضين','أغراض','غرضاً'];
+var C_STORY=['قصّة واحدة','قصّتان','قصص','قصّة'];
 /* معدودُ «مقطع» بعد رقمٍ مكتوب: «٧ مقاطع» و«١١ مقطعاً» — لا «٧ مقطعاً» */
 function segWord(n){ return (n>=3 && n<=10) ? 'مقاطع' : 'مقطعاً'; }
 /* بعد حرف جرّ: «بعد يومين» لا «بعد يومان» — وصيغُه في القواميس صيغُ «يوم» */
@@ -10797,8 +10820,8 @@ function comboHit(){
     var got=checkBadges('defer'), rew=3+BADGE_GEMS*got.length;
     celeShow({ ic:COMBO_IC[lv], kick:'🔥 سلسلة متّصلة',
       title:COMBO_TX[step]||('سلسلةٌ من '+arNum(S.combo)+' بلا خطأ!'),
-      sub:'أجبتَ '+arNum(S.combo)+' أسئلة متتالية بلا خطأ'+
-          (got.length?'\n🎖️ ونلتَ: '+badgeLine(got):''),
+      sub:tx('أجبتَ عن {q} على التوالي بلا خطأ',{q:arCount(S.combo,C_QUES)})+
+          (got.length?'\n🎖️ '+tx('ونلتَ: {b}',{b:badgeLine(got)}):''),
       rew:'+'+arNum(rew)+' 💎' });
   }
 }
@@ -10892,7 +10915,9 @@ function badgeTapSp(id){
   for(i=0;i<BADGE_SP.length;i++) if(BADGE_SP[i].id===id) B=BADGE_SP[i];
   if(!B) return;
   var on=!!(curP().badges||{})['b:sp:'+B.id];
-  uiBox('<b>'+B.ic+' '+B.n+'</b>'+'\n\n'+'المطلوب: '+(B.q||B.d)+'\n\n'+
+  /* «البقرة ٢٥٥»: اسمُ السورة ورقمُ الآية خانتان في القالب، فلا يُقطع السطر */
+  var need=(B.id==='kursi') ? tx('المطلوب: أن تحفظ آية الكرسيّ — {s} {a}',{s:'البقرة', a:'٢٥٥'}) : 'المطلوب: '+(B.q||B.d);
+  uiBox('<b>'+B.ic+' '+B.n+'</b>'+'\n\n'+need+'\n\n'+
     (on?'✅ نلتَها — بارك الله فيك':'⏳ لم تنلها بعد'), B.ic, '✅ تمام', null, null);
 }
 function badgeTapCrown(){
@@ -10985,6 +11010,7 @@ function checkBadges(mode){
       if(!p.badges[k] && v>=need){
         p.badges[k]=todayNum();
         got.push({ ic:TIERS[i].i, title:F.ic+' '+F.n+' — '+TIERS[i].n,
+                   tt:F.ic+' '+tx(F.n)+' — '+tx(TIERS[i].n),   /* مترجَماً: يُضمّ في جملةٍ أخرى */
                    sub:arNum(need)+' '+F.u });
       }
     });
@@ -10993,7 +11019,7 @@ function checkBadges(mode){
     var k='b:sp:'+B.id;
     if(!p.badges[k] && B.ok()){
       p.badges[k]=todayNum();
-      got.push({ ic:B.ic, title:B.n, sub:B.d });
+      got.push({ ic:B.ic, title:B.n, tt:tx(B.n), sub:B.d });
     }
   });
   if(!got.length) return defer?got:0;
@@ -11007,14 +11033,14 @@ function checkBadges(mode){
     else                                              /* تُجمع فلا تتوالى الاحتفالات */
       celeShow({ ic:'🎖️', kick:'🎖️ شارات جديدة',
                  title:arNum(got.length)+' شارات دفعةً واحدة!',
-                 sub:got.map(function(g){ return g.ic+' '+g.title; }).join('  •  '),
+                 sub:badgeLine(got),
                  rew:'+'+arNum(BADGE_GEMS*got.length)+' 💎' });
   }
   return got.length;
 }
 /* سطر يجمع ما نيل من شارات في احتفال آخر */
 function badgeLine(got){
-  return got.map(function(g){ return g.ic+' '+g.title; }).join('  •  ');
+  return got.map(function(g){ return g.ic+' '+(g.tt||g.title); }).join('  •  ');
 }
 /* ===== مشاركة الإنجاز ===== */
 var NL=String.fromCharCode(10);
@@ -11025,7 +11051,7 @@ function crownRowHTML(){
   try{ t=memTotal(); }catch(e){}
   var pct=Math.max(2,Math.min(100,Math.round(100*t/QURAN_AYAT)));
   return '<div class="bfam crownfam"><div class="fh"><span>👑 تاج الحافظ</span>'+
-    '<small>'+arNum(t)+' من '+arNum(QURAN_AYAT)+' آية</small></div>'+
+    '<small>'+tx('{0} من {1}',{0:arNum(t), 1:arCount(QURAN_AYAT,C_AYAH)})+'</small></div>'+
     '<div class="crownrow">'+
       '<div class="crownpic'+(on?' on':'')+'" role="button" tabindex="0" data-bcrown="1">'+
         '<svg viewBox="24 14 52 36" aria-hidden="true">'+crownSVG()+'</svg></div>'+
@@ -11404,8 +11430,9 @@ function roundEdge(r){
     '<div class="hintline">'+(which==='first'?'🚩 بداية الصفحة':'🏁 نهاية الصفحة')+'</div>'+
     '<div class="ayahbox"><div class="ayah" style="font-size:'+Math.min(SET.font,32)+'px">'+esc(anchor)+
       '<span class="anum">'+arNum(r.a+1)+'</span></div></div>'+
-    '<div class="qtitle">ما هي الآية في '+(which==='first'?'بداية':'نهاية')+
-      ' الصفحة التي تحتوي هذا المقطع؟</div>'+
+    '<div class="qtitle">'+(which==='first'
+      ? 'ما هي الآية في بداية الصفحة التي تحتوي هذا المقطع؟'
+      : 'ما هي الآية في نهاية الصفحة التي تحتوي هذا المقطع؟')+'</div>'+
     '<div class="opts" id="opts">'+opts.map(function(o,i){
       return '<button class="opt phrase" data-i="'+i+'">'+esc(o)+'</button>'; }).join('')+'</div>';
   var ob=$('opts').querySelectorAll('.opt'), answered=false, i;
@@ -11816,7 +11843,7 @@ function roundAyat(r){
 
 function roundRevPage(r){
   var pcs=r.pieces, useRec=useRecNow();
-  var names=pcs.map(function(p){ return esc(p.s.name)+' '+arNum(p.from+1)+'-'+arNum(p.to); }).join(' • ');
+  var names=pcs.map(function(p){ return esc(tx('{s1} {0}-{1}',{s1:p.s.name, 0:arNum(p.from+1), 1:arNum(p.to)})); }).join(' • ');
   var full=pcs.map(function(p){
     var out=[];
     for(var a=p.from;a<p.to;a++) out.push(ayahText(p.s,a)+' \u2066('+arNum(a+1)+')\u2069');
@@ -11827,7 +11854,7 @@ function roundRevPage(r){
   var cue=ws.length ? esc(ws.slice(0,EDGE_WORDS).join(' '))+' …' : 'صفحة '+arNum(r.page)+' …';
   recReset();
   $('playArea').innerHTML=
-    '<div class="hintline" id="hintR">سمّع <b>صفحة '+arNum(r.page)+'</b> عن ظهر قلب — '+names+'</div>'+
+    '<div class="hintline" id="hintR">'+tx('سمّع <b>صفحة {p}</b> عن ظهر قلب — {r}',{p:arNum(r.page), r:names})+'</div>'+
     '<div class="ayahbox pagebox" id="pageBox"><div class="ayah" id="ayHidden" style="font-size:'+Math.min(SET.font,28)+'px;color:#9db2c9">'+cue+'</div></div>'+
     (useRec ? '<button class="btn red big pulse" id="btnRecR">🎤 سجّل تسميعي</button>'+
               '<div class="row" id="rowPlayR" hidden style="margin:0 0 12px">'+
@@ -12462,9 +12489,9 @@ function renderRevPlanBody(){
       '<button type="button" class="goalcard now" id="btnRevCont">'+
       '<span class="gcic">'+(doneS>0?'▶️':'🎛️')+'</span>'+
       '<span class="gctx"><b>'+
-        (doneS>0 ? ('أكمل المسار — الجلسة '+arNum(doneS+1)+' من '+arNum(nS))
+        (doneS>0 ? tx('أكمل المسار — الجلسة {i} من {n}',{i:arNum(doneS+1), n:arNum(nS)})
                  : ('ابدأ المسار — '+arCount(nS,C_SESS)))+'</b>'+
-        '<i>'+esc(aa.name)+' '+arNum(REV.fromA)+' ← '+esc(bb.name)+' '+arNum(REV.toA)+
+        '<i>'+esc(rangeTx(aa.name,REV.fromA,bb.name,REV.toA))+
           ' • '+arCount(REV.size,C_PAGE)+' في الجلسة</i></span>'+
       '<span class="gcgo">❮</span></button>'+
       /* القلمُ والحذفُ مع البطاقة دائماً، ولو كانت لوحةُ الإعداد مفتوحةً لم تُثبَّت بعد */
@@ -12489,8 +12516,8 @@ function renderRevPlanBody(){
           'ولك أن تضبط مراجعةً حرّةً من تبويبها، أو تعيد المراجعة من '+
           '«الإعدادات ← 🧭 غيّر خطة الحفظ».','btnRevToPlan','🧭 غيّر خطة الحفظ')
       : emptyBox('🌙','لا مراجعةَ مستحقّةً اليوم',
-          'كلُّ ما حلّ موعدُه قد رُوجع. ولك أن تزيد من بابِ المراجعة الحرّة، '+
-          'أو تمشي في ورد محفوظاتك.','btnRevToFree','🎛️ مراجعة حرّة'));
+          tx('كلُّ ما حلّ موعدُه قد رُوجع. ولك أن تزيد من بابِ المراجعة الحرّة، أو تمشي في ورد محفوظاتك.'),
+          'btnRevToFree','🎛️ مراجعة حرّة'));
     bqnRevWire('P'); selfRevWire('P');
     if($('btnRevToPlan')) $('btnRevToPlan').onclick=function(){ startBqn('set','wird'); };
     if($('btnRevToFree')) $('btnRevToFree').onclick=function(){ REV_TAB='free'; renderRevPlan(); };
@@ -12554,7 +12581,7 @@ function renderRevPlanBody(){
     mfPickRange(GIDX[REV.fromS-1]+(REV.fromA-1), function(fs,fa,ts,ta){   /* ونطاقُه الحاليّ مظلَّل */
       REV.fromS=fs; REV.fromA=fa; REV.toS=ts; REV.toA=ta;
       REV.wird=false; REV.mode='free'; REV.done=0; REV.weak={}; revSave(); renderRevPlan();
-      try{ navToast('📖 '+surahBy(fs).name+' '+arNum(fa)+' ← '+surahBy(ts).name+' '+arNum(ta)); }catch(e){}
+      try{ navToast('📖 '+rangeTx(surahBy(fs).name, fa, surahBy(ts).name, ta)); }catch(e){}
     }, (function(){ try{ return revBounds(); }catch(e){ return null; } })());
   };
   $('revFS').onchange=function(){ REV.fromS=parseInt(this.value,10); REV.fromA=1; reset(); };
@@ -12689,7 +12716,7 @@ function renderRevSum(){
   $('revSum').innerHTML = all.length
     ? (function(){
         var perS=revQuizCount(REV.size), tot=perS*ss.length;
-        return '<div class="revsum">من <b>'+esc(a.name)+' '+arNum(REV.fromA)+'</b> إلى <b>'+esc(b.name)+' '+arNum(REV.toA)+'</b><br>'+
+        return '<div class="revsum">'+fromToHTML(a,REV.fromA,b,REV.toA)+'<br>'+
           arCount(all.length,C_PAGE)+' • <b>'+arCount(ss.length,C_SESS)+'</b> • '+
           arCount(REV.size,C_PAGE)+' في الجلسة<br>'+
           '<small style="font-weight:700;opacity:.85">الجلسة: تسميع صفحاتها ثم '+arCount(perS,C_QUES)+' منها</small>'+
@@ -12799,7 +12826,7 @@ function selfDirHTML(){
       row('baqarah','📖','من البقرة','على ترتيب المصحف، من أوّله إلى آخره')+
     '</div>'+
     '<div class="note" style="margin-bottom:10px">'+
-      (got ? ('يبدأ حفظك من: <b>'+(cur?esc(cur.name):'—')+'</b>')
+      (got ? tx('يبدأ حفظك من: <b>{n}</b>',{n:(cur?esc(cur.name):'—')})
            : 'اختر واحدة لنعرف من أين نبدأ بك.')+'</div>';
 }
 /* اختيار البداية يحرّك موضع المسار فوراً لمن هو على المسار الحرّ */
@@ -12869,8 +12896,8 @@ function setPlan(id){
 /* اسم الحجم المقروء */
 function segModeName(m){
   m=m||segMode();
-  if(isPlanMode(m)){ var plm=bqnPlan(m); return 'خطة «'+plm.t+'»'; }
-  return MODES[m] ? MODES[m].n : (arNum(parseInt(m,10)||0)+' آيات');
+  if(isPlanMode(m)){ var plm=bqnPlan(m); return tx('خطة «{t}»',{t:tx(plm.t)}); }
+  return MODES[m] ? tx(MODES[m].n) : arCount(parseInt(m,10)||0, C_AYAH);
 }
 function doneSegsCountFor(m){
   var n=0, ks=Object.keys(prog), i, x;
@@ -12934,10 +12961,10 @@ function bqnLabel(r){
   if(!r) return '—';
   var A=bqnIdx(r[0]), B=bqnIdx(r[1]);
   if(A.s.n===B.s.n){
-    if(A.a===1 && B.a===A.s.ayat.length) return esc(A.s.name)+' كاملة';
-    return esc(A.s.name)+' '+arNum(A.a)+' — '+arNum(B.a);
+    if(A.a===1 && B.a===A.s.ayat.length) return esc(tx('{s1} كاملة',{s1:A.s.name}));
+    return esc(tx('{s1} {0} — {1}',{s1:A.s.name, 0:arNum(A.a), 1:arNum(B.a)}));
   }
-  return esc(A.s.name)+' '+arNum(A.a)+' ← '+esc(B.s.name)+' '+arNum(B.a);
+  return esc(rangeTx(A.s.name,A.a,B.s.name,B.a));
 }
 function bqnPages(r){
   var pc=bqnPieces(r), seen={}, out=[], i, P, a, p2;
@@ -13060,7 +13087,7 @@ function wirdSetupBanner(){
   var h='<div class="revsum" style="margin:0 0 16px;text-align:start">'+
     '<div style="font-size:15px">🎉 <b>هنيئاً لك ما تحفظ من كتاب الله</b></div>'+
     '<div style="font-size:17px;font-weight:900;margin-top:6px">'+
-      'عندك '+arNum(n)+' وجهاً محفوظاً — أفنضع لها ورداً يوميّاً يثبّتها؟</div>'+
+      tx('عندك من المحفوظ {n} — أفنضع لها ورداً يوميّاً يثبّتها؟',{n:arCount(n,C_FACE)})+'</div>'+
     '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin:4px 0 12px">'+
       'يمشي الورد في محفوظك وجهاً وجهاً ثمّ يعود من أوّله — اختر مقداره:</div>'+
     '<div class="onbopts">';
@@ -13068,7 +13095,7 @@ function wirdSetupBanner(){
     var c=wirdCalc(z);
     h+='<button type="button" class="onbopt" data-wsize="'+z+'">'+
        '<span class="oe">'+arNum(z)+'</span><span class="ot">'+
-       '<b>'+(z===1?'وجه واحد':(z===2?'وجهان':arNum(z)+' أوجه'))+' في اليوم</b>'+
+       '<b>'+tx('{n} في اليوم',{n:arCount(z,C_FACE)})+'</b>'+
        '<i>تُتمّ محفوظك في '+arNum(c.days)+' يوماً</i></span></button>';
   });
   h+='</div><button type="button" class="btn ghost" id="wirdSkip" style="width:100%;margin:12px 0 0">'+
@@ -13083,7 +13110,7 @@ function wirdSetupWire(){
     REV.on=true; REV.wird=true; REV.wdone=0;
     if(REV.dir!==1 && REV.dir!==-1) REV.dir=(selfFrom()==='baqarah'?1:-1);
     revSave(); renderRevPlan();
-    try{ navToast('📖 بدأ وردك — '+arNum(revSize('wird'))+' وجه في اليوم'); }catch(e){}
+    try{ navToast('📖 '+tx('بدأ وردك — {n} في اليوم',{n:arCount(revSize('wird'),C_FACE)})); }catch(e){}
   };
   if($('wirdSkip')) $('wirdSkip').onclick=function(){
     REV.on=false; revSave(); renderRevPlan();
@@ -13094,15 +13121,17 @@ function wirdBanner(sfx){
   var ss=[]; try{ ss=revSessions('wird'); }catch(e){}
   if(!ss.length) return '';
   var n=ss.length, i=(REV.wdone||0)%n, cur=ss[i], done=wirdDoneToday();
-  var lbl=cur.map(function(P){ return arNum(P); }).join('، ');
-  var pcs=pagePieces(cur[0]), nm=pcs.length?esc(pcs[0].s.name):'';
+  var lbl=cur.map(function(P){ return arNum(P); }).join(lsep());
+  var pcs=pagePieces(cur[0]), nm=pcs.length?esc(pcs[0].s.name):'', hv={s:nm, p:lbl};
+  /* العنوانُ جملةٌ واحدةٌ بقالبها: «وردُ اليوم — الإخلاص أوجه ٦٠٤، ٦٠٣» */
+  var head=done ? (cur.length>1 ? tx('زِدْ على وردك — {s} أوجه {p}',hv) : tx('زِدْ على وردك — {s} وجه {p}',hv))
+                : (cur.length>1 ? tx('وردُ اليوم — {s} أوجه {p}',hv) : tx('وردُ اليوم — {s} وجه {p}',hv));
   return revCard({
     id:'wirdGo'+sfx, done:done, ic:(done?'✅':'📖'),
-    head:(done?'زِدْ على وردك — ':'وردُ اليوم — ')+nm+' '+
-         (cur.length>1?('أوجه '+lbl):('وجه '+lbl)),
-    sub:'من محفوظك • الجلسة '+arNum(i+1)+' من '+arNum(n)+
-        ' • تتمّ الدورة في '+arNum(n)+' يوماً'+
-        ((REV.cyc||0)? (' • 🏅 أتممتَ '+arNum(REV.cyc)+(REV.cyc===1?' دورة':' دورات')) : '')
+    head:head,
+    sub:'من محفوظك • '+tx('الجلسة {i} من {n}',{i:arNum(i+1), n:arNum(n)})+
+        ' • '+tx('تتمّ الدورة في {d}',{d:arCount(n,C_DAYS)})+
+        ((REV.cyc||0)? (' • 🏅 '+tx('أتممتَ {c}',{c:arCount(REV.cyc,C_CYCLE)})) : '')
   });
 }
 function wirdWire(sfx){
@@ -13192,18 +13221,20 @@ function bqnNextDay(){
 /* ---------- وصف المسار النشط: للإعدادات والمعالج ---------- */
 function planTitle(){
   var id=planId();
-  if(id==='self') return 'مسارك الخاص — '+segModeName();
+  if(id==='self') return tx('مسارك الخاص — {m}',{m:segModeName()});
   var pl=bqnPlan(id);
-  return pl ? ('خطة «'+pl.t+'» — '+pl.sub) : 'مسارك الخاص';
+  return pl ? tx('خطة «{t}» — {sub}',{t:tx(pl.t), sub:tx(pl.sub)}) : tx('مسارك الخاص');
 }
 function planSubtitle(){
   var st=bqnState(), pl=st.id?bqnPlan(st.id):null;
-  return pl ? ('أنت في اليوم '+arNum(Math.min(st.day+1,pl.n))+' من '+arNum(pl.n))
-            : ('أتممت '+arNum(doneSegsCountFor(segMode()))+' من '+arNum(khatmaSegs(segMode()))+' '+segWord(khatmaSegs(segMode())));
+  if(pl) return tx('أنت في اليوم {d} من {n}',{d:arNum(Math.min(st.day+1,pl.n)), n:arNum(pl.n)});
+  var kn=khatmaSegs(segMode()), kv={0:arNum(doneSegsCountFor(segMode())), 1:arNum(kn)};
+  /* القالبان مفتاحان قائمان: «مقاطع» لما بين ٣ و١٠، و«مقطعاً» لغيره */
+  return segWord(kn)==='مقاطع' ? tx('أتممت {0} من {1} مقاطع',kv) : tx('أتممت {0} من {1} مقطعاً',kv);
 }
 function fillBqnSelect(){
   var el=$('bqnNote');
-  if(el) el.textContent='الآن: '+planTitle()+' • '+planSubtitle();
+  if(el) el.textContent=tx('الآن: {t}',{t:planTitle()})+' • '+planSubtitle();
   if($('btnBqnOpen')) $('btnBqnOpen').onclick=function(){ startBqn('set'); };
 }
 /* ===== خطوةُ الخطّة في معالج المستخدم الجديد =====
@@ -13528,9 +13559,10 @@ function priorModeSet(v, after){
   if(v==='new'){
     var t=0; try{ t=memTotal(); }catch(e){}
     if(t>0){
-      uiAsk('وجدنا لك سجلَّ محفوظاتٍ سابقاً — '+arNum(t)+' آية.\n'+
+      /* سطرٌ سطر: كلٌّ منها مفتاحه — والثالثُ يبدأ بـ«» فيُترجم بقالبه لا بالبحث */
+      uiAsk(tx('وجدنا لك سجلَّ محفوظاتٍ سابقاً — {a}.',{a:arCount(t,C_AYAH)})+'\n'+
             'وجواهرُك ومسجدُك وأوسمتُك باقيةٌ لك على كلّ حال.\n'+
-            '«أبدأ من جديد» يمسح هذا السجلَّ ويُعيد ضبطَ تقدّمك.\nأتوافق؟',
+            tx('«أبدأ من جديد» يمسح هذا السجلَّ ويُعيد ضبطَ تقدّمك')+'.\nأتوافق؟',
         function(ok){
           if(!ok){ if(after) after(); return; }
           p.priorMode='new';
@@ -13581,7 +13613,7 @@ function priorRanges(){
   (p.priorR||[]).forEach(function(z){
     var la=mLoc(z[0]), lb=mLoc(z[1]), sa=surahBy(la[0]), sb=surahBy(lb[0]);
     out.push({g0:z[0], g1:z[1],
-      t:(sa?sa.name:'')+' '+arNum(la[1])+' ← '+(sb?sb.name:'')+' '+arNum(lb[1])});
+      t:rangeTx((sa?sa.name:''), la[1], (sb?sb.name:''), lb[1])});
   });
   return out;
 }
@@ -14005,7 +14037,7 @@ function renderBqnList(){
           '<span class="ot"><b>أنا حافظٌ لكتاب الله كاملاً</b>'+
           '<i>لا خطّةَ حفظٍ لي — يُسجَّل المصحفُ كلُّه محفوظاً، وتُضبط خطّةُ مراجعتك</i>'+
         '</span></button></div>'+
-      foldHTML('fSelf','🧭 خطط تطبيق «نور الوحي»'+(onSelf?(' — ✅ '+esc(segModeName())):''),
+      foldHTML('fSelf','🧭 '+tx('خطط تطبيق «نور الوحي»')+(onSelf?(' — ✅ '+esc(segModeName())):''),
         foldIsOpen('fSelf'), selfBody)+
       foldHTML('fBqn','📅 خطط «بالقرآن نحيا»'+(pn?(' — ✅ '+esc(pn.t)):''),
         foldIsOpen('fBqn'), bqnBody);
@@ -14095,7 +14127,7 @@ function wirdBody(){
   h+='<div class="revsum" style="margin:16px 0 0;text-align:start">'+
      '<div style="font-size:15px">🧮 <b>حسبة ورد مراجعتك</b></div>'+
      '<div style="font-size:17px;font-weight:900;margin-top:6px">'+
-       arNum(c.pages)+' وجهاً محفوظاً • دورةٌ في '+arNum(c.days)+' يوماً</div>'+
+       tx('محفوظك: {n}',{n:arCount(c.pages,C_FACE)})+' • '+tx('دورةٌ في {0} يوماً',{0:arNum(c.days)})+'</div>'+
      '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:6px">'+
        'في الدورة الواحدة: 💎 '+arNum(c.gems)+' جوهرة • 🔩 '+arNum(c.iron)+' حديد'+
        ' • 🔷 '+arNum(c.glass)+' زجاج إن أتقنت</div></div>';
@@ -14286,7 +14318,7 @@ function renderRevPath(){
     '<span>'+arNum(Math.min(done,ss.length))+'/'+arNum(ss.length)+' جلسة • '+
     arCount(list.length,C_SURAH)+' • '+
     (wird ? ('كلّ محفوظك'+((REV.cyc||0)?(' • 🏅 '+arNum(REV.cyc)+' دورة'):''))
-          : (esc(a.name)+' '+arNum(REV.fromA)+' ← '+esc(b.name)+' '+arNum(REV.toA)))+'</span>';
+          : esc(rangeTx(a.name,REV.fromA,b.name,REV.toA)))+'</span>';
 
   var offs=['off2','off1','off2','','off3','off4','off3',''];
   var h='', nodes=0;
@@ -14548,10 +14580,10 @@ function finishRevQuiz(){
     addGems(100); addMat('gold',wg);
     try{ celeShow({ ic:'🏅', kick:'🎉 دورةٌ كاملة',
       title:'تعاهدتَ محفوظك كلّه',
-      sub:'راجعتَ '+arNum(np)+' وجهاً — وهذه '+
-          (wirdRound===1?'دورتك الأولى':('دورتك رقم '+arNum(wirdRound)))+
-          '، ويستأنف وردك من أوّله غداً',
-      rew:'＋ 100 💎 و'+arNum(wg)+' ✨ ذهب' }); }catch(e){}
+      sub:(wirdRound===1
+            ? tx('راجعتَ {p} — وهذه دورتك الأولى، ويستأنف وردك من أوّله غداً',{p:arCount(np,C_FACE)})
+            : tx('راجعتَ {p} — وهذه دورتك رقم {k}، ويستأنف وردك من أوّله غداً',{p:arCount(np,C_FACE), k:arNum(wirdRound)})),
+      rew:tx('＋ {g} 💎 و{n} ✨ ذهب',{g:arNum(100), n:arNum(wg)}) }); }catch(e){}
   }
 
   var outH=revOutHTML(donePages.map(function(P){ return { r:res[P], tag:arNum(P) }; }), '📄 ');
@@ -14560,7 +14592,7 @@ function finishRevQuiz(){
   $('playCard').classList.remove('bare');
   $('mosque').removeAttribute('hidden');
   $('mosque').innerHTML=mosqueSVG(1);
-  $('stageChip').textContent = onPath ? ('☀️ انتهت الجلسة '+arNum(REV.si+1)+' من '+arNum(ss.length)) : '☀️ انتهت مراجعة اليوم';
+  $('stageChip').textContent = onPath ? ('☀️ '+tx('انتهت الجلسة {i} من {n}',{i:arNum(REV.si+1), n:arNum(ss.length)})) : '☀️ انتهت مراجعة اليوم';
   $('barFill').style.width='100%';
   $('playArea').className='';
   $('playArea').innerHTML=
@@ -14568,12 +14600,12 @@ function finishRevQuiz(){
     '<h2 style="color:var(--g1);margin:6px 0">'+
       (weakList.length?'أحسنت — وبقيت صفحات تحتاج تثبيتاً':(more?'أتممتَ الجلسة!':'أتممتَ النطاق كله! 🏁'))+'</h2>'+
     '<p style="color:#3d5b7a;font-size:15px;margin:0 0 10px">'+
-      'راجعتَ '+arCount(donePages.length,C_PAGE)+
-      (onPath? ('<br>الجلسة '+arNum(REV.si+1)+' من '+arNum(ss.length)) : '')+'</p>'+
+      tx('راجعتَ {p}',{p:arCount(donePages.length,C_PAGE)})+
+      (onPath? ('<br>'+tx('الجلسة {i} من {n}',{i:arNum(REV.si+1), n:arNum(ss.length)})) : '')+'</p>'+
     outH+
-    '<div style="color:#8a6100;font-weight:800;margin-bottom:12px">+'+arNum(10*donePages.length)+' 💎 و '+arNum(2*donePages.length)+' ⚙️'+
-      (weakList.length?'':' و '+arNum(2*donePages.length)+' 🔷')+'</div>'+
-    (more? '<button class="btn primary big pulse" id="btnRevNext">▶️ الجلسة التالية ('+arNum(revDone(md)+1)+' من '+arNum(ss.length)+')</button>' : '')+
+    '<div style="color:#8a6100;font-weight:800;margin-bottom:12px">'+
+      matLine(10*donePages.length, 2*donePages.length, weakList.length?0:2*donePages.length)+'</div>'+
+    (more? '<button class="btn primary big pulse" id="btnRevNext">▶️ '+tx('الجلسة التالية ({i} من {n})',{i:arNum(revDone(md)+1), n:arNum(ss.length)})+'</button>' : '')+
     '<button class="btn '+(more?'ghost big':'primary big pulse')+'" id="btnRevMap">'+
       (freeEnded?'🎛️ حدّد نطاقاً جديداً':'🗺️ مسار المراجعة')+'</button>'+
     '<button class="btn ghost big" id="btnRevHome2" style="margin:0">🏠 البداية</button></div>';
@@ -14852,7 +14884,7 @@ function showJuzCert(j){
       '<div class="who">'+esc(profile.name||'الطالب')+'</div>'+
       '<div style="font-size:14px;color:#4a627e">قد أتمّ بفضل الله تعالى حفظ ومراجعة</div>'+
       '<div class="what">الجزء '+arNum(j)+'</div>'+
-      '<div style="font-size:14px;color:#4a627e">('+arNum(list.length)+' سورة — واجتاز اختبار الجزء 🏰)</div>'+
+      '<div style="font-size:14px;color:#4a627e">('+tx('{n} — واجتاز اختبار الجزء 🏰',{n:arCount(list.length,C_SURAH)})+')</div>'+
       '<div class="stars">★★★★★</div>'+
       (buildCount()?'<svg class="mosque" viewBox="0 0 400 250" style="max-width:280px">'+bigMosqueSVG()+'</svg>'
                   :'<svg class="mosque" viewBox="0 0 300 170" style="max-width:250px">'+mosqueSVG(1)+'</svg>')+
@@ -15432,13 +15464,13 @@ function examPrize(right,tot,extra){
 function examRangeLine(){
   var a=surahBy(EX.fromS), b=surahBy(EX.toS), ay=examAyat();
   if(ay<1) return '<div class="revsum">النطاق فارغ — صحّح الاختيار</div>';
-  return '<div class="revsum">'+(EX.memOnly?'⭐ <b>ما حفظتَه فقط</b><br>':'')+'من <b>'+esc(a.name)+' '+arNum(EX.fromA)+'</b> إلى <b>'+esc(b.name)+' '+arNum(EX.toA)+'</b><br>'+
+  return '<div class="revsum">'+(EX.memOnly?'⭐ <b>ما حفظتَه فقط</b><br>':'')+fromToHTML(a,EX.fromA,b,EX.toA)+'<br>'+
     arCount(ay,C_AYAH)+' • '+arCount(examPagesN(),C_PAGE)+'</div>';
 }
 function examSummary(){
   var a=surahBy(EX.fromS), b=surahBy(EX.toS), ay=examAyat();
   if(ay<1) return '<div class="revsum">النطاق فارغ — ارجع وصحّح الاختيار</div>';
-  return '<div class="revsum">'+(EX.memOnly?'⭐ <b>ما حفظتَه فقط</b><br>':'')+'من <b>'+esc(a.name)+' '+arNum(EX.fromA)+'</b> إلى <b>'+esc(b.name)+' '+arNum(EX.toA)+'</b><br>'+
+  return '<div class="revsum">'+(EX.memOnly?'⭐ <b>ما حفظتَه فقط</b><br>':'')+fromToHTML(a,EX.fromA,b,EX.toA)+'<br>'+
     arCount(ay,C_AYAH)+' • '+arCount(examPagesN(),C_PAGE)+'<br>'+
     '<b>'+esc(examKindName())+'</b> • '+arCount(EX.count,C_QUES)+' في الاختبار كلّه'+
     /* يُقال له العطاءُ بأرقامه التامّة ولا يُشرح له حسابُه: المُضاعِفُ
@@ -15447,8 +15479,8 @@ function examSummary(){
       /* نصيبُ الرصّ المتوقَّع: إن كان فيما اختاره فالأسئلةُ تُقسَم على أنواعه */
       var pk=examPicks(), ex=(pk.indexOf(EX_HARD)>=0 && pk.length) ? (EX.count/pk.length) : 0;
       var pz=examPrize(EX.count,EX.count,ex);
-      return '<div class="revtot">🎁 إن أتقنتَ الكلَّ: <b>'+arNum(pz.gems)+' 💎</b>'+
-        ' و '+arNum(pz.iron)+' ⚙️ و '+arNum(pz.glass)+' 🔷</div>';
+      return '<div class="revtot">'+tx('🎁 إن أتقنتَ الكلَّ: <b>{0} 💎</b> و {1} ⚙️ و {2} 🔷',
+        {0:arNum(pz.gems), 1:arNum(pz.iron), 2:arNum(pz.glass)})+'</div>';
     })()+
     '<div style="font-size:12.5px;font-weight:800;opacity:.85;margin-top:6px">'+
       'الاختبارُ لا ينوب عن مراجعتك ولا يغيّر مواعيدها — إنّما يدلّك على موضع الخلل</div></div>';
@@ -15552,7 +15584,7 @@ function examWire(k){
       mfPickRange(gAt(EX.fromS,EX.fromA), function(fs,fa,ts,ta){
         EX.fromS=fs; EX.fromA=fa; EX.toS=ts; EX.toA=ta; EX.memOnly=0;
         examBody('range');
-        try{ navToast('📖 '+surahBy(fs).name+' '+arNum(fa)+' ← '+surahBy(ts).name+' '+arNum(ta)); }catch(e){}
+        try{ navToast('📖 '+rangeTx(surahBy(fs).name, fa, surahBy(ts).name, ta)); }catch(e){}
       });
     };
     sync();
@@ -15639,14 +15671,15 @@ function examResume(daily){
 /* الخروجُ إيقاف: يُحفظ ويعود إليه من الموضع نفسِه */
 function examQuitAsk(){
   var daily=!!(S&&S.daily);
-  uiBox('⏸️ <b>أتوقف '+(daily?'تحدّي اليوم':'الاختبار')+' الآن؟</b>'+String.fromCharCode(10)+String.fromCharCode(10)+
-    'يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله متى شئت من زرّ '+(daily?'«تحدّي اليوم»':'«اختبر نفسي»')+
-    (daily?' — اليومَ نفسَه.':'.'),
+  /* جملتان كاملتان لكلٍّ منهما: الاختبارُ وتحدّي اليوم */
+  uiBox('⏸️ <b>'+(daily ? tx('أتوقف تحدّي اليوم الآن؟') : tx('أتوقف الاختبار الآن؟'))+'</b>'+String.fromCharCode(10)+String.fromCharCode(10)+
+    (daily ? tx('يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله متى شئت من زرّ «تحدّي اليوم» — اليومَ نفسَه.')
+           : 'يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله متى شئت من زرّ «اختبر نفسي».'),
     '⏸️', '⏸️ أوقِفه الآن', '↩️ أُكمل', function(ok){
       if(!ok) return;
       examSave();
       S=null; renderPlayers(); show('scr-start');
-      try{ navToast('⏸️ حُفظ '+(daily?'تحدّيك':'اختبارك')+' — تعود إليه من حيث وقفت'); }catch(e){}
+      try{ navToast('⏸️ '+(daily ? tx('حُفظ تحدّيك — تعود إليه من حيث وقفت') : tx('حُفظ اختبارك — تعود إليه من حيث وقفت'))); }catch(e){}
     });
 }
 /* ===== الاختبار نفسه ===== */
@@ -15682,7 +15715,7 @@ function examWeakest(){
     by[e.s]=(by[e.s]||0)+1;
   }
   return Object.keys(by).sort(function(x,y){ return by[y]-by[x]; }).slice(0,4)
-    .map(function(sn){ var sx=surahBy(parseInt(sn,10)); return (sx?sx.name:'')+' ('+arNum(by[sn])+')'; });
+    .map(function(sn){ var sx=surahBy(parseInt(sn,10)); return (sx?snm(sx.name):'')+' ('+arNum(by[sn])+')'; });
 }
 var EX_LAST=null;   /* آخرُ نتيجةٍ — لتُطبع بعد قراءتها */
 function finishExam(){
@@ -15699,8 +15732,8 @@ function finishExam(){
   /* ولا شاراتٍ تُفحص هنا: الاختبارُ ميزانٌ لا مرحلةٌ تُحتسب */
   var a=surahBy(EX.fromS), b=surahBy(EX.toS);
   EX_LAST={ right:right, tot:tot, pct:pct, grade:g[1], ic:g[2], secs:secs,
-            kind:examKindName(), from:(a?a.name:'')+' '+arNum(EX.fromA),
-            to:(b?b.name:'')+' '+arNum(EX.toA), weak:examWeakest(),
+            kind:examKindName(), from:tx('{s1} {0}',{s1:(a?a.name:''), 0:arNum(EX.fromA)}),
+            to:tx('{s1} {0}',{s1:(b?b.name:''), 0:arNum(EX.toA)}), weak:examWeakest(),
             gems:gems, iron:iron, glass:glass, pages:examPagesN(), date:greg() };
   $('playCard').classList.remove('bare');
   $('mosque').removeAttribute('hidden');
@@ -15714,11 +15747,10 @@ function finishExam(){
     '<h2 style="color:var(--g1);margin:6px 0">'+esc(g[1])+'</h2>'+
     '<div class="exscore">'+arNum(right)+' / '+arNum(tot)+'<span>'+arNum(pct)+'%</span></div>'+
     '<p style="color:#3d5b7a;font-size:15px;margin:0 0 10px">'+
-      esc(EX_LAST.from)+' ← '+esc(EX_LAST.to)+'<br>'+
+      esc(tx('{a} ← {b}',{a:EX_LAST.from, b:EX_LAST.to}))+'<br>'+
       esc(EX_LAST.kind)+' • '+arCount(tot,C_QUES)+' • ⏱️ '+examDur(secs)+
-      (weak.length? ('<br>راجِع: <b>'+esc(weak.join(' • '))+'</b>') : '<br>لم تُخطئ في موضع 👌')+'</p>'+
-    '<div style="color:#8a6100;font-weight:800;margin-bottom:12px">+'+arNum(gems)+' 💎 و '+arNum(iron)+' ⚙️'+
-      (glass?(' و '+arNum(glass)+' 🔷'):'')+'</div>'+
+      (weak.length? ('<br>'+tx('راجِع: <b>{w}</b>',{w:esc(weak.join(' • '))})) : '<br>لم تُخطئ في موضع 👌')+'</p>'+
+    '<div style="color:#8a6100;font-weight:800;margin-bottom:12px">'+matLine(gems,iron,glass)+'</div>'+
     '<button class="btn green big pulse" id="btnExPrint">🖨️ اطبع نتيجتك</button>'+
     '<button class="btn blue big" id="btnExAgain">🔁 اختبارٌ آخر</button>'+
     '<button class="btn ghost big" id="btnExHome2" style="margin:0">🏠 البداية</button></div>';
@@ -15728,7 +15760,7 @@ function finishExam(){
 }
 function examDur(s){
   var m=Math.floor(s/60), r=s%60;
-  return m ? (arNum(m)+' د '+arNum(r)+' ث') : (arNum(r)+' ث');
+  return m ? tx('{m} د {s} ث',{m:arNum(m), s:arNum(r)}) : tx('{s} ث',{s:arNum(r)});
 }
 /* =========================================================
    تحدّي اليوم
@@ -15840,10 +15872,9 @@ function finishDaily(){
     '<div class="exscore">'+arNum(right)+' / '+arNum(tot)+'<span>'+arNum(pct)+'%</span></div>'+
     '<p style="color:#3d5b7a;font-size:15px;margin:0 0 10px">'+
       '🎯 تحدّي اليوم • '+arCount(tot,C_QUES)+' • ⏱️ '+examDur(secs)+
-      (weak.length? ('<br>راجِع: <b>'+esc(weak.join(' • '))+'</b>') : '<br>لم تُخطئ في موضع 👌')+
-      '<br>وتحدٍّ جديدٌ ينتظرك غداً من الساعة '+arNum(DAILY_H)+' صباحاً</p>'+
-    (first ? ('<div style="color:#8a6100;font-weight:800;margin-bottom:12px">+'+arNum(gems)+' 💎 و '+arNum(iron)+' ⚙️'+
-      (glass?(' و '+arNum(glass)+' 🔷'):'')+'</div>') : '')+
+      (weak.length? ('<br>'+tx('راجِع: <b>{w}</b>',{w:esc(weak.join(' • '))})) : '<br>لم تُخطئ في موضع 👌')+
+      '<br>'+tx('وتحدٍّ جديدٌ ينتظرك غداً من الساعة {h} صباحاً',{h:arNum(DAILY_H)})+'</p>'+
+    (first ? ('<div style="color:#8a6100;font-weight:800;margin-bottom:12px">'+matLine(gems,iron,glass)+'</div>') : '')+
     '<button class="btn green big pulse" id="btnDailyHome" style="margin:0">🏠 البداية</button></div>';
   $('btnDailyHome').onclick=function(){ S=null; renderPlayers(); show('scr-start'); };
 }
@@ -15864,7 +15895,7 @@ function showExamCert(){
       '<div style="font-size:14px;color:#4a627e">اختبر</div>'+
       '<div class="who">'+esc(profile.name||'الطالب')+'</div>'+
       '<div style="font-size:14px;color:#4a627e">نفسَه في</div>'+
-      '<div class="what">'+esc(R.from)+' ← '+esc(R.to)+'</div>'+
+      '<div class="what">'+esc(tx('{a} ← {b}',{a:R.from, b:R.to}))+'</div>'+
       '<div class="exscore big">'+arNum(R.right)+' / '+arNum(R.tot)+'<span>'+arNum(R.pct)+'%</span></div>'+
       '<div style="font-weight:900;color:#a1791a;font-size:19px;margin:4px 0 8px">'+R.ic+' '+esc(R.grade)+'</div>'+
       '<div style="font-size:14px;color:#4a627e">'+esc(R.kind)+' • '+arCount(R.tot,C_QUES)+' • ⏱️ '+examDur(R.secs)+'</div>'+
@@ -16194,7 +16225,7 @@ function renderHomeCards(){
   /* اجتمع عليه مقرَّرُ اليوم ومسارٌ حرٌّ؟ يُذكر المسارُ ذيلاً فلا يُنسيه المقرَّرُ
      أنّ له طريقاً مفتوحاً */
   if(!revOff() && freeLeft && duty)
-    rTxt+=' • ومسارك الحرّ: بقيت '+arCount(freeLeft,C_SESS);
+    rTxt+=' • '+tx('ومسارك الحرّ: بقيت {n}',{n:arCount(freeLeft,C_SESS)});
   $('cardRevTxt').innerHTML=rTxt;
   $('cardRevIc').textContent=rDone?'✅':'☀️';
   rc.className='goalcard '+(rDone?'done':'now');
@@ -17498,7 +17529,7 @@ function gamePool(src){
 function gameSrcLabel(pool){
   if(pool && pool.day) return '📅 من مقرَّر اليوم — وجواهرُه مضاعَفة';
   if(pool && pool.sel) return '📖 من '+selLabel(pool.sel);
-  if(pool && pool.sura) return '📖 من سورة '+pool.sura.name;
+  if(pool && pool.sura) return '📖 '+tx('من سورة {s}',{s:pool.sura.name});
   return (pool && pool.mem) ? '📚 من محفوظك' : '📚 من الفاتحة وقصار السور';
 }
 /* cov: غلافٌ مرسومٌ بأسلوب أغلفة القصص؛ رقمُه في الاسم لأنّ icons/ تُخزَّن بلا تجديد — يُرفع إن تغيّرت الصورة */
@@ -17679,7 +17710,7 @@ function storiesLeft(){
   return (!G.h && !G.r) ? 'الحفظ والمراجعة' : (!G.h ? 'الحفظ' : 'المراجعة');
 }
 function storiesLockedMsg(left){
-  uiBox('ستُفتح القصصُ حين تُنهي مقرَّرَك اليوم\nبقي عليك: '+left, '📚', '🏠 إلى مقرَّري', 'لاحقاً',
+  uiBox('ستُفتح القصصُ حين تُنهي مقرَّرَك اليوم\n'+tx('بقي عليك: {x}',{x:tx(String(left))}), '📚', '🏠 إلى مقرَّري', 'لاحقاً',
     function(ok){ if(ok){ renderPlayers(); show('scr-start'); } });
 }
 /* روابطُ الأغلفة تبقى ما بقي التطبيقُ مفتوحاً: كانت تُفكّ عند كلّ رسمٍ ثمّ تُجلب
@@ -17951,14 +17982,15 @@ function stBoot(){
     if(first){
       /* لا يُعلَن عمّا كان موجوداً يومَ نزل التطبيق — يجده في ركنه */
       try{ celeShow({ ic:'📚', kick:'🎪 ركن المغامرة', title:'وصلتْك قصص!',
-                      sub:'في ركن المغامرة تبويبٌ جديدٌ للقصص — فيه '+arNum(L.length)+
-                          (L.length===1?' قصّة':' قصص')+' بالصُّور',
+                      sub:tx('في ركن المغامرة تبويبٌ جديدٌ للقصص — فيه {n} بالصُّور',{n:arCount(L.length,C_STORY)}),
                       rew:'📖 اقرأها متى شئت' }); }catch(e){}
       return;
     }
     celeShow({ ic:esc(fresh[0].ic||'📖'), kick:(again?'✨ قصّةٌ تجدّدت':'✨ قصّةٌ جديدة وصلت'),
                title:fresh[0].t||'قصّة جديدة',
-               sub:(again?'صورُها ونصُّها أجملُ ممّا قرأتَ — أعِدْها':(fresh[0].d||''))+(fresh.length>1?'\nومعها '+arNum(fresh.length-1)+' قصّةً أخرى':''),
+               /* سطران في عقدةٍ واحدة: يُترجم كلٌّ منهما قبل أن يُضمّا (والوصفُ مترجَمٌ من فهرس اللغة) */
+               sub:(again?tx('صورُها ونصُّها أجملُ ممّا قرأتَ — أعِدْها'):(fresh[0].d||''))+
+                   (fresh.length>1?'\n'+tx('ومعها غيرُها: {n}',{n:arCount(fresh.length-1,C_STORY)}):''),
                rew:'🎪 تجدها في ركن المغامرة' });
   })['catch'](function(){});
 }
@@ -18049,7 +18081,7 @@ function gameSuraList(g){
            '<button type="button" class="mfprow" data-sn="'+s.n+'">'+
              '<span class="n">'+arNum(s.n)+'</span>'+
              '<span class="t"><b>سورة '+esc(s.name)+'</b><i>'+juzLabel(s)+' • آياتها '+arNum(s.ayat.length)+
-               (has?' • ✓ حفظتَ منها':'')+'</i></span>'+
+               (has?' • ✓ '+tx('حفظتَ منها'):'')+'</i></span>'+
              '<span class="p gmck">'+(on?'☑️':'⬜')+'</span>'+
            '</button>'+
            (on ? ('<div class="gmrng">'+
@@ -18131,10 +18163,10 @@ function runOverlay(kind, nb){
   else if(kind==='pause')
     h='<div class="ot">⏸️ توقّفتِ اللعبة</div><button type="button" class="btn primary" id="runStart">▶️ تابِعْ</button>';
   else
-    h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+arNum(RUN.score)+' نقطة • 📜 '+arNum(RUN.done)+' سؤال • 🏁 '+arNum(runMeters())+' م'+
+    h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+tx('{0} نقطة',{0:arNum(RUN.score)})+' • 📜 '+arCount(RUN.done,C_QUES)+' • 🏁 '+tx('{0} م',{0:arNum(runMeters())})+
       (RUN.gems?' • 💎 '+arNum(RUN.gems):'')+'<br>'+
-      (nb ? '🏆 أفضلُ نتيجةٍ لك في «'+RUN_LEVELS[runLv()].n+'» حتى الآن!'
-          : 'أفضلُ نتيجةٍ لك في «'+RUN_LEVELS[runLv()].n+'»: ⭐ '+arNum(runBests()[runLv()]||0))+'</p>'+
+      (nb ? '🏆 '+tx('أفضلُ نتيجةٍ لك في «{l}» حتى الآن!',{l:tx(RUN_LEVELS[runLv()].n)})
+          : tx('أفضلُ نتيجةٍ لك في «{l}»: ⭐ {n}',{l:tx(RUN_LEVELS[runLv()].n), n:arNum(runBests()[runLv()]||0)}))+'</p>'+
       runLvHTML()+
       '<div class="runbtns"><button type="button" class="btn primary" id="runAgain">🔁 مرّةً أخرى</button>'+
       '<button type="button" class="btn ghost" id="runBack">🎮 الألعاب</button></div>';
@@ -18480,7 +18512,7 @@ function shelfHud(){
   gemHud('shelfGem', SH.gems||0);
   if(!ay) return;
   var np=ay.parts.length, done=ay.p>=np;
-  $('shelfRef').textContent='سورة '+ay.s.name+(np>1 && !done ? ' • الجزء '+arNum(ay.p+1)+' من '+arNum(np) : '');
+  $('shelfRef').textContent=tx('سورة {s1}',{s1:ay.s.name})+(np>1 && !done ? ' • '+tx('الجزء {p} من {n}',{p:arNum(ay.p+1), n:arNum(np)}) : '');
   var L='';
   if(ay.a>0){ var pw=wordsOf(ayahText(ay.s,ay.a-1));
     L+='<span class="rw ctx">'+(pw.length>3?'… ':'')+esc(pw.slice(-3).join(' '))+'</span>'; }
@@ -18908,10 +18940,10 @@ function birdOverlay(kind, nb){
   else if(kind==='pause')
     h='<div class="ot">⏸️ توقّفتِ اللعبة</div><button type="button" class="btn primary" id="birdStart">▶️ تابِعْ</button>';
   else
-    h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+arNum(BD.score)+' نقطة • 📜 '+arNum(BD.done)+' سؤال'+
+    h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+tx('{0} نقطة',{0:arNum(BD.score)})+' • 📜 '+arCount(BD.done,C_QUES)+
       (BD.gems?' • 💎 '+arNum(BD.gems):'')+'<br>'+
-      (nb ? '🏆 أفضلُ نتيجةٍ لك في «'+RUN_LEVELS[lv].n+'» حتى الآن!'
-          : 'أفضلُ نتيجةٍ لك في «'+RUN_LEVELS[lv].n+'»: ⭐ '+arNum(B[lv]||0))+'</p>'+
+      (nb ? '🏆 '+tx('أفضلُ نتيجةٍ لك في «{l}» حتى الآن!',{l:tx(RUN_LEVELS[lv].n)})
+          : tx('أفضلُ نتيجةٍ لك في «{l}»: ⭐ {n}',{l:tx(RUN_LEVELS[lv].n), n:arNum(B[lv]||0)}))+'</p>'+
       gameLvHTML('bird')+
       '<div class="runbtns"><button type="button" class="btn primary" id="birdAgain">🔁 مرّةً أخرى</button>'+
       '<button type="button" class="btn ghost" id="birdBack">🎮 الألعاب</button></div>';
@@ -19292,7 +19324,7 @@ if($('btnInstall2')) $('btnInstall2').onclick=function(){
 pwaSync();
 $('btnDelPlayer').onclick=function(){
   if(DB.players.length<2){ uiAlert('لا يمكن حذف المستخدم الوحيد','👤'); return; }
-  uiAsk('حذف المستخدم «'+(profile.name||'بلا اسم')+'» وكلّ نجومه؟',function(ok){
+  uiAsk(tx('حذف المستخدم «{n}» وكلّ نجومه؟',{n:(profile.name||tx('بلا اسم'))}),function(ok){
     if(!ok) return;
     bkSave(true)['catch'](function(){});
     DB.players.splice(DB.cur,1); DB.cur=0; saveDB(); bindPlayer();
