@@ -8,7 +8,8 @@
    ١) نصوصٌ عربيّةٌ في الشيفرة (نصوصُ الصفحة الثابتة، والنصوصُ بين علامات التنصيص
       وما بين وسوم HTML فيها) ليست في قاموس الأرديّة ولا في قائمة التجاهل — أي جديدةٌ
       أو عُدّلت بعد آخر ترجمة. هذا أهمّ ما فيه: تعديلُ نصِّ زرٍّ عربيٍّ يُسقط ترجمتَه بصمت.
-   ٢) صيغُ العدد: كلُّ مصفوفة C_* (arCount) لها «#1 …» و«#n …» في كلّ قاموس.
+   ٢) صيغُ العدد: كلُّ مصفوفة C_* (arCount) لها «#1 …» و«#n …» في كلّ قاموس،
+      و«#one …» و«#few …» أيضاً لِلُغةٍ في جمعها قلّة (الروسيّة).
    ٣) قوالبُ tx('…') في الشيفرة لها مدخلٌ في كلّ قاموس.
    ٤) مفاتيحُ في القاموس لم يعد لنصّها أثرٌ في الشيفرة (يتيمة) — تُحذف أو تُحدَّث.
    ٥) كلُّ لغةٍ غير الأرديّة: ما في قاموس الأرديّة (المرجع) ولم يُترجَم فيها بعد.
@@ -130,7 +131,7 @@ const extra = [['arYears', 'سنة'], ['arMonths', 'شهر'], ['arDays', 'يوم
    المفتاحُ صورتُه وقتَ العرض، والشيفرةُ تبنيه قطعاً («الإتقان» + « — الشارة » + «فضّية»)،
    فيُقطَّع عند الوسوم والخانات والفواصل، ويكفي أن تُوجد قطعةٌ منه ليُعدّ حيّاً */
 const flat = norm(html + ' ' + (existsSync('data/plans.js') ? readFileSync('data/plans.js', 'utf8') : ''));
-const pieces = k => k.replace(/<[^>]*>/g, '|').split(/\{[a-z0-9]+\}|#1 |#n |\||—|•|«|»|:|؟|\(|\)|،|\.|<br>/)
+const pieces = k => k.replace(/<[^>]*>/g, '|').split(/\{[a-z0-9]+\}|#1 |#n |#one |#few |\||—|•|«|»|:|؟|\(|\)|،|\.|<br>/)
   .map(norm).filter(p => AR.test(p) && p.length >= 4);
 /* ما يأتي من البيانات لا من الشيفرة: نوعُ السورة، وأسماءُ الأشهر (من Intl) */
 const fromData = new Set([...SURAHS.map(s => s.type),
@@ -157,13 +158,16 @@ if (fresh.length) {
   console.log('   ← أضفها إلى lang/*.js، أو إن لم تكن للواجهة (آية، اسم، جزءُ جملة) فـ --accept');
 } else console.log('   لا شيء ✓');
 
+/* لغةٌ في قواعد جمعها قلّةٌ (الروسيّة) تحتاج «#one» و«#few» مع «#1» و«#n» */
+const fewCats = c => new Intl.PluralRules(c).resolvedOptions().pluralCategories.includes('few');
+
 for (const c of langs) {
   const d = dicts[c];
   const missCount = [...countForms.map(f => f[1]), ...extra.map(e => e[1])]
-    .filter(f => d['#1 ' + f] == null || d['#n ' + f] == null);
+    .filter(f => d['#1 ' + f] == null || d['#n ' + f] == null || (fewCats(c) && (d['#one ' + f] == null || d['#few ' + f] == null)));
   const missTx = TX.filter(t => AR.test(t) && d[norm(t)] == null && !/^[؀-ۿ ]{1,3}$/.test(t));
   head(`٢–٣) ${c}: صيغُ العدد الناقصة (${missCount.length}) — قوالبُ tx() الناقصة (${missTx.length}):`);
-  if (missCount.length) { bad += missCount.length; list(missCount, f => `«#1 ${f}» و«#n ${f}»`); }
+  if (missCount.length) { bad += missCount.length; list(missCount, f => `«#1 ${f}» و«#n ${f}»` + (fewCats(c) ? ` و«#one ${f}» و«#few ${f}»` : '')); }
   if (missTx.length) { bad += missTx.length; list([...new Set(missTx)]); }
   if (!missCount.length && !missTx.length) console.log('   لا شيء ✓');
 }

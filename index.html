@@ -5419,11 +5419,19 @@ function khatmaSegs(mode){
   KHATMA[mode]=n;
   return n;
 }
-/* في غير العربيّة: صيغةُ العدد من القاموس («#1 سنة» للواحد، «#n سنة» لما فوقه) */
+/* في غير العربيّة: صيغةُ العدد من القاموس («#1 سنة» للواحد، «#n سنة» لما فوقه).
+   ولِلُغةٍ صيغُها أكثر (الروسيّة: 21 год، 3 года، 5 лет) «#one» لِما ينتهي كالواحد و«#few» للقلّة،
+   تختارهما قواعدُ المتصفّح (Intl.PluralRules)؛ وما لا مفتاحَ له يقع على «#n» */
+var PLURAL_RULES;
 function lcount(n, k){
   if(!NUR_I18N.on) return null;
-  var D=NUR_I18N.dict, one=D['#1 '+k], many=D['#n '+k];
+  var D=NUR_I18N.dict, one=D['#1 '+k], many=D['#n '+k], cat='', f;
   if(n===1 && one!=null) return one;
+  if(D['#few '+k]!=null){
+    try{ cat=(PLURAL_RULES=PLURAL_RULES||new Intl.PluralRules(NUR_I18N.code)).select(n); }catch(e){}
+    f=D['#'+cat+' '+k];
+    if((cat==='one'||cat==='few') && f!=null) many=f;
+  }
   return many!=null ? many.replace('{n}', arNum(n)) : null;
 }
 function arYears(y){ var l=lcount(y,'سنة'); if(l!=null) return l; return y===1?'سنة':(y===2?'سنتين':(y<=10?y+' سنوات':y+' سنة')); }
