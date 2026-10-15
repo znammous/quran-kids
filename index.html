@@ -1117,9 +1117,10 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 .cert{background:#fffdf3;border:12px double var(--gold);border-radius:16px;padding:20px 16px;text-align:center;
   box-shadow:0 14px 34px rgba(0,0,0,.3);position:relative}
 .cert .orn{font-size:22px;color:#c9a227;letter-spacing:8px}
-.cert h2{font-family:"Traditional Arabic","Amiri","IBM Plex Sans Arabic","Segoe UI",serif;font-size:36px;color:var(--g1);margin:6px 0}
+/* Nunito بعد خطّ الواجهة: للكيريليّة، فليس في Plex حروفُها */
+.cert h2{font-family:"Traditional Arabic","Amiri","IBM Plex Sans Arabic",Nunito,"Segoe UI",serif;font-size:36px;color:var(--g1);margin:6px 0}
 .cert .who{font-size:26px;font-weight:900;color:#102b4a;margin:8px 0}
-.cert .what{font-family:"Traditional Arabic","Amiri","IBM Plex Sans Arabic","Segoe UI",serif;font-size:30px;color:#8a6100;margin:6px 0}
+.cert .what{font-family:"Traditional Arabic","Amiri","IBM Plex Sans Arabic",Nunito,"Segoe UI",serif;font-size:30px;color:#8a6100;margin:6px 0}
 .cert .stars{font-size:30px;letter-spacing:4px;margin:8px 0}
 .cert .meta2{display:flex;justify-content:space-around;flex-wrap:wrap;gap:10px;margin-top:14px;font-size:13px;color:#4a627e}
 .cert .sign{margin-top:16px;display:flex;justify-content:space-between;gap:14px;font-size:13px;color:#4a627e}
@@ -8147,7 +8148,7 @@ function surahRowHTML(s){
     : '';
   return '<div class="'+cls+'" data-n="'+s.n+'">'+
     '<div style="flex:1"><div class="nm">'+esc(s.name)+'</div>'+
-    '<div class="mt">'+arNum(s.count)+' آية • '+s.type+' • '+juzLabel(s)+'</div>'+
+    '<div class="mt">'+arCount(s.count,C_AYAH)+' • '+s.type+' • '+juzLabel(s)+'</div>'+
     '<div class="mini-bar"><i style="width:'+Math.round(100*t.done/Math.max(1,t.segs))+'%"></i></div></div>'+
     pill+cert+'</div>';
 }
@@ -14794,7 +14795,7 @@ function showCert(s){
       '<div class="who">'+esc(profile.name||'الطالب')+'</div>'+
       '<div style="font-size:14px;color:#4a627e">قد أتمّ بفضل الله تعالى حفظ</div>'+
       '<div class="what">سورة '+esc(s.name)+'</div>'+
-      '<div style="font-size:14px;color:#4a627e">('+arNum(s.count)+' آية — '+s.type+' — الجزء '+arNum(s.juz)+')</div>'+
+      '<div style="font-size:14px;color:#4a627e">('+arCount(s.count,C_AYAH)+' — '+s.type+' — الجزء '+arNum(s.juz)+')</div>'+
       '<div class="stars">★★★★★</div>'+
       (buildCount()?'<svg class="mosque" viewBox="0 0 400 250" style="max-width:280px">'+bigMosqueSVG()+'</svg>'
                   :'<svg class="mosque" viewBox="0 0 300 170" style="max-width:250px">'+mosqueSVG(1)+'</svg>')+
@@ -14821,7 +14822,7 @@ function showQuranCert(){
       '<div class="who">'+esc(profile.name||'الطالب')+'</div>'+
       '<div style="font-size:14px;color:#4a627e">قد أتمّ بفضل الله تعالى ومنّته حفظ</div>'+
       '<div class="what">القرآن الكريم كاملاً</div>'+
-      '<div style="font-size:14px;color:#4a627e">'+arNum(t)+' آية • 114 سورة • 30 جزءاً</div>'+
+      '<div style="font-size:14px;color:#4a627e">'+arCount(t,C_AYAH)+' • '+arCount(114,C_SURAH)+' • 30 جزءاً</div>'+
       '<div class="stars">★★★★★</div>'+
       '<div class="crowncert">'+
         '<svg viewBox="24 14 52 36" aria-hidden="true">'+crownSVG()+'</svg>'+
