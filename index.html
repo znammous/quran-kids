@@ -492,8 +492,8 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .chiphd:first-child{margin-top:0}
 #askChips .chipsel{white-space:nowrap}   /* «Al-Kurdi» لا ينكسر عند شَرطته */
 /* ثلاثُ رقاقاتٍ في صفٍّ واحد، وما طال منها ينكسر سطرين ولا يُنزَل وحده */
-#askChips.three{display:grid;grid-template-columns:repeat(3,1fr)}
-#askChips.three .chipsel:first-child{white-space:normal}
+#askChips.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+#askChips.three .chipsel{white-space:normal}   /* واسمُ القارئ الطويل سطران، فلا يزاحم أخويه */
 #askX{width:32px;height:32px;font-size:15px;top:10px;inset-inline-start:10px;box-shadow:0 3px 0 rgba(0,0,0,.22)}
 
 .topbar{background:var(--pnl);color:var(--gink);border:3px solid var(--pb);border-radius:14px;
