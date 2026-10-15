@@ -3,7 +3,7 @@ const {chromium}=require('playwright'); const fs=require('fs');
 const L=process.argv[2]||'en', DEV=process.argv[3]||'phone', ONLY=process.argv[4];   /* ثالثُها اختياريّ: مشهدٌ واحد، مثل 9-lang */
 const ROOT=require('path').join(__dirname,'../..'); const OUT=ROOT+'/store/l10n/_raw/'+L+'/'+DEV; fs.mkdirSync(OUT,{recursive:true});
 const VP= DEV==='ipad' ? {width:1024,height:1366,dsf:2} : {width:390,height:844,dsf:3};
-const LTR=['en','id','ms','bn','tr','fr','sw','ha','uz','so'];
+const LTR=['en','id','ms','bn','tr','fr','sw','ha','uz','so','ru'];
 let db=JSON.parse(fs.readFileSync(__dirname+'/seed_db.json','utf8'));
 if(LTR.includes(L)){ db.players[0].name='Maryam'; db.players[1].name='Omar'; }
 const HIDE='#qaBar,#setInstall,[id*="nstallBan"],.instbar,.toast{display:none!important}';

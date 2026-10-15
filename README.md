@@ -11,7 +11,7 @@
 <a href="https://github.com/znammous/quran-kids/releases/download/apk/nur-alwahy.apk"><img src=".github/readme/btn-apk.png" alt="APK" height="56"></a>
 <a href="https://znammous.github.io/quran-kids/"><img src=".github/readme/btn-web.png" alt="جرّبه في المتصفّح" height="56"></a>
 
-✓ مجّانيّ تماماً &nbsp;·&nbsp; ✓ بلا إعلانات &nbsp;·&nbsp; ✓ لا يجمع بيانات &nbsp;·&nbsp; ✓ يعمل دون إنترنت &nbsp;·&nbsp; ✓ أربع عشرة لغة
+✓ مجّانيّ تماماً &nbsp;·&nbsp; ✓ بلا إعلانات &nbsp;·&nbsp; ✓ لا يجمع بيانات &nbsp;·&nbsp; ✓ يعمل دون إنترنت &nbsp;·&nbsp; ✓ خمس عشرة لغة
 
 **[nuralwahy.app](https://nuralwahy.app)**
 
@@ -58,10 +58,10 @@
 
 ## 🌍 بلغات أكثر من مليار مسلم
 
-الواجهة والقصص بأربع عشرة لغة، ومعها ترجمةُ معاني الآيات المعتمدة في أكثرها. أمّا المصحفُ والآياتُ فبالعربيّة كما أُنزلت.
+الواجهة والقصص بخمس عشرة لغة، ومعها ترجمةُ معاني الآيات المعتمدة في أكثرها. أمّا المصحفُ والآياتُ فبالعربيّة كما أُنزلت.
 
 <p align="center">
-العربيّة · English · اردو · فارسی · پښتو · Türkçe · Français · Bahasa Indonesia · Bahasa Melayu · বাংলা · Kiswahili · Hausa · Soomaali · O‘zbekcha
+العربيّة · English · اردو · فارسی · پښتو · Türkçe · Français · Bahasa Indonesia · Bahasa Melayu · বাংলা · Kiswahili · Hausa · Soomaali · O‘zbekcha · Русский
 </p>
 
 ## 🔒 آمنٌ لأطفالك

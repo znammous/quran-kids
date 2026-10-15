@@ -11,7 +11,7 @@ const SCENES=['1-path','2-games','3-seg','4-rec','5-mean','6-build','7-words','7
 const b64=f=>'data:image/png;base64,'+fs.readFileSync(f).toString('base64');
 const FONT=`@font-face{font-family:P;src:url(http://localhost:8765/fonts/ui/plex-arabic-700-arabic.woff2);font-weight:700}
 @font-face{font-family:P;src:url(http://localhost:8765/fonts/ui/plex-arabic-700-latin.woff2);font-weight:700;unicode-range:U+0000-00FF,U+2000-206F}`;
-const FAM= ['tr','bn','ha','uz'].includes(L) ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : 'P,system-ui,sans-serif';
+const FAM= ['tr','bn','ha','uz','ru'].includes(L) ? 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif' : 'P,system-ui,sans-serif';
 const BG='radial-gradient(120% 55% at 50% 0%, #1d4f9f 0%, #0d2f6b 45%, #061b42 100%)';
 function shotHTML(s,sz,img){
   const W=sz.w,H=sz.h, top=Math.round(H*0.16), pad=Math.round(W*0.035);

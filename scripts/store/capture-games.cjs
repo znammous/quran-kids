@@ -4,7 +4,7 @@
 const {chromium}=require('playwright'); const fs=require('fs');
 const L=process.argv[2]||'ar', ONLY=process.argv[3];
 const ROOT=require('path').join(__dirname,'../..'); const OUT=ROOT+'/store/l10n/_raw/'+L+'/games'; fs.mkdirSync(OUT,{recursive:true});
-const LTR=['en','id','ms','bn','tr','fr','sw','ha','uz','so'];
+const LTR=['en','id','ms','bn','tr','fr','sw','ha','uz','so','ru'];
 let db=JSON.parse(fs.readFileSync(__dirname+'/seed_db.json','utf8'));
 if(LTR.includes(L)){ db.players[0].name='Maryam'; db.players[1].name='Omar'; }
 const HIDE='#qaBar,#setInstall,[id*="nstallBan"],.instbar,.toast{display:none!important}';
