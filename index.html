@@ -10265,6 +10265,17 @@ function wordChunks(s,a,size){
   }
   return fin.length?fin:[[0,len]];
 }
+/* مقاطعُ مرحلة الترتيب: الآيةُ كلُّها على نسقها، وبقيّةٌ دون ثلاث كلمات
+   تُضمّ إلى ما قبلها، فلا يقف سؤالٌ على كلمةٍ أو كلمتين */
+function orderChunks(s,a){
+  var ch=wordChunks(s,a, SET.level==='hard'?8:WORDS_MIN), last;
+  while(ch.length>1){
+    last=ch[ch.length-1];
+    if(last[1]-last[0]>=ORDER_MIN) break;
+    ch[ch.length-2][1]=last[1]; ch.pop();
+  }
+  return ch;
+}
 function chunkRanges(len,size,min){
   min = (min==null) ? WORDS_MIN : min;
   if(len<=0) return [[0,0]];
@@ -10410,12 +10421,9 @@ function buildRounds(s,seg,stage){
   } else if(stage===1){
     for(i=from;i<to;i++){
       if(ayahWords(s,i)<ORDER_MIN) continue;      /* آيةٌ لا يُرتَّب فيها شيء */
-      var ch=wordChunks(s,i, SET.level==='hard'?8:WORDS_MIN);
-      /* الآيات الطويلة: ثلاثةُ مقاطعَ من أوّل الآية على ترتيبها، لا تفكيكَ
-         للآية كلِّها. وكانت الثلاثةُ تُنتقى بالقرعة ثمّ تُرتَّب، فيبدأ الطفلُ
-         من وسط الآية أو من آخرها ولم يُرتّب أوّلَها — والحفظُ يُبنى من أوّله.
-         (ومقطعُ الآية الواحدة في المرحلة الرابعة كان على الصواب، فاستويا) */
-      if(ch.length>3) ch=ch.slice(0,3);
+      /* الآيةُ الطويلة تُرتَّب مقاطعَ من أوّلها إلى آخرها، لا يُترك منها شيء:
+         كانت تُقصَر على ثلاثة مقاطع فيقفز الطفلُ عن خاتمتها إلى الآية التالية */
+      var ch=orderChunks(s,i);
       for(k=0;k<ch.length;k++) r.push({t:'words',a:i,from:ch[k][0],to:ch[k][1],parts:ch.length,part:k});
     }
     /* مقطعٌ كلُّ آياته كلمةٌ أو كلمتان: يُقرأ ولا يُرتَّب */
@@ -10463,8 +10471,7 @@ function buildRounds(s,seg,stage){
       /* مقطع من آية واحدة: نرتّب كلماتها كاملة بدل ترتيب الآيات */
       if(ayahWords(s,from)<ORDER_MIN) r.push({t:'read',a:from});
       else{
-        var ch2=wordChunks(s,from, SET.level==='hard'?8:WORDS_MIN);
-        if(ch2.length>3) ch2=ch2.slice(0,3);
+        var ch2=orderChunks(s,from);
         for(k=0;k<ch2.length;k++) r.push({t:'words',a:from,from:ch2[k][0],to:ch2[k][1],parts:ch2.length,part:k});
       }
     }
