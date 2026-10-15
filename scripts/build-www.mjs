@@ -14,8 +14,9 @@ for (const f of FILES) cpSync(f, `${OUT}/${f}`);
 for (const d of DIRS) {
   if (!existsSync(d)) throw new Error(`مفقود: ${d}/`);
   /* من lang/ القواميسُ وحدَها: الدليلُ وقائمةُ التجاهل لأدوات الفحص لا للتطبيق */
+  /* ومن data/ ترجماتُ المعاني خارجاً: تُجلب لغةُ الطفل وحدَها من الموقع (TR_HOME في index.html) */
   cpSync(d, `${OUT}/${d}`, { recursive: true,
-    filter: f => !(d === 'lang' && /\.(md|json)$/.test(f)) });
+    filter: f => !(d === 'lang' && /\.(md|json)$/.test(f)) && !/^data[\/\\]tr([\/\\]|$)/.test(f) });
 }
 /* رقمُ الحزمة: بصمةُ محتواها، لا رقمٌ يُكتب باليد. يقارنه التطبيقُ برقم آخر
    حزمةٍ منشورة فيعرف أنّ عنده تحديثاً (انظر «التحديث الحيّ» في index.html) */

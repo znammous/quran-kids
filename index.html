@@ -3312,7 +3312,7 @@ body.hastabs #btnRevQuit{display:none}
   function pick(v, done){
     try{ localStorage.setItem('nur_lang', v); }catch(e){}
     I.ask=null;
-    if(v===I.code){ if(done) done(false); return; }
+    if(v===I.code){ if(done) done(false); try{ trPrefetch(); }catch(e){} return; }
     if(done) done(true);
     /* ‎?lang=‎ في الرابط يغلب المحفوظ: يُحذف، وإلّا عادت اللغةُ القديمة */
     var u=location.href.replace(/([?&#])lang=[a-z]{2}&?/,'$1').replace(/[?&#]$/,'');
@@ -9681,12 +9681,65 @@ function tafPageJuz(P){
 function trLang(){ var I=NUR_I18N; return I.on && I.langs[I.code].tr ? I.code : ''; }
 function tafLoad(j){
   if(TAFS[j]) return Promise.resolve(TAFS[j]);
-  var dir=trLang() ? 'data/tr/'+trLang()+'/' : 'data/tafsir/';
-  if(!TAFS_P[j]) TAFS_P[j]=fetch(dir+'juz-'+(j<10?'0':'')+j+'.json').then(function(r){
-    if(!r.ok) throw new Error(r.status);
-    return r.json();
-  }).then(function(d){ TAFS[j]=d; return d; })['catch'](function(e){ TAFS_P[j]=null; throw e; });
+  var get = (trLang() && isNative()) ? trJson(trLang(), j)
+    : fetch((trLang() ? 'data/tr/'+trLang()+'/' : 'data/tafsir/')+'juz-'+(j<10?'0':'')+j+'.json').then(function(r){
+        if(!r.ok) throw new Error(r.status);
+        return r.json();
+      });
+  if(!TAFS_P[j]) TAFS_P[j]=get.then(function(d){ TAFS[j]=d; return d; })['catch'](function(e){ TAFS_P[j]=null; throw e; });
   return TAFS_P[j];
+}
+/* ===== ترجماتُ المعاني في الجوّال =====
+   كانت في حزمة التحديث، ثلاثَ عشرةَ لغةً تُنزَّل كلُّها مع كلّ تعديلٍ صغير —
+   أكثرُ من نصف الحزمة، والطفلُ لا يقرأ إلّا لغتَه. فصارت تُجلب من الموقع:
+   أجزاءُ لغته الثلاثون تُنزَّل بهدوءٍ في الخلفيّة متى أقرّ لغتَه (أوّلَ تشغيلٍ
+   أو عند تبديلها)، ثمّ تبقى في المخزن فتُقرأ بلا إنترنت. وما لم يكتمل يُستأنف
+   في الفتح التالي، وما طُلب قبل وصوله يُجلب وحدَه.
+   وإن تغيّرت ملفّاتُها في data/tr رُفع TR_VER، فتُجلب من جديد ويُحذف القديم.
+   وعلى الويب تبقى بجوار الصفحة، وعاملُ الخدمة يخزّنها. */
+var TR_HOME='https://znammous.github.io/quran-kids/data/tr/';
+var TR_CACHE='nur-tr';
+var TR_VER=1;
+function trUrl(c,j){ return TR_HOME+c+'/juz-'+(j<10?'0':'')+j+'.json?v='+TR_VER; }
+function trJson(c,j){
+  var u=trUrl(c,j);
+  if(!window.caches) return stFetch(u,20000).then(function(r){ return r.json(); });
+  return caches.open(TR_CACHE).then(function(k){
+    return k.match(u).then(function(hit){
+      if(hit) return hit.json();
+      return stFetch(u,20000).then(function(r){
+        try{ k.put(u, r.clone()); }catch(e){}
+        return r.json();
+      });
+    });
+  });
+}
+var TR_RUN=false;
+function trPrefetch(){
+  var c=trLang(), key=c+':'+TR_VER;
+  if(!c || !isNative() || !window.caches || TR_RUN || NUR_I18N.ask) return;
+  if(load('nur_tr_done','')===key) return;
+  TR_RUN=true;
+  caches.open(TR_CACHE).then(function(k){
+    /* إصدارٌ قديم: لا يُقرأ بعد اليوم */
+    return k.keys().then(function(rs){
+      return Promise.all(rs.map(function(r){
+        if(r.url.indexOf('?v='+TR_VER)<0) return k['delete'](r);
+      }));
+    }).then(function(){
+      /* واحداً واحداً: لا يزاحم ما يطلبه الطفلُ في أثناء ذلك */
+      var j=1, bad=0;
+      function next(){
+        if(j>30){ TR_RUN=false; if(!bad) save('nur_tr_done', key); return; }
+        var u=trUrl(c,j++);
+        return k.match(u).then(function(hit){
+          if(hit) return;
+          return stFetch(u,30000).then(function(r){ return k.put(u, r); })['catch'](function(){ bad++; });
+        }).then(next);
+      }
+      return next();
+    });
+  })['catch'](function(){ TR_RUN=false; });
 }
 function tafOf(sn,ay){
   var o=TAFS[tafJuzOf(gAt(sn,ay))];
@@ -20366,6 +20419,7 @@ function splashReady(){
 /* حلولُ الخطوط آخرُ ما يزحزح الصفحة، فيُنتظر إن أمكن */
 try{ if(document.fonts && document.fonts.ready) document.fonts.ready.then(splashReady); }catch(e){}
 window.addEventListener('load', splashReady);
+window.addEventListener('load', function(){ setTimeout(trPrefetch, 3000); });
 splashReady();
 setTimeout(splashOff, 8000);      /* لئلّا يبقى مسدلاً إن تعثّر شيء */
 </script>
