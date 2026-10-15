@@ -8407,7 +8407,7 @@ function renderPath(){
   /* إن كُشف ما قبل المقرَّر بُيّن في الترويسة، فلا يظنّ المقرَّرَ اتّسع */
   $('pathTitle').innerHTML=(SC?('📅 '+esc(SC.label)+
       ((SC.base && (SC.lo<SC.base[0] || SC.hi>SC.base[1]))?' + ما مضى':'')):'🗺️ مسارك')+
-    '<span>'+arNum(dnAll)+'/'+arNum(tot)+' مقطع • '+arCount(list.length,C_SURAH)+'</span>';
+    '<span>'+tx('{0}/{1} مقطع',{0:arNum(dnAll),1:arNum(tot)})+' • '+arCount(list.length,C_SURAH)+'</span>';   /* بـtx: صيغةُ العدد بعدها مترجمةٌ سلفاً فلا يجد المحرّكُ الجملةَ كاملة */
 
   var tn=todayNum(), offs=['off2','off1','off2','','off3','off4','off3',''];
   var h='', nowUsed=false, nodes=0;
