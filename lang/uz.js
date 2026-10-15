@@ -1791,4 +1791,6 @@ NUR_I18N.add('uz', {
   "حُفظت نسخةٌ من المحفوظ القديم جانباً ولم تُمسح": "Eski saqlangan maʼlumotlarning nusxasi chetga olib qoʻyildi, oʻchirilmadi",
   "{d} — قبل آخر مسحٍ أو استعادة": "{d} — oxirgi tozalash yoki tiklashdan oldin",
   "وفيها: {names}": "Ichida: {names}",
+  "{0} نقطة": "{0} ball",
+  "أُضيفت {n} إلى رصيدك": "{n} hisobingizga qoʻshildi",
 });

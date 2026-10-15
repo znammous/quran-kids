@@ -7805,7 +7805,7 @@ function renderBoard(){
     return '<div class="brow'+(r.i===DB.cur?' me':'')+'">'+
       '<span class="rank">'+(medals[k]||arNum(k+1))+'</span>'+
       '<span class="who2">'+esc(r.name)+'</span>'+
-      '<span class="num2">📖 '+arNum(r.ayat)+' آية<br>⭐ '+arNum(r.stars)+' • 🏮 '+arNum(r.streak)+'</span></div>';
+      '<span class="num2">📖 '+arCount(r.ayat,C_AYAH)+'<br>⭐ '+arNum(r.stars)+' • 🏮 '+arNum(r.streak)+'</span></div>';
   }).join('') || '<div class="hintline">لا يوجد مستخدمون</div>';
 }
 function renderPlayers(){
@@ -13837,7 +13837,7 @@ function priorCeleFlush(){
   if(!PRIOR_CELE) return;
   var c=PRIOR_CELE; PRIOR_CELE=null;
   try{ celeShow({ ic:'📌', kick:'✅ سُجّل حفظك السابق',
-    title:'أُضيفت '+arNum(c.n)+' آية إلى رصيدك',
+    title:tx('أُضيفت {n} إلى رصيدك',{n:arCount(c.n,C_AYAH)}),
     sub:'ستدخل المراجعة، وأُعيد حساب الأيام المتبقّية',
     rew:'＋ '+(c.added===1 ? 'مقطعٌ جديد' : c.added===2 ? 'مقطعان جديدان'
              : arNum(c.added)+(c.added<=10 ? ' مقاطع جديدة' : ' مقطعاً جديداً')) }); }catch(e){}
@@ -18518,7 +18518,7 @@ function shelfOverlay(kind, nb){
   else if(kind==='pause')
     h='<div class="ot">⏸️ توقّفتِ اللعبة</div><button type="button" class="btn primary" id="shelfStart">▶️ تابِعْ</button>';
   else
-    h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+arNum(SH.score)+' نقطة • 📜 '+arNum(SH.done)+' آية'+
+    h='<div class="ot">💔 نفدتِ القلوب</div><p>⭐ '+tx('{0} نقطة',{0:arNum(SH.score)})+' • 📜 '+arCount(SH.done,C_AYAH)+
       (SH.gems?' • 💎 '+arNum(SH.gems):'')+'<br>'+
       (nb?'🏆 أفضلُ نتيجةٍ لك حتى الآن!':'أفضلُ نتيجةٍ لك: ⭐ '+arNum(st.best||0))+'</p>'+
       '<div class="runbtns"><button type="button" class="btn primary" id="shelfAgain">🔁 مرّةً أخرى</button>'+

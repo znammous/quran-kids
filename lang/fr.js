@@ -1791,4 +1791,6 @@ NUR_I18N.add('fr', {
   "حُفظت نسخةٌ من المحفوظ القديم جانباً ولم تُمسح": "Une copie des anciennes données a été mise de côté, sans être effacée",
   "{d} — قبل آخر مسحٍ أو استعادة": "{d} — avant la dernière remise à zéro ou restauration",
   "وفيها: {names}": "Elle contient : {names}",
+  "{0} نقطة": "{0} points",
+  "أُضيفت {n} إلى رصيدك": "{n} ajoutés à votre total",
 });

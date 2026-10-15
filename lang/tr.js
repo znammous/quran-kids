@@ -1791,4 +1791,6 @@ NUR_I18N.add('tr', {
   "حُفظت نسخةٌ من المحفوظ القديم جانباً ولم تُمسح": "Eski kayıtlı verilerin bir kopyası kenara ayrıldı, silinmedi",
   "{d} — قبل آخر مسحٍ أو استعادة": "{d} — son sıfırlama ya da geri yüklemeden önce",
   "وفيها: {names}": "İçinde: {names}",
+  "{0} نقطة": "{0} puan",
+  "أُضيفت {n} إلى رصيدك": "{n} hanenize eklendi",
 });

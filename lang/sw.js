@@ -1791,4 +1791,6 @@ NUR_I18N.add('sw', {
   "حُفظت نسخةٌ من المحفوظ القديم جانباً ولم تُمسح": "Nakala ya data ya zamani imewekwa kando, haijafutwa",
   "{d} — قبل آخر مسحٍ أو استعادة": "{d} — kabla ya kufuta au kurejesha mara ya mwisho",
   "وفيها: {names}": "Ina: {names}",
+  "{0} نقطة": "pointi {0}",
+  "أُضيفت {n} إلى رصيدك": "{n} zimeongezwa kwenye jumla yako",
 });

@@ -1791,4 +1791,6 @@ NUR_I18N.add('ms', {
   "حُفظت نسخةٌ من المحفوظ القديم جانباً ولم تُمسح": "Salinan data lama disimpan berasingan dan tidak dipadam",
   "{d} — قبل آخر مسحٍ أو استعادة": "{d} — sebelum padam atau pemulihan terakhir",
   "وفيها: {names}": "Kandungannya: {names}",
+  "{0} نقطة": "{0} mata",
+  "أُضيفت {n} إلى رصيدك": "{n} ditambah ke jumlah anda",
 });

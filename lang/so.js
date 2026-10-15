@@ -1791,4 +1791,6 @@ NUR_I18N.add('so', {
   "حُفظت نسخةٌ من المحفوظ القديم جانباً ولم تُمسح": "Nuqul xogtii hore ah ayaa dhinac la dhigay, lama tirtirin",
   "{d} — قبل آخر مسحٍ أو استعادة": "{d} — ka hor tirtiriddii ama soo celintii ugu dambeysay",
   "وفيها: {names}": "Waxaa ku jira: {names}",
+  "{0} نقطة": "{0} dhibcood",
+  "أُضيفت {n} إلى رصيدك": "{n} ayaa lagu daray wadartaada",
 });

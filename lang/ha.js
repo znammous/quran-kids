@@ -1791,4 +1791,6 @@ NUR_I18N.add('ha', {
   "حُفظت نسخةٌ من المحفوظ القديم جانباً ولم تُمسح": "An ajiye kwafin tsoffin bayanai a gefe, ba a goge su ba",
   "{d} — قبل آخر مسحٍ أو استعادة": "{d} — kafin gogewa ko dawowa na ƙarshe",
   "وفيها: {names}": "Akwai a ciki: {names}",
+  "{0} نقطة": "maki {0}",
+  "أُضيفت {n} إلى رصيدك": "An ƙara {n} a kan jimillarka",
 });
