@@ -4513,6 +4513,15 @@ function simScan(toks,all){
         if(!v[p]){ p++; continue; }
         var s=p, e=p, q=p+1, t;
         while(q<L && (v[q] || (q+1<L && v[q+1]))){ if(v[q]) e=q; q++; }
+        var e0=e;
+        /* للتلوين: طرفٌ قريبٌ لا تليه مطابقةٌ ليس من العبارة — «هو خالق كلّ شيء»
+           و«وهو على كلّ شيء» عبارتُهما «كلّ شيء» وحدَها، وإلّا وصلت «هو» مجموعةَ
+           «لا إله إلّا هو» بمجموعة «كلّ شيء» فصارتا لوناً واحداً. و«ربّكم/ربّك»
+           تليها «لا» المطابقة فتبقى */
+        if(all){
+          while(s<e && v[s]===1 && v[s+1]!==2){ s++; while(s<e && !v[s]) s++; }
+          while(e>s && v[e]===1 && v[e-1]!==2){ e--; while(e>s && !v[e]) e--; }
+        }
         var S=0, N=0, G=0, NS=0;
         for(t=s;t<=e;t++){
           if(v[t]===2) S++; else if(v[t]===1) N++; else G++;
@@ -4531,7 +4540,7 @@ function simScan(toks,all){
           if(e+1<L){ put(i,xe+1,'d',j,xe+1+d,false); put(j,xe+1+d,'d',i,xe+1,false); }
           if(s>0){ put(i,xs-1,'d',j,xs-1+d,false); put(j,xs-1+d,'d',i,xs-1,false); }
         }
-        p=e+1;
+        p=e0+1;
       }
     }
   }
