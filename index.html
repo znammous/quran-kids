@@ -654,6 +654,17 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .mfbody.mfpeek{position:absolute;inset-inline:0;z-index:2;overflow:hidden;pointer-events:none;
   background:var(--paper);box-shadow:0 0 22px rgba(0,0,0,.2)}
 .mfbody .mushaf{font-size:clamp(16px,4.6vw,25px)}
+/* كعبُ المصحف على الحافّة الداخليّة للوجه: ظلٌّ يخفت نحو النصّ، وفي الحافّة
+   الخارجيّة أطرافُ الأوراق — فيُرى الوجهُ أيمنَ أم أيسر. بالجهات الحسّيّة
+   left/right لا المنطقيّة، فالجهةُ جهةُ الورق لا جهةُ لغة الواجهة.
+   ومحتواه في .mfbody (position:relative)، فيتحرّك مع الوجه في السحب */
+.mspine{position:absolute;inset:0;pointer-events:none;z-index:1;background-repeat:no-repeat;
+  --sp:linear-gradient(var(--spd),rgba(100,70,25,.42),rgba(100,70,25,.14) 30%,rgba(100,70,25,0));
+  --ed:repeating-linear-gradient(to right,rgba(150,112,40,.45) 0 1px,transparent 1px 2.5px)}
+.mspine.l{--spd:to right;background-image:var(--sp),var(--ed);
+  background-size:30px 100%,7px 100%;background-position:left top,right top}
+.mspine.r{--spd:to left;background-image:var(--sp),var(--ed);
+  background-size:30px 100%,7px 100%;background-position:right top,left top}
 /* الوجهُ المضبوطُ على إطاره ثابتٌ على الجوال: يسعه الإطارُ فلا يُمرَّر رأسيّاً،
    ولا ترتدّ الصفحةُ تحت الإصبع — والسحبُ الأفقيُّ للتقليب باقٍ بأحداث المؤشّر */
 @media (pointer:coarse){
@@ -4790,6 +4801,9 @@ function mushafPageHTML(P, hlGi, glyphs){
   }
   /* رقمُ الوجه تحته، ليس سطراً (mline) فلا يدخل في الالتقاط ولا في ضبط العرض */
   html+='<div class="mpgno" aria-hidden="true">'+arNum(P)+'</div>';
+  /* جهةُ الوجه: الفرديُّ على اليمين وكعبُه (موضعُ الخياطة) عن يساره، والزوجيُّ
+     على اليسار وكعبُه عن يمينه — كما يُفتح المصحف، فيعرف الحافظُ وجهَه */
+  html+='<div class="mspine '+(P%2?'l':'r')+'" aria-hidden="true"></div>';
   return html;
 }
 /* ===== تحديد نطاق المراجعة من المصحف نفسه =====
