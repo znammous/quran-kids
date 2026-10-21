@@ -848,6 +848,10 @@ body.light .card.bare .diffline{color:var(--on2)}
 .card.bare .ayahbox{background:#f6fbff;border-color:#5f9fd8}
 .card.bare .diffline{color:#eaf3fd}
 .card.bare #reciteInput{background:#fff}
+/* سؤالُ التثبيت (ما أخطأ فيه ثمّ عاد): شارةٌ خضراء تميّزه عن سائر الأسئلة،
+   ليُفهم أنّ عودته تثبيتٌ لا تكرارٌ عابر */
+.card.bare .stagechip.fix{background:rgba(60,200,120,.16);color:#8fe3b0;border-color:#2fa866}
+body.light .card.bare .stagechip.fix{background:#e3f6ea;color:#0b6b39;border-color:#3fae6e}
 
 .stagechip{display:inline-block;background:#e2f1ff;color:var(--g1);border-radius:10px;padding:5px 12px;
   font-size:14px;font-weight:800;margin-bottom:8px}
@@ -10707,6 +10711,7 @@ function runRound(){
   ({read:roundRead,words:roundWords,missing:roundMissing,miss2:roundMiss2,ayat:roundAyat,recite:roundRecite,
     aedge:roundAEdge,eorder:roundEOrder,
     revpage:roundRevPage,edge:roundEdge})[r.t](r);
+  $('stageChip').classList.toggle('fix', !!r.rq);
   try{ qScreenFit(true); }catch(e){}             /* سؤالٌ جديد: يُضبط على الشاشة من جديد */
 }
 /* ===== الخطأُ في الاختبار يمضي ولا يُعاد =====
