@@ -11896,11 +11896,15 @@ function roundAyat(r){
   var s=S.surah, idx=[], i;
   for(i=r.from;i<r.to;i++) idx.push(i);
   var order=shuffle(idx.slice()), placed=0;
+  /* نصُّ البطاقة كما يراه */
+  function cardTxt(ai){
+    var t=stripMarks(ayahText(s,ai));
+    return t.length>110 ? t.slice(0,110)+'…' : t;
+  }
   $('playArea').innerHTML=
     '<div class="hintline">'+tx('رتّب آيات المقطع ({a} – {b}) من {s}',{a:arNum(r.from+1),b:arNum(r.to),s:esc(s.name)})+'</div>'+
     '<div class="acards" id="acards">'+order.map(function(ai){
-      var t=stripMarks(ayahText(s,ai));
-      if(t.length>110) t=t.slice(0,110)+'…';
+      var t=cardTxt(ai);
       return '<div class="acard" data-a="'+ai+'"><span class="ord">؟</span><span>'+esc(t)+'</span></div>';
     }).join('')+'</div>';
   var cards=$('acards').querySelectorAll('.acard');
@@ -11908,7 +11912,9 @@ function roundAyat(r){
     cards[i].onclick=function(){
       if(this.classList.contains('placed')) return;
       var ai=parseInt(this.getAttribute('data-a'),10);
-      if(ai===idx[placed]){
+      /* يُقابَل بالنصّ لا برقم الآية: الآيتان المتطابقتان (الكافرون ٣ و٥)
+         كانت إحداهما تُحسب خطأً وهي هي في عين الطفل */
+      if(ai===idx[placed] || cardTxt(ai)===cardTxt(idx[placed])){
         this.classList.add('placed');
         this.querySelector('.ord').textContent=arNum(placed+1);
         placed++; beep([620+placed*50],0.05);
