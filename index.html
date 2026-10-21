@@ -11913,8 +11913,9 @@ function roundAyat(r){
       if(this.classList.contains('placed')) return;
       var ai=parseInt(this.getAttribute('data-a'),10);
       /* يُقابَل بالنصّ لا برقم الآية: الآيتان المتطابقتان (الكافرون ٣ و٥)
-         كانت إحداهما تُحسب خطأً وهي هي في عين الطفل */
-      if(ai===idx[placed] || cardTxt(ai)===cardTxt(idx[placed])){
+         كانت إحداهما تُحسب خطأً وهي هي في عين الطفل. والمطابقةُ بالنصّ كاملاً
+         حرفاً وحركةً، لا بما قُصّ منه للبطاقة */
+      if(ai===idx[placed] || ayahText(s,ai)===ayahText(s,idx[placed])){
         this.classList.add('placed');
         this.querySelector('.ord').textContent=arNum(placed+1);
         placed++; beep([620+placed*50],0.05);
