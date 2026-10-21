@@ -11896,10 +11896,14 @@ function roundAyat(r){
   var s=S.surah, idx=[], i;
   for(i=r.from;i<r.to;i++) idx.push(i);
   var order=shuffle(idx.slice()), placed=0;
-  /* نصُّ البطاقة كما يراه */
+  /* نصُّ البطاقة كما يراه: يُقصّ الطويلُ، إلا إن شاركته آيةٌ في المقطع أوّلَه
+     وفارقته بعده (الحجّ ١٤ و٢٣) — فتبدوان واحدةً وهما اثنتان، فيُعرض كاملاً */
+  function cut(ai){ var t=stripMarks(ayahText(s,ai)); return t.length>110 ? t.slice(0,110)+'…' : t; }
   function cardTxt(ai){
-    var t=stripMarks(ayahText(s,ai));
-    return t.length>110 ? t.slice(0,110)+'…' : t;
+    var c=cut(ai), j;
+    if(c.slice(-1)==='…') for(j=0;j<idx.length;j++)
+      if(idx[j]!==ai && cut(idx[j])===c && ayahText(s,idx[j])!==ayahText(s,ai)) return stripMarks(ayahText(s,ai));
+    return c;
   }
   $('playArea').innerHTML=
     '<div class="hintline">'+tx('رتّب آيات المقطع ({a} – {b}) من {s}',{a:arNum(r.from+1),b:arNum(r.to),s:esc(s.name)})+'</div>'+
