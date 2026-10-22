@@ -3220,7 +3220,7 @@ body.hastabs #btnRevQuit{display:none}
       <div class="setpage" data-setp="play" hidden>
       <!-- المستوى يحكم نوعَ الأسئلة لا مقدارَ الحفظ، فبابُه اللعبُ لا الحفظ -->
       <div class="setblock">
-        <label class="lbl">🎚️ المستوى</label>
+        <label class="lbl">📶 المستوى</label>
         <button type="button" class="btn blue" id="btnSetLevel" style="width:100%"></button>
         <select id="setLevel" hidden>
           <option value="easy">سهل — ضغطٌ واختيارٌ بلا كتابة</option>
@@ -19685,12 +19685,12 @@ if($('setQari')) $('setQari').addEventListener('change', audStoreNote);
 function levelSetBtn(){
   var s=$('setLevel'), b=$('btnSetLevel'); if(!s||!b) return;
   var o=s.options[s.selectedIndex];
-  b.textContent='🎚️ '+(o ? o.textContent : '');
+  b.textContent='📶 '+(o ? o.textContent : '');
 }
 if($('btnSetLevel')) $('btnSetLevel').onclick=function(){
   var s=$('setLevel');
   var chips=[].map.call(s.options, function(o){ return { n:o.textContent, v:o.value, sel:o.value===s.value }; });
-  uiBox(tx('المستوى'), '🎚️', null, tx('رجوع'), function(ok, v){
+  uiBox(tx('المستوى'), '📶', null, tx('رجوع'), function(ok, v){
     if(!ok || !v || v===s.value) return;
     s.value=v; levelSetBtn();
     s.dispatchEvent(new Event('change', {bubbles:true}));   /* يُحفظ كسائر الإعدادات */
