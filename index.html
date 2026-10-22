@@ -12108,7 +12108,7 @@ function roundRecite(r){
     function okAt(i){ return i<part.length && norm(typed[i])===norm(part[i]); }
     function draw(fresh){
       $('wtLine').innerHTML=typed.map(function(w,i){
-        var cl=i<given?'given':i===ed?'hintme':okAt(i)?'ok':'bad';
+        var cl=i<given?(i<echo?'ok':'given'):i===ed?'hintme':okAt(i)?'ok':'bad';
         if(cl==='bad' && fresh && fresh.indexOf(i)>=0) cl+=' shake';
         return '<span class="chip wt '+cl+'" data-i="'+i+'">'+esc(w)+
                (cl.indexOf('bad')===0?'<span class="wp">✏️</span>':'')+'</span>';
@@ -12128,9 +12128,12 @@ function roundRecite(r){
     }
     function put(ws){
       ws=ws.filter(function(w){ return norm(w); });
-      /* من أعاد كتابةَ الكلمتين المعطاتين من أوّل الآية لم يُخطئ: تُطوى ولا تُحمَّر */
+      /* من أعاد كتابةَ الكلمتين المعطاتين من أوّل الآية لم يُخطئ: تُطوى ولا تُحمَّر،
+         ويخضرّ صندوقُها المعطى كأنّه كتبه */
+      var e0=echo;
       while(ws.length && ed<0 && echo<given && typed.length===given &&
             norm(ws[0])===norm(part[echo]) && norm(ws[0])!==norm(part[given])){ ws.shift(); echo++; }
+      if(echo>e0) draw();
       if(!ws.length) return;
       var at=ed>=0?ed:typed.length, fresh=[];
       [].splice.apply(typed,[at,ed>=0?1:0].concat(ws)); ed=-1;
