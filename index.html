@@ -15413,18 +15413,22 @@ var EX_KINDS=[['words','🧩','ترتيب الكلمات','تُبعثر كلما
               ['aedge','🚩','مطلعُ الآية وخاتمتُها','يُعطى شطرَ الآية فيذكر طرفَها الغائب'],
               ['eorder','🏁','رصُّ المطالع والخواتم','يرتّب أوائلَ الآيات أو أواخرَها'],
               ['write','✍️','اكتب الآية','يكتب الآيةَ كاملةً كلمةً كلمة']];
-/* نوعٌ قائمٌ بنفسه: لا تشمله «منوّعة» ولا «تحدّي اليوم»، ولا يأتي إلّا لمن اختاره —
-   فكتابةُ الآية كاملةً على الجوال أطولُ من أن تُفاجئ من لم يطلبها */
+/* نوعٌ لا يشمله «تحدّي اليوم»: عشرون سؤالاً تُفاجئه كلَّ يوم، وكتابةُ الآية كاملةً
+   على الجوال أطولُ من أن تأتيه فيها بلا طلب. وأمّا «اختبر نفسي» فـ«منوّعة» فيه
+   تشمله كسائر الأنواع، وهو مختارٌ فيه من أوّل مرّة */
 var EX_SOLO={ write:1 };
 /* أنواعُ الاختبار المأذونُ فيها بدرجة اللاعب */
 function exKinds(){ return EX_KINDS.filter(function(z){ return kindAllowed(z[0]); }); }
 /* ما تشمله «منوّعة»، وهو الأصلُ إن لم يُختر شيء */
-function exKindKeys(){ return exKinds().filter(function(z){ return !EX_SOLO[z[0]]; }).map(function(z){ return z[0]; }); }
-/* المختارةُ الآن — وإن لم يُختر شيءٌ فالكلُّ */
+function exKindKeys(){ return exKinds().map(function(z){ return z[0]; }); }
+/* المختارةُ الآن — وإن لم يُختر شيءٌ فالكلُّ.
+   والقائمةُ الفارغةُ عمداً (ألغى الكلَّ بلمس «منوّعة») تبقى فارغة، فيرى
+   الأنواعَ كلَّها بلا علامةٍ ويختار منها ما شاء */
 function examPicks(){
   var p=EX.picks;
+  if(p && !p.length) return [];
   /* ما حُجب بعد اختياره يسقط — كمن اختار ثمّ هبط بدرجته */
-  if(p&&p.length) p=p.filter(function(t){ return kindAllowed(t); });
+  if(p) p=p.filter(function(t){ return kindAllowed(t); });
   return (p && p.length) ? p : exKindKeys();
 }
 function examAllOn(){
@@ -15718,7 +15722,7 @@ function examBody(k){
   }
   else if(k==='kind'){
     var picked=examPicks(), allOn=examAllOn(), kinds=exKinds();
-    var every=kinds.filter(function(z){ return !EX_SOLO[z[0]]; }).map(function(z){ return z[2]; }).join('، ');
+    var every=kinds.map(function(z){ return z[2]; }).join('، ');
     h='<div class="onbopts">'+
       '<button type="button" class="onbopt'+(allOn?' sel':'')+'" data-exall="1">'+
         '<span class="oe">'+(allOn?'✅':'🎲')+'</span>'+
@@ -15947,7 +15951,8 @@ function examWire(k){
   if(k==='kind'){
     var as=$('exBody').querySelectorAll('[data-exall]'), ks=$('exBody').querySelectorAll('[data-exk]'), i;
     for(i=0;i<as.length;i++) as[i].onclick=function(){
-      EX.picks=exKindKeys(); sPick(); examBody('kind'); examGate();
+      /* «منوّعة» تُحدّد الكلَّ، ولمسةٌ ثانيةٌ عليها تُلغي الكلّ */
+      EX.picks=examAllOn() ? [] : exKindKeys(); sPick(); examBody('kind'); examGate();
     };
     for(i=0;i<ks.length;i++) ks[i].onclick=function(){
       var key=this.getAttribute('data-exk'), cur=examPicks().slice(), at=cur.indexOf(key);
@@ -16169,7 +16174,8 @@ function dailyRounds(){
   var old=shuffle(all.filter(function(x){ return D.used[dailyKey(x)]; }));
   var order=saved.map(function(x){ return byKey[x]; }).filter(Boolean).concat(fresh, old);
   var out=[], picked=[], took={}, seen={}, keep=EX.picks;
-  EX.picks=null;                                   /* كلُّ الأنواع المأذونة بدرجته */
+  /* كلُّ الأنواع المأذونة بدرجته، إلّا ما لا يُفاجأ به (EX_SOLO) */
+  EX.picks=exKindKeys().filter(function(t){ return !EX_SOLO[t]; });
   try{
     for(i=0;i<order.length && out.length<DAILY_N;i++){
       it=order[i]; k=dailyKey(it);
