@@ -684,6 +684,7 @@ NUR_I18N.add('sw', {
   "تحدّيك": "Changamoto yako",
   "تحقّق": "Kagua",
   "أستسلم": "Nimekata tamaa",
+  "أكمل {w} عن ظهر قلب (التشكيل غير مطلوب)": "Kamilisha {w} kwa kuhifadhi (harakati hazihitajiki)",
   "اكتب الآية": "Andika aya",
   "يكتب الآيةَ كاملةً كلمةً كلمة": "Anaandika aya nzima neno kwa neno",
   "انقر الكلمة الحمراء لتعدّلها": "Gusa neno jekundu kulirekebisha",

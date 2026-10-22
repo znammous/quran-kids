@@ -684,6 +684,7 @@ NUR_I18N.add('ha', {
   "تحدّيك": "Ƙalubalenka",
   "تحقّق": "Duba",
   "أستسلم": "Na haƙura",
+  "أكمل {w} عن ظهر قلب (التشكيل غير مطلوب)": "Kammala {w} daga haddace (wasula ba dole ba)",
   "اكتب الآية": "Rubuta aya",
   "يكتب الآيةَ كاملةً كلمةً كلمة": "Yana rubuta aya gaba ɗaya kalma bayan kalma",
   "انقر الكلمة الحمراء لتعدّلها": "Taɓa kalmar ja don gyara ta",

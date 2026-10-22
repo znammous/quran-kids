@@ -684,6 +684,7 @@ NUR_I18N.add('fr', {
   "تحدّيك": "Ton défi",
   "تحقّق": "Vérifier",
   "أستسلم": "J’abandonne",
+  "أكمل {w} عن ظهر قلب (التشكيل غير مطلوب)": "Complète {w} de mémoire (voyelles non nécessaires)",
   "اكتب الآية": "Écris le verset",
   "يكتب الآيةَ كاملةً كلمةً كلمة": "Écrit le verset entier mot par mot",
   "انقر الكلمة الحمراء لتعدّلها": "Touche le mot rouge pour le corriger",

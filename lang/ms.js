@@ -684,6 +684,7 @@ NUR_I18N.add('ms', {
   "تحدّيك": "Cabaran kamu",
   "تحقّق": "Semak",
   "أستسلم": "Saya menyerah",
+  "أكمل {w} عن ظهر قلب (التشكيل غير مطلوب)": "Lengkapkan {w} dari hafalan (baris tidak perlu)",
   "اكتب الآية": "Tulis ayat",
   "يكتب الآيةَ كاملةً كلمةً كلمة": "Menulis ayat penuh perkataan demi perkataan",
   "انقر الكلمة الحمراء لتعدّلها": "Ketik perkataan merah untuk membetulkannya",

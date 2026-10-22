@@ -684,6 +684,7 @@ NUR_I18N.add('so', {
   "تحدّيك": "Tartankaaga",
   "تحقّق": "Hubi",
   "أستسلم": "Waan is dhiibay",
+  "أكمل {w} عن ظهر قلب (التشكيل غير مطلوب)": "Dhammaystir {w} adigoo xifdi ka qoraya (shakal looma baahna)",
   "اكتب الآية": "Qor aayadda",
   "يكتب الآيةَ كاملةً كلمةً كلمة": "Wuxuu qoraa aayadda oo dhan eray eray",
   "انقر الكلمة الحمراء لتعدّلها": "Taabo erayga cas si aad u saxdo",

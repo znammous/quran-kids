@@ -684,6 +684,7 @@ NUR_I18N.add('en', {
   "تحدّيك": "Your challenge",
   "تحقّق": "Check",
   "أستسلم": "I give up",
+  "أكمل {w} عن ظهر قلب (التشكيل غير مطلوب)": "Complete {w} from memory (diacritics not needed)",
   "اكتب الآية": "Write the ayah",
   "يكتب الآيةَ كاملةً كلمةً كلمة": "Writes the whole ayah word by word",
   "انقر الكلمة الحمراء لتعدّلها": "Tap the red word to fix it",

@@ -684,6 +684,7 @@ NUR_I18N.add('uz', {
   "تحدّيك": "Musobaqang",
   "تحقّق": "Tekshirish",
   "أستسلم": "Taslim bo‘laman",
+  "أكمل {w} عن ظهر قلب (التشكيل غير مطلوب)": "{w} ni yoddan to‘ldiring (harakatlar shart emas)",
   "اكتب الآية": "Oyatni yozing",
   "يكتب الآيةَ كاملةً كلمةً كلمة": "Oyatni to‘liq so‘zma-so‘z yozadi",
   "انقر الكلمة الحمراء لتعدّلها": "Tuzatish uchun qizil so‘zga bosing",

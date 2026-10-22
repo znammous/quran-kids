@@ -684,6 +684,7 @@ NUR_I18N.add('tr', {
   "تحدّيك": "Meydan okuman",
   "تحقّق": "Kontrol et",
   "أستسلم": "Pes ediyorum",
+  "أكمل {w} عن ظهر قلب (التشكيل غير مطلوب)": "{w} ezberden tamamla (hareke gerekmez)",
   "اكتب الآية": "Ayeti yaz",
   "يكتب الآيةَ كاملةً كلمةً كلمة": "Ayetin tamamını kelime kelime yazar",
   "انقر الكلمة الحمراء لتعدّلها": "Düzeltmek için kırmızı kelimeye dokun",

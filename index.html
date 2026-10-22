@@ -12094,9 +12094,10 @@ function roundRecite(r){
     /* أوّلُ كلمتين معطاتان صناديقَ ثابتةً يبني عليها، بدل صندوق الآية الكبير:
        رقمُ الآية وحده لا يدلّ الحافظَ عليها، ومطلعُها يدلّه. ولا تُعطى الآيةُ كلُّها */
     var given=Math.max(0,Math.min(2,part.length-1));
-    var typed=part.slice(0,given), ed=-1, done=false, missed=false;
+    var echo=0, typed=part.slice(0,given), ed=-1, done=false, missed=false;
     $('playArea').innerHTML=
-      '<div class="hintline">اكتب '+where+' عن ظهر قلب (التشكيل غير مطلوب)</div>'+
+      '<div class="hintline">'+(given ? tx('أكمل {w} عن ظهر قلب (التشكيل غير مطلوب)',{w:where})
+                                      : 'اكتب '+where+' عن ظهر قلب (التشكيل غير مطلوب)')+'</div>'+
       '<div class="wtline" id="wtLine"></div>'+
       '<input type="text" id="reciteInput" placeholder="اكتب هنا…" autocomplete="off" spellcheck="false">'+
       '<button class="btn green big" id="btnCheck" style="margin-top:10px">✅ تحقّق</button>'+
@@ -12127,6 +12128,9 @@ function roundRecite(r){
     }
     function put(ws){
       ws=ws.filter(function(w){ return norm(w); });
+      /* من أعاد كتابةَ الكلمتين المعطاتين من أوّل الآية لم يُخطئ: تُطوى ولا تُحمَّر */
+      while(ws.length && ed<0 && echo<given && typed.length===given &&
+            norm(ws[0])===norm(part[echo]) && norm(ws[0])!==norm(part[given])){ ws.shift(); echo++; }
       if(!ws.length) return;
       var at=ed>=0?ed:typed.length, fresh=[];
       [].splice.apply(typed,[at,ed>=0?1:0].concat(ws)); ed=-1;
