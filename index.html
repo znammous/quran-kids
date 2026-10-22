@@ -12094,6 +12094,11 @@ function roundRecite(r){
     /* أوّلُ كلمتين معطاتان صناديقَ ثابتةً يبني عليها، بدل صندوق الآية الكبير:
        رقمُ الآية وحده لا يدلّ الحافظَ عليها، ومطلعُها يدلّه. ولا تُعطى الآيةُ كلُّها */
     var given=Math.max(0,Math.min(2,part.length-1));
+    /* ومن يكتب المقطعَ آيةً بعد آية يكفيه مطلعُ أوّله: ما بعده يصله بما كتب قبله.
+       فلا يُعطى شيءٌ إن كان السؤالُ قبله تسميعَ الآية السابقة أو جزءاً من الآية نفسها */
+    var pv=(!wr && S.rounds && S.i>0) ? S.rounds[S.i-1] : null;
+    if(pi>0 || (pv && pv.t==='recite' && (pv.surah||S.surah)===(r.surah||S.surah) &&
+                (pv.a===r.a-1 || pv.a===r.a))) given=0;
     var echo=0, typed=part.slice(0,given), ed=-1, done=false, missed=false;
     $('playArea').innerHTML=
       '<div class="hintline">'+(given ? tx('أكمل {w} عن ظهر قلب (التشكيل غير مطلوب)',{w:where})
