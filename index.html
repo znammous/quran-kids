@@ -5581,20 +5581,31 @@ function revHold(){
 function dueSegs(){
   try{ revHold(); }catch(e){}
   if(revOff()) return [];
-  var t=todayNum(), out=[];
+  var t=todayNum(), out=[], at={};
   Object.keys(prog).forEach(function(k){
     var m=/^(\d+)_(\d+)_([a-z\d]+)$/.exec(k); if(!m) return;
     if(m[3]!==segMode()) return;
     var p=prog[k]; if(!p.done || p.due==null || p.due>t) return;
     var s=surahBy(parseInt(m[1],10)); if(!s || !inRange(s)) return;
     var from=parseInt(m[2],10);
-    var gg=segsOf(s), to=from+1, f0=from;
-    for(var z=0;z<gg.length;z++){
-      if((gg[z].ks!=null?gg[z].ks:gg[z][0])===from){ f0=gg[z][0]; to=gg[z][1]; break; }
+    var gg=segsOf(s), to=from+1, f0=from, hit=false, z;
+    for(z=0;z<gg.length;z++){
+      if((gg[z].ks!=null?gg[z].ks:gg[z][0])===from){ f0=gg[z][0]; to=gg[z][1]; hit=true; break; }
     }
-    out.push({ s:s, from:f0, to:to, key:k, due:p.due });
+    /* مفتاحٌ من تقسيمٍ قديم (تغيّرت حدودُ الأنصاف) لا يطابق مقطعاً اليوم: كان يُعرض
+       آيةً واحدة («الأنعام ٦٥—٦٥») ويُعدّ مقطعاً وحدَه وهو في جوف مقطعٍ مستحقّ.
+       فيُردّ إلى المقطع الذي يحويه، ويُحمل في alt ليُجدوَل معه */
+    if(!hit) for(z=0;z<gg.length;z++){
+      if(gg[z][0]<=from && from<gg[z][1]){ f0=gg[z][0]; to=gg[z][1]; break; }
+    }
+    var id=s.n+'_'+f0, o=at[id];
+    if(!o){ out.push(at[id]={ s:s, from:f0, to:to, key:k, due:p.due, alt:[], hit:hit }); return; }
+    if(hit && !o.hit){ o.alt.push(o.key); o.key=k; o.hit=true; } else o.alt.push(k);
+    if(p.due<o.due) o.due=p.due;
   });
-  out.sort(function(a,b){ return a.due-b.due; });
+  /* ما استحقّ في يومٍ واحد يُرتَّب بالمصحف: كان يبقى على ترتيب إنشاء مفاتيحه،
+     فيتقدّم «الأنعام ٦٥» على «٦٤» */
+  out.sort(function(a,b){ return a.due-b.due || a.s.n-b.s.n || a.from-b.from; });
   return out;
 }
 /* ===== سجلّ الحفظ بالآيات =====
@@ -14799,6 +14810,7 @@ function revSegDone(d){
   var p=getP(d.key), b0=p.box||0, d0=p.due;
   if(e===lim+1) p.due=todayNum()+1;                 /* يُعاد غداً ولا ينزل */
   else scheduleNext(d.key, ok);
+  (d.alt||[]).forEach(function(k){ var q=getP(k); q.box=p.box; q.due=p.due; });   /* مفاتيحُه القديمة تتبعه */
   d.r={ n:1, bad:!ok, drop:!ok && (p.box||0)<b0, grad:ok && d0!=null && p.due==null, next:p.due };
   saveProg();
   noteReview(e===0, segsPages([d]), !S.revCounted);   /* بالأوجه كالورد، والجلسةُ تُعدّ مرّة */
