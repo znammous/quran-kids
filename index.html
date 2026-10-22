@@ -10472,18 +10472,18 @@ function buildRounds(s,seg,stage){
     for(i=from;i<to;i++) r.push({t:'read',a:i});
   } else if(stage===1){
     for(i=from;i<to;i++){
-      if(ayahWords(s,i)<ORDER_MIN) continue;      /* آيةٌ لا يُرتَّب فيها شيء */
+      /* آيةٌ لا يُرتَّب فيها شيء تُقرأ في مكانها ولا تُسقط: كان «مَلِكِ النَّاسِ»
+         و«إِلَٰهِ النَّاسِ» يُحذفان فيقفز الطفلُ من الآية الأولى إلى الرابعة */
+      if(ayahWords(s,i)<ORDER_MIN){ r.push({t:'read',a:i}); continue; }
       /* الآيةُ الطويلة تُرتَّب مقاطعَ من أوّلها إلى آخرها، لا يُترك منها شيء:
          كانت تُقصَر على ثلاثة مقاطع فيقفز الطفلُ عن خاتمتها إلى الآية التالية */
       var ch=orderChunks(s,i);
       for(k=0;k<ch.length;k++) r.push({t:'words',a:i,from:ch[k][0],to:ch[k][1],parts:ch.length,part:k});
     }
-    /* مقطعٌ كلُّ آياته كلمةٌ أو كلمتان: يُقرأ ولا يُرتَّب */
-    if(!r.length) for(i=from;i<to;i++) r.push({t:'read',a:i});
   } else if(stage===2){
     for(i=from;i<to;i++){
       var ws=wordsOf(ayahText(s,i));
-      if(ws.length<MISS_MIN) continue;           /* آيةٌ قصيرةٌ يبتلعها الفراغ */
+      if(ws.length<MISS_MIN){ r.push({t:'read',a:i}); continue; }   /* آيةٌ قصيرةٌ يبتلعها الفراغ: تُقرأ في مكانها */
       var blanks=Math.min(3, Math.max(1, Math.ceil(ws.length/8)));
       var used=[], sb=simBlank(s,from,to,i);
       for(k=0;k<blanks;k++){
@@ -10495,8 +10495,6 @@ function buildRounds(s,seg,stage){
         r.push({t:'missing',a:i,wi:wi});
       }
     }
-    /* مقطعٌ كلُّ آياته قصار: يُقرأ ولا يُفرَّغ، فلا تمرّ مرحلةٌ خاوية */
-    if(!r.length) for(i=from;i<to;i++) r.push({t:'read',a:i});
   } else if(stage===3){
     var Pw=segWholePage(s,seg);
     if(Pw && edgeOK(Pw,false)){
@@ -10539,8 +10537,8 @@ function buildRounds(s,seg,stage){
       }
       else if(w2.length>=MISS_MIN)
         r.push({t:'missing',a:i,wi:simWi(s,from,to,i,w2.length)});
+      else r.push({t:'read',a:i});              /* وما قصر يُقرأ في مكانه فلا ينقطع التسلسل */
     }
-    if(!r.length) for(i=from;i<to;i++) r.push({t:'read',a:i});
   } else {
     for(i=from;i<to;i++){
       var np=recitePortions(s,i);
