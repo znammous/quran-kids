@@ -15480,11 +15480,19 @@ function examOpenNew(){
     /* يبدأ من نطاق مراجعته إن كان له نطاق، فأغلبُ الظنّ أنّه يختبر ما يتعاهده */
     try{ revLoad(); if(REV.fromS){ EX.fromS=REV.fromS; EX.fromA=REV.fromA; EX.toS=REV.toS; EX.toA=REV.toA; } }catch(e){}
   }
-  /* مقرَّرُ اليوم يتبدّل بيومه وبما أتمّ: يُعاد أخذُه كلّما فُتح الاختبار */
-  if(EX.dayOnly){
-    var dm=exDayMap(), e=dm && examMemEdges(dm);
-    if(e){ var A=bqnIdx(e[0]), B=bqnIdx(e[1]); EX.dayMap=dm; EX.fromS=A.s.n; EX.fromA=A.a; EX.toS=B.s.n; EX.toA=B.a; }
-    else EX.dayOnly=0;
+  /* بابُ الآيات يُذكر لكلّ لاعبٍ كما في الألعاب: من اختبر من مقرَّر يومه أو
+     من محفوظه وجده محدَّداً في المرّة التالية — ولو بعد إغلاق التطبيق.
+     ومقرَّرُ اليوم يتبدّل بيومه وبما أتمّ: يُعاد أخذُه كلّما فُتح الاختبار */
+  var src=''; try{ src=curP().exSrc||''; }catch(e){}
+  EX.dayOnly=0; EX.memOnly=0;
+  var ed=null, dm=null;
+  if(src==='day'){ dm=exDayMap(); ed=dm && examMemEdges(dm); }
+  else if(src==='mem') ed=examMemEdges();
+  if(ed){
+    var A=bqnIdx(ed[0]), B=bqnIdx(ed[1]);
+    EX.memPrev=[EX.fromS,EX.fromA,EX.toS,EX.toA];
+    EX.fromS=A.s.n; EX.fromA=A.a; EX.toS=B.s.n; EX.toA=B.a;
+    if(src==='day'){ EX.dayMap=dm; EX.dayOnly=1; } else EX.memOnly=1;
   }
   examShow(0); show('scr-exam');
 }
@@ -15872,6 +15880,7 @@ function examQuitAsk(){
 function examBegin(){
   var rounds=examBuild();
   if(!rounds.length){ uiAlert('النطاق لا يصلح للاختبار — وسّعه قليلاً','📖'); return; }
+  try{ curP().exSrc=EX.dayOnly?'day':(EX.memOnly?'mem':''); saveDB(); }catch(e){}
   examRun(rounds, false);
 }
 /* daily: تحدّي اليوم — أسئلتُه كالاختبار، وخاتمتُه غيرُ خاتمته */
