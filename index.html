@@ -978,7 +978,7 @@ body.light .card.bare .stagechip.fix{background:#e3f6ea;color:#0b6b39;border-col
 .diffline .w{padding:0 3px;border-radius:6px}
 .diffline .w.bad{color:var(--red);background:#ffe2e2}
 .diffline .w.ok{color:#12694a}
-/* التسميعُ كتابةً: صناديقُ الكلمات المكتوبة، وزرُّ ✕ صغيرٌ في ركن الحمراء ومساحةُ لمسه أوسعُ منه */
+/* التسميعُ كتابةً: صناديقُ الكلمات المكتوبة، وفي ركن الحمراء قلمٌ يدلّ على أنّها تُنقر فتُعدَّل */
 .wtline{display:flex;flex-wrap:wrap;gap:12px 8px;justify-content:center;margin:4px 0 12px}
 .wtline:empty{display:none}
 .chip.wt{position:relative;font-size:23px;padding:.12em 12px .72em;cursor:default}
@@ -986,10 +986,8 @@ body.light .card.bare .stagechip.fix{background:#e3f6ea;color:#0b6b39;border-col
 .chip.wt.bad{border-color:var(--red);background:#ffe9e9;color:#b3261e;cursor:pointer}
 .chip.wt.hintme{cursor:pointer}
 .chip.wt.shake{animation:shake .35s}
-.chip.wt .wx{position:absolute;top:-10px;inset-inline-end:-10px;width:22px;height:22px;border-radius:50%;border:0;padding:0;
-  background:var(--red);color:#fff;font:800 12px/22px system-ui,sans-serif;cursor:pointer}
-.chip.wt.hintme .wx{background:#9a7a1c}
-.chip.wt .wx::after{content:"";position:absolute;inset:-9px}
+.chip.wt .wp{position:absolute;top:-11px;inset-inline-end:-11px;width:24px;height:24px;border-radius:50%;
+  background:#fff;border:2px solid var(--red);font:13px/20px system-ui,sans-serif;text-align:center;pointer-events:none}
 
 /* الاحتفال: يملأ الشاشة لحظة ثم يذوب */
 .cele{position:fixed;inset:0;z-index:150;display:flex;flex-direction:column;align-items:center;
@@ -12087,7 +12085,8 @@ function roundRecite(r){
   if(wr || SET.level==='hard'){
     /* كلُّ كلمةٍ تُكتب تصير صندوقاً يتلوّن في الحال: أخضرُ إن وافقت موضعها وأحمرُ إن خالفته.
        والحمراءُ تُنقر فتعود إلى الحقل تُعدَّل في مكانها — وكلمتان تُكتبان مكانها تُدرجان الناقصة —
-       أو تُحذف بـ✕، فلا يسير الطفلُ بالمؤشّر على سطرٍ طويل. والمحاولاتُ مفتوحةٌ حتى يستسلم */
+       أو تُمسح فتُحذف، فلا يسير الطفلُ بالمؤشّر على سطرٍ طويل. والمحاولاتُ مفتوحةٌ حتى يستسلم.
+       وعلى الحمراء قلمٌ ✏️ لا ✕: الحذفُ وحده لا يُصلح شيئاً، والقلمُ يدلّه على أنّها تُعدَّل */
     var typed=[], ed=-1, done=false, missed=false;
     $('playArea').innerHTML=
       '<div class="hintline">اكتب '+where+' عن ظهر قلب (التشكيل غير مطلوب)</div>'+
@@ -12105,7 +12104,7 @@ function roundRecite(r){
         var cl=i===ed?'hintme':okAt(i)?'ok':'bad';
         if(cl==='bad' && fresh && fresh.indexOf(i)>=0) cl+=' shake';
         return '<span class="chip wt '+cl+'" data-i="'+i+'">'+esc(w)+
-               (cl==='ok'?'':'<button class="wx" data-x="'+i+'">✕</button>')+'</span>';
+               (cl.indexOf('bad')===0?'<span class="wp">✏️</span>':'')+'</span>';
       }).join('');
     }
     function miss(){ if(!missed){ missed=true; S.errors++; comboMiss(); } }
@@ -12116,8 +12115,9 @@ function roundRecite(r){
         nextRound(true); return;
       }
       var bad=typed.some(function(w,i){ return i!==ed && !okAt(i); });
-      $('fb').className=bad?'fb bad':'fb';
-      $('fb').textContent=bad?'انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها':'';
+      $('fb').className=(bad&&ed<0)?'fb bad':'fb';
+      $('fb').textContent=ed>=0 ? 'صحّحها ثمّ اضغط ✅ — أو امسحها كلَّها لتحذفها'
+                        : bad ? 'انقر الكلمة الحمراء لتعدّلها' : '';
     }
     function put(ws){
       ws=ws.filter(function(w){ return norm(w); });
@@ -12149,17 +12149,15 @@ function roundRecite(r){
     };
     $('btnCheck').onclick=function(){
       if(done) return;
-      var v=inp.value; inp.value=''; put(v.split(/\s+/)); inp.focus();
+      var v=inp.value; inp.value='';
+      /* كلمةٌ تُعدَّل فمُسحت كلُّها: تُحذف */
+      if(ed>=0 && !norm(v)){ typed.splice(ed,1); ed=-1; draw(); settle(); }
+      else put(v.split(/\s+/));
+      inp.focus();
     };
     $('wtLine').onclick=function(e){
       if(done) return;
-      var x=e.target.closest('[data-x]'), c=e.target.closest('[data-i]');
-      if(x){
-        var j=+x.getAttribute('data-x');
-        typed.splice(j,1);
-        if(ed===j){ ed=-1; inp.value=''; } else if(ed>j) ed--;
-        draw(); settle(); inp.focus(); return;
-      }
+      var c=e.target.closest('[data-i]');
       if(!c) return;
       var i=+c.getAttribute('data-i');
       if(i===ed){ ed=-1; inp.value=''; draw(); settle(); inp.focus(); return; }
