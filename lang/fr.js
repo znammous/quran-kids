@@ -1212,7 +1212,6 @@ NUR_I18N.add('fr', {
   "كلّ محفوظك": "Toute ta mémorisation",
   "كلّما كثرت كان الميزانُ أدقّ — وزادت حصيلتُك معها": "Plus il y en a, plus la mesure est précise — et tes gains augmentent aussi",
   "كم جوهرة تحمل هذه المنحة؟": "Combien de pierres précieuses contient ce cadeau ?",
-  "كم حاصلُ ضرب <b>{a}</b> في <b>{b}</b>؟": "Combien font <b>{a}</b> fois <b>{b}</b> ?",
   "كم سؤالاً في الاختبار كلّه؟": "Combien de questions dans tout le test ?",
   "كم سؤالاً لكل صفحة؟": "Combien de questions par page ?",
   "كم صفحةً في الجلسة الواحدة؟": "Combien de pages par séance ?",
@@ -1905,8 +1904,5 @@ NUR_I18N.add('fr', {
   "ثلاثة": "trois",
   "أربعة": "quatre",
   "خمسة": "cinq",
-  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Combien font <b>{a}</b> plus <b>{b}</b> plus <b>{c}</b> ?",
-  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Question parentale : addition au lieu de multiplication<br><small style=\"font-weight:700;color:var(--mute)\">Additionner trois nombres écrits en lettres, pour qui trouve l’addition plus facile</small>",
-  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Question parentale : addition au lieu de multiplication",
-  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Additionner trois nombres écrits en lettres, pour qui trouve l’addition plus facile"
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Combien font <b>{a}</b> plus <b>{b}</b> plus <b>{c}</b> ?"
 });

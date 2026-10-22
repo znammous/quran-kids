@@ -1212,7 +1212,6 @@ NUR_I18N.add('en', {
   "كلّ محفوظك": "All your memorization",
   "كلّما كثرت كان الميزانُ أدقّ — وزادت حصيلتُك معها": "The more there are, the more accurate the measure — and your earnings grow too",
   "كم جوهرة تحمل هذه المنحة؟": "How many gems does this gift carry?",
-  "كم حاصلُ ضرب <b>{a}</b> في <b>{b}</b>؟": "What is <b>{a}</b> times <b>{b}</b>?",
   "كم سؤالاً في الاختبار كلّه؟": "How many questions in the whole test?",
   "كم سؤالاً لكل صفحة؟": "How many questions per page?",
   "كم صفحةً في الجلسة الواحدة؟": "How many pages in one session?",
@@ -1905,8 +1904,5 @@ NUR_I18N.add('en', {
   "ثلاثة": "three",
   "أربعة": "four",
   "خمسة": "five",
-  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "What is <b>{a}</b> plus <b>{b}</b> plus <b>{c}</b>?",
-  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Parent question: addition instead of multiplication<br><small style=\"font-weight:700;color:var(--mute)\">Adding three numbers written in words, for those who find addition easier</small>",
-  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Parent question: addition instead of multiplication",
-  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Adding three numbers written in words, for those who find addition easier"
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "What is <b>{a}</b> plus <b>{b}</b> plus <b>{c}</b>?"
 });

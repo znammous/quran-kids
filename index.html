@@ -3265,7 +3265,6 @@ body.hastabs #btnRevQuit{display:none}
         </div>
       </div>
       <div class="switchrow"><span>🏠 لوحة البيت بين أفراد الأسرة</span><input type="checkbox" id="setBoard"></div>
-      <div class="switchrow"><span>➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style="font-weight:700;color:var(--mute)">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small></span><input type="checkbox" id="setGateAdd"></div>
       <div class="setblock" style="margin-top:12px">
         <label class="lbl">💾 نسخةُ تقدّمك</label>
         <div class="row">
@@ -15337,7 +15336,6 @@ function fillSettings(){
   $('setRec').checked=!!SET.rec;
   $('setFree').checked=!!SET.free;
   $('setBoard').checked=!!DB.app.board;
-  $('setGateAdd').checked=!!DB.app.gateAdd;
   var a='',b='';
   for(var j=1;j<=30;j++){
     a+='<option value="'+j+'"'+(SET.juzFrom===j?' selected':'')+'>من الجزء '+arNum(j)+'</option>';
@@ -15407,7 +15405,6 @@ function readSettings(){
   applyGlow();
   SET.free=$('setFree').checked;
   DB.app.board=$('setBoard').checked;
-  DB.app.gateAdd=$('setGateAdd').checked;
   saveDB();
 }
 
@@ -20274,24 +20271,17 @@ function writeNudge(){
 }
 /* ===== بوابةُ وليّ الأمر =====
    ما لا يُتراجع عنه (حذفُ مستخدم، وتصفيرُ التقدّم، وفتحُ ملفٍّ يستبدل الجميع) وتشغيلُ
-   المايكروفون يمرّ بسؤالٍ يُجيبه الكبير: ضربُ عددين مكتوبين بالحروف. وتشترطه آبل في
-   تطبيقات الأطفال قبل الأذونات. ومن أجاب مرّةً لم يُسأل ثانيةً دقيقتين.
-   ولمن لا يألف الضربَ خيارٌ في الإعدادات: جمعُ ثلاثة أعدادٍ من ١ إلى ٩ — لا اثنين،
-   فجمعُهما في متناول الطفل */
+   المايكروفون يمرّ بسؤالٍ يُجيبه الكبير: جمعُ ثلاثة أعدادٍ من ١ إلى ٩ مكتوبةٍ بالحروف —
+   لا ضرب، فمن الأمّهات من لا يألفه؛ ولا عددان، فجمعُهما في متناول الطفل. وتشترطه آبل في
+   تطبيقات الأطفال قبل الأذونات. ومن أجاب مرّةً لم يُسأل ثانيةً دقيقتين. */
 var PGATE_AT=0;
 var PGATE_W=['واحد','اثنان','ثلاثة','أربعة','خمسة','ستّة','سبعة','ثمانية','تسعة'];
 function parentGate(cb){
   if(Date.now()-PGATE_AT < 120000){ cb(true); return; }
   if($('pgate')) $('pgate').remove();
-  var add=!!DB.app.gateAdd, a, b, c, ans, q;
-  function rn(lo){ return lo+Math.floor(Math.random()*(10-lo)); }
-  if(add){
-    a=rn(1); b=rn(1); c=rn(1); ans=a+b+c;
-    q=tx('كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟',{a:tx(PGATE_W[a-1]),b:tx(PGATE_W[b-1]),c:tx(PGATE_W[c-1])});
-  } else {
-    a=rn(6); b=rn(6); ans=a*b;
-    q=tx('كم حاصلُ ضرب <b>{a}</b> في <b>{b}</b>؟',{a:tx(PGATE_W[a-1]),b:tx(PGATE_W[b-1])});
-  }
+  function rn(){ return 1+Math.floor(Math.random()*9); }
+  var a=rn(), b=rn(), c=rn(), ans=a+b+c;
+  var q=tx('كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟',{a:tx(PGATE_W[a-1]),b:tx(PGATE_W[b-1]),c:tx(PGATE_W[c-1])});
   var bg=document.createElement('div');
   bg.className='modal-bg'; bg.id='pgate';
   bg.innerHTML='<div class="modal" style="max-width:360px;text-align:center">'+
@@ -20321,18 +20311,11 @@ function parentGate(cb){
   inp.onkeydown=function(e){ if(e.key==='Enter') $('pgateYes').click(); };
   setTimeout(function(){ try{ inp.focus(); }catch(e){} }, 50);
 }
-/* مفتاحا «تسجيل الصوت» و«الجمع بدل الضرب» في الإعدادات: يُقرآن عند مغادرتها، فيُعاد إطفاؤهما حتى يُجاب السؤال.
+/* مفتاحُ «تسجيل الصوت» في الإعدادات: يُقرأ عند مغادرتها، فيُعاد إطفاؤه حتى يُجاب السؤال.
    ويُسمع في مرحلة الالتقاط، قبل أيّ مستمعٍ آخر للمفتاح */
 document.addEventListener('change', function(e){
   var t=e.target;
-  if(!t || !t.checked) return;
-  if(t.id==='setGateAdd'){                 /* التسهيلُ نفسُه يمرّ بالسؤال الأصعب */
-    if(DB.app.gateAdd) return;
-    t.checked=false;
-    parentGate(function(ok){ if(ok) t.checked=true; });
-    return;
-  }
-  if(t.id!=='setRec' || SET.rec) return;
+  if(!t || t.id!=='setRec' || !t.checked || SET.rec) return;
   t.checked=false;
   parentGate(function(ok){ if(ok) t.checked=true; });
 }, true);

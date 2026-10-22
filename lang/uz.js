@@ -1212,7 +1212,6 @@ NUR_I18N.add('uz', {
   "كلّ محفوظك": "Hamma yodlaganlaring",
   "كلّما كثرت كان الميزانُ أدقّ — وزادت حصيلتُك معها": "Qancha koʻp boʻlsa, oʻlchov shuncha aniq — daromading ham oshadi",
   "كم جوهرة تحمل هذه المنحة؟": "Bu sovgʻa necha javohir olib boradi?",
-  "كم حاصلُ ضرب <b>{a}</b> في <b>{b}</b>؟": "<b>{a}</b> karra <b>{b}</b> necha boʻladi?",
   "كم سؤالاً في الاختبار كلّه؟": "Butun imtihonda nechta savol boʻlsin?",
   "كم سؤالاً لكل صفحة؟": "Har bir sahifaga nechta savol?",
   "كم صفحةً في الجلسة الواحدة؟": "Bir mashgʻulotda necha sahifa?",
@@ -1905,8 +1904,5 @@ NUR_I18N.add('uz', {
   "ثلاثة": "uch",
   "أربعة": "toʻrt",
   "خمسة": "besh",
-  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "<b>{a}</b> qoʻshuv <b>{b}</b> qoʻshuv <b>{c}</b> necha boʻladi?",
-  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Ota-ona savoli: koʻpaytirish oʻrniga qoʻshish<br><small style=\"font-weight:700;color:var(--mute)\">Soʻz bilan yozilgan uchta sonni qoʻshish — qoʻshish osonroq boʻlganlar uchun</small>",
-  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Ota-ona savoli: koʻpaytirish oʻrniga qoʻshish",
-  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Soʻz bilan yozilgan uchta sonni qoʻshish — qoʻshish osonroq boʻlganlar uchun"
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "<b>{a}</b> qoʻshuv <b>{b}</b> qoʻshuv <b>{c}</b> necha boʻladi?"
 });

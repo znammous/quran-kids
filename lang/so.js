@@ -1212,7 +1212,6 @@ NUR_I18N.add('so', {
   "كلّ محفوظك": "Xifdigaaga oo dhan",
   "كلّما كثرت كان الميزانُ أدقّ — وزادت حصيلتُك معها": "Markay badato ayuu miisaanku sii saxnaanayaa — dakhligaaguna wuu la kordhayaa",
   "كم جوهرة تحمل هذه المنحة؟": "Immisa dhagax oo qaali ah ayay hadiyaddani sidaa?",
-  "كم حاصلُ ضرب <b>{a}</b> في <b>{b}</b>؟": "Waa imisa <b>{a}</b> jeer <b>{b}</b>?",
   "كم سؤالاً في الاختبار كلّه؟": "Immisa su’aalood ayaa imtixaanka oo dhan ku jira?",
   "كم سؤالاً لكل صفحة؟": "Immisa su’aalood bog kasta?",
   "كم صفحةً في الجلسة الواحدة؟": "Immisa bog hal fadhi?",
@@ -1905,8 +1904,5 @@ NUR_I18N.add('so', {
   "ثلاثة": "saddex",
   "أربعة": "afar",
   "خمسة": "shan",
-  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Imisa ayay isku noqonayaan <b>{a}</b> iyo <b>{b}</b> iyo <b>{c}</b>?",
-  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Su’aasha waalidka: isku-dar halkii isku-dhufasho<br><small style=\"font-weight:700;color:var(--mute)\">Isku-darka saddex tiro oo erayo lagu qoray, qofka isku-darku u fudud yahay</small>",
-  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Su’aasha waalidka: isku-dar halkii isku-dhufasho",
-  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Isku-darka saddex tiro oo erayo lagu qoray, qofka isku-darku u fudud yahay"
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Imisa ayay isku noqonayaan <b>{a}</b> iyo <b>{b}</b> iyo <b>{c}</b>?"
 });

@@ -1212,7 +1212,6 @@ NUR_I18N.add('sw', {
   "كلّ محفوظك": "Kila ulichohifadhi",
   "كلّما كثرت كان الميزانُ أدقّ — وزادت حصيلتُك معها": "Zikiwa nyingi zaidi, kipimo kinakuwa sahihi zaidi — na mapato yako yanaongezeka pia",
   "كم جوهرة تحمل هذه المنحة؟": "Zawadi hii inabeba vito vingapi?",
-  "كم حاصلُ ضرب <b>{a}</b> في <b>{b}</b>؟": "<b>{a}</b> mara <b>{b}</b> ni ngapi?",
   "كم سؤالاً في الاختبار كلّه؟": "Maswali mangapi katika mtihani wote?",
   "كم سؤالاً لكل صفحة؟": "Maswali mangapi kwa kila ukurasa?",
   "كم صفحةً في الجلسة الواحدة؟": "Kurasa ngapi katika kikao kimoja?",
@@ -1905,8 +1904,5 @@ NUR_I18N.add('sw', {
   "ثلاثة": "tatu",
   "أربعة": "nne",
   "خمسة": "tano",
-  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "<b>{a}</b> jumlisha <b>{b}</b> jumlisha <b>{c}</b> ni ngapi?",
-  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Swali la mzazi: kujumlisha badala ya kuzidisha<br><small style=\"font-weight:700;color:var(--mute)\">Kujumlisha namba tatu zilizoandikwa kwa maneno, kwa anayeona kujumlisha ni rahisi zaidi</small>",
-  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Swali la mzazi: kujumlisha badala ya kuzidisha",
-  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Kujumlisha namba tatu zilizoandikwa kwa maneno, kwa anayeona kujumlisha ni rahisi zaidi"
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "<b>{a}</b> jumlisha <b>{b}</b> jumlisha <b>{c}</b> ni ngapi?"
 });

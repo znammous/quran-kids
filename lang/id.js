@@ -1212,7 +1212,6 @@ NUR_I18N.add('id', {
   "كلّ محفوظك": "Seluruh hafalanmu",
   "كلّما كثرت كان الميزانُ أدقّ — وزادت حصيلتُك معها": "Makin banyak, makin tepat ukurannya — dan perolehanmu juga bertambah",
   "كم جوهرة تحمل هذه المنحة؟": "Berapa permata yang dibawa hadiah ini?",
-  "كم حاصلُ ضرب <b>{a}</b> في <b>{b}</b>؟": "Berapa <b>{a}</b> kali <b>{b}</b>?",
   "كم سؤالاً في الاختبار كلّه؟": "Berapa soal di seluruh tes?",
   "كم سؤالاً لكل صفحة؟": "Berapa soal per halaman?",
   "كم صفحةً في الجلسة الواحدة؟": "Berapa halaman dalam satu sesi?",
@@ -1905,8 +1904,5 @@ NUR_I18N.add('id', {
   "ثلاثة": "tiga",
   "أربعة": "empat",
   "خمسة": "lima",
-  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Berapa <b>{a}</b> ditambah <b>{b}</b> ditambah <b>{c}</b>?",
-  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Pertanyaan orang tua: penjumlahan, bukan perkalian<br><small style=\"font-weight:700;color:var(--mute)\">Menjumlahkan tiga angka yang ditulis dengan huruf, bagi yang lebih mudah menjumlah</small>",
-  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Pertanyaan orang tua: penjumlahan, bukan perkalian",
-  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Menjumlahkan tiga angka yang ditulis dengan huruf, bagi yang lebih mudah menjumlah"
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Berapa <b>{a}</b> ditambah <b>{b}</b> ditambah <b>{c}</b>?"
 });

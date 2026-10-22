@@ -1212,7 +1212,6 @@ NUR_I18N.add('ha', {
   "كلّ محفوظك": "Duk haddarka",
   "كلّما كثرت كان الميزانُ أدقّ — وزادت حصيلتُك معها": "Idan suka yi yawa, ma’auni ya fi daidai — kuma ribarka ma tana ƙaruwa",
   "كم جوهرة تحمل هذه المنحة؟": "Duwatsu masu daraja nawa wannan kyauta take ɗauke da su?",
-  "كم حاصلُ ضرب <b>{a}</b> في <b>{b}</b>؟": "Nawa ne <b>{a}</b> sau <b>{b}</b>?",
   "كم سؤالاً في الاختبار كلّه؟": "Tambayoyi nawa a dukan jarrabawar?",
   "كم سؤالاً لكل صفحة؟": "Tambayoyi nawa a kowane shafi?",
   "كم صفحةً في الجلسة الواحدة؟": "Shafuka nawa a zama ɗaya?",
@@ -1905,8 +1904,5 @@ NUR_I18N.add('ha', {
   "ثلاثة": "uku",
   "أربعة": "huɗu",
   "خمسة": "biyar",
-  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Nawa ne <b>{a}</b> da <b>{b}</b> da <b>{c}</b> idan an haɗa?",
-  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Tambayar iyaye: haɗawa maimakon ninkawa<br><small style=\"font-weight:700;color:var(--mute)\">Haɗa lambobi uku da aka rubuta da kalmomi, ga wanda haɗawa ta fi masa sauƙi</small>",
-  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Tambayar iyaye: haɗawa maimakon ninkawa",
-  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Haɗa lambobi uku da aka rubuta da kalmomi, ga wanda haɗawa ta fi masa sauƙi"
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Nawa ne <b>{a}</b> da <b>{b}</b> da <b>{c}</b> idan an haɗa?"
 });

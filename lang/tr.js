@@ -1212,7 +1212,6 @@ NUR_I18N.add('tr', {
   "كلّ محفوظك": "Bütün ezberin",
   "كلّما كثرت كان الميزانُ أدقّ — وزادت حصيلتُك معها": "Ne kadar çok olursa ölçü o kadar doğru olur — kazancın da artar",
   "كم جوهرة تحمل هذه المنحة؟": "Bu hediye kaç mücevher taşıyor?",
-  "كم حاصلُ ضرب <b>{a}</b> في <b>{b}</b>؟": "<b>{a}</b> çarpı <b>{b}</b> kaç eder?",
   "كم سؤالاً في الاختبار كلّه؟": "Bütün sınavda kaç soru olsun?",
   "كم سؤالاً لكل صفحة؟": "Her sayfa için kaç soru?",
   "كم صفحةً في الجلسة الواحدة؟": "Bir oturumda kaç sayfa?",
@@ -1905,8 +1904,5 @@ NUR_I18N.add('tr', {
   "ثلاثة": "üç",
   "أربعة": "dört",
   "خمسة": "beş",
-  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "<b>{a}</b> artı <b>{b}</b> artı <b>{c}</b> kaç eder?",
-  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Veli sorusu: çarpma yerine toplama<br><small style=\"font-weight:700;color:var(--mute)\">Yazıyla yazılmış üç sayıyı toplamak — toplamayı daha kolay bulanlar için</small>",
-  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Veli sorusu: çarpma yerine toplama",
-  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Yazıyla yazılmış üç sayıyı toplamak — toplamayı daha kolay bulanlar için"
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "<b>{a}</b> artı <b>{b}</b> artı <b>{c}</b> kaç eder?"
 });

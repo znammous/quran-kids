@@ -1212,7 +1212,6 @@ NUR_I18N.add('ms', {
   "كلّ محفوظك": "Semua hafazan kamu",
   "كلّما كثرت كان الميزانُ أدقّ — وزادت حصيلتُك معها": "Semakin banyak, semakin tepat ukurannya — dan perolehan kamu juga bertambah",
   "كم جوهرة تحمل هذه المنحة؟": "Berapa permata yang dibawa oleh hadiah ini?",
-  "كم حاصلُ ضرب <b>{a}</b> في <b>{b}</b>؟": "Berapakah <b>{a}</b> darab <b>{b}</b>?",
   "كم سؤالاً في الاختبار كلّه؟": "Berapa soalan dalam seluruh ujian?",
   "كم سؤالاً لكل صفحة؟": "Berapa soalan bagi setiap muka surat?",
   "كم صفحةً في الجلسة الواحدة؟": "Berapa muka surat dalam satu sesi?",
@@ -1905,8 +1904,5 @@ NUR_I18N.add('ms', {
   "ثلاثة": "tiga",
   "أربعة": "empat",
   "خمسة": "lima",
-  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Berapakah <b>{a}</b> tambah <b>{b}</b> tambah <b>{c}</b>?",
-  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Soalan ibu bapa: tambah, bukan darab<br><small style=\"font-weight:700;color:var(--mute)\">Menambah tiga nombor yang ditulis dengan perkataan, bagi yang lebih mudah menambah</small>",
-  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Soalan ibu bapa: tambah, bukan darab",
-  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Menambah tiga nombor yang ditulis dengan perkataan, bagi yang lebih mudah menambah"
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Berapakah <b>{a}</b> tambah <b>{b}</b> tambah <b>{c}</b>?"
 });
