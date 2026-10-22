@@ -15288,15 +15288,17 @@ function examEdges(){
   var g0=gAt(EX.fromS,EX.fromA), g1=gAt(EX.toS,EX.toA);
   return g1<g0 ? [g1,g0] : [g0,g1];
 }
-/* كلُّ آيةٍ في النطاق، ومعها حدودُ قطعتها في الوجه — منها تُؤخذ المشتّتات */
+/* كلُّ آيةٍ في النطاق، ومعها حدودُ قطعتها في الوجه — منها تُؤخذ المشتّتات.
+   والقطعةُ مقصوصةٌ على حدّي النطاق: كانت قطعةَ الوجه كلَّها، فمن اختبر الأنعام
+   ١١١–١١٣ رأى «الأنعام ١١١-١١٨» وجاءه ترتيبُ آياتٍ ومطالعُ من خارج ما طلب */
 function examItems(){
   var e=examEdges(), g0=e[0], g1=e[1], out=[], P;
   var p0=pageOfIdx(g0), p1=pageOfIdx(g1);
   for(P=p0;P<=p1;P++){
     pagePieces(P).forEach(function(pc){
+      var base=GIDX[pc.s.n-1];
+      pc={ s:pc.s, from:Math.max(pc.from,g0-base), to:Math.min(pc.to,g1-base+1) };
       for(var a=pc.from;a<pc.to;a++){
-        var g=GIDX[pc.s.n-1]+a;
-        if(g<g0||g>g1) continue;
         if(EX.memOnly && !memHas(pc.s.n,a,a+1)) continue;
         out.push(EX.memOnly ? examMemPiece(pc,a,P) : { s:pc.s, a:a, from:pc.from, to:pc.to, P:P });
       }
