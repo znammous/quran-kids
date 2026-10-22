@@ -1878,4 +1878,13 @@ NUR_I18N.add('en', {
   "ومعها غيرُها: {n}": "And more with it: {n}",
   "راجِع: <b>{w}</b>": "Review: <b>{w}</b>",
   "ومسارك الحرّ: بقيت {n}": "and your free path: {n} left",
+  "أتقنتها": "You mastered it",
+  "رسخت": "Firmly memorized",
+  "تأخّرت {d}": "{d} overdue",
+  "حفظتَها {t}": "Memorized {t}",
+  "أخطأتَ فيها {t}": "You made mistakes {t}",
+  "راجعتَها {t}": "Reviewed {t}",
+  "إن أتقنتها رسخت": "Master it and it becomes firm",
+  "إن أتقنتها عادت بعد {d}": "Master it and it returns in {d}",
+  "إن أتقنتها عادت بعد {a}–{d}": "Master it and it returns in {a}–{d}",
 });

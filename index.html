@@ -5509,9 +5509,12 @@ function getP(key){
 function peek(key){ return prog[key] || {stars:0,stage:0,done:false,box:0,due:null}; }
 function saveProg(){ saveDB(); }
 var INTERVALS=[1,3,7,14,30];
-/* بلغ أعلى السلّم؟ تخرّج من الجدول بالمواعيد إلى الورد الدوريّ — علامتُه due=null */
+/* بلغ أعلى السلّم؟ تخرّج من الجدول بالمواعيد إلى الورد الدوريّ — علامتُه due=null
+   ld/lk: يومُ آخر مراجعةٍ وحكمُها (١ أتقن، ٠ أخطأ، ٢ حفظٌ أوّل) — يقرؤها مسارُ
+   المستحقّ فيقول للطفل لماذا عاد المقطع، إذ الدرجةُ وحدها لا تقول */
 function scheduleNext(key,ok){
   var p=getP(key);
+  p.ld=todayNum(); p.lk=ok?1:0;
   if(ok){
     p.box=Math.min((p.box||0)+1,INTERVALS.length-1);
     p.due=(p.box>=INTERVALS.length-1) ? null : (todayNum()+INTERVALS[p.box]);
@@ -12231,7 +12234,7 @@ function finishStage(){
   if(first) noteStage();                              /* التثبيت لا يُكسب جواهر مكرّرة */
   if(last){
     p.done=true;
-    if(p.due==null){ p.box=0; p.due=todayNum()+INTERVALS[0]; }
+    if(p.due==null){ p.box=0; p.due=todayNum()+INTERVALS[0]; p.ld=todayNum(); p.lk=2; }
     memAdd(S.surah.n, S.seg[0], S.seg[1]);
     saveProg();
     if(first) noteSeg();
@@ -14391,6 +14394,55 @@ function beginRevPath(){
    العقد على هاتف طفل. */
 var RPATH_WIN=2, RPATH_WIN_STEP=3, RPATH_NODE_CAP=240;
 var RPATH_BACK=1, RPATH_GOTOP=false;
+/* سطرُ «لماذا عادت؟» تحت جلسة المستحقّ: متى رُوجعت آخرَ مرّة وبمَ حُكم لها، وإلى
+   متى تغيب إن أتقنها — تُقرأ من مقاطع أوجهها. والجلسةُ التي تمّت اليوم يُقال
+   ما صار إليه موعدُها. ولا سطرَ لغير المستحقّ: الوردُ والحرّةُ لا سلّمَ لهما */
+function revWhyHTML(pg, st){
+  var t0=todayNum(), ks=[], i, j, k, p;
+  for(i=0;i<pg.length;i++){
+    var pk=pageSegKeys(pg[i]);
+    for(j=0;j<pk.length;j++) if(ks.indexOf(pk[j])<0) ks.push(pk[j]);
+  }
+  var out=[];
+  if(st==='done'){
+    var bad=false, nx=null, grad=false, any=false;
+    for(i=0;i<ks.length;i++){
+      p=prog[ks[i]]; if(p.ld!==t0) continue;
+      any=true;
+      if(p.lk===0) bad=true;
+      else if(p.due==null) grad=true;
+      else if(nx==null || p.due<nx) nx=p.due;
+    }
+    if(!any) return '';
+    if(bad) out.push('↩ '+tx('تعود غداً'));
+    else if(nx!=null) out.push('✅ '+tx('أتقنتها'), tx('موعدها بعد {d}',{d:arCount(Math.max(1,nx-t0),C_DAYS)}));
+    else if(grad) out.push('🎓 '+tx('رسخت'));
+  }else{
+    var top=INTERVALS.length-1, old=null, lo=null, hi=null, gr=0, n=0;
+    for(i=0;i<ks.length;i++){
+      p=prog[ks[i]]; if(p.due==null || p.due>t0) continue;
+      n++;
+      if(old==null || p.due<old.due) old=p;
+      var nb=Math.min((p.box||0)+1, top);
+      if(nb>=top){ gr++; continue; }
+      k=INTERVALS[nb];
+      if(lo==null || k<lo) lo=k;
+      if(hi==null || k>hi) hi=k;
+    }
+    if(!n) return '';
+    var late=t0-old.due, ago=(old.ld!=null && old.ld<t0) ? agoText(t0-old.ld) : '';
+    if(late>=1) out.push(tx('تأخّرت {d}',{d:arCount(late,C_DAYS)}));
+    else if(ago) out.push(old.lk===2 ? tx('حفظتَها {t}',{t:ago})
+                        : old.lk===0 ? tx('أخطأتَ فيها {t}',{t:ago})
+                        : tx('راجعتَها {t}',{t:ago}));
+    if(lo==null) out.push(tx('إن أتقنتها رسخت')+' 🎓');
+    else if(lo===hi) out.push(tx('إن أتقنتها عادت بعد {d}',{d:arCount(lo,C_DAYS)}));
+    else out.push(tx('إن أتقنتها عادت بعد {a}–{d}',{a:arNum(lo), b:arNum(hi), d:arCount(hi,C_DAYS)}));
+    out[0]='⏳ '+out[0];
+  }
+  if(!out.length) return '';
+  return '<br><span style="opacity:.75;font-size:11px;font-weight:700">'+out.join(' • ')+'</span>';
+}
 function revSecHTML(sn,cnt,dn,here){
   var sx=surahBy(sn), all=(cnt>0 && dn>=cnt);
   return '<div class="pathsec'+(all?' done':(here?' here':''))+'">'+
@@ -14431,7 +14483,7 @@ function renderRevPath(){
           : esc(rangeTx(a.name,REV.fromA,b.name,REV.toA)))+'</span>';
 
   var offs=['off2','off1','off2','','off3','off4','off3',''];
-  var h='', nodes=0;
+  var h='', nodes=0, isDue=(md==='task' && REV.task && REV.task.k==='due');
   var from=Math.max(0,pos-RPATH_BACK), to=Math.min(list.length-1, pos+RPATH_WIN);
   var hHead=h.length;
   for(i=from;i<=to;i++){
@@ -14447,7 +14499,8 @@ function renderRevPath(){
       h+='<div class="pnode '+st+' '+offs[k%offs.length]+'" data-revs="'+x.i+'">'+
          (st==='now'?'<span class="bubble">ابدأ</span>':'')+
          '<div class="dot">'+(st==='done'?'✓':(st==='locked'?'🔒':arNum(x.i+1)))+'</div>'+
-         '<div class="lbl wide">'+esc(revSessionLabel(x.pg))+(weak?' 🔁':'')+'</div></div>';
+         '<div class="lbl wide">'+esc(revSessionLabel(x.pg))+(weak?' 🔁':'')+
+           (isDue ? revWhyHTML(x.pg, st) : '')+'</div></div>';
       nodes++;
     }
     if(nodes>=RPATH_NODE_CAP && i>=pos){ to=i; break; }
@@ -14808,9 +14861,9 @@ function revSegDone(d){
   var e=S.errors-(S.segE0||0), lim=(segSize(d)>=0.8 ? 1 : 0), ok=e<=lim;
   S.segE0=S.errors;
   var p=getP(d.key), b0=p.box||0, d0=p.due;
-  if(e===lim+1) p.due=todayNum()+1;                 /* يُعاد غداً ولا ينزل */
+  if(e===lim+1){ p.due=todayNum()+1; p.ld=todayNum(); p.lk=0; }   /* يُعاد غداً ولا ينزل */
   else scheduleNext(d.key, ok);
-  (d.alt||[]).forEach(function(k){ var q=getP(k); q.box=p.box; q.due=p.due; });   /* مفاتيحُه القديمة تتبعه */
+  (d.alt||[]).forEach(function(k){ var q=getP(k); q.box=p.box; q.due=p.due; q.ld=p.ld; q.lk=p.lk; });   /* مفاتيحُه القديمة تتبعه */
   d.r={ n:1, bad:!ok, drop:!ok && (p.box||0)<b0, grad:ok && d0!=null && p.due==null, next:p.due };
   saveProg();
   noteReview(e===0, segsPages([d]), !S.revCounted);   /* بالأوجه كالورد، والجلسةُ تُعدّ مرّة */

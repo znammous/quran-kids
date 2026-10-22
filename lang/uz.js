@@ -1878,4 +1878,13 @@ NUR_I18N.add('uz', {
   "ومعها غيرُها: {n}": "Yana boshqalari ham: {n}",
   "راجِع: <b>{w}</b>": "Takrorlang: <b>{w}</b>",
   "ومسارك الحرّ: بقيت {n}": "va erkin yoʻling: {n} ta qoldi",
+  "أتقنتها": "Puxta bilding",
+  "رسخت": "Mustahkamlandi",
+  "تأخّرت {d}": "{d} kechikdi",
+  "حفظتَها {t}": "{t} yodlading",
+  "أخطأتَ فيها {t}": "{t} xato qilding",
+  "راجعتَها {t}": "{t} takrorlading",
+  "إن أتقنتها رسخت": "Puxta aytsang, mustahkamlanadi",
+  "إن أتقنتها عادت بعد {d}": "Puxta aytsang, {d}dan keyin qaytadi",
+  "إن أتقنتها عادت بعد {a}–{d}": "Puxta aytsang, {a}–{d}dan keyin qaytadi",
 });

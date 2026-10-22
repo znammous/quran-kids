@@ -1878,4 +1878,13 @@ NUR_I18N.add('sw', {
   "ومعها غيرُها: {n}": "Na nyingine pamoja nayo: {n}",
   "راجِع: <b>{w}</b>": "Rudia: <b>{w}</b>",
   "ومسارك الحرّ: بقيت {n}": "na njia yako huru: zimebaki {n}",
+  "أتقنتها": "Umeimudu",
+  "رسخت": "Imeimarika",
+  "تأخّرت {d}": "Imechelewa {d}",
+  "حفظتَها {t}": "Ulihifadhi {t}",
+  "أخطأتَ فيها {t}": "Ulikosea {t}",
+  "راجعتَها {t}": "Ulirudia {t}",
+  "إن أتقنتها رسخت": "Ukiimudu itaimarika",
+  "إن أتقنتها عادت بعد {d}": "Ukiimudu itarudi baada ya {d}",
+  "إن أتقنتها عادت بعد {a}–{d}": "Ukiimudu itarudi baada ya siku {a}–{b}",
 });

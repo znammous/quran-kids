@@ -1878,4 +1878,13 @@ NUR_I18N.add('ha', {
   "ومعها غيرُها: {n}": "Da wasu tare da shi: {n}",
   "راجِع: <b>{w}</b>": "Maimaita: <b>{w}</b>",
   "ومسارك الحرّ: بقيت {n}": "da hanyarka ta ʼyanci: saura {n}",
+  "أتقنتها": "Ka kware",
+  "رسخت": "Ta kafu",
+  "تأخّرت {d}": "Ta makara {d}",
+  "حفظتَها {t}": "Ka haddace {t}",
+  "أخطأتَ فيها {t}": "Ka yi kuskure {t}",
+  "راجعتَها {t}": "Ka maimaita {t}",
+  "إن أتقنتها رسخت": "Idan ka kware za ta kafu",
+  "إن أتقنتها عادت بعد {d}": "Idan ka kware za ta dawo bayan {d}",
+  "إن أتقنتها عادت بعد {a}–{d}": "Idan ka kware za ta dawo bayan kwanaki {a}–{b}",
 });

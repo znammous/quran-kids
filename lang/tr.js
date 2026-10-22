@@ -1878,4 +1878,13 @@ NUR_I18N.add('tr', {
   "ومعها غيرُها: {n}": "Ve yanında daha fazlası: {n}",
   "راجِع: <b>{w}</b>": "Tekrar et: <b>{w}</b>",
   "ومسارك الحرّ: بقيت {n}": "ve serbest yolun: {n} kaldı",
+  "أتقنتها": "Pekiştirdin",
+  "رسخت": "Kalıcı oldu",
+  "تأخّرت {d}": "{d} gecikti",
+  "حفظتَها {t}": "{t} ezberledin",
+  "أخطأتَ فيها {t}": "{t} hata yaptın",
+  "راجعتَها {t}": "{t} tekrar ettin",
+  "إن أتقنتها رسخت": "İyi okursan kalıcı olur",
+  "إن أتقنتها عادت بعد {d}": "İyi okursan {d} sonra döner",
+  "إن أتقنتها عادت بعد {a}–{d}": "İyi okursan {a}–{d} sonra döner",
 });

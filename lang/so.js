@@ -1878,4 +1878,13 @@ NUR_I18N.add('so', {
   "ومعها غيرُها: {n}": "Iyo kuwo kale oo la socda: {n}",
   "راجِع: <b>{w}</b>": "Dib u eeg: <b>{w}</b>",
   "ومسارك الحرّ: بقيت {n}": "iyo waddadaada xorta ah: waxaa haray {n}",
+  "أتقنتها": "Waad xifdisay si fiican",
+  "رسخت": "Way adkaatay",
+  "تأخّرت {d}": "Waxay dib u dhacday {d}",
+  "حفظتَها {t}": "Waxaad xifdisay {t}",
+  "أخطأتَ فيها {t}": "Waad ku qaladay {t}",
+  "راجعتَها {t}": "Waad dib u eegtay {t}",
+  "إن أتقنتها رسخت": "Haddaad si fiican u akhrido way adkaanaysaa",
+  "إن أتقنتها عادت بعد {d}": "Haddaad si fiican u akhrido waxay soo noqonaysaa {d} kadib",
+  "إن أتقنتها عادت بعد {a}–{d}": "Haddaad si fiican u akhrido waxay soo noqonaysaa {a}–{d} kadib",
 });

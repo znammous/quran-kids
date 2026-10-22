@@ -1878,4 +1878,13 @@ NUR_I18N.add('fr', {
   "ومعها غيرُها: {n}": "Et d’autres avec elle : {n}",
   "راجِع: <b>{w}</b>": "À revoir : <b>{w}</b>",
   "ومسارك الحرّ: بقيت {n}": "et ton parcours libre : il reste {n}",
+  "أتقنتها": "Tu l’as maîtrisée",
+  "رسخت": "Bien ancrée",
+  "تأخّرت {d}": "En retard de {d}",
+  "حفظتَها {t}": "Mémorisée {t}",
+  "أخطأتَ فيها {t}": "Erreurs {t}",
+  "راجعتَها {t}": "Révisée {t}",
+  "إن أتقنتها رسخت": "Maîtrise-la et elle sera ancrée",
+  "إن أتقنتها عادت بعد {d}": "Maîtrise-la et elle reviendra dans {d}",
+  "إن أتقنتها عادت بعد {a}–{d}": "Maîtrise-la et elle reviendra dans {a} à {d}",
 });

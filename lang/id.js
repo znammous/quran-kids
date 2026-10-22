@@ -1878,4 +1878,13 @@ NUR_I18N.add('id', {
   "ومعها غيرُها: {n}": "Dan ada lagi yang lain: {n}",
   "راجِع: <b>{w}</b>": "Ulangi: <b>{w}</b>",
   "ومسارك الحرّ: بقيت {n}": "dan jalur bebasmu: tersisa {n}",
+  "أتقنتها": "Kamu menguasainya",
+  "رسخت": "Sudah melekat",
+  "تأخّرت {d}": "Terlambat {d}",
+  "حفظتَها {t}": "Dihafal {t}",
+  "أخطأتَ فيها {t}": "Ada kesalahan {t}",
+  "راجعتَها {t}": "Diulang {t}",
+  "إن أتقنتها رسخت": "Kuasai, maka akan melekat",
+  "إن أتقنتها عادت بعد {d}": "Kuasai, maka kembali {d} lagi",
+  "إن أتقنتها عادت بعد {a}–{d}": "Kuasai, maka kembali {a}–{d} lagi",
 });
