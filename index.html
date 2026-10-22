@@ -494,6 +494,8 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 /* ثلاثُ رقاقاتٍ في صفٍّ واحد، وما طال منها ينكسر سطرين ولا يُنزَل وحده */
 #askChips.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
 #askChips.three .chipsel{white-space:normal}   /* واسمُ القارئ الطويل سطران، فلا يزاحم أخويه */
+#askChips.lvls{flex-direction:column}
+#askChips.lvls .chipsel{white-space:normal;width:100%}   /* المستوى بشرحه سطرٌ كامل */
 #askX{width:32px;height:32px;font-size:15px;top:10px;inset-inline-start:10px;box-shadow:0 3px 0 rgba(0,0,0,.22)}
 
 .topbar{background:var(--pnl);color:var(--gink);border:3px solid var(--pb);border-radius:14px;
@@ -3219,7 +3221,8 @@ body.hastabs #btnRevQuit{display:none}
       <!-- المستوى يحكم نوعَ الأسئلة لا مقدارَ الحفظ، فبابُه اللعبُ لا الحفظ -->
       <div class="setblock">
         <label class="lbl">🎚️ المستوى</label>
-        <select id="setLevel">
+        <button type="button" class="btn blue" id="btnSetLevel" style="width:100%"></button>
+        <select id="setLevel" hidden>
           <option value="easy">سهل — ضغطٌ واختيارٌ بلا كتابة</option>
           <option value="mid">متوسّط — يزيد مطالعَ الآيات وخواتمَها ورصَّها</option>
           <option value="hard">متقدّم — يزيد كتابةَ الكلمات والتسميعَ كتابةً</option>
@@ -15285,6 +15288,7 @@ function fillSettings(){
     APPI.getInfo().then(function(i){ vs.textContent='الإصدار '+i.version+' ('+i.build+')'; })['catch'](function(){});
 }catch(e){}
   $('setLevel').value=SET.level;
+  levelSetBtn();
   $('setScript').value=String(SET.script);
   $('setReps').value=String(SET.reps);
   $('setFont').value=String(SET.font);
@@ -19676,6 +19680,23 @@ if($('btnAudAll')) $('btnAudAll').onclick=function(){ audDrop(false); };
 if($('btnAudOthers')) $('btnAudOthers').onclick=function(){ audDrop(true); };
 if($('setQari')) $('setQari').addEventListener('change', audStoreNote);
 /* القارئُ في الإعدادات يُختار من صندوق القرّاء نفسِه، والقائمةُ المخفيّةُ تتبعه */
+/* المستوى زرٌّ يفتح صندوقاً كاللغات، والقائمةُ خلفه مخفيّةٌ تحمل القيمة؛
+   ونصوصُ خياراتها مترجمةٌ في الصفحة فتُؤخذ منها كما هي */
+function levelSetBtn(){
+  var s=$('setLevel'), b=$('btnSetLevel'); if(!s||!b) return;
+  var o=s.options[s.selectedIndex];
+  b.textContent='🎚️ '+(o ? o.textContent : '');
+}
+if($('btnSetLevel')) $('btnSetLevel').onclick=function(){
+  var s=$('setLevel');
+  var chips=[].map.call(s.options, function(o){ return { n:o.textContent, v:o.value, sel:o.value===s.value }; });
+  uiBox(tx('المستوى'), '🎚️', null, tx('رجوع'), function(ok, v){
+    if(!ok || !v || v===s.value) return;
+    s.value=v; levelSetBtn();
+    s.dispatchEvent(new Event('change', {bubbles:true}));   /* يُحفظ كسائر الإعدادات */
+  }, null, null, chips);
+  $('askChips').className='row lvls';
+};
 function qariSetBtn(){
   var b=$('btnSetQari'), q=qariRow(); if(!b) return;
   b.textContent='🎙️ '+(q ? q.n : '');
