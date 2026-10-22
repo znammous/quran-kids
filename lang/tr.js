@@ -1254,6 +1254,8 @@ NUR_I18N.add('tr', {
   "لا يمكن حذف المستخدم الوحيد": "Tek kullanıcı silinemez",
   "لا يوجد مستخدمون": "Kullanıcı yok",
   "لا يُسأل إلّا عن آياتٍ حفظتَها — المسْه ثانيةً لتختار بنفسك": "Yalnızca ezberlediğin ayetlerden sorulur — kendin seçmek için ona yeniden dokun",
+  "لا يُسأل إلّا عن مقرَّر يومك — المسْه ثانيةً لتختار بنفسك": "Yalnızca bugünkü bölümden sorulur — kendin seçmek için yeniden dokun",
+  "{n} من مقرَّر اليوم": "Bugünkü bölümden {n}",
   "لاحقاً": "Sonra",
   "لباس نظيف يليق بمجلس القرآن": "Kur’an meclisine yakışan temiz giysi",
   "لبناء «الأساس والمصطبة» ينقصك": "“Temel ve seki”yi inşa etmek için eksiğin:",

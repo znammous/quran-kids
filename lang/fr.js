@@ -1254,6 +1254,8 @@ NUR_I18N.add('fr', {
   "لا يمكن حذف المستخدم الوحيد": "Le seul utilisateur ne peut pas être supprimé",
   "لا يوجد مستخدمون": "Aucun utilisateur",
   "لا يُسأل إلّا عن آياتٍ حفظتَها — المسْه ثانيةً لتختار بنفسك": "Seuls les versets que tu as appris sont demandés — touche-le encore pour choisir toi-même",
+  "لا يُسأل إلّا عن مقرَّر يومك — المسْه ثانيةً لتختار بنفسك": "Seule la portion du jour est demandée — touche-le encore pour choisir toi-même",
+  "{n} من مقرَّر اليوم": "{n} de la portion du jour",
   "لاحقاً": "Plus tard",
   "لباس نظيف يليق بمجلس القرآن": "Des vêtements propres, dignes d’un cercle de Coran",
   "لبناء «الأساس والمصطبة» ينقصك": "Pour construire « Fondations et estrade », il te manque",

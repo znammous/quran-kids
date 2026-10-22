@@ -1254,6 +1254,8 @@ NUR_I18N.add('en', {
   "لا يمكن حذف المستخدم الوحيد": "The only user can’t be deleted",
   "لا يوجد مستخدمون": "No users",
   "لا يُسأل إلّا عن آياتٍ حفظتَها — المسْه ثانيةً لتختار بنفسك": "Only ayahs you memorized are asked — touch it again to choose yourself",
+  "لا يُسأل إلّا عن مقرَّر يومك — المسْه ثانيةً لتختار بنفسك": "Only today’s portion is asked — touch it again to choose yourself",
+  "{n} من مقرَّر اليوم": "{n} from today’s portion",
   "لاحقاً": "Later",
   "لباس نظيف يليق بمجلس القرآن": "Clean clothes fit for a Quran gathering",
   "لبناء «الأساس والمصطبة» ينقصك": "To build the “Foundation and platform” you’re missing",

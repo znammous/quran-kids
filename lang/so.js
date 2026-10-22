@@ -1254,6 +1254,8 @@ NUR_I18N.add('so', {
   "لا يمكن حذف المستخدم الوحيد": "Isticmaalaha keliya lama tirtiri karo",
   "لا يوجد مستخدمون": "Isticmaalayaal ma jiraan",
   "لا يُسأل إلّا عن آياتٍ حفظتَها — المسْه ثانيةً لتختار بنفسك": "Waxaa lagu weydiinayaa aayadaha aad xifdisay oo keliya — mar kale taabo si aad naftaada u doorato",
+  "لا يُسأل إلّا عن مقرَّر يومك — المسْه ثانيةً لتختار بنفسك": "Waxaa lagu weydiinayaa qaybta maanta oo keliya — mar kale taabo si aad naftaada u doorato",
+  "{n} من مقرَّر اليوم": "{n} oo ka mid ah qaybta maanta",
   "لاحقاً": "Mar dambe",
   "لباس نظيف يليق بمجلس القرآن": "Dhar nadiif ah oo ku habboon majlis Qur’aan",
   "لبناء «الأساس والمصطبة» ينقصك": "Si aad u dhisto “Aasaaska iyo madasha” waxaa kaa dhiman",

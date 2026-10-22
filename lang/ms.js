@@ -1254,6 +1254,8 @@ NUR_I18N.add('ms', {
   "لا يمكن حذف المستخدم الوحيد": "Satu-satunya pengguna tidak boleh dipadam",
   "لا يوجد مستخدمون": "Tiada pengguna",
   "لا يُسأل إلّا عن آياتٍ حفظتَها — المسْه ثانيةً لتختار بنفسك": "Hanya ayat yang kamu hafal akan disoal — sentuh sekali lagi untuk memilih sendiri",
+  "لا يُسأل إلّا عن مقرَّر يومك — المسْه ثانيةً لتختار بنفسك": "Hanya bahagian hari ini yang ditanya — sentuh lagi untuk memilih sendiri",
+  "{n} من مقرَّر اليوم": "{n} daripada bahagian hari ini",
   "لاحقاً": "Nanti",
   "لباس نظيف يليق بمجلس القرآن": "Pakaian bersih yang layak untuk majlis al-Quran",
   "لبناء «الأساس والمصطبة» ينقصك": "Untuk membina “Asas dan pelantar” kamu masih kekurangan",

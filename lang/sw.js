@@ -1254,6 +1254,8 @@ NUR_I18N.add('sw', {
   "لا يمكن حذف المستخدم الوحيد": "Mtumiaji pekee hawezi kufutwa",
   "لا يوجد مستخدمون": "Hakuna watumiaji",
   "لا يُسأل إلّا عن آياتٍ حفظتَها — المسْه ثانيةً لتختار بنفسك": "Zinaulizwa aya ulizohifadhi tu — igusa tena ili uchague mwenyewe",
+  "لا يُسأل إلّا عن مقرَّر يومك — المسْه ثانيةً لتختار بنفسك": "Utaulizwa sehemu ya leo tu — iguse tena ili uchague mwenyewe",
+  "{n} من مقرَّر اليوم": "{n} kutoka sehemu ya leo",
   "لاحقاً": "Baadaye",
   "لباس نظيف يليق بمجلس القرآن": "Nguo safi zinazofaa kikao cha Qurani",
   "لبناء «الأساس والمصطبة» ينقصك": "Ili kujenga “Msingi na jukwaa” unakosa",

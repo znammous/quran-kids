@@ -15249,8 +15249,10 @@ function readSettings(){
    ========================================================= */
 /* picks: الأنواعُ المختارة — أكثرُ من واحدٍ يجوز، والكلُّ هو الأصل.
    وكان نوعاً واحداً لا غير، فمن أراد نوعين لم يجد إلى ذلك سبيلاً. */
-/* memOnly: «ما حفظتُه فقط» — النطاقُ من أوّل محفوظه إلى آخره، ولا يُسأل إلّا عمّا حفظ منه */
-var EX={ i:0, init:0, fromS:114, fromA:1, toS:114, toA:6, picks:null, count:10, log:[], t0:0, memOnly:0 };
+/* memOnly: «ما حفظتُه فقط» — النطاقُ من أوّل محفوظه إلى آخره، ولا يُسأل إلّا عمّا حفظ منه.
+   dayOnly: «من مقرَّر اليوم» — مثلُه، والآياتُ ما يلعب به في الألعاب من مقرَّر يومه
+   (dayAyat)، محفوظةً في dayMap على هيئة المحفوظ: {سورة: [[من، إلى)]} */
+var EX={ i:0, init:0, fromS:114, fromA:1, toS:114, toA:6, picks:null, count:10, log:[], t0:0, memOnly:0, dayOnly:0, dayMap:null };
 var EX_KINDS=[['words','🧩','ترتيب الكلمات','تُبعثر كلماتُ الآية فيعيد بناءها'],
               ['missing','🔍','الكلمة الناقصة','تسقط كلمةٌ من الآية فيختارها'],
               ['miss2','🔎','الكلمتان الناقصتان','تسقط كلمتان من الآية فيختارهما تِباعاً'],
@@ -15304,24 +15306,47 @@ function examEdges(){
    والقطعةُ مقصوصةٌ على حدّي النطاق: كانت قطعةَ الوجه كلَّها، فمن اختبر الأنعام
    ١١١–١١٣ رأى «الأنعام ١١١-١١٨» وجاءه ترتيبُ آياتٍ ومطالعُ من خارج ما طلب */
 function examItems(){
-  var e=examEdges(), g0=e[0], g1=e[1], out=[], P;
+  var e=examEdges(), g0=e[0], g1=e[1], out=[], P, om=exOnlyMap();
   var p0=pageOfIdx(g0), p1=pageOfIdx(g1);
   for(P=p0;P<=p1;P++){
     pagePieces(P).forEach(function(pc){
       var base=GIDX[pc.s.n-1];
       pc={ s:pc.s, from:Math.max(pc.from,g0-base), to:Math.min(pc.to,g1-base+1) };
       for(var a=pc.from;a<pc.to;a++){
-        if(EX.memOnly && !memHas(pc.s.n,a,a+1)) continue;
-        out.push(EX.memOnly ? examMemPiece(pc,a,P) : { s:pc.s, a:a, from:pc.from, to:pc.to, P:P });
+        if(om && !exOnlyHas(om,pc.s.n,a)) continue;
+        out.push(om ? examMemPiece(pc,a,P) : { s:pc.s, a:a, from:pc.from, to:pc.to, P:P });
       }
     });
   }
   return out;
 }
+/* الخريطةُ التي يُقصَر عليها النطاق: المحفوظُ، أو مقرَّرُ اليوم، أو لا شيء */
+function exOnlyMap(){
+  if(EX.dayOnly && EX.dayMap) return EX.dayMap;
+  return EX.memOnly ? memAll() : null;
+}
+function exOnlyHas(m,n,a){
+  var r=m[n]||[], i;
+  for(i=0;i<r.length;i++) if(r[i][0]<=a && a<r[i][1]) return true;
+  return false;
+}
+/* آياتُ مقرَّر اليوم — كما في الألعاب — مجموعةً في مدياتٍ متّصلة */
+function exDayMap(){
+  var A=[], m={}, n=0, i, x, r;
+  try{ A=dayAyat(); }catch(e){ A=[]; }
+  A=A.slice().sort(function(p,q){ return p.s.n-q.s.n || p.a-q.a; });
+  for(i=0;i<A.length;i++){
+    x=A[i]; r=m[x.s.n]||(m[x.s.n]=[]);
+    if(r.length && r[r.length-1][1]===x.a) r[r.length-1][1]=x.a+1;
+    else r.push([x.a,x.a+1]);
+    n++;
+  }
+  return n ? m : null;
+}
 function examAyat(){
-  var e=examEdges();
-  if(!EX.memOnly) return e[1]-e[0]+1;
-  var m=memAll(), t=0, n, i, r, b;
+  var e=examEdges(), m=exOnlyMap();
+  if(!m) return e[1]-e[0]+1;
+  var t=0, n, i, r, b;
   for(n in m){
     b=GIDX[n-1]; if(b==null) continue;
     for(i=0;i<(m[n]||[]).length;i++){
@@ -15335,19 +15360,29 @@ function examAyat(){
    لا بما بين أوّل محفوظه وآخره من أوجهٍ لم يحفظها */
 function examPagesN(){
   var e=examEdges(), p0=pageOfIdx(e[0]), p1=pageOfIdx(e[1]);
-  if(!EX.memOnly) return p1-p0+1;
-  return memPages().filter(function(P){ return P>=p0 && P<=p1; }).length;
+  var m=exOnlyMap(), seen={}, c=0, n, s, i, a, P;
+  if(!m) return p1-p0+1;
+  for(n in m){
+    s=surahBy(parseInt(n,10)); if(!s) continue;
+    for(i=0;i<(m[n]||[]).length;i++)
+      for(a=m[n][i][0];a<m[n][i][1];a++){
+        P=ayahPage(s,a);
+        if(P>=p0 && P<=p1 && !seen[P]){ seen[P]=1; c++; }
+      }
+  }
+  return c;
 }
 /* قطعةُ الآية في «ما حفظتُه فقط» تُقصَر على محفوظها: فترتيبُ الآيات ومطالعُها
    لا يأتيه بآيةٍ من الوجه لم يحفظها */
 function examMemPiece(pc,a,P){
-  var r=memAll()[pc.s.n]||[], f=pc.from, t=pc.to, i;
+  var r=(exOnlyMap()||memAll())[pc.s.n]||[], f=pc.from, t=pc.to, i;
   for(i=0;i<r.length;i++) if(r[i][0]<=a && a<r[i][1]){ f=Math.max(f,r[i][0]); t=Math.min(t,r[i][1]); break; }
   return { s:pc.s, a:a, from:f, to:t, P:P };
 }
 /* أوّلُ محفوظه وآخرُه في المصحف كلّه، بفهرسه العامّ — أو null إن لم يحفظ شيئاً */
-function examMemEdges(){
-  var m=memAll(), g0=Infinity, g1=-1, n, i, r, b;
+function examMemEdges(m){
+  m=m||memAll();
+  var g0=Infinity, g1=-1, n, i, r, b;
   for(n in m){
     b=GIDX[n-1]; if(b==null) continue;
     for(i=0;i<(m[n]||[]).length;i++){
@@ -15445,6 +15480,12 @@ function examOpenNew(){
     /* يبدأ من نطاق مراجعته إن كان له نطاق، فأغلبُ الظنّ أنّه يختبر ما يتعاهده */
     try{ revLoad(); if(REV.fromS){ EX.fromS=REV.fromS; EX.fromA=REV.fromA; EX.toS=REV.toS; EX.toA=REV.toA; } }catch(e){}
   }
+  /* مقرَّرُ اليوم يتبدّل بيومه وبما أتمّ: يُعاد أخذُه كلّما فُتح الاختبار */
+  if(EX.dayOnly){
+    var dm=exDayMap(), e=dm && examMemEdges(dm);
+    if(e){ var A=bqnIdx(e[0]), B=bqnIdx(e[1]); EX.dayMap=dm; EX.fromS=A.s.n; EX.fromA=A.a; EX.toS=B.s.n; EX.toA=B.a; }
+    else EX.dayOnly=0;
+  }
   examShow(0); show('scr-exam');
 }
 function examShow(i){
@@ -15491,6 +15532,18 @@ function examBody(k){
                           : 'بلمسةٍ واحدة: كلُّ ما حفظتَه، ولا شيءَ غيرُه')+
             '</i></span></button>'
         : '')+
+      /* ومقرَّرُ اليوم كما في الألعاب: ما أتمّه من حفظ يومه ومراجعته */
+      (function(){
+        var dm=EX.dayOnly ? EX.dayMap : exDayMap(), dn=0, k, j;
+        if(!dm) return '';
+        for(k in dm) for(j=0;j<dm[k].length;j++) dn+=dm[k][j][1]-dm[k][j][0];
+        return '<button type="button" class="onbopt'+(EX.dayOnly?' sel':'')+'" id="exDay" style="width:100%;margin:0 0 12px">'+
+          '<span class="oe">'+(EX.dayOnly?'✅':'📅')+'</span>'+
+          '<span class="ot"><b>من مقرَّر اليوم</b><i>'+
+            (EX.dayOnly ? 'لا يُسأل إلّا عن مقرَّر يومك — المسْه ثانيةً لتختار بنفسك'
+                        : dayWhatLine(dn))+
+          '</i></span></button>';
+      })()+
       exScopeDoorsHTML()+'<div class="revsum" id="exRange"></div>';
   }
   else if(k==='kind'){
@@ -15573,17 +15626,21 @@ function examPrize(right,tot,extra){
            iron:Math.max(1, Math.round(EX_PAGE_IRON*pe*sh)),
            glass:(tot>0 && right>=tot) ? Math.max(1, Math.round(EX_PAGE_GLASS*pe)) : 0 };
 }
+function exOnlyTag(){
+  if(EX.dayOnly) return '📅 <b>'+tx('من مقرَّر اليوم')+'</b><br>';
+  return EX.memOnly ? '⭐ <b>ما حفظتَه فقط</b><br>' : '';
+}
 /* مقدارُ النطاق وحدَه: يُعرض في خطوة النطاق قبل أن يُختار نوعٌ أو عدد */
 function examRangeLine(){
   var a=surahBy(EX.fromS), b=surahBy(EX.toS), ay=examAyat();
   if(ay<1) return '<div class="revsum">النطاق فارغ — صحّح الاختيار</div>';
-  return '<div class="revsum">'+(EX.memOnly?'⭐ <b>ما حفظتَه فقط</b><br>':'')+fromToHTML(a,EX.fromA,b,EX.toA)+'<br>'+
+  return '<div class="revsum">'+exOnlyTag()+fromToHTML(a,EX.fromA,b,EX.toA)+'<br>'+
     arCount(ay,C_AYAH)+' • '+arCount(examPagesN(),C_PAGE)+'</div>';
 }
 function examSummary(){
   var a=surahBy(EX.fromS), b=surahBy(EX.toS), ay=examAyat();
   if(ay<1) return '<div class="revsum">النطاق فارغ — ارجع وصحّح الاختيار</div>';
-  return '<div class="revsum">'+(EX.memOnly?'⭐ <b>ما حفظتَه فقط</b><br>':'')+fromToHTML(a,EX.fromA,b,EX.toA)+'<br>'+
+  return '<div class="revsum">'+exOnlyTag()+fromToHTML(a,EX.fromA,b,EX.toA)+'<br>'+
     arCount(ay,C_AYAH)+' • '+arCount(examPagesN(),C_PAGE)+'<br>'+
     '<b>'+esc(examKindName())+'</b> • '+arCount(EX.count,C_QUES)+' في الاختبار كلّه'+
     /* يُقال له العطاءُ بأرقامه التامّة ولا يُشرح له حسابُه: المُضاعِفُ
@@ -15610,7 +15667,7 @@ function exDoorHTML(id,ic,t,sub,body){
 function exSetGi(g0,g1){
   if(g1<g0){ var t=g0; g0=g1; g1=t; }
   var A=bqnIdx(g0), B=bqnIdx(g1);
-  EX.fromS=A.s.n; EX.fromA=A.a; EX.toS=B.s.n; EX.toA=B.a; EX.memOnly=0;
+  EX.fromS=A.s.n; EX.fromA=A.a; EX.toS=B.s.n; EX.toA=B.a; EX.memOnly=0; EX.dayOnly=0;
   examBody('range');
 }
 function exScopeDoorsHTML(){
@@ -15675,10 +15732,10 @@ function examWire(k){
       examGate();
     };
     exScopeDoorsWire();
-    $('exFS').onchange=function(){ EX.fromS=parseInt(this.value,10); EX.fromA=1; EX.memOnly=0; examBody('range'); };
-    $('exFA').onchange=function(){ EX.fromA=parseInt(this.value,10); if(EX.memOnly){ EX.memOnly=0; examBody('range'); } else sync(); };
-    $('exTS').onchange=function(){ EX.toS=parseInt(this.value,10); EX.toA=(surahBy(EX.toS)||SURAHS[0]).ayat.length; EX.memOnly=0; examBody('range'); };
-    $('exTA').onchange=function(){ EX.toA=parseInt(this.value,10); if(EX.memOnly){ EX.memOnly=0; examBody('range'); } else sync(); };
+    $('exFS').onchange=function(){ EX.fromS=parseInt(this.value,10); EX.fromA=1; EX.memOnly=0; EX.dayOnly=0; examBody('range'); };
+    $('exFA').onchange=function(){ EX.fromA=parseInt(this.value,10); if(EX.memOnly||EX.dayOnly){ EX.memOnly=0; EX.dayOnly=0; examBody('range'); } else sync(); };
+    $('exTS').onchange=function(){ EX.toS=parseInt(this.value,10); EX.toA=(surahBy(EX.toS)||SURAHS[0]).ayat.length; EX.memOnly=0; EX.dayOnly=0; examBody('range'); };
+    $('exTA').onchange=function(){ EX.toA=parseInt(this.value,10); if(EX.memOnly||EX.dayOnly){ EX.memOnly=0; EX.dayOnly=0; examBody('range'); } else sync(); };
     if($('exMem')) $('exMem').onclick=function(){
       var e=examMemEdges(); if(!e) return;
       /* ترْكُه يُعيد النطاقَ الذي كان قبله، لا المصحفَ كلَّه */
@@ -15687,15 +15744,29 @@ function examWire(k){
         if(o){ EX.fromS=o[0]; EX.fromA=o[1]; EX.toS=o[2]; EX.toA=o[3]; }
         examBody('range'); return;
       }
-      EX.memPrev=[EX.fromS,EX.fromA,EX.toS,EX.toA];
+      if(!EX.dayOnly) EX.memPrev=[EX.fromS,EX.fromA,EX.toS,EX.toA];
       var A=bqnIdx(e[0]), B=bqnIdx(e[1]);
-      EX.fromS=A.s.n; EX.fromA=A.a; EX.toS=B.s.n; EX.toA=B.a; EX.memOnly=1;
+      EX.fromS=A.s.n; EX.fromA=A.a; EX.toS=B.s.n; EX.toA=B.a; EX.memOnly=1; EX.dayOnly=0;
       examBody('range');
       try{ navToast('⭐ '+arCount(examAyat(),C_AYAH)+' ممّا حفظت'); }catch(e2){}
     };
+    if($('exDay')) $('exDay').onclick=function(){
+      if(EX.dayOnly){
+        var o=EX.memPrev; EX.dayOnly=0;
+        if(o){ EX.fromS=o[0]; EX.fromA=o[1]; EX.toS=o[2]; EX.toA=o[3]; }
+        examBody('range'); return;
+      }
+      var dm=exDayMap(), e=dm && examMemEdges(dm); if(!e) return;
+      if(!EX.memOnly) EX.memPrev=[EX.fromS,EX.fromA,EX.toS,EX.toA];
+      var A=bqnIdx(e[0]), B=bqnIdx(e[1]);
+      EX.fromS=A.s.n; EX.fromA=A.a; EX.toS=B.s.n; EX.toA=B.a;
+      EX.dayMap=dm; EX.dayOnly=1; EX.memOnly=0;
+      examBody('range');
+      try{ navToast('📅 '+tx('{n} من مقرَّر اليوم',{n:arCount(examAyat(),C_AYAH)})); }catch(e2){}
+    };
     $('exPick').onclick=function(){
       mfPickRange(gAt(EX.fromS,EX.fromA), function(fs,fa,ts,ta){
-        EX.fromS=fs; EX.fromA=fa; EX.toS=ts; EX.toA=ta; EX.memOnly=0;
+        EX.fromS=fs; EX.fromA=fa; EX.toS=ts; EX.toA=ta; EX.memOnly=0; EX.dayOnly=0;
         examBody('range');
         try{ navToast('📖 '+rangeTx(surahBy(fs).name, fa, surahBy(ts).name, ta)); }catch(e){}
       });
@@ -15744,7 +15815,8 @@ function examSave(){
     });
   } finally { S.i=i0; }
   p[examPauseKey(S.daily)]={ s:s, log:EX.log.slice(), el:Date.now()-EX.t0, day:todayNum(),
-    ex:{ fromS:EX.fromS, fromA:EX.fromA, toS:EX.toS, toA:EX.toA, memOnly:EX.memOnly } };
+    ex:{ fromS:EX.fromS, fromA:EX.fromA, toS:EX.toS, toA:EX.toA, memOnly:EX.memOnly,
+         dayOnly:EX.dayOnly, dayMap:EX.dayOnly?EX.dayMap:null } };
   saveDB();
 }
 function examPaused(daily){
@@ -15776,7 +15848,8 @@ function examResume(daily){
   }catch(e){ examDrop(daily); return false; }
   if(!o || !o.rounds || !o.rounds.length){ examDrop(daily); return false; }
   EX.log=z.log||[]; EX.t0=Date.now()-(z.el||0);
-  if(z.ex){ EX.fromS=z.ex.fromS; EX.fromA=z.ex.fromA; EX.toS=z.ex.toS; EX.toA=z.ex.toA; EX.memOnly=z.ex.memOnly?1:0; }
+  if(z.ex){ EX.fromS=z.ex.fromS; EX.fromA=z.ex.fromA; EX.toS=z.ex.toS; EX.toA=z.ex.toA; EX.memOnly=z.ex.memOnly?1:0;
+             EX.dayMap=z.ex.dayMap||null; EX.dayOnly=(z.ex.dayOnly&&EX.dayMap)?1:0; }
   S=o;
   show('scr-play'); runRound();
   return true;
@@ -17567,13 +17640,21 @@ function dayPool(){
   return out;
 }
 /* وصفُ مقرَّر اليوم في سطرٍ واحد، ليعرف إلامَ يقوده الزرُّ قبل ضغطه */
+function dayWhat(){
+  if(DAY_SRC==='today') return 'ممّا أتممتَه من مقرَّر اليوم';
+  if(DAY_SRC==='prev')  return 'آخرُ مقرَّرٍ أتممتَه';
+  if(DAY_SRC==='due')   return 'ما أتممتَه وما حلّ موعدُ مراجعته';
+  if(DAY_SRC==='last')  return 'آخرُ مقطعٍ أتممتَه';
+  return '';
+}
 function dayPoolLabel(n){
-  var what='';
-  if(DAY_SRC==='today')     what='ممّا أتممتَه من مقرَّر اليوم';
-  else if(DAY_SRC==='prev') what='آخرُ مقرَّرٍ أتممتَه';
-  else if(DAY_SRC==='due')  what='ما أتممتَه وما حلّ موعدُ مراجعته';
-  else if(DAY_SRC==='last') what='آخرُ مقطعٍ أتممتَه';
+  var what=dayWhat();
   return (what?what+' — ':'')+arCount(n,C_AYAH)+' تصلح للسؤال';
+}
+/* وفي «اختبر نفسي»: الآياتُ كلُّها، فالاختبارُ يُبدّل ما لا تحتمله آيةٌ بما تحتمله */
+function dayWhatLine(n){
+  var what=dayWhat();
+  return (what?what+' — ':'')+arCount(n,C_AYAH);
 }
 /* ===== نطاقُ الفهرس: سورٌ يُختار منها، ولكلّ سورةٍ مداها =====
    كان الفهرسُ يأخذ سورةً واحدةً كاملةً لا غير، فمن أراد «البقرة ١ — ٢٠» أو

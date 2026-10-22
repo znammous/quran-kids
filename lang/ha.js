@@ -1254,6 +1254,8 @@ NUR_I18N.add('ha', {
   "لا يمكن حذف المستخدم الوحيد": "Ba za a iya goge mai amfani guda ɗaya tilo ba",
   "لا يوجد مستخدمون": "Babu masu amfani",
   "لا يُسأل إلّا عن آياتٍ حفظتَها — المسْه ثانيةً لتختار بنفسك": "Ana tambaya ne kawai a kan ayoyin da ka haddace — sake taɓa shi don ka zaɓa da kanka",
+  "لا يُسأل إلّا عن مقرَّر يومك — المسْه ثانيةً لتختار بنفسك": "Za a tambaye ka daga rabon yau kawai — taɓa shi kuma don ka zaɓa da kanka",
+  "{n} من مقرَّر اليوم": "{n} daga rabon yau",
   "لاحقاً": "Anjima",
   "لباس نظيف يليق بمجلس القرآن": "Tufafi masu tsabta da suka dace da majalisin Alƙur’ani",
   "لبناء «الأساس والمصطبة» ينقصك": "Don gina “Harsashi da dandamali” kana rasa",

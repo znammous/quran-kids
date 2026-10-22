@@ -1254,6 +1254,8 @@ NUR_I18N.add('uz', {
   "لا يمكن حذف المستخدم الوحيد": "Yagona foydalanuvchini oʻchirib boʻlmaydi",
   "لا يوجد مستخدمون": "Foydalanuvchilar yoʻq",
   "لا يُسأل إلّا عن آياتٍ حفظتَها — المسْه ثانيةً لتختار بنفسك": "Faqat yodlagan oyatlaringdan soʻraladi — oʻzing tanlash uchun yana tegin",
+  "لا يُسأل إلّا عن مقرَّر يومك — المسْه ثانيةً لتختار بنفسك": "Faqat bugungi ulushdan so‘raladi — o‘zing tanlash uchun yana bos",
+  "{n} من مقرَّر اليوم": "Bugungi ulushdan {n}",
   "لاحقاً": "Keyinroq",
   "لباس نظيف يليق بمجلس القرآن": "Qurʼon majlisiga loyiq toza kiyim",
   "لبناء «الأساس والمصطبة» ينقصك": "“Poydevor va supa”ni qurish uchun senga yetishmaydi:",
