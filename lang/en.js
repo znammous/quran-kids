@@ -1893,5 +1893,20 @@ NUR_I18N.add('en', {
   "إن أتقنتها رسخت": "Master it and it becomes firm",
   "إن أتقنتها عادت بعد {d}": "Master it and it returns in {d}",
   "إن أتقنتها عادت بعد {a}–{d}": "Master it and it returns in {a}–{d}",
-  "نعود إليه لنثبّته": "We’re coming back to it to make it stick"
+  "نعود إليه لنثبّته": "We’re coming back to it to make it stick",
+  "جرّب الكتابة!": "Try writing!",
+  "هل تعلم أنّك تستطيع أن تكتب الآياتِ بيدك؟": "Did you know you can write the ayat yourself?",
+  "في المستوى «المتقدّم» تكتب كلماتٍ من الآية، وتُسمّع المقطعَ كتابةً، فيثبت حفظُك أكثر.": "At the “Advanced” level you type words from the ayah and recite the section by typing, so your memorization grows stronger.",
+  "ويمكنك الرجوع متى شئت من الإعدادات ← اللعب ← المستوى.": "You can go back anytime from Settings → Play → Level.",
+  "جرّبه الآن": "Try it now",
+  "صار مستواك «المتقدّم» — بالتوفيق": "Your level is now “Advanced” — good luck",
+  "واحد": "one",
+  "اثنان": "two",
+  "ثلاثة": "three",
+  "أربعة": "four",
+  "خمسة": "five",
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "What is <b>{a}</b> plus <b>{b}</b> plus <b>{c}</b>?",
+  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Parent question: addition instead of multiplication<br><small style=\"font-weight:700;color:var(--mute)\">Adding three numbers written in words, for those who find addition easier</small>",
+  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Parent question: addition instead of multiplication",
+  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Adding three numbers written in words, for those who find addition easier"
 });

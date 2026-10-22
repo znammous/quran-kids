@@ -3265,6 +3265,7 @@ body.hastabs #btnRevQuit{display:none}
         </div>
       </div>
       <div class="switchrow"><span>🏠 لوحة البيت بين أفراد الأسرة</span><input type="checkbox" id="setBoard"></div>
+      <div class="switchrow"><span>➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style="font-weight:700;color:var(--mute)">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small></span><input type="checkbox" id="setGateAdd"></div>
       <div class="setblock" style="margin-top:12px">
         <label class="lbl">💾 نسخةُ تقدّمك</label>
         <div class="row">
@@ -12423,6 +12424,7 @@ function finishStage(){
       curSurah=s2; curP().last=s2.n; saveDB();
       renderPath(); show('scr-path');
     };
+    if(first) writeNudgeSoon();
     return;
   }
   saveProg();
@@ -15335,6 +15337,7 @@ function fillSettings(){
   $('setRec').checked=!!SET.rec;
   $('setFree').checked=!!SET.free;
   $('setBoard').checked=!!DB.app.board;
+  $('setGateAdd').checked=!!DB.app.gateAdd;
   var a='',b='';
   for(var j=1;j<=30;j++){
     a+='<option value="'+j+'"'+(SET.juzFrom===j?' selected':'')+'>من الجزء '+arNum(j)+'</option>';
@@ -15376,6 +15379,7 @@ function readSettings(){
   SET.level=$('setLevel').value;
   if(LEVELS.indexOf(SET.level)<0) SET.level='easy';
   SET.lv3=true;
+  if(SET.level==='hard') profile.wrHard=1;          /* عرف الكتابةَ فلا يُعرَّف بها (writeNudge) */
   SET.script=parseInt($('setScript').value,10)||0;
   SET.reps=parseInt($('setReps').value,10)||1;
   SET.font=parseInt($('setFont').value,10)||34;
@@ -15403,6 +15407,7 @@ function readSettings(){
   applyGlow();
   SET.free=$('setFree').checked;
   DB.app.board=$('setBoard').checked;
+  DB.app.gateAdd=$('setGateAdd').checked;
   saveDB();
 }
 
@@ -20231,22 +20236,68 @@ function backupNudge(){
         'احفظها الآن في «الملفّات» أو أرسلها لنفسك، تعود إليها إن بدّلتَ الجهاز.',
         '💾', '📤 احفظها الآن', 'لاحقاً', function(yes){ if(yes) bkShare(); });
 }
+/* ===== تعريفٌ بالكتابة =====
+   من كان على «سهل» أو «متوسّط» قد لا يدري أنّ في «المتقدّم» كتابةَ الكلمات والتسميعَ
+   كتابةً، وهي أثبتُ للحفظ. فيُعرَّف بها بعد أن يُتمّ مقطعاً — لحظةَ فرح، لا وسطَ
+   الأسئلة — وقد أنجز عشرَ مراحل، مرّةً كلَّ أسبوعين، ولا تزيد على ثلاث. ولكلّ لاعبٍ
+   حسابُه، ولا تُعرض لمن جرّب «المتقدّم» ثمّ عدل عنه: فقد عرفه واختار. */
+function writeNudgeSoon(){
+  (function t(){
+    var c=$('cele');
+    if(c && !c.hidden){ setTimeout(t, 800); return; }   /* بعد الاحتفال لا فوقه */
+    whenCalm(writeNudge);
+  })();
+}
+function writeNudge(){
+  var p=null; try{ p=curP(); }catch(e){ return; }
+  if(!p || SET.level==='hard' || p.wrHard || p.wrOff) return;
+  if(curScreen()!=='scr-play' || !$('btnSegsNow')) return;   /* مضى إلى غيرها */
+  var st=0; try{ st=totals().stars||0; }catch(e){ return; }
+  if(st<10 || (p.wrN||0)>=3) return;
+  var tn=todayNum();
+  if(p.wrAsk && tn-p.wrAsk<14) return;
+  p.wrAsk=tn; p.wrN=(p.wrN||0)+1; saveDB();
+  uiBox('<b>جرّب الكتابة!</b>\n\n'+
+        'هل تعلم أنّك تستطيع أن تكتب الآياتِ بيدك؟\n\n'+
+        'في المستوى «المتقدّم» تكتب كلماتٍ من الآية، وتُسمّع المقطعَ كتابةً، فيثبت حفظُك أكثر.\n\n'+
+        'ويمكنك الرجوع متى شئت من الإعدادات ← اللعب ← المستوى.',
+        '✍️', '✍️ جرّبه الآن', 'لاحقاً', function(yes){
+    /* «لا تُظهرها» تُحفظ للاعبه لا للجهاز: فلإخوته مستوياتُهم */
+    if(load('nur_wr_mute',0)){ p.wrOff=1; save('nur_wr_mute',0); }
+    if(yes){
+      SET.level='hard'; p.wrHard=1;
+      if($('setLevel')){ $('setLevel').value='hard'; levelSetBtn(); }
+      try{ navToast(tx('صار مستواك «المتقدّم» — بالتوفيق')); }catch(e){}
+    }
+    saveDB();
+  }, 'nur_wr_mute');
+}
 /* ===== بوابةُ وليّ الأمر =====
    ما لا يُتراجع عنه (حذفُ مستخدم، وتصفيرُ التقدّم، وفتحُ ملفٍّ يستبدل الجميع) وتشغيلُ
    المايكروفون يمرّ بسؤالٍ يُجيبه الكبير: ضربُ عددين مكتوبين بالحروف. وتشترطه آبل في
-   تطبيقات الأطفال قبل الأذونات. ومن أجاب مرّةً لم يُسأل ثانيةً دقيقتين. */
+   تطبيقات الأطفال قبل الأذونات. ومن أجاب مرّةً لم يُسأل ثانيةً دقيقتين.
+   ولمن لا يألف الضربَ خيارٌ في الإعدادات: جمعُ ثلاثة أعدادٍ من ١ إلى ٩ — لا اثنين،
+   فجمعُهما في متناول الطفل */
 var PGATE_AT=0;
-var PGATE_W=['ستّة','سبعة','ثمانية','تسعة'];
+var PGATE_W=['واحد','اثنان','ثلاثة','أربعة','خمسة','ستّة','سبعة','ثمانية','تسعة'];
 function parentGate(cb){
   if(Date.now()-PGATE_AT < 120000){ cb(true); return; }
   if($('pgate')) $('pgate').remove();
-  var a=6+Math.floor(Math.random()*4), b=6+Math.floor(Math.random()*4);
+  var add=!!DB.app.gateAdd, a, b, c, ans, q;
+  function rn(lo){ return lo+Math.floor(Math.random()*(10-lo)); }
+  if(add){
+    a=rn(1); b=rn(1); c=rn(1); ans=a+b+c;
+    q=tx('كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟',{a:tx(PGATE_W[a-1]),b:tx(PGATE_W[b-1]),c:tx(PGATE_W[c-1])});
+  } else {
+    a=rn(6); b=rn(6); ans=a*b;
+    q=tx('كم حاصلُ ضرب <b>{a}</b> في <b>{b}</b>؟',{a:tx(PGATE_W[a-1]),b:tx(PGATE_W[b-1])});
+  }
   var bg=document.createElement('div');
   bg.className='modal-bg'; bg.id='pgate';
   bg.innerHTML='<div class="modal" style="max-width:360px;text-align:center">'+
     '<div style="font-size:42px;line-height:1">👨‍👩‍👧</div>'+
     '<div style="font-size:18px;font-weight:900;margin:8px 0 2px;color:var(--ttl)">سؤالٌ لوليّ الأمر</div>'+
-    '<div style="font-size:15px;font-weight:800;color:var(--ttl);line-height:1.9">'+tx('كم حاصلُ ضرب <b>{a}</b> في <b>{b}</b>؟',{a:tx(PGATE_W[a-6]),b:tx(PGATE_W[b-6])})+'</div>'+
+    '<div style="font-size:15px;font-weight:800;color:var(--ttl);line-height:1.9">'+q+'</div>'+
     '<input type="number" inputmode="numeric" id="pgateIn" autocomplete="off" aria-label="الناتج" '+
       'style="width:120px;margin-top:10px;font-family:inherit;font-size:22px;font-weight:900;text-align:center;'+
       'color:var(--ttl);background:var(--pnl2);border:2px solid var(--pb);border-radius:12px;padding:8px">'+
@@ -20259,7 +20310,7 @@ function parentGate(cb){
   var inp=$('pgateIn'), tries=0;
   function done(ok){ bg.remove(); if(ok) PGATE_AT=Date.now(); cb(ok); }
   $('pgateYes').onclick=function(){
-    if(parseInt(inp.value,10)===a*b){ done(true); return; }
+    if(parseInt(inp.value,10)===ans){ done(true); return; }
     tries++; inp.value='';
     if(tries>=3){ done(false); return; }
     $('pgateMsg').textContent='ليست هذه — حاول مرّةً أخرى';
@@ -20270,11 +20321,18 @@ function parentGate(cb){
   inp.onkeydown=function(e){ if(e.key==='Enter') $('pgateYes').click(); };
   setTimeout(function(){ try{ inp.focus(); }catch(e){} }, 50);
 }
-/* مفتاحُ «تسجيل الصوت» في الإعدادات: يُقرأ عند مغادرتها، فيُعاد إطفاؤه حتى يُجاب السؤال.
+/* مفتاحا «تسجيل الصوت» و«الجمع بدل الضرب» في الإعدادات: يُقرآن عند مغادرتها، فيُعاد إطفاؤهما حتى يُجاب السؤال.
    ويُسمع في مرحلة الالتقاط، قبل أيّ مستمعٍ آخر للمفتاح */
 document.addEventListener('change', function(e){
   var t=e.target;
-  if(!t || t.id!=='setRec' || !t.checked || SET.rec) return;
+  if(!t || !t.checked) return;
+  if(t.id==='setGateAdd'){                 /* التسهيلُ نفسُه يمرّ بالسؤال الأصعب */
+    if(DB.app.gateAdd) return;
+    t.checked=false;
+    parentGate(function(ok){ if(ok) t.checked=true; });
+    return;
+  }
+  if(t.id!=='setRec' || SET.rec) return;
   t.checked=false;
   parentGate(function(ok){ if(ok) t.checked=true; });
 }, true);

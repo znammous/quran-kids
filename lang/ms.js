@@ -1893,5 +1893,20 @@ NUR_I18N.add('ms', {
   "إن أتقنتها رسخت": "Kuasai, maka ia kukuh",
   "إن أتقنتها عادت بعد {d}": "Kuasai, maka kembali selepas {d}",
   "إن أتقنتها عادت بعد {a}–{d}": "Kuasai, maka kembali selepas {a}–{d}",
-  "نعود إليه لنثبّته": "Kita ulang supaya lebih melekat"
+  "نعود إليه لنثبّته": "Kita ulang supaya lebih melekat",
+  "جرّب الكتابة!": "Cuba menulis!",
+  "هل تعلم أنّك تستطيع أن تكتب الآياتِ بيدك؟": "Tahukah kamu bahawa kamu boleh menulis ayat sendiri?",
+  "في المستوى «المتقدّم» تكتب كلماتٍ من الآية، وتُسمّع المقطعَ كتابةً، فيثبت حفظُك أكثر.": "Di tahap “Lanjutan” kamu menaip perkataan daripada ayat dan bertasmik bahagian dengan menaip, jadi hafazanmu lebih kukuh.",
+  "ويمكنك الرجوع متى شئت من الإعدادات ← اللعب ← المستوى.": "Kamu boleh kembali bila-bila masa dari Tetapan → Main → Tahap.",
+  "جرّبه الآن": "Cuba sekarang",
+  "صار مستواك «المتقدّم» — بالتوفيق": "Tahapmu kini “Lanjutan” — semoga berjaya",
+  "واحد": "satu",
+  "اثنان": "dua",
+  "ثلاثة": "tiga",
+  "أربعة": "empat",
+  "خمسة": "lima",
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Berapakah <b>{a}</b> tambah <b>{b}</b> tambah <b>{c}</b>?",
+  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Soalan ibu bapa: tambah, bukan darab<br><small style=\"font-weight:700;color:var(--mute)\">Menambah tiga nombor yang ditulis dengan perkataan, bagi yang lebih mudah menambah</small>",
+  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Soalan ibu bapa: tambah, bukan darab",
+  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Menambah tiga nombor yang ditulis dengan perkataan, bagi yang lebih mudah menambah"
 });

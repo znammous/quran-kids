@@ -1893,5 +1893,20 @@ NUR_I18N.add('id', {
   "إن أتقنتها رسخت": "Kuasai, maka akan melekat",
   "إن أتقنتها عادت بعد {d}": "Kuasai, maka kembali {d} lagi",
   "إن أتقنتها عادت بعد {a}–{d}": "Kuasai, maka kembali {a}–{d} lagi",
-  "نعود إليه لنثبّته": "Kita ulangi agar makin melekat"
+  "نعود إليه لنثبّته": "Kita ulangi agar makin melekat",
+  "جرّب الكتابة!": "Coba menulis!",
+  "هل تعلم أنّك تستطيع أن تكتب الآياتِ بيدك؟": "Tahukah kamu bahwa kamu bisa menulis ayat sendiri?",
+  "في المستوى «المتقدّم» تكتب كلماتٍ من الآية، وتُسمّع المقطعَ كتابةً، فيثبت حفظُك أكثر.": "Di tingkat “Lanjutan” kamu mengetik kata-kata dari ayat dan menyetorkan bagian dengan mengetik, sehingga hafalanmu makin kuat.",
+  "ويمكنك الرجوع متى شئت من الإعدادات ← اللعب ← المستوى.": "Kamu bisa kembali kapan saja dari Pengaturan → Main → Tingkat.",
+  "جرّبه الآن": "Coba sekarang",
+  "صار مستواك «المتقدّم» — بالتوفيق": "Tingkatmu sekarang “Lanjutan” — semoga sukses",
+  "واحد": "satu",
+  "اثنان": "dua",
+  "ثلاثة": "tiga",
+  "أربعة": "empat",
+  "خمسة": "lima",
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Berapa <b>{a}</b> ditambah <b>{b}</b> ditambah <b>{c}</b>?",
+  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Pertanyaan orang tua: penjumlahan, bukan perkalian<br><small style=\"font-weight:700;color:var(--mute)\">Menjumlahkan tiga angka yang ditulis dengan huruf, bagi yang lebih mudah menjumlah</small>",
+  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Pertanyaan orang tua: penjumlahan, bukan perkalian",
+  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Menjumlahkan tiga angka yang ditulis dengan huruf, bagi yang lebih mudah menjumlah"
 });

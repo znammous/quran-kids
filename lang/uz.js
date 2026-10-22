@@ -1893,5 +1893,20 @@ NUR_I18N.add('uz', {
   "إن أتقنتها رسخت": "Puxta aytsang, mustahkamlanadi",
   "إن أتقنتها عادت بعد {d}": "Puxta aytsang, {d}dan keyin qaytadi",
   "إن أتقنتها عادت بعد {a}–{d}": "Puxta aytsang, {a}–{d}dan keyin qaytadi",
-  "نعود إليه لنثبّته": "Mustahkamlash uchun unga qaytyapmiz"
+  "نعود إليه لنثبّته": "Mustahkamlash uchun unga qaytyapmiz",
+  "جرّب الكتابة!": "Yozib koʻr!",
+  "هل تعلم أنّك تستطيع أن تكتب الآياتِ بيدك؟": "Oyatlarni oʻzing yoza olishingni bilarmiding?",
+  "في المستوى «المتقدّم» تكتب كلماتٍ من الآية، وتُسمّع المقطعَ كتابةً، فيثبت حفظُك أكثر.": "“Murakkab” darajada oyatdan soʻzlarni yozasan va boʻlimni yozib yoddan aytib berasan — shunda yodlaganing yanada mustahkam boʻladi.",
+  "ويمكنك الرجوع متى شئت من الإعدادات ← اللعب ← المستوى.": "Istagan paytda Sozlamalar → Oʻyna → Daraja orqali qaytishing mumkin.",
+  "جرّبه الآن": "Hozir sinab koʻr",
+  "صار مستواك «المتقدّم» — بالتوفيق": "Endi darajang “Murakkab” — omad!",
+  "واحد": "bir",
+  "اثنان": "ikki",
+  "ثلاثة": "uch",
+  "أربعة": "toʻrt",
+  "خمسة": "besh",
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "<b>{a}</b> qoʻshuv <b>{b}</b> qoʻshuv <b>{c}</b> necha boʻladi?",
+  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Ota-ona savoli: koʻpaytirish oʻrniga qoʻshish<br><small style=\"font-weight:700;color:var(--mute)\">Soʻz bilan yozilgan uchta sonni qoʻshish — qoʻshish osonroq boʻlganlar uchun</small>",
+  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Ota-ona savoli: koʻpaytirish oʻrniga qoʻshish",
+  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Soʻz bilan yozilgan uchta sonni qoʻshish — qoʻshish osonroq boʻlganlar uchun"
 });

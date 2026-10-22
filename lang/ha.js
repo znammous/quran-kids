@@ -1893,5 +1893,20 @@ NUR_I18N.add('ha', {
   "إن أتقنتها رسخت": "Idan ka kware za ta kafu",
   "إن أتقنتها عادت بعد {d}": "Idan ka kware za ta dawo bayan {d}",
   "إن أتقنتها عادت بعد {a}–{d}": "Idan ka kware za ta dawo bayan kwanaki {a}–{b}",
-  "نعود إليه لنثبّته": "Mun dawo gare shi don ya kafu"
+  "نعود إليه لنثبّته": "Mun dawo gare shi don ya kafu",
+  "جرّب الكتابة!": "Gwada rubutu!",
+  "هل تعلم أنّك تستطيع أن تكتب الآياتِ بيدك؟": "Ka san cewa za ka iya rubuta ayoyi da kanka?",
+  "في المستوى «المتقدّم» تكتب كلماتٍ من الآية، وتُسمّع المقطعَ كتابةً، فيثبت حفظُك أكثر.": "A matakin “Na gaba-gaba” kana rubuta kalmomi daga aya kuma kana karanta sashen daga ka ta rubutu, don haddarka ta ƙara ƙarfi.",
+  "ويمكنك الرجوع متى شئت من الإعدادات ← اللعب ← المستوى.": "Za ka iya komawa a kowane lokaci daga Saituna → Wasa → Mataki.",
+  "جرّبه الآن": "Gwada yanzu",
+  "صار مستواك «المتقدّم» — بالتوفيق": "Matakinka yanzu “Na gaba-gaba” ne — Allah ya ba da sa’a",
+  "واحد": "ɗaya",
+  "اثنان": "biyu",
+  "ثلاثة": "uku",
+  "أربعة": "huɗu",
+  "خمسة": "biyar",
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Nawa ne <b>{a}</b> da <b>{b}</b> da <b>{c}</b> idan an haɗa?",
+  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Tambayar iyaye: haɗawa maimakon ninkawa<br><small style=\"font-weight:700;color:var(--mute)\">Haɗa lambobi uku da aka rubuta da kalmomi, ga wanda haɗawa ta fi masa sauƙi</small>",
+  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Tambayar iyaye: haɗawa maimakon ninkawa",
+  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Haɗa lambobi uku da aka rubuta da kalmomi, ga wanda haɗawa ta fi masa sauƙi"
 });

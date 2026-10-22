@@ -1893,5 +1893,20 @@ NUR_I18N.add('tr', {
   "إن أتقنتها رسخت": "İyi okursan kalıcı olur",
   "إن أتقنتها عادت بعد {d}": "İyi okursan {d} sonra döner",
   "إن أتقنتها عادت بعد {a}–{d}": "İyi okursan {a}–{d} sonra döner",
-  "نعود إليه لنثبّته": "İyice pekişsin diye ona dönüyoruz"
+  "نعود إليه لنثبّته": "İyice pekişsin diye ona dönüyoruz",
+  "جرّب الكتابة!": "Yazmayı dene!",
+  "هل تعلم أنّك تستطيع أن تكتب الآياتِ بيدك؟": "Ayetleri kendin yazabileceğini biliyor muydun?",
+  "في المستوى «المتقدّم» تكتب كلماتٍ من الآية، وتُسمّع المقطعَ كتابةً، فيثبت حفظُك أكثر.": "“İleri” seviyede ayetten kelimeler yazar ve bölümü yazarak ezberden okursun; böylece ezberin daha sağlam olur.",
+  "ويمكنك الرجوع متى شئت من الإعدادات ← اللعب ← المستوى.": "İstediğin zaman Ayarlar → Oyna → Seviye bölümünden geri dönebilirsin.",
+  "جرّبه الآن": "Şimdi dene",
+  "صار مستواك «المتقدّم» — بالتوفيق": "Seviyen artık “İleri” — başarılar",
+  "واحد": "bir",
+  "اثنان": "iki",
+  "ثلاثة": "üç",
+  "أربعة": "dört",
+  "خمسة": "beş",
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "<b>{a}</b> artı <b>{b}</b> artı <b>{c}</b> kaç eder?",
+  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Veli sorusu: çarpma yerine toplama<br><small style=\"font-weight:700;color:var(--mute)\">Yazıyla yazılmış üç sayıyı toplamak — toplamayı daha kolay bulanlar için</small>",
+  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Veli sorusu: çarpma yerine toplama",
+  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Yazıyla yazılmış üç sayıyı toplamak — toplamayı daha kolay bulanlar için"
 });

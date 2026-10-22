@@ -1893,5 +1893,20 @@ NUR_I18N.add('fr', {
   "إن أتقنتها رسخت": "Maîtrise-la et elle sera ancrée",
   "إن أتقنتها عادت بعد {d}": "Maîtrise-la et elle reviendra dans {d}",
   "إن أتقنتها عادت بعد {a}–{d}": "Maîtrise-la et elle reviendra dans {a} à {d}",
-  "نعود إليه لنثبّته": "On y revient pour bien le retenir"
+  "نعود إليه لنثبّته": "On y revient pour bien le retenir",
+  "جرّب الكتابة!": "Essaie l’écriture !",
+  "هل تعلم أنّك تستطيع أن تكتب الآياتِ بيدك؟": "Savais-tu que tu peux écrire les versets toi-même ?",
+  "في المستوى «المتقدّم» تكتب كلماتٍ من الآية، وتُسمّع المقطعَ كتابةً، فيثبت حفظُك أكثر.": "Au niveau « Avancé », tu tapes des mots du verset et tu récites la section en tapant : ta mémorisation devient plus solide.",
+  "ويمكنك الرجوع متى شئت من الإعدادات ← اللعب ← المستوى.": "Tu peux revenir quand tu veux depuis Réglages → Jouer → Niveau.",
+  "جرّبه الآن": "Essaie maintenant",
+  "صار مستواك «المتقدّم» — بالتوفيق": "Ton niveau est maintenant « Avancé » — bonne chance",
+  "واحد": "un",
+  "اثنان": "deux",
+  "ثلاثة": "trois",
+  "أربعة": "quatre",
+  "خمسة": "cinq",
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Combien font <b>{a}</b> plus <b>{b}</b> plus <b>{c}</b> ?",
+  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Question parentale : addition au lieu de multiplication<br><small style=\"font-weight:700;color:var(--mute)\">Additionner trois nombres écrits en lettres, pour qui trouve l’addition plus facile</small>",
+  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Question parentale : addition au lieu de multiplication",
+  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Additionner trois nombres écrits en lettres, pour qui trouve l’addition plus facile"
 });

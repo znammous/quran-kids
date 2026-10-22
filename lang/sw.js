@@ -1893,5 +1893,20 @@ NUR_I18N.add('sw', {
   "إن أتقنتها رسخت": "Ukiimudu itaimarika",
   "إن أتقنتها عادت بعد {d}": "Ukiimudu itarudi baada ya {d}",
   "إن أتقنتها عادت بعد {a}–{d}": "Ukiimudu itarudi baada ya siku {a}–{b}",
-  "نعود إليه لنثبّته": "Tunarudi kwake ili kiimarike"
+  "نعود إليه لنثبّته": "Tunarudi kwake ili kiimarike",
+  "جرّب الكتابة!": "Jaribu kuandika!",
+  "هل تعلم أنّك تستطيع أن تكتب الآياتِ بيدك؟": "Je, unajua kwamba unaweza kuandika aya wewe mwenyewe?",
+  "في المستوى «المتقدّم» تكتب كلماتٍ من الآية، وتُسمّع المقطعَ كتابةً، فيثبت حفظُك أكثر.": "Katika kiwango cha “Ya juu” unaandika maneno ya aya na kusoma sehemu kwa moyo kwa kuandika, hivyo hifdhi yako inakuwa imara zaidi.",
+  "ويمكنك الرجوع متى شئت من الإعدادات ← اللعب ← المستوى.": "Unaweza kurudi wakati wowote kupitia Mipangilio → Cheza → Kiwango.",
+  "جرّبه الآن": "Jaribu sasa",
+  "صار مستواك «المتقدّم» — بالتوفيق": "Kiwango chako sasa ni “Ya juu” — kila la heri",
+  "واحد": "moja",
+  "اثنان": "mbili",
+  "ثلاثة": "tatu",
+  "أربعة": "nne",
+  "خمسة": "tano",
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "<b>{a}</b> jumlisha <b>{b}</b> jumlisha <b>{c}</b> ni ngapi?",
+  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Swali la mzazi: kujumlisha badala ya kuzidisha<br><small style=\"font-weight:700;color:var(--mute)\">Kujumlisha namba tatu zilizoandikwa kwa maneno, kwa anayeona kujumlisha ni rahisi zaidi</small>",
+  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Swali la mzazi: kujumlisha badala ya kuzidisha",
+  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Kujumlisha namba tatu zilizoandikwa kwa maneno, kwa anayeona kujumlisha ni rahisi zaidi"
 });

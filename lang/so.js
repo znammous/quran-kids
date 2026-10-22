@@ -1893,5 +1893,20 @@ NUR_I18N.add('so', {
   "إن أتقنتها رسخت": "Haddaad si fiican u akhrido way adkaanaysaa",
   "إن أتقنتها عادت بعد {d}": "Haddaad si fiican u akhrido waxay soo noqonaysaa {d} kadib",
   "إن أتقنتها عادت بعد {a}–{d}": "Haddaad si fiican u akhrido waxay soo noqonaysaa {a}–{d} kadib",
-  "نعود إليه لنثبّته": "Waan ku soo noqonaynaa si uu kuugu dhego"
+  "نعود إليه لنثبّته": "Waan ku soo noqonaynaa si uu kuugu dhego",
+  "جرّب الكتابة!": "Isku day qorista!",
+  "هل تعلم أنّك تستطيع أن تكتب الآياتِ بيدك؟": "Ma ogtahay inaad adigu qori karto aayadaha?",
+  "في المستوى «المتقدّم» تكتب كلماتٍ من الآية، وتُسمّع المقطعَ كتابةً، فيثبت حفظُك أكثر.": "Heerka “Horumarsan” waxaad ku qoraysaa erayo aayadda ka mid ah, qaybtana xifdi ahaan baad u akhrinaysaa adigoo qoraya, sidaas darteed xifdigaagu wuu sii xoogaystaa.",
+  "ويمكنك الرجوع متى شئت من الإعدادات ← اللعب ← المستوى.": "Waad ku noqon kartaa mar kasta oo aad rabto: Dejinta → Ciyaar → Heerka.",
+  "جرّبه الآن": "Hadda isku day",
+  "صار مستواك «المتقدّم» — بالتوفيق": "Heerkaagu hadda waa “Horumarsan” — guul ayaan kuu rajaynayaa",
+  "واحد": "kow",
+  "اثنان": "laba",
+  "ثلاثة": "saddex",
+  "أربعة": "afar",
+  "خمسة": "shan",
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Imisa ayay isku noqonayaan <b>{a}</b> iyo <b>{b}</b> iyo <b>{c}</b>?",
+  "➕ سؤالُ وليّ الأمر جمعاً لا ضرباً<br><small style=\"font-weight:700;color:var(--mute)\">جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع</small>": "➕ Su’aasha waalidka: isku-dar halkii isku-dhufasho<br><small style=\"font-weight:700;color:var(--mute)\">Isku-darka saddex tiro oo erayo lagu qoray, qofka isku-darku u fudud yahay</small>",
+  "سؤالُ وليّ الأمر جمعاً لا ضرباً": "Su’aasha waalidka: isku-dar halkii isku-dhufasho",
+  "جمعُ ثلاثة أعدادٍ مكتوبةٍ بالحروف، لمن يسهل عليه الجمع": "Isku-darka saddex tiro oo erayo lagu qoray, qofka isku-darku u fudud yahay"
 });
