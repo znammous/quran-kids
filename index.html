@@ -1548,6 +1548,11 @@ body.light .sp-lit{fill:#1f92d4}
   width:100%;font-family:inherit;font-size:15px;font-weight:700;color:#102b4a;background:#f7fbff;
   border:2px solid #d7e2f0;border-radius:10px;padding:9px 10px;box-sizing:border-box}
 .gftbox input[type=text]{letter-spacing:1px;text-align:center;text-transform:uppercase}
+/* سهمُ القائمة: appearance:none أخفى سهمَ النظام، فبدت القائمةُ سطرَ شرحٍ لا يُغيَّر */
+select,.gftbox select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%235b6f8a' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-size:13px 9px;background-position:left 14px center;padding-inline-end:38px}
+[dir=ltr] select,[dir=ltr] .gftbox select{background-position:right 14px center}
+.mfbar select{background-image:none;padding-inline-end:4px}
 .gftrow{margin-bottom:8px}
 .gftrow label{display:block;font-size:13px;font-weight:800;color:#4a627e;margin-bottom:4px}
 .gftt{display:flex;gap:6px;margin-bottom:10px}
