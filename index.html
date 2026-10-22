@@ -978,6 +978,18 @@ body.light .card.bare .stagechip.fix{background:#e3f6ea;color:#0b6b39;border-col
 .diffline .w{padding:0 3px;border-radius:6px}
 .diffline .w.bad{color:var(--red);background:#ffe2e2}
 .diffline .w.ok{color:#12694a}
+/* التسميعُ كتابةً: صناديقُ الكلمات المكتوبة، وزرُّ ✕ صغيرٌ في ركن الحمراء ومساحةُ لمسه أوسعُ منه */
+.wtline{display:flex;flex-wrap:wrap;gap:12px 8px;justify-content:center;margin:4px 0 12px}
+.wtline:empty{display:none}
+.chip.wt{position:relative;font-size:23px;padding:.12em 12px .72em;cursor:default}
+.chip.wt.ok{border-color:#12a35c;background:#b6f0cc;color:#08512d;box-shadow:none}
+.chip.wt.bad{border-color:var(--red);background:#ffe9e9;color:#b3261e;cursor:pointer}
+.chip.wt.hintme{cursor:pointer}
+.chip.wt.shake{animation:shake .35s}
+.chip.wt .wx{position:absolute;top:-10px;inset-inline-end:-10px;width:22px;height:22px;border-radius:50%;border:0;padding:0;
+  background:var(--red);color:#fff;font:800 12px/22px system-ui,sans-serif;cursor:pointer}
+.chip.wt.hintme .wx{background:#9a7a1c}
+.chip.wt .wx::after{content:"";position:absolute;inset:-9px}
 
 /* الاحتفال: يملأ الشاشة لحظة ثم يذوب */
 .cele{position:fixed;inset:0;z-index:150;display:flex;flex-direction:column;align-items:center;
@@ -1222,7 +1234,7 @@ body.light .revbox .reprow .repv.wait{color:#a06a12}
 [dir=ltr] .tabin-next{animation-name:tabInPrev}
 [dir=ltr] .tabin-prev{animation-name:tabInNext}
 [dir=ltr] :is(.ayah,.ayahbox,.chip,.chip2,.opt,.acard,.acards,.ansline,.anslines,#playArea .chips,
-  .runline,.runayah,.shelf,.bxlines,.diffline,#reciteInput,.basmala,.mfq,.mfprow .ay,.mfmrow .w,
+  .runline,.runayah,.shelf,.bxlines,.diffline,.wtline,#reciteInput,.basmala,.mfq,.mfprow .ay,.mfmrow .w,
   .mbas,.adab,.onbsample,.mfbody,.mushaf,.mftaf:not([lang]),.mfmrow){direction:rtl}
 /* اللغاتُ اللاتينيّة: Nunito، مستديرٌ ودودٌ كأزرار التطبيق، وفيه حروفُ التركيّة والأوزبكيّة والروسيّة.
    وما فيها من عربيّ (أسماءُ السور وغيرُها) يقع على خطّ الواجهة بعده */
@@ -12070,32 +12082,101 @@ function roundRecite(r){
   var where=tx('الآية {a} من {s}',{a:arNum(r.a+1),s:esc(s.name)})+
             (np>1?(' \u2068'+tx('(جزء {i} من {n})',{i:arNum(pi+1),n:arNum(np)})+'\u2069'):'');
   if(SET.level==='hard'){
+    /* كلُّ كلمةٍ تُكتب تصير صندوقاً يتلوّن في الحال: أخضرُ إن وافقت موضعها وأحمرُ إن خالفته.
+       والحمراءُ تُنقر فتعود إلى الحقل تُعدَّل في مكانها — وكلمتان تُكتبان مكانها تُدرجان الناقصة —
+       أو تُحذف بـ✕، فلا يسير الطفلُ بالمؤشّر على سطرٍ طويل. والمحاولاتُ مفتوحةٌ حتى يستسلم */
+    var typed=[], ed=-1, done=false, missed=false;
     $('playArea').innerHTML=
       '<div class="hintline">اكتب '+where+' عن ظهر قلب (التشكيل غير مطلوب)</div>'+
       '<div class="ayahbox"><div class="ayah" style="font-size:'+SET.font+'px;color:#9db2c9">'+esc(hint)+'</div></div>'+
+      '<div class="wtline" id="wtLine"></div>'+
       '<input type="text" id="reciteInput" placeholder="اكتب هنا…" autocomplete="off" spellcheck="false">'+
       '<button class="btn green big" id="btnCheck" style="margin-top:10px">✅ تحقّق</button>'+
-      '<button class="btn ghost big" id="btnShow">📖 اعرض الوجه</button>';
-    var tries=0;
-    $('reciteInput').focus();
-    $('reciteInput').onkeydown=function(e){ if(e.key==='Enter') $('btnCheck').click(); };
-    $('btnCheck').onclick=function(){
-      var v=$('reciteInput').value;
-      if(!norm(v)) return;
-      if(norm(v)===norm(txt)){ sGood(); $('fb').className='fb good'; $('fb').textContent='ما شاء الله، صحيحة تماماً ✅'; nextRound(true); }
-      else{
-        tries++; sBad(); S.errors++; comboMiss();
-        if(tries>=2){
-          $('fb').className='fb bad';
-          $('fb').innerHTML='الصواب:<div class="diffline">'+diffHTML(v,txt)+'</div>';
-          sLater(function(){ nextRound(false); },2800);
-        } else { $('fb').className='fb bad'; $('fb').textContent='قريب! راجعها وحاول مرة أخرى 💪'; }
+      '<div class="row"><button class="btn ghost" id="btnShow">📖 اعرض الوجه</button>'+
+        '<button class="btn ghost" id="btnGiveUp">🏳️ أستسلم</button></div>';
+    var inp=$('reciteInput');
+    inp.focus();
+    function okAt(i){ return i<part.length && norm(typed[i])===norm(part[i]); }
+    function draw(fresh){
+      $('wtLine').innerHTML=typed.map(function(w,i){
+        var cl=i===ed?'hintme':okAt(i)?'ok':'bad';
+        if(cl==='bad' && fresh && fresh.indexOf(i)>=0) cl+=' shake';
+        return '<span class="chip wt '+cl+'" data-i="'+i+'">'+esc(w)+
+               (cl==='ok'?'':'<button class="wx" data-x="'+i+'">✕</button>')+'</span>';
+      }).join('');
+    }
+    function miss(){ if(!missed){ missed=true; S.errors++; comboMiss(); } }
+    function settle(){
+      if(typed.length===part.length && typed.every(function(w,i){ return okAt(i); })){
+        done=true; inp.blur(); sGood();
+        $('fb').className='fb good'; $('fb').textContent='ما شاء الله، صحيحة تماماً ✅';
+        nextRound(true); return;
       }
+      var bad=typed.some(function(w,i){ return i!==ed && !okAt(i); });
+      $('fb').className=bad?'fb bad':'fb';
+      $('fb').textContent=bad?'انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها':'';
+    }
+    function put(ws){
+      ws=ws.filter(function(w){ return norm(w); });
+      if(!ws.length) return;
+      var at=ed>=0?ed:typed.length, fresh=[];
+      [].splice.apply(typed,[at,ed>=0?1:0].concat(ws)); ed=-1;
+      ws.forEach(function(w,k){ fresh.push(at+k); });
+      draw(fresh);
+      if(fresh.some(function(i){ return !okAt(i); })){ sBad(); miss(); }
+      settle();
+    }
+    /* الآيةُ تُقبل بآخر حرفٍ منها دون مسافةٍ بعده */
+    function completes(v){
+      var t=typed.slice(); if(ed>=0) t[ed]=v; else t.push(v);
+      return t.length===part.length && t.every(function(w,i){ return norm(w)===norm(part[i]); });
+    }
+    inp.oninput=function(){
+      if(done) return;
+      var ws=inp.value.split(/\s+/), rest=ws.pop();
+      if(ws.length){ inp.value=rest; put(ws); }
+      if(!done && norm(rest) && completes(rest)){ inp.value=''; put([rest]); }
+    };
+    inp.onkeydown=function(e){
+      if(e.key==='Enter') $('btnCheck').click();
+      /* المسحُ في حقلٍ فارغ يعيد الكلمةَ الأخيرة إليه، كما في الكتابة العاديّة */
+      else if(e.key==='Backspace' && !inp.value && ed<0 && typed.length){
+        e.preventDefault(); inp.value=typed.pop(); draw(); settle();
+      }
+    };
+    $('btnCheck').onclick=function(){
+      if(done) return;
+      var v=inp.value; inp.value=''; put(v.split(/\s+/)); inp.focus();
+    };
+    $('wtLine').onclick=function(e){
+      if(done) return;
+      var x=e.target.closest('[data-x]'), c=e.target.closest('[data-i]');
+      if(x){
+        var j=+x.getAttribute('data-x');
+        typed.splice(j,1);
+        if(ed===j){ ed=-1; inp.value=''; } else if(ed>j) ed--;
+        draw(); settle(); inp.focus(); return;
+      }
+      if(!c) return;
+      var i=+c.getAttribute('data-i');
+      if(i===ed){ ed=-1; inp.value=''; draw(); settle(); inp.focus(); return; }
+      if(okAt(i)) return;
+      if(ed<0 && norm(inp.value)){ var v=inp.value; inp.value=''; put(v.split(/\s+/)); if(done) return; }
+      ed=i; inp.value=typed[i]; draw(); settle();
+      inp.focus(); try{ inp.select(); }catch(er){}
+    };
+    $('btnGiveUp').onclick=function(){
+      if(done) return;
+      done=true; inp.blur(); sBad(); miss();
+      if(norm(inp.value)) typed.splice(ed>=0?ed:typed.length, ed>=0?1:0, inp.value);
+      $('fb').className='fb bad';
+      $('fb').innerHTML='الصواب:<div class="diffline">'+diffHTML(typed.join(' '),txt)+'</div>';
+      sLater(function(){ nextRound(false); },2800);
     };
     $('btnShow').onclick=function(){
       mushafOpen(s, r.a);                      /* الوجه أنفع من النصّ مجرّداً */
       $('fb').className='fb'; $('fb').innerHTML='<div class="diffline">'+esc(txt)+'</div>';
-      S.errors++; comboMiss();
+      miss();
     };
   } else {
     recReset();

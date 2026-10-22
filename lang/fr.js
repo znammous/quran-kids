@@ -683,6 +683,8 @@ NUR_I18N.add('fr', {
   "تحدّي اليوم": "Défi du jour",
   "تحدّيك": "Ton défi",
   "تحقّق": "Vérifier",
+  "أستسلم": "J’abandonne",
+  "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Touche un mot rouge pour le corriger, ou ✕ pour le supprimer",
   "تحقّق من وجود تحديث": "Vérifier les mises à jour",
   "تحمل فيها مصحفك وكتبك": "Porte-y ton Mushaf et tes livres",
   "تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة": "Tu choisis la taille du passage et tu apprends quand tu veux. Chaque taille garde sa propre progression",

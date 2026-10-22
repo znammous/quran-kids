@@ -683,6 +683,8 @@ NUR_I18N.add('ha', {
   "تحدّي اليوم": "Ƙalubalen yau",
   "تحدّيك": "Ƙalubalenka",
   "تحقّق": "Duba",
+  "أستسلم": "Na haƙura",
+  "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Taɓa kalma ja don gyara ta, ko ✕ don goge ta",
   "تحقّق من وجود تحديث": "Duba ko akwai sabuntawa",
   "تحمل فيها مصحفك وكتبك": "Kana ɗaukar Mushafinka da littattafanka a ciki",
   "تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة": "Kai kake zaɓar girman sashe, kuma kana haddace a duk lokacin da kake so. Kowane girma yana da cigabansa daban",

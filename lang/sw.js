@@ -683,6 +683,8 @@ NUR_I18N.add('sw', {
   "تحدّي اليوم": "Changamoto ya leo",
   "تحدّيك": "Changamoto yako",
   "تحقّق": "Kagua",
+  "أستسلم": "Nimekata tamaa",
+  "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Gusa neno jekundu kulirekebisha, au ✕ kulifuta",
   "تحقّق من وجود تحديث": "Angalia kama kuna sasisho",
   "تحمل فيها مصحفك وكتبك": "Beba ndani yake Msahafu wako na vitabu vyako",
   "تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة": "Unachagua ukubwa wa sehemu na kuhifadhi wakati wowote upendao. Kila ukubwa una maendeleo yake",

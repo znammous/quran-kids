@@ -683,6 +683,8 @@ NUR_I18N.add('so', {
   "تحدّي اليوم": "Tartanka maanta",
   "تحدّيك": "Tartankaaga",
   "تحقّق": "Hubi",
+  "أستسلم": "Waan is dhiibay",
+  "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Taabo erayga cas si aad u saxdo, ama ✕ si aad u tirtirto",
   "تحقّق من وجود تحديث": "Hubi inuu jiro cusboonaysiin",
   "تحمل فيها مصحفك وكتبك": "Ku qaado Mushafkaaga iyo buugaagtaada",
   "تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة": "Adigaa dooranaya cabbirka qaybta, waxaadna xifdinaysaa goor kasta oo aad rabto. Cabbir kastaa horumarkiisa gaarka ah ayuu leeyahay",

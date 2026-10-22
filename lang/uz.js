@@ -683,6 +683,8 @@ NUR_I18N.add('uz', {
   "تحدّي اليوم": "Bugungi musobaqa",
   "تحدّيك": "Musobaqang",
   "تحقّق": "Tekshirish",
+  "أستسلم": "Taslim bo‘laman",
+  "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Tuzatish uchun qizil so‘zga bosing yoki o‘chirish uchun ✕ ni bosing",
   "تحقّق من وجود تحديث": "Yangilanishlarni tekshirish",
   "تحمل فيها مصحفك وكتبك": "Mushafing va kitoblaringni unda olib yur",
   "تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة": "Boʻlak hajmini oʻzing tanlaysan va xohlagan paytingda yodlaysan. Har bir hajmning oʻz natijasi saqlanadi",

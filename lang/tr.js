@@ -683,6 +683,8 @@ NUR_I18N.add('tr', {
   "تحدّي اليوم": "Bugünün meydan okuması",
   "تحدّيك": "Meydan okuman",
   "تحقّق": "Kontrol et",
+  "أستسلم": "Pes ediyorum",
+  "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Düzeltmek için kırmızı kelimeye dokun, silmek için ✕",
   "تحقّق من وجود تحديث": "Güncelleme var mı kontrol et",
   "تحمل فيها مصحفك وكتبك": "Mushaf’ını ve kitaplarını içinde taşırsın",
   "تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة": "Bölüm boyutunu sen seçersin, istediğin zaman ezberlersin. Her boyutun ilerlemesi ayrı kaydedilir",

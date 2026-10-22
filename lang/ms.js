@@ -683,6 +683,8 @@ NUR_I18N.add('ms', {
   "تحدّي اليوم": "Cabaran hari ini",
   "تحدّيك": "Cabaran kamu",
   "تحقّق": "Semak",
+  "أستسلم": "Saya menyerah",
+  "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Ketik perkataan merah untuk membetulkannya, atau ✕ untuk memadamnya",
   "تحقّق من وجود تحديث": "Semak kemas kini",
   "تحمل فيها مصحفك وكتبك": "Bawa Mushaf dan buku kamu di dalamnya",
   "تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة": "Kamu pilih saiz bahagian dan menghafal bila-bila masa kamu suka. Setiap saiz menyimpan kemajuannya sendiri",

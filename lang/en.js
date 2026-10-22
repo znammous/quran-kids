@@ -683,6 +683,8 @@ NUR_I18N.add('en', {
   "تحدّي اليوم": "Today’s challenge",
   "تحدّيك": "Your challenge",
   "تحقّق": "Check",
+  "أستسلم": "I give up",
+  "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Tap a red word to fix it, or ✕ to delete it",
   "تحقّق من وجود تحديث": "Check for updates",
   "تحمل فيها مصحفك وكتبك": "Carry your Mushaf and books in it",
   "تختار حجم المقطع، وتحفظ متى شئت. تقدّم كل حجم محفوظ على حدة": "You choose the section size and memorize whenever you like. Each size keeps its own progress",
