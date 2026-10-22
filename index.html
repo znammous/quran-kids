@@ -982,7 +982,7 @@ body.light .card.bare .fb.fixnote{color:#0b6b39}
 .diffline .w{padding:0 3px;border-radius:6px}
 .diffline .w.bad{color:var(--red);background:#ffe2e2}
 .diffline .w.ok{color:#12694a}
-/* التسميعُ كتابةً: صناديقُ الكلمات المكتوبة، وفي ركن الحمراء قلمٌ يدلّ على أنّها تُنقر فتُعدَّل */
+/* كتابةُ الآية: صناديقُ الكلمات المكتوبة، وفي ركن الحمراء قلمٌ يدلّ على أنّها تُنقر فتُعدَّل */
 .wtline{display:flex;flex-wrap:wrap;gap:12px 8px;justify-content:center;margin:4px 0 12px}
 .wtline:empty{display:none}
 .chip.wt{position:relative;font-size:23px;padding:.12em 12px .72em;cursor:default}
@@ -3227,7 +3227,7 @@ body.hastabs #btnRevQuit{display:none}
         <select id="setLevel" hidden>
           <option value="easy">سهل — ضغطٌ واختيارٌ بلا كتابة</option>
           <option value="mid">متوسّط — يزيد مطالعَ الآيات وخواتمَها ورصَّها</option>
-          <option value="hard">متقدّم — يزيد كتابةَ الكلمات والتسميعَ كتابةً</option>
+          <option value="hard">متقدّم — يزيد كتابةَ الكلمات وكتابةَ الآية بعد تسميعها</option>
         </select>
       </div>
       <div class="switchrow"><span>🔔 أصوات التشجيع (نغمات فقط)</span><input type="checkbox" id="setSound"></div>
@@ -3479,7 +3479,7 @@ function matLine(g,i,gl){
 /* ===== درجاتُ الصعوبة الثلاث =====
    سهل   : كلُّ الأنواع إلّا مطالعَ الآيات ورصَّ المطالع والخواتم
    متوسّط: كلُّ الأنواع بالضغط والاختيار
-   متقدّم: المتوسّطُ وزيادةً كتابةُ الكلمات والتسميعُ كتابةً
+   متقدّم: المتوسّطُ وزيادةً كتابةُ الكلمات، وكتابةُ آيةٍ بعد التسميع لا بدلَه
    والحجبُ يُذكر هنا مرّةً واحدة، فمن زاد نوعاً لم يلزمه أن يطوف على
    مولِّدات الأسئلة الثلاثة يستثنيه في كلٍّ منها. */
 var LEVELS=['easy','mid','hard'];
@@ -10554,8 +10554,24 @@ function buildRounds(s,seg,stage){
       var np=recitePortions(s,i);
       for(k=0;k<np;k++) r.push({t:'recite',a:i,pi:k,np:np});
     }
+    /* «المتقدّم» يكتب بعد التسميع لا بدلَه: آيةٌ من المقطع، أو آيتان إن طال */
+    if(SET.level==='hard')
+      writePick(s,from,to,(to-from>=5)?2:1).forEach(function(a){ r.push({t:'write',a:a}); });
   }
   return r;
+}
+/* آياتٌ للكتابة من [from,to): لا القصيرةُ التي لا تُختبر كتابتُها، ولا الطويلةُ التي
+   تُثقل على الطفل — إلّا ألّا يكون غيرُهما. وتُردّ مرتّبةً، ولا تكون «skip» ما وُجد غيرُها */
+function writePick(s,from,to,n,skip){
+  var ok=[], all=[], a, w, out=[];
+  for(a=from;a<to;a++){
+    if(a===skip && to-from>1) continue;
+    all.push(a); w=ayahWords(s,a);
+    if(w>=3 && w<=30) ok.push(a);
+  }
+  var pool=ok.length ? ok : all;
+  while(out.length<n && pool.length) out.push(pool.splice(Math.floor(Math.random()*pool.length),1)[0]);
+  return out.sort(function(x,y){ return x-y; });
 }
 
 /* تمييز العدد على وجهه: مفردٌ ومثنّى وجمعُ قلّةٍ وجمعُ كثرة */
@@ -10860,13 +10876,12 @@ var CELE={ q:[], on:false, tm:0, then:null };
 var CELE_MS=5000;                                   /* مدّة الاحتفال قبل أن يذوب وحده */
 var QTYPES={ words:1, missing:1, miss2:1, ayat:1, edge:1, aedge:1, eorder:1, write:1 };   /* ما يُعرف صوابه من خطئه */
 /* التسميع بالصوت يقرّه اللاعب على نفسه، فلا سبيل إلى الحكم عليه:
-   لا يزيد السلسلة ولا يقطعها. أمّا تسميع الكتابة فيُقابَل بالنصّ. */
+   لا يزيد السلسلة ولا يقطعها. أمّا كتابةُ الآية فتُقابَل بالنصّ. */
 function comboCounts(r){
   if(!r) return false;
   /* الاختبارُ خارج السلسلة: لا يزيدها إن أصاب ولا يقطعها إن أخطأ */
   if(S && S.rev==='exam') return false;
-  if(QTYPES[r.t]) return true;
-  return r.t==='recite' && SET.level==='hard';
+  return !!QTYPES[r.t];
 }
 /* المراتب تتباعد: كلّما أتقن ارتفع السقف */
 var COMBO_STEPS=[5,10,20,35,50], COMBO_ON=25;        /* وبعد الخمسين: كل خمس وعشرين */
@@ -12096,7 +12111,7 @@ function roundRecite(r){
   var hint=part.slice(0,1).join(' ')+' …';
   var where=tx('الآية {a} من {s}',{a:arNum(r.a+1),s:esc(s.name)})+
             (np>1?(' \u2068'+tx('(جزء {i} من {n})',{i:arNum(pi+1),n:arNum(np)})+'\u2069'):'');
-  if(wr || SET.level==='hard'){
+  if(wr){
     /* كلُّ كلمةٍ تُكتب تصير صندوقاً يتلوّن في الحال: أخضرُ إن وافقت موضعها وأحمرُ إن خالفته.
        والحمراءُ تُنقر فتعود إلى الحقل تُعدَّل في مكانها — وكلمتان تُكتبان مكانها تُدرجان الناقصة —
        أو تُمسح فتُحذف، فلا يسير الطفلُ بالمؤشّر على سطرٍ طويل. والمحاولاتُ مفتوحةٌ حتى يستسلم.
@@ -14791,6 +14806,13 @@ function beginRevQuiz(){
       var it=items[Math.floor(Math.random()*items.length)];
       rounds.push(revQuestion(it,P,order[k]));
     }
+    /* و«المتقدّم» يكتب آيةً من كلّ وجه */
+    if(SET.level==='hard'){
+      var iw=items[Math.floor(Math.random()*items.length)];
+      writePick(iw.s,iw.from,iw.to,1).forEach(function(a){
+        rounds.push({t:'write',a:a,surah:iw.s,segFrom:iw.from,segTo:iw.to,page:P});
+      });
+    }
   });
   if(!rounds.length){ REV.quizDone=true; renderRevPath(); show('scr-revpath'); return; }
   rounds=shuffle(rounds);                                  /* لا تتوالى أسئلة صفحة واحدة */
@@ -14945,6 +14967,9 @@ function beginReview(j){
       }
       var a3=d.from+Math.floor(Math.random()*span);
       rounds.push({t:'recite',a:a3,pi:0,np:recitePortions(s,a3),surah:s,segFrom:d.from,segTo:d.to});
+      if(SET.level==='hard') writePick(s,d.from,d.to,1,a3).forEach(function(a4){
+        rounds.push({t:'write',a:a4,surah:s,segFrom:d.from,segTo:d.to});
+      });
     });
   }
   var first=rounds[0];
@@ -20256,7 +20281,7 @@ function writeNudge(){
   p.wrAsk=tn; p.wrN=(p.wrN||0)+1; saveDB();
   uiBox('<b>جرّب الكتابة!</b>\n\n'+
         'هل تعلم أنّك تستطيع أن تكتب الآياتِ بيدك؟\n\n'+
-        'في المستوى «المتقدّم» تكتب كلماتٍ من الآية، وتُسمّع المقطعَ كتابةً، فيثبت حفظُك أكثر.\n\n'+
+        'في المستوى «المتقدّم» تكتب كلماتٍ من الآية، وتكتب الآيةَ بعد أن تُسمّعها، فيثبت حفظُك أكثر.\n\n'+
         'ويمكنك الرجوع متى شئت من الإعدادات ← اللعب ← المستوى.',
         '✍️', '✍️ جرّبه الآن', 'لاحقاً', function(yes){
     /* «لا تُظهرها» تُحفظ للاعبه لا للجهاز: فلإخوته مستوياتُهم */
