@@ -982,6 +982,7 @@ body.light .card.bare .stagechip.fix{background:#e3f6ea;color:#0b6b39;border-col
 .wtline{display:flex;flex-wrap:wrap;gap:12px 8px;justify-content:center;margin:4px 0 12px}
 .wtline:empty{display:none}
 .chip.wt{position:relative;font-size:23px;padding:.12em 12px .72em;cursor:default}
+.chip.wt.given{border:3px dashed #a9cdf2;background:#f2f9ff;color:#5d7a99;box-shadow:none}
 .chip.wt.ok{border-color:#12a35c;background:#b6f0cc;color:#08512d;box-shadow:none}
 .chip.wt.bad{border-color:var(--red);background:#ffe9e9;color:#b3261e;cursor:pointer}
 .chip.wt.hintme{cursor:pointer}
@@ -12087,21 +12088,23 @@ function roundRecite(r){
        والحمراءُ تُنقر فتعود إلى الحقل تُعدَّل في مكانها — وكلمتان تُكتبان مكانها تُدرجان الناقصة —
        أو تُمسح فتُحذف، فلا يسير الطفلُ بالمؤشّر على سطرٍ طويل. والمحاولاتُ مفتوحةٌ حتى يستسلم.
        وعلى الحمراء قلمٌ ✏️ لا ✕: الحذفُ وحده لا يُصلح شيئاً، والقلمُ يدلّه على أنّها تُعدَّل */
-    var typed=[], ed=-1, done=false, missed=false;
+    /* أوّلُ كلمتين معطاتان صناديقَ ثابتةً يبني عليها، بدل صندوق الآية الكبير:
+       رقمُ الآية وحده لا يدلّ الحافظَ عليها، ومطلعُها يدلّه. ولا تُعطى الآيةُ كلُّها */
+    var given=Math.max(0,Math.min(2,part.length-1));
+    var typed=part.slice(0,given), ed=-1, done=false, missed=false;
     $('playArea').innerHTML=
       '<div class="hintline">اكتب '+where+' عن ظهر قلب (التشكيل غير مطلوب)</div>'+
-      '<div class="ayahbox"><div class="ayah" style="font-size:'+SET.font+'px;color:#9db2c9">'+esc(hint)+'</div></div>'+
       '<div class="wtline" id="wtLine"></div>'+
       '<input type="text" id="reciteInput" placeholder="اكتب هنا…" autocomplete="off" spellcheck="false">'+
       '<button class="btn green big" id="btnCheck" style="margin-top:10px">✅ تحقّق</button>'+
       '<div class="row"><button class="btn ghost" id="btnShow">📖 اعرض الوجه</button>'+
         '<button class="btn ghost" id="btnGiveUp">🏳️ أستسلم</button></div>';
     var inp=$('reciteInput');
-    inp.focus();
+    draw(); inp.focus();
     function okAt(i){ return i<part.length && norm(typed[i])===norm(part[i]); }
     function draw(fresh){
       $('wtLine').innerHTML=typed.map(function(w,i){
-        var cl=i===ed?'hintme':okAt(i)?'ok':'bad';
+        var cl=i<given?'given':i===ed?'hintme':okAt(i)?'ok':'bad';
         if(cl==='bad' && fresh && fresh.indexOf(i)>=0) cl+=' shake';
         return '<span class="chip wt '+cl+'" data-i="'+i+'">'+esc(w)+
                (cl.indexOf('bad')===0?'<span class="wp">✏️</span>':'')+'</span>';
@@ -12143,7 +12146,7 @@ function roundRecite(r){
     inp.onkeydown=function(e){
       if(e.key==='Enter') $('btnCheck').click();
       /* المسحُ في حقلٍ فارغ يعيد الكلمةَ الأخيرة إليه، كما في الكتابة العاديّة */
-      else if(e.key==='Backspace' && !inp.value && ed<0 && typed.length){
+      else if(e.key==='Backspace' && !inp.value && ed<0 && typed.length>given){
         e.preventDefault(); inp.value=typed.pop(); draw(); settle();
       }
     };
