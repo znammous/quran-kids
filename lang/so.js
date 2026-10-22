@@ -1893,4 +1893,5 @@ NUR_I18N.add('so', {
   "إن أتقنتها رسخت": "Haddaad si fiican u akhrido way adkaanaysaa",
   "إن أتقنتها عادت بعد {d}": "Haddaad si fiican u akhrido waxay soo noqonaysaa {d} kadib",
   "إن أتقنتها عادت بعد {a}–{d}": "Haddaad si fiican u akhrido waxay soo noqonaysaa {a}–{d} kadib",
+  "نعود إليه لنثبّته": "Waan ku soo noqonaynaa si uu kuugu dhego"
 });

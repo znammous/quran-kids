@@ -1893,4 +1893,5 @@ NUR_I18N.add('tr', {
   "إن أتقنتها رسخت": "İyi okursan kalıcı olur",
   "إن أتقنتها عادت بعد {d}": "İyi okursan {d} sonra döner",
   "إن أتقنتها عادت بعد {a}–{d}": "İyi okursan {a}–{d} sonra döner",
+  "نعود إليه لنثبّته": "İyice pekişsin diye ona dönüyoruz"
 });

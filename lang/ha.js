@@ -1893,4 +1893,5 @@ NUR_I18N.add('ha', {
   "إن أتقنتها رسخت": "Idan ka kware za ta kafu",
   "إن أتقنتها عادت بعد {d}": "Idan ka kware za ta dawo bayan {d}",
   "إن أتقنتها عادت بعد {a}–{d}": "Idan ka kware za ta dawo bayan kwanaki {a}–{b}",
+  "نعود إليه لنثبّته": "Mun dawo gare shi don ya kafu"
 });

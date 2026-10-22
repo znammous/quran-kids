@@ -1893,4 +1893,5 @@ NUR_I18N.add('sw', {
   "إن أتقنتها رسخت": "Ukiimudu itaimarika",
   "إن أتقنتها عادت بعد {d}": "Ukiimudu itarudi baada ya {d}",
   "إن أتقنتها عادت بعد {a}–{d}": "Ukiimudu itarudi baada ya siku {a}–{b}",
+  "نعود إليه لنثبّته": "Tunarudi kwake ili kiimarike"
 });

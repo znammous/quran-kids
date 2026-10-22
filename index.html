@@ -854,6 +854,8 @@ body.light .card.bare .diffline{color:var(--on2)}
    ليُفهم أنّ عودته تثبيتٌ لا تكرارٌ عابر */
 .card.bare .stagechip.fix{background:rgba(60,200,120,.16);color:#8fe3b0;border-color:#2fa866}
 body.light .card.bare .stagechip.fix{background:#e3f6ea;color:#0b6b39;border-color:#3fae6e}
+.card.bare .fb.fixnote{color:#8fe3b0;font-size:17px}
+body.light .card.bare .fb.fixnote{color:#0b6b39}
 
 .stagechip{display:inline-block;background:#e2f1ff;color:var(--g1);border-radius:10px;padding:5px 12px;
   font-size:14px;font-weight:800;margin-bottom:8px}
@@ -10744,6 +10746,11 @@ function runRound(){
     aedge:roundAEdge,eorder:roundEOrder,
     revpage:roundRevPage,edge:roundEdge})[r.t](r);
   $('stageChip').classList.toggle('fix', !!r.rq);
+  /* أوّلُ سؤالِ تثبيتٍ في المرحلة يُعرَّف بسطرٍ مكانَ النتيجة تحت التلميح، ثمّ تكفي الشارة */
+  if(r.rq && !S.fixSeen){
+    S.fixSeen=1;
+    $('fb').className='fb fixnote'; $('fb').textContent='🔁 نعود إليه لنثبّته';
+  }
   try{ qScreenFit(true); }catch(e){}             /* سؤالٌ جديد: يُضبط على الشاشة من جديد */
 }
 /* ===== الخطأُ في الاختبار يمضي ولا يُعاد =====

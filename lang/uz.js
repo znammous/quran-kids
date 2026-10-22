@@ -1893,4 +1893,5 @@ NUR_I18N.add('uz', {
   "إن أتقنتها رسخت": "Puxta aytsang, mustahkamlanadi",
   "إن أتقنتها عادت بعد {d}": "Puxta aytsang, {d}dan keyin qaytadi",
   "إن أتقنتها عادت بعد {a}–{d}": "Puxta aytsang, {a}–{d}dan keyin qaytadi",
+  "نعود إليه لنثبّته": "Mustahkamlash uchun unga qaytyapmiz"
 });

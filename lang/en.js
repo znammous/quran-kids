@@ -1893,4 +1893,5 @@ NUR_I18N.add('en', {
   "إن أتقنتها رسخت": "Master it and it becomes firm",
   "إن أتقنتها عادت بعد {d}": "Master it and it returns in {d}",
   "إن أتقنتها عادت بعد {a}–{d}": "Master it and it returns in {a}–{d}",
+  "نعود إليه لنثبّته": "We’re coming back to it to make it stick"
 });

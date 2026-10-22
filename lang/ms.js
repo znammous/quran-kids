@@ -1893,4 +1893,5 @@ NUR_I18N.add('ms', {
   "إن أتقنتها رسخت": "Kuasai, maka ia kukuh",
   "إن أتقنتها عادت بعد {d}": "Kuasai, maka kembali selepas {d}",
   "إن أتقنتها عادت بعد {a}–{d}": "Kuasai, maka kembali selepas {a}–{d}",
+  "نعود إليه لنثبّته": "Kita ulang supaya lebih melekat"
 });
