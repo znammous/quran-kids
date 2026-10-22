@@ -684,6 +684,8 @@ NUR_I18N.add('sw', {
   "تحدّيك": "Changamoto yako",
   "تحقّق": "Kagua",
   "أستسلم": "Nimekata tamaa",
+  "اكتب الآية": "Andika aya",
+  "يكتب الآيةَ كاملةً كلمةً كلمة": "Anaandika aya nzima neno kwa neno",
   "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Gusa neno jekundu kulirekebisha, au ✕ kulifuta",
   "تحقّق من وجود تحديث": "Angalia kama kuna sasisho",
   "تحمل فيها مصحفك وكتبك": "Beba ndani yake Msahafu wako na vitabu vyako",

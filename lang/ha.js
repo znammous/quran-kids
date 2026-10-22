@@ -684,6 +684,8 @@ NUR_I18N.add('ha', {
   "تحدّيك": "Ƙalubalenka",
   "تحقّق": "Duba",
   "أستسلم": "Na haƙura",
+  "اكتب الآية": "Rubuta aya",
+  "يكتب الآيةَ كاملةً كلمةً كلمة": "Yana rubuta aya gaba ɗaya kalma bayan kalma",
   "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Taɓa kalma ja don gyara ta, ko ✕ don goge ta",
   "تحقّق من وجود تحديث": "Duba ko akwai sabuntawa",
   "تحمل فيها مصحفك وكتبك": "Kana ɗaukar Mushafinka da littattafanka a ciki",

@@ -684,6 +684,8 @@ NUR_I18N.add('tr', {
   "تحدّيك": "Meydan okuman",
   "تحقّق": "Kontrol et",
   "أستسلم": "Pes ediyorum",
+  "اكتب الآية": "Ayeti yaz",
+  "يكتب الآيةَ كاملةً كلمةً كلمة": "Ayetin tamamını kelime kelime yazar",
   "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Düzeltmek için kırmızı kelimeye dokun, silmek için ✕",
   "تحقّق من وجود تحديث": "Güncelleme var mı kontrol et",
   "تحمل فيها مصحفك وكتبك": "Mushaf’ını ve kitaplarını içinde taşırsın",

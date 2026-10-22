@@ -10730,11 +10730,12 @@ function runRound(){
   if(r.rq) $('stageChip').textContent='🔁 تثبيت • '+seghere;
   else if(r.t==='miss2') $('stageChip').textContent='🔍 الكلمتان الناقصتان • '+seghere;
   else if(r.t==='aedge') $('stageChip').textContent=(r.which==='first'?'🚩 مطلعُ الآية • ':'🏁 خاتمةُ الآية • ')+seghere;
+  else if(r.t==='write') $('stageChip').textContent='✍️ اكتب الآية • '+seghere;
   /* الشارةُ بآيات السؤال نفسِها لا بالمقطع كلِّه: السؤالُ يأخذ من المقطع ٤–٧ آياتٍ
      فقط، فكانت الشارةُ «٦-١٦» والمطلوبُ «من ٧ إلى ١٣» */
   else if(r.t==='eorder') $('stageChip').textContent=(r.which==='first'?'🚩 مطالعُ الآيات • ':'🏁 خواتمُ الآيات • ')+
     (r.surah||S.surah).name+' '+arNum(r.from+1)+'-'+arNum(r.to);
-  ({read:roundRead,words:roundWords,missing:roundMissing,miss2:roundMiss2,ayat:roundAyat,recite:roundRecite,
+  ({read:roundRead,words:roundWords,missing:roundMissing,miss2:roundMiss2,ayat:roundAyat,recite:roundRecite,write:roundRecite,
     aedge:roundAEdge,eorder:roundEOrder,
     revpage:roundRevPage,edge:roundEdge})[r.t](r);
   $('stageChip').classList.toggle('fix', !!r.rq);
@@ -10845,7 +10846,7 @@ function nextRound(ok){
 /* ===== سلسلة الإجابات الصحيحة ===== */
 var CELE={ q:[], on:false, tm:0, then:null };
 var CELE_MS=5000;                                   /* مدّة الاحتفال قبل أن يذوب وحده */
-var QTYPES={ words:1, missing:1, miss2:1, ayat:1, edge:1, aedge:1, eorder:1 };   /* ما يُعرف صوابه من خطئه */
+var QTYPES={ words:1, missing:1, miss2:1, ayat:1, edge:1, aedge:1, eorder:1, write:1 };   /* ما يُعرف صوابه من خطئه */
 /* التسميع بالصوت يقرّه اللاعب على نفسه، فلا سبيل إلى الحكم عليه:
    لا يزيد السلسلة ولا يقطعها. أمّا تسميع الكتابة فيُقابَل بالنصّ. */
 function comboCounts(r){
@@ -12076,12 +12077,14 @@ function roundRevPage(r){
 function roundRecite(r){
   var s=S.surah;
   var np=r.np||1, pi=r.pi||0;
-  var part=portionOf(s,r.a,pi,np);
+  /* «اكتب الآية» في الاختبار: الآيةُ كاملةً كتابةً، بأيّ درجةٍ كان اللاعب */
+  var wr=(r.t==='write');
+  var part=wr ? wordsOf(ayahTyping(s,r.a)) : portionOf(s,r.a,pi,np);
   var txt=part.join(' ');
   var hint=part.slice(0,1).join(' ')+' …';
   var where=tx('الآية {a} من {s}',{a:arNum(r.a+1),s:esc(s.name)})+
             (np>1?(' \u2068'+tx('(جزء {i} من {n})',{i:arNum(pi+1),n:arNum(np)})+'\u2069'):'');
-  if(SET.level==='hard'){
+  if(wr || SET.level==='hard'){
     /* كلُّ كلمةٍ تُكتب تصير صندوقاً يتلوّن في الحال: أخضرُ إن وافقت موضعها وأحمرُ إن خالفته.
        والحمراءُ تُنقر فتعود إلى الحقل تُعدَّل في مكانها — وكلمتان تُكتبان مكانها تُدرجان الناقصة —
        أو تُحذف بـ✕، فلا يسير الطفلُ بالمؤشّر على سطرٍ طويل. والمحاولاتُ مفتوحةٌ حتى يستسلم */
@@ -15392,10 +15395,15 @@ var EX_KINDS=[['words','🧩','ترتيب الكلمات','تُبعثر كلما
               ['miss2','🔎','الكلمتان الناقصتان','تسقط كلمتان من الآية فيختارهما تِباعاً'],
               ['ayat','🔢','ترتيب الآيات','تُبعثر آياتُ المقطع فيعيد ترتيبها'],
               ['aedge','🚩','مطلعُ الآية وخاتمتُها','يُعطى شطرَ الآية فيذكر طرفَها الغائب'],
-              ['eorder','🏁','رصُّ المطالع والخواتم','يرتّب أوائلَ الآيات أو أواخرَها']];
+              ['eorder','🏁','رصُّ المطالع والخواتم','يرتّب أوائلَ الآيات أو أواخرَها'],
+              ['write','✍️','اكتب الآية','يكتب الآيةَ كاملةً كلمةً كلمة']];
+/* نوعٌ قائمٌ بنفسه: لا تشمله «منوّعة» ولا «تحدّي اليوم»، ولا يأتي إلّا لمن اختاره —
+   فكتابةُ الآية كاملةً على الجوال أطولُ من أن تُفاجئ من لم يطلبها */
+var EX_SOLO={ write:1 };
 /* أنواعُ الاختبار المأذونُ فيها بدرجة اللاعب */
 function exKinds(){ return EX_KINDS.filter(function(z){ return kindAllowed(z[0]); }); }
-function exKindKeys(){ return exKinds().map(function(z){ return z[0]; }); }
+/* ما تشمله «منوّعة»، وهو الأصلُ إن لم يُختر شيء */
+function exKindKeys(){ return exKinds().filter(function(z){ return !EX_SOLO[z[0]]; }).map(function(z){ return z[0]; }); }
 /* المختارةُ الآن — وإن لم يُختر شيءٌ فالكلُّ */
 function examPicks(){
   var p=EX.picks;
@@ -15403,7 +15411,10 @@ function examPicks(){
   if(p&&p.length) p=p.filter(function(t){ return kindAllowed(t); });
   return (p && p.length) ? p : exKindKeys();
 }
-function examAllOn(){ return examPicks().length===exKinds().length; }
+function examAllOn(){
+  var p=examPicks(), m=exKindKeys();
+  return p.length===m.length && m.every(function(t){ return p.indexOf(t)>=0; });
+}
 var EX_COUNTS=[10,20,30,50];
 /* لكلّ عددٍ بيتُه: كان تحت الرقاقات سطرٌ واحدٌ ثابتٌ يذكر العشرةَ والخمسين
    ويسكت عمّا بينهما. فصار بيتاً من الشعر يتبدّل مع كلّ عددٍ يلمسه — يعلو
@@ -15531,6 +15542,7 @@ function examQ(it){
   var pool=examPicks(), ch, pick, ws, span, lo, j1, j2;
   var t=pool[Math.floor(Math.random()*pool.length)];
   if(t==='ayat' && (it.to-it.from)<3) t='missing';
+  if(t==='write') return {t:'write',a:it.a,surah:it.s,segFrom:it.from,segTo:it.to,page:it.P};
   if(t==='words'){
     ch=(ayahWords(it.s,it.a)>=ORDER_MIN) ? wordChunks(it.s,it.a,WORDS_MIN) : null;
     if(ch && ch.length){
@@ -15690,7 +15702,7 @@ function examBody(k){
   }
   else if(k==='kind'){
     var picked=examPicks(), allOn=examAllOn(), kinds=exKinds();
-    var every=kinds.map(function(z){ return z[2]; }).join('، ');
+    var every=kinds.filter(function(z){ return !EX_SOLO[z[0]]; }).map(function(z){ return z[2]; }).join('، ');
     h='<div class="onbopts">'+
       '<button type="button" class="onbopt'+(allOn?' sel':'')+'" data-exall="1">'+
         '<span class="oe">'+(allOn?'✅':'🎲')+'</span>'+

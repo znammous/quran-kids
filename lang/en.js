@@ -684,6 +684,8 @@ NUR_I18N.add('en', {
   "تحدّيك": "Your challenge",
   "تحقّق": "Check",
   "أستسلم": "I give up",
+  "اكتب الآية": "Write the ayah",
+  "يكتب الآيةَ كاملةً كلمةً كلمة": "Writes the whole ayah word by word",
   "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Tap a red word to fix it, or ✕ to delete it",
   "تحقّق من وجود تحديث": "Check for updates",
   "تحمل فيها مصحفك وكتبك": "Carry your Mushaf and books in it",

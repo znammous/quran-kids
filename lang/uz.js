@@ -684,6 +684,8 @@ NUR_I18N.add('uz', {
   "تحدّيك": "Musobaqang",
   "تحقّق": "Tekshirish",
   "أستسلم": "Taslim bo‘laman",
+  "اكتب الآية": "Oyatni yozing",
+  "يكتب الآيةَ كاملةً كلمةً كلمة": "Oyatni to‘liq so‘zma-so‘z yozadi",
   "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Tuzatish uchun qizil so‘zga bosing yoki o‘chirish uchun ✕ ni bosing",
   "تحقّق من وجود تحديث": "Yangilanishlarni tekshirish",
   "تحمل فيها مصحفك وكتبك": "Mushafing va kitoblaringni unda olib yur",

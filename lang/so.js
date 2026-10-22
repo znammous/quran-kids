@@ -684,6 +684,8 @@ NUR_I18N.add('so', {
   "تحدّيك": "Tartankaaga",
   "تحقّق": "Hubi",
   "أستسلم": "Waan is dhiibay",
+  "اكتب الآية": "Qor aayadda",
+  "يكتب الآيةَ كاملةً كلمةً كلمة": "Wuxuu qoraa aayadda oo dhan eray eray",
   "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Taabo erayga cas si aad u saxdo, ama ✕ si aad u tirtirto",
   "تحقّق من وجود تحديث": "Hubi inuu jiro cusboonaysiin",
   "تحمل فيها مصحفك وكتبك": "Ku qaado Mushafkaaga iyo buugaagtaada",

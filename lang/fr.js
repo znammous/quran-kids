@@ -684,6 +684,8 @@ NUR_I18N.add('fr', {
   "تحدّيك": "Ton défi",
   "تحقّق": "Vérifier",
   "أستسلم": "J’abandonne",
+  "اكتب الآية": "Écris le verset",
+  "يكتب الآيةَ كاملةً كلمةً كلمة": "Écrit le verset entier mot par mot",
   "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Touche un mot rouge pour le corriger, ou ✕ pour le supprimer",
   "تحقّق من وجود تحديث": "Vérifier les mises à jour",
   "تحمل فيها مصحفك وكتبك": "Porte-y ton Mushaf et tes livres",

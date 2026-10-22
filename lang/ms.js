@@ -684,6 +684,8 @@ NUR_I18N.add('ms', {
   "تحدّيك": "Cabaran kamu",
   "تحقّق": "Semak",
   "أستسلم": "Saya menyerah",
+  "اكتب الآية": "Tulis ayat",
+  "يكتب الآيةَ كاملةً كلمةً كلمة": "Menulis ayat penuh perkataan demi perkataan",
   "انقر الكلمة الحمراء لتعدّلها، أو ✕ لتحذفها": "Ketik perkataan merah untuk membetulkannya, atau ✕ untuk memadamnya",
   "تحقّق من وجود تحديث": "Semak kemas kini",
   "تحمل فيها مصحفك وكتبك": "Bawa Mushaf dan buku kamu di dalamnya",
