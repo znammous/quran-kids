@@ -5144,6 +5144,17 @@ function mushafFit(box){
   var heads=pv ? m.querySelectorAll('.mline.mhead').length : 0, GAP=0.22;
   if(availH>0) fs=Math.max(11, Math.min(fs, availH/(15*1.12+1.2+heads*2*GAP)));
   m.style.fontSize=fs+'px';
+  /* ويُقاس السطرُ بعد التطبيق: من الأجهزة ما يكبّر الخطَّ فوق المقاس المعطى
+     (تكبيرُ خطّ النظام في بعض أندرويد كبوكو وشاومي) فيفيض الوجهُ عن الشاشة
+     ولا يُرى طرفاه. فإن فاض صُغّر بقدر فيضه، وحُفظ المقاسُ المصحَّح لعرضه. */
+  for(var k=0;k<2;k++){
+    var w2=0;
+    for(i=0;i<rows.length;i++) w2=Math.max(w2, rows[i].getBoundingClientRect().width);
+    if(!w2 || w2<=availW*1.002) break;
+    fs=Math.max(11, fs*(availW/w2)*0.99);
+    m.style.fontSize=fs+'px';
+    if(rows.length>=8 && (!MF_FS[key] || fs<MF_FS[key])){ MF_FS[key]=fs; save('mfFs', MF_FS); }
+  }
   var gap=Math.round(fs*GAP);
   m.style.setProperty('--mhgap', gap+'px');
   /* ورقمُ الوجه تحته — حين يُعرض — يُقتطع من الارتفاع قبل قسمته على الأسطر */
