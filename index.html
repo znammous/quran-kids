@@ -772,11 +772,11 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 /* والاسمُ على قدر سطره لا على مقاس الحرف وحده: على شاشة الحاسوب العريضة
    القصيرة يضيق السطرُ إلى ١٫١٢ من الحرف، فكان الاسمُ (١٫٣٥) يفيض على البسملة تحته */
 .mushaf.qcf .msura{line-height:1;font-size:min(1.35em, calc(var(--mlh,1.25em) * .82))}
-/* في معاينة المقطع قبل الأسئلة والمسار يضيق الوجهُ — الشريطُ وزرُّ البدء
-   يأخذان من ارتفاعه — فتتلاصق الأسطرُ ويلاصق الإطارُ البسملة. فلسطر العنوان
-   هناك وحدَها هامشٌ أعلاه وأسفله يُقتطع من الارتفاع قبل قسمته على الأسطر.
-   والمصحفُ العاديُّ على حاله. */
-.mfsheet.pv .mline.mhead{margin-block:var(--mhgap,.2em)}
+/* الأسطرُ متقاربة، وأطرافُ حروف السطر فوق العنوان تنزل على إطاره فيلامسها —
+   وأكثرُ ما يُرى في قصار السور، في الوجه منها عدّةُ عناوين. فلسطر العنوان
+   هامشٌ أعلاه وأسفله يُقتطع من الارتفاع قبل قسمته على الأسطر، فيبقى الوجهُ
+   خمسةَ عشر سطراً. وكان للمعاينة قبل الأسئلة وحدَها. */
+.mushaf.qcf .mline.mhead{margin-block:var(--mhgap,.2em)}
 .msura::before{content:'';position:absolute;inset:1px 0;pointer-events:none;
   border:2px solid #a07a2c;border-radius:4px}
 .msura::after{content:'';position:absolute;inset:5px 4px;pointer-events:none;
@@ -5140,8 +5140,7 @@ function mushafFit(box){
   var cs=getComputedStyle(box);
   var availH=box.clientHeight-(parseFloat(cs.paddingTop)||0)-(parseFloat(cs.paddingBottom)||0);
   /* ولا يزيد على ما يسعه الارتفاع: الوجهُ ثابتٌ لا يُمرَّر، فلا بدّ أن يُرى كلُّه */
-  var pv=!!(box.closest && box.closest('.mfsheet.pv'));
-  var heads=pv ? m.querySelectorAll('.mline.mhead').length : 0, GAP=0.22;
+  var heads=m.querySelectorAll('.mline.mhead').length, GAP=0.22;
   if(availH>0) fs=Math.max(11, Math.min(fs, availH/(15*1.12+1.2+heads*2*GAP)));
   m.style.fontSize=fs+'px';
   /* ويُقاس السطرُ بعد التطبيق: من الأجهزة ما يكبّر الخطَّ فوق المقاس المعطى
