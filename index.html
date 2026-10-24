@@ -5723,8 +5723,57 @@ var GOAL_SEGS=1;        /* مقطع كامل في اليوم — هو وحدة �
 function stagesN(){ return STAGES.length; }
 function todayBox(){
   var p=curP(), t=todayNum();
-  if(!p.today || p.today.d!==t) p.today={d:t,stages:0,segs:0,reviews:0};
+  if(!p.today || p.today.d!==t){ dayArchive(p); p.today={d:t,stages:0,segs:0,reviews:0}; }
   return p.today;
+}
+/* ===== سجلُّ الأيّام =====
+   كان «اليوم» يُصفَّر كلَّ صباح فلا يبقى ممّا مضى شيء: لا يُعرف أكان أسبوعُه أنشطَ
+   من الذي قبله. فإذا بدأ يومٌ جديد حُفظ المنقضي في p.days بيومه:
+   [مراحل، مقاطع، جلساتُ مراجعة، آياتٌ حُفظت أوّلَ مرّة، أسئلة، أصاب منها أوّلَ مرّة].
+   وما لم يُعمل فيه شيءٌ لا يُكتب، ويبقى منه نحوُ سنة. */
+var DAYS_KEEP=400;
+function dayArchive(p){
+  var o=p.today; if(!o || o.d==null) return;
+  var v=[o.stages||0, o.segs||0, o.reviews||0, o.ay||0, o.q||0, o.qok||0];
+  if(!v.some(function(x){ return x>0; })) return;
+  var D=p.days||(p.days={}), ks;
+  D[o.d]=v;
+  ks=Object.keys(D);
+  if(ks.length>DAYS_KEEP+20)
+    ks.sort(function(a,b){ return a-b; }).slice(0,ks.length-DAYS_KEEP).forEach(function(k){ delete D[k]; });
+}
+/* ===== سجلُّ الآيات =====
+   الأسئلةُ تُبنى على آية، والخطأُ كان يُجمع للوجه أو المقطع فتضيع آيتُه. فيُكتب لكلّ آيةٍ
+   سُئل عنها: p.ay["سورة:آية"]=[سُئل، أصاب، آخرُ يومٍ سُئل، أصاب متتالياً منذ آخر خطأ].
+   وأسئلةُ الترتيب تقيس الانتقالَ من آيةٍ إلى التي تليها لا الآيةَ نفسَها، فتُكتب في
+   p.tr["سورة:آية"] للانتقال إلى تلك الآية: [سُئل، أخطأ]. والآيةُ بعدّ التطبيق من الصفر.
+   والمُعتبَر أوّلُ محاولة: من أصاب بعد إعادةٍ أو تلميحٍ لم يُصب.
+   وبداياتُ الصفحات ونهاياتُها علمٌ بالوجه لا بآية، والتسميعُ يقرّه على نفسه — فلا يُكتبان. */
+var AY_ONE={ words:1, missing:1, miss2:1, aedge:1, write:1 }, AY_SEQ={ ayat:1, eorder:1 };
+function ayNote(p,n,a,ok){
+  var A=p.ay||(p.ay={}), k=n+':'+a, v=A[k]||(A[k]=[0,0,0,0]);
+  v[0]++; v[2]=todayNum();
+  if(ok){ v[1]++; v[3]++; } else v[3]=0;
+}
+function trNote(p,n,a,ok){
+  var T=p.tr||(p.tr={}), k=n+':'+a, v=T[k]||(T[k]=[0,0]);
+  v[0]++; if(!ok) v[1]++;
+}
+function qNote(r,wrong){
+  var s=r && (r.surah||S.surah), p=curP(), t, a, end;
+  if(!s) return;
+  if(AY_ONE[r.t]){ if(r.a==null) return; ayNote(p,s.n,r.a,!wrong); }
+  else if(AY_SEQ[r.t]){
+    /* ما رُتّب قبل الزلّة انتقالٌ أصاب فيه، والزلّةُ على الآية التي لم يعرفها في موضعها:
+       فإن كانت أوّلَ النافذة فالآيةُ نفسُها، وإلّا فالانتقالُ إليها */
+    end = !wrong ? r.to : (S.slipA!=null ? S.slipA : r.from);
+    for(a=r.from+1;a<end;a++) trNote(p,s.n,a,true);
+    if(wrong && S.slipA!=null){
+      if(S.slipA>r.from) trNote(p,s.n,S.slipA,false); else ayNote(p,s.n,r.from,false);
+    }
+  }
+  else return;
+  t=todayBox(); t.q=(t.q||0)+1; if(!wrong) t.qok=(t.qok||0)+1;
 }
 /* شطرا اليوم في المسار الحرّ: حفظ ومراجعة — ولا يتمّ اليوم حتى يتمّا معاً */
 function goalHifzMet(){
@@ -5813,8 +5862,8 @@ function celeDay(){
 }
 function addGems(n){ curP().gems=(curP().gems||0)+n; saveDB(); }
 function noteStage(){ todayBox().stages++; addGems(5); addMat("wood",1); creditDay(); checkBadges(); }
-function noteSeg(){
-  todayBox().segs++; addGems(15); addMat("stone",2); creditDay(); checkBadges();
+function noteSeg(ay){
+  todayBox().segs++; todayBox().ay=(todayBox().ay||0)+(ay||0); addGems(15); addMat("stone",2); creditDay(); checkBadges();
   /* إتمامُ حفظ اليوم يُعلَّم ليومه: فإن زاد بعده وفتح مقطعاً جديداً ولم يُتمّه،
      بقيت علامةُ اليوم خضراءَ كما هي — فالزيادةُ لا تنقض ما تمّ */
   try{ var T=bqnToday(); if(T ? T.hifzDone : goalHifzMet()) todayBox().hifz=1; }catch(e){}
@@ -10725,7 +10774,7 @@ function runRound(){
   recReset();
   /* تلاوةُ زرِّ الدرس لسؤالها: تسكت إذا انتقل إلى غيره */
   try{ if(AUD.q.length && AUD.les>=0 && (!S || AUD.les!==S.i)) audStop(); }catch(e){}
-  if(S) S.e0=S.errors;      /* ليُعرف السؤالُ الذي أُصيب من أوّل محاولة */
+  if(S){ S.e0=S.errors; S.slipA=null; }   /* ليُعرف السؤالُ الذي أُصيب من أوّل محاولة، وأين زلّ */
   qaSync();
   $('playArea').className='qfill qcenter';
   if(!S) return;
@@ -10862,6 +10911,8 @@ function nextRound(ok){
   /* يُحسب قبل الزيادة: نظيفٌ إن لم يُخطئ فيه أصلاً */
   var clean = (ok===true) && !!S && (S.errors===S.e0);
   if(S && S.rev==='exam'){ try{ examNote(S.rounds[S.i], clean); }catch(e){} }
+  /* الزلّةُ في السؤال يعلّمها comboMiss بموضعه، ولو أصاب بعدها */
+  if(S && S.rounds){ try{ qNote(S.rounds[S.i], ok===false || miss || S.slipAt===S.i); }catch(e){} }
   if(miss){ comboMiss(); S.miss=(S.miss||0)+1; }   /* تنقطع السلسلةُ ويُعلَم، ولا يُخصم */
   else if(ok===false){ S.errors++; comboMiss(); }
   else comboHit();
@@ -11936,6 +11987,7 @@ function roundEOrder(r){
       if(this.textContent!==seq[placed]){
         var el=this, pl0=placed;
         el.classList.add('bad');
+        if(S.slipA==null) S.slipA=r.from+placed;
         if(examMode()){ placed=seq.length; examMiss(function(){ examShowRight('chips','.chip',seq[pl0],'rightone'); }); return; }
         if(hifzMode()){ placed=seq.length; hifzMiss(r,function(){ examShowRight('chips','.chip',seq[pl0],'rightone'); }); return; }
         sBad(); S.errors++; comboMiss();
@@ -11990,6 +12042,7 @@ function roundAyat(r){
         if(placed>=idx.length){ sGood(); $('fb').className='fb good'; $('fb').textContent='ترتيب صحيح 🌟'; nextRound(true); }
       } else {
         var el=this, pl0=placed; el.classList.add('bad');
+        if(S.slipA==null) S.slipA=idx[placed];
         var showAyat=function(){
           var cs=$('acards').querySelectorAll('.acard'), z;
           for(z=0;z<cs.length;z++)
@@ -12373,7 +12426,7 @@ function finishStage(){
     if(p.due==null){ p.box=0; p.due=todayNum()+INTERVALS[0]; p.ld=todayNum(); p.lk=2; }
     memAdd(S.surah.n, S.seg[0], S.seg[1]);
     saveProg();
-    if(first) noteSeg();
+    if(first) noteSeg(S.seg[1]-S.seg[0]);
     var t=surahStats(S.surah);
     if(t.full && first){ showCert(S.surah); return; }
     /* هل المقطع التالي داخل مقرَّر اليوم؟ لا يُدفع الطفل خارجه وهو لا يدري */
@@ -19777,6 +19830,7 @@ $('btnReset').onclick=function(){
     bkSave(true)['catch'](function(){});      /* تُحفظ قبل المسح، فيُرجَع إليها من «استعادة نسخة» */
     curP().prog={}; curP().mem={}; curP().gems=0; curP().owned={}; curP().badges={}; curP().built={}; curP().mat={};
     curP().streak={count:0,last:null,freezes:0}; curP().today={d:null,stages:0,segs:0,reviews:0};
+    curP().days={}; curP().ay={}; curP().tr={};
     bindPlayer(); saveDB(); renderMap(); show('scr-map');
   },'🗑️');
 };
