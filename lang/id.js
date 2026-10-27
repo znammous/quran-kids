@@ -1904,5 +1904,6 @@ NUR_I18N.add('id', {
   "ثلاثة": "tiga",
   "أربعة": "empat",
   "خمسة": "lima",
-  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Berapa <b>{a}</b> ditambah <b>{b}</b> ditambah <b>{c}</b>?"
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Berapa <b>{a}</b> ditambah <b>{b}</b> ditambah <b>{c}</b>?",
+  "📖 معاني الكلمات في المصحف<br><small style=\"font-weight:700;color:var(--mute)\">خطٌّ منقّطٌ تحت كلّ كلمةٍ لها شرح، ومن لمسها رأى معناها</small>": "📖 Makna kata di Mushaf<br><small style=\"font-weight:700;color:var(--mute)\">Garis titik-titik di bawah setiap kata yang ada penjelasannya; sentuh untuk melihat maknanya</small>"
 });

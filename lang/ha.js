@@ -1904,5 +1904,6 @@ NUR_I18N.add('ha', {
   "ثلاثة": "uku",
   "أربعة": "huɗu",
   "خمسة": "biyar",
-  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Nawa ne <b>{a}</b> da <b>{b}</b> da <b>{c}</b> idan an haɗa?"
+  "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Nawa ne <b>{a}</b> da <b>{b}</b> da <b>{c}</b> idan an haɗa?",
+  "📖 معاني الكلمات في المصحف<br><small style=\"font-weight:700;color:var(--mute)\">خطٌّ منقّطٌ تحت كلّ كلمةٍ لها شرح، ومن لمسها رأى معناها</small>": "📖 Ma'anonin kalmomi a cikin Mushafi<br><small style=\"font-weight:700;color:var(--mute)\">Layi mai ɗigo a ƙarƙashin kowace kalma da ke da bayani; taɓa ta don ganin ma'anarta</small>"
 });
