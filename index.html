@@ -748,6 +748,16 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .mline .mtxt{flex:1;display:flex;flex-wrap:wrap;align-items:baseline;gap:0 .34em;justify-content:center}
 .mw{white-space:nowrap;transition:color .18s ease}
 .mw.hl{color:#0f2d52}
+/* كلمةٌ لها معنى في «الغريب»: خطٌّ منقّطٌ تحتها، ومن لمسها رأى معناها (mfGlossAt) */
+.mw.gl{text-decoration:underline dotted #c9a24a;text-decoration-thickness:2px;text-underline-offset:.3em;
+  text-decoration-skip-ink:none;cursor:pointer}
+.mw.glon{background:rgba(201,162,74,.24);border-radius:4px}
+.mfsheet.picking .mw.gl{text-decoration:none}
+.mfgloss{position:fixed;z-index:7;max-width:min(340px,calc(100vw - 16px));padding:8px 12px;border-radius:12px;
+  background:var(--pnl);color:var(--ttl);border:1.5px solid #c9a24a;box-shadow:0 6px 20px rgba(0,0,0,.18);
+  font-size:15.5px;font-weight:700;line-height:1.9;direction:rtl;pointer-events:none}
+.mfgloss[hidden]{display:none}
+.mfgloss .w{font-family:"UthmanicHafs","Amiri Quran",serif;font-size:21px;font-weight:400;color:var(--rew)}
 .mline.hasHl{background:linear-gradient(90deg,rgba(255,214,102,.22),rgba(255,214,102,.06));border-radius:8px}
 /* وضع خطّ الصفحة: كل كلمة محرفٌ مرسوم كما ركّبه الخطّاط — فلا مسافات ولا تمطيط */
 /* نسب المصحف: التباعد الرأسي قريب من مقاس الحرف، فتسع الصفحة خمسة عشر سطراً */
@@ -2646,6 +2656,7 @@ body.hastabs #btnRevQuit{display:none}
   </div>
   <span class="mfstep" id="mfStep" hidden></span>
   <div class="mfbody" id="mfBody"></div>
+  <div class="mfgloss" id="mfGloss" role="tooltip" translate="no" hidden></div>
   <div class="mfgo" id="mfGo" hidden>
     <!-- الاستماعُ بجانب زرّ البدء: الزرُّ الأخضرُ يخطف العين، فلا يُترك السماعُ
          في شريطٍ صغيرٍ أسفلَ الشاشة لا يُنتبه له -->
@@ -4785,7 +4796,8 @@ function segPreview(pieces, title, btn, go){
 }
 function mushafPageHTML(P, hlGi, glyphs){
   mushafInit();
-  var base=(P-1)*15, html='', l, u=0, GC=glyphs?mushafCodes(P):null, M=MF_MARK, PM=simOn()?simPage(P):null;
+  var base=(P-1)*15, html='', l, u=0, GC=glyphs?mushafCodes(P):null, M=MF_MARK, PM=simOn()?simPage(P):null,
+      GL=gharibOn()?gharibWords():null;
   for(l=0;l<15;l++){
     var i=base+l;
     if(ML[i]==null){
@@ -4818,8 +4830,9 @@ function mushafPageHTML(P, hlGi, glyphs){
       }
       /* الكلمةُ وعلاماتُها وحدةٌ واحدة، والخطّ يجعلها محارفَ متتالية —
          فتُرسم معاً (انظر mushafCodes) وتُعدّ واحدة */
-      out+='<span class="mw'+(on?' hl':'')+mfMarkCls(M,PM,inr,gi,wi)+'" data-gi="'+gi+'">'+
-        (GC ? GC[u] : esc(ws[wi]))+'</span>';
+      var gl=GL && GL[gi+':'+wi] ? gi+':'+wi : '';
+      out+='<span class="mw'+(on?' hl':'')+mfMarkCls(M,PM,inr,gi,wi)+(gl?' gl':'')+'" data-gi="'+gi+'"'+
+        (gl?' data-gl="'+gl+'"':'')+'>'+(GC ? GC[u] : esc(ws[wi]))+'</span>';
       u++; wi++;
     }
     html+='<div class="mline'+(hasHl?' hasHl':'')+(hasSeg?' hasSeg':'')+'"><span class="mtxt">'+out+'</span></div>';
@@ -5064,6 +5077,11 @@ function mushafOpenPage(P, hlGi, title){
     $('mfBody').style.transition=''; $('mfBody').style.transform='';
   }
   var seq=++MFSEQ;
+  mfGlossOff();
+  /* معاني الكلمات تُجلب عند أوّل فتحٍ للمصحف، ثمّ يُعاد رسمُ الوجه المفتوح لتظهر فيه */
+  if(!GHARIB && !trLang()) gharibLoad().then(function(){
+    if(!sh.hidden && gharibOn()) mushafOpenPage(mfPage(), MF_HL, '');
+  })['catch'](function(){});
   if(title) sh.setAttribute('aria-label', title);
   mfBarSync(P, hlGi);
   function paintQcf(fam){
@@ -5236,6 +5254,7 @@ function mushafClose(){
   try{ if(curScreen()!=='scr-play') wakeOff(); }catch(e){ wakeOff(); }   /* عاد إلى درسه: القفلُ باقٍ له */
   try{ audStop(); }catch(e){}            /* طُوي الوجهُ: تسكت التلاوة معه */
   MF_MARK=null; MF_PV=null;
+  mfGlossOff();
   if($('mfGo')) $('mfGo').hidden=true;
   try{ mfPanel(null); }catch(e){}
   if($('mfSheet')){ $('mfSheet').hidden=true; $('mfSheet').classList.remove('reader','pv'); }
@@ -9778,6 +9797,56 @@ function gharibLoad(){
   }).then(function(d){ GHARIB=d; return d; })['catch'](function(e){ GHARIB_P=null; throw e; });
   return GHARIB_P;
 }
+/* الكلماتُ المشروحةُ في الوجه نفسِه — كما في «نور السنّة»: تحتها خطٌّ منقّط،
+   ومن لمسها رأى معناها. GLW['gi:wi'] = سطرُها [سورة، آية، الكلمة، معناها]،
+   يُبنى مرّةً للمصحف كلّه: الآيةُ قد تتمّ في الوجه التالي وسطرُها في قائمة الأوّل.
+   والكلمةُ تُطابَق مجرّدةً من الضبط، وقد يسبقها في الآية واوٌ أو فاء
+   («ويسفك الدماء» وفي الغريب «يسفك الدماء»). ولغةٌ لها ترجمةُ معانٍ لا تُعرض
+   لها، كما لا تُعرض في لوحة المعاني. */
+var GLW=null;
+function gharibOn(){ return !!GHARIB && !trLang(); }
+function gharibWords(){
+  if(GLW || !GHARIB) return GLW;
+  var out={}, flat=function(w){ return norm(w).replace(/ /g,''); };
+  GHARIB.forEach(function(rows){
+    rows.forEach(function(r){
+      var gi=GIDX[r[0]-1]+r[1]-1, ws=mushafWords(r[0],r[1]).map(flat),
+          q=norm(r[2]).split(' ').filter(Boolean), k, j;
+      if(!q.length) return;
+      for(k=0;k+q.length<=ws.length;k++){
+        if(out[gi+':'+k]) continue;      /* تكرّرت في الآية: الموضعُ الذي لم يُشرح بعد */
+        if(ws[k]!==q[0] && ws[k]!=='و'+q[0] && ws[k]!=='ف'+q[0]) continue;
+        for(j=1;j<q.length && ws[k+j]===q[j];j++);
+        if(j<q.length) continue;
+        for(j=0;j<q.length;j++) out[gi+':'+(k+j)]=r;
+        return;
+      }
+    });
+  });
+  return (GLW=out);
+}
+/* لمسةٌ على كلمةٍ مشروحة: معناها في بطاقةٍ فوقها (أو تحتها إن لم يتّسع ما فوقها)،
+   وتُضاء العبارةُ كلُّها إن كانت أكثرَ من كلمة. وتُطوى بلمسةٍ أخرى أو بتمريرٍ أو تقليب. */
+function mfGlossOff(){
+  var p=$('mfGloss'); if(p) p.hidden=true;
+  var on=document.querySelectorAll('#mfBody .glon'), i;
+  for(i=0;i<on.length;i++) on[i].classList.remove('glon');
+}
+function mfGlossAt(el){
+  var r=GLW && GLW[el.getAttribute('data-gl')], p=$('mfGloss');
+  if(!r || !p) return false;
+  var was=el.classList.contains('glon');
+  mfGlossOff();
+  if(was) return true;                   /* لمسها ثانيةً: تُطوى */
+  var ws=$('mfBody').querySelectorAll('[data-gl]'), i;
+  for(i=0;i<ws.length;i++) if(GLW[ws[i].getAttribute('data-gl')]===r) ws[i].classList.add('glon');
+  p.innerHTML='<span class="w">﴿'+esc(r[2])+'﴾</span> '+esc(r[3]);
+  p.hidden=false;
+  var b=el.getBoundingClientRect(), pw=p.offsetWidth, ph=p.offsetHeight;
+  p.style.left=Math.min(Math.max(8, b.left+b.width/2-pw/2), innerWidth-pw-8)+'px';
+  p.style.top=(b.top-ph-8>8 ? b.top-ph-8 : b.bottom+8)+'px';
+  return true;
+}
 /* ===== تفسيرُ الآيات: «التفسير الميسر» — مجمع الملك فهد =====
    مقسَّمٌ ثلاثين ملفاً بعدد الأجزاء في data/tafsir، فلا يُجلب إلا جزءُ الوجه المفتوح
    (نحو ٨٤ كيلوبايت وسطيّاً)، ويخزّنه عاملُ الخدمة كما يخزّن بقيّة البيانات فيعمل
@@ -10262,6 +10331,7 @@ $('mfFindList').onclick=function(e){
        نمنع السلوك الأصليّ لئلّا يُمنع النقر معه. */
     /* ولمسةٌ على الوجه لا تُغلقه ولا تُخفي شريطَه السفليّ: الخروجُ بزرّ «إغلاق» وحده */
   });
+  b.addEventListener('scroll', mfGlossOff, {passive:true});   /* بطاقةُ المعنى لا تبقى معلّقةً والكلمةُ تحتها تتحرّك */
   var wq=0;
   b.addEventListener('wheel', function(e){
     if(Math.abs(e.deltaX)<=Math.abs(e.deltaY)) return;   /* رأسيٌّ: يُترك لتمرير الوجه */
@@ -10274,7 +10344,12 @@ $('mfFindList').onclick=function(e){
   }, {passive:false});
   /* النقرُ هو بابُ الالتقاط: يصل في كلّ موضعٍ من الوجه، ولا يُولَّد من سحب */
   b.addEventListener('click', function(e){
-    if(!MF_PICK || MF_PICK.busy) return;
+    if(!MF_PICK){
+      var g=(!dragged && e.target.closest) ? e.target.closest('[data-gl]') : null;
+      if(!g || !mfGlossAt(g)) mfGlossOff();
+      return;
+    }
+    if(MF_PICK.busy) return;
     if(dragged) return;                        /* نقرةٌ خلّفها سحبُ الفأرة: ليست اختياراً */
     mfPickAt(null, e.clientX, e.clientY);
   });
