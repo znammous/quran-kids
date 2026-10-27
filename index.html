@@ -9791,7 +9791,8 @@ function mfPanelOpen(){ return ['mfIdx','mfFind','mfMean'].some(function(k){ ret
 var GHARIB=null, GHARIB_P=null;
 function gharibLoad(){
   if(GHARIB) return Promise.resolve(GHARIB);
-  if(!GHARIB_P) GHARIB_P=fetch('data/gharib.json').then(function(r){
+  /* عاملُ الخدمة يقدّم ما خزّنه أوّلاً: إن تغيّر الملفُّ رُفع رقمُه، وإلّا بقي القديمُ عند من فتحه */
+  if(!GHARIB_P) GHARIB_P=fetch('data/gharib.json?v=2').then(function(r){
     if(!r.ok) throw new Error(r.status);
     return r.json();
   }).then(function(d){ GHARIB=d; return d; })['catch'](function(e){ GHARIB_P=null; throw e; });
