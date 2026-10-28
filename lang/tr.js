@@ -1906,5 +1906,5 @@ NUR_I18N.add('tr', {
   "خمسة": "beş",
   "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "<b>{a}</b> artı <b>{b}</b> artı <b>{c}</b> kaç eder?",
   "📖 معاني الكلمات في المصحف<br><small style=\"font-weight:700;color:var(--mute)\">خطٌّ منقّطٌ تحت كلّ كلمةٍ لها شرح، ومن لمسها رأى معناها</small>": "📖 Mushaf'ta kelime anlamları<br><small style=\"font-weight:700;color:var(--mute)\">Açıklaması olan her kelimenin altında noktalı bir çizgi; anlamını görmek için ona dokun</small>",
-  "📖 معاني الكلمات في المصحف": "📖 Mushaf'ta kelime anlamları"
+  "📖 معاني الكلمات في المصحف<br><small>خطٌّ منقّطٌ تحت الكلمات، المسها لترى معناها — شغّله أو أطفئه من هنا</small>": "📖 Mushaf'ta kelime anlamları<br><small>Kelimelerin altında noktalı çizgi; anlamını görmek için dokun — buradan aç veya kapat</small>"
 });

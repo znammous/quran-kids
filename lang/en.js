@@ -1906,5 +1906,5 @@ NUR_I18N.add('en', {
   "خمسة": "five",
   "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "What is <b>{a}</b> plus <b>{b}</b> plus <b>{c}</b>?",
   "📖 معاني الكلمات في المصحف<br><small style=\"font-weight:700;color:var(--mute)\">خطٌّ منقّطٌ تحت كلّ كلمةٍ لها شرح، ومن لمسها رأى معناها</small>": "📖 Word meanings in the Mushaf<br><small style=\"font-weight:700;color:var(--mute)\">A dotted line under every word that has an explanation; tap it to see its meaning</small>",
-  "📖 معاني الكلمات في المصحف": "📖 Word meanings in the Mushaf"
+  "📖 معاني الكلمات في المصحف<br><small>خطٌّ منقّطٌ تحت الكلمات، المسها لترى معناها — شغّله أو أطفئه من هنا</small>": "📖 Word meanings in the Mushaf<br><small>A dotted line under the words; tap one to see its meaning — turn it on or off here</small>"
 });

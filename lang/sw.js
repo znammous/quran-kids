@@ -1906,5 +1906,5 @@ NUR_I18N.add('sw', {
   "خمسة": "tano",
   "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "<b>{a}</b> jumlisha <b>{b}</b> jumlisha <b>{c}</b> ni ngapi?",
   "📖 معاني الكلمات في المصحف<br><small style=\"font-weight:700;color:var(--mute)\">خطٌّ منقّطٌ تحت كلّ كلمةٍ لها شرح، ومن لمسها رأى معناها</small>": "📖 Maana ya maneno katika Msahafu<br><small style=\"font-weight:700;color:var(--mute)\">Mstari wa vitone chini ya kila neno lenye maelezo; liguse uone maana yake</small>",
-  "📖 معاني الكلمات في المصحف": "📖 Maana ya maneno katika Msahafu"
+  "📖 معاني الكلمات في المصحف<br><small>خطٌّ منقّطٌ تحت الكلمات، المسها لترى معناها — شغّله أو أطفئه من هنا</small>": "📖 Maana ya maneno katika Msahafu<br><small>Mstari wa vitone chini ya maneno; gusa neno uone maana yake — washa au zima hapa</small>"
 });

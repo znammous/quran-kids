@@ -1906,5 +1906,5 @@ NUR_I18N.add('ms', {
   "خمسة": "lima",
   "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Berapakah <b>{a}</b> tambah <b>{b}</b> tambah <b>{c}</b>?",
   "📖 معاني الكلمات في المصحف<br><small style=\"font-weight:700;color:var(--mute)\">خطٌّ منقّطٌ تحت كلّ كلمةٍ لها شرح، ومن لمسها رأى معناها</small>": "📖 Makna perkataan dalam Mushaf<br><small style=\"font-weight:700;color:var(--mute)\">Garis bertitik di bawah setiap perkataan yang ada penjelasan; sentuh untuk melihat maknanya</small>",
-  "📖 معاني الكلمات في المصحف": "📖 Makna perkataan dalam Mushaf"
+  "📖 معاني الكلمات في المصحف<br><small>خطٌّ منقّطٌ تحت الكلمات، المسها لترى معناها — شغّله أو أطفئه من هنا</small>": "📖 Makna perkataan dalam Mushaf<br><small>Garis bertitik di bawah perkataan; sentuh untuk melihat maknanya — hidupkan atau matikan di sini</small>"
 });
