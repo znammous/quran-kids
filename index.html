@@ -724,6 +724,9 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 /* لوحةُ المعاني: الكلمةُ بخطّ المصحف ومعناها بعدها على سطرها، فتقلّ الحاجةُ إلى التمرير */
 .mfmonly{font-weight:900;font-size:13.5px;color:var(--gold);text-align:center;padding:6px 4px 2px}
 #mfMean .mfplist{padding-top:8px;cursor:pointer}
+.mfglsw{justify-content:space-between;font-weight:800;font-size:15px;color:var(--ttl);cursor:pointer}
+.mfglsw[hidden]{display:none}
+.mfglsw input{width:24px;height:24px;margin:0;accent-color:var(--g2)}
 .mfmsura{margin:14px 0 2px;padding:6px 10px;border-radius:10px;background:var(--psel);
   text-align:center;font-weight:900;font-size:15px;color:var(--ttl)}
 .mfmayah{display:inline-block;margin:12px 0 2px;padding:2px 12px;border-radius:999px;
@@ -751,6 +754,7 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 /* كلمةٌ لها معنى في «الغريب»: خطٌّ منقّطٌ تحتها، ومن لمسها رأى معناها (mfGlossAt) */
 .mw.gl{text-decoration:underline dotted #c9a24a;text-decoration-thickness:2px;text-underline-offset:.3em;
   text-decoration-skip-ink:none;cursor:pointer}
+.mw.gl2{text-decoration-color:#8f6a1f}
 .mw.glon{background:rgba(201,162,74,.24);border-radius:4px}
 .mfsheet.picking .mw.gl{text-decoration:none}
 .mfgloss{position:fixed;z-index:7;max-width:min(340px,calc(100vw - 16px));padding:8px 12px;border-radius:12px;
@@ -2688,6 +2692,8 @@ body.hastabs #btnRevQuit{display:none}
     <div class="mfplist" id="mfFindList"></div>
   </div>
   <div class="mfpanel" id="mfMean" hidden>
+    <!-- مفتاحُ معاني الكلمات في الوجه: هو إعدادُها نفسُه، يُبدَّل هنا دون خروجٍ إلى الإعدادات -->
+    <label class="mfphead mfglsw" id="mfGlossRow"><span>📖 معاني الكلمات في المصحف</span><input type="checkbox" id="mfGlossSw"></label>
     <div class="mfplist" id="mfMeanList"></div>
   </div>
   <nav class="mfdock" id="mfDock">
@@ -4799,7 +4805,7 @@ function segPreview(pieces, title, btn, go){
 function mushafPageHTML(P, hlGi, glyphs){
   mushafInit();
   var base=(P-1)*15, html='', l, u=0, GC=glyphs?mushafCodes(P):null, M=MF_MARK, PM=simOn()?simPage(P):null,
-      GL=gharibOn()?gharibWords():null;
+      GL=gharibOn()?gharibWords():null, glr=null, glp=0;
   for(l=0;l<15;l++){
     var i=base+l;
     if(ML[i]==null){
@@ -4833,7 +4839,10 @@ function mushafPageHTML(P, hlGi, glyphs){
       /* الكلمةُ وعلاماتُها وحدةٌ واحدة، والخطّ يجعلها محارفَ متتالية —
          فتُرسم معاً (انظر mushafCodes) وتُعدّ واحدة */
       var gl=GL && GL[gi+':'+wi] ? gi+':'+wi : '';
-      out+='<span class="mw'+(on?' hl':'')+mfMarkCls(M,PM,inr,gi,wi)+(gl?' gl':'')+'" data-gi="'+gi+'"'+
+      /* شرحان متجاوران يتّصل خطّاهما فيُريان خطّاً واحداً: يتعاقبان بدرجتين،
+         وكلماتُ العبارة الواحدة على درجةٍ واحدة */
+      if(gl && GL[gl]!==glr){ glr=GL[gl]; glp^=1; }
+      out+='<span class="mw'+(on?' hl':'')+mfMarkCls(M,PM,inr,gi,wi)+(gl?(glp?' gl':' gl gl2'):'')+'" data-gi="'+gi+'"'+
         (gl?' data-gl="'+gl+'"':'')+'>'+(GC ? GC[u] : esc(ws[wi]))+'</span>';
       u++; wi++;
     }
@@ -10085,6 +10094,9 @@ $('mfDockFind').onclick=function(){
 $('mfDockMean').onclick=function(){
   if(!$('mfMean').hidden){ mfPanel(null); return; }
   mfPanel('mfMean'); mfMeanRender();
+  /* لغةٌ لها ترجمةُ معانٍ لا تُظلَّل لها كلماتٌ عربيّة، فلا مفتاحَ لها */
+  $('mfGlossRow').hidden=!!trLang();
+  $('mfGlossSw').checked=(SET.gloss!==false);
 };
 /* الاستماع: يتلو آياتِ المقطع إن كان معلَّماً، وإلّا آياتِ الوجه كلَّه.
    والضغطةُ الثانية تُمسكه وتفتح صندوقَه، والثالثةُ تتابع — وزرٌّ واحدٌ لا زرّان */
@@ -10159,7 +10171,16 @@ $('mfDockSim').onclick=function(){
   try{ navToast(simOn() ? '🎨 تظليلُ المتشابهات: ظاهر' : '🎨 تظليلُ المتشابهات: مخفيّ'); }catch(e){}
 };
 /* لمسةٌ على اللوحة تطويها فيعود إلى الوجه — والتمريرُ لا يُعدّ لمسة */
-$('mfMean').onclick=function(){ mfPanel(null); };
+$('mfMean').onclick=function(e){
+  if(e.target.closest && e.target.closest('#mfGlossRow')) return;   /* مفتاحُ المعاني لا يطويها */
+  mfPanel(null);
+};
+/* مفتاحُ معاني الكلمات (SET.gloss) في رأس اللوحة، ويُعاد رسمُ الوجه تحتها بحاله */
+$('mfGlossSw').onchange=function(){
+  SET.gloss=this.checked; saveDB();
+  if(MF_PICK) mfPickDraw();
+  else mushafOpenPage(MF_PAGE, MF_HL, '');
+};
 /* والإغلاقُ والمعاني مفتوحةٌ يطويها وحدَها: من قصد الخروجَ منها لا يُخرَج من المصحف */
 $('mfDockClose').onclick=function(){
   if(!$('mfMean').hidden){ mfPanel(null); return; }

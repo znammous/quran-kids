@@ -1905,5 +1905,6 @@ NUR_I18N.add('uz', {
   "أربعة": "toʻrt",
   "خمسة": "besh",
   "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "<b>{a}</b> qoʻshuv <b>{b}</b> qoʻshuv <b>{c}</b> necha boʻladi?",
-  "📖 معاني الكلمات في المصحف<br><small style=\"font-weight:700;color:var(--mute)\">خطٌّ منقّطٌ تحت كلّ كلمةٍ لها شرح، ومن لمسها رأى معناها</small>": "📖 Mushafda so'zlar ma'nosi<br><small style=\"font-weight:700;color:var(--mute)\">Izohi bor har bir so'z ostida nuqtali chiziq; ma'nosini ko'rish uchun unga teging</small>"
+  "📖 معاني الكلمات في المصحف<br><small style=\"font-weight:700;color:var(--mute)\">خطٌّ منقّطٌ تحت كلّ كلمةٍ لها شرح، ومن لمسها رأى معناها</small>": "📖 Mushafda so'zlar ma'nosi<br><small style=\"font-weight:700;color:var(--mute)\">Izohi bor har bir so'z ostida nuqtali chiziq; ma'nosini ko'rish uchun unga teging</small>",
+  "📖 معاني الكلمات في المصحف": "📖 Mushafda so'zlar ma'nosi"
 });

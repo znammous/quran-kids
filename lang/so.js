@@ -1905,5 +1905,6 @@ NUR_I18N.add('so', {
   "أربعة": "afar",
   "خمسة": "shan",
   "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Imisa ayay isku noqonayaan <b>{a}</b> iyo <b>{b}</b> iyo <b>{c}</b>?",
-  "📖 معاني الكلمات في المصحف<br><small style=\"font-weight:700;color:var(--mute)\">خطٌّ منقّطٌ تحت كلّ كلمةٍ لها شرح، ومن لمسها رأى معناها</small>": "📖 Macnaha erayada Kitaabka<br><small style=\"font-weight:700;color:var(--mute)\">Xariiq dhibco ah ayaa hoos yaal eray kasta oo sharax leh; taabo si aad u aragto macnihiisa</small>"
+  "📖 معاني الكلمات في المصحف<br><small style=\"font-weight:700;color:var(--mute)\">خطٌّ منقّطٌ تحت كلّ كلمةٍ لها شرح، ومن لمسها رأى معناها</small>": "📖 Macnaha erayada Kitaabka<br><small style=\"font-weight:700;color:var(--mute)\">Xariiq dhibco ah ayaa hoos yaal eray kasta oo sharax leh; taabo si aad u aragto macnihiisa</small>",
+  "📖 معاني الكلمات في المصحف": "📖 Macnaha erayada Kitaabka"
 });
