@@ -10561,12 +10561,24 @@ function shortGroups(s,from,to,min){
   if(L>1 && out[L-1][2]<min){ out[L-2][1]=out[L-1][1]; out[L-2][2]+=out[L-1][2]; out.pop(); }
   return out;
 }
-/* الآياتُ التي تُعرض حول آيةٍ قصيرةٍ يُسأل عن فراغها، أو null إن لم يكن لها جار */
+/* آياتٌ حول [lo,hi) تبلغ min كلمةً: ما قبلها أوّلاً — وقد حُفظ — ثمّ ما بعدها.
+   للمقطع الذي لا جارَ فيه للآية القصيرة (يومٌ من خطةٍ ينتهي بها، أو قطعةُ مراجعة)،
+   فتُستعار جارتُها من السورة. وأقصرُ سورةٍ عشرُ كلمات، فلا يُحتاج إلى قراءةٍ أبداً */
+function ayahSpan(s,lo,hi,min){
+  var n=0, i;
+  for(i=lo;i<hi;i++) n+=ayahWords(s,i);
+  while(n<min && (lo>0 || hi<s.ayat.length)){
+    if(lo>0){ lo--; n+=ayahWords(s,lo); }
+    else { n+=ayahWords(s,hi); hi++; }
+  }
+  return [lo,hi];
+}
+/* الآياتُ التي تُعرض حول آيةٍ قصيرةٍ يُسأل عن فراغها: جارتُها في المقطع، وإلّا في السورة */
 function missCtx(s,a,from,to){
   var g=shortGroups(s,from,to,MISS_MIN), k;
-  for(k=0;k<g.length;k++) if(a>=g[k][0] && a<g[k][1])
-    return (g[k][1]-g[k][0]>1 && g[k][2]>=MISS_MIN) ? [g[k][0],g[k][1]] : null;
-  return null;
+  for(k=0;k<g.length;k++) if(a>=g[k][0] && a<g[k][1] && g[k][1]-g[k][0]>1 && g[k][2]>=MISS_MIN)
+    return [g[k][0],g[k][1]];
+  return ayahSpan(s,a,a+1,MISS_MIN);
 }
 /* أسئلةُ الترتيب للمقطع: مقاطعُ كلِّ آيةٍ كما هي، وما قصر منها (آيةٌ قصيرةٌ كلُّها)
    يُضمّ إلى المقطع الذي بعده ولو كان من آيةٍ أخرى، فيُرتَّب طرفا الآيتين معاً.
@@ -10586,7 +10598,11 @@ function orderRounds(s,from,to){
       y=out[out.length-1]; y.a2=x.a2; y.t=x.t; y.n+=x.n;
     } else out.push(x);
   }
-  if(out.length===1 && out[0].n<ORDER_MIN) return null;   /* المقطعُ كلُّه لا يُرتَّب */
+  if(out.length===1 && out[0].n<ORDER_MIN){      /* المقطعُ كلُّه لا يُرتَّب: تُستعار جارتُه من السورة */
+    var sp=ayahSpan(s,from,to,ORDER_MIN), tot=0;
+    for(i=sp[0];i<sp[1];i++) tot+=ayahWords(s,i);
+    out=[{a:sp[0],a2:sp[1],f:0,t:ayahWords(s,sp[1]-1),n:tot}];
+  }
   return out.map(function(x){
     var off=0, j, n=0, m=0;
     for(j=x.a;j<x.a2-1;j++) off+=ayahWords(s,j);
@@ -10623,7 +10639,6 @@ function qFit(r){
   /* قصيرةٌ لها جارٌ في المقطع: تُسأل معه */
   if(!r.ctx) r.ctx=missCtx(sx,r.a, r.segFrom!=null?r.segFrom:S.seg[0], r.segTo!=null?r.segTo:S.seg[1]);
   if(r.ctx){ r.t='missing'; r.wi2=null; if(r.wi>=n) r.wi=n-1; return r; }
-  if(n<ORDER_MIN){ r.t='read'; return r; }      /* ولا يُرتَّب فيها شيء: تُقرأ */
   ch=wordChunks(sx,r.a,WORDS_MIN);
   r.t='words'; r.parts=1; r.part=0;
   r.from=(ch&&ch.length)?ch[0][0]:0;
@@ -10703,16 +10718,14 @@ function buildRounds(s,seg,stage){
     /* الآياتُ كلُّها بترتيبها، والطويلةُ مقاطعَ من أوّلها إلى آخرها. والآيةُ التي
        لا يُرتَّب فيها شيء — «مَلِكِ النَّاسِ» — لا تُسقط ولا تُعرض قراءةً،
        بل تُرتَّب مع جارتها: «مَلِكِ النَّاسِ ۝ إِلَٰهِ النَّاسِ» */
-    var orr=orderRounds(s,from,to);
-    if(orr) r=r.concat(orr);
-    else for(i=from;i<to;i++) r.push({t:'read',a:i});
+    r=r.concat(orderRounds(s,from,to));
   } else if(stage===2){
     for(i=from;i<to;i++){
       var ws=wordsOf(ayahText(s,i));
       if(ws.length<MISS_MIN){
         /* آيةٌ قصيرةٌ يبتلعها الفراغ: تُعرض معها جارتُها فتدلّ عليها، وإلّا قُرئت في مكانها */
         var cx=missCtx(s,i,from,to);
-        r.push(cx ? {t:'missing',a:i,wi:Math.floor(Math.random()*ws.length),ctx:cx} : {t:'read',a:i});
+        r.push({t:'missing',a:i,wi:Math.floor(Math.random()*ws.length),ctx:cx});
         continue;
       }
       var blanks=Math.min(3, Math.max(1, Math.ceil(ws.length/8)));
@@ -10750,11 +10763,7 @@ function buildRounds(s,seg,stage){
     if(to-from>=2) r.push({t:'ayat',from:from,to:to});
     else {
       /* مقطع من آية واحدة: نرتّب كلماتها كاملة بدل ترتيب الآيات */
-      if(ayahWords(s,from)<ORDER_MIN) r.push({t:'read',a:from});
-      else{
-        var ch2=orderChunks(s,from);
-        for(k=0;k<ch2.length;k++) r.push({t:'words',a:from,from:ch2[k][0],to:ch2[k][1],parts:ch2.length,part:k});
-      }
+      r=r.concat(orderRounds(s,from,to));        /* والقصيرةُ تُرتَّب مع جارتها من السورة */
     }
   } else if(stage===4){
     /* الكلمتان الناقصتان: مرحلةٌ قبل التسميع، تشدّ الحفظَ قبل أن يُسمَّع.
@@ -10768,10 +10777,8 @@ function buildRounds(s,seg,stage){
       }
       else if(w2.length>=MISS_MIN)
         r.push({t:'missing',a:i,wi:simWi(s,from,to,i,w2.length)});
-      else {                                    /* وما قصر يُسأل مع جارته، فإن لم تكن قُرئ في مكانه */
-        var cx4=missCtx(s,i,from,to);
-        r.push(cx4 ? {t:'missing',a:i,wi:Math.floor(Math.random()*w2.length),ctx:cx4} : {t:'read',a:i});
-      }
+      else                                      /* وما قصر يُسأل مع جارته */
+        r.push({t:'missing',a:i,wi:Math.floor(Math.random()*w2.length),ctx:missCtx(s,i,from,to)});
     }
   } else {
     for(i=from;i<to;i++){
@@ -15029,9 +15036,13 @@ function revQuestion(it,P,k){
       return {t:'words',a:aw,from:pick[0],to:pick[1],parts:1,part:0,surah:it.s,
               segFrom:it.from,segTo:it.to,page:P};
     }
-    /* قطعةٌ كلُّ آياتها قِصار: تُقرأ ولا تُرتَّب */
-    if((it.to-it.from)<3)
-      return {t:'read',a:it.a,surah:it.s,segFrom:it.from,segTo:it.to,page:P};
+    /* قطعةٌ كلُّ آياتها قِصار: تُرتَّب آيتُه مع جارتها، ولا تُعرض قراءةً في المراجعة */
+    if((it.to-it.from)<3){
+      var orr=orderRounds(it.s,it.from,it.to), ro=orr[0], q;
+      for(q=0;q<orr.length;q++) if(orr[q].a<=it.a && (orr[q].a2||orr[q].a+1)>it.a) ro=orr[q];
+      ro.surah=it.s; ro.segFrom=it.from; ro.segTo=it.to; ro.page=P;
+      return ro;
+    }
   }
   /* ترتيب آيات: نافذة من ثلاث إلى أربع آيات متتالية داخل القطعة */
   var span=Math.min(4,it.to-it.from);
