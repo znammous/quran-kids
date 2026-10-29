@@ -11417,7 +11417,11 @@ function renderBadges(){
 
 function roundRead(r){
   var s=S.surah, txt=ayahText(s,r.a);
-  var need=SET.reps, got=0;
+  /* بعد مرحلة القراءة لا تأتي القراءةُ إلّا لآيةٍ قصيرةٍ لا يُسأل فيها، تُذكر في
+     مكانها فلا ينقطع التسلسل — فتكفي مرّةٌ بلا تسجيل، لا تُعاد شاشةُ «اقرأ وردّد»
+     بتكرارها بين الأسئلة فيظنّها الطفلُ رجوعاً إلى المرحلة الأولى */
+  var brief=!!(S && S.stage>0);
+  var need=brief?1:SET.reps, got=0;
   /* البسملة: تُعرض فوق الآية الأولى، ويُحجز مكانها في بقيّة آيات المرحلة فلا يقفز ما تحتها */
   var bismHere=(s.n!==1 && s.n!==9);
   var bismInStage=false;
@@ -11427,7 +11431,7 @@ function roundRead(r){
     ? '<div class="basmala"'+(r.a===0?'':' style="visibility:hidden"')+'>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>'
     : '';
   recReset();
-  var useRec = useRecNow();
+  var useRec = !brief && useRecNow();
   $('playArea').innerHTML = bism+
     '<div class="ayahbox"><div class="ayah" style="font-size:'+SET.font+'px">'+esc(txt)+
     '<span class="anum">'+arNum(r.a+1)+'</span></div></div>'+
@@ -11475,7 +11479,7 @@ function roundRead(r){
   $('btnMushaf').onclick=function(){ mushafOpen(s, r.a); };
   $('btnListen').onclick=lessonListen;
   try{ audSync(); }catch(e){}
-  function dots(){ var d=''; for(var i=0;i<need;i++) d+=(i<got?'●':'○'); $('repDots').textContent=d; }
+  function dots(){ var d=''; if(!brief) for(var i=0;i<need;i++) d+=(i<got?'●':'○'); $('repDots').textContent=d; }
   dots();
   function countOne(){
     got++; dots(); beep([700+got*90],0.06);
