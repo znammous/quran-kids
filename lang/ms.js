@@ -350,6 +350,7 @@ NUR_I18N.add('ms', {
   "الآية {0} من {s1}": "{s1}, ayat {0}",
   "الآية {0} من {s1} — اختر الكلمة الصحيحة": "{s1}, ayat {0} — pilih perkataan yang betul",
   "الآية {0} من {s1} — اضغط الكلمات بالترتيب الصحيح": "{s1}, ayat {0} — tekan perkataan mengikut urutan yang betul",
+  "الآيات {0}-{1} من {s1} — اضغط الكلمات بالترتيب الصحيح": "{s1}, ayat {0}-{1} — tekan perkataan mengikut urutan yang betul",
   "الآية {a} من {s}": "{s}, ayat {a}",
   "الأجزاء": "Juzuk",
   "الأجزاء {0}–{1}": "Juzuk {0}–{1}",

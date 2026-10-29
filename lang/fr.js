@@ -350,6 +350,7 @@ NUR_I18N.add('fr', {
   "الآية {0} من {s1}": "{s1}, verset {0}",
   "الآية {0} من {s1} — اختر الكلمة الصحيحة": "{s1}, verset {0} — choisis le bon mot",
   "الآية {0} من {s1} — اضغط الكلمات بالترتيب الصحيح": "{s1}, verset {0} — touche les mots dans le bon ordre",
+  "الآيات {0}-{1} من {s1} — اضغط الكلمات بالترتيب الصحيح": "{s1}, versets {0}-{1} — touche les mots dans le bon ordre",
   "الآية {a} من {s}": "{s}, verset {a}",
   "الأجزاء": "Juz",
   "الأجزاء {0}–{1}": "Juz {0}–{1}",

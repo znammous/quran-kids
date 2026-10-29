@@ -350,6 +350,7 @@ NUR_I18N.add('sw', {
   "الآية {0} من {s1}": "{s1}, aya {0}",
   "الآية {0} من {s1} — اختر الكلمة الصحيحة": "{s1}, aya {0} — chagua neno sahihi",
   "الآية {0} من {s1} — اضغط الكلمات بالترتيب الصحيح": "{s1}, aya {0} — bonyeza maneno kwa mpangilio sahihi",
+  "الآيات {0}-{1} من {s1} — اضغط الكلمات بالترتيب الصحيح": "{s1}, aya {0}-{1} — bonyeza maneno kwa mpangilio sahihi",
   "الآية {a} من {s}": "{s}, aya {a}",
   "الأجزاء": "Juzuu",
   "الأجزاء {0}–{1}": "Juzuu {0}–{1}",

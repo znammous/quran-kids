@@ -350,6 +350,7 @@ NUR_I18N.add('ha', {
   "الآية {0} من {s1}": "{s1}, aya ta {0}",
   "الآية {0} من {s1} — اختر الكلمة الصحيحة": "{s1}, aya ta {0} — zaɓi kalmar da ta dace",
   "الآية {0} من {s1} — اضغط الكلمات بالترتيب الصحيح": "{s1}, aya ta {0} — danna kalmomin a jerin da ya dace",
+  "الآيات {0}-{1} من {s1} — اضغط الكلمات بالترتيب الصحيح": "{s1}, ayoyi {0}-{1} — danna kalmomin a jerin da ya dace",
   "الآية {a} من {s}": "{s}, aya ta {a}",
   "الأجزاء": "Izu",
   "الأجزاء {0}–{1}": "Izu {0}–{1}",

@@ -350,6 +350,7 @@ NUR_I18N.add('so', {
   "الآية {0} من {s1}": "{s1}, aayadda {0}",
   "الآية {0} من {s1} — اختر الكلمة الصحيحة": "{s1}, aayadda {0} — dooro erayga saxda ah",
   "الآية {0} من {s1} — اضغط الكلمات بالترتيب الصحيح": "{s1}, aayadda {0} — riix erayada siday u kala horreeyaan",
+  "الآيات {0}-{1} من {s1} — اضغط الكلمات بالترتيب الصحيح": "{s1}, aayadaha {0}-{1} — riix erayada siday u kala horreeyaan",
   "الآية {a} من {s}": "{s}, aayadda {a}",
   "الأجزاء": "Juz’yada",
   "الأجزاء {0}–{1}": "Juz’ {0}–{1}",
