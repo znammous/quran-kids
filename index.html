@@ -1288,6 +1288,14 @@ body.light .revbox .reprow .repv.wait{color:#a06a12}
   cursor:pointer;white-space:nowrap;transition:.12s;touch-action:manipulation}
 .onbtab:active{transform:scale(.96)}
 .onbtab.sel{background:var(--psel);border-color:var(--gold);color:var(--ttl)}
+/* وراء الحافّة تبويبٌ آخر: يخفت الطرفُ ولا يُقطع قطعاً حادّاً يبدو خللاً، فيُفهم أنّ الشريط يُسحب
+   (fl/fr: بقيّةٌ في اليسار/اليمين — يضعهما barFade) */
+.onbtabs.fl{-webkit-mask-image:linear-gradient(to right,rgba(0,0,0,.1),#000 38px);
+  mask-image:linear-gradient(to right,rgba(0,0,0,.1),#000 38px)}
+.onbtabs.fr{-webkit-mask-image:linear-gradient(to left,rgba(0,0,0,.1),#000 38px);
+  mask-image:linear-gradient(to left,rgba(0,0,0,.1),#000 38px)}
+.onbtabs.fl.fr{-webkit-mask-image:linear-gradient(to right,rgba(0,0,0,.1),#000 38px,#000 calc(100% - 38px),rgba(0,0,0,.1));
+  mask-image:linear-gradient(to right,rgba(0,0,0,.1),#000 38px,#000 calc(100% - 38px),rgba(0,0,0,.1))}
 /* التبويبُ المسحوبُ إليه يدخل من جهته */
 .tabin-next{animation:tabInNext .22s ease-out}
 .tabin-prev{animation:tabInPrev .22s ease-out}
@@ -4317,6 +4325,7 @@ function famTabsRender(el){
   };
   /* التبويبُ المختارُ يُجلب إلى المرأى، فقد يطول الشريطُ بعدد الإخوة */
   try{ var s=el.querySelector('.onbtab.sel'); if(s && s.scrollIntoView) s.scrollIntoView({block:'nearest',inline:'center'}); }catch(e){}
+  try{ barFade(el); }catch(e){}
 }
 /* أخٌ أو أختٌ جديدة: يُضاف ثمّ يُسأل عن اسمه أوّلَ مرّة */
 function famAdd(t){
@@ -8694,6 +8703,7 @@ function show(id){
   var s=document.querySelectorAll('.screen');
   for(var i=0;i<s.length;i++) s[i].classList.remove('active');
   $(id).classList.add('active');
+  try{ barsFit($(id)); }catch(e){}       /* أشرطةُ تبويباته: المختارُ كاملٌ في المرأى */
   /* غادر الإعدادات: يُعتمد ما أشّره من حفظٍ سابق وتُعاد الجدولة، ولو خرج من الشريط */
   if(from==='scr-settings' && id!=='scr-settings'){ try{ settingsCommit(); }catch(e){} }
   if(id==='scr-start'){ try{ renderHome(); }catch(e){} }
@@ -16084,6 +16094,47 @@ function fillSettings(){
   $('setJuzFrom').innerHTML=a; $('setJuzTo').innerHTML=b;
   renderSetTabs();
 }
+/* شريطُ التبويبات الأفقيّ: المختارُ يُجلب إلى وسطه فيظهر كاملاً لا طرفُه،
+   ويخفت الطرفُ الذي وراءه بقيّة. والتمريرُ أفقيٌّ في الشريط وحدَه لا تتحرّك له الصفحة */
+function barFade(bar){
+  var max=bar.scrollWidth-bar.clientWidth, x=Math.abs(bar.scrollLeft),
+      rtl=getComputedStyle(bar).direction==='rtl',
+      st=max>2 && x>2, en=max>2 && x<max-2;            /* بقيّةٌ قبل المرئيّ / بعده */
+  bar.classList.toggle('fl', rtl?en:st);
+  bar.classList.toggle('fr', rtl?st:en);
+}
+var BAR_RO=null;
+function barShow(bar, smooth){
+  if(!bar || bar.hidden || !bar.clientWidth) return;
+  var s=bar.querySelector('.onbtab.sel');
+  /* وما تأخّر من خطٍّ أو رمزٍ يغيّر عرضَ التبويب بعد توسيطه: يُراقَب فيُعاد */
+  if(s && !s._barRo && window.ResizeObserver){
+    BAR_RO=BAR_RO || new ResizeObserver(function(es){
+      for(var k=0;k<es.length;k++){
+        var t=es[k].target, b0=t.parentNode;
+        if(b0 && t.classList.contains('sel')) barShow(b0);
+      }
+    });
+    s._barRo=1; BAR_RO.observe(s);
+  }
+  if(s && bar.scrollWidth>bar.clientWidth+2){
+    var a=s.getBoundingClientRect(), b=bar.getBoundingClientRect(),
+        d=(a.left+a.width/2)-(b.left+b.width/2);
+    if(Math.abs(d)>2){
+      try{ bar.scrollTo({left:bar.scrollLeft+d, behavior:smooth?'smooth':'auto'}); }
+      catch(e){ bar.scrollLeft+=d; }
+    }
+  }
+  barFade(bar);
+}
+function barsFit(root){
+  var l=(root||document).querySelectorAll('.onbtabs'), i;
+  for(i=0;i<l.length;i++) barShow(l[i]);
+}
+document.addEventListener('scroll', function(e){
+  var t=e.target; if(t && t.classList && t.classList.contains('onbtabs')) barFade(t);
+}, true);
+window.addEventListener('resize', function(){ try{ barsFit(); }catch(e){} });
 /* ===== الإعدادات صفحاتٌ لا لفيفةٌ طويلة ===== */
 var SET_TABS=[['hifz','📖 الحفظ'],['mushaf','✒️ المصحف'],['play','🔔 اللعب'],['dev','📱 الجهاز']];
 var setTab='hifz';
@@ -16097,6 +16148,7 @@ function renderSetTabs(){
     var ps0=document.querySelectorAll('#scr-settings .setpage');
     for(q=0;q<ps0.length;q++) ps0[q].hidden=(ps0[q].getAttribute('data-setp')!==setTab);
     try{ updDot(); }catch(e){}
+    barShow(el, true);
     if(setTab==='mushaf') audStoreNote();
     return;
   }
@@ -16111,6 +16163,7 @@ function renderSetTabs(){
   var ps=document.querySelectorAll('#scr-settings .setpage');
   for(i=0;i<ps.length;i++) ps[i].hidden=(ps[i].getAttribute('data-setp')!==setTab);
   try{ updDot(); }catch(e){}
+  barShow(el);
   if(setTab==='mushaf') audStoreNote();
 }
 function readSettings(){
@@ -17422,6 +17475,7 @@ function onbTabs(){
     onbShow(parseInt(this.getAttribute('data-t'),10));
   };
   try{ bar.querySelector('.onbtab.sel').scrollIntoView({block:'nearest',inline:'center'}); }catch(e){}
+  try{ barFade(bar); }catch(e){}
 }
 /* الخروج من وضع التعديل: كل شيء محفوظ أوّلاً بأوّل، فهذا رجوع وتثبيت */
 function onbEditDone(){
