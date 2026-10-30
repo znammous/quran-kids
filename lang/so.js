@@ -1981,5 +1981,5 @@ NUR_I18N.add('so', {
   "أدائي": "Horumar",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "Halkan waxaa lagu barbardhigaa naftaada oo keliya — cid kale maaha",
   "ثبتت:": "Hadda way adag yihiin:",
-  "في الشريط السفليّ زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Xariijinta hoose waxaa ku yaal badhanka “📊 Horumar”: arag toddobaadkaaga oo la barbardhigay kii hore, iyo aayadaha aad ku siibato — kuna xooji hal taabasho. “Dukaan” hadda waa tab ku jira “Masjid”."
+  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Xariijinta hoose waxaa ku yaal badhanka “📈 Horumar”: arag toddobaadkaaga oo la barbardhigay kii hore, iyo aayadaha aad ku siibato — kuna xooji hal taabasho. “Dukaan” hadda waa tab ku jira “Masjid”."
 });

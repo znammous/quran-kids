@@ -1981,5 +1981,5 @@ NUR_I18N.add('sw', {
   "أدائي": "Maendeleo",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "Hapa unalinganishwa na nafsi yako tu — si na mtu mwingine",
   "ثبتت:": "Sasa imara:",
-  "في الشريط السفليّ زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Kwenye upau wa chini kuna kitufe cha “📊 Maendeleo”: ona wiki yako ikilinganishwa na iliyotangulia, na aya unazokosea — kisha ziimarishe kwa mguso mmoja. Na “Duka” sasa ni kichupo ndani ya “Msikiti”."
+  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Kwenye upau wa chini kuna kitufe cha “📈 Maendeleo”: ona wiki yako ikilinganishwa na iliyotangulia, na aya unazokosea — kisha ziimarishe kwa mguso mmoja. Na “Duka” sasa ni kichupo ndani ya “Msikiti”."
 });

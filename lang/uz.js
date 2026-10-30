@@ -1981,5 +1981,5 @@ NUR_I18N.add('uz', {
   "أدائي": "Natijalar",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "Bu yerda faqat oʻzing bilan solishtirilasan — boshqa hech kim bilan emas",
   "ثبتت:": "Endi mustahkam:",
-  "في الشريط السفليّ زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Pastki panelda «📊 Natijalar» tugmasi bor: haftangni oldingisi bilan solishtirib koʻr, adashadigan oyatlaringni ham — va ularni bir bosishda mustahkamla. «Doʻkon» esa endi «Masjid» ichidagi boʻlim."
+  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Pastki panelda «📈 Natijalar» tugmasi bor: haftangni oldingisi bilan solishtirib koʻr, adashadigan oyatlaringni ham — va ularni bir bosishda mustahkamla. «Doʻkon» esa endi «Masjid» ichidagi boʻlim."
 });

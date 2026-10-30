@@ -1981,5 +1981,5 @@ NUR_I18N.add('en', {
   "أدائي": "Progress",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "Here you’re compared only with yourself — no one else",
   "ثبتت:": "Now firm:",
-  "في الشريط السفليّ زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "In the bottom bar there’s a “📊 Progress” button: see your week compared with the one before, and the ayahs you slip on — and strengthen them with one tap. And “Store” is now a tab in “Mosque”."
+  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "In the bottom bar there’s a “📈 Progress” button: see your week compared with the one before, and the ayahs you slip on — and strengthen them with one tap. And “Store” is now a tab in “Mosque”."
 });

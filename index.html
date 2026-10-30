@@ -2953,7 +2953,7 @@ body.hastabs #btnRevQuit{display:none}
       <button class="btn blue" id="btnGames">🎮 الألعاب</button>
     </div>
     <div class="row">
-      <button class="btn ghost" id="btnPerf">📊 أدائي</button>
+      <button class="btn ghost" id="btnPerf">📈 أدائي</button>
       <button class="btn ghost" id="btnSettings">⚙️ الإعدادات</button>
       <button class="btn ghost" id="btnBoard" hidden>🏠 لوحة البيت</button>
     </div>
@@ -3166,7 +3166,7 @@ body.hastabs #btnRevQuit{display:none}
 
   <!-- أدائي: يُقارَن فيها الطفلُ بنفسه وحدَها — أسبوعُه بالذي قبله، وأيّامُه، وما زلّ فيه من الآيات -->
   <section class="screen" id="scr-perf">
-    <h1>📊 أدائي</h1>
+    <h1>📈 أدائي</h1>
     <p class="sub">تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك</p>
     <div id="perfWrap"></div>
     <!-- مخفيٌّ: الشريطُ السفليّ يُغني عنه، ويبقى ليضغطه زرُّ الرجوع في الجهاز -->
@@ -6254,7 +6254,7 @@ function finishFix(){
       (fixed.length ? tx('ثبتت: <b>{w}</b>',{w:esc(fixed.join(' • '))})
                     : tx('أصب الآيةَ مرّتين متتاليتين تخرج من القائمة — عُد إليها غداً'))+'</p>'+
     (gems ? ('<div style="color:#8a6100;font-weight:800;margin-bottom:12px">'+'+'+arNum(gems)+' 💎'+'</div>') : '')+
-    '<button class="btn green big pulse" id="btnFixPerf">📊 '+tx('أدائي')+'</button>'+
+    '<button class="btn green big pulse" id="btnFixPerf">📈 '+tx('أدائي')+'</button>'+
     '<button class="btn ghost big" id="btnFixHome" style="margin:0">🏠 البداية</button></div>';
   $('btnFixPerf').onclick=function(){ S=null; perfOpen(); };
   $('btnFixHome').onclick=function(){ S=null; renderPlayers(); show('scr-start'); };
@@ -8661,7 +8661,7 @@ var TABS=[
   {id:'scr-games',    ic:'🎪', n:'المغامرة',  also:['scr-story'], go:function(){ advGo(ADV_V); }},
   /* والمتجرُ تبويبٌ في «مسجدي»: يُنفق فيه ما يكسب كما يبني به، فمكانُهما واحد */
   {id:'scr-build',    ic:'🕌', n:'مسجدي',    also:['scr-shop'], go:function(){ $('btnBuild').click(); }},
-  {id:'scr-perf',     ic:'📊', n:'أدائي',    go:function(){ perfOpen(); }},
+  {id:'scr-perf',     ic:'📈', n:'أدائي',    go:function(){ perfOpen(); }},
   {id:'scr-settings', ic:'⚙️', n:'الإعدادات', go:function(){ $('btnSettings').click(); }}
 ];
 /* تختفي أثناء الدرس والشهادة والمعالج، كما تفعل دولينجو داخل الدرس */
@@ -21035,7 +21035,7 @@ function bootNotes(){
    «يوجد تحديث» قبل أن ينزّله (قواميسُه القديمة لا تعرفها). ثمّ تُعرض مرّةً واحدة
    بعد أن تصل الحزمةُ — أو الصفحةُ على الموقع — لمن لم يرَها، ولا تُعرض لمن فتح
    التطبيقَ لأوّل مرّة. */
-var WHATSNEW='في الشريط السفليّ زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».';
+var WHATSNEW='في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».';
 function newsNote(next){
   var seen=load('nur_news','');
   if(!WHATSNEW || seen===WHATSNEW || NEWS_FIRST){

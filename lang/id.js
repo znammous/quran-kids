@@ -1981,5 +1981,5 @@ NUR_I18N.add('id', {
   "أدائي": "Prestasi",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "Di sini kamu hanya dibandingkan dengan dirimu sendiri — bukan orang lain",
   "ثبتت:": "Kini kokoh:",
-  "في الشريط السفليّ زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Di bilah bawah ada tombol “📊 Prestasi”: lihat minggumu dibandingkan dengan minggu sebelumnya, dan ayat-ayat yang sering keliru — lalu kuatkan dengan satu ketukan. Dan “Tokoku” kini menjadi tab di “Masjidku”."
+  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Di bilah bawah ada tombol “📈 Prestasi”: lihat minggumu dibandingkan dengan minggu sebelumnya, dan ayat-ayat yang sering keliru — lalu kuatkan dengan satu ketukan. Dan “Tokoku” kini menjadi tab di “Masjidku”."
 });
