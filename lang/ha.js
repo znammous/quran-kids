@@ -1911,6 +1911,7 @@ NUR_I18N.add('ha', {
   "📚 القصص مفتوحة دائماً<br><small style=\"font-weight:700;color:var(--mute)\">إن أطفأتَه فُتحت القصصُ مكافأةً بعد إنهاء مقرَّر اليوم من الحفظ والمراجعة</small>": "📚 Labarai a buɗe koyaushe<br><small style=\"font-weight:700;color:var(--mute)\">Idan ka kashe shi, labarai za su buɗe a matsayin lada bayan ka gama haddar da maimaitawar yau</small>",
   "ابحث في القصص": "Nemi cikin labarai",
   "امسح البحث": "Share bincike",
+  "اختر قيمةً تظهر قصصُها": "Zaɓi ɗabi’a don ganin labaranta",
   "الكلّ": "Duka",
   "لا قصّةَ توافق بحثك": "Babu labarin da ya dace da bincikenka",
   "الغضب والخصام": "Fushi da faɗa",
@@ -1930,5 +1931,7 @@ NUR_I18N.add('ha', {
   "الطاعة والإخلاص والتوبة": "Biyayya, ikhlasi da tuba",
   "الآداب": "Ladabi",
   "الوقت والإتقان والنظام": "Lokaci, ƙwazo da tsari",
-  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Yanzu labarai suna da akwatin bincike a cikin take da rubutunsu, da maɓallai da suke tara su bisa ɗabi'u: misali zaɓi «Fushi da faɗa» don ganin labaran da suka shafe shi."
+  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Yanzu labarai suna da akwatin bincike a cikin take da rubutunsu, da maɓallai da suke tara su bisa ɗabi'u: misali zaɓi «Fushi da faɗa» don ganin labaran da suka shafe shi.",
+  "شارك القصّة": "Raba labarin",
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "An kwafi mahaɗin labarin — liƙa shi ga wanda kake so"
 });

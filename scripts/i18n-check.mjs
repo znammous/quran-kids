@@ -15,12 +15,13 @@
    ٥) كلُّ لغةٍ غير الأرديّة: ما في قاموس الأرديّة (المرجع) ولم يُترجَم فيها بعد.
    ٦) لغاتُ اليسار: الأسماءُ اللاتينيّة وقوالبُ السور.
    ٧) القصص: كلُّ قصّةٍ مترجمةٌ بمراجعتها وعددِ صفحاتها وآياتِها.
-   ٨) القصص: لكلٍّ قيمُها (k) من ST_KINDS، وفهرسُ البحث (q.json) يطابق نصوصَها.
+   ٨) القصص: لكلٍّ قيمُها (k) من ST_KINDS، وفهرسُ البحث (q.json) وصفحاتُ المشاركة (p/، og/) تطابقها.
 
    الفحصُ ثابتٌ لا يشغّل الصفحة، فالجملُ التي تُركَّب من أجزاءٍ تظهر أجزاءً.
    ولما لا يُرى إلا بالتشغيل: scripts/i18n-harvest.mjs */
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
 import { build as storiesSearch } from './stories-search.mjs';
+import { build as storiesShare, staleImages } from './stories-share.mjs';
 
 const args = new Set(process.argv.slice(2));
 const AR = /[؀-ۿ]/;
@@ -227,6 +228,9 @@ if (existsSync('stories/index.json')) {
   }
   const out = storiesSearch();
   for (const f in out) if (!existsSync('stories/' + f) || readFileSync('stories/' + f, 'utf8') !== out[f]) miss.push(`stories/${f} قديم — npm run stories`);
+  const pg = storiesShare(), old = Object.keys(pg).filter(f => !existsSync('stories/' + f) || readFileSync('stories/' + f, 'utf8') !== pg[f]);
+  if (old.length) miss.push(`صفحاتُ المشاركة قديمة (${old.length}، أوّلُها stories/${old[0]}) — npm run stories`);
+  for (const x of staleImages()) miss.push(`stories/og/${x.id}.jpg غائبةٌ أو أقدمُ من الغلاف — npm run stories`);
   head(`٨) القصص: القيمُ وفهرسُ البحث (${miss.length})`);
   miss.length ? (bad += miss.length, list(miss)) : console.log('   لا شيء ✓');
 }

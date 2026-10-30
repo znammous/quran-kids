@@ -1911,6 +1911,7 @@ NUR_I18N.add('fr', {
   "📚 القصص مفتوحة دائماً<br><small style=\"font-weight:700;color:var(--mute)\">إن أطفأتَه فُتحت القصصُ مكافأةً بعد إنهاء مقرَّر اليوم من الحفظ والمراجعة</small>": "📚 Histoires toujours ouvertes<br><small style=\"font-weight:700;color:var(--mute)\">Si tu le désactives, les histoires s’ouvrent en récompense après avoir terminé la mémorisation et la révision du jour</small>",
   "ابحث في القصص": "Chercher dans les histoires",
   "امسح البحث": "Effacer la recherche",
+  "اختر قيمةً تظهر قصصُها": "Choisis une valeur pour voir ses histoires",
   "الكلّ": "Toutes",
   "لا قصّةَ توافق بحثك": "Aucune histoire ne correspond à ta recherche",
   "الغضب والخصام": "La colère et les disputes",
@@ -1930,5 +1931,7 @@ NUR_I18N.add('fr', {
   "الطاعة والإخلاص والتوبة": "Obéissance, sincérité et repentir",
   "الآداب": "Les bonnes manières",
   "الوقت والإتقان والنظام": "Le temps, le travail soigné et l’ordre",
-  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Les histoires ont maintenant une recherche dans leurs titres et leurs textes, et des boutons qui les regroupent par valeur : choisis « La colère et les disputes », par exemple, pour voir les histoires qui en parlent."
+  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Les histoires ont maintenant une recherche dans leurs titres et leurs textes, et des boutons qui les regroupent par valeur : choisis « La colère et les disputes », par exemple, pour voir les histoires qui en parlent.",
+  "شارك القصّة": "Partager l’histoire",
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Lien de l’histoire copié — colle-le pour qui tu aimes"
 });

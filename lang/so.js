@@ -1911,6 +1911,7 @@ NUR_I18N.add('so', {
   "📚 القصص مفتوحة دائماً<br><small style=\"font-weight:700;color:var(--mute)\">إن أطفأتَه فُتحت القصصُ مكافأةً بعد إنهاء مقرَّر اليوم من الحفظ والمراجعة</small>": "📚 Sheekooyinku had iyo jeer way furan yihiin<br><small style=\"font-weight:700;color:var(--mute)\">Haddii aad damiso, sheekooyinku waxay u furmayaan abaalmarin ahaan marka aad dhammaysato xifdiga iyo dib-u-eegista maanta</small>",
   "ابحث في القصص": "Ka raadi sheekooyinka",
   "امسح البحث": "Tirtir raadinta",
+  "اختر قيمةً تظهر قصصُها": "Dooro qiyam si aad u aragto sheekooyinkiisa",
   "الكلّ": "Dhammaan",
   "لا قصّةَ توافق بحثك": "Ma jirto sheeko u dhiganta raadintaada",
   "الغضب والخصام": "Cadho iyo muran",
@@ -1930,5 +1931,7 @@ NUR_I18N.add('so', {
   "الطاعة والإخلاص والتوبة": "Adeecid, ikhlaas iyo toobad",
   "الآداب": "Edeb",
   "الوقت والإتقان والنظام": "Waqtiga, dadaalka iyo nidaamka",
-  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Sheekooyinka hadda waxaa ku jira sanduuq raadin ah oo cinwaannada iyo qoraalka ah, iyo badhamo u kala saara qiyamka: tusaale ahaan dooro «Cadho iyo muran» si aad u aragto sheekooyinka ka hadla."
+  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Sheekooyinka hadda waxaa ku jira sanduuq raadin ah oo cinwaannada iyo qoraalka ah, iyo badhamo u kala saara qiyamka: tusaale ahaan dooro «Cadho iyo muran» si aad u aragto sheekooyinka ka hadla.",
+  "شارك القصّة": "La wadaag sheekada",
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Xiriirka sheekada waa la koobiyeeyay — u dhig qof aad jeceshahay"
 });

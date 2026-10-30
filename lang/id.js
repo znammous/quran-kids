@@ -1911,6 +1911,7 @@ NUR_I18N.add('id', {
   "📚 القصص مفتوحة دائماً<br><small style=\"font-weight:700;color:var(--mute)\">إن أطفأتَه فُتحت القصصُ مكافأةً بعد إنهاء مقرَّر اليوم من الحفظ والمراجعة</small>": "📚 Cerita selalu terbuka<br><small style=\"font-weight:700;color:var(--mute)\">Jika dimatikan, cerita terbuka sebagai hadiah setelah menyelesaikan hafalan dan murajaah hari ini</small>",
   "ابحث في القصص": "Cari di cerita",
   "امسح البحث": "Hapus pencarian",
+  "اختر قيمةً تظهر قصصُها": "Pilih satu nilai untuk melihat kisah-kisahnya",
   "الكلّ": "Semua",
   "لا قصّةَ توافق بحثك": "Tidak ada cerita yang cocok",
   "الغضب والخصام": "Marah dan bertengkar",
@@ -1930,5 +1931,7 @@ NUR_I18N.add('id', {
   "الطاعة والإخلاص والتوبة": "Taat, ikhlas, dan tobat",
   "الآداب": "Adab",
   "الوقت والإتقان والنظام": "Waktu, kesungguhan, dan kerapian",
-  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Kini ada kotak pencarian di judul dan isi cerita, serta tombol yang mengelompokkannya menurut nilai: pilih misalnya «Marah dan bertengkar» untuk melihat cerita tentangnya."
+  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Kini ada kotak pencarian di judul dan isi cerita, serta tombol yang mengelompokkannya menurut nilai: pilih misalnya «Marah dan bertengkar» untuk melihat cerita tentangnya.",
+  "شارك القصّة": "Bagikan cerita",
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Tautan cerita disalin — tempelkan untuk orang yang kamu sayangi"
 });

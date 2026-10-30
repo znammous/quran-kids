@@ -1911,6 +1911,7 @@ NUR_I18N.add('en', {
   "📚 القصص مفتوحة دائماً<br><small style=\"font-weight:700;color:var(--mute)\">إن أطفأتَه فُتحت القصصُ مكافأةً بعد إنهاء مقرَّر اليوم من الحفظ والمراجعة</small>": "📚 Stories always open<br><small style=\"font-weight:700;color:var(--mute)\">If you turn it off, stories open as a reward after finishing today’s memorization and review</small>",
   "ابحث في القصص": "Search the stories",
   "امسح البحث": "Clear search",
+  "اختر قيمةً تظهر قصصُها": "Pick a value to see its stories",
   "الكلّ": "All",
   "لا قصّةَ توافق بحثك": "No story matches your search",
   "الغضب والخصام": "Anger and quarrels",
@@ -1930,5 +1931,7 @@ NUR_I18N.add('en', {
   "الطاعة والإخلاص والتوبة": "Obedience, sincerity and repentance",
   "الآداب": "Good manners",
   "الوقت والإتقان والنظام": "Time, care and order",
-  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Stories now have a search box for their titles and text, and buttons that group them by value: pick “Anger and quarrels”, for example, to see the stories that address it."
+  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Stories now have a search box for their titles and text, and buttons that group them by value: pick “Anger and quarrels”, for example, to see the stories that address it.",
+  "شارك القصّة": "Share the story",
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Story link copied — paste it to someone you love"
 });

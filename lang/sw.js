@@ -1911,6 +1911,7 @@ NUR_I18N.add('sw', {
   "📚 القصص مفتوحة دائماً<br><small style=\"font-weight:700;color:var(--mute)\">إن أطفأتَه فُتحت القصصُ مكافأةً بعد إنهاء مقرَّر اليوم من الحفظ والمراجعة</small>": "📚 Hadithi zimefunguliwa daima<br><small style=\"font-weight:700;color:var(--mute)\">Ukiizima, hadithi zitafunguka kama zawadi baada ya kumaliza kuhifadhi na kurudia kwa leo</small>",
   "ابحث في القصص": "Tafuta katika hadithi",
   "امسح البحث": "Futa utafutaji",
+  "اختر قيمةً تظهر قصصُها": "Chagua thamani uone hadithi zake",
   "الكلّ": "Zote",
   "لا قصّةَ توافق بحثك": "Hakuna hadithi inayolingana na utafutaji wako",
   "الغضب والخصام": "Hasira na ugomvi",
@@ -1930,5 +1931,7 @@ NUR_I18N.add('sw', {
   "الطاعة والإخلاص والتوبة": "Utiifu, ikhlasi na toba",
   "الآداب": "Adabu",
   "الوقت والإتقان والنظام": "Wakati, bidii na mpangilio",
-  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Hadithi sasa zina kisanduku cha kutafuta katika vichwa na maandishi yake, na vitufe vinavyozipanga kwa maadili: chagua kwa mfano «Hasira na ugomvi» uone hadithi zinazohusu hilo."
+  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Hadithi sasa zina kisanduku cha kutafuta katika vichwa na maandishi yake, na vitufe vinavyozipanga kwa maadili: chagua kwa mfano «Hasira na ugomvi» uone hadithi zinazohusu hilo.",
+  "شارك القصّة": "Shiriki hadithi",
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Kiungo cha hadithi kimenakiliwa — kibandike kwa umpendaye"
 });

@@ -1911,6 +1911,7 @@ NUR_I18N.add('tr', {
   "📚 القصص مفتوحة دائماً<br><small style=\"font-weight:700;color:var(--mute)\">إن أطفأتَه فُتحت القصصُ مكافأةً بعد إنهاء مقرَّر اليوم من الحفظ والمراجعة</small>": "📚 Hikâyeler her zaman açık<br><small style=\"font-weight:700;color:var(--mute)\">Kapatırsan hikâyeler, bugünkü ezber ve tekrarı bitirdikten sonra ödül olarak açılır</small>",
   "ابحث في القصص": "Hikâyelerde ara",
   "امسح البحث": "Aramayı temizle",
+  "اختر قيمةً تظهر قصصُها": "Hikâyelerini görmek için bir değer seç",
   "الكلّ": "Tümü",
   "لا قصّةَ توافق بحثك": "Aramana uyan hikâye yok",
   "الغضب والخصام": "Öfke ve kavga",
@@ -1930,5 +1931,7 @@ NUR_I18N.add('tr', {
   "الطاعة والإخلاص والتوبة": "İtaat, ihlas ve tövbe",
   "الآداب": "Görgü kuralları",
   "الوقت والإتقان والنظام": "Zaman, özen ve düzen",
-  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Hikâyelerde artık başlık ve metinlerde arama kutusu ve onları değerlerine göre toplayan düğmeler var: örneğin «Öfke ve kavga»yı seç, onu ele alan hikâyeler görünsün."
+  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Hikâyelerde artık başlık ve metinlerde arama kutusu ve onları değerlerine göre toplayan düğmeler var: örneğin «Öfke ve kavga»yı seç, onu ele alan hikâyeler görünsün.",
+  "شارك القصّة": "Hikâyeyi paylaş",
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Hikâye bağlantısı kopyalandı — sevdiğin birine yapıştır"
 });

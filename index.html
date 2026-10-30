@@ -78,6 +78,10 @@
       else{
         var dl=navigator.languages&&navigator.languages.length ? navigator.languages : [navigator.language||''];
         var AL={'in':'id', prs:'fa', zsm:'ms'}, g=null;   /* رموزٌ قديمةٌ أو أدقّ لِلُغةٍ عندنا */
+        /* رابطُ قصّةٍ مُشارَكة (stories/<لغة>/p/) يحمل لغةَ مُرسِله hl: تُقدَّم على لغة الجهاز
+           لمن يفتح أوّلَ مرّة، ويُسأل عنها كغيرها — ولا تُفرض على من له لغةٌ محفوظة كما تُفرض lang */
+        var hl=/[?&]hl=([a-z]{2})\b/.exec(location.search);
+        if(hl && LANGS[hl[1]] && LANGS[hl[1]].ready) g=hl[1];
         for(var j=0;j<dl.length && !g;j++){
           var c2=String(dl[j]||'').toLowerCase().split(/[-_]/)[0]; c2=AL[c2]||c2;
           if(LANGS[c2] && LANGS[c2].ready) g=c2;
@@ -2092,9 +2096,16 @@ body.glow-off .dfpic{animation:none}
 .stfind input::-webkit-search-cancel-button{display:none}
 .stfind button{position:absolute;top:50%;inset-inline-end:6px;transform:translateY(-50%);width:32px;height:32px;
   border:0;border-radius:50%;background:var(--pnl3);color:var(--on2);font:inherit;font-weight:900;cursor:pointer}
-.stkinds{display:flex;gap:8px;overflow-x:auto;margin:0 -4px 12px;padding:2px 4px 6px;scrollbar-width:none}
-.stkinds::-webkit-scrollbar{display:none}
-.stkinds .chipsel{flex:0 0 auto;white-space:nowrap}
+/* القيمُ زرٌّ واحدٌ يفتح صندوقَها، كصندوق القرّاء: كانت صفّاً يُمرَّر أفقيّاً
+   لا يُرى منه إلّا ثلاثٌ من سبعَ عشرة */
+.stkinds{margin:0 0 12px}
+.stkinds button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;box-sizing:border-box;
+  font-family:inherit;font-size:16px;font-weight:800;text-align:start;cursor:pointer;
+  color:var(--ttl);background:var(--pnl2);border:2px solid var(--pb);border-radius:12px;padding:10px 12px}
+.stkinds button.on{border-color:var(--gold)}
+.stkinds button::after{content:'▾';color:var(--on2)}
+#askChips.kinds{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+#askChips.kinds .chipsel{white-space:normal}
 .stfound{font-size:13.5px;font-weight:900;color:var(--on2);margin:-4px 2px 10px}
 .stcard .stsnip{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
   font-size:12.5px;font-weight:700;color:var(--on2);line-height:1.7;margin-top:4px}
@@ -3111,6 +3122,7 @@ body.hastabs #btnRevQuit{display:none}
       <button type="button" class="runx" id="btnStoryBack" aria-label="رجوع">➡️</button>
       <div class="sttitle" id="stTitle">—</div>
       <div class="stcount" id="stCount">—</div>
+      <button type="button" class="runx" id="btnStoryShare" aria-label="شارك القصّة">📤</button>
     </div>
     <div class="stpage" id="stPage"></div>
     <!-- تعريفُ وضع القراءة الأفقيّ: داخل الشاشة المُدارة فيُقرأ والهاتفُ مقلوب،
@@ -18603,24 +18615,27 @@ function storiesRender(){
   stGridRender();
   if(stNorm(ST_Q).length>=2 && STQ_KEY!==stQKey()) stQLoad().then(function(j){ if(j) stGridRender(); });
 }
-/* القيمُ التي لها قصص وحدَها، بترتيب ST_KINDS */
+/* القيمُ التي لها قصص وحدَها، بترتيب ST_KINDS: زرٌّ باسم المختارة يفتح صندوقَها */
 function stKindsRender(){
-  var K=$('stKinds'), has={}, h='';
+  var K=$('stKinds'), has={}, cur=null;
   stList().forEach(function(x){ (x.k||[]).forEach(function(k){ has[k]=(has[k]|0)+1; }); });
   if(ST_K && !has[ST_K]) ST_K='';
-  ST_KINDS.forEach(function(k){
-    if(has[k[0]]) h+='<button type="button" class="chipsel'+(ST_K===k[0]?' sel':'')+'" data-kind="'+k[0]+'">'+k[1]+' '+k[2]+'</button>';
-  });
-  K.hidden=!h;
-  K.innerHTML=h ? '<button type="button" class="chipsel'+(ST_K?'':' sel')+'" data-kind="">📚 الكلّ</button>'+h : '';
-  var bs=K.querySelectorAll('[data-kind]'), i;
-  for(i=0;i<bs.length;i++) bs[i].onclick=function(){
-    ST_K=this.getAttribute('data-kind');
-    var cs=K.querySelectorAll('[data-kind]'), j;
-    for(j=0;j<cs.length;j++) cs[j].classList.toggle('sel', cs[j]===this);
-    stGridRender();
+  var L=ST_KINDS.filter(function(k){ if(k[0]===ST_K) cur=k; return has[k[0]]; });
+  K.hidden=!L.length;
+  if(!L.length){ K.innerHTML=''; return; }
+  K.innerHTML='<button type="button" class="'+(cur?'on':'')+'">'+(cur ? cur[1]+' '+esc(tx(cur[2])) : '📚 '+esc(tx('الكلّ')))+'</button>';
+  K.firstChild.onclick=function(){
+    var chips=[{ v:'*', n:'📚 '+tx('الكلّ'), sel:!ST_K }].concat(L.map(function(k){
+      return { v:k[0], n:k[1]+' '+tx(k[2]), sel:k[0]===ST_K };
+    }));
+    uiBox('اختر قيمةً تظهر قصصُها', '📚', null, 'رجوع', function(ok, v){
+      if(!ok || !v) return;
+      v=(v==='*' ? '' : v);
+      if(v===ST_K) return;
+      ST_K=v; stKindsRender(); stGridRender();
+    }, null, null, chips);
+    $('askChips').className='row kinds';
   };
-  if(ST_K){ var on=K.querySelector('.sel'); if(on) try{ on.scrollIntoView({block:'nearest', inline:'center'}); }catch(e){} }
 }
 function stGridRender(){
   var G=$('stGrid'), F=$('stFound'); if(!G) return;
@@ -18713,6 +18728,7 @@ function storyOpen(id){
   var left=storiesLeft();
   if(left){ storiesLockedMsg(left); return; }
   var meta=stMeta(id); if(!meta) return;
+  ST_ID=id;
   ST_BACK={ id:id, y:window.scrollY||0 };
   var s=stBox();
   var rv=stRev(meta);
@@ -18865,8 +18881,57 @@ function storyDone(){
   var t=(STORY && STORY.meta && STORY.meta.t) || 'القصّة';
   try{ celeShow({ ic:'📚', kick:'✨ أتممتَ القصّة', title:t,
                   sub:'قرأتَها إلى آخرها — ولك أن تعيدها متى شئت' }); }catch(e){}
+  storyLeave();
+}
+/* الخروجُ من القصّة إلى رفّها — إلّا من جاءها برابطٍ قبل أن يُعدّ التطبيق، فإلى المعالج */
+var ST_AFTER=null;
+function storyLeave(){
   storyFree(); STORY=null;
+  if(ST_AFTER){ var f=ST_AFTER; ST_AFTER=null; f(); return; }
   storiesOpen();
+}
+/* ===== مشاركةُ القصّة =====
+   رابطُ صفحتها الثابتة (stories/p/<id>.html، يكتبها npm run stories): فيها وسومُ og
+   بغلافها وعنوانها، فيعرضها واتساب وغيرُه معاينةً — ومن فتحها نُقل إلى القصّة هنا
+   (#story=<id>). وبلغته إن كانت القصّةُ مترجمةً عنده */
+var ST_ID='';
+function storyShare(){
+  var m=stMeta(ST_ID); if(!m) return;
+  var lc=m.loc ? stLocCode() : '';
+  var url=ST_HOME+(lc ? lc+'/' : '')+'p/'+encodeURIComponent(m.id)+'.html';
+  var t=m.t||'', txt='📖 '+t+(m.d ? ' — '+m.d : '');
+  var SH=nativePlugin('Share');
+  if(isNative() && SH){
+    SH.share({ title:t, text:txt, url:url, dialogTitle:tx('شارك القصّة') })['catch'](function(){});
+    return;
+  }
+  if(navigator.share){
+    navigator.share({ title:t, text:txt, url:url })['catch'](function(e){ if(!e || e.name!=='AbortError') stShareCopy(url); });
+    return;
+  }
+  stShareCopy(url);
+}
+function stShareCopy(url){
+  var no=function(){ uiAlert(url, '🔗'); };
+  try{ navigator.clipboard.writeText(url).then(function(){ navToast('🔗 نُسخ رابطُ القصّة — الصقه لمن تحبّ'); }, no); }
+  catch(e){ no(); }
+}
+/* الرابطُ المُشارَك: index.html#story=<id> — يُؤخذ مرّةً ويُمحى من العنوان، فلا يعود مع كلّ تحديثٍ للصفحة */
+function stLinkTake(){
+  var m=/[#&]story=([a-z0-9_-]+)/i.exec(location.hash||''); if(!m) return '';
+  try{ history.replaceState(null, '', location.pathname+location.search); }catch(e){}
+  return m[1];
+}
+/* `after`: ما يُفعل بعدها (المعالجُ لمن يفتح أوّلَ مرّة) — وإن لم تُعرف القصّةُ أو كانت مقفلةً فُعل في الحال */
+function stLinkOpen(id, after){
+  var go=function(){
+    if(!stMeta(id)){ if(after) after(); return; }
+    if(storiesLeft()){ if(after) after(); else storyOpen(id); return; }   /* storyOpen يقول ما بقي عليه */
+    ST_AFTER=after||null;
+    storyOpen(id);
+  };
+  var p=stIdxLoad();
+  if(stMeta(id)) go(); else p.then(go, go);   /* الفهرسُ المخزَّن يكفي، وإلّا انتُظرت الشبكة */
 }
 
 /* ===== الإعلانُ عن الجديد عند الفتح =====
@@ -20154,8 +20219,9 @@ $('stNext').onclick=function(){ storyStep(1); };
    ضغطةٍ تُغلق الصورةَ المكبَّرة لا القصّةَ كلَّها */
 $('btnStoryBack').onclick=function(){
   if(stZoomClose() || stNoteClose() || stLandClose()) return;
-  storyFree(); STORY=null; storiesOpen();
+  storyLeave();
 };
+$('btnStoryShare').onclick=storyShare;
 $('stZoom').onclick=stZoomClose;
 $('stLandTipOk').onclick=function(){
   if($('stLandTipChk').checked) save('nur_stland_tip',1);
@@ -21301,10 +21367,15 @@ if(onbNeeded() || _onbAgain){                      /* أول مرة: المعا�
   for(var _pi=0;_pi<DB.players.length;_pi++)
     if(_pi!==DB.cur && (DB.players[_pi].name||'').trim()){ ONB.prev=_pi; break; }
   /* أوّلُ تشغيلٍ على جهازٍ بغير العربيّة: تُسأل اللغةُ قبل كلّ شيء، والواجهةُ بلغة الجهاز */
-  if(NUR_I18N.ask && NUR_I18N.choose) NUR_I18N.choose(true, function(){ onbShow(0); });
-  else onbShow(0);
+  var _onbGo=function(){
+    if(NUR_I18N.ask && NUR_I18N.choose) NUR_I18N.choose(true, function(){ onbShow(0); });
+    else onbShow(0);
+  };
+  /* جاء برابط قصّة: يقرؤها أوّلاً، ثمّ يُعدّ التطبيقَ إن شاء */
+  var _stLink=_onbAgain ? '' : stLinkTake();
+  if(_stLink) stLinkOpen(_stLink, _onbGo); else _onbGo();
 }
-else{ renderHome(); bootNotes(); }
+else{ renderHome(); bootNotes(); var _stL=stLinkTake(); if(_stL) stLinkOpen(_stL); }
 /* بلغ الإقلاعُ آخرَه: الحزمةُ سليمة، فلا يُرجَع عنها (التحديثُ الحيّ) */
 liveReady();
 setTimeout(mfSeed, 6000);

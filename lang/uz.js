@@ -1911,6 +1911,7 @@ NUR_I18N.add('uz', {
   "📚 القصص مفتوحة دائماً<br><small style=\"font-weight:700;color:var(--mute)\">إن أطفأتَه فُتحت القصصُ مكافأةً بعد إنهاء مقرَّر اليوم من الحفظ والمراجعة</small>": "📚 Hikoyalar doim ochiq<br><small style=\"font-weight:700;color:var(--mute)\">O‘chirsangiz, hikoyalar bugungi yodlash va takrorlashni tugatgandan keyin mukofot sifatida ochiladi</small>",
   "ابحث في القصص": "Hikoyalardan qidirish",
   "امسح البحث": "Qidiruvni tozalash",
+  "اختر قيمةً تظهر قصصُها": "Hikoyalarini ko‘rish uchun bir qadriyatni tanla",
   "الكلّ": "Hammasi",
   "لا قصّةَ توافق بحثك": "Qidiruvingizga mos hikoya yoʻq",
   "الغضب والخصام": "Gʻazab va janjal",
@@ -1930,5 +1931,7 @@ NUR_I18N.add('uz', {
   "الطاعة والإخلاص والتوبة": "Itoat, ixlos va tavba",
   "الآداب": "Odob",
   "الوقت والإتقان والنظام": "Vaqt, puxtalik va tartib",
-  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Hikoyalarda endi sarlavha va matn boʻyicha qidiruv hamda ularni qadriyatlar boʻyicha guruhlaydigan tugmalar bor: masalan, «Gʻazab va janjal»ni tanlang — unga oid hikoyalar chiqadi."
+  "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Hikoyalarda endi sarlavha va matn boʻyicha qidiruv hamda ularni qadriyatlar boʻyicha guruhlaydigan tugmalar bor: masalan, «Gʻazab va janjal»ni tanlang — unga oid hikoyalar chiqadi.",
+  "شارك القصّة": "Hikoyani ulashish",
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Hikoya havolasi nusxalandi — yaqiningizga yuboring"
 });
