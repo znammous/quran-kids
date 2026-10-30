@@ -1907,5 +1907,6 @@ NUR_I18N.add('ha', {
   "خمسة": "biyar",
   "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Nawa ne <b>{a}</b> da <b>{b}</b> da <b>{c}</b> idan an haɗa?",
   "📖 معاني الكلمات في المصحف<br><small style=\"font-weight:700;color:var(--mute)\">خطٌّ منقّطٌ تحت كلّ كلمةٍ لها شرح، ومن لمسها رأى معناها</small>": "📖 Ma'anonin kalmomi a cikin Mushafi<br><small style=\"font-weight:700;color:var(--mute)\">Layi mai ɗigo a ƙarƙashin kowace kalma da ke da bayani; taɓa ta don ganin ma'anarta</small>",
-  "📖 معاني الكلمات في المصحف<br><small>خطٌّ منقّطٌ تحت الكلمات، المسها لترى معناها — شغّله أو أطفئه من هنا</small>": "📖 Ma'anonin kalmomi a cikin Mushafi<br><small>Layi mai ɗigo a ƙarƙashin kalmomi; taɓa ɗaya don ganin ma'anarta — kunna ko kashe a nan</small>"
+  "📖 معاني الكلمات في المصحف<br><small>خطٌّ منقّطٌ تحت الكلمات، المسها لترى معناها — شغّله أو أطفئه من هنا</small>": "📖 Ma'anonin kalmomi a cikin Mushafi<br><small>Layi mai ɗigo a ƙarƙashin kalmomi; taɓa ɗaya don ganin ma'anarta — kunna ko kashe a nan</small>",
+  "📚 القصص مفتوحة دائماً<br><small style=\"font-weight:700;color:var(--mute)\">إن أطفأتَه فُتحت القصصُ مكافأةً بعد إنهاء مقرَّر اليوم من الحفظ والمراجعة</small>": "📚 Labarai a buɗe koyaushe<br><small style=\"font-weight:700;color:var(--mute)\">Idan ka kashe shi, labarai za su buɗe a matsayin lada bayan ka gama haddar da maimaitawar yau</small>"
 });

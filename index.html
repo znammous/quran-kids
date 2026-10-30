@@ -3238,6 +3238,7 @@ body.hastabs #btnRevQuit{display:none}
         </div>
       </div>
       <div class="switchrow"><span>🔀 القفز بين مقاطع السورة<br><small style="font-weight:700;color:var(--mute)">داخل السور المتاحة أعلاه: يبدأ بأيّ مقطع دون إتمام ما قبله — ولا يفتح جزءاً خارج نطاقك</small></span><input type="checkbox" id="setFree"></div>
+      <div class="switchrow"><span>📚 القصص مفتوحة دائماً<br><small style="font-weight:700;color:var(--mute)">إن أطفأتَه فُتحت القصصُ مكافأةً بعد إنهاء مقرَّر اليوم من الحفظ والمراجعة</small></span><input type="checkbox" id="setStFree"></div>
       <div class="setblock">
         <label class="lbl">🔁 عدد مرات التكرار في مرحلة القراءة</label>
         <select id="setReps"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
@@ -3542,7 +3543,7 @@ function kindAllowed(t){
   var h=LV_HIDE[SET&&SET.level];
   return !(h&&h[t]);
 }
-function defSet(){ return { level:'easy', lv3:true, script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false, simHl:true, gloss:true, wake:true, qari:'Minshawy_Teacher_128kbps', audRep:1 }; }
+function defSet(){ return { level:'easy', lv3:true, script:1, reps:1, font:24, sound:true, glow:true, cele:true, rec:false, segMode:'q', selfFrom:'', juzFrom:30, juzTo:30, free:false, stFree:true, simHl:true, gloss:true, wake:true, qari:'Minshawy_Teacher_128kbps', audRep:1 }; }
 /* ثلاث درجات للخطّ لا خمس — ويُردّ القديم إلى أقربها */
 var FONTS=[{v:20,n:'صغير'},{v:24,n:'متوسط'},{v:30,n:'كبير'}];
 function normFont(f){ f=parseInt(f,10)||24; return f<=22?20:(f<=27?24:30); }
@@ -3636,6 +3637,7 @@ function bindPlayer(){
   if(LEVELS.indexOf(SET.level)<0) SET.level='easy';
   if(typeof SET.glow!=='boolean') SET.glow=true;
   if(typeof SET.cele!=='boolean') SET.cele=true;
+  if(typeof SET.stFree!=='boolean') SET.stFree=true;
   if(typeof SET.light!=='boolean') SET.light=false;
   if(typeof SET.simHl!=='boolean') SET.simHl=true;   /* مفعَّلٌ افتراضياً */
   if(typeof SET.gloss!=='boolean') SET.gloss=true;   /* ومعاني الكلمات في الوجه كذلك */
@@ -15660,6 +15662,7 @@ function fillSettings(){
   if($('setWake')) $('setWake').checked=(SET.wake!==false);
   $('setRec').checked=!!SET.rec;
   $('setFree').checked=!!SET.free;
+  $('setStFree').checked=(SET.stFree!==false);
   $('setBoard').checked=!!DB.app.board;
   var a='',b='';
   for(var j=1;j<=30;j++){
@@ -15730,6 +15733,7 @@ function readSettings(){
   if(SET.rec) REC.off=false;                 /* إعادة التفعيل تُلغي إيقاف الجلسة */
   applyGlow();
   SET.free=$('setFree').checked;
+  SET.stFree=$('setStFree').checked;
   DB.app.board=$('setBoard').checked;
   saveDB();
 }
@@ -17520,6 +17524,17 @@ $('btnSetBack').onclick=function(){
 var SET_T=0, SET_TOAST=0;
 (function(){
   var sc=$('scr-settings'); if(!sc) return;
+  /* فتحُ القصص بعد أن جعلها وليُّ الأمر استحقاقاً يمرّ ببوّابته، وإلّا فتحها الطفلُ بنفسه */
+  var sf=$('setStFree');
+  if(sf) sf.addEventListener('click', function(e){
+    if(!sf.checked || SET.stFree!==false) return;
+    e.preventDefault();
+    parentGate(function(ok){
+      if(!ok) return;
+      sf.checked=true;
+      sf.dispatchEvent(new Event('change',{bubbles:true}));
+    });
+  });
   sc.addEventListener('change', function(e){
     var t=e.target;
     if(!t || !/^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName||'')) return;
@@ -18412,10 +18427,12 @@ function storiesOpen(){
     if(ADV_V==='stories' && curScreen()==='scr-games' && JSON.stringify(stList())!==was){ storiesRender(); advSync(); }
   });
 }
-/* القصصُ تُفتح بعد مقرَّر اليوم: حين يخضرّ صحّا الحفظ والمراجعة في الرئيسيّة.
+/* القصصُ مفتوحةٌ دائماً (SET.stFree)، ومن أطفأه من الإعدادات فُتحت بعد مقرَّر اليوم:
+   حين يخضرّ صحّا الحفظ والمراجعة في الرئيسيّة.
    وقبلها تبقى ظاهرةً بالأبيض والأسود — يراها فيشتاق إليها، ولا قفلَ يُنفّره.
    يُرجع ما بقي عليه، أو null إن فُتحت */
 function storiesLeft(){
+  if(SET.stFree!==false) return null;
   var G=goalChecks();
   if(G.h && G.r) return null;
   return (!G.h && !G.r) ? 'الحفظ والمراجعة' : (!G.h ? 'الحفظ' : 'المراجعة');

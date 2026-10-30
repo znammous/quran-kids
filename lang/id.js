@@ -1907,5 +1907,6 @@ NUR_I18N.add('id', {
   "خمسة": "lima",
   "كم مجموعُ <b>{a}</b> و<b>{b}</b> و<b>{c}</b>؟": "Berapa <b>{a}</b> ditambah <b>{b}</b> ditambah <b>{c}</b>?",
   "📖 معاني الكلمات في المصحف<br><small style=\"font-weight:700;color:var(--mute)\">خطٌّ منقّطٌ تحت كلّ كلمةٍ لها شرح، ومن لمسها رأى معناها</small>": "📖 Makna kata di Mushaf<br><small style=\"font-weight:700;color:var(--mute)\">Garis titik-titik di bawah setiap kata yang ada penjelasannya; sentuh untuk melihat maknanya</small>",
-  "📖 معاني الكلمات في المصحف<br><small>خطٌّ منقّطٌ تحت الكلمات، المسها لترى معناها — شغّله أو أطفئه من هنا</small>": "📖 Makna kata di Mushaf<br><small>Garis titik-titik di bawah kata; sentuh untuk melihat maknanya — nyalakan atau matikan di sini</small>"
+  "📖 معاني الكلمات في المصحف<br><small>خطٌّ منقّطٌ تحت الكلمات، المسها لترى معناها — شغّله أو أطفئه من هنا</small>": "📖 Makna kata di Mushaf<br><small>Garis titik-titik di bawah kata; sentuh untuk melihat maknanya — nyalakan atau matikan di sini</small>",
+  "📚 القصص مفتوحة دائماً<br><small style=\"font-weight:700;color:var(--mute)\">إن أطفأتَه فُتحت القصصُ مكافأةً بعد إنهاء مقرَّر اليوم من الحفظ والمراجعة</small>": "📚 Cerita selalu terbuka<br><small style=\"font-weight:700;color:var(--mute)\">Jika dimatikan, cerita terbuka sebagai hadiah setelah menyelesaikan hafalan dan murajaah hari ini</small>"
 });
