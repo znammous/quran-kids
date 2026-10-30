@@ -21398,6 +21398,22 @@ if(onbNeeded() || _onbAgain){                      /* أول مرة: المعا�
   if(_stLink) stLinkOpen(_stLink, _onbGo); else _onbGo();
 }
 else{ renderHome(); bootNotes(); var _stL=stLinkTake(); if(_stL) stLinkOpen(_stL); }
+/* وفي التطبيق: رابطُ القصّة يصل من النظام (App Links / Universal Links) لا من العنوان —
+   عند الفتح به (getLaunchUrl) أو والتطبيقُ مفتوح (appUrlOpen). ومن لم يُتمّ المعالجَ يُتمّه أوّلاً.
+   والرابطُ يُعمل به مرّةً واحدة: تحديثٌ حيٌّ يُعيد الصفحةَ لا يُعيد فتحَ القصّة */
+(function(){
+  var App=nativePlugin('App');
+  if(!isNative() || !App) return;
+  var take=function(u){
+    var m=/\/stories\/(?:[a-z]{2}\/)?p\/([a-z0-9_-]+)\.html/i.exec(String(u||'')), done='';
+    if(!m) return;
+    try{ done=sessionStorage.getItem('nur_stlink')||''; sessionStorage.setItem('nur_stlink', u); }catch(e){}
+    if(done===u || onbNeeded()) return;
+    stLinkOpen(m[1]);
+  };
+  if(App.addListener) App.addListener('appUrlOpen', function(e){ try{ sessionStorage.removeItem('nur_stlink'); }catch(_){} take(e && e.url); });
+  if(App.getLaunchUrl) App.getLaunchUrl().then(function(r){ take(r && r.url); })['catch'](function(){});
+})();
 /* بلغ الإقلاعُ آخرَه: الحزمةُ سليمة، فلا يُرجَع عنها (التحديثُ الحيّ) */
 liveReady();
 setTimeout(mfSeed, 6000);
