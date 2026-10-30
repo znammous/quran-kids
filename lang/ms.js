@@ -1978,8 +1978,8 @@ NUR_I18N.add('ms', {
   "أحسنت — والتكرارُ يثبّتها": "Syabas — ulangan menjadikannya kukuh",
   "ثبتت: <b>{w}</b>": "Kini kukuh: <b>{w}</b>",
   "أصب الآيةَ مرّتين متتاليتين تخرج من القائمة — عُد إليها غداً": "Jawab satu ayat dengan betul dua kali berturut-turut, maka ia keluar daripada senarai — kembali esok",
-  "أدائي": "Prestasiku",
+  "أدائي": "Prestasi",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "Di sini kamu hanya dibandingkan dengan dirimu sendiri — bukan orang lain",
   "ثبتت:": "Kini kukuh:",
-  "في الرئيسيّة زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد.": "Di laman utama ada butang “📊 Prestasiku”: lihat minggumu berbanding minggu sebelumnya, dan ayat-ayat yang kamu tersilap — lalu kukuhkan dengan satu ketikan."
+  "في الشريط السفليّ زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Di bar bawah ada butang “📊 Prestasi”: lihat minggumu berbanding minggu sebelumnya, dan ayat-ayat yang kamu tersilap — lalu kukuhkan dengan satu ketikan. Dan “Kedai” kini menjadi tab dalam “Masjid”."
 });

@@ -1978,8 +1978,8 @@ NUR_I18N.add('uz', {
   "أحسنت — والتكرارُ يثبّتها": "Barakalla — takrorlash ularni mustahkamlaydi",
   "ثبتت: <b>{w}</b>": "Endi mustahkam: <b>{w}</b>",
   "أصب الآيةَ مرّتين متتاليتين تخرج من القائمة — عُد إليها غداً": "Oyatni ketma-ket ikki marta toʻgʻri aytsang, roʻyxatdan chiqadi — ertaga yana qayt",
-  "أدائي": "Natijalarim",
+  "أدائي": "Natijalar",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "Bu yerda faqat oʻzing bilan solishtirilasan — boshqa hech kim bilan emas",
   "ثبتت:": "Endi mustahkam:",
-  "في الرئيسيّة زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد.": "Bosh sahifada «📊 Natijalarim» tugmasi bor: haftangni oldingisi bilan solishtirib koʻr, adashadigan oyatlaringni ham — va ularni bir bosishda mustahkamla."
+  "في الشريط السفليّ زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Pastki panelda «📊 Natijalar» tugmasi bor: haftangni oldingisi bilan solishtirib koʻr, adashadigan oyatlaringni ham — va ularni bir bosishda mustahkamla. «Doʻkon» esa endi «Masjid» ichidagi boʻlim."
 });

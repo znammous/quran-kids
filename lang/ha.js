@@ -1978,8 +1978,8 @@ NUR_I18N.add('ha', {
   "أحسنت — والتكرارُ يثبّتها": "Madalla — maimaitawa tana ƙarfafa su",
   "ثبتت: <b>{w}</b>": "Yanzu sun ƙarfafa: <b>{w}</b>",
   "أصب الآيةَ مرّتين متتاليتين تخرج من القائمة — عُد إليها غداً": "Amsa aya daidai sau biyu a jere za ta fita daga jerin — ka dawo gobe",
-  "أدائي": "Ci gabana",
+  "أدائي": "Cigaba",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "A nan ana kwatanta ka da kanka kawai — ba da wani ba",
   "ثبتت:": "Yanzu sun ƙarfafa:",
-  "في الرئيسيّة زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد.": "A babban shafi akwai maɓallin “📊 Ci gabana”: ka ga makonka idan aka kwatanta da wanda ya gabata, da ayoyin da kake zamewa a ciki — ka ƙarfafa su da taɓawa ɗaya."
+  "في الشريط السفليّ زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "A sandar ƙasa akwai maɓallin “📊 Cigaba”: ka ga makonka idan aka kwatanta da wanda ya gabata, da ayoyin da kake zamewa a ciki — ka ƙarfafa su da taɓawa ɗaya. Kuma “Shago” yanzu shafi ne a cikin “Masallaci”."
 });

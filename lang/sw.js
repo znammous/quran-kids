@@ -1978,8 +1978,8 @@ NUR_I18N.add('sw', {
   "أحسنت — والتكرارُ يثبّتها": "Hongera — kurudia huziimarisha",
   "ثبتت: <b>{w}</b>": "Sasa imara: <b>{w}</b>",
   "أصب الآيةَ مرّتين متتاليتين تخرج من القائمة — عُد إليها غداً": "Jibu aya sawa mara mbili mfululizo nayo itatoka kwenye orodha — rudi kesho",
-  "أدائي": "Maendeleo yangu",
+  "أدائي": "Maendeleo",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "Hapa unalinganishwa na nafsi yako tu — si na mtu mwingine",
   "ثبتت:": "Sasa imara:",
-  "في الرئيسيّة زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد.": "Kwenye skrini kuu kuna kitufe cha “📊 Maendeleo yangu”: ona wiki yako ikilinganishwa na iliyotangulia, na aya unazokosea — kisha ziimarishe kwa mguso mmoja."
+  "في الشريط السفليّ زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Kwenye upau wa chini kuna kitufe cha “📊 Maendeleo”: ona wiki yako ikilinganishwa na iliyotangulia, na aya unazokosea — kisha ziimarishe kwa mguso mmoja. Na “Duka” sasa ni kichupo ndani ya “Msikiti”."
 });

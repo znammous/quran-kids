@@ -1978,8 +1978,8 @@ NUR_I18N.add('fr', {
   "أحسنت — والتكرارُ يثبّتها": "Bravo — la répétition les rend solides",
   "ثبتت: <b>{w}</b>": "Désormais solides : <b>{w}</b>",
   "أصب الآيةَ مرّتين متتاليتين تخرج من القائمة — عُد إليها غداً": "Réussis un verset deux fois de suite et il quitte la liste — reviens-y demain",
-  "أدائي": "Mes progrès",
+  "أدائي": "Progrès",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "Ici, tu n’es comparé qu’à toi-même — à personne d’autre",
   "ثبتت:": "Désormais solides :",
-  "في الرئيسيّة زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد.": "Sur l’écran d’accueil, un bouton « 📊 Mes progrès » : vois ta semaine comparée à la précédente, et les versets où tu te trompes — puis consolide-les d’un seul geste."
+  "في الشريط السفليّ زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Dans la barre du bas, un bouton « 📊 Progrès » : vois ta semaine comparée à la précédente, et les versets où tu te trompes — puis consolide-les d’un seul geste. Et le « Magasin » est désormais un onglet de « Mosquée »."
 });
