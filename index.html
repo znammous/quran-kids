@@ -2495,6 +2495,41 @@ body.hastabs #btnRevQuit{display:none}
   .cert h2{font-size:29px}
 }
 </style>
+<script>
+/* متصفّحُ النظام القديم (WebView قبل Chrome 87، كأجهزة هواوي وهونر بلا تحديثه) لا يعرف
+   inset ولا الخصائصَ المنطقيّة (inset-inline، margin-inline…) فيُسقطها: كان المصحفُ — وهو
+   position:fixed;inset:0 — يُرسم بقدر محتواه في زاوية الشاشة فوق الرئيسيّة. هنا تُترجَم
+   إلى top/right/bottom/left بحسب اتّجاه اللغة، ويُعاد ذلك إن تغيّر الاتّجاه */
+(function(){
+  if(!window.CSS || !CSS.supports || CSS.supports('inset','0')) return;
+  var st=document.querySelector('style'), src=st.textContent, de=document.documentElement, last;
+  function parts(v){ // قِيَمٌ مفصولةٌ بمسافات، وما بين القوسين قيمةٌ واحدة
+    var out=[], cur='', d=0;
+    for(var i=0;i<v.length;i++){ var c=v[i];
+      if(c==='(') d++; else if(c===')') d--;
+      if(/\s/.test(c) && !d){ if(cur) out.push(cur); cur=''; } else cur+=c; }
+    if(cur) out.push(cur); return out;
+  }
+  function conv(rtl){
+    var S=rtl?'right':'left', E=rtl?'left':'right';
+    return src.replace(/(^|[;{\s])(inset|inset-inline|inset-inline-start|inset-inline-end|(?:margin|padding)-(?:inline|block)(?:-start|-end)?|border-inline)\s*:\s*([^;}]*)/g,
+      function(m,pre,p,v){
+        var imp=/!important\s*$/.test(v)?' !important':''; v=v.replace(/!important\s*$/,'').trim();
+        var a=parts(v), r=[], k=p.split('-'), base=k[0]==='inset'?'':k[0]+'-';
+        function put(side,val){ r.push(base+side+':'+val+imp); }
+        if(p==='border-inline'){ put('right',v); put('left',v); }
+        else if(p==='inset'){ var t=a[0], rt=a[1]||t, b=a[2]||t, l=a[3]||rt; put('top',t); put('right',rt); put('bottom',b); put('left',l); }
+        else if(k[1]==='block'){ if(k[2]) put(k[2]==='start'?'top':'bottom',v); else { put('top',a[0]); put('bottom',a[1]||a[0]); } }
+        else if(k[2]) put(k[2]==='start'?S:E,v);
+        else { put(S,a[0]); put(E,a[1]||a[0]); }
+        return pre+r.join(';');
+      });
+  }
+  function apply(){ var rtl=de.dir!=='ltr'; if(rtl!==last){ last=rtl; st.textContent=conv(rtl); } }
+  apply();
+  if(window.MutationObserver) new MutationObserver(apply).observe(de,{attributes:true,attributeFilter:['dir']});
+})();
+</script>
 </head>
 <body>
 <script>
