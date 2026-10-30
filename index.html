@@ -3818,7 +3818,8 @@ function hap(k){
   var H=hapNative(), no=function(){};
   try{
     if(H){
-      if(k==='ok') H.notification({ type:'SUCCESS' })['catch'](no);
+      /* الصوابُ نقرةٌ واحدةٌ خفيفة — كان إشعارَ نجاحٍ بنبضتين قويّتين، فكان أخشنَ ممّا يُحبّ */
+      if(k==='ok') H.impact({ style:'LIGHT' })['catch'](no);
       else if(k==='bad') H.notification({ type:'ERROR' })['catch'](no);
       else if(k==='win'){
         /* الاحتفالُ اهتزازٌ واحدٌ متّصلٌ قرابةَ ثلثَي ثانية: يُفرق عن نقرة الصواب بطوله.
@@ -3828,7 +3829,7 @@ function hap(k){
       else H.impact({ style:'LIGHT' })['catch'](no);
       return;
     }
-    if(navigator.vibrate) navigator.vibrate({ ok:[18], bad:[45,70,45], win:[650] }[k] || [10]);
+    if(navigator.vibrate) navigator.vibrate({ ok:[12], bad:[45,70,45], win:[650] }[k] || [10]);
   }catch(e){}
 }
 
