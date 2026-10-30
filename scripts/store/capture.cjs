@@ -6,6 +6,7 @@ const VP= DEV==='ipad' ? {width:1024,height:1366,dsf:2} : {width:390,height:844,
 const LTR=['en','id','ms','bn','tr','fr','sw','ha','uz','so','ru'];
 let db=JSON.parse(fs.readFileSync(__dirname+'/seed_db.json','utf8'));
 if(LTR.includes(L)){ db.players[0].name='Maryam'; db.players[1].name='Omar'; }
+if(ONLY==='0-home'){ db.players[0].name=LTR.includes(L)?'Aya':'آية'; Object.assign(db.players[0].look,{hijab:4,cloth:1,flower:1}); }   /* صورةُ صفحة الهبوط: آيةُ بحجابٍ أخضر ووردة */
 const HIDE='#qaBar,#setInstall,[id*="nstallBan"],.instbar,.toast{display:none!important}';
 (async()=>{
   const b=await chromium.launch({channel:'chrome'});
@@ -28,6 +29,9 @@ const HIDE='#qaBar,#setInstall,[id*="nstallBan"],.instbar,.toast{display:none!im
   const MULK=()=>{ const s=SURAHS[66]; curSurah=s; startSeg(s,0); };
   if(ONLY==='9-lang'){   /* صندوقُ اختيار اللغة: اللغاتُ كلُّها بأسمائها */
     const p=await page(); await p.evaluate(()=>{ show('scr-settings'); document.getElementById('btnLang').click(); }); await snap(p,'9-lang'); await p.close();
+    await b.close(); console.log(L,DEV,'errors',errs.slice(0,3)); return; }
+  if(ONLY==='0-home'){   /* الرئيسية: أوّلُ ما يراه الطفل، لصورة صفحة الهبوط */
+    const p=await page(); await p.evaluate(()=>{ renderHome(); show('scr-start'); window.scrollTo(0,0); }); await p.addStyleTag({content:'#instBox,#homeKhatma{display:none!important}'}); await snap(p,'0-home'); await p.close();
     await b.close(); console.log(L,DEV,'errors',errs.slice(0,3)); return; }
   // 1 path
   { const p=await page(); await p.evaluate(()=>{ curSurah=SURAHS[66]; renderPath(); show('scr-path'); window.scrollTo(0,0); }); await snap(p,'1-path'); await p.close(); }
