@@ -1933,5 +1933,6 @@ NUR_I18N.add('uz', {
   "الوقت والإتقان والنظام": "Vaqt, puxtalik va tartib",
   "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Hikoyalarda endi sarlavha va matn boʻyicha qidiruv hamda ularni qadriyatlar boʻyicha guruhlaydigan tugmalar bor: masalan, «Gʻazab va janjal»ni tanlang — unga oid hikoyalar chiqadi.",
   "شارك القصّة": "Hikoyani ulashish",
-  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Hikoya havolasi nusxalandi — yaqiningizga yuboring"
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Hikoya havolasi nusxalandi — yaqiningizga yuboring",
+  "الاهتزاز مع الإجابة والإنجاز": "Javob va yutuqlarda tebranish"
 });

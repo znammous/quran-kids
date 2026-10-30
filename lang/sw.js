@@ -1933,5 +1933,6 @@ NUR_I18N.add('sw', {
   "الوقت والإتقان والنظام": "Wakati, bidii na mpangilio",
   "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Hadithi sasa zina kisanduku cha kutafuta katika vichwa na maandishi yake, na vitufe vinavyozipanga kwa maadili: chagua kwa mfano «Hasira na ugomvi» uone hadithi zinazohusu hilo.",
   "شارك القصّة": "Shiriki hadithi",
-  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Kiungo cha hadithi kimenakiliwa — kibandike kwa umpendaye"
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Kiungo cha hadithi kimenakiliwa — kibandike kwa umpendaye",
+  "الاهتزاز مع الإجابة والإنجاز": "Mtetemo wakati wa kujibu na kufaulu"
 });

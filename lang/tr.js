@@ -1933,5 +1933,6 @@ NUR_I18N.add('tr', {
   "الوقت والإتقان والنظام": "Zaman, özen ve düzen",
   "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Hikâyelerde artık başlık ve metinlerde arama kutusu ve onları değerlerine göre toplayan düğmeler var: örneğin «Öfke ve kavga»yı seç, onu ele alan hikâyeler görünsün.",
   "شارك القصّة": "Hikâyeyi paylaş",
-  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Hikâye bağlantısı kopyalandı — sevdiğin birine yapıştır"
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Hikâye bağlantısı kopyalandı — sevdiğin birine yapıştır",
+  "الاهتزاز مع الإجابة والإنجاز": "Cevaplarda ve başarılarda titreşim"
 });

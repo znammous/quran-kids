@@ -1933,5 +1933,6 @@ NUR_I18N.add('en', {
   "الوقت والإتقان والنظام": "Time, care and order",
   "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Stories now have a search box for their titles and text, and buttons that group them by value: pick “Anger and quarrels”, for example, to see the stories that address it.",
   "شارك القصّة": "Share the story",
-  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Story link copied — paste it to someone you love"
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Story link copied — paste it to someone you love",
+  "الاهتزاز مع الإجابة والإنجاز": "Vibration on answers and achievements"
 });

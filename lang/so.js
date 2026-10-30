@@ -1933,5 +1933,6 @@ NUR_I18N.add('so', {
   "الوقت والإتقان والنظام": "Waqtiga, dadaalka iyo nidaamka",
   "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Sheekooyinka hadda waxaa ku jira sanduuq raadin ah oo cinwaannada iyo qoraalka ah, iyo badhamo u kala saara qiyamka: tusaale ahaan dooro «Cadho iyo muran» si aad u aragto sheekooyinka ka hadla.",
   "شارك القصّة": "La wadaag sheekada",
-  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Xiriirka sheekada waa la koobiyeeyay — u dhig qof aad jeceshahay"
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Xiriirka sheekada waa la koobiyeeyay — u dhig qof aad jeceshahay",
+  "الاهتزاز مع الإجابة والإنجاز": "Gariir marka la jawaabo iyo guusha"
 });

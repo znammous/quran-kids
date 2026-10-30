@@ -1933,5 +1933,6 @@ NUR_I18N.add('ha', {
   "الوقت والإتقان والنظام": "Lokaci, ƙwazo da tsari",
   "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Yanzu labarai suna da akwatin bincike a cikin take da rubutunsu, da maɓallai da suke tara su bisa ɗabi'u: misali zaɓi «Fushi da faɗa» don ganin labaran da suka shafe shi.",
   "شارك القصّة": "Raba labarin",
-  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "An kwafi mahaɗin labarin — liƙa shi ga wanda kake so"
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "An kwafi mahaɗin labarin — liƙa shi ga wanda kake so",
+  "الاهتزاز مع الإجابة والإنجاز": "Girgiza a lokacin amsa da nasara"
 });

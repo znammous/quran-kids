@@ -1933,5 +1933,6 @@ NUR_I18N.add('fr', {
   "الوقت والإتقان والنظام": "Le temps, le travail soigné et l’ordre",
   "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Les histoires ont maintenant une recherche dans leurs titres et leurs textes, et des boutons qui les regroupent par valeur : choisis « La colère et les disputes », par exemple, pour voir les histoires qui en parlent.",
   "شارك القصّة": "Partager l’histoire",
-  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Lien de l’histoire copié — colle-le pour qui tu aimes"
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Lien de l’histoire copié — colle-le pour qui tu aimes",
+  "الاهتزاز مع الإجابة والإنجاز": "Vibration aux réponses et aux réussites"
 });

@@ -1933,5 +1933,6 @@ NUR_I18N.add('id', {
   "الوقت والإتقان والنظام": "Waktu, kesungguhan, dan kerapian",
   "في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.": "Kini ada kotak pencarian di judul dan isi cerita, serta tombol yang mengelompokkannya menurut nilai: pilih misalnya «Marah dan bertengkar» untuk melihat cerita tentangnya.",
   "شارك القصّة": "Bagikan cerita",
-  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Tautan cerita disalin — tempelkan untuk orang yang kamu sayangi"
+  "نُسخ رابطُ القصّة — الصقه لمن تحبّ": "Tautan cerita disalin — tempelkan untuk orang yang kamu sayangi",
+  "الاهتزاز مع الإجابة والإنجاز": "Getar saat menjawab dan berhasil"
 });
