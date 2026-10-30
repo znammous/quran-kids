@@ -1,10 +1,14 @@
 {
-  "v": 104,
+  "v": 105,
   "stories": [
     {
       "id": "kahf",
       "t": "أصحاب الكهف",
       "d": "فتيةٌ آمنوا بربّهم فزادهم هدى",
+      "k": [
+        "sabr",
+        "iman"
+      ],
       "ic": "🏔️",
       "cover": "covers/kahf.webp",
       "file": "s/kahf.json",
@@ -17,6 +21,9 @@
       "id": "qarya",
       "t": "الرجلُ الذي مرّ على قرية",
       "d": "مات مئةَ عامٍ ثمّ بعثه الله",
+      "k": [
+        "iman"
+      ],
       "ic": "🏚️",
       "cover": "covers/qarya.webp",
       "file": "s/qarya.json",
@@ -28,6 +35,10 @@
       "id": "qarun",
       "t": "قارون",
       "d": "كنوزٌ خسف اللهُ بها الأرض",
+      "k": [
+        "kibr",
+        "shukr"
+      ],
       "ic": "💰",
       "cover": "covers/qarun.webp",
       "file": "s/qarun.json",
@@ -39,6 +50,10 @@
       "id": "qatil",
       "t": "قاتلُ المئة",
       "d": "قتل مئةً ثمّ غُفر له",
+      "k": [
+        "iman",
+        "taa"
+      ],
       "ic": "🚪",
       "cover": "covers/qatil.webp",
       "file": "s/qatil.json",
@@ -51,6 +66,10 @@
       "id": "jannatayn",
       "t": "صاحبُ الجنّتين",
       "d": "جنّةٌ قال لا تبيد فبادت",
+      "k": [
+        "kibr",
+        "shukr"
+      ],
       "ic": "🍇",
       "cover": "covers/jannatayn.webp",
       "file": "s/jannatayn.json",
@@ -62,6 +81,9 @@
       "id": "shiraa",
       "t": "الشِّراع",
       "d": "مَثَلٌ في التنازع",
+      "k": [
+        "ghadab"
+      ],
       "ic": "⛵",
       "cover": "covers/shiraa.webp",
       "file": "s/shiraa.json",
@@ -74,6 +96,10 @@
       "id": "shah",
       "t": "الشاةُ الضالّة",
       "d": "مَثَلٌ في التثبّت",
+      "k": [
+        "ghadab",
+        "lisan"
+      ],
       "ic": "🐑",
       "cover": "covers/shah.webp",
       "file": "s/shah.json",
@@ -86,6 +112,10 @@
       "id": "jidar",
       "t": "ما وراء الجدار",
       "d": "مَثَلٌ في التجسّس",
+      "k": [
+        "lisan",
+        "adab"
+      ],
       "ic": "🧱",
       "cover": "covers/jidar.webp",
       "file": "s/jidar.json",
@@ -98,6 +128,9 @@
       "id": "kalima",
       "t": "الكلمةُ تمشي",
       "d": "مَثَلٌ في طيب الكلام",
+      "k": [
+        "lisan"
+      ],
       "ic": "🍞",
       "cover": "covers/kalima.webp",
       "file": "s/kalima.json",
@@ -110,6 +143,9 @@
       "id": "jabal",
       "t": "الجبلُ لا يلتفت",
       "d": "مَثَلٌ في الكِبر",
+      "k": [
+        "kibr"
+      ],
       "ic": "⛰️",
       "cover": "covers/jabal.webp",
       "file": "s/jabal.json",
@@ -122,6 +158,9 @@
       "id": "hajar",
       "t": "الحجرُ الأوّل",
       "d": "مَثَلٌ في التعاون",
+      "k": [
+        "awn"
+      ],
       "ic": "💧",
       "cover": "covers/hajar.webp",
       "file": "s/hajar.json",
@@ -134,6 +173,10 @@
       "id": "tamra",
       "t": "التمرةُ الزائدة",
       "d": "مَثَلٌ في الميزان",
+      "k": [
+        "sidq",
+        "adl"
+      ],
       "ic": "⚖️",
       "cover": "covers/tamra.webp",
       "file": "s/tamra.json",
@@ -146,6 +189,9 @@
       "id": "fasila",
       "t": "الفسيلة",
       "d": "مَثَلٌ في الشكر",
+      "k": [
+        "shukr"
+      ],
       "ic": "🌴",
       "cover": "covers/fasila.webp",
       "file": "s/fasila.json",
@@ -158,6 +204,10 @@
       "id": "siyaj",
       "t": "السياج",
       "d": "مَثَلٌ في الإحسان إلى المسيء",
+      "k": [
+        "ghadab",
+        "rahma"
+      ],
       "ic": "🐐",
       "cover": "covers/siyaj.webp",
       "file": "s/siyaj.json",
@@ -170,6 +220,10 @@
       "id": "fakhkhar",
       "t": "عند باب الفخّار",
       "d": "مَثَلٌ في الرفق بالسائل",
+      "k": [
+        "karam",
+        "rahma"
+      ],
       "ic": "🏺",
       "cover": "covers/fakhkhar.webp",
       "file": "s/fakhkhar.json",
@@ -182,6 +236,10 @@
       "id": "ghina",
       "t": "ديما",
       "d": "مَثَلٌ في اليد التي لا تسأل",
+      "k": [
+        "shukr",
+        "karam"
+      ],
       "ic": "🌾",
       "file": "s/ghina.json",
       "added": "2026-09-22",
@@ -194,6 +252,10 @@
       "id": "ruqayya",
       "t": "قولاً كريماً",
       "d": "مَثَلٌ في برّ الأمّ",
+      "k": [
+        "lisan",
+        "birr"
+      ],
       "ic": "🌙",
       "cover": "covers/ruqayya.webp",
       "file": "s/ruqayya.json",
@@ -205,6 +267,9 @@
       "id": "shatla",
       "t": "صفُّ الشتلات",
       "d": "مَثَلٌ في «لا تغضب»",
+      "k": [
+        "ghadab"
+      ],
       "ic": "🌱",
       "cover": "covers/shatla.webp",
       "file": "s/shatla.json",
@@ -217,6 +282,9 @@
       "id": "salam",
       "t": "مَن بدأ",
       "d": "مَثَلٌ في ترك الهجر",
+      "k": [
+        "ghadab"
+      ],
       "ic": "🤝",
       "cover": "covers/salam.webp",
       "file": "s/salam.json",
@@ -228,6 +296,11 @@
       "id": "ukhtan",
       "t": "أختان",
       "d": "مَثَلٌ في الأخوّة",
+      "k": [
+        "ghadab",
+        "birr",
+        "awn"
+      ],
       "ic": "🫱",
       "cover": "covers/ukhtan.webp",
       "file": "s/ukhtan.json",
@@ -240,6 +313,10 @@
       "id": "hilal",
       "t": "الذي كانوا يضحكون منه",
       "d": "مَثَلٌ في ترك السخرية",
+      "k": [
+        "lisan",
+        "kibr"
+      ],
       "ic": "⭐",
       "cover": "covers/hilal.webp",
       "file": "s/hilal.json",
@@ -252,6 +329,9 @@
       "id": "sahrij",
       "t": "ماءُ الصهريج",
       "d": "مَثَلٌ في ترك الإسراف",
+      "k": [
+        "shukr"
+      ],
       "ic": "💧",
       "cover": "covers/sahrij.webp",
       "file": "s/sahrij.json",
@@ -264,6 +344,9 @@
       "id": "sibaq",
       "t": "حَكَمُ السباق",
       "d": "مَثَلٌ في العدل مع من لا تحبّ",
+      "k": [
+        "adl"
+      ],
       "ic": "🏁",
       "cover": "covers/sibaq.webp",
       "file": "s/sibaq.json",
@@ -275,6 +358,9 @@
       "id": "qindil",
       "t": "القنديل المكسور",
       "d": "مَثَلٌ في الصدق",
+      "k": [
+        "sidq"
+      ],
       "ic": "🏮",
       "cover": "covers/qindil.webp",
       "file": "s/qindil.json",
@@ -287,6 +373,9 @@
       "id": "tayyara",
       "t": "طائرةُ الورق",
       "d": "مَثَلٌ في ترك الحسد",
+      "k": [
+        "hasad"
+      ],
       "ic": "🪁",
       "cover": "covers/tayyara.webp",
       "file": "s/tayyara.json",
@@ -299,6 +388,9 @@
       "id": "kalb",
       "t": "الكلبُ العطشان",
       "d": "مَثَلٌ في الرحمة بالحيوان",
+      "k": [
+        "rahma"
+      ],
       "ic": "🐕",
       "cover": "covers/kalb.webp",
       "file": "s/kalb.json",
@@ -311,6 +403,9 @@
       "id": "qafila",
       "t": "القافلة",
       "d": "مَثَلٌ في الشورى",
+      "k": [
+        "awn"
+      ],
       "ic": "🐪",
       "cover": "covers/qafila.webp",
       "file": "s/qafila.json",
@@ -323,6 +418,9 @@
       "id": "surra",
       "t": "الصُّرّة المختومة",
       "d": "مَثَلٌ في الأمانة",
+      "k": [
+        "sidq"
+      ],
       "ic": "👝",
       "cover": "covers/surra.webp",
       "file": "s/surra.json",
@@ -335,6 +433,10 @@
       "id": "raghif",
       "t": "الرغيفُ الأخير",
       "d": "مَثَلٌ في الإيثار",
+      "k": [
+        "hasad",
+        "karam"
+      ],
       "ic": "🍞",
       "cover": "covers/raghif.webp",
       "cw": "covers/w/raghif.webp",
@@ -347,6 +449,10 @@
       "id": "dayf",
       "t": "الضيفُ في المطر",
       "d": "مَثَلٌ في إكرام الضيف",
+      "k": [
+        "karam",
+        "adab"
+      ],
       "ic": "☕",
       "cover": "covers/dayf.webp",
       "cw": "covers/w/dayf.webp",
@@ -359,6 +465,9 @@
       "id": "zeer",
       "t": "جرّةُ السبيل",
       "d": "مَثَلٌ في حقّ ابن السبيل",
+      "k": [
+        "karam"
+      ],
       "ic": "🏺",
       "cover": "covers/zeer.webp",
       "cw": "covers/w/zeer.webp",
@@ -371,6 +480,9 @@
       "id": "bab",
       "t": "البابُ المغلق",
       "d": "مَثَلٌ في الاستئذان",
+      "k": [
+        "adab"
+      ],
       "ic": "🚪",
       "cover": "covers/bab.webp",
       "cw": "covers/w/bab.webp",
@@ -382,6 +494,10 @@
       "id": "janna",
       "t": "أصحابُ الجنّة",
       "d": "إخوةٌ منعوا المسكينَ حقَّه",
+      "k": [
+        "karam",
+        "taa"
+      ],
       "ic": "🌾",
       "cover": "covers/janna.webp",
       "cw": "covers/w/janna.webp",
@@ -393,6 +509,10 @@
       "id": "sabt",
       "t": "أصحابُ السبت",
       "d": "قريةٌ احتالت على أمر الله",
+      "k": [
+        "sidq",
+        "taa"
+      ],
       "ic": "🐟",
       "cover": "covers/sabt.webp",
       "cw": "covers/w/sabt.webp",
@@ -405,6 +525,10 @@
       "id": "namla",
       "t": "النملة",
       "d": "كلمةٌ أنقذت قوماً",
+      "k": [
+        "ghadab",
+        "awn"
+      ],
       "ic": "🐜",
       "cover": "covers/namla.webp",
       "cw": "covers/w/namla.webp",
@@ -416,6 +540,10 @@
       "id": "yasin",
       "t": "الرجلُ الذي جاء يسعى",
       "d": "كلمةُ حقٍّ في مدينةٍ كذّبت",
+      "k": [
+        "shaja",
+        "iman"
+      ],
       "ic": "🏃",
       "cover": "covers/yasin.webp",
       "cw": "covers/w/yasin.webp",
@@ -428,6 +556,9 @@
       "id": "rabbayani",
       "t": "كما ربّياني صغيراً",
       "d": "مَثَلٌ في برّ الجدّ",
+      "k": [
+        "birr"
+      ],
       "ic": "🧓",
       "cover": "covers/rabbayani.webp",
       "cw": "covers/w/rabbayani.webp",
@@ -440,6 +571,10 @@
       "id": "tamr",
       "t": "التمرُ المرصوف",
       "d": "مَثَلٌ في ترك الغشّ",
+      "k": [
+        "sidq",
+        "adl"
+      ],
       "ic": "🌴",
       "cover": "covers/tamr.webp",
       "cw": "covers/w/tamr.webp",
@@ -452,6 +587,11 @@
       "id": "kabir",
       "t": "الكبيرُ والصغير",
       "d": "مَثَلٌ في رحمة الصغير وتوقير الكبير",
+      "k": [
+        "birr",
+        "rahma",
+        "adab"
+      ],
       "ic": "🤲",
       "cover": "covers/kabir.webp",
       "cw": "covers/w/kabir.webp",
@@ -464,6 +604,9 @@
       "id": "kalima2",
       "t": "الكلمةُ التي لم تُقَل",
       "d": "مَثَلٌ في حفظ اللسان",
+      "k": [
+        "lisan"
+      ],
       "ic": "🤐",
       "cover": "covers/kalima2.webp",
       "cw": "covers/w/kalima2.webp",
@@ -476,6 +619,9 @@
       "id": "qalam",
       "t": "القلمُ المستعار",
       "d": "مَثَلٌ في ردّ الأمانة",
+      "k": [
+        "sidq"
+      ],
       "ic": "🖍️",
       "cover": "covers/qalam.webp",
       "cw": "covers/w/qalam.webp",
@@ -487,6 +633,9 @@
       "id": "busat",
       "t": "البساطُ الأحمر",
       "d": "مَثَلٌ في الصبر",
+      "k": [
+        "sabr"
+      ],
       "ic": "🧶",
       "cover": "covers/busat.webp",
       "cw": "covers/w/busat.webp",
@@ -499,6 +648,10 @@
       "id": "shawk",
       "t": "غصنُ الشوك",
       "d": "مَثَلٌ في إماطة الأذى عن الطريق",
+      "k": [
+        "awn",
+        "adab"
+      ],
       "ic": "🌿",
       "cover": "covers/shawk.webp",
       "cw": "covers/w/shawk.webp",
@@ -510,6 +663,10 @@
       "id": "sirr",
       "t": "صدقةُ السرّ",
       "d": "مَثَلٌ في إخفاء الصدقة",
+      "k": [
+        "karam",
+        "taa"
+      ],
       "ic": "🤫",
       "cover": "covers/sirr.webp",
       "cw": "covers/w/sirr.webp",
@@ -522,6 +679,9 @@
       "id": "baqara",
       "t": "بقرةُ بني إسرائيل",
       "d": "قومٌ أكثروا السؤالَ فشدّدوا على أنفسهم",
+      "k": [
+        "taa"
+      ],
       "ic": "🐄",
       "cover": "covers/baqara.webp",
       "cw": "covers/w/baqara.webp",
@@ -533,6 +693,10 @@
       "id": "ibnay",
       "t": "ابنا آدم",
       "d": "أوّلُ حسدٍ في الأرض، وغرابٌ يُعلّم",
+      "k": [
+        "ghadab",
+        "hasad"
+      ],
       "ic": "🐦‍⬛",
       "cover": "covers/ibnay.webp",
       "cw": "covers/w/ibnay.webp",
@@ -544,6 +708,9 @@
       "id": "faiz",
       "t": "الفائزُ الثاني",
       "d": "مَثَلٌ في أن تحبّ لأخيك ما تحبّ لنفسك",
+      "k": [
+        "hasad"
+      ],
       "ic": "🥈",
       "cover": "covers/faiz.webp",
       "cw": "covers/w/faiz.webp",
@@ -555,6 +722,9 @@
       "id": "waqt",
       "t": "الوقتُ الضائع",
       "d": "مَثَلٌ في اغتنام الوقت",
+      "k": [
+        "nizam"
+      ],
       "ic": "⏳",
       "cover": "covers/waqt.webp",
       "cw": "covers/w/waqt.webp",
@@ -566,6 +736,9 @@
       "id": "fawq",
       "t": "فوقَ كلّ عالِم",
       "d": "مَثَلٌ في التواضع في العلم",
+      "k": [
+        "kibr"
+      ],
       "ic": "📚",
       "cover": "covers/fawq.webp",
       "cw": "covers/w/fawq.webp",
@@ -577,6 +750,10 @@
       "id": "muhra",
       "t": "المُهرةُ العنيدة",
       "d": "مَثَلٌ في الرفق",
+      "k": [
+        "ghadab",
+        "rahma"
+      ],
       "ic": "🐎",
       "cover": "covers/muhra.webp",
       "cw": "covers/w/muhra.webp",
@@ -588,6 +765,9 @@
       "id": "mawid",
       "t": "الموعدُ عند البئر",
       "d": "مَثَلٌ في الوفاء بالوعد",
+      "k": [
+        "sidq"
+      ],
       "ic": "🤝",
       "cover": "covers/mawid.webp",
       "cw": "covers/w/mawid.webp",
@@ -599,6 +779,9 @@
       "id": "saa",
       "t": "الساعةُ المعطّلة",
       "d": "مَثَلٌ في إتقان العمل",
+      "k": [
+        "nizam"
+      ],
       "ic": "⏱️",
       "cover": "covers/saa.webp",
       "cw": "covers/w/saa.webp",
@@ -611,6 +794,9 @@
       "id": "basma",
       "t": "ابتسامةٌ في الطريق",
       "d": "مَثَلٌ في البشاشة",
+      "k": [
+        "adab"
+      ],
       "ic": "😊",
       "cover": "covers/basma.webp",
       "cw": "covers/w/basma.webp",
@@ -622,6 +808,9 @@
       "id": "ghurfa",
       "t": "الغرفةُ المرتّبة",
       "d": "مَثَلٌ في النظافة والترتيب",
+      "k": [
+        "nizam"
+      ],
       "ic": "🧹",
       "cover": "covers/ghurfa.webp",
       "cw": "covers/w/ghurfa.webp",
@@ -634,6 +823,10 @@
       "id": "ard",
       "t": "زيتونُ جدّي",
       "d": "مَثَلٌ في الثبات على الأرض والدفاع عنها",
+      "k": [
+        "sabr",
+        "shaja"
+      ],
       "ic": "🫒",
       "cover": "covers/ard.webp",
       "cw": "covers/w/ard.webp",
@@ -645,6 +838,12 @@
       "id": "hijra",
       "t": "الهجرة",
       "d": "من مكّة إلى المدينة، والله معهما",
+      "k": [
+        "karam",
+        "awn",
+        "sabr",
+        "iman"
+      ],
       "ic": "🐪",
       "cover": "covers/hijra.webp",
       "cw": "covers/w/hijra.webp",
@@ -657,6 +856,10 @@
       "id": "dayn",
       "t": "الدَّينُ الثقيل",
       "d": "مَثَلٌ في التيسير على المدين",
+      "k": [
+        "karam",
+        "rahma"
+      ],
       "ic": "🪙",
       "cover": "covers/dayn.webp",
       "cw": "covers/w/dayn.webp",
@@ -668,6 +871,10 @@
       "id": "asir",
       "t": "فكُّ الأسير",
       "d": "مَثَلٌ في السعي لفكّ الأسير",
+      "k": [
+        "awn",
+        "shaja"
+      ],
       "ic": "🕊️",
       "cover": "covers/asir.webp",
       "cw": "covers/w/asir.webp",
@@ -680,6 +887,9 @@
       "id": "haja",
       "t": "في حاجة أخيه",
       "d": "مَثَلٌ في قضاء حاجات الناس",
+      "k": [
+        "awn"
+      ],
       "ic": "🧺",
       "cover": "covers/haja.webp",
       "cw": "covers/w/haja.webp",
@@ -691,6 +901,9 @@
       "id": "surur",
       "t": "سرورٌ تُدخله",
       "d": "مَثَلٌ في إدخال السرور على المسلم",
+      "k": [
+        "awn"
+      ],
       "ic": "🎁",
       "cover": "covers/surur.webp",
       "cw": "covers/w/surur.webp",
@@ -703,6 +916,11 @@
       "id": "talut",
       "t": "طالوت وجالوت",
       "d": "قلّةٌ صبرت فغلبت كثرةً بإذن الله",
+      "k": [
+        "sabr",
+        "shaja",
+        "iman"
+      ],
       "ic": "🛡️",
       "cover": "covers/talut.webp",
       "cw": "covers/w/talut.webp",
@@ -715,6 +933,9 @@
       "id": "ghulaman",
       "t": "غلامان في الصفّ",
       "d": "صغيران أقدما يومَ بدر",
+      "k": [
+        "shaja"
+      ],
       "ic": "⚔️",
       "cover": "covers/ghulaman.webp",
       "cw": "covers/w/ghulaman.webp",
@@ -727,6 +948,9 @@
       "id": "sahm",
       "t": "سهمُ سند",
       "d": "مَثَلٌ في تجهيز الغازي",
+      "k": [
+        "awn"
+      ],
       "ic": "🏹",
       "cover": "covers/sahm.webp",
       "cw": "covers/w/sahm.webp",
@@ -739,6 +963,11 @@
       "id": "baydar",
       "t": "عامُ القمح وعامُ البَرَد",
       "d": "مَثَلٌ في السَّعة والضيق",
+      "k": [
+        "shukr",
+        "karam",
+        "sabr"
+      ],
       "ic": "🌾",
       "cover": "covers/baydar.webp",
       "cw": "covers/w/baydar.webp",
@@ -751,6 +980,9 @@
       "id": "qidr",
       "t": "القِدرُ الكبيرة",
       "d": "مَثَلٌ في إعارة الماعون",
+      "k": [
+        "karam"
+      ],
       "ic": "🍲",
       "cover": "covers/qidr.webp",
       "cw": "covers/w/qidr.webp",
@@ -763,6 +995,9 @@
       "id": "safwan",
       "t": "الصخرةُ الملساء",
       "d": "مَثَلٌ في الإخلاص وترك الرياء",
+      "k": [
+        "taa"
+      ],
       "ic": "🪨",
       "cover": "covers/safwan.webp",
       "cw": "covers/w/safwan.webp",

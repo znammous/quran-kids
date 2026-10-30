@@ -7,7 +7,8 @@
     "www": "node scripts/build-www.mjs",
     "sync": "node scripts/build-www.mjs && npx cap sync",
     "i18n": "node scripts/i18n-check.mjs",
-    "i18n:live": "node scripts/i18n-harvest.mjs"
+    "i18n:live": "node scripts/i18n-harvest.mjs",
+    "stories": "node scripts/stories-search.mjs"
   },
   "dependencies": {
     "@capacitor/app": "^8.1.1",

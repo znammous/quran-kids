@@ -2083,8 +2083,22 @@ body.glow-off .dfpic{animation:none}
 .goalcard.stoff{filter:grayscale(1);opacity:.8}
 /* قائمةُ القصص عمودان: الصورةُ ٤:٣ تملأ رأسَ البطاقة، والعنوانُ والوصفُ تحتها،
    وحالُ القصّة شارةٌ على زاوية الصورة */
-#storiesBody:not([hidden]){display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
-#storiesBody .gmnote{grid-column:1/-1}
+#storiesBody .stgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;align-items:start}
+/* البحثُ فوقها، ثمّ القيمُ صفّاً يُمرَّر أفقيّاً */
+.stfind{position:relative;margin:0 0 10px}
+.stfind input{display:block;width:100%;box-sizing:border-box;font-family:inherit;font-size:16px;font-weight:800;
+  color:var(--ttl);background:var(--pnl2);border:2px solid var(--pb);border-radius:12px;
+  padding:10px 12px;padding-inline-end:42px;-webkit-appearance:none;appearance:none}
+.stfind input::-webkit-search-cancel-button{display:none}
+.stfind button{position:absolute;top:50%;inset-inline-end:6px;transform:translateY(-50%);width:32px;height:32px;
+  border:0;border-radius:50%;background:var(--pnl3);color:var(--on2);font:inherit;font-weight:900;cursor:pointer}
+.stkinds{display:flex;gap:8px;overflow-x:auto;margin:0 -4px 12px;padding:2px 4px 6px;scrollbar-width:none}
+.stkinds::-webkit-scrollbar{display:none}
+.stkinds .chipsel{flex:0 0 auto;white-space:nowrap}
+.stfound{font-size:13.5px;font-weight:900;color:var(--on2);margin:-4px 2px 10px}
+.stcard .stsnip{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+  font-size:12.5px;font-weight:700;color:var(--on2);line-height:1.7;margin-top:4px}
+.stcard .stsnip mark{background:var(--gold);color:#3a2a00;border-radius:4px;padding:0 2px}
 .stcard{position:relative;display:block;width:100%;padding:0;text-align:start;
   background:var(--pnl);border:3px solid var(--pb);border-radius:16px;overflow:hidden;
   cursor:pointer;font-family:inherit;box-shadow:0 5px 0 rgba(0,0,0,.16);transition:.12s;
@@ -18445,28 +18459,192 @@ function storiesLockedMsg(left){
    من جديد، فتظهر البطاقاتُ بلا صورٍ لحظةً ثمّ تمتلئ — ترمش الشاشةُ كلّما رجع.
    والآن ما جُلب مرّةً يُرسم مع البطاقة نفسِها */
 var ST_COV={};
+/* ===== البحثُ في القصص، وتصنيفُها بقيمها =====
+   كلُّ قصّةٍ في الفهرس لها `k`: القيمُ التي تعالجها، من ST_KINDS — فيجد وليُّ
+   الأمر ما يُحاكي ما يريد («الغضب» مثلاً). والبحثُ في العنوان والوصف ونصِّ
+   الصفحات: والنصوصُ في فهرسٍ واحدٍ (q.json، يكتبه npm run stories) يُجلب عند
+   أوّل بحثٍ لا قبله، فالقصّةُ نفسُها لا تُنزَّل إلّا حين تُفتح. */
+var ST_KINDS=[
+  ['ghadab','😤','الغضب والخصام'],
+  ['lisan','🗣️','حفظ اللسان'],
+  ['sidq','🤝','الصدق والأمانة'],
+  ['adl','⚖️','العدل'],
+  ['hasad','💚','الحسد وحبّ الخير للغير'],
+  ['kibr','🌱','التواضع وترك الكِبر'],
+  ['shukr','🙏','الشكر والقناعة'],
+  ['karam','🎁','الكرم والعطاء'],
+  ['birr','👪','برّ الوالدين والأهل'],
+  ['rahma','💞','الرحمة والرفق'],
+  ['awn','🧱','التعاون وعون الناس'],
+  ['sabr','⏳','الصبر والثبات'],
+  ['shaja','🦁','الشجاعة وقول الحقّ'],
+  ['iman','🕋','الإيمان والتوكّل'],
+  ['taa','🤲','الطاعة والإخلاص والتوبة'],
+  ['adab','🚪','الآداب'],
+  ['nizam','⏰','الوقت والإتقان والنظام']
+];
+var ST_Q='', ST_K='', ST_QT=0;      /* يبقيان ما بقي التطبيقُ مفتوحاً: يرجع من القصّة إلى نتائجه */
+/* التطبيعُ للبحث: بلا تشكيلٍ ولا همزاتٍ ولا تطويل، والتاءُ المربوطة هاءً، واللاتينيّةُ
+   بلا علامات (é ← e). ومع `map` يُحفظ لكلّ حرفٍ موضعُه من الأصل، فيُقتطع منه المقتطف */
+var ST_NSKIP=/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640\u0621]/, ST_NSP=/\s/;
+function stNorm(s, map){
+  s=String(s||'');
+  var o='', m=map ? [] : null, sp=true, i, c, d;
+  for(i=0;i<s.length;i++){
+    c=s.charAt(i);
+    if(ST_NSKIP.test(c)) continue;
+    if(ST_NSP.test(c)){ if(!sp){ sp=true; o+=' '; if(m) m.push(i); } continue; }
+    if(c==='\u0622'||c==='\u0623'||c==='\u0625'||c==='\u0671') c='\u0627';
+    else if(c==='\u0649'||c==='\u0626') c='\u064A';
+    else if(c==='\u0629') c='\u0647';
+    else if(c==='\u0624') c='\u0648';
+    else if(c<'\u0600' || c>'\u06ff'){ c=c.toLowerCase(); if(c.normalize) c=c.normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+    sp=false;
+    for(d=0;d<c.length;d++){ o+=c.charAt(d); if(m) m.push(i); }
+  }
+  return m ? { s:o, m:m, x:s } : o.replace(/ $/,'');
+}
+/* فهرسُ النصوص برقم الفهرس (v) وبصمةِ الترجمات: يتجدّد إذا تغيّرت القصص،
+   ويُحذف القديمُ من المخزن */
+var STQ=null, STQ_KEY='', STQ_P=null, STQ_N={};
+function stQKey(){
+  var f='', n=0, r=0, k;
+  if(stLocCode() && STLOC && STLOC.stories){ for(k in STLOC.stories){ n++; r+=(STLOC.stories[k].rev|0)||1; } f='.'+n+'.'+r; }
+  return ((SIDX && SIDX.v)|0)+f;
+}
+function stQLoad(){
+  var key=stQKey(), lc=stLocCode();
+  if(STQ && STQ_KEY===key) return Promise.resolve(STQ);
+  if(STQ_P && STQ_P.key===key) return STQ_P.p;
+  var one=function(p){
+    return stJson(p+'?v='+key).then(function(j){ return (j && j.s) || null; })['catch'](function(){ return null; });
+  };
+  var p=Promise.all([one('q.json'), lc ? one(lc+'/q.json') : null]).then(function(r){
+    STQ_P=null;
+    if(!r[0]) return null;              /* بلا شبكةٍ ولا مخزَّن: يُكتفى بالعنوان، ويُعاد في البحث التالي */
+    STQ={ ar:r[0], loc:r[1]||{} }; STQ_KEY=key; STQ_N={};
+    if(window.caches) caches.open(ST_CACHE).then(function(c){
+      return c.keys().then(function(ks){
+        ks.forEach(function(q){ if(/\/q\.json\?v=/.test(q.url) && q.url.slice(-('?v='+key).length)!=='?v='+key) c['delete'](q); });
+      });
+    })['catch'](function(){});
+    return STQ;
+  });
+  STQ_P={ key:key, p:p };
+  return p;
+}
+/* نصوصُ القصّة المطبَّعة: المعروضةُ بلغته أوّلاً (إن كانت لمراجعتها)، ثمّ العربيّة */
+function stQText(x){
+  if(!STQ) return [];
+  if(STQ_N[x.id]) return STQ_N[x.id];
+  var o=[], l=STQ.loc[x.id], a=STQ.ar[x.id];
+  if(x.loc && l && ((l.r|0)||1)===stRev(x)) o.push(stNorm(l.x, true));
+  if(a) o.push(stNorm(a.x, true));
+  return (STQ_N[x.id]=o);
+}
+/* مقتطفٌ حول ما وُجد، والكلمةُ مُعلَّمة */
+function stSnip(t, at, len){
+  var a=t.m[at], b=t.m[at+len-1]+1, s=Math.max(0,a-28), e=Math.min(t.x.length,b+46);
+  while(s>0 && !ST_NSP.test(t.x.charAt(s-1)) && a-s<40) s--;
+  while(e<t.x.length && !ST_NSP.test(t.x.charAt(e)) && e-b<60) e++;
+  var tr=function(z){ return esc(z.replace(/\s+/g,' ')); };
+  return (s>0?'…':'')+tr(t.x.slice(s,a))+'<mark>'+tr(t.x.slice(a,b))+'</mark>'+tr(t.x.slice(b,e))+(e<t.x.length?'…':'');
+}
+/* ما يُعرض: القيمةُ المختارة، ثمّ البحث — كلُّ كلمةٍ في القصّة في أيّ موضع،
+   وما وُجد في العنوان أوّلاً، ثمّ في الوصف، ثمّ في النصّ ومعه مقتطفُه */
+function stShown(){
+  var q=stNorm(ST_Q), w=q.length>=2 ? q.split(' ') : [], out=[];
+  stList().forEach(function(x, i){
+    if(ST_K && (x.k||[]).indexOf(ST_K)<0) return;
+    if(!w.length){ out.push({ x:x, r:0, i:i }); return; }
+    var tn=stNorm(x.t), dn=stNorm(x.d), tx_=null, r=0, ok=true, sn='';
+    w.forEach(function(v){
+      if(!ok) return;
+      if(tn.indexOf(v)>-1) return;
+      if(dn.indexOf(v)>-1){ r=Math.max(r,1); return; }
+      tx_=tx_||stQText(x);
+      for(var j=0;j<tx_.length;j++){
+        var at=tx_[j].s.indexOf(v);
+        if(at>-1){ r=2; if(!sn) sn=stSnip(tx_[j], at, v.length); return; }
+      }
+      ok=false;
+    });
+    if(ok) out.push({ x:x, r:r, i:i, sn:sn });
+  });
+  return out.sort(function(a,b){ return a.r-b.r || a.i-b.i; });
+}
 function storiesRender(){
   var B=$('storiesBody'); if(!B) return;
-  var L=stList(), s=stBox(), h='', off=!!storiesLeft();
-  if(!L.length){
-    h='<p class="gmnote">لا قصصَ بعدُ هنا 📖<br>تظهر حين تصل — ويكفي أن يتّصل التطبيقُ بالإنترنت مرّةً واحدة</p>';
-  }else{
-    L.forEach(function(x){
-      var rv=stRev(x), seen=(s.op[x.id]|0)>0;
-      var fresh=(s.op[x.id]|0)<rv, done=(s.read[x.id]|0)>=rv;
-      /* الغلافُ العريض (cw) للبطاقة الكبيرة، والمربّعُ الصغير بديلُه في الفهرس القديم */
-      var cv=x.cw||x.cover, cp=stAt(cv,rv)||'', cu=cp && ST_COV[cp];
-      h+='<button type="button" class="stcard'+(fresh?' now newdot':(done?' done':''))+(off?' stoff':'')+'" data-story="'+esc(x.id)+'">'+
-         '<span class="stcimg'+(cv&&!cu?' stcov':'')+'" data-cov="'+esc(cp)+'">'+(cu?'<img alt="" src="'+esc(cu)+'">':(cv?'':esc(x.ic||'📖')))+
-           '<span class="stcbadge">'+(fresh?(seen?'✨ تجدّدت':'✨ جديدة'):(done?'✓ قرأتَها':'⏳ لم تُتمَّها'))+'</span></span>'+
-         '<span class="stctx"><b>'+esc(x.t||'قصّة')+'</b><i>'+esc(x.d||'')+'</i></span></button>';
-    });
+  if(!stList().length){
+    B.innerHTML='<p class="gmnote">لا قصصَ بعدُ هنا 📖<br>تظهر حين تصل — ويكفي أن يتّصل التطبيقُ بالإنترنت مرّةً واحدة</p>';
+    return;
   }
-  B.innerHTML=h;
-  var bs=B.querySelectorAll('[data-story]'), i;
+  /* الخانةُ تُبنى مرّةً واحدة، ولا يُعاد إلّا ما تحتها — وإلّا ذهب منها المؤشّر مع كلّ حرف */
+  if(!$('stGrid')){
+    B.innerHTML='<div class="stfind"><input type="search" id="stQ" placeholder="🔎 ابحث في القصص…" autocomplete="off" enterkeyhint="search">'+
+        '<button type="button" id="stQX" aria-label="امسح البحث" hidden>✕</button></div>'+
+      '<div class="stkinds" id="stKinds"></div><div class="stfound" id="stFound" hidden></div><div class="stgrid" id="stGrid"></div>';
+    var I=$('stQ');
+    I.value=ST_Q;
+    I.onfocus=function(){ stQLoad(); };      /* يُجلب وهو يكتب، فلا ينتظره */
+    I.oninput=function(){
+      ST_Q=I.value; $('stQX').hidden=!ST_Q;
+      clearTimeout(ST_QT);
+      ST_QT=setTimeout(function(){
+        stGridRender();
+        if(stNorm(ST_Q).length>=2 && STQ_KEY!==stQKey()) stQLoad().then(function(j){ if(j) stGridRender(); });
+      }, 160);
+    };
+    I.onkeydown=function(e){ if(e.key==='Enter'){ try{ I.blur(); }catch(_){} } };
+    $('stQX').onclick=function(){ I.value=''; I.oninput(); };
+  }
+  $('stQX').hidden=!ST_Q;
+  stKindsRender();
+  stGridRender();
+  if(stNorm(ST_Q).length>=2 && STQ_KEY!==stQKey()) stQLoad().then(function(j){ if(j) stGridRender(); });
+}
+/* القيمُ التي لها قصص وحدَها، بترتيب ST_KINDS */
+function stKindsRender(){
+  var K=$('stKinds'), has={}, h='';
+  stList().forEach(function(x){ (x.k||[]).forEach(function(k){ has[k]=(has[k]|0)+1; }); });
+  if(ST_K && !has[ST_K]) ST_K='';
+  ST_KINDS.forEach(function(k){
+    if(has[k[0]]) h+='<button type="button" class="chipsel'+(ST_K===k[0]?' sel':'')+'" data-kind="'+k[0]+'">'+k[1]+' '+k[2]+'</button>';
+  });
+  K.hidden=!h;
+  K.innerHTML=h ? '<button type="button" class="chipsel'+(ST_K?'':' sel')+'" data-kind="">📚 الكلّ</button>'+h : '';
+  var bs=K.querySelectorAll('[data-kind]'), i;
+  for(i=0;i<bs.length;i++) bs[i].onclick=function(){
+    ST_K=this.getAttribute('data-kind');
+    var cs=K.querySelectorAll('[data-kind]'), j;
+    for(j=0;j<cs.length;j++) cs[j].classList.toggle('sel', cs[j]===this);
+    stGridRender();
+  };
+  if(ST_K){ var on=K.querySelector('.sel'); if(on) try{ on.scrollIntoView({block:'nearest', inline:'center'}); }catch(e){} }
+}
+function stGridRender(){
+  var G=$('stGrid'), F=$('stFound'); if(!G) return;
+  var s=stBox(), off=!!storiesLeft(), R=stShown(), h='', i;
+  var on=!!ST_K || stNorm(ST_Q).length>=2;
+  R.forEach(function(o){
+    var x=o.x, rv=stRev(x), seen=(s.op[x.id]|0)>0;
+    var fresh=(s.op[x.id]|0)<rv, done=(s.read[x.id]|0)>=rv;
+    /* الغلافُ العريض (cw) للبطاقة الكبيرة، والمربّعُ الصغير بديلُه في الفهرس القديم */
+    var cv=x.cw||x.cover, cp=stAt(cv,rv)||'', cu=cp && ST_COV[cp];
+    h+='<button type="button" class="stcard'+(fresh?' now newdot':(done?' done':''))+(off?' stoff':'')+'" data-story="'+esc(x.id)+'">'+
+       '<span class="stcimg'+(cv&&!cu?' stcov':'')+'" data-cov="'+esc(cp)+'">'+(cu?'<img alt="" src="'+esc(cu)+'">':(cv?'':esc(x.ic||'📖')))+
+         '<span class="stcbadge">'+(fresh?(seen?'✨ تجدّدت':'✨ جديدة'):(done?'✓ قرأتَها':'⏳ لم تُتمَّها'))+'</span></span>'+
+       '<span class="stctx"><b>'+esc(x.t||'قصّة')+'</b><i>'+esc(x.d||'')+'</i>'+
+         (o.sn ? '<span class="stsnip" translate="no">'+o.sn+'</span>' : '')+'</span></button>';
+  });
+  F.hidden=!on;
+  if(on) F.textContent = R.length ? arCount(R.length, C_STORY)
+    : (stNorm(ST_Q).length>=2 && !STQ ? '…' : tx('لا قصّةَ توافق بحثك'));
+  G.innerHTML=h;
+  var bs=G.querySelectorAll('[data-story]');
   for(i=0;i<bs.length;i++) bs[i].onclick=function(){ storyOpen(this.getAttribute('data-story')); };
   /* الأغلفةُ تُجلب بعد رسم القائمة، فلا تنتظرها */
-  var cs=B.querySelectorAll('.stcov[data-cov]');
+  var cs=G.querySelectorAll('.stcov[data-cov]');
   for(i=0;i<cs.length;i++) (function(el){
     var p=el.getAttribute('data-cov'); if(!p) return;
     stImg(p).then(function(u){
@@ -20375,7 +20553,7 @@ function bootNotes(){
    «يوجد تحديث» قبل أن ينزّله (قواميسُه القديمة لا تعرفها). ثمّ تُعرض مرّةً واحدة
    بعد أن تصل الحزمةُ — أو الصفحةُ على الموقع — لمن لم يرَها، ولا تُعرض لمن فتح
    التطبيقَ لأوّل مرّة. */
-var WHATSNEW='';
+var WHATSNEW='في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.';
 function newsNote(next){
   var seen=load('nur_news','');
   if(!WHATSNEW || seen===WHATSNEW || NEWS_FIRST){

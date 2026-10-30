@@ -15,10 +15,12 @@
    ٥) كلُّ لغةٍ غير الأرديّة: ما في قاموس الأرديّة (المرجع) ولم يُترجَم فيها بعد.
    ٦) لغاتُ اليسار: الأسماءُ اللاتينيّة وقوالبُ السور.
    ٧) القصص: كلُّ قصّةٍ مترجمةٌ بمراجعتها وعددِ صفحاتها وآياتِها.
+   ٨) القصص: لكلٍّ قيمُها (k) من ST_KINDS، وفهرسُ البحث (q.json) يطابق نصوصَها.
 
    الفحصُ ثابتٌ لا يشغّل الصفحة، فالجملُ التي تُركَّب من أجزاءٍ تظهر أجزاءً.
    ولما لا يُرى إلا بالتشغيل: scripts/i18n-harvest.mjs */
 import { readFileSync, writeFileSync, existsSync, readdirSync } from 'node:fs';
+import { build as storiesSearch } from './stories-search.mjs';
 
 const args = new Set(process.argv.slice(2));
 const AR = /[؀-ۿ]/;
@@ -213,6 +215,20 @@ if (existsSync('stories/index.json')) {
     head(`٧) ${c}: القصص (${miss.length})`);
     miss.length ? (bad += miss.length, list(miss)) : console.log('   لا شيء ✓');
   }
+}
+
+/* ---------- ٨) القصص: قيمُها من ST_KINDS في index.html، وفهرسُ البحث يطابقها ---------- */
+if (existsSync('stories/index.json')) {
+  const SI = JSON.parse(readFileSync('stories/index.json', 'utf8')).stories, miss = [];
+  const KINDS = new Set([...(html.match(/var ST_KINDS=\[([\s\S]*?)\n\];/) || ['', ''])[1].matchAll(/\['([a-z]+)'/g)].map(m => m[1]));
+  for (const x of SI) {
+    if (!x.k || !x.k.length) miss.push(`${x.id}: بلا قيمة (k)`);
+    for (const k of x.k || []) if (!KINDS.has(k)) miss.push(`${x.id}: قيمةٌ لا تعرفها ST_KINDS «${k}»`);
+  }
+  const out = storiesSearch();
+  for (const f in out) if (!existsSync('stories/' + f) || readFileSync('stories/' + f, 'utf8') !== out[f]) miss.push(`stories/${f} قديم — npm run stories`);
+  head(`٨) القصص: القيمُ وفهرسُ البحث (${miss.length})`);
+  miss.length ? (bad += miss.length, list(miss)) : console.log('   لا شيء ✓');
 }
 
 console.log(`\nاللغات: ${langs.join('، ')} — نصوصُ الشيفرة المفحوصة: ${found.size}، وفي قاموس ${REF}: ${Object.keys(ref).length}`);
