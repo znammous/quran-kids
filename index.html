@@ -14696,6 +14696,7 @@ function bqnBlocked(){
   }
   return null;
 }
+var BQ_GATED=false;         /* أُجيب سؤالُ وليّ الأمر للتوّ: يمضي startBqn بلا إعادته */
 var BQN_BACK='';            /* من أين جئنا إلى شاشة الاختيار: '' أو 'onb' أو 'set' */
 /* يُفتح على خطوةٍ بعينها متى عُرف المقصود — فمن جاء يسجّل حفظَه السابق
    لا يُستأنف به المعالجُ من أوّله ولا يُسأل عن خطّةٍ قد اختارها. */
@@ -14740,7 +14741,13 @@ function bqnFreshAsk(after){
       after();
     },'🗑️');
 }
+/* تغييرُ خطّةٍ قائمة يمرّ ببوّابة وليّ الأمر: من الإعدادات والمراجعة وتعديلِ الملفّ —
+   كان الأطفالُ يغيّرونها بأنفسهم. ومن لم يختر خطّةً بعدُ (المعالجُ الأوّل) لا يُسأل */
 function startBqn(from, step){
+  if(curP().planChosen && !BQ_GATED && (from!=='onb' || ONB.edit)){
+    parentGate(function(ok){ if(!ok) return; BQ_GATED=true; startBqn(from, step); BQ_GATED=false; });
+    return;
+  }
   BQN_BACK=from||'';
   if(BQ.snap==null) BQ.snap=bqnSig();     /* أوّلُ الدخول، لا كلُّ عودةٍ إليه في أثنائه */
   show('scr-bqn');
