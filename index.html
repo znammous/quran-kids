@@ -11675,22 +11675,34 @@ function fxLoad(){
   if(FX.asked) return;
   FX.asked=true;
   var s=document.createElement('script');
-  s.src='data/fx.js?v=1'; s.async=true;
+  s.src='data/fx.js?v=1'; s.async=true; s.onload=fxWarm;
   document.head.appendChild(s);
+}
+/* تُبنى كلُّ حركةٍ مرّةً في الخفاء حين تصل: أوّلُ بناءٍ يُعِدّ بياناتِها، فلا يتأخّر أوّلُ جوابٍ عن ضغطته */
+function fxWarm(){
+  if(!fxOn()) return;
+  var d=document.createElement('div'), k;
+  d.style.cssText='position:fixed;width:1px;height:1px;left:-9px;top:-9px;overflow:hidden;visibility:hidden';
+  document.body.appendChild(d);
+  for(k in NUR_FX){ try{ lottie.loadAnimation({ container:d, renderer:'svg', loop:false, autoplay:false, animationData:NUR_FX[k] }).destroy(); }catch(e){} }
+  d.parentNode.removeChild(d);
 }
 /* موضعُ آخر لمسة: حركةُ الجواب تنبع من الزرّ الذي ضُغط */
 document.addEventListener('pointerdown', function(e){
   FX.t=Date.now(); FX.x=e.clientX; FX.y=e.clientY; FX.el=e.target;
 }, true);
-/* o.fit: «slice» يملأ الشاشة ولو قُصّ طرفُه. o.upto: يقف عند هذا الكسر من الحركة
-   (ما بعده ذبولٌ لا يحسن أن يُترك عليه). o.done: عند تمامها */
+/* ما يُعرض من كلّ حركة وفي كم ثانية: [من، إلى] كسرٌ من طولها، ثمّ المدّة.
+   الحركاتُ على أصلها بطيئة، وأكثرُ طولها فراغٌ أو ذبول — والجوابُ نقرةٌ لا تنتظر */
+var FX_CUT={ ok1:[0,.4,.45], ok2:[.35,.9,.55], bad:[.1,.7,.45], dance:[0,.7,.9],
+             cup:[.05,.7,.8], cup2:[.05,.6,.55], stars5:[0,.42,.7], conf:[.05,.65,1.3] };
+/* o.fit: «slice» يملأ الشاشة ولو قُصّ طرفُه. o.done: عند تمامها */
 function fxPlay(box, name, o){
   o=o||{};
-  var an=lottie.loadAnimation({ container:box, renderer:'svg', loop:false, autoplay:!o.upto,
-    animationData:NUR_FX[name], rendererSettings:{ preserveAspectRatio:'xMidYMid '+(o.fit||'meet') } });
-  if(o.upto) an.addEventListener('DOMLoaded', function(){
-    an.playSegments([0, Math.round(an.totalFrames*o.upto)], true);
-  });
+  var J=NUR_FX[name], n=J.op-J.ip, c=FX_CUT[name]||[0,1,n/J.fr];
+  var an=lottie.loadAnimation({ container:box, renderer:'svg', loop:false, autoplay:true,
+    animationData:J, initialSegment:[J.ip+Math.round(n*c[0]), J.ip+Math.round(n*c[1])],
+    rendererSettings:{ preserveAspectRatio:'xMidYMid '+(o.fit||'meet') } });
+  an.setSpeed(n*(c[1]-c[0])/J.fr/c[2]);
   if(o.done) an.addEventListener('complete', function(){ o.done(an); });
   return an;
 }
@@ -11720,7 +11732,7 @@ function fxScreen(name){
   an=fxPlay(d, name, { fit:'slice', done:function(){ fxGone(an, d); } });
   setTimeout(function(){ fxGone(an, d); }, 6000);
 }
-/* رمزٌ في الصفحة تحلّ محلَّه حركة: data-fx اسمُها، وdata-fxh ارتفاعُها، وdata-fxu موضعُ وقوفها */
+/* رمزٌ في الصفحة تحلّ محلَّه حركة: data-fx اسمُها، وdata-fxh ارتفاعُها */
 function fxFill(root){
   while(FX.fill.length) fxGone(FX.fill.pop());       /* ما بقي من شاشةٍ قبلها */
   if(!fxOn() || !root) return;
@@ -11729,7 +11741,7 @@ function fxFill(root){
     el=els[i];
     el.textContent=''; el.style.fontSize='';
     el.style.height=el.getAttribute('data-fxh')+'px';
-    FX.fill.push(fxPlay(el, el.getAttribute('data-fx'), { upto:parseFloat(el.getAttribute('data-fxu'))||0 }));
+    FX.fill.push(fxPlay(el, el.getAttribute('data-fx')));
   }
 }
 
@@ -13235,7 +13247,7 @@ function finishStage(){
   $('barFill').style.width='100%';
   $('pStars').textContent=arNum(p.stars);
   $('playArea').innerHTML=
-    '<div style="text-align:center"><div style="font-size:52px" data-fx="dance" data-fxh="120" data-fxu=".7">🌟</div>'+
+    '<div style="text-align:center"><div style="font-size:52px" data-fx="dance" data-fxh="120">🌟</div>'+
     '<h2 style="color:var(--g1);margin:6px 0">أنجزت المرحلة!</h2>'+
     '<p style="color:#3d5b7a;font-size:16px;margin:0 0 12px">النجمة '+arNum(p.stars)+' من '+arNum(stagesN())+' في '+esc(S.surah.name)+' \u2066('+arNum(S.seg[0]+1)+'-'+arNum(S.seg[1])+')\u2069</p>'+
     '<div style="font-size:28px;letter-spacing:4px;color:#d9b400;margin-bottom:12px">'+stars5(p.stars)+'</div>'+
