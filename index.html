@@ -3807,7 +3807,7 @@ function beep(freqs,dur){
     }, 4000 + Math.ceil(freqs.length*dur*1000));
   }catch(e){}
 }
-function sGood(){ beep([660,880,1180],0.11); hap('ok'); fxTap(Math.random()<.5?'ok1':'ok2', 150); }
+function sGood(){ beep([660,880,1180],0.11); hap('ok'); fxTap('ok1', 150); }
 function sBad(){ beep([300,220],0.14); hap('bad'); fxTap('bad', 90); }
 function sWin(){ beep([523,659,784,1046],0.14); hap('win'); }
 /* نغمةُ اختيار: قصيرةٌ خفيفة كنغمة وضع الكلمة في الترتيب */
@@ -11675,7 +11675,7 @@ function fxLoad(){
   if(FX.asked) return;
   FX.asked=true;
   var s=document.createElement('script');
-  s.src='data/fx.js?v=1'; s.async=true; s.onload=fxWarm;
+  s.src='data/fx.js?v=2'; s.async=true; s.onload=fxWarm;
   document.head.appendChild(s);
 }
 /* تُبنى كلُّ حركةٍ مرّةً في الخفاء حين تصل: أوّلُ بناءٍ يُعِدّ بياناتِها، فلا يتأخّر أوّلُ جوابٍ عن ضغطته */
@@ -11693,7 +11693,7 @@ document.addEventListener('pointerdown', function(e){
 }, true);
 /* ما يُعرض من كلّ حركة وفي كم ثانية: [من، إلى] كسرٌ من طولها، ثمّ المدّة.
    الحركاتُ على أصلها بطيئة، وأكثرُ طولها فراغٌ أو ذبول — والجوابُ نقرةٌ لا تنتظر */
-var FX_CUT={ ok1:[0,.4,.45], ok2:[.35,.9,.55], bad:[.1,.7,.45], dance:[0,.7,.9],
+var FX_CUT={ ok1:[0,.4,.45], bad:[.1,.7,.45], dance:[0,.7,.9],
              cup:[.05,.7,.8], cup2:[.05,.6,.55], stars5:[0,.42,.7], conf:[.05,.65,1.3] };
 /* o.fit: «slice» يملأ الشاشة ولو قُصّ طرفُه. o.done: عند تمامها */
 function fxPlay(box, name, o){
