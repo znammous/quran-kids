@@ -3821,18 +3821,14 @@ function hap(k){
       if(k==='ok') H.notification({ type:'SUCCESS' })['catch'](no);
       else if(k==='bad') H.notification({ type:'ERROR' })['catch'](no);
       else if(k==='win'){
-        /* الاحتفالُ متصاعد قرابةَ ثانية — كقرع الطبل: نقراتٌ تشتدّ، ثمّ نجاحٌ وهزّةٌ ختام.
-           وكان نقرةَ نجاحٍ وهزّةً في ثلث ثانية، لا يكاد يُفرق عن الإجابة الصحيحة */
-        [['LIGHT',0],['LIGHT',110],['MEDIUM',220],['MEDIUM',330],['HEAVY',460],['OK',720],['HEAVY',980]].forEach(function(t){
-          setTimeout(function(){
-            try{ (t[0]==='OK' ? H.notification({ type:'SUCCESS' }) : H.impact({ style:t[0] }))['catch'](no); }catch(e){}
-          }, t[1]);
-        });
+        /* الاحتفالُ اهتزازٌ واحدٌ متّصلٌ قرابةَ ثلثَي ثانية: يُفرق عن نقرة الصواب بطوله.
+           (كان نقرةً في ثلث ثانية لا تكاد تُفرق، ثمّ قرعَ طبلٍ لم يُعجب) */
+        H.vibrate({ duration:650 })['catch'](no);
       }
       else H.impact({ style:'LIGHT' })['catch'](no);
       return;
     }
-    if(navigator.vibrate) navigator.vibrate({ ok:[18], bad:[45,70,45], win:[20,90,20,90,40,90,40,90,70,190,35,65,21,190,80] }[k] || [10]);
+    if(navigator.vibrate) navigator.vibrate({ ok:[18], bad:[45,70,45], win:[650] }[k] || [10]);
   }catch(e){}
 }
 
