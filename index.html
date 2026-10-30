@@ -1111,6 +1111,49 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 .bbar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#48d98a,#f0c14b)}
 .bsp{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .bsp .bmed .bi{font-size:29px}
+/* شاشة أدائي */
+.pftiles{display:flex;gap:8px;margin-bottom:11px}
+.pftile{flex:1;min-width:0;text-align:center;background:var(--pnl);border:2px solid var(--pb);border-radius:14px;padding:9px 4px}
+.pftile b{display:block;font-size:19px;color:var(--ttl);font-weight:900}
+.pftile small{display:block;font-size:11.5px;color:var(--on3);font-weight:800;margin-top:2px}
+.pflines{list-style:none;margin:0;padding:0}
+.pflines li{padding:7px 2px;border-bottom:1px dashed var(--pb2);color:var(--ttl);font-weight:800;font-size:14.5px;line-height:1.6}
+.pflines li:last-child{border-bottom:0}
+.pflines li small{display:block;color:var(--on3);font-size:12.5px;font-weight:700}
+.pfmute{color:var(--on3);font-size:13px;font-weight:700;margin:6px 0;text-align:center;line-height:1.7}
+.pfchart{display:flex;align-items:flex-end;gap:3px;height:128px;padding-top:4px}
+.pfcol{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.pfcol i{display:block;width:78%;border-radius:5px 5px 2px 2px;background:linear-gradient(180deg,#48d98a,#22a35f);min-height:0}
+.pfcol .pfv{font-size:10.5px;font-weight:900;color:var(--ttl);line-height:1.3;min-height:14px}
+.pfcol .pfsun{font-size:10px;line-height:1.4;min-height:15px}
+.pfcol .pfd{font-size:10px;font-weight:800;color:var(--on3);line-height:1.2}
+.pfcol.now .pfd{color:var(--gink);font-weight:900}
+.pfcol.now i{background:linear-gradient(180deg,#ffd76a,#e0a312)}
+.pfleg{display:flex;flex-wrap:wrap;gap:6px 12px;justify-content:center;margin-top:9px;font-size:11.5px;font-weight:800;color:var(--on3)}
+.pfleg span{display:inline-flex;align-items:center;gap:4px}
+.pfleg .pfbar{display:inline-block;width:10px;height:12px;border-radius:3px;background:#2fbf74}
+.pfleg .pfc{width:13px;height:13px;min-width:0;padding:0;font-size:0}
+.pfweak{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:6px}
+.pfay{flex:1 1 30%;min-width:92px;font-family:inherit;cursor:pointer;background:var(--pnl2);border:2px solid #e2704f;
+  border-radius:12px;padding:7px 4px;color:var(--ttl);text-align:center}
+.pfay b{display:block;font-size:14px;font-weight:900}
+.pfay small{display:block;font-size:11px;font-weight:700;color:var(--on3)}
+.pfay:active,.pfc:active{transform:scale(.94)}
+.pftr li{font-size:13.5px}
+.pfsur{border-top:1px dashed var(--pb2);padding:6px 0}
+.pfsur summary{display:flex;justify-content:space-between;align-items:baseline;gap:8px;cursor:pointer;
+  color:var(--ttl);font-weight:900;font-size:15px;padding:4px 0;list-style:none}
+.pfsur summary::-webkit-details-marker{display:none}
+.pfsur summary small{color:var(--on3);font-size:11.5px;font-weight:700}
+.pfrow{display:flex;flex-wrap:wrap;gap:4px;margin:5px 0;padding-bottom:5px;border-bottom:1px solid var(--pnl3)}
+.pfrow:last-child{border-bottom:0}
+.pfc{display:inline-block;min-width:27px;height:27px;border-radius:7px;border:0;padding:0 3px;font-family:inherit;
+  font-size:11px;font-weight:900;cursor:pointer;color:#fff;-webkit-tap-highlight-color:transparent}
+.pfc.l0{background:transparent;color:var(--on3);box-shadow:inset 0 0 0 2px var(--pb2)}
+.pfc.l1{background:#d9534f}
+.pfc.l2{background:#e8a33a}
+.pfc.l3{background:#7cc576}
+.pfc.l4{background:#1f9d55}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:104px;z-index:140;
   background:var(--pnl4);border:2px solid var(--pb3);color:var(--on2);font-weight:800;font-size:14px;
   padding:11px 18px;border-radius:14px;box-shadow:0 10px 26px rgba(0,0,0,.45);
@@ -2909,6 +2952,7 @@ body.hastabs #btnRevQuit{display:none}
       <button class="btn blue" id="btnGames">🎮 الألعاب</button>
     </div>
     <div class="row">
+      <button class="btn ghost" id="btnPerf">📊 أدائي</button>
       <button class="btn ghost" id="btnSettings">⚙️ الإعدادات</button>
       <button class="btn ghost" id="btnBoard" hidden>🏠 لوحة البيت</button>
     </div>
@@ -3107,6 +3151,14 @@ body.hastabs #btnRevQuit{display:none}
     <p class="sub" id="badgeSub">—</p>
     <div id="badgeWrap"></div>
     <button class="btn primary big" id="btnBadgesBack" style="margin:0">➡️ رجوع</button>
+  </section>
+
+  <!-- أدائي: يُقارَن فيها الطفلُ بنفسه وحدَها — أسبوعُه بالذي قبله، وأيّامُه، وما زلّ فيه من الآيات -->
+  <section class="screen" id="scr-perf">
+    <h1>📊 أدائي</h1>
+    <p class="sub">تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك</p>
+    <div id="perfWrap"></div>
+    <button class="btn primary big" id="btnPerfBack" style="margin:0">➡️ رجوع</button>
   </section>
 
   <section class="screen" id="scr-board">
@@ -5913,6 +5965,282 @@ function qNote(r,wrong){
   }
   else return;
   t=todayBox(); t.q=(t.q||0)+1; if(!wrong) t.qok=(t.qok||0)+1;
+}
+/* =========================================================
+   أدائي — الطفلُ يُقارَن بنفسه وحدَها
+   من السجلّين: أيّامُه (p.days) وآياتُه (p.ay وp.tr). لا مقارنةَ بالإخوة ولا أرقامَ سرعة.
+   وموعدُ المراجعة يبقى على المقطع: ما هنا تشخيصٌ وتدريبٌ موجَّه لا غير.
+   ========================================================= */
+/* يومٌ من السجلّ: [مراحل، مقاطع، مراجعات، آياتٌ جديدة، أسئلة، أصاب] — واليومُ الجاري
+   لم يُحفظ بعد، فيُقرأ من p.today كما هو */
+function perfDay(p,d){
+  var t=p.today;
+  if(t && t.d===d) return [t.stages||0, t.segs||0, t.reviews||0, t.ay||0, t.q||0, t.qok||0];
+  return (p.days||{})[d]||null;
+}
+/* مجموعُ سبعة أيّامٍ تنتهي بيوم «end»، وكم يوماً عمل فيها */
+function perfWeek(p,end){
+  var w=[0,0,0,0,0,0], act=0, d, v, i;
+  for(d=end-6;d<=end;d++){
+    v=perfDay(p,d); if(!v) continue;
+    if(v.some(function(x){ return x>0; })) act++;
+    for(i=0;i<6;i++) w[i]+=v[i]||0;
+  }
+  return { st:w[0], seg:w[1], rev:w[2], ay:w[3], q:w[4], ok:w[5], act:act };
+}
+/* أقدمُ يومٍ في السجلّ: لا يُقارَن بأسبوعٍ لم يُسجَّل كلُّه */
+function perfFrom(p){
+  var ks=Object.keys(p.days||{}).map(Number), t=p.today;
+  if(t && t.d!=null) ks.push(t.d);
+  return ks.length ? Math.min.apply(null,ks) : null;
+}
+/* حالُ الآية من سجلّها [سُئل، أصاب، آخرُ يوم، أصاب متتالياً]:
+   ٠ لم تُسأل • ١ تحتاج تثبيتاً • ٢ زلّت آخرَ مرّة • ٣ جيّدة • ٤ ثابتة.
+   والضعفُ لا يُحكم به من خطأٍ واحد: خطآن فأكثر ولم يُصب بعدهما مرّتين متتاليتين */
+var PERF_FIRM=3;
+function perfLevel(v){
+  if(!v || !v[0]) return 0;
+  var wr=v[0]-v[1];
+  if(wr>=2 && v[3]<2) return 1;
+  if(v[3]===0) return 2;
+  return v[3]>=PERF_FIRM ? 4 : 3;
+}
+/* الآياتُ التي تحتاج تثبيتاً، أحوجُها أوّلاً: أكثرُها خطأً وأقلُّها إصابة */
+function perfWeak(p){
+  var A=p.ay||{}, out=[], k, v, x, s;
+  for(k in A){
+    v=A[k]; if(perfLevel(v)!==1) continue;
+    x=k.split(':'); s=surahBy(parseInt(x[0],10)); if(!s) continue;
+    out.push({ s:s, a:parseInt(x[1],10), n:v[0], ok:v[1], k:k,
+               w:(v[0]-v[1])*(1-v[1]/v[0]) + (v[3]===0?1:0) });
+  }
+  return out.sort(function(x,y){ return y.w-x.w || x.s.n-y.s.n || x.a-y.a; });
+}
+/* انتقالاتٌ يتوقّف عندها: لا يعرف ما بعد الآية وإن عرفها هي — خطآن فأكثر،
+   وثلثُ ما سُئل عنه فأكثر */
+function perfTrans(p){
+  var T=p.tr||{}, out=[], k, v, x, s;
+  for(k in T){
+    v=T[k]; if(!v || v[1]<2 || v[1]/v[0]<0.34) continue;
+    x=k.split(':'); s=surahBy(parseInt(x[0],10)); if(!s) continue;
+    out.push({ s:s, a:parseInt(x[1],10), n:v[0], wr:v[1], w:v[1]*v[1]/v[0] });
+  }
+  return out.sort(function(x,y){ return y.w-x.w; });
+}
+/* يومُ الشهر لرقم اليوم */
+function perfDate(d){ return new Date((d-DAY_SHIFT-QA_DAYS)*86400000).getUTCDate(); }
+/* سطرُ الأسبوع: ما عمل هذا الأسبوع، وموازنتُه بالذي قبله بما يشجّع لا بما يُحبط */
+function perfLines(p){
+  var t=todayNum(), W=perfWeek(p,t), L=perfWeek(p,t-7), f=perfFrom(p);
+  var cmp=(f!=null && f<=t-13), out=[], d, pc, pl;
+  function li(main,sub){ out.push('<li><span>'+main+'</span>'+(sub?'<small>'+sub+'</small>':'')+'</li>'); }
+  if(!W.act && !(cmp && L.act)) return out;
+  if(W.ay || (cmp && L.ay)){
+    d=W.ay-L.ay;
+    li(W.ay ? '🌟 '+tx('حفظت هذا الأسبوع {n}',{n:arCount(W.ay,C_AYAH)}) : '🌱 '+tx('لم تحفظ جديداً هذا الأسبوع'),
+       !cmp ? '' :
+       d>0 ? '📈 '+tx('أكثرَ من الأسبوع الماضي بـ{n}',{n:arCount(d,C_AYAH)}) :
+       d===0 ? tx('مثلَ الأسبوع الماضي — ثباتٌ جميل') :
+       tx('وحفظت الأسبوعَ الذي قبله {n} — قليلٌ كلَّ يومٍ يبلغ بك',{n:arCount(L.ay,C_AYAH)}));
+  }
+  if(W.rev || (cmp && L.rev)){
+    d=W.rev-L.rev;
+    li(W.rev ? '☀️ '+tx('راجعت هذا الأسبوع {n}',{n:arCount(W.rev,C_SESS)}) : '☀️ '+tx('لم تراجع هذا الأسبوع بعد'),
+       !cmp ? '' :
+       d>0 ? '📈 '+tx('أكثرَ من الأسبوع الماضي بـ{n}',{n:arCount(d,C_SESS)}) :
+       d===0 ? tx('مثلَ الأسبوع الماضي — ثباتٌ جميل') :
+       tx('وراجعت الأسبوعَ الذي قبله {n} — المراجعةُ تحفظ ما حفظت',{n:arCount(L.rev,C_SESS)}));
+  }
+  li('🔥 '+tx('عملت في {n} من {m}',{n:arNum(W.act), m:arCount(7,C_DAYS)}),
+     (cmp && W.act>L.act) ? '📈 '+tx('أكثرَ من الأسبوع الماضي بـ{n}',{n:arCount(W.act-L.act,C_DAYS)}) : '');
+  if(W.q>=5){
+    pc=Math.round(100*W.ok/W.q);
+    pl=(cmp && L.q>=5) ? Math.round(100*L.ok/L.q) : null;
+    li('🎯 '+tx('أصبت من أوّل محاولةٍ في {p}٪ من أسئلتك',{p:arNum(pc)}),
+       pl==null ? '' :
+       pc-pl>=3 ? '📈 '+tx('أدقُّ من الأسبوع الماضي ({p}٪)',{p:arNum(pl)}) :
+       pl-pc>=3 ? tx('كانت {p}٪ الأسبوعَ الماضي — تمهَّل في الجواب تُصب أكثر',{p:arNum(pl)}) :
+       tx('دقّتك ثابتةٌ كالأسبوع الماضي'));
+  }
+  return out;
+}
+/* آخرُ أربعة عشر يوماً: العمودُ ما حفظ جديداً في يومه، والشمسُ تحته يومٌ راجع فيه */
+function perfChart(p){
+  var t=todayNum(), days=[], mx=1, any=false, d, v;
+  for(d=t-13;d<=t;d++){
+    v=perfDay(p,d)||[0,0,0,0,0,0];
+    days.push({ d:d, ay:v[3]||0, rev:v[2]||0, on:v.some(function(x){ return x>0; }) });
+    mx=Math.max(mx, v[3]||0);
+    if(v.some(function(x){ return x>0; })) any=true;
+  }
+  if(!any) return '<p class="pfmute">'+tx('احفظ أو راجع اليوم، فيبدأ رسمُ أيّامك من هنا')+' 🌱'+'</p>';
+  return '<div class="pfchart">'+days.map(function(x){
+    var h=x.ay ? Math.max(8, Math.round(100*x.ay/mx)) : (x.on?4:0);
+    return '<div class="pfcol'+(x.d===t?' now':'')+'">'+
+      '<span class="pfv">'+(x.ay?arNum(x.ay):'')+'</span>'+
+      '<i style="height:'+h+'%"></i>'+
+      '<span class="pfsun">'+(x.rev?'☀️':'')+'</span>'+
+      '<span class="pfd">'+arNum(perfDate(x.d))+'</span></div>';
+  }).join('')+'</div>'+
+  '<div class="pfleg"><span><i class="pfbar"></i>'+tx('آياتٌ جديدة')+'</span><span>☀️ '+tx('يومٌ راجعت فيه')+'</span></div>';
+}
+/* خريطةُ الثبات: لكلّ سورةٍ سُئل فيها مقاطعُها، ولكلّ آيةٍ مربّعٌ بلون حالها */
+function perfMap(p){
+  var A=p.ay||{}, by={}, k, x, n, list=[];
+  for(k in A){
+    x=k.split(':'); n=parseInt(x[0],10);
+    if(!by[n]) by[n]={ last:0 };
+    by[n].last=Math.max(by[n].last, A[k][2]||0);
+  }
+  for(n in by){ var s=surahBy(parseInt(n,10)); if(s) list.push({ s:s, last:by[n].last }); }
+  if(!list.length) return '';
+  list.sort(function(a,b){ return b.last-a.last; });
+  return list.map(function(L,li){
+    var s=L.s, segs=[], firm=0, asked=0;
+    try{ segs=segsOf(s); }catch(e){}
+    if(!segs.length) segs=[[0,s.ayat.length]];
+    var rows=segs.filter(function(g){
+      for(var a=g[0];a<g[1];a++) if(A[s.n+':'+a]) return true;
+      return false;
+    }).map(function(g){
+      var c='';
+      for(var a=g[0];a<g[1];a++){
+        var lv=perfLevel(A[s.n+':'+a]);
+        if(lv) asked++;
+        if(lv===4) firm++;
+        c+='<button type="button" class="pfc l'+lv+'" data-ps="'+s.n+'" data-pa="'+a+'" title="'+arNum(a+1)+'">'+arNum(a+1)+'</button>';
+      }
+      return '<div class="pfrow">'+c+'</div>';
+    }).join('');
+    return '<details class="pfsur"'+(li<2?' open':'')+'><summary><span>'+esc(snm(s.name))+'</span>'+
+      '<small>'+tx('ثابتة {n} من {m}',{n:arNum(firm), m:arCount(asked,C_AYAH)})+'</small></summary>'+rows+'</details>';
+  }).join('')+
+  '<div class="pfleg">'+
+    '<span><i class="pfc l0"></i>'+tx('لم تُسأل عنها')+'</span>'+
+    '<span><i class="pfc l1"></i>'+tx('تحتاج تثبيتاً')+'</span>'+
+    '<span><i class="pfc l2"></i>'+tx('زلّت آخرَ مرّة')+'</span>'+
+    '<span><i class="pfc l3"></i>'+tx('جيّدة')+'</span>'+
+    '<span><i class="pfc l4"></i>'+tx('ثابتة')+'</span></div>';
+}
+var PERF_SHOW=6;
+function perfHTML(){
+  var p=curP(), h='', st=0, lines=perfLines(p), W=perfWeak(p), T=perfTrans(p), mp=perfMap(p);
+  try{ st=streakNow(p); }catch(e){}
+  var mem=0; try{ mem=memTotal(); }catch(e){}
+  h+='<div class="pftiles">'+
+     '<div class="pftile"><b>🔥 '+arNum(st)+'</b><small>'+tx('أيّامٌ متتالية')+'</small></div>'+
+     '<div class="pftile"><b>📖 '+arNum(mem)+'</b><small>'+tx('آياتٌ محفوظة')+'</small></div>'+
+     '<div class="pftile"><b>💪 '+arNum(W.length)+'</b><small>'+tx('تحتاج تثبيتاً')+'</small></div></div>';
+  h+='<div class="bfam"><div class="fh"><span>📅 '+tx('أسبوعي')+'</span><small>'+tx('آخرُ سبعة أيّام')+'</small></div>'+
+     (lines.length ? '<ul class="pflines">'+lines.join('')+'</ul>'
+                   : '<p class="pfmute">'+tx('أسبوعك يبدأ اليوم — احفظ مقطعاً أو راجع، فيظهر هنا ما عملت')+' 🌱'+'</p>')+'</div>';
+  h+='<div class="bfam"><div class="fh"><span>📊 '+tx('أيّامي')+'</span><small>'+tx('آخرُ أربعة عشر يوماً')+'</small></div>'+perfChart(p)+'</div>';
+  h+='<div class="bfam"><div class="fh"><span>💪 '+tx('آياتٌ تحتاج تثبيتاً')+'</span></div>';
+  if(W.length || T.length){
+    if(W.length)
+      h+='<div class="pfweak">'+W.slice(0,PERF_SHOW).map(function(x){
+        return '<button type="button" class="pfay" data-ps="'+x.s.n+'" data-pa="'+x.a+'"><b>'+
+          esc(tx('{s1} {0}',{s1:x.s.name, 0:arNum(x.a+1)}))+'</b><small>'+
+          tx('أصبت {a} من {b}',{a:arNum(x.ok), b:arNum(x.n)})+'</small></button>';
+      }).join('')+'</div>';
+    if(T.length)
+      h+='<ul class="pflines pftr">'+T.slice(0,3).map(function(x){
+        return '<li><span>'+esc('🔗 '+tx('تتوقّف بين الآيتين {a} و{b} من {s1}',{a:arNum(x.a), b:arNum(x.a+1), s1:x.s.name}))+'</span></li>';
+      }).join('')+'</ul>';
+    h+='<p class="pfmute">'+tx('اضغط آيةً لترى موضعها في المصحف')+'</p>'+
+       '<button class="btn green big pulse" id="btnFixGo" style="margin:4px 0 0">💪 '+tx('ثبّتها الآن')+'</button>';
+  }
+  else h+='<p class="pfmute">'+(mp ? tx('لا آيةَ تحتاج تثبيتاً الآن — أحسنت!')+' 🌟'
+                                  : tx('أجب عن أسئلة الحفظ والمراجعة، فتظهر هنا الآياتُ التي تحتاج تثبيتاً'))+'</p>';
+  h+='</div>';
+  if(mp) h+='<div class="bfam"><div class="fh"><span>🗺️ '+tx('خريطة الثبات')+'</span></div>'+
+            '<p class="pfmute">'+tx('كلُّ مربّعٍ آية، وكلُّ صفٍّ مقطع — اجعلها كلَّها خضراء!')+'</p>'+mp+'</div>';
+  return h;
+}
+function perfOpen(){
+  var w=$('perfWrap'); if(!w) return;
+  w.innerHTML=perfHTML();
+  var b=w.querySelectorAll('[data-ps]'), i;
+  for(i=0;i<b.length;i++) b[i].onclick=function(){
+    var s=surahBy(parseInt(this.getAttribute('data-ps'),10)), a=parseInt(this.getAttribute('data-pa'),10);
+    if(s) mushafOpen(s,a);
+  };
+  if($('btnFixGo')) $('btnFixGo').onclick=fixBegin;
+  show('scr-perf');
+}
+/* ===== ثبّتها الآن =====
+   أسئلةٌ على الآيات الضعيفة نفسِها، ثمّ ترتيبُها مع ما قبلها وما بعدها — فلا يُعاد المقطعُ
+   كلُّه لأجل آيتين. وتُبنى على محرّك الاختبار، وأجوبتُها تُكتب في سجلّ الآيات كغيرها:
+   فإذا أصاب الآيةَ مرّتين متتاليتين خرجت من القائمة. */
+var FIX_AY=4, FIX_TR=3;
+function fixRounds(){
+  var p=curP(), W=perfWeak(p).slice(0,FIX_AY), T=perfTrans(p).slice(0,FIX_TR);
+  var mem={}, out=[], seen={}, keep=EX.picks;
+  try{ dailyItems().forEach(function(it){ mem[dailyKey(it)]=it; }); }catch(e){}
+  /* الآيةُ ومعها آيتان قبلها وآيتان بعدها، لا يتجاوز ما حُفظ متّصلاً معها */
+  function item(s,a){
+    var m=mem[s.n+':'+a], lo=m?m.from:0, hi=m?m.to:s.ayat.length;
+    return { s:s, a:a, from:Math.max(lo,a-2), to:Math.min(hi,a+3), P:ayahPage(s,a) };
+  }
+  function ask(it,kinds){
+    EX.picks=kinds.filter(function(t){ return kindAllowed(t); });
+    if(!EX.picks.length) EX.picks=['missing'];
+    for(var j=0;j<6;j++){
+      var q=examQ(it), k=q && examQKey(q);
+      if(q && !seen[k]){ seen[k]=1; out.push(q); return; }
+    }
+  }
+  try{
+    W.forEach(function(x){
+      var it=item(x.s,x.a);
+      ask(it,['words','missing','miss2']);
+      ask(it,['missing','miss2','aedge']);
+      ask(it,['ayat']);                     /* وموضعُها بين جاراتها */
+    });
+    T.forEach(function(x){
+      var it=item(x.s,x.a);
+      ask(it,['ayat']);
+      ask(item(x.s,x.a-1),['aedge','missing']);   /* خاتمةُ التي قبلها تقود إليها */
+    });
+  } finally { EX.picks=keep; }
+  return out;
+}
+function fixBegin(){
+  var rounds=fixRounds();
+  if(!rounds.length){ uiAlert(tx('لا آيةَ تحتاج تثبيتاً الآن — أحسنت!'),'🌟'); return; }
+  var before={}; perfWeak(curP()).forEach(function(x){ before[x.k]=x; });
+  examRun(rounds, false, true);
+  S.fixWas=before;
+}
+/* الخروجُ منها رجوعٌ إلى «أدائي»: جلسةٌ قصيرةٌ لا تُحفظ لتُستأنف */
+function fixQuit(){ S=null; perfOpen(); }
+function finishFix(){
+  var tot=EX.log.length||1, right=0, i, p=curP(), day=todayNum();
+  for(i=0;i<EX.log.length;i++) if(EX.log[i].ok) right++;
+  var pct=Math.round(100*right/tot), was=(S && S.fixWas)||{}, now={}, fixed=[], k;
+  perfWeak(p).forEach(function(x){ now[x.k]=1; });
+  for(k in was) if(!now[k]) fixed.push(tx('{s1} {0}',{s1:was[k].s.name, 0:arNum(was[k].a+1)}));
+  /* جواهرُها مرّةً في اليوم، فلا تصير بابَ جمعٍ يُعاد */
+  var gems=0;
+  if(p.fixDay!==day){ gems=EX_GEM*right; p.fixDay=day; if(gems) addGems(gems); else saveDB(); }
+  $('playCard').classList.remove('bare');
+  $('mosque').removeAttribute('hidden');
+  $('mosque').innerHTML=mosqueSVG(1);
+  $('stageChip').textContent='💪 '+tx('انتهى التثبيت');
+  $('barFill').style.width='100%';
+  $('playArea').className='';
+  $('playArea').innerHTML=
+    '<div style="text-align:center"><div style="font-size:52px">'+(fixed.length?'🌟':'💪')+'</div>'+
+    '<h2 style="color:var(--g1);margin:6px 0">'+(fixed.length?tx('ثبتت آياتٌ كانت تزلّ!'):tx('أحسنت — والتكرارُ يثبّتها'))+'</h2>'+
+    '<div class="exscore">'+arNum(right)+' / '+arNum(tot)+'<span>'+arNum(pct)+'%</span></div>'+
+    '<p style="color:#3d5b7a;font-size:15px;margin:0 0 10px">'+
+      (fixed.length ? tx('ثبتت: <b>{w}</b>',{w:esc(fixed.join(' • '))})
+                    : tx('أصب الآيةَ مرّتين متتاليتين تخرج من القائمة — عُد إليها غداً'))+'</p>'+
+    (gems ? ('<div style="color:#8a6100;font-weight:800;margin-bottom:12px">'+'+'+arNum(gems)+' 💎'+'</div>') : '')+
+    '<button class="btn green big pulse" id="btnFixPerf">📊 '+tx('أدائي')+'</button>'+
+    '<button class="btn ghost big" id="btnFixHome" style="margin:0">🏠 البداية</button></div>';
+  $('btnFixPerf').onclick=function(){ S=null; perfOpen(); };
+  $('btnFixHome').onclick=function(){ S=null; renderPlayers(); show('scr-start'); };
 }
 /* شطرا اليوم في المسار الحرّ: حفظ ومراجعة — ولا يتمّ اليوم حتى يتمّا معاً */
 function goalHifzMet(){
@@ -11072,7 +11400,7 @@ function runRound(){
   $('pSeg').textContent=S.review?('☀️ '+arNum(r.segFrom+1)+'-'+arNum(r.segTo)):segLabel();
   var seghere = S.surah.name+' '+arNum(S.seg[0]+1)+'-'+arNum(S.seg[1]);
   $('stageChip').textContent =
-      S.rev==='exam' ? ((S.daily?'🎯 تحدّي اليوم • ':'📝 اختبار • ')+seghere)
+      S.rev==='exam' ? ((S.fix?'💪 تثبيت • ':S.daily?'🎯 تحدّي اليوم • ':'📝 اختبار • ')+seghere)
     : S.rev==='quiz' ? ('🧩 أسئلة المراجعة • '+seghere)
     : S.review       ? ('☀️ مراجعة اليوم • '+seghere)
     :                  (STAGES[S.stage].t+' • '+seghere);
@@ -16390,7 +16718,7 @@ function examWire(k){
    كبير، فتُحفظ برقمها وتُردّ عند الاستئناف. */
 function examPauseKey(daily){ return daily ? 'dyPause' : 'exPause'; }
 function examSave(){
-  if(!S || S.rev!=='exam') return;
+  if(!S || S.rev!=='exam' || S.fix) return;
   var p; try{ p=curP(); }catch(e){ return; }
   if(!p) return;
   /* أجاب ولم يظهر التالي بعدُ (مهلةُ كشف الصواب): يُحفظ على التالي،
@@ -16445,6 +16773,7 @@ function examResume(daily){
 }
 /* الخروجُ إيقاف: يُحفظ ويعود إليه من الموضع نفسِه */
 function examQuitAsk(){
+  if(S && S.fix){ fixQuit(); return; }
   var daily=!!(S&&S.daily);
   /* جملتان كاملتان لكلٍّ منهما: الاختبارُ وتحدّي اليوم */
   uiBox('⏸️ <b>'+(daily ? tx('أتوقف تحدّي اليوم الآن؟') : tx('أتوقف الاختبار الآن؟'))+'</b>'+String.fromCharCode(10)+String.fromCharCode(10)+
@@ -16464,13 +16793,14 @@ function examBegin(){
   try{ curP().exSrc=EX.dayOnly?'day':(EX.memOnly?'mem':''); saveDB(); }catch(e){}
   examRun(rounds, false);
 }
-/* daily: تحدّي اليوم — أسئلتُه كالاختبار، وخاتمتُه غيرُ خاتمته */
-function examRun(rounds, daily){
-  examDrop(daily);                         /* بدأ جديداً: يُترك الموقوفُ من نوعه */
+/* daily: تحدّي اليوم — أسئلتُه كالاختبار، وخاتمتُه غيرُ خاتمته.
+   fix: «ثبّتها الآن» من شاشة أدائي — لا تُحفظ ولا تمسّ الاختبارَ الموقوف */
+function examRun(rounds, daily, fix){
+  if(!fix) examDrop(daily);                /* بدأ جديداً: يُترك الموقوفُ من نوعه */
   EX.log=[]; EX.t0=Date.now();
   var f0=rounds[0];
   S={ surah:f0.surah, seg:[f0.segFrom,f0.segTo], si:0, key:segKey(f0.surah.n,f0.segFrom),
-      stage:4, review:true, rev:'exam', daily:!!daily, rounds:rounds, i:0, errors:0, due:[] };
+      stage:4, review:true, rev:'exam', daily:!!daily, fix:!!fix, rounds:rounds, i:0, errors:0, due:[] };
   show('scr-play'); runRound();
 }
 function examNote(r, ok){
@@ -16495,6 +16825,7 @@ function examWeakest(){
 }
 var EX_LAST=null;   /* آخرُ نتيجةٍ — لتُطبع بعد قراءتها */
 function finishExam(){
+  if(S && S.fix){ finishFix(); return; }
   examDrop(!!(S && S.daily));             /* انتهى: لا موقوفَ بعده */
   if(S && S.daily){ finishDaily(); return; }
   var tot=EX.log.length||1, right=0, i;
@@ -17778,6 +18109,8 @@ $('btnBqnDone').onclick=function(){
 $('btnBadges').onclick=function(){ renderBadges(); show('scr-badges'); };
 $('homeAvaBtn').onclick=function(){ renderBadges(); show('scr-badges'); };
 $('btnBadgesBack').onclick=function(){ renderPlayers(); show('scr-start'); };
+$('btnPerf').onclick=perfOpen;
+$('btnPerfBack').onclick=function(){ renderPlayers(); show('scr-start'); };
 $('btnRevPlan').onclick=startRevPlan;
 $('revPrev').onclick=function(){ revGoSurah(-1); };
 $('revNext').onclick=function(){ revGoSurah(1); };
@@ -20672,7 +21005,7 @@ function bootNotes(){
    «يوجد تحديث» قبل أن ينزّله (قواميسُه القديمة لا تعرفها). ثمّ تُعرض مرّةً واحدة
    بعد أن تصل الحزمةُ — أو الصفحةُ على الموقع — لمن لم يرَها، ولا تُعرض لمن فتح
    التطبيقَ لأوّل مرّة. */
-var WHATSNEW='في القصص صندوقُ بحثٍ في عناوينها ونصوصها، وأزرارٌ تجمعها بقيمها: اختر «الغضب والخصام» مثلاً تظهر القصصُ التي تعالجه.';
+var WHATSNEW='في الرئيسيّة زرُّ «📊 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد.';
 function newsNote(next){
   var seen=load('nur_news','');
   if(!WHATSNEW || seen===WHATSNEW || NEWS_FIRST){
@@ -21140,7 +21473,7 @@ var NAV_BACK={ 'scr-look':'btnLookDone', 'scr-tree':'btnTreeBack', 'scr-report':
   'scr-map':'btnBackStart', 'scr-path':'btnBackMap',
   'scr-rev':'btnRevHome', 'scr-revpath':'btnRevQuit', 'scr-build':'btnBuildBack',
   'scr-shop':'btnShopBack', 'scr-board':'btnBoardBack', 'scr-cert':'btnCertBack',
-  'scr-badges':'btnBadgesBack', 'scr-bqn':'btnBqnHome', 'scr-juz':'btnJuzListBack',
+  'scr-badges':'btnBadgesBack', 'scr-perf':'btnPerfBack', 'scr-bqn':'btnBqnHome', 'scr-juz':'btnJuzListBack',
   'scr-games':'btnGamesBack', 'scr-story':'btnStoryBack',
   'scr-runner':'btnRunQuit', 'scr-shelf':'btnShelfQuit', 'scr-bird':'btnBirdQuit',
   'scr-settings':'btnSetBack', 'scr-exam':'btnExamHome' };
