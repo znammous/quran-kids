@@ -2336,6 +2336,7 @@ body.glow-off .dfpic{animation:none}
 .gmlist .goalcard{margin-bottom:12px}
 .gmnote{text-align:center;color:var(--on3);font-size:13.5px;font-weight:700;margin:2px 0 14px;line-height:1.7}
 .runtop{display:flex;align-items:center;gap:10px;margin:4px 0 8px}
+#btnStoryShare{display:flex;align-items:center;justify-content:center;padding:0}
 .runx{flex:0 0 auto;width:42px;height:42px;border-radius:12px;border:2px solid var(--pb);background:var(--pnl);
   color:var(--ttl);font-size:18px;font-weight:900;font-family:inherit;cursor:pointer;touch-action:manipulation}
 .runhearts{flex:1;min-width:0;font-size:19px;letter-spacing:1px;white-space:nowrap;overflow:hidden}
@@ -3134,7 +3135,7 @@ body.hastabs #btnRevQuit{display:none}
       <button type="button" class="runx" id="btnStoryBack" aria-label="رجوع">➡️</button>
       <div class="sttitle" id="stTitle">—</div>
       <div class="stcount" id="stCount">—</div>
-      <button type="button" class="runx" id="btnStoryShare" aria-label="شارك القصّة">📤</button>
+      <button type="button" class="runx" id="btnStoryShare" aria-label="شارك القصّة"></button>
     </div>
     <div class="stpage" id="stPage"></div>
     <!-- تعريفُ وضع القراءة الأفقيّ: داخل الشاشة المُدارة فيُقرأ والهاتفُ مقلوب،
@@ -20234,6 +20235,15 @@ $('btnStoryBack').onclick=function(){
   storyLeave();
 };
 $('btnStoryShare').onclick=storyShare;
+/* أيقونةُ المشاركة كما يعرفها في جهازه: مربّعٌ يخرج منه سهمٌ على أبل، ونقاطٌ ثلاثٌ موصولةٌ على غيرها */
+(function(){
+  var ios=false;
+  try{ ios=isNative() ? window.Capacitor.getPlatform()==='ios'
+    : (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) && (!/Macintosh/.test(navigator.userAgent) || navigator.maxTouchPoints>1)); }catch(e){}
+  $('btnStoryShare').innerHTML='<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+
+    (ios ? '<path d="M12 3v12M7.5 7.5 12 3l4.5 4.5"/><path d="M8 10.5H6.5A1.5 1.5 0 0 0 5 12v7.5A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V12a1.5 1.5 0 0 0-1.5-1.5H16"/>'
+         : '<circle cx="17.5" cy="5.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><circle cx="17.5" cy="18.5" r="2.5"/><path d="m8.7 10.7 6.6-3.9M8.7 13.3l6.6 3.9"/>')+'</svg>';
+})();
 $('stZoom').onclick=stZoomClose;
 $('stLandTipOk').onclick=function(){
   if($('stLandTipChk').checked) save('nur_stland_tip',1);
