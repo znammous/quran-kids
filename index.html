@@ -748,11 +748,13 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
   text-align:center;font-weight:900;font-size:15px;color:var(--ttl)}
 .mfmayah{display:inline-block;margin:12px 0 2px;padding:2px 12px;border-radius:999px;
   background:var(--pnl2);border:2px solid var(--pb);font-size:12.5px;font-weight:900;color:var(--mute)}
-.mfmrow{padding:5px 4px;border-bottom:1px solid var(--pb);font-size:15.5px;font-family:'Majalla','Baloo Bhaijaan 2',sans-serif;font-weight:700;line-height:1.9;color:var(--ttl)}
+.mfmrow{padding:5px 4px;border-bottom:1px solid var(--pb);font-size:15.5px;font-family:'Majalla','Baloo Bhaijaan 2',sans-serif;font-weight:400;line-height:1.9;color:var(--ttl)}
 /* تفسيرُ الآية فوق كلماتها الغريبة: لوحٌ هادئٌ يفصله عمّا تحته */
 .mftaf{font-size:14.5px;font-weight:700;line-height:2;color:var(--ttl);
   background:var(--pnl2);border:1px solid var(--pb);border-radius:12px;
   padding:9px 11px;margin:4px 0 8px}
+/* التفسيرُ الميسّر العربيُّ بخطّ المعاني؛ أمّا ترجمتُه فتحمل lang فتبقى بخطّ لغتها */
+.mftaf:not([lang]){font-family:'Majalla','Baloo Bhaijaan 2',sans-serif;font-weight:400}
 .mfmrow .w{font-family:"UthmanicHafs","Amiri Quran",serif;font-size:21px;font-weight:400;color:var(--rew)}
 .mfmsrc{margin-top:16px;text-align:center;font-size:11.5px;font-weight:700;color:var(--mute)}
 .mfphist{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 6px 6px}
@@ -762,24 +764,24 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 /* خطّا المصحف المساعدان: أسماء السور المزخرفة، ورسم عثمان طه للبسملة والعرض البديل */
 @font-face{font-family:'SuraNames';src:url(fonts/sura_names.woff2) format('woff2');font-display:swap}
 @font-face{font-family:'UthmanicHafs';src:url(fonts/UthmanicHafs.woff2) format('woff2');font-display:swap}
-/* معاني الكلمات بخطّ سكال مجلة: حروفُه العربيّةُ وحدَها (٤٢ ك.ب)، ويُجلب حين تُعرض أوّلَ معنًى.
+/* معاني الكلمات بخطّ سكال مجلة العاديّ لا العريض: حروفُه العربيّةُ وحدَها، ويُجلب حين تُعرض أوّلَ معنًى.
    وهو أصغرُ عيناً من غيره فيُكبَّر كما في «نور السنّة» */
-@font-face{font-family:'Majalla';src:local('Sakkal Majalla Bold'),local('SakkalMajalla-Bold'),url(fonts/ui/majalla-bold.woff2) format('woff2');font-weight:700;font-display:swap;size-adjust:125%}
+@font-face{font-family:'Majalla';src:local('Sakkal Majalla'),local('SakkalMajalla'),url(fonts/ui/majalla.woff2) format('woff2');font-weight:400;font-display:swap;size-adjust:125%}
 .mushaf{font-family:"UthmanicHafs","Amiri Quran","Traditional Arabic",serif;direction:rtl;color:#4c5668;
   line-height:1.9;width:100%}
 .mline{display:flex;align-items:baseline;min-height:1.7em;padding:1px 0}
 .mline .mtxt{flex:1;display:flex;flex-wrap:wrap;align-items:baseline;gap:0 .34em;justify-content:center}
 .mw{white-space:nowrap;transition:color .18s ease}
 .mw.hl{color:#0f2d52}
-/* كلمةٌ لها معنى في «الغريب»: خطٌّ منقّطٌ تحتها، ومن لمسها رأى معناها (mfGlossAt) */
-.mw.gl{text-decoration:underline dotted #c9a24a;text-decoration-thickness:2px;text-underline-offset:.3em;
+/* كلمةٌ لها معنى في «الغريب»: خطٌّ رفيعٌ متّصلٌ باهتٌ تحتها لا يزحم الصفحة، ومن لمسها رأى معناها (mfGlossAt) */
+.mw.gl{text-decoration:underline solid rgba(201,162,74,.6);text-decoration-thickness:1.5px;text-underline-offset:.3em;
   text-decoration-skip-ink:none;cursor:pointer}
-.mw.gl2{text-decoration-color:#8d96a5}
+.mw.gl2{text-decoration-color:rgba(141,150,165,.5)}
 .mw.glon{background:rgba(201,162,74,.24);border-radius:4px}
 .mfsheet.picking .mw.gl{text-decoration:none}
 .mfgloss{position:fixed;z-index:7;max-width:min(340px,calc(100vw - 16px));padding:8px 12px;border-radius:12px;
   background:var(--pnl);color:var(--ttl);border:1.5px solid #c9a24a;box-shadow:0 6px 20px rgba(0,0,0,.18);
-  font-family:'Majalla','Baloo Bhaijaan 2',sans-serif;font-size:15.5px;font-weight:700;line-height:1.9;direction:rtl;pointer-events:none}
+  font-family:'Majalla','Baloo Bhaijaan 2',sans-serif;font-size:15.5px;font-weight:400;line-height:1.9;direction:rtl;pointer-events:none}
 .mfgloss[hidden]{display:none}
 .mfgloss .w{font-family:"UthmanicHafs","Amiri Quran",serif;font-size:21px;font-weight:400;color:var(--rew)}
 .mline.hasHl{background:linear-gradient(90deg,rgba(255,214,102,.22),rgba(255,214,102,.06));border-radius:8px}
@@ -2847,7 +2849,7 @@ body.hastabs #btnRevQuit{display:none}
   </div>
   <div class="mfpanel" id="mfMean" hidden>
     <!-- مفتاحُ معاني الكلمات في الوجه: هو إعدادُها نفسُه، يُبدَّل هنا دون خروجٍ إلى الإعدادات -->
-    <label class="mfphead mfglsw" id="mfGlossRow"><span>📖 معاني الكلمات في المصحف<br><small>خطٌّ منقّطٌ تحت الكلمات، المسها لترى معناها — شغّله أو أطفئه من هنا</small></span><input type="checkbox" id="mfGlossSw"></label>
+    <label class="mfphead mfglsw" id="mfGlossRow"><span>📖 معاني الكلمات في المصحف<br><small>خطٌّ رفيعٌ تحت الكلمات، المسها لترى معناها — شغّله أو أطفئه من هنا</small></span><input type="checkbox" id="mfGlossSw"></label>
     <div class="mfplist" id="mfMeanList"></div>
   </div>
   <nav class="mfdock" id="mfDock">
@@ -3403,7 +3405,7 @@ body.hastabs #btnRevQuit{display:none}
           <option value="1">الرسم العثماني (كما في المصحف)</option>
         </select>
       </div>
-      <div class="switchrow"><span>📖 معاني الكلمات في المصحف<br><small style="font-weight:700;color:var(--mute)">خطٌّ منقّطٌ تحت كلّ كلمةٍ لها شرح، ومن لمسها رأى معناها</small></span><input type="checkbox" id="setGloss"></div>
+      <div class="switchrow"><span>📖 معاني الكلمات في المصحف<br><small style="font-weight:700;color:var(--mute)">خطٌّ رفيعٌ تحت كلّ كلمةٍ لها شرح، ومن لمسها رأى معناها</small></span><input type="checkbox" id="setGloss"></div>
       <div class="switchrow"><span>✨ تظليل المتشابهات<br><small style="font-weight:700;color:var(--mute)">في كل وجهٍ من المصحف: ما تشابه أو تكرّر من العبارات والكلمات، لكل مجموعةٍ لونٌ واحد — ويُبدَّل كذلك من شريط المصحف نفسِه 🎨</small></span><input type="checkbox" id="setSimHl"></div>
       <div class="switchrow"><span>💡 إبقاء الشاشة مضاءة أثناء القراءة<br><small style="font-weight:700;color:var(--mute)">لا تنطفئ الشاشةُ ووجهُ المصحف مفتوحٌ بين يديه، وتعود مهلةُ جهازك حين يُغلق الوجه</small></span><input type="checkbox" id="setWake"></div>
       <div class="setblock">
