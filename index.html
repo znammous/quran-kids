@@ -11695,7 +11695,7 @@ document.addEventListener('pointerdown', function(e){
 }, true);
 /* ما يُعرض من كلّ حركة وفي كم ثانية: [من، إلى] كسرٌ من طولها، ثمّ المدّة.
    الحركاتُ على أصلها بطيئة، وأكثرُ طولها فراغٌ أو ذبول — والجوابُ نقرةٌ لا تنتظر */
-var FX_CUT={ ok1:[0,.4,.45], dance:[0,.7,.9],
+var FX_CUT={ ok1:[0,.4,.45], dance:[0,.95,1.3],
              cup:[.05,.7,.8], cup2:[.05,.6,.55], stars5:[0,.42,.7], conf:[.05,.9,1.8] };
 /* o.fit: «slice» يملأ الشاشة ولو قُصّ طرفُه. o.done: عند تمامها */
 function fxPlay(box, name, o){
@@ -11734,17 +11734,23 @@ function fxScreen(name){
   an=fxPlay(d, name, { fit:'slice', done:function(){ fxGone(an, d); } });
   setTimeout(function(){ fxGone(an, d); }, 6000);
 }
-/* رمزٌ في الصفحة تحلّ محلَّه حركة: data-fx اسمُها، وdata-fxh ارتفاعُها */
+/* رمزٌ في الصفحة تحلّ محلَّه حركة: data-fx اسمُها، وdata-fxh ارتفاعُها.
+   وdata-fxback: تمضي الحركةُ حتى تذهب، ثمّ يعود الرمزُ مكانَها — لحركةٍ لا يحسن الوقوفُ على آخرها */
 function fxFill(root){
   while(FX.fill.length) fxGone(FX.fill.pop());       /* ما بقي من شاشةٍ قبلها */
   if(!fxOn() || !root) return;
-  var els=root.querySelectorAll('[data-fx]'), i, el;
-  for(i=0;i<els.length;i++){
-    el=els[i];
+  var els=root.querySelectorAll('[data-fx]'), i;
+  for(i=0;i<els.length;i++) (function(el){
+    var h=el.getAttribute('data-fxh'), ic=el.innerHTML, fs=el.style.fontSize;
     el.textContent=''; el.style.fontSize='';
-    el.style.height=el.getAttribute('data-fxh')+'px';
-    FX.fill.push(fxPlay(el, el.getAttribute('data-fx')));
-  }
+    el.style.height=h+'px';
+    FX.fill.push(fxPlay(el, el.getAttribute('data-fx'), !el.hasAttribute('data-fxback') ? null : { done:function(an){
+      fxGone(an);
+      el.style.fontSize=fs; el.style.lineHeight=h+'px';
+      el.style.animation='celepop .45s cubic-bezier(.2,1.7,.4,1)';
+      el.innerHTML=ic;
+    } }));
+  })(els[i]);
 }
 
 /* ===== الاحتفال ===== */
@@ -13250,7 +13256,7 @@ function finishStage(){
   $('barFill').style.width='100%';
   $('pStars').textContent=arNum(p.stars);
   $('playArea').innerHTML=
-    '<div style="text-align:center"><div style="font-size:52px" data-fx="dance" data-fxh="120">🌟</div>'+
+    '<div style="text-align:center"><div style="font-size:52px" data-fx="dance" data-fxh="120" data-fxback>🌟</div>'+
     '<h2 style="color:var(--g1);margin:6px 0">أنجزت المرحلة!</h2>'+
     '<p style="color:#3d5b7a;font-size:16px;margin:0 0 12px">النجمة '+arNum(p.stars)+' من '+arNum(stagesN())+' في '+esc(S.surah.name)+' \u2066('+arNum(S.seg[0]+1)+'-'+arNum(S.seg[1])+')\u2069</p>'+
     '<div style="font-size:28px;letter-spacing:4px;color:#d9b400;margin-bottom:12px">'+stars5(p.stars)+'</div>'+
