@@ -1001,7 +1001,7 @@ body.light .card.bare .fb.fixnote{color:#0b6b39}
 .diffline .w{padding:0 3px;border-radius:6px}
 .diffline .w.bad{color:var(--red);background:#ffe2e2}
 .diffline .w.ok{color:#12694a}
-/* كتابةُ الآية: صناديقُ الكلمات المكتوبة، وفي ركن الحمراء قلمٌ يدلّ على أنّها تُنقر فتُعدَّل */
+/* كتابةُ الآية: صناديقُ الكلمات المكتوبة، وفي ركن الحمراء ✕ يحذفها، ونقرُها نفسِها يعيدها للتعديل */
 .wtline{display:flex;flex-wrap:wrap;gap:12px 8px;justify-content:center;margin:4px 0 12px}
 .wtline:empty{display:none}
 .chip.wt{position:relative;font-size:23px;padding:.12em 12px .72em;cursor:default}
@@ -1011,7 +1011,8 @@ body.light .card.bare .fb.fixnote{color:#0b6b39}
 .chip.wt.hintme{cursor:pointer}
 .chip.wt.shake{animation:shake .35s}
 .chip.wt .wp{position:absolute;top:-11px;inset-inline-end:-11px;width:24px;height:24px;border-radius:50%;
-  background:#fff;border:2px solid var(--red);font:13px/20px system-ui,sans-serif;text-align:center;pointer-events:none}
+  background:#fff;border:2px solid var(--red);color:var(--red);font:900 13px/20px system-ui,sans-serif;text-align:center;cursor:pointer}
+.chip.wt .wp::before{content:"";position:absolute;inset:-8px}   /* مساحةُ لمسٍ أوسع من الدائرة */
 
 /* الاحتفال: يملأ الشاشة لحظة ثم يذوب */
 .cele{position:fixed;inset:0;z-index:150;display:flex;flex-direction:column;align-items:center;
@@ -12976,7 +12977,7 @@ function roundRecite(r){
     /* كلُّ كلمةٍ تُكتب تصير صندوقاً يتلوّن في الحال: أخضرُ إن وافقت موضعها وأحمرُ إن خالفته.
        والحمراءُ تُنقر فتعود إلى الحقل تُعدَّل في مكانها — وكلمتان تُكتبان مكانها تُدرجان الناقصة —
        أو تُمسح فتُحذف، فلا يسير الطفلُ بالمؤشّر على سطرٍ طويل. والمحاولاتُ مفتوحةٌ حتى يستسلم.
-       وعلى الحمراء قلمٌ ✏️ لا ✕: الحذفُ وحده لا يُصلح شيئاً، والقلمُ يدلّه على أنّها تُعدَّل */
+       وعلى الحمراء ✕ يحذفها بنقرة، ونقرُ الكلمة نفسِها يعيدها إلى الحقل لتُعدَّل */
     /* أوّلُ كلمتين معطاتان صناديقَ ثابتةً يبني عليها، بدل صندوق الآية الكبير:
        رقمُ الآية وحده لا يدلّ الحافظَ عليها، ومطلعُها يدلّه. ولا تُعطى الآيةُ كلُّها */
     var given=Math.max(0,Math.min(2,part.length-1));
@@ -13003,7 +13004,7 @@ function roundRecite(r){
         var cl=i<given?(i<echo?'ok':'given'):i===ed?'hintme':okAt(i)?'ok':'bad';
         if(cl==='bad' && fresh && fresh.indexOf(i)>=0) cl+=' shake';
         return '<span class="chip wt '+cl+'" data-i="'+i+'">'+esc(w)+
-               (cl.indexOf('bad')===0?'<span class="wp">✏️</span>':'')+'</span>';
+               (cl.indexOf('bad')===0?'<span class="wp">✕</span>':'')+'</span>';
       }).join('');
     }
     function miss(){ if(!missed){ missed=true; S.errors++; comboMiss(); } }
@@ -13066,6 +13067,11 @@ function roundRecite(r){
       var c=e.target.closest('[data-i]');
       if(!c) return;
       var i=+c.getAttribute('data-i');
+      if(e.target.closest('.wp')){
+        typed.splice(i,1);
+        if(i===ed){ ed=-1; inp.value=''; } else if(ed>i) ed--;
+        draw(); settle(); inp.focus(); return;
+      }
       if(i===ed){ ed=-1; inp.value=''; draw(); settle(); inp.focus(); return; }
       if(okAt(i)) return;
       if(ed<0 && norm(inp.value)){ var v=inp.value; inp.value=''; put(v.split(/\s+/)); if(done) return; }
