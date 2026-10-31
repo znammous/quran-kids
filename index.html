@@ -773,12 +773,14 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .mline .mtxt{flex:1;display:flex;flex-wrap:wrap;align-items:baseline;gap:0 .34em;justify-content:center}
 .mw{white-space:nowrap;transition:color .18s ease}
 .mw.hl{color:#0f2d52}
-/* كلمةٌ لها معنى في «الغريب»: خطٌّ رفيعٌ متّصلٌ باهتٌ تحتها لا يزحم الصفحة، ومن لمسها رأى معناها (mfGlossAt) */
-.mw.gl{text-decoration:underline solid rgba(201,162,74,.6);text-decoration-thickness:1.5px;text-underline-offset:.3em;
-  text-decoration-skip-ink:none;cursor:pointer}
-.mw.gl2{text-decoration-color:rgba(141,150,165,.5)}
-.mw.glon{background:rgba(201,162,74,.24);border-radius:4px}
-.mfsheet.picking .mw.gl{text-decoration:none}
+/* كلمةٌ لها معنى في «الغريب»: خطٌّ رفيعٌ فاتحٌ تحتها لا يزحم الصفحة، ومن لمسها رأى معناها (mfGlossAt).
+   يُرسم خلفيّةً أقصرَ من الكلمة بـ.15em من كلّ طرف، فبين خطَّي كلمتين متلاصقتين فجوةٌ ظاهرةٌ دائماً
+   (وفي وضع خطّ الصفحة لا مسافةَ بين الكلمات أصلاً) */
+.mw.gl{--glc:#e6d3a3;background-image:linear-gradient(var(--glc),var(--glc));background-repeat:no-repeat;
+  background-size:calc(100% - .3em) 1.5px;background-position:50% var(--gly,92%);cursor:pointer}
+.mw.gl2{--glc:#cdd2da}
+.mw.glon{background-color:rgba(201,162,74,.24);border-radius:4px}
+.mfsheet.picking .mw.gl{background-image:none}
 .mfgloss{position:fixed;z-index:7;max-width:min(340px,calc(100vw - 16px));padding:8px 12px;border-radius:12px;
   background:var(--pnl);color:var(--ttl);border:1.5px solid #c9a24a;box-shadow:0 6px 20px rgba(0,0,0,.18);
   font-family:'Majalla','Baloo Bhaijaan 2',sans-serif;font-size:15.5px;font-weight:400;line-height:1.9;direction:rtl;pointer-events:none}
@@ -10305,7 +10307,7 @@ function gharibLoad(){
   }).then(function(d){ GHARIB=d; return d; })['catch'](function(e){ GHARIB_P=null; throw e; });
   return GHARIB_P;
 }
-/* الكلماتُ المشروحةُ في الوجه نفسِه — كما في «نور السنّة»: تحتها خطٌّ منقّط،
+/* الكلماتُ المشروحةُ في الوجه نفسِه — كما في «نور السنّة»: تحتها خطٌّ رفيع،
    ومن لمسها رأى معناها. GLW['gi:wi'] = سطرُها [سورة، آية، الكلمة، معناها]،
    يُبنى مرّةً للمصحف كلّه: الآيةُ قد تتمّ في الوجه التالي وسطرُها في قائمة الأوّل.
    والكلمةُ تُطابَق مجرّدةً من الضبط، وقد يسبقها في الآية واوٌ أو فاء
