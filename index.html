@@ -10268,6 +10268,7 @@ function audPageAsk(){
 }
 /* لوحةٌ واحدةٌ في كلّ مرّة — ولا شيءَ يُطوي الكلّ */
 function mfPanel(id){
+  mfGlossOff();                          /* بطاقةُ معنى الكلمة لا تبقى طافيةً فوق اللوحة */
   ['mfIdx','mfFind','mfMean'].forEach(function(k){ if($(k)) $(k).hidden=(k!==id); });
   if(!id) AUD_PICKSURA=false;            /* أُغلق الفهرسُ ولم يختر: يعود فهرساً كعادته */
   if(id){ var d=$('mfDock'); $(id).style.bottom=(d?d.offsetHeight:0)+'px'; }
@@ -10281,6 +10282,7 @@ function mfPanelOpen(){ return ['mfIdx','mfFind','mfMean'].some(function(k){ ret
    الشريط، وكانت اللوحةُ واقفةً عند ارتفاعه القديم فتظهر صفحةُ المصحف بينهما */
 (function(){
   var d=$('mfDock'); if(!d) return;
+  d.addEventListener('click', mfGlossOff, true);   /* وأيُّ لمسةٍ في الشريط تطوي بطاقةَ المعنى */
   function fit(){
     ['mfIdx','mfFind','mfMean'].forEach(function(k){
       var e=$(k); if(e && !e.hidden) e.style.bottom=d.offsetHeight+'px';
