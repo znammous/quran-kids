@@ -774,11 +774,14 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .mw{white-space:nowrap;transition:color .18s ease}
 .mw.hl{color:#0f2d52}
 /* كلمةٌ لها معنى في «الغريب»: خطٌّ رفيعٌ فاتحٌ تحتها لا يزحم الصفحة، ومن لمسها رأى معناها (mfGlossAt).
-   كلماتُ الشرح الواحد تحتها خطٌّ متّصل، وأوّلُ كلمةٍ في كلّ شرحٍ (gls) يقصر خطُّها .3em من يمينها
-   فبين الذهبيّ والرماديّ المتجاورين فجوةٌ ظاهرةٌ دائماً ولا يُريان خطّاً واحداً */
+   كلماتُ الشرح الواحد تحتها خطٌّ متّصل يقصر .2em من طرفيه بالقدر نفسه فيتوسّطها:
+   gls أوّلُ كلمةٍ فيه (من يمينها) وgle آخرُها (من يسارها)، فالكلمةُ الوحيدة خطُّها في منتصفها،
+   وبين خطَّي شرحين متجاورين فجوةٌ ظاهرةٌ دائماً ولا يُريان خطّاً واحداً */
 .mw.gl{--glc:#e6d3a3;background-image:linear-gradient(var(--glc),var(--glc));background-repeat:no-repeat;
-  background-size:100% 1.5px;background-position:0 92%;cursor:pointer}
-.mw.gl.gls{background-size:calc(100% - .3em) 1.5px}
+  background-size:100% 1.5px;background-position:50% 92%;cursor:pointer}
+.mw.gl.gls{background-size:calc(100% - .2em) 1.5px;background-position:0 92%}
+.mw.gl.gle{background-size:calc(100% - .2em) 1.5px;background-position:100% 92%}
+.mw.gl.gls.gle{background-size:calc(100% - .4em) 1.5px;background-position:50% 92%}
 .mw.gl2{--glc:#cdd2da}
 /* وفي العرض البديل بين الكلمات مسافة: يصلها الخطُّ داخل الشرح الواحد (وفي خطّ الصفحة لا مسافة) */
 .mw.gl:not(.gls){position:relative}
@@ -5045,7 +5048,9 @@ function mushafPageHTML(P, hlGi, glyphs){
     }
     var nx=null, j;
     for(j=i+1;j<ML.length;j++) if(ML[j]){ nx=ML[j]; break; }
-    var gi=ML[i][0], wi=ML[i][1], out='', hasHl=false, hasSeg=false, guard=0;
+    var gi=ML[i][0], wi=ML[i][1], out='', hasHl=false, hasSeg=false, guard=0, pr=null;
+    /* طرفُ الشرح: الكلمةُ التالية ليست منه (أو انتهى السطر) فيقصر خطُّه من يساره (gle) */
+    var glEnd=function(e){ var k=out.lastIndexOf('\u0001'); if(k>=0) out=out.slice(0,k)+(e?' gle':'')+out.slice(k+1); };
     while(guard++<400){
       if(nx && (gi>nx[0] || (gi===nx[0] && wi>=nx[1]))) break;
       if(gi>=6236) break;
@@ -5054,6 +5059,7 @@ function mushafPageHTML(P, hlGi, glyphs){
       if(M && inr) hasSeg=true;
       if(on) hasHl=true;
       if(wi>=ws.length){
+        glEnd(1); pr=null;
         out+='<span class="manum'+(on?' hl':'')+(inr?'':' mout')+'" data-gi="'+gi+'">'+(GC?GC[u]:arNum(loc[1]))+'</span>';
         u++; gi++; wi=0; continue;
       }
@@ -5062,12 +5068,16 @@ function mushafPageHTML(P, hlGi, glyphs){
       var gl=GL && GL[gi+':'+wi] ? gi+':'+wi : '';
       /* شرحان متجاوران يتّصل خطّاهما فيُريان خطّاً واحداً: يتعاقبان بدرجتين،
          وكلماتُ العبارة الواحدة على درجةٍ واحدة */
-      var gls=gl && GL[gl]!==glr;      /* أوّلُ كلمةٍ في شرحٍ جديد: عندها الفجوة (gls) */
-      if(gls){ glr=GL[gl]; glp^=1; }
-      out+='<span class="mw'+(on?' hl':'')+mfMarkCls(M,PM,inr,gi,wi)+(gl?(glp?' gl':' gl gl2')+(gls?' gls':''):'')+'" data-gi="'+gi+'"'+
+      if(gl && GL[gl]!==glr){ glr=GL[gl]; glp^=1; }
+      /* كلُّ شرحٍ يقصر خطُّه من طرفيه بالقدر نفسه فيتوسّط كلماته، ويتّصل بين كلماته:
+         gls أوّلُ كلمةٍ فيه (يقصر من يمينها)، وgle آخرُها (من يسارها) */
+      var gls=gl && GL[gl]!==pr;
+      glEnd(!gl || gls); pr=gl ? GL[gl] : null;
+      out+='<span class="mw'+(on?' hl':'')+mfMarkCls(M,PM,inr,gi,wi)+(gl?(glp?' gl':' gl gl2')+(gls?' gls':'')+'\u0001':'')+'" data-gi="'+gi+'"'+
         (gl?' data-gl="'+gl+'"':'')+'>'+(GC ? GC[u] : esc(ws[wi]))+'</span>';
       u++; wi++;
     }
+    glEnd(1);
     html+='<div class="mline'+(hasHl?' hasHl':'')+(hasSeg?' hasSeg':'')+'"><span class="mtxt">'+out+'</span></div>';
   }
   /* رقمُ الوجه تحته، ليس سطراً (mline) فلا يدخل في الالتقاط ولا في ضبط العرض */
