@@ -1987,5 +1987,8 @@ NUR_I18N.add('uz', {
   "أنت أقوى من خطأٍ واحد!": "Sen bitta xatodan kuchliroqsan!",
   "انطلِق من جديد!": "Yana parvoz qil!",
   "بلغتَ {q} على التوالي — وهي أطولُ سلسلةٍ لك!": "Ketma-ket {q} ga yetding — bu eng uzun ketma-ketliging!",
-  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Ketma-ket {q} ga yetding — eng uzun ketma-ketliging: {b}"
+  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Ketma-ket {q} ga yetding — eng uzun ketma-ketliging: {b}",
+  "وقتُ التثبيت": "Mustahkamlash vaqti",
+  "لنثبّت ما تعلّمت": "O‘rganganingni mustahkamlaylik",
+  "نعود إلى {q} لنثبّت حفظك 💪": "Yodlaganing mustahkam bo‘lishi uchun {q}ga qaytamiz 💪"
 });

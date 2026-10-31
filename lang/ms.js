@@ -1987,5 +1987,8 @@ NUR_I18N.add('ms', {
   "أنت أقوى من خطأٍ واحد!": "Kamu lebih kuat daripada satu kesilapan!",
   "انطلِق من جديد!": "Melonjak semula!",
   "بلغتَ {q} على التوالي — وهي أطولُ سلسلةٍ لك!": "Kamu mencapai {q} berturut-turut — rentetan terpanjangmu!",
-  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Kamu mencapai {q} berturut-turut — rentetan terpanjangmu {b}"
+  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Kamu mencapai {q} berturut-turut — rentetan terpanjangmu {b}",
+  "وقتُ التثبيت": "Masa pengukuhan",
+  "لنثبّت ما تعلّمت": "Mari kukuhkan apa yang kamu pelajari",
+  "نعود إلى {q} لنثبّت حفظك 💪": "Kita kembali kepada {q} supaya hafalanmu lebih kukuh 💪"
 });

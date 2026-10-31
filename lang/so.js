@@ -1987,5 +1987,8 @@ NUR_I18N.add('so', {
   "أنت أقوى من خطأٍ واحد!": "Waad ka xoog badan tahay hal khalad!",
   "انطلِق من جديد!": "Mar kale duul!",
   "بلغتَ {q} على التوالي — وهي أطولُ سلسلةٍ لك!": "Waxaad gaartay {q} isku xiga — kani waa isku xigiddaada ugu dheer!",
-  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Waxaad gaartay {q} isku xiga — isku xigiddaada ugu dheer waa {b}"
+  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Waxaad gaartay {q} isku xiga — isku xigiddaada ugu dheer waa {b}",
+  "وقتُ التثبيت": "Waa waqtiga xoojinta",
+  "لنثبّت ما تعلّمت": "Aan xoojinno waxaad baratay",
+  "نعود إلى {q} لنثبّت حفظك 💪": "Waxaan ku laabanaynaa {q} si xifdigaagu u xoogaysto 💪"
 });

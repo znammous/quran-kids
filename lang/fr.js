@@ -1987,5 +1987,8 @@ NUR_I18N.add('fr', {
   "أنت أقوى من خطأٍ واحد!": "Tu es plus fort qu’une seule erreur !",
   "انطلِق من جديد!": "Repars de plus belle !",
   "بلغتَ {q} على التوالي — وهي أطولُ سلسلةٍ لك!": "Tu as atteint {q} d’affilée — ta plus longue série !",
-  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Tu as atteint {q} d’affilée — ta plus longue série : {b}"
+  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Tu as atteint {q} d’affilée — ta plus longue série : {b}",
+  "وقتُ التثبيت": "C’est l’heure de renforcer",
+  "لنثبّت ما تعلّمت": "Renforçons ce que tu as appris",
+  "نعود إلى {q} لنثبّت حفظك 💪": "On revient sur {q} pour bien fixer ta mémorisation 💪"
 });

@@ -1987,5 +1987,8 @@ NUR_I18N.add('sw', {
   "أنت أقوى من خطأٍ واحد!": "Una nguvu kuliko kosa moja!",
   "انطلِق من جديد!": "Ruka tena!",
   "بلغتَ {q} على التوالي — وهي أطولُ سلسلةٍ لك!": "Umefikia {q} mfululizo — ndio mfululizo wako mrefu zaidi!",
-  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Umefikia {q} mfululizo — mfululizo wako mrefu zaidi ni {b}"
+  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Umefikia {q} mfululizo — mfululizo wako mrefu zaidi ni {b}",
+  "وقتُ التثبيت": "Wakati wa kuimarisha",
+  "لنثبّت ما تعلّمت": "Tuimarishe ulichojifunza",
+  "نعود إلى {q} لنثبّت حفظك 💪": "Tunarudi kwenye {q} ili hifadhi yako iimarike 💪"
 });

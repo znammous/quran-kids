@@ -11465,12 +11465,20 @@ function runRound(){
     aedge:roundAEdge,eorder:roundEOrder,
     revpage:roundRevPage,edge:roundEdge})[r.t](r);
   $('stageChip').classList.toggle('fix', !!r.rq);
-  /* أوّلُ سؤالِ تثبيتٍ في المرحلة يُعرَّف بسطرٍ مكانَ النتيجة تحت التلميح، ثمّ تكفي الشارة */
+  /* أوّلُ سؤالِ تثبيتٍ في المرحلة تستقبله شاشةُ تشجيعٍ هادئة — نجمةٌ فوقها مصباحٌ ينبض —
+     لا تذكر الخطأ، فالإعادةُ تدبيرٌ لا عتاب. ثمّ يُعرَّف بسطرٍ مكانَ النتيجة، وبعده تكفي الشارة */
   if(r.rq && !S.fixSeen){
     S.fixSeen=1;
     $('fb').className='fb fixnote'; $('fb').textContent='🔁 نعود إليه لنثبّته';
+    fixCele();
   }
   try{ qScreenFit(true); }catch(e){}             /* سؤالٌ جديد: يُضبط على الشاشة من جديد */
+}
+function fixCele(){
+  var n=0, i;
+  for(i=S.i;i<S.rounds.length;i++) if(S.rounds[i].rq) n++;
+  celeShow({ calm:true, fx:'fix', ic:'💡', kick:'🔁 وقتُ التثبيت', title:'لنثبّت ما تعلّمت',
+    sub:tx('نعود إلى {q} لنثبّت حفظك 💪',{q:arCount(n,C_QUES)}) });
 }
 /* ===== الخطأُ في الاختبار يمضي ولا يُعاد =====
    في الحفظ والمراجعة يُعاد السؤالُ حتى يُصيب، فذاك تمرينٌ يُراد به
@@ -11698,7 +11706,7 @@ function fxLoad(){
   if(FX.asked) return;
   FX.asked=true;
   var s=document.createElement('script');
-  s.src='data/fx.js?v=4'; s.async=true; s.onload=fxWarm;
+  s.src='data/fx.js?v=5'; s.async=true; s.onload=fxWarm;
   document.head.appendChild(s);
 }
 /* تُبنى كلُّ حركةٍ مرّةً في الخفاء حين تصل: أوّلُ بناءٍ يُعِدّ بياناتِها، فلا يتأخّر أوّلُ جوابٍ عن ضغطته */

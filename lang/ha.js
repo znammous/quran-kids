@@ -1987,5 +1987,8 @@ NUR_I18N.add('ha', {
   "أنت أقوى من خطأٍ واحد!": "Ka fi kuskure ɗaya ƙarfi!",
   "انطلِق من جديد!": "Sake tashi sama!",
   "بلغتَ {q} على التوالي — وهي أطولُ سلسلةٍ لك!": "Ka kai {q} a jere — wannan ne jerinka mafi tsawo!",
-  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Ka kai {q} a jere — jerinka mafi tsawo shi ne {b}"
+  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Ka kai {q} a jere — jerinka mafi tsawo shi ne {b}",
+  "وقتُ التثبيت": "Lokacin ƙarfafawa",
+  "لنثبّت ما تعلّمت": "Mu ƙarfafa abin da ka koya",
+  "نعود إلى {q} لنثبّت حفظك 💪": "Za mu koma kan {q} don haddarka ta kafu 💪"
 });

@@ -1987,5 +1987,8 @@ NUR_I18N.add('en', {
   "أنت أقوى من خطأٍ واحد!": "You’re stronger than one mistake!",
   "انطلِق من جديد!": "Take off again!",
   "بلغتَ {q} على التوالي — وهي أطولُ سلسلةٍ لك!": "You reached {q} in a row — your longest streak yet!",
-  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "You reached {q} in a row — your longest streak is {b}"
+  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "You reached {q} in a row — your longest streak is {b}",
+  "وقتُ التثبيت": "Time to strengthen",
+  "لنثبّت ما تعلّمت": "Let’s make what you learned stick",
+  "نعود إلى {q} لنثبّت حفظك 💪": "We’re going back to {q} to make your memorization firm 💪"
 });

@@ -1987,5 +1987,8 @@ NUR_I18N.add('tr', {
   "أنت أقوى من خطأٍ واحد!": "Tek bir hatadan daha güçlüsün!",
   "انطلِق من جديد!": "Yeniden havalan!",
   "بلغتَ {q} على التوالي — وهي أطولُ سلسلةٍ لك!": "Art arda {q} ulaştın — en uzun serin!",
-  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Art arda {q} ulaştın — en uzun serin {b}"
+  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Art arda {q} ulaştın — en uzun serin {b}",
+  "وقتُ التثبيت": "Pekiştirme zamanı",
+  "لنثبّت ما تعلّمت": "Öğrendiklerini pekiştirelim",
+  "نعود إلى {q} لنثبّت حفظك 💪": "Ezberin sağlamlaşsın diye {q} yeniden soruyoruz 💪"
 });
