@@ -1981,5 +1981,11 @@ NUR_I18N.add('tr', {
   "أدائي": "Performans",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "Burada yalnızca kendinle karşılaştırılırsın — başkasıyla değil",
   "ثبتت:": "Artık sağlam:",
-  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Alt çubukta “📈 Performans” düğmesi var: haftanı bir öncekiyle karşılaştır, kaydığın ayetleri gör — ve tek dokunuşla pekiştir. “Mağazam” ise artık “Camim” içinde bir sekme."
+  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Alt çubukta “📈 Performans” düğmesi var: haftanı bir öncekiyle karşılaştır, kaydığın ayetleri gör — ve tek dokunuşla pekiştir. “Mağazam” ise artık “Camim” içinde bir sekme.",
+  "انقطعت السلسلة": "Seri bozuldu",
+  "أشعِلها من جديد!": "Yeniden alevlendir!",
+  "أنت أقوى من خطأٍ واحد!": "Tek bir hatadan daha güçlüsün!",
+  "انطلِق من جديد!": "Yeniden havalan!",
+  "بلغتَ {q} على التوالي — وهي أطولُ سلسلةٍ لك!": "Art arda {q} ulaştın — en uzun serin!",
+  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Art arda {q} ulaştın — en uzun serin {b}"
 });

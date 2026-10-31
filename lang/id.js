@@ -1981,5 +1981,11 @@ NUR_I18N.add('id', {
   "أدائي": "Prestasi",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "Di sini kamu hanya dibandingkan dengan dirimu sendiri — bukan orang lain",
   "ثبتت:": "Kini kokoh:",
-  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Di bilah bawah ada tombol “📈 Prestasi”: lihat minggumu dibandingkan dengan minggu sebelumnya, dan ayat-ayat yang sering keliru — lalu kuatkan dengan satu ketukan. Dan “Tokoku” kini menjadi tab di “Masjidku”."
+  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Di bilah bawah ada tombol “📈 Prestasi”: lihat minggumu dibandingkan dengan minggu sebelumnya, dan ayat-ayat yang sering keliru — lalu kuatkan dengan satu ketukan. Dan “Tokoku” kini menjadi tab di “Masjidku”.",
+  "انقطعت السلسلة": "Rangkaian terputus",
+  "أشعِلها من جديد!": "Nyalakan lagi!",
+  "أنت أقوى من خطأٍ واحد!": "Kamu lebih kuat dari satu kesalahan!",
+  "انطلِق من جديد!": "Melesat lagi!",
+  "بلغتَ {q} على التوالي — وهي أطولُ سلسلةٍ لك!": "Kamu mencapai {q} berturut-turut — rangkaian terpanjangmu!",
+  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Kamu mencapai {q} berturut-turut — rangkaian terpanjangmu {b}"
 });

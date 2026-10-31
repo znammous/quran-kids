@@ -1981,5 +1981,11 @@ NUR_I18N.add('fr', {
   "أدائي": "Progrès",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "Ici, tu n’es comparé qu’à toi-même — à personne d’autre",
   "ثبتت:": "Désormais solides :",
-  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Dans la barre du bas, un bouton « 📈 Progrès » : vois ta semaine comparée à la précédente, et les versets où tu te trompes — puis consolide-les d’un seul geste. Et le « Magasin » est désormais un onglet de « Mosquée »."
+  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Dans la barre du bas, un bouton « 📈 Progrès » : vois ta semaine comparée à la précédente, et les versets où tu te trompes — puis consolide-les d’un seul geste. Et le « Magasin » est désormais un onglet de « Mosquée ».",
+  "انقطعت السلسلة": "Série interrompue",
+  "أشعِلها من جديد!": "Rallume-la !",
+  "أنت أقوى من خطأٍ واحد!": "Tu es plus fort qu’une seule erreur !",
+  "انطلِق من جديد!": "Repars de plus belle !",
+  "بلغتَ {q} على التوالي — وهي أطولُ سلسلةٍ لك!": "Tu as atteint {q} d’affilée — ta plus longue série !",
+  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Tu as atteint {q} d’affilée — ta plus longue série : {b}"
 });

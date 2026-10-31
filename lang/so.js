@@ -1981,5 +1981,11 @@ NUR_I18N.add('so', {
   "أدائي": "Horumar",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "Halkan waxaa lagu barbardhigaa naftaada oo keliya — cid kale maaha",
   "ثبتت:": "Hadda way adag yihiin:",
-  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Xariijinta hoose waxaa ku yaal badhanka “📈 Horumar”: arag toddobaadkaaga oo la barbardhigay kii hore, iyo aayadaha aad ku siibato — kuna xooji hal taabasho. “Dukaan” hadda waa tab ku jira “Masjid”."
+  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "Xariijinta hoose waxaa ku yaal badhanka “📈 Horumar”: arag toddobaadkaaga oo la barbardhigay kii hore, iyo aayadaha aad ku siibato — kuna xooji hal taabasho. “Dukaan” hadda waa tab ku jira “Masjid”.",
+  "انقطعت السلسلة": "Isku xigiddii way go’day",
+  "أشعِلها من جديد!": "Mar kale shid!",
+  "أنت أقوى من خطأٍ واحد!": "Waad ka xoog badan tahay hal khalad!",
+  "انطلِق من جديد!": "Mar kale duul!",
+  "بلغتَ {q} على التوالي — وهي أطولُ سلسلةٍ لك!": "Waxaad gaartay {q} isku xiga — kani waa isku xigiddaada ugu dheer!",
+  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Waxaad gaartay {q} isku xiga — isku xigiddaada ugu dheer waa {b}"
 });

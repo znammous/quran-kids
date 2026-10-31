@@ -1981,5 +1981,11 @@ NUR_I18N.add('ha', {
   "أدائي": "Cigaba",
   "تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك": "A nan ana kwatanta ka da kanka kawai — ba da wani ba",
   "ثبتت:": "Yanzu sun ƙarfafa:",
-  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "A sandar ƙasa akwai maɓallin “📈 Cigaba”: ka ga makonka idan aka kwatanta da wanda ya gabata, da ayoyin da kake zamewa a ciki — ka ƙarfafa su da taɓawa ɗaya. Kuma “Shago” yanzu shafi ne a cikin “Masallaci”."
+  "في الشريط السفليّ زرُّ «📈 أدائي»: ترى فيه أسبوعك موازَناً بالذي قبله، والآياتِ التي تزلّ فيها — وتثبّتها بزرٍّ واحد. و«متجري» صار تبويباً في «مسجدي».": "A sandar ƙasa akwai maɓallin “📈 Cigaba”: ka ga makonka idan aka kwatanta da wanda ya gabata, da ayoyin da kake zamewa a ciki — ka ƙarfafa su da taɓawa ɗaya. Kuma “Shago” yanzu shafi ne a cikin “Masallaci”.",
+  "انقطعت السلسلة": "Jeri ya katse",
+  "أشعِلها من جديد!": "Sake kunna shi!",
+  "أنت أقوى من خطأٍ واحد!": "Ka fi kuskure ɗaya ƙarfi!",
+  "انطلِق من جديد!": "Sake tashi sama!",
+  "بلغتَ {q} على التوالي — وهي أطولُ سلسلةٍ لك!": "Ka kai {q} a jere — wannan ne jerinka mafi tsawo!",
+  "بلغتَ {q} على التوالي — وأطولُ سلسلةٍ لك {b}": "Ka kai {q} a jere — jerinka mafi tsawo shi ne {b}"
 });
