@@ -3845,10 +3845,12 @@ function hap(k){
            (كان نقرةً في ثلث ثانية لا تكاد تُفرق، ثمّ قرعَ طبلٍ لم يُعجب) */
         H.vibrate({ duration:650 })['catch'](no);
       }
+      /* نجمةٌ تُطبع: دقّةٌ ثقيلةٌ واضحة، لكلّ نجمةٍ دقّتُها */
+      else if(k==='star') H.impact({ style:'HEAVY' })['catch'](no);
       else H.impact({ style:'LIGHT' })['catch'](no);
       return;
     }
-    if(navigator.vibrate) navigator.vibrate({ ok:[12], bad:[45,70,45], win:[650] }[k] || [10]);
+    if(navigator.vibrate) navigator.vibrate({ ok:[12], bad:[45,70,45], win:[650], star:[45] }[k] || [10]);
   }catch(e){}
 }
 
@@ -11396,7 +11398,7 @@ function qaDay(n){
 /* يُذهب أيّ احتفالٍ قائم، فلا يحجب الشارة ولا يبتلع النقلة */
 function qaClearCele(){
   try{
-    CELE.q.length=0; CELE.on=false; CELE.then=null; clearTimeout(CELE.tm);
+    CELE.q.length=0; CELE.on=false; CELE.then=null; FX.wait=null; clearTimeout(CELE.tm);
     var el=$('cele'); if(el){ el.hidden=true; el.onclick=null; }
   }catch(e){}
 }
@@ -11714,15 +11716,23 @@ document.addEventListener('pointerdown', function(e){
 /* ما يُعرض من كلّ حركة وفي كم ثانية: [من، إلى] كسرٌ من طولها، ثمّ المدّة.
    الحركاتُ على أصلها بطيئة، وأكثرُ طولها فراغٌ أو ذبول — والجوابُ نقرةٌ لا تنتظر */
 var FX_CUT={ ok1:[0,.4,.45], dance:[0,.95,1.3],
-             cup:[.05,.7,.8], cup2:[.05,.6,.55], stars5:[0,.56,.85], conf:[.05,.9,1.8] };
-/* o.fit: «slice» يملأ الشاشة ولو قُصّ طرفُه. o.loop: تدور ما دامت ظاهرة. o.done: عند تمامها */
+             cup:[.05,.7,1.3], cup2:[.05,.6,.55], stars5:[0,.56,2], conf:[.05,.9,1.8] };
+/* إطاراتٌ يهتزّ عندها الجهاز: النجومُ الخمس تُطبع كلٌّ في إطارها، فيدقّ الجهازُ مع كلّ نجمة */
+var FX_HAP={ stars5:[2,6,10,14,18] };
+/* o.fit: «slice» يملأ الشاشة ولو قُصّ طرفُه. o.loop: تدور ما دامت ظاهرة. o.done: عند تمامها.
+   o.wait: تبدأ بعد كذا جزءاً من الثانية */
 function fxPlay(box, name, o){
   o=o||{};
-  var J=NUR_FX[name], n=J.op-J.ip, c=FX_CUT[name]||[0,1,n/J.fr];
-  var an=lottie.loadAnimation({ container:box, renderer:'svg', loop:!!o.loop, autoplay:true,
+  var J=NUR_FX[name], n=J.op-J.ip, c=FX_CUT[name]||[0,1,n/J.fr], hf=FX_HAP[name], hi=0;
+  var an=lottie.loadAnimation({ container:box, renderer:'svg', loop:!!o.loop, autoplay:!o.wait,
     animationData:J, initialSegment:[J.ip+Math.round(n*c[0]), J.ip+Math.round(n*c[1])],
     rendererSettings:{ preserveAspectRatio:'xMidYMid '+(o.fit||'meet') } });
   an.setSpeed(n*(c[1]-c[0])/J.fr/c[2]);
+  if(o.wait) setTimeout(function(){ if(an.renderer) an.play(); }, o.wait);
+  if(hf) an.addEventListener('enterFrame', function(){
+    /* لا يدقّ لحركةٍ غابت شاشتُها */
+    while(hi<hf.length && an.firstFrame+an.currentFrame>=hf[hi]){ hi++; if(box.isConnected) hap('star'); }
+  });
   if(o.done) an.addEventListener('complete', function(){ o.done(an); });
   return an;
 }
@@ -11776,13 +11786,20 @@ function fxFill(root){
     var h=el.getAttribute('data-fxh'), ic=el.innerHTML, fs=el.style.fontSize;
     el.textContent=''; el.style.fontSize='';
     el.style.height=h+'px';
-    FX.fill.push(fxPlay(el, el.getAttribute('data-fx'), !el.hasAttribute('data-fxback') ? null : { done:function(an){
+    FX.fill.push(fxPlay(el, el.getAttribute('data-fx'), !el.hasAttribute('data-fxback') ? { wait:+el.getAttribute('data-fxwait')||0 } : { done:function(an){
       fxGone(an);
       el.style.fontSize=fs; el.style.lineHeight=h+'px';
       el.style.animation='celepop .45s cubic-bezier(.2,1.7,.4,1)';
       el.innerHTML=ic;
     } }));
   })(els[i]);
+}
+
+/* حركاتُ الشاشة تنتظر شاشةَ الاحتفال إن كانت قائمة — كانت تجري تحتها فلا يُرى منها شيء.
+   ولا تجري إن غادر الطفلُ الشاشةَ قبل أن ينتهي الاحتفال */
+function fxAfterCele(fn){
+  var inn=$('playArea').firstChild, go=function(){ if(inn && inn.isConnected) fn(); };
+  if(CELE.on) FX.wait=go; else go();
 }
 
 /* ===== الاحتفال ===== */
@@ -11811,6 +11828,7 @@ function celeNext(){
   if(!o){
     CELE.on=false;
     if(el) el.hidden=true;
+    if(FX.wait){ var fw=FX.wait; FX.wait=null; setTimeout(fw,140); }
     if(CELE.then){ var go=CELE.then; CELE.then=null; setTimeout(go,140); }
     return;
   }
@@ -13266,9 +13284,9 @@ function finishStage(){
       '<h2 style="color:var(--g1);margin:6px 0">'+(first?'أتممتَ المقطع!':'ثبّتَّ المقطع 💪')+'</h2>'+
       '<p style="color:#3d5b7a;font-size:16px;margin:0 0 6px">'+esc(S.surah.name)+' — الآيات '+arNum(S.seg[0]+1)+' إلى '+arNum(S.seg[1])+'</p>'+
       '<p style="color:#3d5b7a;font-size:15px;margin:0 0 12px">أنجزت '+arNum(t.done)+' من '+arNum(t.segs)+' مقاطع السورة ✨</p>'+
-      '<div style="font-size:28px;letter-spacing:4px;color:#d9b400;margin-bottom:12px" data-fx="stars5" data-fxh="56">★★★★★</div>'+
+      '<div style="font-size:28px;letter-spacing:4px;color:#d9b400;margin-bottom:12px" data-fx="stars5" data-fxh="56" data-fxwait="700">★★★★★</div>'+
       note+btns+'</div>';
-    fxFill($('playArea')); fxScreen('conf');
+    fxAfterCele(function(){ fxFill($('playArea')); fxScreen('conf'); });
     $('fb').textContent='';
     if($('btnNextSeg')) $('btnNextSeg').onclick=function(){ startSeg(S.surah, S.si+1); };
     if($('btnNextDay')) $('btnNextDay').onclick=function(){ bqnNextDay(); };
@@ -13297,7 +13315,7 @@ function finishStage(){
     '<div style="font-size:28px;letter-spacing:4px;color:#d9b400;margin-bottom:12px">'+stars5(p.stars)+'</div>'+
     '<button class="btn primary big pulse" id="btnNextStage">⬅️ المرحلة التالية: '+nx.t+'</button>'+
     '<button class="btn ghost big" id="btnSegsNow" style="margin:0">🗺️ المسار</button></div>';
-  fxFill($('playArea'));
+  fxAfterCele(function(){ fxFill($('playArea')); });
   $('fb').textContent='';
   $('btnNextStage').onclick=function(){ beginStage({s:S.surah,seg:S.seg,si:S.si,key:S.key,stage:p.stage}); };
   $('btnSegsNow').onclick=function(){ curSurah=S.surah; renderPath(); show('scr-path'); };
@@ -15906,8 +15924,7 @@ function finishReview(){
     '<p style="color:#3d5b7a;margin:0 0 12px">'+body+'</p>'+outH+
     (isTest&&ok?'<button class="btn primary big pulse" id="btnJuzCert">📜 شهادة الجزء</button>':'')+
     '<button class="btn ghost big" id="btnMapNow2" style="margin:0">➡️ رجوع</button></div>';
-  fxFill($('playArea'));
-  if(ok && isTest) fxScreen('conf');
+  fxAfterCele(function(){ fxFill($('playArea')); if(ok && isTest) fxScreen('conf'); });
   $('fb').textContent='';
   if($('btnJuzCert')) $('btnJuzCert').onclick=function(){ showJuzCert(j); };
   $('btnMapNow2').onclick=function(){ renderPath(); show('scr-path'); };
