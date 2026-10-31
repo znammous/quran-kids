@@ -13,9 +13,7 @@
 <link rel="icon" href="icons/icon-192.png" type="image/png">
 <title>نور الوحي 🕌 حفظ ومراجعة القرآن الكريم</title>
 <!-- خطوطُ الواجهة ملفّاتٌ لا نصٌّ مُضمَّن: كان ترميزُها base64 يُضخّم الصفحة ولا يُضغط. تُطلب مبكّراً فلا يتأخّر الرسم -->
-<link rel="preload" href="fonts/ui/plex-arabic-400-arabic.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="fonts/ui/plex-arabic-600-arabic.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="fonts/ui/plex-arabic-700-arabic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/ui/baloo-arabic.woff2" as="font" type="font/woff2" crossorigin>
 <script>
 /* ===== لغاتُ الواجهة: الأزرارُ والرسائلُ وحدَها — المصحفُ والآياتُ بالعربيّة دائماً =====
    قاموسُ كلِّ لغةٍ في lang/<رمزها>.js، مفاتيحُه النصُّ العربيُّ نفسُه كما يظهر،
@@ -246,12 +244,26 @@
 })();
 </script>
 <style>
+/* خطُّ الواجهة: Baloo Bhaijaan 2 — مستديرٌ سميك يناسب الأطفال، وملفٌّ واحدٌ لكلّ الأوزان (٤٠٠–٨٠٠).
+   وPlex بعده للبشتو وحدَها: ليس في Baloo حروفُها (ټ ډ ړ ښ ګ ڼ…)، فتُبدَّل له في السكربت بعد هذا */
+@font-face{font-family:'Baloo Bhaijaan 2';font-style:normal;font-weight:400 800;font-display:swap;src:url(fonts/ui/baloo-arabic.woff2) format('woff2');unicode-range:U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;}
+@font-face{font-family:'Baloo Bhaijaan 2';font-style:normal;font-weight:400 800;font-display:swap;src:url(fonts/ui/baloo-latin-ext.woff2) format('woff2');unicode-range:U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;}
+@font-face{font-family:'Baloo Bhaijaan 2';font-style:normal;font-weight:400 800;font-display:swap;src:url(fonts/ui/baloo-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
 @font-face{font-family:'IBM Plex Sans Arabic';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ui/plex-arabic-400-arabic.woff2) format('woff2');unicode-range:U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;}
 @font-face{font-family:'IBM Plex Sans Arabic';font-style:normal;font-weight:400;font-display:swap;src:url(fonts/ui/plex-arabic-400-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
 @font-face{font-family:'IBM Plex Sans Arabic';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/ui/plex-arabic-600-arabic.woff2) format('woff2');unicode-range:U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;}
 @font-face{font-family:'IBM Plex Sans Arabic';font-style:normal;font-weight:600;font-display:swap;src:url(fonts/ui/plex-arabic-600-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
 @font-face{font-family:'IBM Plex Sans Arabic';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/ui/plex-arabic-700-arabic.woff2) format('woff2');unicode-range:U+0600-06FF, U+0750-077F, U+0870-088E, U+0890-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC4, U+10EFC-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1;}
 @font-face{font-family:'IBM Plex Sans Arabic';font-style:normal;font-weight:700;font-display:swap;src:url(fonts/ui/plex-arabic-700-latin.woff2) format('woff2');unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+</style>
+<script>
+/* البشتو: حروفُها ليست في Baloo، فيُعلَن Plex تحت اسمه للحروف العربيّة — ما أُعلن آخراً يُقدَّم،
+   فتأخذه الواجهةُ كلُّها (والرسمُ على اللوحات) دون أن يُمسّ موضعٌ واحد */
+if(document.documentElement.lang==='ps') document.write('<style>'+['400','600','700'].map(function(w){
+  return "@font-face{font-family:'Baloo Bhaijaan 2';font-weight:"+w+(w==='700'?' 900':'')+";font-display:swap;src:url(fonts/ui/plex-arabic-"+w+"-arabic.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+08A0-08FF,U+FB50-FDFF,U+FE70-FEFF}";
+}).join('')+'<\/style>');
+</script>
+<style>
 
 :root{
   /* أزرق البحر العميق مع توهّج سماوي */
@@ -305,7 +317,7 @@ input,textarea,select,[contenteditable]:not([contenteditable="false"]){
   -webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
 .gftcode{-webkit-touch-callout:default}
 body{
-  font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,system-ui,-apple-system,sans-serif;color:var(--ink);
+  font-family:"Baloo Bhaijaan 2","Segoe UI",Tahoma,system-ui,-apple-system,sans-serif;color:var(--ink);
   background:linear-gradient(180deg,var(--bg1) 0%,var(--bg2) 40%,var(--bg3) 75%,var(--bg4) 100%);
   min-height:100vh;min-height:100dvh;overflow-x:hidden;
   overscroll-behavior-y:none;                 /* لا سحب مطّاطي يوحي بتحديث الصفحة */
@@ -584,7 +596,7 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
   src:url(fonts/ui/nunito-cyrillic.woff2) format("woff2");unicode-range:U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116}
 @font-face{font-family:'Noto Nastaliq Urdu';font-style:normal;font-weight:400 700;font-display:swap;
   src:url(fonts/ui/nastaliq-urdu.woff2) format("woff2")}
-.ayah{font-family:"Amiri Quran","Traditional Arabic","Scheherazade New","IBM Plex Sans Arabic","Segoe UI",serif;
+.ayah{font-family:"Amiri Quran","Traditional Arabic","Scheherazade New","Baloo Bhaijaan 2","Segoe UI",serif;
   font-size:34px;line-height:2.1;text-align:center;color:#102b4a;padding:10px 6px;word-spacing:2px}
 
 /* ===== وجه المصحف: الكلمة في موضعها من مصحف المدينة ===== */
@@ -615,7 +627,7 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 /* شارةُ الخطوة تطفو على الوجه، فلا تزاحم الشريط */
 .mfstep{position:absolute;top:10px;inset-inline:auto;left:50%;transform:translateX(-50%);z-index:3;
   padding:6px 14px;border-radius:99px;white-space:nowrap;
-  font-family:"IBM Plex Sans Arabic","Segoe UI",sans-serif;
+  font-family:"Baloo Bhaijaan 2","Segoe UI",sans-serif;
   background:linear-gradient(180deg,#ffd75e,#eab308);color:#4a3600;border:2px solid #a1791a;
   font-weight:900;font-size:13.5px;box-shadow:0 3px 10px var(--qsh)}
 .mfstep[hidden]{display:none!important}
@@ -805,7 +817,7 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .mbas{flex:1;text-align:center;font-family:"UthmanicHafs","Amiri Quran",serif;color:#5b6678;font-size:.86em}
 .mblank{flex:1}
 /* دائرة رقم الآية — للعرض البديل قبل وصول خطّ الصفحة */
-.manum{font-family:"IBM Plex Sans Arabic","Segoe UI",sans-serif;font-size:.42em;font-weight:800;
+.manum{font-family:"Baloo Bhaijaan 2","Segoe UI",sans-serif;font-size:.42em;font-weight:800;
   color:#b9a67d;border:1.5px solid #ddc99b;border-radius:50%;padding:.15em .45em;margin:0 .12em;
   vertical-align:.35em;white-space:nowrap}
 /* المتشابهاتُ في الوجه: لكلّ مجموعةٍ لونٌ واحد. وفي عرض المقطع ما حوله باهت —
@@ -847,9 +859,9 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 /* صفحة كاملة تحتاج مساحة أوسع */
 .ayahbox.pagebox{max-height:56vh;text-align:justify}
 .anum{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;
-  border:2px solid var(--g2);color:var(--g2);font-size:15px;font-weight:800;font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  border:2px solid var(--g2);color:var(--g2);font-size:15px;font-weight:800;font-family:"Baloo Bhaijaan 2","Segoe UI",Tahoma,sans-serif;
   margin:0 6px;vertical-align:middle}
-.basmala{font-family:"Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif;font-size:24px;text-align:center;
+.basmala{font-family:"Amiri Quran","Traditional Arabic","Baloo Bhaijaan 2","Segoe UI",serif;font-size:24px;text-align:center;
   color:#1560b0;margin-bottom:6px}
 /* ==== شاشة السؤال بلا بطاقة: الأسئلة على خلفية التطبيق مباشرة ==== */
 .card.bare{background:transparent;box-shadow:none;padding:0}
@@ -914,7 +926,7 @@ body.light .card.bare .fb.fixnote{color:#0b6b39}
    «مستقيمٍ» في الإطار. فسطرٌ ثابتٌ (1.6) وحشوٌ سفليٌّ أكبرُ من العلويّ يرفع
    الحرفَ إلى الوسط، والصندوقُ أطولُ قليلاً لأنّ «مستقيم» لا يسعها دونه.
    والحشوُ بـ em ليبقى على نسبة الخطّ في الحاسوب والجوال */
-.chip{font-family:"Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif;font-size:27px;background:#fff;
+.chip{font-family:"Amiri Quran","Traditional Arabic","Baloo Bhaijaan 2","Segoe UI",serif;font-size:27px;background:#fff;
   line-height:1.6;border:3px solid #d7e2f0;border-radius:12px;padding:.17em 14px .85em;cursor:pointer;font-weight:600;
   color:#102b4a;box-shadow:0 3px 0 rgba(0,0,0,.12);transition:.1s;touch-action:manipulation}
 .chip:active{transform:translateY(2px)}
@@ -968,7 +980,7 @@ body.light .card.bare .fb.fixnote{color:#0b6b39}
 .card.bare .qtitle{color:var(--ttl);text-shadow:0 2px 6px var(--qsh)}
 .opts{display:flex;flex-direction:column;gap:9px;margin-top:6px}
 .opt.phrase{font-size:22px;line-height:1.9;padding:12px 10px}
-.opt{font-family:"Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif;font-size:28px;background:#fff;border:3px solid #d7e2f0;
+.opt{font-family:"Amiri Quran","Traditional Arabic","Baloo Bhaijaan 2","Segoe UI",serif;font-size:28px;background:#fff;border:3px solid #d7e2f0;
   border-radius:14px;padding:10px;cursor:pointer;color:#102b4a;font-weight:600;touch-action:manipulation}
 .opt:active{transform:scale(.98)}
 /* كانت الخلفيّةُ زرقاءَ والأخضرُ في الحدّ وحدَه، فلا تُقرأ صواباً.
@@ -984,10 +996,10 @@ body.light .card.bare .fb.fixnote{color:#0b6b39}
 .m2note{text-align:center;font-weight:900;font-size:14px;color:var(--gold);margin:8px 0 2px}
 
 .acards{display:flex;flex-direction:column;gap:12px}
-.acard{font-family:"Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif;font-size:23px;background:#fff;
+.acard{font-family:"Amiri Quran","Traditional Arabic","Baloo Bhaijaan 2","Segoe UI",serif;font-size:23px;background:#fff;
   border:3px solid #d7e2f0;border-radius:14px;padding:9px 12px;cursor:pointer;color:#102b4a;
   display:flex;align-items:center;gap:10px;touch-action:manipulation}
-.acard .ord{font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;font-size:14px;font-weight:900;color:#fff;background:#cfd8d4;
+.acard .ord{font-family:"Baloo Bhaijaan 2","Segoe UI",Tahoma,sans-serif;font-size:14px;font-weight:900;color:#fff;background:#cfd8d4;
   min-width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
 .acard.placed{background:#e2f1ff;border-color:#9fdcb8}
 .acard.placed .ord{background:var(--green)}
@@ -996,8 +1008,8 @@ body.light .card.bare .fb.fixnote{color:#0b6b39}
 .fb{min-height:44px;text-align:center;font-size:20px;font-weight:800;margin-top:10px}
 .fb.good{color:var(--green)}
 .fb.bad{color:var(--red)}
-#reciteInput{font-family:"Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif;font-size:26px;text-align:center;line-height:1.9}
-.diffline{font-family:"Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif;font-size:26px;line-height:2;text-align:center}
+#reciteInput{font-family:"Amiri Quran","Traditional Arabic","Baloo Bhaijaan 2","Segoe UI",serif;font-size:26px;text-align:center;line-height:1.9}
+.diffline{font-family:"Amiri Quran","Traditional Arabic","Baloo Bhaijaan 2","Segoe UI",serif;font-size:26px;line-height:2;text-align:center}
 .diffline .w{padding:0 3px;border-radius:6px}
 .diffline .w.bad{color:var(--red);background:#ffe2e2}
 .diffline .w.ok{color:#12694a}
@@ -1197,7 +1209,7 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 .modal p,.modal .sub{color:var(--on1)}
 /* كان لونُها مكتوباً في السطر: أزرقُ شاحبٌ يصلح لليل ويغيب في النهار */
 .modal .adabsay{text-align:center;color:var(--ttl2);font-size:15px;margin:0}
-.modal .adab{text-align:center;font-family:"Traditional Arabic","Amiri","IBM Plex Sans Arabic","Segoe UI",serif;
+.modal .adab{text-align:center;font-family:"Traditional Arabic","Amiri","Baloo Bhaijaan 2","Segoe UI",serif;
   font-size:30px;color:var(--adab);margin:12px 0;text-shadow:0 1px 0 rgba(0,0,0,.35)}
 .modal .note{background:var(--mnote);border-color:var(--pb3);color:var(--on2)}
 .modal .note b{color:var(--ttl)}
@@ -1221,10 +1233,10 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 .cert{background:#fffdf3;border:12px double var(--gold);border-radius:16px;padding:20px 16px;text-align:center;
   box-shadow:0 14px 34px rgba(0,0,0,.3);position:relative}
 .cert .orn{font-size:22px;color:#c9a227;letter-spacing:8px}
-/* Nunito بعد خطّ الواجهة: للكيريليّة، فليس في Plex حروفُها */
-.cert h2{font-family:"Traditional Arabic","Amiri","IBM Plex Sans Arabic",Nunito,"Segoe UI",serif;font-size:36px;color:var(--g1);margin:6px 0}
+/* Nunito بعد خطّ الواجهة: للكيريليّة، فليس في Baloo حروفُها */
+.cert h2{font-family:"Traditional Arabic","Amiri","Baloo Bhaijaan 2",Nunito,"Segoe UI",serif;font-size:36px;color:var(--g1);margin:6px 0}
 .cert .who{font-size:26px;font-weight:900;color:#102b4a;margin:8px 0}
-.cert .what{font-family:"Traditional Arabic","Amiri","IBM Plex Sans Arabic",Nunito,"Segoe UI",serif;font-size:30px;color:#8a6100;margin:6px 0}
+.cert .what{font-family:"Traditional Arabic","Amiri","Baloo Bhaijaan 2",Nunito,"Segoe UI",serif;font-size:30px;color:#8a6100;margin:6px 0}
 .cert .stars{font-size:30px;letter-spacing:4px;margin:8px 0}
 .cert .stars svg{width:1.1em;height:1.1em;margin:0 2px;vertical-align:middle;fill:#ffd200;stroke:#ffd200;stroke-width:24;stroke-linejoin:round}
 .cert .meta2{display:flex;justify-content:space-around;flex-wrap:wrap;gap:10px;margin-top:14px;font-size:13px;color:#4a627e}
@@ -1237,7 +1249,7 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 .tree{background:#fffdf3;border:10px double var(--gold);border-radius:16px;padding:18px 12px;
   text-align:center;box-shadow:0 14px 34px rgba(0,0,0,.3)}
 .tree .orn{font-size:20px;color:#c9a227;letter-spacing:8px}
-.tree h2{font-family:"Traditional Arabic","Amiri","IBM Plex Sans Arabic","Segoe UI",serif;
+.tree h2{font-family:"Traditional Arabic","Amiri","Baloo Bhaijaan 2","Segoe UI",serif;
   font-size:30px;color:var(--g1);margin:4px 0 12px}
 .trow{display:flex;justify-content:center;flex-wrap:wrap;gap:14px;margin:10px 0}
 .tnode{width:104px}
@@ -1254,7 +1266,7 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 /* ===== ورقةُ تقرير الخطّة ===== */
 .rep{background:#fffdf3;border:10px double var(--gold);border-radius:16px;padding:18px 14px;
   box-shadow:0 14px 34px rgba(0,0,0,.3);text-align:start}
-.rep h2{font-family:"Traditional Arabic","Amiri","IBM Plex Sans Arabic","Segoe UI",serif;
+.rep h2{font-family:"Traditional Arabic","Amiri","Baloo Bhaijaan 2","Segoe UI",serif;
   font-size:28px;color:var(--g1);margin:4px 0 2px;text-align:center}
 .rep .who{text-align:center;font-size:18px;font-weight:900;color:#102b4a;margin-bottom:12px}
 .rep .orn{font-size:19px;color:#c9a227;letter-spacing:8px;text-align:center}
@@ -1321,9 +1333,10 @@ body.light .revbox .reprow .repv.wait{color:#a06a12}
 [dir=ltr] :is(.ayah,.ayahbox,.chip,.chip2,.opt,.acard,.acards,.ansline,.anslines,#playArea .chips,
   .runline,.runayah,.shelf,.bxlines,.diffline,.wtline,#reciteInput,.basmala,.mfq,.mfprow .ay,.mfmrow .w,
   .mbas,.adab,.onbsample,.mfbody,.mushaf,.mftaf:not([lang]),.mfmrow){direction:rtl}
-/* اللغاتُ اللاتينيّة: Nunito، مستديرٌ ودودٌ كأزرار التطبيق، وفيه حروفُ التركيّة والأوزبكيّة والروسيّة.
-   وما فيها من عربيّ (أسماءُ السور وغيرُها) يقع على خطّ الواجهة بعده */
-html[dir=ltr] body{font-family:Nunito,"IBM Plex Sans Arabic","Segoe UI",system-ui,sans-serif}
+/* اللغاتُ اللاتينيّة: خطُّ الواجهة نفسُه (فيه حروفُ التركيّة والأوزبكيّة)، وNunito بعده للكيريليّة.
+   والروسيّةُ تبدأ بـ Nunito: لا تُكتب أرقامُها بخطٍّ وحروفُها بآخر */
+html[dir=ltr] body{font-family:"Baloo Bhaijaan 2",Nunito,"Segoe UI",system-ui,sans-serif}
+html[lang=ru] body{font-family:Nunito,"Baloo Bhaijaan 2","Segoe UI",system-ui,sans-serif}
 /* لغاتٌ حروفُها خارج Nunito (ƙ في الهوسا، والبنغاليّة كلُّها): خطُّ الجهاز للواجهة كلِّها،
    فلا تُكتب الكلمةُ الواحدةُ بخطّين. وخطوطُ المصحف لها أنماطُها فلا تُمسّ */
 html:is([lang=bn],[lang=ha]) body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans","Noto Sans Bengali",sans-serif}
@@ -1331,7 +1344,7 @@ html:is([lang=bn],[lang=ha]) body{font-family:system-ui,-apple-system,"Segoe UI"
 [dir=ltr] .sttext:not([lang=ar]){line-height:1.65}   /* والقصّةُ التي لم تُترجم تبقى على تباعدها */
 /* والأرديّة تُقرأ في كتب أطفالها بالنستعليق؛ وهو أعلى سطراً، فيحتاج تباعداً أكبر.
    للقصص وحدها، والواجهةُ تبقى بالنسخ. و«» ليستا فيه فتقعان على خطّ الواجهة */
-html[lang=ur] .sttext:not([lang=ar]){font-family:"Noto Nastaliq Urdu","IBM Plex Sans Arabic",serif;font-weight:500;line-height:2.55}
+html[lang=ur] .sttext:not([lang=ar]){font-family:"Noto Nastaliq Urdu","Baloo Bhaijaan 2",serif;font-weight:500;line-height:2.55}
 /* أسهمٌ في عناصرَ مستقلّةٍ بلا نصّ: سهمُ البطاقات، وسهما القصّة، وزرُّ الرجوع منها،
    وسهمُ «انتقل» بجانب رقم الصفحة (رسمٌ لا حرفٌ، فلا يقلبه المترجم) */
 [dir=ltr] :is(.gcgo,.sar,#btnStoryBack,#mfGoPgBtn svg){display:inline-block;transform:scaleX(-1)}
@@ -1367,7 +1380,7 @@ html[lang=ur] .sttext:not([lang=ar]){font-family:"Noto Nastaliq Urdu","IBM Plex 
 .onbopt{flex-wrap:wrap}
 .onbsample{flex:1 0 100%;margin-top:10px;padding:10px 8px;background:#f7fbff;border:2px solid #e5ecf6;
   border-radius:12px;text-align:center;color:#102b4a;line-height:2.1;
-  font-family:"Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif}
+  font-family:"Amiri Quran","Traditional Arabic","Baloo Bhaijaan 2","Segoe UI",serif}
 .onbfam{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 /* نبضة تدلّ على أن التسجيل جارٍ الآن */
 .btn.reclive{animation:reclive 1.1s ease-in-out infinite}
@@ -1824,7 +1837,7 @@ body.hastabs .fabbar{bottom:calc(72px + env(safe-area-inset-bottom))}
 .pnode{position:relative;display:flex;flex-direction:column;align-items:center;margin:0 0 20px}
 .pnode .dot{position:relative;z-index:1;width:74px;height:74px;border-radius:50%;background:#fff;border:5px solid #dde6f1;color:#9db2c9;
   display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;cursor:pointer;
-  box-shadow:0 6px 0 rgba(0,0,0,.14);transition:.12s;touch-action:manipulation;font-family:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif}
+  box-shadow:0 6px 0 rgba(0,0,0,.14);transition:.12s;touch-action:manipulation;font-family:"Baloo Bhaijaan 2","Segoe UI",Tahoma,sans-serif}
 .pnode .dot:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.14)}
 .pnode.done .dot{background:linear-gradient(180deg,#48d98a,#1faa59);border-color:#0f7a44;color:#fff}
 .pnode.now .dot{background:linear-gradient(180deg,#ffd75e,#eab308);border-color:#a1791a;color:#4a3600;
@@ -2418,13 +2431,13 @@ body.glow-off .dfpic{animation:none}
 }
 .runayah{background:var(--pnl);border:2px solid var(--pb);border-radius:16px;padding:6px 12px 8px;margin-bottom:8px;text-align:center}
 .runref{font-size:12.5px;font-weight:800;color:var(--on3)}
-.runline{font-family:"Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif;font-size:23px;line-height:1.85;color:var(--ttl);min-height:3.7em;
+.runline{font-family:"Amiri Quran","Traditional Arabic","Baloo Bhaijaan 2","Segoe UI",serif;font-size:23px;line-height:1.85;color:var(--ttl);min-height:3.7em;
   display:flex;flex-wrap:wrap;align-items:center;justify-content:center;align-content:center}
 .runline{column-gap:8px}
 .runline .rw{display:inline-block}
 .runline .ctx{opacity:.45}
 .runline .todo{opacity:.35}
-.runline .next{min-width:1.9em;padding:0 6px;font-family:"IBM Plex Sans Arabic",sans-serif;font-size:.8em;font-weight:900;border:2px dashed var(--gold);border-radius:10px;color:var(--gold);
+.runline .next{min-width:1.9em;padding:0 6px;font-family:"Baloo Bhaijaan 2",sans-serif;font-size:.8em;font-weight:900;border:2px dashed var(--gold);border-radius:10px;color:var(--gold);
   animation:runnext 1s ease-in-out infinite}
 .runline .got{color:var(--gink)}
 .runline.done .got{color:var(--green)}
@@ -2875,7 +2888,7 @@ body.hastabs #btnRevQuit{display:none}
       <li><b>🎧 التلاوات</b><span>everyayah.com · mp3quran.net</span></li>
       <li><b>🗓️ خطط الحفظ</b><span>برنامج «بالقرآن نحيا»، Quranlives.com</span></li>
       <li><b>🧩 نوعُ كلّ كلمةٍ في القرآن</b><span>Quranic Arabic Corpus (corpus.quran.com) · github.com/mustafa0x/quran-morphology</span></li>
-      <li><b>🔤 خطوط الواجهة</b><span>IBM Plex Sans Arabic · Amiri Quran · Nunito · Noto Nastaliq Urdu</span></li>
+      <li><b>🔤 خطوط الواجهة</b><span>Baloo Bhaijaan 2 · IBM Plex Sans Arabic · Amiri Quran · Nunito · Noto Nastaliq Urdu</span></li>
     </ul>
   </div>
 </div>
@@ -18434,7 +18447,7 @@ function runLvWire(kind){
 }
 var RUN_FALLBACK=[1,108,109,110,111,112,113,114];      /* لمن لم يُسجَّل له محفوظٌ بعد */
 /* خطُّ كلمات «رتّب الكلمات» نفسه: العثمانيّ هنا يُظهر الصفرَ المستدير (۟) دائرةً منفصلة */
-var RUN_FONT='24px "Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif';
+var RUN_FONT='24px "Amiri Quran","Traditional Arabic","Baloo Bhaijaan 2","Segoe UI",serif';
 var RUN={ state:'idle', raf:0, spr:{}, items:[], parts:[], W:0, H:240, k:1, ground:212 };
 var RUN_STARS=(function(){ var a=[], i; for(i=0;i<28;i++) a.push([Math.random()*480, .02+Math.random()*.62, Math.random()<.25?3:2]); return a; })();
 
@@ -18707,7 +18720,7 @@ function gameFlash(c, txt, W, y, big){
     return a*1.17+8;
   }
   function widest(){
-    c.font='900 '+size+'px "IBM Plex Sans Arabic",sans-serif';
+    c.font='900 '+size+'px "Baloo Bhaijaan 2",sans-serif';
     var mx=0; for(var z=0;z<lines.length;z++) mx=Math.max(mx, wide(lines[z]));
     return mx;
   }
@@ -18729,7 +18742,7 @@ function gameFlash(c, txt, W, y, big){
   c.textAlign='center'; c.lineWidth=6; c.strokeStyle='#0a2a5e';
   for(k=0;k<lines.length;k++){
     var yy=y+k*(size+5);
-    c.font='900 '+size+'px "IBM Plex Sans Arabic",sans-serif';
+    c.font='900 '+size+'px "Baloo Bhaijaan 2",sans-serif';
     c.strokeText(lines[k], W/2, yy);
     c.fillStyle='#ffe27a'; c.fillText(lines[k], W/2, yy);
   }
@@ -20018,13 +20031,13 @@ function runDraw(){
   for(i=0;i<RUN.parts.length;i++){ var p=RUN.parts[i]; c.fillStyle=p.c; c.fillRect(Math.round(p.x),Math.round(p.y),3,3); }
   /* رسائل، ومسافةُ الطريق في الركن */
   c.textBaseline='middle'; c.direction='rtl';
-  c.font='800 13px "IBM Plex Sans Arabic",sans-serif'; c.textAlign='right';
+  c.font='800 13px "Baloo Bhaijaan 2",sans-serif'; c.textAlign='right';
   c.fillStyle=L?'rgba(10,42,94,.75)':'rgba(255,255,255,.8)';
   c.fillText('🏁 '+tx('{0} م', [arNum(runMeters())]), W-10, 20);
   c.textAlign='center';
   if(RUN.flashT>0) gameFlash(c, RUN.flash||tx('أحسنت! 🌟'), W, 80, 23);
   if(RUN.toastT>0 && RUN.toast){
-    c.font='700 14px "IBM Plex Sans Arabic",sans-serif';
+    c.font='700 14px "Baloo Bhaijaan 2",sans-serif';
     var tw=c.measureText(RUN.toast).width+24;
     c.fillStyle='rgba(0,0,0,.55)'; c.fillRect(Math.round(W/2-tw/2), 8, Math.round(tw), 26);
     c.fillStyle='#ffffff'; c.fillText(RUN.toast, W/2, 22);
@@ -20042,7 +20055,7 @@ function runDraw(){
    ========================================================= */
 var SHELF_HEARTS=3, SHELF_PART=5, SHELF_SPEED=210, SHELF_BH=34, SHELF_PX=4, SHELF_DECOY_AFTER=3;
 var SH={ state:'idle', raf:0, W:400, H:330, G:306, k:1, slots:[], boxes:[], anims:[], parts:[], benchX:[] };
-function shelfFont(){ return '19px "Amiri Quran","Traditional Arabic","IBM Plex Sans Arabic","Segoe UI",serif'; }
+function shelfFont(){ return '19px "Amiri Quran","Traditional Arabic","Baloo Bhaijaan 2","Segoe UI",serif'; }
 function shelfCtx(){ var c=$('shelfCv').getContext('2d'); c.font=shelfFont(); return c; }
 function shelfBoxW(t, c){ return Math.max(46, Math.ceil((c||shelfCtx()).measureText(t).width)+22); }
 function shelfEase(u){ return u<0.5 ? 2*u*u : 1-Math.pow(-2*u+2,2)/2; }
@@ -20423,7 +20436,7 @@ function shelfDraw(){
   c.textAlign='center'; c.textBaseline='middle'; c.direction='rtl';
   if(SH.flashT>0 && SH.flash) gameFlash(c, SH.flash, W, 32, 20);
   if(SH.toastT>0 && SH.toast){
-    c.font='700 14px "IBM Plex Sans Arabic",sans-serif';
+    c.font='700 14px "Baloo Bhaijaan 2",sans-serif';
     var tw=c.measureText(SH.toast).width+24;
     c.fillStyle='rgba(0,0,0,.6)'; c.fillRect(Math.round(W/2-tw/2), 96, Math.round(tw), 26);
     c.fillStyle='#ffffff'; c.fillText(SH.toast, W/2, 110);
@@ -20803,7 +20816,7 @@ function birdDraw(){
   c.textBaseline='middle'; c.direction='rtl'; c.textAlign='center';
   if(BD.flashT>0) gameFlash(c, BD.flash||tx('أحسنت! 🌟'), W, 34, 22);
   if(BD.toastT>0 && BD.toast){
-    c.font='700 14px "IBM Plex Sans Arabic",sans-serif';
+    c.font='700 14px "Baloo Bhaijaan 2",sans-serif';
     var tw=c.measureText(BD.toast).width+24;
     c.fillStyle='rgba(0,0,0,.55)'; c.fillRect(Math.round(W/2-tw/2), G-32, Math.round(tw), 26);
     c.fillStyle='#ffffff'; c.fillText(BD.toast, W/2, G-19);

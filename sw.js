@@ -4,7 +4,7 @@
    التنصيب، وخطوطُ صفحات المصحف عند أوّل استعمال فقط فلا نُنزّل ستّة وأربعين ميجابايت دفعةً واحدة.
    البيانات (data/): المخزَّن أوّلاً. ملفّاتُ الآيات والخطط تُطلب برقم إصدارٍ (?v=)
    فإذا تغيّر ملفٌّ رُفع رقمُه في index.html وفي DATA_FILES هنا، فيُجلب الجديدُ ويُحذف القديم. */
-var VER   = 'v6';
+var VER   = 'v7';
 var SHELL = 'nur-shell-' + VER;   /* الصفحة وما يتبعها — يُمسح مع كل إصدار */
 var ASSET = 'nur-assets';         /* خطوط لا تتغيّر — يبقى عبر الإصدارات */
 var DATA  = 'nur-data-1';         /* بياناتُ الآيات والخطط والمعاني */
@@ -22,9 +22,9 @@ var NET_WAIT = 4000;
 /* ما لا تعمل الصفحةُ بدونه: يُخزَّن عند التنصيب، فيفتح التطبيقُ دون إنترنت من ثاني مرّة.
    (أوّلُ فتحٍ يسبق عاملَ الخدمة، فلا يمرّ ما يُطلب فيه من هنا) */
 var DATA_FILES = ['./data/quran.js?v=1', './data/plans.js?v=1', './data/morph.json?v=1', './data/fx.js?v=5'];
-var UI_FONTS = ['400','600','700'].reduce(function(a,w){
-  return a.concat(['./fonts/ui/plex-arabic-'+w+'-arabic.woff2', './fonts/ui/plex-arabic-'+w+'-latin.woff2']);
-}, ['./fonts/ui/amiri-quran.woff2']);
+/* خطُّ الواجهة Baloo بملفّاته الثلاثة؛ وPlex للبشتو يُخزَّن حين تُطلب أوّلَ مرّة */
+var UI_FONTS = ['./fonts/ui/amiri-quran.woff2', './fonts/ui/baloo-arabic.woff2',
+                './fonts/ui/baloo-latin.woff2', './fonts/ui/baloo-latin-ext.woff2'];
 
 function fill(name, list){
   return caches.open(name).then(function(c){ return c.addAll(list); })['catch'](function(){});

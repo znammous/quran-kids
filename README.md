@@ -85,7 +85,7 @@
 | 🎧 التلاوات | [everyayah.com](https://everyayah.com) و[mp3quran.net](https://mp3quran.net) |
 | 🗓️ خطط الحفظ | برنامج «بالقرآن نحيا» — [Quranlives.com](https://quranlives.com) |
 | 🧩 نوعُ كلّ كلمةٍ في القرآن (لخيارات «أكمل الآية») | [Quranic Arabic Corpus](https://corpus.quran.com) (رخصة GPL)، بنسخته المنقّحة [mustafa0x/quran-morphology](https://github.com/mustafa0x/quran-morphology) |
-| 🔤 خطوط الواجهة | [IBM Plex Sans Arabic](https://github.com/IBM/plex) · [Amiri Quran](https://github.com/aliftype/amiri) · [Nunito](https://github.com/googlefonts/nunito) · [Noto Nastaliq Urdu](https://github.com/notofonts/nastaliq) |
+| 🔤 خطوط الواجهة | [Baloo Bhaijaan 2](https://github.com/EkType/Baloo2) · [IBM Plex Sans Arabic](https://github.com/IBM/plex) (للبشتو) · [Amiri Quran](https://github.com/aliftype/amiri) · [Nunito](https://github.com/googlefonts/nunito) · [Noto Nastaliq Urdu](https://github.com/notofonts/nastaliq) |
 
 <br>
 
