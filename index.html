@@ -774,11 +774,17 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .mw{white-space:nowrap;transition:color .18s ease}
 .mw.hl{color:#0f2d52}
 /* كلمةٌ لها معنى في «الغريب»: خطٌّ رفيعٌ فاتحٌ تحتها لا يزحم الصفحة، ومن لمسها رأى معناها (mfGlossAt).
-   يُرسم خلفيّةً أقصرَ من الكلمة بـ.15em من كلّ طرف، فبين خطَّي كلمتين متلاصقتين فجوةٌ ظاهرةٌ دائماً
-   (وفي وضع خطّ الصفحة لا مسافةَ بين الكلمات أصلاً) */
+   كلماتُ الشرح الواحد تحتها خطٌّ متّصل، وأوّلُ كلمةٍ في كلّ شرحٍ (gls) يقصر خطُّها .3em من يمينها
+   فبين الذهبيّ والرماديّ المتجاورين فجوةٌ ظاهرةٌ دائماً ولا يُريان خطّاً واحداً */
 .mw.gl{--glc:#e6d3a3;background-image:linear-gradient(var(--glc),var(--glc));background-repeat:no-repeat;
-  background-size:calc(100% - .3em) 1.5px;background-position:50% var(--gly,92%);cursor:pointer}
+  background-size:100% 1.5px;background-position:0 92%;cursor:pointer}
+.mw.gl.gls{background-size:calc(100% - .3em) 1.5px}
 .mw.gl2{--glc:#cdd2da}
+/* وفي العرض البديل بين الكلمات مسافة: يصلها الخطُّ داخل الشرح الواحد (وفي خطّ الصفحة لا مسافة) */
+.mw.gl:not(.gls){position:relative}
+.mw.gl:not(.gls)::before{content:'';position:absolute;right:-.34em;width:.34em;bottom:8%;height:1.5px;background:var(--glc)}
+.mushaf.qcf .mw.gl:not(.gls)::before{display:none}
+.mfsheet.picking .mw.gl::before{display:none}
 .mw.glon{background-color:rgba(201,162,74,.24);border-radius:4px}
 .mfsheet.picking .mw.gl{background-image:none}
 .mfgloss{position:fixed;z-index:7;max-width:min(340px,calc(100vw - 16px));padding:8px 12px;border-radius:12px;
@@ -5056,8 +5062,9 @@ function mushafPageHTML(P, hlGi, glyphs){
       var gl=GL && GL[gi+':'+wi] ? gi+':'+wi : '';
       /* شرحان متجاوران يتّصل خطّاهما فيُريان خطّاً واحداً: يتعاقبان بدرجتين،
          وكلماتُ العبارة الواحدة على درجةٍ واحدة */
-      if(gl && GL[gl]!==glr){ glr=GL[gl]; glp^=1; }
-      out+='<span class="mw'+(on?' hl':'')+mfMarkCls(M,PM,inr,gi,wi)+(gl?(glp?' gl':' gl gl2'):'')+'" data-gi="'+gi+'"'+
+      var gls=gl && GL[gl]!==glr;      /* أوّلُ كلمةٍ في شرحٍ جديد: عندها الفجوة (gls) */
+      if(gls){ glr=GL[gl]; glp^=1; }
+      out+='<span class="mw'+(on?' hl':'')+mfMarkCls(M,PM,inr,gi,wi)+(gl?(glp?' gl':' gl gl2')+(gls?' gls':''):'')+'" data-gi="'+gi+'"'+
         (gl?' data-gl="'+gl+'"':'')+'>'+(GC ? GC[u] : esc(ws[wi]))+'</span>';
       u++; wi++;
     }
