@@ -1222,6 +1222,7 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 .cert .who{font-size:26px;font-weight:900;color:#102b4a;margin:8px 0}
 .cert .what{font-family:"Traditional Arabic","Amiri","IBM Plex Sans Arabic",Nunito,"Segoe UI",serif;font-size:30px;color:#8a6100;margin:6px 0}
 .cert .stars{font-size:30px;letter-spacing:4px;margin:8px 0}
+.cert .stars svg{width:1.1em;height:1.1em;margin:0 2px;vertical-align:middle;fill:#ffd200;stroke:#ffd200;stroke-width:24;stroke-linejoin:round}
 .cert .meta2{display:flex;justify-content:space-around;flex-wrap:wrap;gap:10px;margin-top:14px;font-size:13px;color:#4a627e}
 .cert .sign{margin-top:16px;display:flex;justify-content:space-between;gap:14px;font-size:13px;color:#4a627e}
 .cert .sign div{flex:1;border-top:2px dotted #c9bfa0;padding-top:6px}
@@ -1272,7 +1273,7 @@ body.light .revbox .reprow .repv.ok{color:#147c40}
 body.light .revbox .reprow .repv.wait{color:#a06a12}
 .repbar{height:11px;border-radius:99px;background:#e8e0c6;overflow:hidden;margin:8px 0 4px}
 .repbar i{display:block;height:100%;background:linear-gradient(90deg,#d9a441,#8a6100)}
-.cert .waqf{margin-top:10px;font-size:12.5px;font-weight:800;color:#8a6a1e;line-height:1.9}
+.cert .waqf{margin-top:10px;font-size:12.5px;font-weight:800;color:#8a6a1e;line-height:1.9;white-space:nowrap;overflow:hidden}
 /* الوقف واسم المطوّر في الإعدادات */
 .waqfbox{text-align:center;margin:14px 0 18px;font-size:11px;font-weight:700;color:var(--ttl2);
   line-height:1.8}
@@ -2113,7 +2114,7 @@ body.glow-off .dfpic{animation:none}
   .cert .crowncert small{font-size:10.5px;line-height:1.75;margin-top:6px}
   .cert .meta2{margin-top:9px;font-size:11px}
   .cert .sign{margin-top:11px;font-size:11px}
-  .cert .waqf{margin-top:7px;font-size:10.5px;line-height:1.7}
+  .cert .waqf{margin-top:7px;font-size:10.5px!important;line-height:1.7;white-space:normal}   /* الورقةُ أعرض: يسعه سطرٌ بخطّه، ولا يُقصّ ما طال من ترجمته */
   .exscore{font-size:26px;margin:2px 0 6px}
   .exscore.big{font-size:32px}
   .exscore span{font-size:13px}
@@ -15952,6 +15953,11 @@ function greg(){
   catch(e){ var d=new Date(); return d.getDate()+'/'+(d.getMonth()+1)+'/'+d.getFullYear(); }
 }
 var certSurah=null;
+/* نجومُ الشهادة على شكل نجوم الحركات (ذهبيّةٌ مدوّرةُ الأطراف) — رسمٌ لا حرف، فلا يسودّ بخطّ الجهاز */
+function certStars(){
+  var one='<svg viewBox="-118 -118 236 236" aria-hidden="true"><polygon points="0,-100 29.4,-40.5 95.1,-30.9 47.6,15.5 58.8,80.9 0,50 -58.8,80.9 -47.6,15.5 -95.1,-30.9 -29.4,-40.5"/></svg>';
+  return one+one+one+one+one;
+}
 function showCert(s){
   certFrom='';
   certSurah=s;
@@ -15967,7 +15973,7 @@ function showCert(s){
       '<div style="font-size:14px;color:#4a627e">قد أتمّ بفضل الله تعالى حفظ</div>'+
       '<div class="what">سورة '+esc(s.name)+'</div>'+
       '<div style="font-size:14px;color:#4a627e">('+arCount(s.count,C_AYAH)+' — '+s.type+' — الجزء '+arNum(s.juz)+')</div>'+
-      '<div class="stars">★★★★★</div>'+
+      '<div class="stars">'+certStars()+'</div>'+
       (buildCount()?'<svg class="mosque" viewBox="0 0 400 250" style="max-width:280px">'+bigMosqueSVG()+'</svg>'
                   :'<svg class="mosque" viewBox="0 0 300 170" style="max-width:250px">'+mosqueSVG(1)+'</svg>')+
       (allDone?'<div style="font-weight:900;color:#a1791a;font-size:18px">🏆 وأتممت كل السور المتاحة! ما شاء الله</div>':'')+
@@ -15995,7 +16001,7 @@ function showQuranCert(){
       '<div style="font-size:14px;color:#4a627e">قد أتمّ بفضل الله تعالى ومنّته حفظ</div>'+
       '<div class="what">القرآن الكريم كاملاً</div>'+
       '<div style="font-size:14px;color:#4a627e">'+arCount(t,C_AYAH)+' • '+arCount(114,C_SURAH)+' • 30 جزءاً</div>'+
-      '<div class="stars">★★★★★</div>'+
+      '<div class="stars">'+certStars()+'</div>'+
       '<div class="crowncert">'+
         '<svg viewBox="24 14 52 36" aria-hidden="true">'+crownSVG()+'</svg>'+
         '<p>«مَن قرأ القرآنَ وتعلَّم وعمِل به، أُلْبِس والداه يومَ القيامةِ '+
@@ -16026,7 +16032,7 @@ function showJuzCert(j){
       '<div style="font-size:14px;color:#4a627e">قد أتمّ بفضل الله تعالى حفظ ومراجعة</div>'+
       '<div class="what">الجزء '+arNum(j)+'</div>'+
       '<div style="font-size:14px;color:#4a627e">('+tx('{n} — واجتاز اختبار الجزء 🏰',{n:arCount(list.length,C_SURAH)})+')</div>'+
-      '<div class="stars">★★★★★</div>'+
+      '<div class="stars">'+certStars()+'</div>'+
       (buildCount()?'<svg class="mosque" viewBox="0 0 400 250" style="max-width:280px">'+bigMosqueSVG()+'</svg>'
                   :'<svg class="mosque" viewBox="0 0 300 170" style="max-width:250px">'+mosqueSVG(1)+'</svg>')+
       '<div class="meta2"><span>📅 '+greg()+'</span>'+(hijriDate()?'<span>🌙 '+hijriDate()+'</span>':'')+'</div>'+
@@ -17209,6 +17215,21 @@ function showExamCert(){
    فتُصغَّر كلُّها بنسبةٍ واحدةٍ لتسع ما بين أعلاها والزرّين — تبقى هي هي
    كما تُطبع — وتُقفل الصفحة. ويُقاس بـ offsetTop لا بالمستطيل، فحركةُ دخول
    الشاشة لا تُفسد الحساب. وإن لزم تصغيرٌ لا يُقرأ معه تُركت كما هي تُمرَّر. */
+/* سطرُ الوقف سطرٌ واحد: يصغر خطُّه بقدر ما يسعه عرضُ الشهادة، لا ينكسر */
+function waqfFit(c){
+  var w=c && c.querySelector('.waqf'); if(!w) return;
+  w.style.fontSize=''; w.style.whiteSpace='';
+  var fs=parseFloat(getComputedStyle(w).fontSize)||12, cw=w.clientWidth, n=0, MIN=5.5;
+  if(!cw) return;
+  /* بالنسبة أوّلاً، ثمّ نصفَ نقطةٍ نصفَ نقطة: عرضُ الحروف لا يصغر على النسبة تماماً */
+  if(w.scrollWidth>cw) fs=Math.floor(fs*cw/w.scrollWidth*10)/10;
+  while(n++<12){
+    w.style.fontSize=Math.max(MIN,fs)+'px';
+    if(w.scrollWidth<=cw || fs<=MIN) break;
+    fs-=.5;
+  }
+  if(w.scrollWidth>cw) w.style.whiteSpace='normal';   /* ترجمةٌ أطولُ من أن تسعها: سطران خيرٌ من قصّ آخرها */
+}
 function certFit(){
   var wrap=$('certWrap'), scr=$('scr-cert'); if(!wrap || !scr) return;
   var c=wrap.querySelector('.cert');
@@ -17216,9 +17237,11 @@ function certFit(){
   wrap.style.height=''; wrap.classList.remove('fit');
   document.body.classList.remove('certfit'); document.body.classList.remove('certscroll');
   if(!c || !scr.classList.contains('active')) return;
+  waqfFit(c);
   if(!(window.matchMedia && window.matchMedia('(max-width:820px)').matches)) return;
   c.classList.add('compact');
   document.body.classList.add('certfit');          /* قبل القياس: يُضيّق هامشَ الأسفل */
+  waqfFit(c);                                       /* compact يغيّر خطَّه */
   var top=0, e;
   for(e=wrap; e; e=e.offsetParent) top+=e.offsetTop;
   var acts=scr.querySelector('.noprint');
@@ -17889,7 +17912,7 @@ function certRRect(ctx,x,y,w,h,r){
 function certSvgUrl(svg, w, h){
   var XS=new XMLSerializer(), cl=svg.cloneNode(true);
   var src=svg.querySelectorAll('*'), dst=cl.querySelectorAll('*'), i;
-  var PROPS=['fill','stroke','stroke-width','opacity','fill-opacity','stroke-opacity','display','visibility','stop-color','stop-opacity'];
+  var PROPS=['fill','stroke','stroke-width','stroke-linejoin','opacity','fill-opacity','stroke-opacity','display','visibility','stop-color','stop-opacity'];
   for(i=0;i<src.length && i<dst.length;i++){
     var cs=getComputedStyle(src[i]), st='';
     for(var p=0;p<PROPS.length;p++){ var v=cs.getPropertyValue(PROPS[p]); if(v) st+=PROPS[p]+':'+v+';'; }
