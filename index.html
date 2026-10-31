@@ -1043,6 +1043,8 @@ body.glow-off .cele .spk{display:none}
 @media print{ .fxtap,.fxscr{display:none!important} }
 /* نجماتُ إتمام المرحلة في وسط لوحةٍ أكثرُها فراغ: تُكبَّر لتملأ مكانها */
 [data-fx="dance"] svg{transform:scale(1.9)!important}
+/* النجومُ الخمس تمتلئ مع اتّجاه القراءة: من اليمين في العربيّة وأخواتها */
+html[dir="rtl"] [data-fx="stars5"] svg{transform:scaleX(-1)!important}
 /* عدّاد السلسلة في شريط اللعب */
 /* شارتا الفحص: لا تظهران إلا بعلامة qa في الرابط — للاختبار لا للّعب */
 .pstat.qachip{background:linear-gradient(180deg,#8b5cf6,#5b21b6);border-color:#c4b5fd;color:#fff;
