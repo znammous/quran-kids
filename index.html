@@ -13030,8 +13030,9 @@ function roundRecite(r){
       var at=ed>=0?ed:typed.length, fresh=[];
       [].splice.apply(typed,[at,ed>=0?1:0].concat(ws)); ed=-1;
       ws.forEach(function(w,k){ fresh.push(at+k); });
+      /* الكلمةُ الخاطئة تحمرّ وتهتزّ ولا تُحسب خطأً: قد تكون زلّةَ إصبعٍ على لوحة المفاتيح،
+         وهو يصحّحها في مكانها. لا يُحسب عليه إلّا الاستسلامُ أو عرضُ الوجه */
       draw(fresh);
-      if(fresh.some(function(i){ return !okAt(i); })){ sBad(); miss(); }
       settle();
     }
     /* الآيةُ تُقبل بآخر حرفٍ منها دون مسافةٍ بعده */
