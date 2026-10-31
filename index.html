@@ -1040,6 +1040,7 @@ body.glow-off .cele .spk{display:none}
 .fxtap{position:fixed;z-index:160;pointer-events:none;transform:translate(-50%,-50%)}
 .fxscr,.cele .fxbg{position:fixed;inset:0;z-index:140;pointer-events:none}
 .cele .fxbg{position:absolute}
+@media print{ .fxtap,.fxscr{display:none!important} }
 /* نجماتُ إتمام المرحلة في وسط لوحةٍ أكثرُها فراغ: تُكبَّر لتملأ مكانها */
 [data-fx="dance"] svg{transform:scale(1.9)!important}
 /* عدّاد السلسلة في شريط اللعب */
@@ -11717,13 +11718,27 @@ function fxTap(name, sz){
   if(!fxOn() || Date.now()-FX.t>1500) return;
   var card=$('playCard');
   if(!card || !FX.el || !card.contains(FX.el)) return;
+  fxAt(FX.x, FX.y, name, sz);
+}
+/* حركةٌ عابرةٌ مركزُها هذه النقطةُ من الشاشة */
+function fxAt(x, y, name, sz){
   var d=document.createElement('div'), an;
   d.className='fxtap';
-  d.style.left=FX.x+'px'; d.style.top=FX.y+'px';
+  d.style.left=x+'px'; d.style.top=y+'px';
   d.style.width=d.style.height=sz+'px';
   document.body.appendChild(d);
   an=fxPlay(d, name, { done:function(){ fxGone(an, d); } });
   setTimeout(function(){ fxGone(an, d); }, 4000);   /* لئلّا تبقى إن لم تتمّ */
+}
+/* الشهادةُ تُستقبل بقصاصاتٍ وحلقةِ نجومٍ حول صورة صاحبها — فوقها لا فيها،
+   فلا تدخل في صورتها حين تُشارك ولا في طباعتها */
+function certFx(){
+  setTimeout(function(){
+    if(!fxOn() || !$('scr-cert').classList.contains('active')) return;
+    fxScreen('conf');
+    var a=$('certAvatar'), r=a && a.getBoundingClientRect();
+    if(r && r.width) fxAt(r.left+r.width/2, r.top+r.height/2, 'ok1', Math.max(220, r.width*2.6));
+  }, 300);                                            /* بعد أن تستقرّ الشاشةُ في مكانها */
 }
 /* قصاصاتٌ تعمّ الشاشة فوق شاشة الإنجاز */
 function fxScreen(name){
@@ -15963,6 +15978,7 @@ function showCert(s){
     '</div>';
   renderAvatars();
   show('scr-cert');
+  certFx();
 }
 /* ===== شهادة ختم القرآن =====
    أرفع شهاداته، ولا تُمنح إلا بتمام المصحف في سجلّ الآيات. */
@@ -15996,6 +16012,7 @@ function showQuranCert(){
   certSurah=null;
   renderAvatars();
   show('scr-cert');
+  certFx();
 }
 function showJuzCert(j){
   var list=juzStartSurahs(j);
@@ -16019,6 +16036,7 @@ function showJuzCert(j){
     '</div>';
   renderAvatars();
   show('scr-cert');
+  certFx();
 }
 
 /* ===== تثبيت التطبيق على الجهاز =====
