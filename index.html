@@ -12449,6 +12449,10 @@ function roundRead(r){
       var w=e.target.closest ? e.target.closest('.mw.cur') : null; if(!w) return;
       var k=faceWords(gi).indexOf(w); if(k<1) return;
       if(peek[k]) delete peek[k]; else peek[k]=1;
+      /* كشفها كلمةً كلمةً حتى آخرها: فهي ظاهرةٌ كلُّها، ويصير الزرُّ «غطِّها» */
+      if(Object.keys(peek).length>=faceWords(gi).length-1){
+        cov=false; peek={}; $('recHint').textContent=hint0;
+      }
       coverDraw();
     };
   } else {
