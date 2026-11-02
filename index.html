@@ -8448,7 +8448,7 @@ function buildJuzTest(j){
       var aw=missPick(s,it.g[0],it.g[1],ORDER_MIN);   /* آيةٌ تحتمل الترتيب */
       if(aw<0) kind=2;                                /* لا واحدةَ فيه: تسميعٌ بدلَها */
       else{
-        var ch=wordChunks(s,aw,WORDS_MIN), pk=ch[Math.floor(Math.random()*ch.length)];
+        var pk=reviewChunk(s,aw);
         rounds.push({t:'words',a:aw,from:pk[0],to:pk[1],parts:1,part:0,surah:s,segFrom:it.g[0],segTo:it.g[1]});
       }
     }
@@ -11011,6 +11011,31 @@ function orderChunks(s,a){
     ch[ch.length-2][1]=last[1]; ch.pop();
   }
   return ch;
+}
+/* ===== سؤالُ الترتيب في المراجعة والاختبار =====
+   قطعةٌ واحدةٌ تأتي وحدها بلا ما قبلها، فلا تبدأ إلّا من مبتدأ: أوّلِ الآية أو
+   بعد وقفٍ يُبتدأ بعده — صلى ۖ قلى ۗ م ۘ ج ۚ — لا بعد «لا» ۙ ولا السكتة ۜ،
+   ولا من كلمةٍ يقع عليها العدّ. وتمتدّ إلى آخر الآية أو إلى وقفٍ دون الحدّ،
+   فإن لم تبلغهما وقفت عند الحدّ: آخرُها ناقصٌ ولا بأس، أمّا أوّلُها فلا. */
+var START_RE=/^[ۖۗۘۚ]$/;
+function reviewChunk(s,a){
+  var len=ayahWords(s,a), row=s.ayat[a], st=[0], kept=0, toks, i, b, e, c;
+  if(row){
+    toks=String(row[0]).split(/\s+/);
+    for(i=0;i<toks.length;i++){
+      if(!toks[i]) continue;
+      if(START_RE.test(toks[i])){ if(kept>0 && kept<len) st.push(kept); continue; }
+      if(!MARK_RE.test(toks[i])) kept++;
+    }
+    if(kept!==len) st=[0];          /* الرسمان لا يتطابقان: لا نثق بالمواضع */
+  }
+  st=st.filter(function(x){ return len-x>=ORDER_MIN; });
+  if(!st.length) st=[0];
+  b=st[Math.floor(Math.random()*st.length)];
+  if(len-b<=WORDS_MAX) return [b,len];
+  e=b+WORDS_MAX;
+  for(i=st.length-1;i>=0;i--){ c=st[i]; if(c-b>=WORDS_MIN && c-b<=WORDS_MAX){ e=c; break; } }
+  return [b,e];
 }
 function chunkRanges(len,size,min){
   min = (min==null) ? WORDS_MIN : min;
@@ -15703,7 +15728,7 @@ function revQuestion(it,P,k){
     /* إن كانت آيتُه كلمةً أو كلمتين التُمست غيرُها من القطعة نفسها */
     var aw=(ayahWords(it.s,it.a)>=ORDER_MIN) ? it.a : missPick(it.s,it.from,it.to,ORDER_MIN);
     if(aw>=0){
-      var ch=wordChunks(it.s,aw,WORDS_MIN), pick=ch[Math.floor(Math.random()*ch.length)];
+      var pick=reviewChunk(it.s,aw);
       return {t:'words',a:aw,from:pick[0],to:pick[1],parts:1,part:0,surah:it.s,
               segFrom:it.from,segTo:it.to,page:P};
     }
@@ -15890,7 +15915,7 @@ function beginReview(j){
       }
       var a2=missPick(s,d.from,d.to,ORDER_MIN);       /* آيةٌ تحتمل الترتيب */
       if(a2>=0){
-        var ch=wordChunks(s,a2,WORDS_MIN), pick=ch[Math.floor(Math.random()*ch.length)];
+        var pick=reviewChunk(s,a2);
         rounds.push({t:'words',a:a2,from:pick[0],to:pick[1],parts:1,part:0,surah:s,segFrom:d.from,segTo:d.to});
       }
       var a3=d.from+Math.floor(Math.random()*span);
@@ -16590,9 +16615,8 @@ function examQ(it){
   if(t==='ayat' && (it.to-it.from)<3) t='missing';
   if(t==='write') return {t:'write',a:it.a,surah:it.s,segFrom:it.from,segTo:it.to,page:it.P};
   if(t==='words'){
-    ch=(ayahWords(it.s,it.a)>=ORDER_MIN) ? wordChunks(it.s,it.a,WORDS_MIN) : null;
-    if(ch && ch.length){
-      pick=ch[Math.floor(Math.random()*ch.length)];
+    if(ayahWords(it.s,it.a)>=ORDER_MIN){
+      pick=reviewChunk(it.s,it.a);
       return {t:'words',a:it.a,from:pick[0],to:pick[1],parts:1,part:0,surah:it.s,
               segFrom:it.from,segTo:it.to,page:it.P};
     }
