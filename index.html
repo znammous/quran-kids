@@ -639,7 +639,9 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .qface .hintline{min-height:2.9em;margin-bottom:6px}
 .qface .stbig .btn.big{margin-bottom:8px}
 .qface .strow{margin:0;min-height:52px;flex-wrap:nowrap;gap:8px}
-.qface .strow .btn{flex:1 1 0;min-width:0;font-size:15px;padding:12px 6px;white-space:nowrap}
+.qface .strow .btn{flex:1 1 0;min-width:0;font-size:14px;padding:12px 4px;white-space:nowrap;gap:4px;overflow:hidden}
+/* زرٌّ أيقونتُه وحدها (🔇) على قدرها، فيتّسع ما بجانبه لنصّه بأيّ لغة */
+.qface .strow .btn.ico1{flex:0 0 54px;padding-inline:0}
 .qface .strow .btn.spd{flex:0 0 58px}
 .qface .stc{unicode-bidi:isolate;margin-inline-start:6px}
 /* وجه المصحف ملء الشاشة */
@@ -13391,7 +13393,7 @@ function roundRecite(r){
           (useRec ? '<button class="btn red big pulse" id="btnRecR">🎤 سجّل تسميعي</button>'+
                     '<button class="btn blue" id="btnPlayR">▶️ استمع لتسميعي</button>'+
                     '<button class="btn ghost spd" id="btnSpeedR">'+recRateLabel()+'</button>'+
-                    '<button class="btn ghost" id="btnNoMic2" aria-label="لا أستطيع التسجيل الآن">🔇</button>' : '')+
+                    '<button class="btn ghost ico1" id="btnNoMic2" aria-label="لا أستطيع التسجيل الآن">🔇</button>' : '')+
           '<button class="btn green big pulse" id="btnOkR">✅ سمّعتُها صحيحة</button>'+
           '<button class="btn ghost" id="btnShow">👁️ اكشفها</button>'+
           '<button class="btn ghost" id="btnAgainR">🔁 سأعيدها</button>'+
