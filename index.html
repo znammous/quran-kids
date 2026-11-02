@@ -893,7 +893,12 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .mfgo .btn{margin:0}
 /* صفُّ «استمع» و«ابدأ» نصفان: اللونُ يميّز البدء، والاستماعُ قبله عادةٌ لا تُصغَّر */
 .mfgorow{display:flex;gap:8px;align-items:stretch}
-.mfgorow .btn{flex:1 1 0;min-width:0;padding-inline:10px}
+.mfgorow .btn{flex:1 1 0;min-width:0;padding-inline:6px;font-size:17px;white-space:nowrap;overflow:hidden}
+/* «غطِّها» في عرض المقطع: آياتُه مغطّاةٌ إلّا أوّلَ كلمةٍ من كلّ آية، ولمسُ كلمةٍ يكشفها */
+.mfbody .mushaf .mw.cov{color:transparent!important;cursor:pointer;
+  background:linear-gradient(#cdb8f0,#cdb8f0) center 55%/calc(100% - .14em) 58% no-repeat!important}
+.mfbody .mushaf .mw.cov::before,.mfbody .mushaf .mw.cov::after{display:none}
+.mfbody .mushaf .mw.peek{color:#6a3fb8!important;background:rgba(123,82,199,.14)!important}
 .mfq{font-family:"UthmanicHafs","Amiri Quran",serif;font-size:1.2em;font-weight:400;padding:0 .25em;
   border-radius:6px;background:rgba(255,255,255,.12)}
 .mfq.mg0{background:rgba(255,222,0,.5)}
@@ -2871,6 +2876,7 @@ body.hastabs #btnRevQuit{display:none}
          في شريطٍ صغيرٍ أسفلَ الشاشة لا يُنتبه له -->
     <div class="mfgorow">
       <button class="btn blue big" id="mfGoListen">🎧 استمع</button>
+      <button class="btn ghost big" id="mfGoCover">📕 غطِّها</button>
       <button class="btn green big" id="mfGoBtn">▶️ ابدأ</button>
     </div>
   </div>
@@ -5024,6 +5030,31 @@ function missPair(n,d){
 /* ===== عرضُ المقطع في وجهه قبل البدء ===== */
 var MF_MARK=null;   /* {rg:[[gi0,gi1]…]} — نطاقُ المقطع، وما خارجه باهت */
 var MF_PV=null;     /* عرضٌ ينتظر زرَّ البدء: {go} */
+var MF_COV=null;    /* آياتُ المقطع مغطّاةٌ في عرضه: {peek:{}} ما كُشف منها */
+/* كلماتُ المقطع في الوجه المعروض، وأوّلُ كلمةٍ من كلّ آيةٍ ظاهرةٌ تفتح له.
+   ومفتاحُ الكلمة وجهُها وآيتُها وترتيبُها فيها، فيبقى ما كشفه إن قلّب ورجع */
+function mfCovWords(){
+  var b=$('mfBody'), out=[], seen={}, n={};
+  if(!b || !MF_MARK) return out;
+  [].slice.call(b.querySelectorAll('.mushaf .mw[data-gi]:not(.mout)')).forEach(function(w){
+    var g=w.getAttribute('data-gi');
+    n[g]=(n[g]||0)+1;
+    if(!seen[g]){ seen[g]=1; return; }
+    out.push({w:w, k:mfPage()+':'+g+':'+n[g]});
+  });
+  return out;
+}
+function mfCovDraw(){
+  var c=MF_COV, ws=mfCovWords(), i, bt=$('mfGoCover');
+  for(i=0;i<ws.length;i++){
+    var pk=!!(c && c.peek[ws[i].k]);
+    ws[i].w.classList.toggle('cov', !!c && !pk);
+    ws[i].w.classList.toggle('peek', !!c && pk);
+  }
+  if(!c){ var b=$('mfBody'), old=b ? b.querySelectorAll('.mw.cov,.mw.peek') : [];
+    for(i=0;i<old.length;i++) old[i].classList.remove('cov','peek'); }
+  if(bt) bt.textContent=c ? '📖 أظهرها' : '📕 غطِّها';
+}
 var MF_HL=-1;       /* الآيةُ المضاءةُ في الوجه المعروض، ليُعاد رسمُه بحاله */
 function mfInRg(M,gi){
   for(var i=0;i<M.rg.length;i++) if(gi>=M.rg[i][0] && gi<M.rg[i][1]) return true;
@@ -5078,6 +5109,7 @@ function segPreview(pieces, title, btn, go){
   $('mfGo').hidden=false;
   $('mfSheet').classList.add('pv');
   MF_PV={go:go};
+  MF_COV=null; mfCovDraw();
   mushafOpenPage(P, -1, title);
   mfSpanNote(P2, P, '↔️ مقطعك يكمل في الصفحة ');
 }
@@ -5364,6 +5396,7 @@ function mushafRead(P, title){
 /* يُنادى بعد رسم الوجه مرّةً واحدة: به تُرفع طبقةُ السحب حين يحلّ الوجهُ محلّها */
 var MF_ONPAINT=null;
 function mfAfterPaint(){
+  if(MF_COV) mfCovDraw();
   var f=MF_ONPAINT; MF_ONPAINT=null;
   if(f){ try{ f(); }catch(e){} }
 }
@@ -5554,7 +5587,7 @@ document.addEventListener('visibilitychange', function(){
 function mushafClose(){
   try{ if(curScreen()!=='scr-play') wakeOff(); }catch(e){ wakeOff(); }   /* عاد إلى درسه: القفلُ باقٍ له */
   try{ audStop(); }catch(e){}            /* طُوي الوجهُ: تسكت التلاوة معه */
-  MF_MARK=null; MF_PV=null;
+  MF_MARK=null; MF_PV=null; MF_COV=null;
   mfGlossOff();
   if($('mfGo')) $('mfGo').hidden=true;
   try{ mfPanel(null); }catch(e){}
@@ -9489,7 +9522,7 @@ function startSeg(s,i){
   var o={ s:s, seg:g, si:i, key:key, stage:stage, review:false };
   /* يُرى المقطعُ في وجهه أوّلاً، ثمّ الاستعاذةُ فالمراحل */
   segPreview([{s:s, from:g[0], to:g[1]}], '📖 '+s.name+' '+arNum(g[0]+1)+'-'+arNum(g[1]),
-             '▶️ ابدأ المقطع', function(){ adabAsk(o); });
+             '▶️ ابدأ', function(){ adabAsk(o); });
 }
 function startReview(){ adabAsk({ review:true }); }
 /* الضغط خارج الصندوق يلغي الضغطة التي فتحته، وكذلك مفتاح Escape */
@@ -9499,6 +9532,11 @@ function closeModal(id){
 }
 $('mfClose').onclick=function(){ mfPickEnd(); mushafClose(); mushafEatGhost(); };
 $('mfGoBtn').onclick=function(){ var pv=MF_PV; mushafClose(); mushafEatGhost(); if(pv && pv.go) pv.go(); };
+$('mfGoCover').onclick=function(){
+  mfGlossOff();
+  MF_COV = MF_COV ? null : {peek:{}};
+  mfCovDraw();
+};
 /* استماعُ المقطع من صندوق العرض: إن كان معلَّماً تُتلى آياتُه، وإلّا فالوجهُ من أوّله */
 $('mfGoListen').onclick=function(){
   if(audTap()) return;              /* تتلو الآن: تُمسك ويُفتح صندوقُها */
@@ -10955,6 +10993,20 @@ $('mfFindList').onclick=function(e){
   }, {passive:false});
   /* النقرُ هو بابُ الالتقاط: يصل في كلّ موضعٍ من الوجه، ولا يُولَّد من سحب */
   b.addEventListener('click', function(e){
+    /* مغطّاة: لمسُ كلمةٍ يكشفها ولمسةٌ ثانيةٌ تُعيد غطاءها. فإن كُشفت كلُّها
+       فهي ظاهرة، ويصير الزرُّ «غطِّها» */
+    if(MF_COV && !MF_PICK){
+      var cw=(!dragged && e.target.closest) ? e.target.closest('.mw.cov,.mw.peek') : null;
+      if(cw){
+        var ws=mfCovWords(), j;
+        for(j=0;j<ws.length;j++) if(ws[j].w===cw){
+          if(MF_COV.peek[ws[j].k]) delete MF_COV.peek[ws[j].k]; else MF_COV.peek[ws[j].k]=1;
+        }
+        mfCovDraw();
+        var b0=$('mfBody'); if(b0 && !b0.querySelector('.mw.cov')){ MF_COV=null; mfCovDraw(); }
+        return;
+      }
+    }
     if(!MF_PICK){
       var g=(!dragged && e.target.closest) ? e.target.closest('[data-gl]') : null;
       if(!g || !mfGlossAt(g)) mfGlossOff();
@@ -11567,7 +11619,7 @@ function runRound(){
     var pvk=r.surah.n+':'+r.segFrom;
     if(S.pvSeen!==pvk){
       S.pvSeen=pvk;
-      segPreview([{s:r.surah, from:r.segFrom, to:r.segTo}], '📖 '+r.surah.name, '🎤 ابدأ التسميع', null);
+      segPreview([{s:r.surah, from:r.segFrom, to:r.segTo}], '📖 '+r.surah.name, '🎤 ابدأ', null);
     }
   }                       /* آيةٌ لا تحتمل الفراغ: يُبدَّل سؤالُها */
   $('pSurah').textContent=S.surah.name;
@@ -15989,7 +16041,7 @@ function revStartPage(){
       stage:0, review:true, rev:'page', revPage:P, pieces:pcs,
       rounds:[{t:'revpage', page:P, pieces:pcs}], i:0, errors:0, due:[] };
   show('scr-play'); runRound();
-  segPreview(pcs, '📖 صفحة '+arNum(P), '🎤 ابدأ التسميع', null);   /* يرى وجهَه قبل أن يسمّعه */
+  segPreview(pcs, '📖 صفحة '+arNum(P), '🎤 ابدأ', null);   /* يرى وجهَه قبل أن يسمّعه */
 }
 function revSkipToQuiz(){ REV.pi=REV.pages.length; revStartPage(); }
 
