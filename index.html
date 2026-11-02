@@ -612,8 +612,11 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 /* ===== الآيةُ في وجه المصحف (القراءة والتسميع) ===== */
 /* وجهُ يمينٍ أم يسار: كعبُه (ظلُّ الخياطة) وأطرافُ أوراقه كما في عارض المصحف (.mspine)،
    فيعرف الحافظُ جهةَ وجهه ولو رأى ربعَه */
-.stface{background:var(--paper);border:1.5px solid #e2d3a8;border-radius:14px;padding:6px 3px 5px;
+.stface{background:var(--paper);border:1.5px solid #e2d3a8;border-radius:14px;padding:6px 14px 5px;
   margin-bottom:10px;flex:0 0 auto;position:relative;overflow:hidden}
+/* الكعبُ وأطرافُ الأوراق في الحشوة وحدها، فلا يقع ظلُّها على طرف السطر */
+.stface .mspine.l{background-size:13px 100%,5px 100%}
+.stface .mspine.r{background-size:13px 100%,5px 100%}
 .stface .mushaf.qcf .mline{height:1.2em}
 .stface .mushaf.qcf .mline.mhead{margin-block:.18em}
 .stface .mline.cut,.stface .mpgno{display:none}
@@ -688,7 +691,7 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 /* position:relative لأنّ التمرير إلى الآية يقيس بالنسبة لهذا الإطار */
 /* الحشوةُ متساويةٌ أعلى وأسفل: كانت السفلى أكبرَ بعشرين نقطة، والوجهُ في وسط
    ما بينهما فيقع أعلى من وسطه — فيُرى الفراغُ تحته أوسعَ منه فوقه */
-.mfbody{flex:1;position:relative;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 12px;
+.mfbody{flex:1;position:relative;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 20px;
   touch-action:pan-y}
 /* الوجهُ في وسط الإطار رأسيّاً: الهامشُ التلقائيّ لا يقصّ أعلاه إن طال عن
    الشاشة، بخلاف justify-content:center */
@@ -715,9 +718,9 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
   --sp:linear-gradient(var(--spd),rgba(100,70,25,.42),rgba(100,70,25,.14) 30%,rgba(100,70,25,0));
   --ed:repeating-linear-gradient(to right,rgba(150,112,40,.45) 0 1px,transparent 1px 2.5px)}
 .mspine.l{--spd:to right;background-image:var(--sp),var(--ed);
-  background-size:30px 100%,7px 100%;background-position:left top,right top}
+  background-size:18px 100%,7px 100%;background-position:left top,right top}
 .mspine.r{--spd:to left;background-image:var(--sp),var(--ed);
-  background-size:30px 100%,7px 100%;background-position:right top,left top}
+  background-size:18px 100%,7px 100%;background-position:right top,left top}
 /* الوجهُ المضبوطُ على إطاره ثابتٌ على الجوال: يسعه الإطارُ فلا يُمرَّر رأسيّاً،
    ولا ترتدّ الصفحةُ تحت الإصبع — والسحبُ الأفقيُّ للتقليب باقٍ بأحداث المؤشّر */
 @media (pointer:coarse){
