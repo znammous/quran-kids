@@ -4495,14 +4495,7 @@ function reportHTML(){
   /* ٣) المراجعة */
   h+='<div class="repsec"><h3>☀️ المراجعة</h3>';
   try{
-    if(revFreeOnly()){
-      h+=repRow('خطّةُ المراجعة','مراجعةٌ حرّةٌ وحدها');
-      if(!!p.rev && !revIsWird()){
-        var allF=revSessions('free').length;
-        h+=repRow('المسار الحرّ', tx('{0} من {1}',{0:arNum(Math.min(REV.done||0, allF)), 1:arCount(allF,C_SESS)}));
-      }
-    }
-    else if(revOff()) h+=repRow('خطّةُ المراجعة','لا مراجعةَ في خطّتك');
+    if(revOff()) h+=repRow('خطّةُ المراجعة','لا مراجعةَ في خطّتك');
     else{
       h+=repRow('وردُ المحفوظ', wirdOn()? tx('نعم — {p} في اليوم',{p:arCount(revSize('wird'),C_PAGE)}) : 'لا');
       if(!!p.rev && !revIsWird()){
@@ -5886,19 +5879,6 @@ function surahStats(s){
    له شيءٌ منها مهمّةً. وما بُني عليها من نقاطٍ حمراءَ وبطاقاتٍ وهدفِ يومٍ
    يسكت تبعاً لها، فلا موضعَ يُستثنى فيُنسى. ومن ضبط مراجعةً حرّةً رُفع عنه. */
 function revOff(){ try{ return curP().noRev===true; }catch(e){ return false; } }
-/* «المراجعةُ الحرّةُ وحدها»: كالحفظ بلا مراجعة في كلّ ما سبق — لا يُجدوَل ما
-   يحفظه ولا مهامّ — غير أنّ مسارَه الحرَّ هو مراجعتُه: فلا يرفعه تثبيتُ
-   النطاق، ولا يُقال له «لا مراجعة»، ويُفتح له بابُ المراجعة الحرّة */
-function revFreeOnly(){ try{ return revOff() && curP().freeOnly===true; }catch(e){ return false; } }
-/* خيارُ خطّة المراجعة في المعالج والإعدادات معاً، فلا يفترق الموضعان.
-   '0' جديدُ حفظه • '1' ومعه وِرد • 'free' حرّةٌ وجديدُه يُراجَع • 'fonly' حرّةٌ وحدها • 'off' بلا مراجعة */
-function revPlanPick(v){
-  var p=curP();
-  p.noRev=(v==='off' || v==='fonly'); p.freeOnly=(v==='fonly');
-  REV.on=(v==='1'); if(REV.on) REV.wird=true;
-  if(v==='free' || v==='fonly'){ REV.wird=false; p.freeRev=true; }
-  else if(v==='0'){ REV.wird=true; p.freeRev=false; }
-}
 /* تصفيرُ المستحقّ: من تراكمت عليه المراجعة يبدأ صفحةً بيضاء — لا يُمحى حفظُه
    ولا درجتُه في السلّم، وإنّما تُفرَّق مواعيدُ ما فات على الأسبوع المقبل
    أقدمَها أوّلاً، فلا يبقى عليه اليوم شيء ولا ينهال عليه غداً جملةً */
@@ -13893,7 +13873,7 @@ var REV_SUB={ due:'ما استحقّ اليوم من خطّتك ومن محفو�
               mine:'ما حفظتَه قبل التطبيق — يمشي وردُك فيه وجهاً وجهاً' };
 var REV_TAB='';
 /* بابُ الدخول دائماً «المقرَّر اليوميّ»: هو موضعُ عمل اليوم، وما سواه يُقصد قصداً */
-function revTabDefault(){ return revFreeOnly() ? 'free' : 'due'; }
+function revTabDefault(){ return 'due'; }
 /* ===== إلى أين يعود زرُّ الرجوع من مسار المراجعة؟ =====
    كان يعود إلى «المقرَّر اليوميّ» أبداً، فمن دخل المسارَ من المراجعة الحرّة
    أو من محفوظاته رُدّ إلى بابٍ غيرِ بابه. فصار يُحفظ البابُ الذي فُتح منه.
@@ -13991,12 +13971,7 @@ function renderRevPlanBody(){
     var dueH=bqnRevBanner('P')+selfRevBanner('P');
     /* من اختار «حفظاً بلا مراجعة» يُقال له ذلك صريحاً ويُدلّ على بابه،
        فلا يحسب الفراغَ عطلاً في التطبيق */
-    $('revPlan').innerHTML = dueH || (revFreeOnly()
-      ? emptyBox('🎛️','لا مقرَّرَ يوميّاً في خطّتك',
-          'اخترتَ المراجعةَ الحرّةَ وحدها، فلا يُجدوَل ما تحفظه ولا تأتيك مهامّ. '+
-          'مراجعتُك في تبويب «المراجعة الحرّة»، ولك أن تُعيد جدولة جديد حفظك من '+
-          '«الإعدادات ← 🧭 غيّر خطة الحفظ».','btnRevToFree','🎛️ مراجعة حرّة')
-      : revOff()
+    $('revPlan').innerHTML = dueH || (revOff()
       ? emptyBox('🚫','ليس لديك خطة مراجعة مضبوطة',
           'اخترتَ الحفظ بلا مراجعة، فلا مقرَّرَ يوميّاً ولا مهامّ. '+
           'ولك أن تضبط مراجعةً حرّةً من تبويبها، أو تعيد المراجعة من '+
@@ -14105,8 +14080,7 @@ function renderRevPlanBody(){
   if($('btnFreeFix')) $('btnFreeFix').onclick=function(){
     REV.wird=false; REV.mode='free';
     curP().freeRev=false;
-    /* ضبط مساراً حرّاً: فله مراجعةٌ بعد اليوم وتعود مهامُّها — إلّا من اختار الحرّةَ وحدها */
-    if(!revFreeOnly()) curP().noRev=false;
+    curP().noRev=false;        /* ضبط مساراً حرّاً: فله مراجعةٌ بعد اليوم وتعود مهامُّها */
     revSave();
     try{ navToast('✅ ثُبّت مسارُك — '+arCount(revSessions('free').length,C_SESS)); }catch(e){}
     beginRevPath();
@@ -14742,8 +14716,7 @@ function onbPlanHTML(){
   h+=line('📌','حالُك من الحفظ',
       pm==='all'?'حافظٌ لكتاب الله':(pm==='has'?'لك حفظٌ سابق':(pm==='new'?'تبدأ من جديد':'لم يُحدَّد بعد')),
       !!pm);
-  var rv = revFreeOnly() ? 'مراجعةٌ حرّةٌ وحدها'
-         : revOff() ? 'حفظٌ بلا مراجعة'
+  var rv = revOff() ? 'حفظٌ بلا مراجعة'
          : (REV.on===true ? 'وردٌ يوميّ لمحفوظك'
          : (REV.on===false ? (revIsWird()?'مراجعةُ جديدِ حفظك':'خطّةٌ حرّة') : 'لم تُحدَّد بعد'));
   h+=line('📖','خطّةُ المراجعة', rv, !(REV.on==null && !revOff()));
@@ -14762,13 +14735,16 @@ function wirdOnbSync(){
      وكان لا يُعرض إلّا لمن سجّل حفظاً سابقاً، فلا يراه صاحبُ الحساب الجديد */
   box.innerHTML='<div class="lbl steplb">📖 خطة المراجعة <b style="color:var(--gold)">(لازم)</b></div>'+
                 wirdBody();
-  var bs=box.querySelectorAll('[data-wird],[data-wfree],[data-wsize],[data-wdir]'), i;
+  var bs=box.querySelectorAll('[data-wird],[data-wsize],[data-wdir]'), i;
   var hit=function(){
     var v=this.getAttribute('data-wird');
-    /* الضغطُ على «خطة مراجعة حرّة» ثانيةً لا يُسقط ما اختاره تحتها */
-    if(v!=null) revPlanPick(v==='free' && revFreeOnly() ? 'fonly' : v);
-    var wf=this.getAttribute('data-wfree');
-    if(wf!=null) revPlanPick(wf==='only' ? 'fonly' : 'free');
+    if(v!=null){
+      curP().noRev=(v==='off');
+      REV.on=(v==='1'); if(REV.on) REV.wird=true;
+      /* «خطةٌ حرّة»: يخرج من الورد وتُفتح له لوحةُ النطاق بعد تمام الخطّة */
+      if(v==='free'){ REV.wird=false; curP().freeRev=true; }
+      else if(v==='0'){ REV.wird=true; curP().freeRev=false; }
+    }
     var sz=this.getAttribute('data-wsize');
     if(sz!=null){ REV.wsize=parseInt(sz,10); REV.wdone=0; }
     var dr=this.getAttribute('data-wdir');
@@ -15067,7 +15043,7 @@ function priorModeSet(v, after){
     try{ revLoad(); }catch(e){}
     /* وحاجةُ الحافظ وردٌ يوميّ يتعاهد به محفوظَه، فهو افتراضُه بعدها —
        وله أن يبدّله في السؤال نفسِه */
-    try{ REV.on=true; REV.wird=true; p.noRev=false; p.freeOnly=false; revSave(); }catch(e){}
+    try{ REV.on=true; REV.wird=true; p.noRev=false; revSave(); }catch(e){}
   }
   fin();
 }
@@ -15561,7 +15537,7 @@ function wirdCalc(size){
   return { pages:n, days:days, gems:25*n, iron:2*n, glass:2*n };
 }
 function wirdBody(){
-  var on=REV.on, fonly=revFreeOnly(), off=(revOff() && !fonly), has=false, h='';
+  var on=REV.on, off=revOff(), has=false, h='';
   try{ has=wirdAsk(); }catch(e){}
   /* «وزِدْ» زيادةٌ على الأوّل لا بديلٌ عنه: من اختار الورد يُراجَع له جديدُه أيضاً */
   var appSel=(!off && (on===true || revIsWird()));
@@ -15580,7 +15556,7 @@ function wirdBody(){
        '<span class="ot"><b>وزِدْ وِرداً يوميّاً لمحفوظي</b>'+
        '<i>جلسةٌ كلَّ يوم تمشي في محفوظك وجهاً وجهاً</i></span></button>';
   /* خطةٌ حرّة: نطاقٌ يختاره بنفسه — يُثبَّت نطاقُه بعد تمام الخطّة */
-  var freeSel=(fonly || (!revOff() && on!==true && !revIsWird()));
+  var freeSel=(!off && on!==true && !revIsWird());
   h+='<button type="button" class="onbopt'+(freeSel?' sel':'')+'" data-wird="free">'+
        '<span class="oe">'+(freeSel?'✅':'🎛️')+'</span>'+
        '<span class="ot"><b>خطةُ مراجعةٍ حرّة</b>'+
@@ -15590,20 +15566,6 @@ function wirdBody(){
        '<span class="ot"><b>حفظٌ بلا مراجعة</b>'+
        '<i>لا مقرَّرَ يوميّاً ولا مهامّ — ولك أن تضبط مراجعةً حرّةً متى شئت</i></span></button>'+
      '</div>';
-  /* اختار الحرّة: أيُجدوَل معها جديدُ حفظه أم تكون مراجعتَه وحدها؟ */
-  if(freeSel){
-    h+='<div class="lbl" style="margin:16px 0 6px">☀️ وجديدُ ما تحفظه في التطبيق؟</div><div class="onbopts">'+
-       '<button type="button" class="onbopt'+(!fonly?' sel':'')+'" data-wfree="due">'+
-         '<span class="oe">'+(!fonly?'✅':'☀️')+'</span>'+
-         '<span class="ot"><b>يُراجَع في موعده</b>'+
-         '<i>كلُّ مقطعٍ تحفظه يعود إليك في موعده، والمراجعةُ الحرّةُ فوقه</i></span></button>'+
-       '<button type="button" class="onbopt'+(fonly?' sel':'')+'" data-wfree="only">'+
-         '<span class="oe">'+(fonly?'✅':'🎛️')+'</span>'+
-         '<span class="ot"><b>المراجعةُ الحرّةُ وحدها</b>'+
-         '<i>لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ</i></span></button>'+
-       '</div>';
-    return h;
-  }
   if(off || on!==true) return h;
   h+='<div class="lbl" style="margin:16px 0 6px">📏 كم وجهاً في الجلسة؟</div><div class="onbopts">';
   REV_SIZES.forEach(function(z){
@@ -15638,10 +15600,12 @@ function wirdWirePanel(){
     var v=this.getAttribute('data-wird');
     /* «حفظٌ بلا مراجعة» و«خطةٌ حرّة» يُسجَّلان هنا كما يُسجَّلان في المعالج،
        وإلّا اختارهما من الإعدادات فلم يُحفظ له */
-    /* الضغطُ على «خطة مراجعة حرّة» ثانيةً لا يُسقط ما اختاره تحتها */
-    if(v!=null) revPlanPick(v==='free' && revFreeOnly() ? 'fonly' : v);
-    var wf=this.getAttribute('data-wfree');
-    if(wf!=null) revPlanPick(wf==='only' ? 'fonly' : 'free');
+    if(v!=null){
+      curP().noRev=(v==='off');
+      REV.on=(v==='1'); if(REV.on) REV.wird=true;
+      if(v==='free'){ REV.wird=false; curP().freeRev=true; }
+      else if(v==='0'){ REV.wird=true; curP().freeRev=false; }
+    }
     var sz=this.getAttribute('data-wsize');
     if(sz!=null){ REV.wsize=parseInt(sz,10); REV.wdone=0; }
     var dr=this.getAttribute('data-wdir');
@@ -15649,7 +15613,7 @@ function wirdWirePanel(){
     revSave();
     renderBqnList(); bqnGate();
   };
-  var bs=box.querySelectorAll('[data-wird],[data-wfree],[data-wsize],[data-wdir]');
+  var bs=box.querySelectorAll('[data-wird],[data-wsize],[data-wdir]');
   for(var i=0;i<bs.length;i++) bs[i].onclick=hit;
 }
 /* أوّل خطوةٍ لم يُجَب عنها — إليها يُساق من أراد الخروج قبل تمامها */
@@ -15736,7 +15700,7 @@ function bqnReturn(){
   /* اختار «خطةً حرّة» ولم يضبط نطاقَها بعد: يُساق إلى لوحة النطاق ساعتَه،
      فلا تبقى خطّةٌ مختارةٌ بلا نطاقٍ يمشي فيه */
   try{
-    if((!revOff() || revFreeOnly()) && !revIsWird() && curP().freeRev){
+    if(!revOff() && !revIsWird() && curP().freeRev){
       REV_TAB='free'; renderRevPlan(); show('scr-rev'); return;
     }
   }catch(e){}
@@ -17973,8 +17937,7 @@ function renderHomeCards(){
       freeLeft=Math.max(0, revSessions('free').length-(REV.done||0));
   }catch(e){}
   var duty=!!((T && T.r && !T.revDone) || due || wp);
-  if(revFreeOnly() && !freeLeft) rTxt='اضبط نطاق مراجعتك الحرّة';
-  else if(revOff() && !freeLeft) rTxt='ليس لديك خطة مراجعة مضبوطة';
+  if(revOff() && !freeLeft) rTxt='ليس لديك خطة مراجعة مضبوطة';
   else if(revOff()) rTxt=tx('مسارك الحرّ مفتوح — بقيت {n}',{n:arCount(freeLeft,C_SESS)});
   else if(T && T.r && !T.revDone) rTxt=bqnLabel(T.r)+' — '+arCount(T.pages.length,C_PAGE);
   /* أتمّ مقرَّرَ خطّته: تُهنّئه البطاقةُ ولا يُنقضُ صحُّها بمستحقٍّ خارج المقرَّر */
@@ -18027,8 +17990,7 @@ function renderHome(){
   var due=dueSegs().length, tb=todayBox(), w=false;
   try{ revLoad(); w=wirdPending(); }catch(e){}
   var hz=false; try{ hz=isHafiz(); }catch(e){}
-  $('homeHi2').textContent = revFreeOnly() ? 'مراجعتُك حرّة — تمشي فيها متى شئت 🎛️'
-    : revOff()
+  $('homeHi2').textContent = revOff()
       ? (hz ? 'هنيئاً لك ختمُ القرآن — ولم تضبط خطّةَ مراجعةٍ بعد 👑'
             : 'ليس لديك خطة مراجعة مضبوطة — والحفظُ ماضٍ 📖')
     : w ? 'ورد المراجعة ينتظرك 📖'
@@ -18623,7 +18585,7 @@ if($('cardHifz')) $('cardHifz').onclick=function(){ openBqn(); };
 if($('cardRev')) $('cardRev').onclick=function(){
   /* كان البابُ يُختار ثمّ يُمحى: «startRevPlan» بلا وسيطٍ تردّ كلَّ داخلٍ
      إلى «المقرَّر اليوميّ»، فيُفتح على من لا مقرَّرَ له بابٌ فارغ */
-  startRevPlan(revDueToday() ? 'due' : (revFreeOnly() ? 'free' : 'mine'));
+  startRevPlan(revDueToday() ? 'due' : 'mine');
 };
 $('btnRevHome').onclick=function(){ renderPlayers(); show('scr-start'); };
 $('btnRevQuit').onclick=function(){ startRevPlan(revBackTab()); };   /* إلى البابِ الذي دخل منه */
