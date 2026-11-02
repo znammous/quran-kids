@@ -10323,14 +10323,16 @@ function audGo(pcs){
 function audScopeAsk(){
   var P=MF_PAGE, pc=[];
   try{ pc=pagePieces(P); }catch(e){}
+  /* «هذا الوجه» مُنتقًى من أوّله، فمن أراده لمس «ابدأ» بجانب «إلغاء»؛
+     وسائرُها أبوابٌ تُفتح بلمستها */
   var list=[
-    { v:'now',  n:'📄 هذا الوجه', act:true },
+    { v:'now',  n:'📄 هذا الوجه', sel:true },
     { v:'sura', n:'📖 سورةٌ كاملة',                     act:true },
     { v:'ayah', n:'🔤 من آيةٍ إلى آية',                 act:true },
     { v:'page', n:'📚 من وجهٍ إلى وجه',                 act:true }
   ];
   uiBox('ماذا تُحبُّ أن تسمع؟\nالوجه '+arNum(P)+((pc.length&&pc[0].s)?(' • سورة '+pc[0].s.name):''),
-    '🎧', null, 'إلغاء', function(ok,v){
+    '🎧', '▶️ ابدأ', 'إلغاء', function(ok,v){
       if(!ok || v==null) return;
       if(v==='now'){ audGo(pagePieces(MF_PAGE)); return; }
       if(v==='sura'){ audSuraAsk(); return; }
