@@ -2004,5 +2004,16 @@ NUR_I18N.add('fr', {
   "اكشفها": "Dévoiler",
   "سمّعتُها": "Je l’ai récité",
   "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "Dans « Lis et répète » et « Réciter », le verset peut maintenant s’afficher sur la page même du Mushaf : à sa place dans la page, et tu peux le couvrir pour le lire de mémoire — active-le dans ⚙️ Réglages → ✒️ Mushaf.",
-  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Récite {w} de mémoire — touche un mot pour le dévoiler"
+  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Récite {w} de mémoire — touche un mot pour le dévoiler",
+  "مراجعةٌ حرّةٌ وحدها": "Révision libre uniquement",
+  "لا مقرَّرَ يوميّاً في خطّتك": "Pas de portion du jour dans ton plan",
+  "اخترتَ المراجعةَ الحرّةَ وحدها، فلا يُجدوَل ما تحفظه ولا تأتيك مهامّ.": "Tu as choisi la révision libre uniquement : ce que tu apprends n’est pas programmé et tu n’as pas de tâches.",
+  "مراجعتُك في تبويب «المراجعة الحرّة»، ولك أن تُعيد جدولة جديد حفظك من": "Ta révision est dans l’onglet « Révision libre », et tu peux reprogrammer ce que tu apprends depuis",
+  "☀️ وجديدُ ما تحفظه في التطبيق؟": "☀️ Et ce que tu apprends dans l’application ?",
+  "يُراجَع في موعده": "Révisé au bon moment",
+  "كلُّ مقطعٍ تحفظه يعود إليك في موعده، والمراجعةُ الحرّةُ فوقه": "Chaque passage que tu apprends revient vers toi à temps, et la révision libre en plus",
+  "المراجعةُ الحرّةُ وحدها": "La révision libre uniquement",
+  "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Ce que tu apprends n’est pas programmé et tu n’as pas de tâches de révision — ta révision, c’est ta plage libre",
+  "اضبط نطاق مراجعتك الحرّة": "Choisis ta plage de révision libre",
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Ta révision est libre — avance quand tu veux 🎛️"
 });

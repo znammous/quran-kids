@@ -2004,5 +2004,16 @@ NUR_I18N.add('en', {
   "اكشفها": "Reveal",
   "سمّعتُها": "I recited it",
   "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "In “Read and repeat” and “Recite”, the ayah can now appear on the Mushaf page itself: in its place on the page, and you can cover it to read from memory — turn it on in ⚙️ Settings → ✒️ Mushaf.",
-  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Recite {w} from memory — tap a word to reveal it"
+  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Recite {w} from memory — tap a word to reveal it",
+  "مراجعةٌ حرّةٌ وحدها": "Free review only",
+  "لا مقرَّرَ يوميّاً في خطّتك": "No daily portion in your plan",
+  "اخترتَ المراجعةَ الحرّةَ وحدها، فلا يُجدوَل ما تحفظه ولا تأتيك مهامّ.": "You chose free review only, so what you memorize isn’t scheduled and you get no tasks.",
+  "مراجعتُك في تبويب «المراجعة الحرّة»، ولك أن تُعيد جدولة جديد حفظك من": "Your review is in the “Free review” tab, and you can schedule your new memorization again from",
+  "☀️ وجديدُ ما تحفظه في التطبيق؟": "☀️ And what you memorize in the app?",
+  "يُراجَع في موعده": "Reviewed when it’s due",
+  "كلُّ مقطعٍ تحفظه يعود إليك في موعده، والمراجعةُ الحرّةُ فوقه": "Every section you memorize comes back to you on time, with free review on top",
+  "المراجعةُ الحرّةُ وحدها": "Free review only",
+  "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "What you memorize isn’t scheduled and you get no review tasks — your review is your free range",
+  "اضبط نطاق مراجعتك الحرّة": "Set your free review range",
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Your review is free — go through it whenever you like 🎛️"
 });

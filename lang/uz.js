@@ -2004,5 +2004,16 @@ NUR_I18N.add('uz', {
   "اكشفها": "Och",
   "سمّعتُها": "Oʻqib berdim",
   "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "«Oʻqi va takrorla» hamda «Oʻqib ber» boʻlimlarida oyat endi Mushaf sahifasining oʻzida koʻrinishi mumkin: sahifadagi oʻrnida, va yoddan oʻqishing uchun uni yopish mumkin — ⚙️ Sozlamalar → ✒️ Mushaf boʻlimida yoqing.",
-  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "{w} ni yoddan oʻqib ber — ochish uchun soʻzga tegin"
+  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "{w} ni yoddan oʻqib ber — ochish uchun soʻzga tegin",
+  "مراجعةٌ حرّةٌ وحدها": "Faqat erkin takrorlash",
+  "لا مقرَّرَ يوميّاً في خطّتك": "Rejangda kunlik ulush yoʻq",
+  "اخترتَ المراجعةَ الحرّةَ وحدها، فلا يُجدوَل ما تحفظه ولا تأتيك مهامّ.": "Faqat erkin takrorlashni tanlading, shuning uchun yodlaganing jadvalga qoʻyilmaydi va vazifalar kelmaydi.",
+  "مراجعتُك في تبويب «المراجعة الحرّة»، ولك أن تُعيد جدولة جديد حفظك من": "Takrorlashing “Erkin takrorlash” boʻlimida, yangi yodlaganingni esa yana jadvalga qoʻyishing mumkin:",
+  "☀️ وجديدُ ما تحفظه في التطبيق؟": "☀️ Ilovada yodlaganing-chi?",
+  "يُراجَع في موعده": "Oʻz vaqtida takrorlanadi",
+  "كلُّ مقطعٍ تحفظه يعود إليك في موعده، والمراجعةُ الحرّةُ فوقه": "Yodlagan har bir boʻlaging oʻz vaqtida senga qaytadi, ustiga erkin takrorlash ham",
+  "المراجعةُ الحرّةُ وحدها": "Faqat erkin takrorlash",
+  "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Yodlaganing jadvalga qoʻyilmaydi va takrorlash vazifalari kelmaydi — takrorlashing bu erkin oraligʻing",
+  "اضبط نطاق مراجعتك الحرّة": "Erkin takrorlash oraligʻini sozla",
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Takrorlashing erkin — xohlagan paytda davom et 🎛️"
 });

@@ -2004,5 +2004,16 @@ NUR_I18N.add('sw', {
   "اكشفها": "Ifunue",
   "سمّعتُها": "Nimeisoma",
   "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "Katika “Soma na urudie” na “Kusoma kwa moyo”, aya sasa inaweza kuonekana kwenye ukurasa wa Msahafu wenyewe: mahali pake ukurasani, na unaweza kuifunika ili uisome kwa moyo — iwashe katika ⚙️ Mipangilio → ✒️ Msahafu.",
-  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Soma {w} kwa moyo — gusa neno ili ulifunue"
+  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Soma {w} kwa moyo — gusa neno ili ulifunue",
+  "مراجعةٌ حرّةٌ وحدها": "Kurudia huru pekee",
+  "لا مقرَّرَ يوميّاً في خطّتك": "Hakuna sehemu ya kila siku katika mpango wako",
+  "اخترتَ المراجعةَ الحرّةَ وحدها، فلا يُجدوَل ما تحفظه ولا تأتيك مهامّ.": "Umechagua kurudia huru pekee, kwa hivyo unachohifadhi hakiwekwi kwenye ratiba na hakuna kazi.",
+  "مراجعتُك في تبويب «المراجعة الحرّة»، ولك أن تُعيد جدولة جديد حفظك من": "Kurudia kwako kuko kwenye kichupo cha “Kurudia huru”, na unaweza kurudisha hifadhi yako mpya kwenye ratiba kupitia",
+  "☀️ وجديدُ ما تحفظه في التطبيق؟": "☀️ Na unachohifadhi katika programu?",
+  "يُراجَع في موعده": "Kinarudiwa kwa wakati wake",
+  "كلُّ مقطعٍ تحفظه يعود إليك في موعده، والمراجعةُ الحرّةُ فوقه": "Kila sehemu unayohifadhi inarudi kwako kwa wakati wake, na kurudia huru juu yake",
+  "المراجعةُ الحرّةُ وحدها": "Kurudia huru pekee",
+  "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Unachohifadhi hakiwekwi kwenye ratiba na hakuna kazi za kurudia — kurudia kwako ni masafa yako huru",
+  "اضبط نطاق مراجعتك الحرّة": "Weka masafa yako ya kurudia huru",
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Kurudia kwako ni huru — endelea wakati wowote upendao 🎛️"
 });

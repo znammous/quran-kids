@@ -2004,5 +2004,16 @@ NUR_I18N.add('so', {
   "اكشفها": "Fur",
   "سمّعتُها": "Waan akhriyay",
   "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "“Akhri oo ku celi” iyo “Ka akhrin xifdi” gudahooda, aayaddu hadda waxay ka muuqan kartaa bogga Mushafka laftiisa: meesheeda bogga, waxaana la dabooli karaa si aad xifdi uga akhrido — ka shid ⚙️ Dejinta → ✒️ Mushaf.",
-  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Ka akhri {w} xifdi — erey taabo si aad u furto"
+  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Ka akhri {w} xifdi — erey taabo si aad u furto",
+  "مراجعةٌ حرّةٌ وحدها": "Muraajaco xor ah oo keliya",
+  "لا مقرَّرَ يوميّاً في خطّتك": "Qorshahaaga ma jiro qayb maalinle ah",
+  "اخترتَ المراجعةَ الحرّةَ وحدها، فلا يُجدوَل ما تحفظه ولا تأتيك مهامّ.": "Waxaad dooratay muraajaco xor ah oo keliya, markaa waxaad xifdiso jadwal laguma daro, hawlona ma jiraan.",
+  "مراجعتُك في تبويب «المراجعة الحرّة»، ولك أن تُعيد جدولة جديد حفظك من": "Muraajacadaadu waxay ku jirtaa tab-ka “Muraajaco xor ah”, xifdigaaga cusubna mar kale jadwal waad gelin kartaa adigoo maraya",
+  "☀️ وجديدُ ما تحفظه في التطبيق؟": "☀️ Waxaad ku xifdiso app-ka-se?",
+  "يُراجَع في موعده": "Waqtigiisa ayaa la muraajacoodaa",
+  "كلُّ مقطعٍ تحفظه يعود إليك في موعده، والمراجعةُ الحرّةُ فوقه": "Qayb kasta oo aad xifdiso waqtigeeda ayay kuugu soo noqotaa, muraajacada xorta ahna dusheeda",
+  "المراجعةُ الحرّةُ وحدها": "Muraajaco xor ah oo keliya",
+  "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Waxaad xifdiso jadwal laguma daro, hawlo muraajaco ahna ma jiraan — muraajacadaadu waa xadkaaga xorta ah",
+  "اضبط نطاق مراجعتك الحرّة": "Deji xadka muraajacadaada xorta ah",
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Muraajacadaadu waa xor — mar kasta oo aad rabto u soco 🎛️"
 });

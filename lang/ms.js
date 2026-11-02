@@ -2004,5 +2004,16 @@ NUR_I18N.add('ms', {
   "اكشفها": "Buka",
   "سمّعتُها": "Sudah tasmik",
   "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "Dalam “Baca dan ulang” dan “Tasmik”, ayat kini boleh dipaparkan pada muka surat Mushaf itu sendiri: di tempatnya pada muka surat, dan boleh ditutup supaya kamu membacanya dari hafalan — hidupkan di ⚙️ Tetapan → ✒️ Mushaf.",
-  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Tasmik {w} dari hafalan — sentuh perkataan untuk membukanya"
+  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Tasmik {w} dari hafalan — sentuh perkataan untuk membukanya",
+  "مراجعةٌ حرّةٌ وحدها": "Ulang kaji bebas sahaja",
+  "لا مقرَّرَ يوميّاً في خطّتك": "Tiada bahagian harian dalam rancangan kamu",
+  "اخترتَ المراجعةَ الحرّةَ وحدها، فلا يُجدوَل ما تحفظه ولا تأتيك مهامّ.": "Kamu memilih ulang kaji bebas sahaja, jadi hafazan kamu tidak dijadualkan dan tiada tugasan.",
+  "مراجعتُك في تبويب «المراجعة الحرّة»، ولك أن تُعيد جدولة جديد حفظك من": "Ulang kaji kamu ada dalam tab “Ulang kaji bebas”, dan kamu boleh menjadualkan semula hafazan baharu kamu dari",
+  "☀️ وجديدُ ما تحفظه في التطبيق؟": "☀️ Bagaimana dengan hafazan kamu dalam aplikasi?",
+  "يُراجَع في موعده": "Diulang kaji tepat pada masanya",
+  "كلُّ مقطعٍ تحفظه يعود إليك في موعده، والمراجعةُ الحرّةُ فوقه": "Setiap bahagian yang kamu hafal kembali kepada kamu tepat pada masanya, ditambah ulang kaji bebas",
+  "المراجعةُ الحرّةُ وحدها": "Ulang kaji bebas sahaja",
+  "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Hafazan kamu tidak dijadualkan dan tiada tugasan ulang kaji — ulang kaji kamu ialah julat bebas kamu",
+  "اضبط نطاق مراجعتك الحرّة": "Tetapkan julat ulang kaji bebas kamu",
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Ulang kaji kamu bebas — jalani bila-bila masa kamu mahu 🎛️"
 });

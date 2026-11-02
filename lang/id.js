@@ -2004,5 +2004,16 @@ NUR_I18N.add('id', {
   "اكشفها": "Buka",
   "سمّعتُها": "Sudah kusetor",
   "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "Di “Baca dan ulangi” dan “Setorkan”, ayat kini bisa tampil di halaman Mushaf itu sendiri: di tempatnya pada halaman, dan bisa ditutup agar kamu membacanya dari hafalan — aktifkan di ⚙️ Pengaturan → ✒️ Mushaf.",
-  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Setorkan {w} dari hafalan — sentuh kata untuk membukanya"
+  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Setorkan {w} dari hafalan — sentuh kata untuk membukanya",
+  "مراجعةٌ حرّةٌ وحدها": "Murajaah bebas saja",
+  "لا مقرَّرَ يوميّاً في خطّتك": "Tidak ada porsi harian dalam rencanamu",
+  "اخترتَ المراجعةَ الحرّةَ وحدها، فلا يُجدوَل ما تحفظه ولا تأتيك مهامّ.": "Kamu memilih murajaah bebas saja, jadi hafalanmu tidak dijadwalkan dan tidak ada tugas.",
+  "مراجعتُك في تبويب «المراجعة الحرّة»، ولك أن تُعيد جدولة جديد حفظك من": "Murajaahmu ada di tab “Murajaah bebas”, dan kamu bisa menjadwalkan lagi hafalan barumu dari",
+  "☀️ وجديدُ ما تحفظه في التطبيق؟": "☀️ Lalu hafalanmu di aplikasi?",
+  "يُراجَع في موعده": "Diulang tepat waktu",
+  "كلُّ مقطعٍ تحفظه يعود إليك في موعده، والمراجعةُ الحرّةُ فوقه": "Setiap bagian yang kamu hafal kembali kepadamu tepat waktu, ditambah murajaah bebas",
+  "المراجعةُ الحرّةُ وحدها": "Murajaah bebas saja",
+  "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Hafalanmu tidak dijadwalkan dan tidak ada tugas murajaah — murajaahmu adalah rentang bebasmu",
+  "اضبط نطاق مراجعتك الحرّة": "Atur rentang murajaah bebasmu",
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Murajaahmu bebas — jalani kapan saja kamu mau 🎛️"
 });

@@ -2004,5 +2004,16 @@ NUR_I18N.add('tr', {
   "اكشفها": "Aç",
   "سمّعتُها": "Okudum",
   "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "“Oku ve tekrarla” ile “Ezberden oku” bölümlerinde ayet artık Mushaf sayfasının kendisinde görünebiliyor: sayfadaki yerinde, ve ezberden okuman için örtülebiliyor — ⚙️ Ayarlar → ✒️ Mushaf’tan aç.",
-  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "{w} ezberden oku — açmak için bir kelimeye dokun"
+  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "{w} ezberden oku — açmak için bir kelimeye dokun",
+  "مراجعةٌ حرّةٌ وحدها": "Yalnızca serbest tekrar",
+  "لا مقرَّرَ يوميّاً في خطّتك": "Planında günlük ders yok",
+  "اخترتَ المراجعةَ الحرّةَ وحدها، فلا يُجدوَل ما تحفظه ولا تأتيك مهامّ.": "Yalnızca serbest tekrarı seçtin; ezberlediklerin takvime konmaz ve görev gelmez.",
+  "مراجعتُك في تبويب «المراجعة الحرّة»، ولك أن تُعيد جدولة جديد حفظك من": "Tekrarın “Serbest tekrar” sekmesinde; yeni ezberlerini yeniden takvime almak için:",
+  "☀️ وجديدُ ما تحفظه في التطبيق؟": "☀️ Uygulamada ezberlediklerin ne olsun?",
+  "يُراجَع في موعده": "Zamanı gelince tekrar edilir",
+  "كلُّ مقطعٍ تحفظه يعود إليك في موعده، والمراجعةُ الحرّةُ فوقه": "Ezberlediğin her bölüm zamanı gelince sana geri döner, serbest tekrar da üstüne",
+  "المراجعةُ الحرّةُ وحدها": "Yalnızca serbest tekrar",
+  "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Ezberlediklerin takvime konmaz ve tekrar görevi gelmez — tekrarın, serbest aralığındır",
+  "اضبط نطاق مراجعتك الحرّة": "Serbest tekrar aralığını ayarla",
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Tekrarın serbest — istediğin zaman ilerle 🎛️"
 });

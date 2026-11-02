@@ -2004,5 +2004,16 @@ NUR_I18N.add('ha', {
   "اكشفها": "Buɗe",
   "سمّعتُها": "Na karanta",
   "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "A cikin “Karanta ka maimaita” da “Karanta daga ka”, aya yanzu za ta iya bayyana a shafin Mushafi kansa: a wurinta a shafin, kuma za ka iya rufe ta don karanta ta daga ka — kunna ta a ⚙️ Saituna → ✒️ Mushafi.",
-  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Karanta {w} daga ka — taɓa kalma don buɗe ta"
+  "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Karanta {w} daga ka — taɓa kalma don buɗe ta",
+  "مراجعةٌ حرّةٌ وحدها": "Bita ta ʼyanci kawai",
+  "لا مقرَّرَ يوميّاً في خطّتك": "Babu rabon yau a tsarinka",
+  "اخترتَ المراجعةَ الحرّةَ وحدها، فلا يُجدوَل ما تحفظه ولا تأتيك مهامّ.": "Ka zaɓi bita ta ʼyanci kawai, don haka abin da ka haddace ba a tsara lokacinsa kuma babu ayyuka.",
+  "مراجعتُك في تبويب «المراجعة الحرّة»، ولك أن تُعيد جدولة جديد حفظك من": "Bitarka tana cikin shafin “Bita ta ʼyanci”, kuma za ka iya sake tsara lokacin sabon haddarka daga",
+  "☀️ وجديدُ ما تحفظه في التطبيق؟": "☀️ To abin da ka haddace a manhajar fa?",
+  "يُراجَع في موعده": "Ana bita a lokacinsa",
+  "كلُّ مقطعٍ تحفظه يعود إليك في موعده، والمراجعةُ الحرّةُ فوقه": "Kowane sashe da ka haddace yana dawowa gare ka a lokacinsa, da bita ta ʼyanci a kai",
+  "المراجعةُ الحرّةُ وحدها": "Bita ta ʼyanci kawai",
+  "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Ba a tsara lokacin abin da ka haddace kuma babu ayyukan bita — bitarka ita ce iyakarka ta ʼyanci",
+  "اضبط نطاق مراجعتك الحرّة": "Saita iyakar bitarka ta ʼyanci",
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Bitarka ta ʼyanci ce — ci gaba a duk lokacin da kake so 🎛️"
 });
