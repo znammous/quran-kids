@@ -2003,7 +2003,7 @@ NUR_I18N.add('ha', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Karanta ta daga ka — taɓa kalma don ganinta, sake taɓawa don rufe ta",
   "اكشفها": "Buɗe",
   "سمّعتُها": "Na karanta",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "A cikin “Karanta ka maimaita” da “Karanta daga ka”, aya yanzu za ta iya bayyana a shafin Mushafi kansa: a wurinta a shafin, kuma za ka iya rufe ta don karanta ta daga ka — kunna ta a ⚙️ Saituna → ✒️ Mushafi.",
+  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "A cikin “Karanta ka maimaita” da “Karanta daga ka”, aya yanzu za ta iya bayyana a shafin Mushafi kansa: a wurinta a shafin, kuma za ka iya rufe ta don karanta ta daga ka — za ka iya mayar da ita rubutu a ⚙️ Saituna → ✒️ Mushafi.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Karanta {w} daga ka — taɓa kalma don buɗe ta",
   "مراجعةٌ حرّةٌ وحدها": "Bita ta ʼyanci kawai",
   "لا مقرَّرَ يوميّاً في خطّتك": "Babu rabon yau a tsarinka",

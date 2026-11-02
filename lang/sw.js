@@ -2003,7 +2003,7 @@ NUR_I18N.add('sw', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Isome kwa moyo — gusa neno ili ulione, liguse tena ili ulifunike",
   "اكشفها": "Ifunue",
   "سمّعتُها": "Nimeisoma",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "Katika “Soma na urudie” na “Kusoma kwa moyo”, aya sasa inaweza kuonekana kwenye ukurasa wa Msahafu wenyewe: mahali pake ukurasani, na unaweza kuifunika ili uisome kwa moyo — iwashe katika ⚙️ Mipangilio → ✒️ Msahafu.",
+  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "Katika “Soma na urudie” na “Kusoma kwa moyo”, aya sasa inaweza kuonekana kwenye ukurasa wa Msahafu wenyewe: mahali pake ukurasani, na unaweza kuifunika ili uisome kwa moyo — unaweza kurudi kwenye maandishi ya kawaida katika ⚙️ Mipangilio → ✒️ Msahafu.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Soma {w} kwa moyo — gusa neno ili ulifunue",
   "مراجعةٌ حرّةٌ وحدها": "Kurudia huru pekee",
   "لا مقرَّرَ يوميّاً في خطّتك": "Hakuna sehemu ya kila siku katika mpango wako",

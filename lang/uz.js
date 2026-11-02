@@ -2003,7 +2003,7 @@ NUR_I18N.add('uz', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Yoddan oʻqi — soʻzni koʻrish uchun unga tegin, yopish uchun yana tegin",
   "اكشفها": "Och",
   "سمّعتُها": "Oʻqib berdim",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "«Oʻqi va takrorla» hamda «Oʻqib ber» boʻlimlarida oyat endi Mushaf sahifasining oʻzida koʻrinishi mumkin: sahifadagi oʻrnida, va yoddan oʻqishing uchun uni yopish mumkin — ⚙️ Sozlamalar → ✒️ Mushaf boʻlimida yoqing.",
+  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "«Oʻqi va takrorla» hamda «Oʻqib ber» boʻlimlarida oyat endi Mushaf sahifasining oʻzida koʻrinishi mumkin: sahifadagi oʻrnida, va yoddan oʻqishing uchun uni yopish mumkin — ⚙️ Sozlamalar → ✒️ Mushaf boʻlimida yana oddiy matnga qaytishing mumkin.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "{w} ni yoddan oʻqib ber — ochish uchun soʻzga tegin",
   "مراجعةٌ حرّةٌ وحدها": "Faqat erkin takrorlash",
   "لا مقرَّرَ يوميّاً في خطّتك": "Rejangda kunlik ulush yoʻq",

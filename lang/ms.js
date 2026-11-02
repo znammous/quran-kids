@@ -2003,7 +2003,7 @@ NUR_I18N.add('ms', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Bacalah dari hafalan — sentuh perkataan untuk melihatnya, sentuh lagi untuk menutupnya",
   "اكشفها": "Buka",
   "سمّعتُها": "Sudah tasmik",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "Dalam “Baca dan ulang” dan “Tasmik”, ayat kini boleh dipaparkan pada muka surat Mushaf itu sendiri: di tempatnya pada muka surat, dan boleh ditutup supaya kamu membacanya dari hafalan — hidupkan di ⚙️ Tetapan → ✒️ Mushaf.",
+  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "Dalam “Baca dan ulang” dan “Tasmik”, ayat kini boleh dipaparkan pada muka surat Mushaf itu sendiri: di tempatnya pada muka surat, dan boleh ditutup supaya kamu membacanya dari hafalan — kamu boleh kembali kepada teks biasa di ⚙️ Tetapan → ✒️ Mushaf.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Tasmik {w} dari hafalan — sentuh perkataan untuk membukanya",
   "مراجعةٌ حرّةٌ وحدها": "Ulang kaji bebas sahaja",
   "لا مقرَّرَ يوميّاً في خطّتك": "Tiada bahagian harian dalam rancangan kamu",

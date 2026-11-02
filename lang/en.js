@@ -2003,7 +2003,7 @@ NUR_I18N.add('en', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Read it from memory — tap a word to see it, tap again to cover it",
   "اكشفها": "Reveal",
   "سمّعتُها": "I recited it",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "In “Read and repeat” and “Recite”, the ayah can now appear on the Mushaf page itself: in its place on the page, and you can cover it to read from memory — turn it on in ⚙️ Settings → ✒️ Mushaf.",
+  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "In “Read and repeat” and “Recite”, the ayah can now appear on the Mushaf page itself: in its place on the page, and you can cover it to read from memory — you can switch back to plain text in ⚙️ Settings → ✒️ Mushaf.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Recite {w} from memory — tap a word to reveal it",
   "مراجعةٌ حرّةٌ وحدها": "Free review only",
   "لا مقرَّرَ يوميّاً في خطّتك": "No daily portion in your plan",

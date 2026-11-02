@@ -2003,7 +2003,7 @@ NUR_I18N.add('fr', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Lis-le de mémoire — touche un mot pour le voir, touche-le encore pour le couvrir",
   "اكشفها": "Dévoiler",
   "سمّعتُها": "Je l’ai récité",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "Dans « Lis et répète » et « Réciter », le verset peut maintenant s’afficher sur la page même du Mushaf : à sa place dans la page, et tu peux le couvrir pour le lire de mémoire — active-le dans ⚙️ Réglages → ✒️ Mushaf.",
+  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "Dans « Lis et répète » et « Réciter », le verset peut maintenant s’afficher sur la page même du Mushaf : à sa place dans la page, et tu peux le couvrir pour le lire de mémoire — tu peux revenir au texte simple dans ⚙️ Réglages → ✒️ Mushaf.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Récite {w} de mémoire — touche un mot pour le dévoiler",
   "مراجعةٌ حرّةٌ وحدها": "Révision libre uniquement",
   "لا مقرَّرَ يوميّاً في خطّتك": "Pas de portion du jour dans ton plan",

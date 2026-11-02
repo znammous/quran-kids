@@ -2003,7 +2003,7 @@ NUR_I18N.add('id', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Bacalah dari hafalan — sentuh kata untuk melihatnya, sentuh lagi untuk menutupnya",
   "اكشفها": "Buka",
   "سمّعتُها": "Sudah kusetor",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "Di “Baca dan ulangi” dan “Setorkan”, ayat kini bisa tampil di halaman Mushaf itu sendiri: di tempatnya pada halaman, dan bisa ditutup agar kamu membacanya dari hafalan — aktifkan di ⚙️ Pengaturan → ✒️ Mushaf.",
+  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "Di “Baca dan ulangi” dan “Setorkan”, ayat kini bisa tampil di halaman Mushaf itu sendiri: di tempatnya pada halaman, dan bisa ditutup agar kamu membacanya dari hafalan — kamu bisa kembali ke teks biasa di ⚙️ Pengaturan → ✒️ Mushaf.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Setorkan {w} dari hafalan — sentuh kata untuk membukanya",
   "مراجعةٌ حرّةٌ وحدها": "Murajaah bebas saja",
   "لا مقرَّرَ يوميّاً في خطّتك": "Tidak ada porsi harian dalam rencanamu",

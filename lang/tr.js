@@ -2003,7 +2003,7 @@ NUR_I18N.add('tr', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Ezberden oku — görmek için bir kelimeye dokun, örtmek için tekrar dokun",
   "اكشفها": "Aç",
   "سمّعتُها": "Okudum",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "“Oku ve tekrarla” ile “Ezberden oku” bölümlerinde ayet artık Mushaf sayfasının kendisinde görünebiliyor: sayfadaki yerinde, ve ezberden okuman için örtülebiliyor — ⚙️ Ayarlar → ✒️ Mushaf’tan aç.",
+  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "“Oku ve tekrarla” ile “Ezberden oku” bölümlerinde ayet artık Mushaf sayfasının kendisinde görünebiliyor: sayfadaki yerinde, ve ezberden okuman için örtülebiliyor — ⚙️ Ayarlar → ✒️ Mushaf’tan düz metne geri dönebilirsin.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "{w} ezberden oku — açmak için bir kelimeye dokun",
   "مراجعةٌ حرّةٌ وحدها": "Yalnızca serbest tekrar",
   "لا مقرَّرَ يوميّاً في خطّتك": "Planında günlük ders yok",

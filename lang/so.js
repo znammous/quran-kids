@@ -2003,7 +2003,7 @@ NUR_I18N.add('so', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Xifdi ka akhri — erey taabo si aad u aragto, mar kale taabo si aad u daboosho",
   "اكشفها": "Fur",
   "سمّعتُها": "Waan akhriyay",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — فعّلها من ⚙️ الإعدادات ← ✒️ المصحف.": "“Akhri oo ku celi” iyo “Ka akhrin xifdi” gudahooda, aayaddu hadda waxay ka muuqan kartaa bogga Mushafka laftiisa: meesheeda bogga, waxaana la dabooli karaa si aad xifdi uga akhrido — ka shid ⚙️ Dejinta → ✒️ Mushaf.",
+  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "“Akhri oo ku celi” iyo “Ka akhrin xifdi” gudahooda, aayaddu hadda waxay ka muuqan kartaa bogga Mushafka laftiisa: meesheeda bogga, waxaana la dabooli karaa si aad xifdi uga akhrido — waxaad dib ugu celin kartaa qoraal caadi ah ⚙️ Dejinta → ✒️ Mushaf.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Ka akhri {w} xifdi — erey taabo si aad u furto",
   "مراجعةٌ حرّةٌ وحدها": "Muraajaco xor ah oo keliya",
   "لا مقرَّرَ يوميّاً في خطّتك": "Qorshahaaga ma jiro qayb maalinle ah",
