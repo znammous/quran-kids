@@ -12595,7 +12595,8 @@ function roundRead(r){
     var d=''; if(!brief) for(var i=0;i<need;i++) d+=(i<got?'●':'○'); $('repDots').textContent=d; }
   dots();
   function countOne(){
-    got++; dots(); beep([700+got*90],0.06);
+    /* كلُّ «قرأتُها» نقرةٌ خفيفةٌ مع طقّتها، كما يُلمس الصوابُ في الأسئلة */
+    got++; dots(); beep([700+got*90],0.06); hap('ok');
     recReset();
     if(useRec) recUI('idle','اضغط 🎤 واقرأ الآية مرة أخرى');
     if(got>=need){ $('fb').className='fb good'; $('fb').textContent='أحسنت 🌟'; recReset(); nextRound(true); }
