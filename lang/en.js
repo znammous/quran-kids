@@ -2015,5 +2015,7 @@ NUR_I18N.add('en', {
   "المراجعةُ الحرّةُ وحدها": "Free review only",
   "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "What you memorize isn’t scheduled and you get no review tasks — your review is your free range",
   "اضبط نطاق مراجعتك الحرّة": "Set your free review range",
-  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Your review is free — go through it whenever you like 🎛️"
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Your review is free — go through it whenever you like 🎛️",
+  "إلى النصف الثاني": "To the second half",
+  "إلى النصف الأوّل": "To the first half"
 });

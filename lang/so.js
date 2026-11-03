@@ -2015,5 +2015,7 @@ NUR_I18N.add('so', {
   "المراجعةُ الحرّةُ وحدها": "Muraajaco xor ah oo keliya",
   "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Waxaad xifdiso jadwal laguma daro, hawlo muraajaco ahna ma jiraan — muraajacadaadu waa xadkaaga xorta ah",
   "اضبط نطاق مراجعتك الحرّة": "Deji xadka muraajacadaada xorta ah",
-  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Muraajacadaadu waa xor — mar kasta oo aad rabto u soco 🎛️"
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Muraajacadaadu waa xor — mar kasta oo aad rabto u soco 🎛️",
+  "إلى النصف الثاني": "U gudub badhka dambe",
+  "إلى النصف الأوّل": "U gudub badhka hore"
 });

@@ -2015,5 +2015,7 @@ NUR_I18N.add('tr', {
   "المراجعةُ الحرّةُ وحدها": "Yalnızca serbest tekrar",
   "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Ezberlediklerin takvime konmaz ve tekrar görevi gelmez — tekrarın, serbest aralığındır",
   "اضبط نطاق مراجعتك الحرّة": "Serbest tekrar aralığını ayarla",
-  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Tekrarın serbest — istediğin zaman ilerle 🎛️"
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Tekrarın serbest — istediğin zaman ilerle 🎛️",
+  "إلى النصف الثاني": "İkinci yarıya",
+  "إلى النصف الأوّل": "İlk yarıya"
 });

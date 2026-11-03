@@ -624,6 +624,13 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .sthalf{text-align:center;font-size:12px;font-weight:800;color:#8a6b2a;background:#fdf6e4;
   border-radius:99px;padding:2px 10px;width:max-content;margin:4px auto 0}
 .sthalf[hidden]{display:none}
+.stface .sthalf{position:relative;z-index:2}   /* فوق كعب الوجه: يُلمس في المراجعة */
+/* «إلى الأسئلة» سطرٌ يُلمس لا زرٌّ ثالث، فلا يأخذ من الوجه */
+/* سطرُ الرسائل تحت السؤال محجوزٌ لها (٤٤) فيأخذ من الوجه: في الوجه يُطوى فارغاً،
+   ورسائلُ «أعِد» في سطر التلميح */
+#playArea.qface+.fb:empty{min-height:0;margin-top:0}
+#playArea.qface .stskip{width:100%;margin:6px 0 0;padding:4px 6px;min-height:0;height:auto;font-size:14px;background:none;box-shadow:none;
+  color:var(--on1);text-decoration:underline;text-underline-offset:3px}
 /* القراءة: الآيةُ داكنةٌ مظلَّلة، وبقيّةُ المقطع أخفت */
 .stface.rd .mw,.stface.rd .manum{color:#8f99a9;transition:color .2s,background .2s}
 .stface.rd .cur{color:#07162b;background:rgba(255,214,102,.40)}
@@ -12304,15 +12311,16 @@ function faceOn(r){ return !!(SET && SET.face) && !(r && r.noFace) && typeof Fon
                            !!document.fonts && !!(S && S.seg && S.surah); }
 /* المقطعُ بفهرسه العامّ [من، إلى) */
 function faceSegRg(){ var b=GIDX[S.surah.n-1]; return [b+S.seg[0], b+S.seg[1]]; }
-/* يرسم وجهَ الآية gi في box، ثمّ done(box) — أو fail() إن تعذّر خطُّه */
+/* يرسم وجهَ الآية gi في box، ثمّ done(box) — أو fail() إن تعذّر خطُّه.
+   rgs: نطاقاتُ ما يُسأل عنه [[من، إلى)…] — المقطعُ وحدَه إن لم تُعطَ، وقطعُ الوجه في مراجعته */
 var FACE_SEQ=0;
-function facePaint(box, gi, done, fail){
-  var P=pageOfIdx(gi), rg=faceSegRg(), seq=++FACE_SEQ;
+function facePaint(box, gi, done, fail, rgs){
+  var P=pageOfIdx(gi), rg=rgs||[faceSegRg()], seq=++FACE_SEQ;
   function paint(fam){
     if(seq!==FACE_SEQ || !box.isConnected) return;
     var m=document.createElement('div');
     m.className='mushaf qcf'; m.style.fontFamily=fam;
-    m.innerHTML=mushafPageHTML(P,-1,true,{mark:{rg:[rg]}});
+    m.innerHTML=mushafPageHTML(P,-1,true,{mark:{rg:rg}});
     box.innerHTML=''; box.appendChild(m);
     var hn=document.createElement('div'); hn.className='sthalf'; hn.hidden=true; box.appendChild(hn);
     faceCrop(box, rg, gi);
@@ -12325,11 +12333,11 @@ function facePaint(box, gi, done, fail){
 }
 /* أسطرُ المقطع من وجهه وحدها، ومعها عنوانُ السورة وبسملتُها إن بدأ بها.
    وكلماتُ غيره في أسطره المشتركة باهتة (mout) */
-function faceCrop(box, rg, gi){
+function faceCrop(box, rgs, gi){
   var L=[].slice.call(box.querySelectorAll('.mline')), f=-1, l=-1;
   L.forEach(function(x,i){
     var g=x.querySelectorAll('[data-gi]'), j, v;
-    for(j=0;j<g.length;j++){ v=+g[j].getAttribute('data-gi'); if(v>=rg[0] && v<rg[1]){ if(f<0) f=i; l=i; break; } }
+    for(j=0;j<g.length;j++){ v=+g[j].getAttribute('data-gi'); if(mfInRg({rg:rgs},v)){ if(f<0) f=i; l=i; break; } }
   });
   if(f<0){ f=0; l=L.length-1; }
   while(f>0 && !L[f-1].querySelector('[data-gi]')) f--;
@@ -12345,13 +12353,17 @@ function faceHalf(box, half){
     var on=[];
     L.forEach(function(x,i){ if(x.querySelector('[data-gi="'+box._gi+'"]')) on.push(i); });
     var mid=f+Math.floor(n/2);
-    if(on.length && on[0]<mid){ b=Math.max(mid,on[on.length-1]); }
+    if(box._side) { if(box._side===1) b=mid; else a=mid; }
+    else if(on.length && on[0]<mid){ b=Math.max(mid,on[on.length-1]); }
     else if(on.length){ a=Math.min(mid,on[0]); }
   }
   L.forEach(function(x,i){ x.classList.toggle('cut', i<a || i>b); });
+  box._halved=!(a===f && b===l);
   if(hn){
-    hn.hidden=(a===f && b===l);
-    hn.textContent=(a===f)?'⬆️ النصف الأوّل من الوجه':'⬇️ النصف الثاني من الوجه';
+    hn.hidden=!box._halved;
+    /* وفي مراجعة الوجه يقلّب بين نصفيه بنفسه: الشارةُ زرٌّ إلى النصف الآخر */
+    if(box._side) hn.textContent=(a===f)?'⬇️ إلى النصف الثاني':'⬆️ إلى النصف الأوّل';
+    else hn.textContent=(a===f)?'⬆️ النصف الأوّل من الوجه':'⬇️ النصف الثاني من الوجه';
   }
 }
 /* يُنادى من qScreenFit: الحرفُ بعرض السطر، فإن لم تسعه الشاشةُ صَغُر ما بقي
@@ -13236,6 +13248,39 @@ function roundRevPage(r){
   var ws=pcs.length ? wordsOf(ayahText(pcs[0].s,pcs[0].from)) : [];
   var cue=ws.length ? esc(ws.slice(0,EDGE_WORDS).join(' '))+' …' : 'صفحة '+arNum(r.page)+' …';
   recReset();
+  /* في وجه المصحف: الوجهُ كلُّه مغطّى بأشكال كلماته وأرقامُ آياته ظاهرة، ومطلعُه ظاهرٌ مفتاحاً.
+     ولمسُ كلمةٍ يكشفها وحدها — وهو كعرض الوجه: يعود إليه غداً (revWeak).
+     وعلى الشاشة الصغيرة نصفان يقلّب بينهما بنفسه، فالتسجيلُ واحدٌ للوجه كلّه */
+  var FM=faceOn(r) && pcs.length, peek={}, shown=false;
+  var rgs=pcs.map(function(p){ var b0=GIDX[p.s.n-1]; return [b0+p.from, b0+p.to]; });
+  if(FM){
+    $('playArea').className='qfill qface';
+    $('playArea').innerHTML=
+      '<div class="stface ts" id="stFace"></div>'+
+      '<div class="qgap"></div>'+
+      /* سطرٌ واحدٌ تحت الوجه: القاعدةُ قبل أن يبدأ (واسمُ الوجه ونطاقُه في الشارة فوقه)،
+         ثمّ رسائلُ التسجيل في مكانها */
+      '<div class="hintline revrule" id="hintR">💡 إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً</div>'+
+      '<div class="stbig" id="stBig"></div><div class="row strow" id="stRow"></div>'+
+      ((REV.pages && REV.pi < REV.pages.length-1)
+        ? '<button class="btn ghost mini stskip" id="btnSkipQuiz">⏭️ سمّعتُها كلها — إلى الأسئلة</button>' : '')+
+      '<div hidden id="stPool">'+
+        (useRec ? '<button class="btn red big pulse" id="btnRecR">🎤 سجّل تسميعي</button>'+
+                  '<button class="btn blue" id="btnPlayR">▶️ استمع لتسميعي</button>'+
+                  '<button class="btn ghost spd" id="btnSpeedR">'+recRateLabel()+'</button>'+
+                  '<button class="btn ghost ico1" id="btnNoMic3" aria-label="لا أستطيع التسجيل الآن">🔇</button>' : '')+
+        '<button class="btn green big pulse" id="btnOkR">✅ سمّعتُها صحيحة</button>'+
+        '<button class="btn ghost" id="btnShow">👁️ اكشفها</button>'+
+        '<button class="btn ghost" id="btnAgainR">🔁 أخطأتُ فيها</button>'+
+      '</div>';
+    if(!useRec){ $('stBig').appendChild($('btnOkR')); $('stRow').appendChild($('btnShow')); $('stRow').appendChild($('btnAgainR')); }
+    facePaint($('stFace'), rgs[0][0], function(box){
+      box._side=1;
+      var hn=box.querySelector('.sthalf');
+      if(hn) hn.onclick=function(e){ e.stopPropagation(); box._side=(box._side===1)?2:1; faceHalf(box,true); };
+      coverDraw();
+    }, function(){ r.noFace=true; roundRevPage(r); }, rgs);
+  } else
   $('playArea').innerHTML=
     '<div class="hintline" id="hintR">'+tx('سمّع <b>صفحة {p}</b> عن ظهر قلب — {r}',{p:arNum(r.page), r:names})+'</div>'+
     '<div class="ayahbox pagebox" id="pageBox"><div class="ayah" id="ayHidden" style="font-size:'+Math.min(SET.font,28)+'px;color:#9db2c9">'+cue+'</div></div>'+
@@ -13256,7 +13301,30 @@ function roundRevPage(r){
       ? '<button class="btn ghost big" id="btnSkipQuiz">⏭️ سمّعتُها كلها — إلى الأسئلة</button>'
       : '');
   var recDone=false;                  /* سجّل تسميعه والصفحةُ مكشوفةٌ للمقارنة */
+  /* كلماتُ ما يُسأل عنه بترتيبها: أوّلُها مفتاحٌ ظاهر (EDGE_WORDS)، وما سواها مغطّى إلّا ما لمسه */
+  function pageWords(){
+    var box=$('stFace'), out=[];
+    if(!box) return out;
+    rgs.forEach(function(g){ for(var k=g[0];k<g[1];k++) out=out.concat(faceWords(k)); });
+    return out;
+  }
+  function coverDraw(){
+    pageWords().forEach(function(w,k){
+      var open=shown || k<EDGE_WORDS || !!peek[k];
+      w.classList.toggle('cov', !open);
+      w.classList.toggle('peek', !shown && k>=EDGE_WORDS && !!peek[k]);
+    });
+  }
+  if(FM) $('stFace').onclick=function(e){
+    if(shown) return;
+    var w=e.target.closest ? e.target.closest('.mw') : null; if(!w) return;
+    var k=pageWords().indexOf(w); if(k<EDGE_WORDS) return;
+    if(peek[k]) delete peek[k];
+    else { peek[k]=1; if(!recDone) revWeak(r.page); }
+    coverDraw();
+  };
   function reveal(on){
+    if(FM){ shown=!!on; if(!on) peek={}; coverDraw(); return; }
     $('ayHidden').innerHTML = on?esc(full):cue;
     $('ayHidden').style.color = on?'#102b4a':'#9db2c9';
     var box=$('pageBox'); if(box) box.scrollTop=0;        /* نبدأ من أوّل الصفحة دائماً */
@@ -13268,22 +13336,50 @@ function roundRevPage(r){
        وحدَها، ويُقال له إلى أين يمتدّ — وكان يراه وجهاً واحداً فيظنّه كلَّ نطاقه.
        وأمّا الوردُ وما استحقّ من محفوظه فنطاقُهما هذا الوجهُ نفسُه */
     var sc=null;
+    if(!FM){                          /* في الوجه يُكشف مكانَه ولا يُفتح فوقه */
     try{ if(revFree() && !revIsWird()) sc=revBounds(); }catch(e){}
     if(sc) mfMarkGi(sc[0], sc[1]); else mfMarkSet(r.pieces);
     mushafOpenPage(r.page, -1, '📖 صفحة '+arNum(r.page));
     if(sc){ try{ mfSpanNote(pageOfIdx(sc[1]), r.page); }catch(e){} }
+    }
     reveal(true);
     if(!recDone) revWeak(r.page);   /* بعد التسجيل يفتحه ليقابل تسميعه بالمصحف، لا استعانةً */
   };
   $('btnAgainR').onclick=function(){
     revWeak(r.page); reveal(true);
-    $('fb').className='fb'; $('fb').textContent='لا بأس — اقرأها ثم أعد التسميع 💚';
+    if(FM) $('hintR').textContent='لا بأس — اقرأها ثم أعد التسميع 💚';
+    else { $('fb').className='fb'; $('fb').textContent='لا بأس — اقرأها ثم أعد التسميع 💚'; }
     /* بعد تسجيلٍ جاهز كان زرُّ 🎤 مخفيّاً فلا سبيل إلى إعادة التسميع؛
        يُعاد ظاهراً والصفحةُ مكشوفةٌ ليقرأها أوّلاً */
     if(useRec && !REC.off){ recReset(); rUI('idle','اقرأ الصفحة ثم اضغط 🎤 وسمّعها من جديد'); }
   };
   if(!useRec) return;
-  function rUI(state,msg){
+  function rUI(state,msg){ return FM ? rUIF(state,msg) : rUIT(state,msg); }
+  /* وفي الوجه: كلُّ زرٍّ إلى موضعه من الحالة — الكبيرُ أو الصفّ الصغير */
+  function rUIF(state,msg){
+    var b=$('btnRecR'), ok=$('btnOkR'), show=$('btnShow'), again=$('btnAgainR'), h=$('hintR'),
+        B=$('stBig'), R=$('stRow'), pool=$('stPool');
+    if(!b||!ok||!B||!R||!pool) return;
+    recTimerStop(); b.disabled=false; b.classList.remove('reclive');
+    recDone=(state==='ready');
+    if($('revRule')) $('revRule').style.visibility=recDone?'hidden':'';
+    [].slice.call(B.children).concat([].slice.call(R.children)).forEach(function(e){ pool.appendChild(e); });
+    var big=null, row=[];
+    if(state==='idle'){ big=b; b.textContent='🎤 سجّل تسميعي'; b.className='btn red big pulse';
+      ok.className='btn ghost'; ok.textContent='✅ سمّعتُها'; row=[ok,show,$('btnNoMic3')]; }
+    else if(state==='norec'){ big=ok; ok.className='btn green big pulse'; ok.textContent='✅ سمّعتُها صحيحة'; row=[show,again]; }
+    else if(state==='wait'){ big=b; b.textContent='⏳ في انتظار إذن المايكروفون'; b.className='btn red big'; reveal(false); }
+    else if(state==='rec'){ big=b; b.className='btn red big reclive'; recTimerStart(b,'⏹️ انتهيت من التسميع'); }
+    else if(state==='ready'){ big=ok; ok.className='btn green big pulse'; ok.textContent='✅ سمّعتُها صحيحة';
+      row=[$('btnPlayR'),$('btnSpeedR'),again]; reveal(true); }
+    else if(state==='fail'){ big=b; b.textContent='🎤 حاول التسجيل مرة أخرى'; b.className='btn red big';
+      ok.className='btn ghost'; ok.textContent='✅ سمّعتُها'; row=[ok,show,again]; }
+    if(big) B.appendChild(big);
+    row.forEach(function(e){ if(e) R.appendChild(e); });
+    R.style.visibility=row.length?'':'hidden';
+    if(h && msg!=null) h.innerHTML=msg;
+  }
+  function rUIT(state,msg){
     var b=$('btnRecR'), pl=$('rowPlayR'), ok=$('btnOkR'), row=$('rowR'), h=$('hintR');
     if(!b||!pl||!ok||!row) return;
     recTimerStop(); b.disabled=false; b.classList.remove('reclive');
@@ -13540,7 +13636,8 @@ function roundRecite(r){
     };
     $('btnAgainR').onclick=function(){
       reveal(false);
-      $('fb').className='fb'; $('fb').textContent='خذ وقتك 💚';
+      if(FM) $('hintR').textContent='خذ وقتك 💚';
+      else { $('fb').className='fb'; $('fb').textContent='خذ وقتك 💚'; }
       if(useRec){ recReset(); rUI('idle','سجّل تسميعك من جديد — 🎤'); }
     };
     if(!useRec) return;

@@ -2015,5 +2015,7 @@ NUR_I18N.add('sw', {
   "المراجعةُ الحرّةُ وحدها": "Kurudia huru pekee",
   "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Unachohifadhi hakiwekwi kwenye ratiba na hakuna kazi za kurudia — kurudia kwako ni masafa yako huru",
   "اضبط نطاق مراجعتك الحرّة": "Weka masafa yako ya kurudia huru",
-  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Kurudia kwako ni huru — endelea wakati wowote upendao 🎛️"
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Kurudia kwako ni huru — endelea wakati wowote upendao 🎛️",
+  "إلى النصف الثاني": "Nenda nusu ya pili",
+  "إلى النصف الأوّل": "Nenda nusu ya kwanza"
 });

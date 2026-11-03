@@ -2015,5 +2015,7 @@ NUR_I18N.add('fr', {
   "المراجعةُ الحرّةُ وحدها": "La révision libre uniquement",
   "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Ce que tu apprends n’est pas programmé et tu n’as pas de tâches de révision — ta révision, c’est ta plage libre",
   "اضبط نطاق مراجعتك الحرّة": "Choisis ta plage de révision libre",
-  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Ta révision est libre — avance quand tu veux 🎛️"
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Ta révision est libre — avance quand tu veux 🎛️",
+  "إلى النصف الثاني": "Vers la seconde moitié",
+  "إلى النصف الأوّل": "Vers la première moitié"
 });

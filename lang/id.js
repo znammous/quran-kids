@@ -2015,5 +2015,7 @@ NUR_I18N.add('id', {
   "المراجعةُ الحرّةُ وحدها": "Murajaah bebas saja",
   "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Hafalanmu tidak dijadwalkan dan tidak ada tugas murajaah — murajaahmu adalah rentang bebasmu",
   "اضبط نطاق مراجعتك الحرّة": "Atur rentang murajaah bebasmu",
-  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Murajaahmu bebas — jalani kapan saja kamu mau 🎛️"
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Murajaahmu bebas — jalani kapan saja kamu mau 🎛️",
+  "إلى النصف الثاني": "Ke separuh kedua",
+  "إلى النصف الأوّل": "Ke separuh pertama"
 });

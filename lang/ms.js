@@ -2015,5 +2015,7 @@ NUR_I18N.add('ms', {
   "المراجعةُ الحرّةُ وحدها": "Ulang kaji bebas sahaja",
   "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Hafazan kamu tidak dijadualkan dan tiada tugasan ulang kaji — ulang kaji kamu ialah julat bebas kamu",
   "اضبط نطاق مراجعتك الحرّة": "Tetapkan julat ulang kaji bebas kamu",
-  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Ulang kaji kamu bebas — jalani bila-bila masa kamu mahu 🎛️"
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Ulang kaji kamu bebas — jalani bila-bila masa kamu mahu 🎛️",
+  "إلى النصف الثاني": "Ke separuh kedua",
+  "إلى النصف الأوّل": "Ke separuh pertama"
 });

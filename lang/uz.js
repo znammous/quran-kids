@@ -2015,5 +2015,7 @@ NUR_I18N.add('uz', {
   "المراجعةُ الحرّةُ وحدها": "Faqat erkin takrorlash",
   "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Yodlaganing jadvalga qoʻyilmaydi va takrorlash vazifalari kelmaydi — takrorlashing bu erkin oraligʻing",
   "اضبط نطاق مراجعتك الحرّة": "Erkin takrorlash oraligʻini sozla",
-  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Takrorlashing erkin — xohlagan paytda davom et 🎛️"
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Takrorlashing erkin — xohlagan paytda davom et 🎛️",
+  "إلى النصف الثاني": "Ikkinchi yarmiga",
+  "إلى النصف الأوّل": "Birinchi yarmiga"
 });

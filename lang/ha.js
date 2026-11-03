@@ -2015,5 +2015,7 @@ NUR_I18N.add('ha', {
   "المراجعةُ الحرّةُ وحدها": "Bita ta ʼyanci kawai",
   "لا يُجدوَل ما تحفظه ولا تأتيك مهامُّ مراجعته — مراجعتُك نطاقُك الحرّ": "Ba a tsara lokacin abin da ka haddace kuma babu ayyukan bita — bitarka ita ce iyakarka ta ʼyanci",
   "اضبط نطاق مراجعتك الحرّة": "Saita iyakar bitarka ta ʼyanci",
-  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Bitarka ta ʼyanci ce — ci gaba a duk lokacin da kake so 🎛️"
+  "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Bitarka ta ʼyanci ce — ci gaba a duk lokacin da kake so 🎛️",
+  "إلى النصف الثاني": "Zuwa rabi na biyu",
+  "إلى النصف الأوّل": "Zuwa rabin farko"
 });
