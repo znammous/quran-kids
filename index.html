@@ -6194,7 +6194,8 @@ function dayArchive(p){
    وأسئلةُ الترتيب تقيس الانتقالَ من آيةٍ إلى التي تليها لا الآيةَ نفسَها، فتُكتب في
    p.tr["سورة:آية"] للانتقال إلى تلك الآية: [سُئل، أخطأ]. والآيةُ بعدّ التطبيق من الصفر.
    والمُعتبَر أوّلُ محاولة: من أصاب بعد إعادةٍ أو تلميحٍ لم يُصب.
-   وبداياتُ الصفحات ونهاياتُها علمٌ بالوجه لا بآية، والتسميعُ يقرّه على نفسه — فلا يُكتبان. */
+   وبداياتُ الصفحات ونهاياتُها علمٌ بالوجه لا بآية، والتسميعُ يقرّه على نفسه — فلا يُكتبان.
+   إلّا كلمةً كشفها في تسميع الوجه: زلّةٌ على آيتها لا شكّ فيها. */
 var AY_ONE={ words:1, missing:1, miss2:1, aedge:1, write:1 }, AY_SEQ={ ayat:1, eorder:1 };
 function ayNote(p,n,a,ok){
   var A=p.ay||(p.ay={}), k=n+':'+a, v=A[k]||(A[k]=[0,0,0,0]);
@@ -13642,7 +13643,7 @@ function roundRevPage(r){
   /* في وجه المصحف: الوجهُ كلُّه مغطّى بأشكال كلماته وأرقامُ آياته ظاهرة، ومطلعُه ظاهرٌ مفتاحاً.
      ولمسُ كلمةٍ يكشفها وحدها — وهو كعرض الوجه: يعود إليه غداً (revWeak).
      وعلى الشاشة الصغيرة نصفان يقلّب بينهما بنفسه، فالتسجيلُ واحدٌ للوجه كلّه */
-  var FM=faceOn(r) && pcs.length, peek={}, shown=false, peeked={}, peekN=0;
+  var FM=faceOn(r) && pcs.length, peek={}, shown=false, peeked={}, peekN=0, peekAy={};
   var rgs=pcs.map(function(p){ var b0=GIDX[p.s.n-1]; return [b0+p.from, b0+p.to]; });
   if(FM){
     $('playArea').className='qfill qface';
@@ -13726,6 +13727,10 @@ function roundRevPage(r){
       if(!recDone && !peeked[k]){
         peeked[k]=1; peekN++;
         if(peekN>=2) revWeak(r.page);
+        /* وفي «أدائي» زلّةٌ على آيتها من أوّل كلمة — الغفرانُ للموعد لا للسجلّ —
+           والآيةُ مرّةً وإن كُشف منها كلمتان */
+        var ga=giAyah(parseInt(w.getAttribute('data-gi'),10));
+        if(ga && !peekAy[ga.s.n+':'+ga.a]){ peekAy[ga.s.n+':'+ga.a]=1; ayNote(curP(),ga.s.n,ga.a,false); }
         /* يُحَسّ الفرقُ في اليد: الأولى لمسةٌ خفيفة، والتي تعيده غداً هزّةُ الخطأ */
         hap(peekN>=2 ? 'bad' : 'tap');
         if($('hintR')) $('hintR').textContent = peekN>=2
