@@ -2025,5 +2025,7 @@ NUR_I18N.add('ha', {
   "أوّلُها": "Farkonsa",
   "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Ana nuna ƙarshen shafi, kai kuma ka faɗi farkon shafi na gaba",
   "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Daidai ✅ — daga shafi {p} zuwa shafi {q}",
-  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Kuskure biyu a tambayoyin shafi suna dawo da shi gobe"
+  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Kuskure biyu a tambayoyin shafi suna dawo da shi gobe",
+  "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Kalma ɗaya ana yafewa — ta biyu tana dawo da shi gobe",
+  "كشفتَ كلمتين — يعود إليك غداً": "Ka buɗe kalmomi biyu — zai dawo gobe"
 });

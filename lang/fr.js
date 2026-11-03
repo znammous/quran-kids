@@ -2025,5 +2025,7 @@ NUR_I18N.add('fr', {
   "أوّلُها": "Son début",
   "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "La fin d’une page s’affiche, et tu retrouves le début de la suivante",
   "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Correct ✅ — de la page {p} à la page {q}",
-  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Deux erreurs dans les questions d’une page la font revenir demain"
+  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Deux erreurs dans les questions d’une page la font revenir demain",
+  "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Un mot est pardonné — un deuxième la fait revenir demain",
+  "كشفتَ كلمتين — يعود إليك غداً": "Tu as dévoilé deux mots — elle revient demain"
 });

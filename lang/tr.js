@@ -2025,5 +2025,7 @@ NUR_I18N.add('tr', {
   "أوّلُها": "Başı",
   "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Bir sayfanın sonu gösterilir, sen de sonraki sayfanın başını hatırlarsın",
   "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Doğru ✅ — {p}. sayfadan {q}. sayfaya",
-  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Sayfanın sorularında iki hata onu yarın geri getirir"
+  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Sayfanın sorularında iki hata onu yarın geri getirir",
+  "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Bir kelime affedilir — ikincisi onu yarın geri getirir",
+  "كشفتَ كلمتين — يعود إليك غداً": "İki kelime açtın — yarın tekrar gelir"
 });

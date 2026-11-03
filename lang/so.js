@@ -2025,5 +2025,7 @@ NUR_I18N.add('so', {
   "أوّلُها": "Bilowgiisa",
   "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Dhammaadka bog ayaa la soo bandhigaa, adiguna waxaad sheegtaa bilowga bogga xiga",
   "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Sax ✅ — bogga {p} ilaa bogga {q}",
-  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Laba qalad oo ku jira su'aalaha bogga ayaa berri dib kuugu soo celinaya"
+  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Laba qalad oo ku jira su'aalaha bogga ayaa berri dib kuugu soo celinaya",
+  "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Hal eray waa la cafiyaa — kan labaad ayaa berri dib u soo celinaya",
+  "كشفتَ كلمتين — يعود إليك غداً": "Laba eray ayaad furtay — berri ayuu soo laabanayaa"
 });

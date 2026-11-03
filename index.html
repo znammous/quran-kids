@@ -13405,7 +13405,7 @@ function roundRevPage(r){
   /* في وجه المصحف: الوجهُ كلُّه مغطّى بأشكال كلماته وأرقامُ آياته ظاهرة، ومطلعُه ظاهرٌ مفتاحاً.
      ولمسُ كلمةٍ يكشفها وحدها — وهو كعرض الوجه: يعود إليه غداً (revWeak).
      وعلى الشاشة الصغيرة نصفان يقلّب بينهما بنفسه، فالتسجيلُ واحدٌ للوجه كلّه */
-  var FM=faceOn(r) && pcs.length, peek={}, shown=false;
+  var FM=faceOn(r) && pcs.length, peek={}, shown=false, peeked={}, peekN=0;
   var rgs=pcs.map(function(p){ var b0=GIDX[p.s.n-1]; return [b0+p.from, b0+p.to]; });
   if(FM){
     $('playArea').className='qfill qface';
@@ -13485,7 +13485,18 @@ function roundRevPage(r){
     var w=e.target.closest ? e.target.closest('.mw') : null; if(!w) return;
     var k=pageWords().indexOf(w); if(k<openN) return;
     if(peek[k]) delete peek[k];
-    else { peek[k]=1; if(!recDone) revWeak(r.page); }
+    else {
+      peek[k]=1;
+      /* كلمةٌ واحدةٌ تُغتفر كالخطأ الواحد في الأسئلة، والثانيةُ تعيده غداً.
+         والعدُّ بالكلمات لا باللمسات: من غطّى كلمةً ثمّ كشفها ثانيةً لم يزد شيئاً */
+      if(!recDone && !peeked[k]){
+        peeked[k]=1; peekN++;
+        if(peekN>=2) revWeak(r.page);
+        if($('hintR')) $('hintR').textContent = peekN>=2
+          ? '↩️ كشفتَ كلمتين — يعود إليك غداً'
+          : '💡 كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً';
+      }
+    }
     coverDraw();
   };
   function reveal(on){

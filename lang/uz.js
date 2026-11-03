@@ -2025,5 +2025,7 @@ NUR_I18N.add('uz', {
   "أوّلُها": "Boshi",
   "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Sahifaning oxiri koʻrsatiladi, siz esa keyingi sahifaning boshini aytasiz",
   "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Toʻgʻri ✅ — {p}-sahifadan {q}-sahifaga",
-  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Sahifa savollaridagi ikki xato uni ertaga qaytaradi"
+  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Sahifa savollaridagi ikki xato uni ertaga qaytaradi",
+  "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Bitta soʻz kechiriladi — ikkinchisi uni ertaga qaytaradi",
+  "كشفتَ كلمتين — يعود إليك غداً": "Ikki soʻzni ochdingiz — ertaga qaytadi"
 });
