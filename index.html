@@ -930,6 +930,11 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 /* صفُّ «استمع» و«ابدأ» نصفان: اللونُ يميّز البدء، والاستماعُ قبله عادةٌ لا تُصغَّر */
 .mfgorow{display:flex;gap:8px;align-items:stretch}
 .mfgorow .btn{flex:1 1 0;min-width:0;padding-inline:6px;font-size:17px;white-space:nowrap;overflow:hidden}
+/* صفُّ التسجيل في «اقرأ وردّد» بالمراجعة: فوق «استمع» و«ابدأ»، وسطرُ حالته تحته */
+.mfgo [hidden]{display:none!important}
+.mfgo .hintline{margin:0}
+/* و«قرأتُه — إلى الأسئلة» يلتفّ سطرين بخطٍّ أصغر قليلاً بدل أن يُقصّ */
+.mfsheet.rd #mfGoBtn{white-space:normal;line-height:1.2;font-size:15px}
 /* «غطِّها» في عرض المقطع: آياتُه مغطّاةٌ إلّا أوّلَ كلمةٍ من كلّ آية، ولمسُ كلمةٍ يكشفها */
 .mfbody .mushaf .mw.cov{color:transparent!important;cursor:pointer;
   background:linear-gradient(#cdb8f0,#cdb8f0) center 55%/calc(100% - .14em) 58% no-repeat!important}
@@ -2920,6 +2925,12 @@ body.hastabs #btnRevQuit{display:none}
   <div class="mfgo" id="mfGo" hidden>
     <!-- الاستماعُ بجانب زرّ البدء: الزرُّ الأخضرُ يخطف العين، فلا يُترك السماعُ
          في شريطٍ صغيرٍ أسفلَ الشاشة لا يُنتبه له -->
+    <div class="mfgorow" id="mfRecRow" hidden>
+      <button class="btn red big pulse" id="mfRec">🎤 سجّل قراءتي</button>
+      <button class="btn blue big" id="mfPlayRec" hidden>▶️ استمع لصوتي</button>
+      <button class="btn ghost big" id="mfAgainRec" hidden>🔁 أعِد</button>
+    </div>
+    <div class="hintline" id="mfRecHint" hidden></div>
     <div class="mfgorow">
       <button class="btn blue big" id="mfGoListen">🎧 استمع</button>
       <button class="btn ghost big" id="mfGoCover">📕 غطِّها</button>
@@ -5150,8 +5161,9 @@ function mfSpanNote(lastP, curP_, txt){
     try{ navToast((txt||'↔️ نطاقك يمتدّ إلى الصفحة ')+arNum(lastP)+' — اسحب الوجه لتراه'); }catch(e){}
   }, 450);
 }
-/* note: شارةٌ تطفو على الوجه تقول ما يُطلب فيه (كـ«اقرأ وردّد» في المراجعة) */
-function segPreview(pieces, title, btn, go, note){
+/* note: شارةٌ تطفو على الوجه تقول ما يُطلب فيه (كـ«اقرأ وردّد» في المراجعة)،
+   وrec: يُسجّل فيه قراءتَه ويستمع لصوته قبل البدء */
+function segPreview(pieces, title, btn, go, note, rec){
   var M=mfMarkSet(pieces);
   if(!M.rg.length){ MF_MARK=null; if(go) go(); return; }
   var P=pageOfIdx(M.rg[0][0]), P2=pageOfIdx(M.rg[M.rg.length-1][1]-1);
@@ -5160,8 +5172,9 @@ function segPreview(pieces, title, btn, go, note){
   $('mfGoBtn').textContent=btn;
   $('mfGo').hidden=false;
   $('mfSheet').classList.add('pv');
-  MF_PV={go:go};
+  MF_PV={go:go, rec:!!rec};
   MF_COV=null; mfCovDraw();
+  mfRecInit(!!rec && recBtnOn());                 /* قبل رسم الوجه: يُضبط على ما بقي له */
   mushafOpenPage(P, -1, title);
   if(note && $('mfStep')){ $('mfStep').textContent=note; $('mfStep').hidden=false; }
   mfSpanNote(P2, P, '↔️ مقطعك يكمل في الصفحة ');
@@ -5651,6 +5664,7 @@ document.addEventListener('visibilitychange', function(){
 function mushafClose(){
   try{ if(curScreen()!=='scr-play') wakeOff(); }catch(e){ wakeOff(); }   /* عاد إلى درسه: القفلُ باقٍ له */
   try{ audStop(); }catch(e){}            /* طُوي الوجهُ: تسكت التلاوة معه */
+  if(MF_PV && MF_PV.rec){ recReset(); mfRecInit(false); }   /* طُوي «اقرأ وردّد»: لا يبقى تسجيلُه مفتوحاً */
   MF_MARK=null; MF_PV=null; MF_COV=null;
   mfGlossOff();
   if($('mfGo')) $('mfGo').hidden=true;
@@ -9625,6 +9639,53 @@ $('mfGoListen').onclick=function(){
   if(audTap()) return;              /* تتلو الآن: تُمسك ويُفتح صندوقُها */
   audAsk(audQueueSeg());
 };
+/* ===== التسجيلُ في «اقرأ وردّد» من المراجعة =====
+   يقرأ المقطعَ كلَّه ويسجّله، ثمّ يستمع لصوته أو يُعيده — كما في «اقرأ وردّد» من الحفظ،
+   لكن للمقطع جملةً لا لآيةٍ آية. ولا يُحسب فيه شيء: «قرأتُه» يمضي متى شاء */
+function mfRecUI(state,msg){
+  var b=$('mfRec'), pl=$('mfPlayRec'), ag=$('mfAgainRec'), h=$('mfRecHint');
+  if(!b) return;
+  recTimerStop(); b.disabled=false;
+  b.hidden=(state==='ready'); pl.hidden=ag.hidden=(state!=='ready');
+  if(state==='idle'){ b.textContent='🎤 سجّل قراءتي'; b.className='btn red big pulse'; }
+  else if(state==='wait'){ b.textContent='⏳ في انتظار إذن المايكروفون'; b.className='btn red big'; }
+  else if(state==='rec'){ b.className='btn red big reclive'; recTimerStart(b,'⏹️ إيقاف التسجيل'); }
+  else if(state==='fail'){ b.textContent='🎤 حاول التسجيل مرة أخرى'; b.className='btn red big'; }
+  else if(state==='ready'){ pl.textContent='▶️ استمع لصوتي'; }
+  if(msg!=null){ h.textContent=msg; h.hidden=!msg; }
+}
+function mfRecInit(on){
+  $('mfRecRow').hidden=!on;
+  $('mfSheet').classList.toggle('rd', on);
+  $('mfRecHint').hidden=true;
+  if(on) mfRecUI('idle','اقرأ المقطع بصوتك — سجّل بـ🎤 لتسمع نفسك');
+}
+$('mfRec').onclick=function(){
+  var b=this;
+  if(REC.rec){ recSaving(b); recStop(); return; }   /* الأثر أولاً ثم الإيقاف */
+  if(REC.starting){ recCancelStart(); mfRecUI('idle','أُلغي التسجيل — اضغط 🎤 لتبدأ من جديد'); return; }
+  try{ audStop(); }catch(e){}                       /* لا تتلو التلاوةُ فوق صوته */
+  recAsk(function(){
+    mfRecUI('wait','⏳ إن سألك المتصفح عن المايكروفون فاضغط «سماح»');
+    recStart(function(){
+      if(!REC.url){ mfRecUI('idle','لم أسمع شيئاً — اضغط 🎤 واقرأ ثم أوقف التسجيل'); return; }
+      mfRecUI('ready', REC.hitMax ? 'بلغ التسجيلُ حدَّه فتوقّف — استمعْ لما سُجّل، أو أعِدْه'
+                                  : 'استمع لصوتك، ثمّ أعِد أو انتقل إلى الأسئلة');
+    }, function(){
+      var msg;
+      if(REC.fail==='denied') msg='لم يُسمح بالمايكروفون — اضغط 🔒 في شريط العنوان واسمح به، ثم أعِد المحاولة';
+      else if(REC.fail==='insecure') msg='التسجيل يحتاج فتح اللعبة عبر «شغّل-اللعبة.bat» — فتح الملف مباشرة يمنع المايكروفون';
+      else msg='التسجيل غير متاح على هذا المتصفح — اقرأ بصوتك واضغط الزر';
+      mfRecUI('fail',msg);
+    }, function(){
+      mfRecUI('rec','أنا أستمع… اقرأ المقطع ثم اضغط إيقاف');
+    }, 0, function(){
+      mfRecUI('idle','أُلغي التسجيل — اضغط 🎤 لتبدأ من جديد');
+    });
+  });
+};
+$('mfPlayRec').onclick=function(){ try{ audStop(); }catch(e){} recPlay(this); };
+$('mfAgainRec').onclick=function(){ recReset(); mfRecUI('idle','اضغط 🎤 واقرأ المقطع مرة أخرى'); };
 /* «استمع إليها» في «اقرأ وردّد» تحت الآية — كان في شريط الدرس فلا يُرى.
    يتلو آيتَه التي هو فيها، وإن لم تكن جولتُه آيةً بعينها فمقطعَه.
    لمسةٌ تتلو مرّةً بلا سؤالٍ عن التكرار، ولمسةٌ توقفها — بلا صندوق. وتسكت
@@ -11729,7 +11790,7 @@ function runRound(){
       S.rdSeen=rdk;
       if(r.t==='recite') S.pvSeen=rdk;
       segPreview([{s:r.surah, from:r.segFrom, to:r.segTo}], '📖 '+r.surah.name, '✅ قرأتُه — إلى الأسئلة', null,
-                 '📖 اقرأ المقطع وردّده');
+                 '📖 اقرأ المقطع وردّده', true);
     }
   }
   /* ويُعرض وجهُ المقطع قبل تسميعه، مرّةً لكلّ مقطع */
