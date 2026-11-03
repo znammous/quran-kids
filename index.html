@@ -621,10 +621,11 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .stface .mushaf.qcf .mline.mhead{margin-block:.18em}
 .stface .mline.cut,.stface .mpgno{display:none}
 .stface .mout{opacity:.32}
-.sthalf{text-align:center;font-size:12px;font-weight:800;color:#8a6b2a;background:#fdf6e4;
-  border-radius:99px;padding:2px 10px;width:max-content;margin:4px auto 0}
-.sthalf[hidden]{display:none}
-.stface .sthalf{position:relative;z-index:2}   /* فوق كعب الوجه: يُلمس في المراجعة */
+.stface .mushaf.stscr{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
+.stface .mushaf.sft{-webkit-mask-image:linear-gradient(to bottom,transparent,#000 1.6em);mask-image:linear-gradient(to bottom,transparent,#000 1.6em)}
+.stface .mushaf.sfb{-webkit-mask-image:linear-gradient(to top,transparent,#000 1.6em);mask-image:linear-gradient(to top,transparent,#000 1.6em)}
+.stface .mushaf.sft.sfb{-webkit-mask-image:linear-gradient(to bottom,transparent,#000 1.6em,#000 calc(100% - 1.6em),transparent);
+  mask-image:linear-gradient(to bottom,transparent,#000 1.6em,#000 calc(100% - 1.6em),transparent)}
 /* «إلى الأسئلة» سطرٌ يُلمس لا زرٌّ ثالث، فلا يأخذ من الوجه */
 /* سطرُ الرسائل تحت السؤال محجوزٌ لها (٤٤) فيأخذ من الوجه: في الوجه يُطوى فارغاً،
    ورسائلُ «أعِد» في سطر التلميح */
@@ -12369,7 +12370,6 @@ function facePaint(box, gi, done, fail, rgs){
     m.className='mushaf qcf'; m.style.fontFamily=fam;
     m.innerHTML=mushafPageHTML(P,-1,true,{mark:{rg:rg}});
     box.innerHTML=''; box.appendChild(m);
-    var hn=document.createElement('div'); hn.className='sthalf'; hn.hidden=true; box.appendChild(hn);
     faceCrop(box, rg, gi);
     done(box);
     try{ qScreenFit(true); }catch(e){}
@@ -12389,52 +12389,49 @@ function faceCrop(box, rgs, gi){
   if(f<0){ f=0; l=L.length-1; }
   while(f>0 && !L[f-1].querySelector('[data-gi]')) f--;
   box._L=L; box._f=f; box._l=l; box._gi=gi;
-  faceHalf(box, false);
+  L.forEach(function(x,i){ x.classList.toggle('cut', i<f || i>l); });
 }
-/* الوجهُ الكاملُ لا تسعه الشاشةُ الصغيرة بحرفٍ مقروء: نصفان ثابتان يتقاسمان
-   السطرَ الأوسط، ولا يتبدّل النصفُ إلا إذا بدأت الآيةُ في الآخر. والآيةُ
-   العابرةُ للحدّ تُرى كاملةً: يمتدّ نصفُها بقدرها */
-function faceHalf(box, half){
-  var L=box._L, f=box._f, l=box._l, n=l-f+1, a=f, b=l, hn=box.querySelector('.sthalf');
-  if(half && n>8){
-    var on=[];
-    L.forEach(function(x,i){ if(x.querySelector('[data-gi="'+box._gi+'"]')) on.push(i); });
-    var mid=f+Math.floor(n/2);
-    if(box._side) { if(box._side===1) b=mid; else a=mid; }
-    else if(on.length && on[0]<mid){ b=Math.max(mid,on[on.length-1]); }
-    else if(on.length){ a=Math.min(mid,on[0]); }
-  }
-  L.forEach(function(x,i){ x.classList.toggle('cut', i<a || i>b); });
-  box._halved=!(a===f && b===l);
-  if(hn){
-    hn.hidden=!box._halved;
-    /* وفي مراجعة الوجه يقلّب بين نصفيه بنفسه: الشارةُ زرٌّ إلى النصف الآخر */
-    if(box._side) hn.textContent=(a===f)?'⬇️ إلى النصف الثاني':'⬆️ إلى النصف الأوّل';
-    else hn.textContent=(a===f)?'⬆️ النصف الأوّل من الوجه':'⬇️ النصف الثاني من الوجه';
-  }
-}
-/* يُنادى من qScreenFit: الحرفُ بعرض السطر، فإن لم تسعه الشاشةُ صَغُر ما بقي
-   عشرين فأكثر، وإلّا فنصفان (ويصغر الحرفُ إن لم يكفيا). ولا تكبيرَ ولا تصغيرَ للسؤال كلّه (zoom) */
+/* يُنادى من qScreenFit: الحرفُ بعرض السطر، فإن لم يسع الشاشةَ صغُر ما بقي عشرين فأكثر،
+   وإلّا بقي عشرين وصار الوجهُ يُمرَّر في مكانه بما بقي من الشاشة. والمقطعُ كلُّه فيه —
+   كان يُقسم نصفين فيُظنّ النصفُ هو المطلوب. ويبدأ من الآية الجارية، ويخفت طرفُه الذي
+   وراءه بقيّةٌ فيُعرف أنّه يُمرَّر. ولا تكبيرَ ولا تصغيرَ للسؤال كلّه (zoom) */
 function faceFit(pa, avail){
   var box=pa.querySelector('.stface'), m=box && box.querySelector('.mushaf');
   if(!m || !box._L) return;
-  faceHalf(box, false);
+  var st=m.scrollTop;
+  m.style.maxHeight=''; m.classList.remove('stscr');
   m.style.fontSize='20px';
   var rows=m.querySelectorAll('.mline:not(.cut) .mtxt'), w=0, i;
   for(i=0;i<rows.length;i++) w=Math.max(w, rows[i].getBoundingClientRect().width);
   var avW=m.clientWidth; if(!w || !avW) return;
   var fs=Math.min(44, 20*avW/w*0.99);
   m.style.fontSize=fs+'px';
-  if(pa.offsetHeight<=avail) return;
-  /* الوجهُ كلُّه بحرفٍ أصغر قليلاً خيرٌ من نصفيه — ما لم ينزل عن عشرين */
-  var shrink=function(){
+  if(pa.offsetHeight>avail){
     var over=pa.offsetHeight-avail, mh=m.offsetHeight;
-    return (over>0 && mh>over) ? fs*(mh-over)/mh : fs;
-  };
-  var f1=shrink();
-  if(f1>=20 || box._l-box._f+1<=8){ m.style.fontSize=Math.max(12,f1)+'px'; return; }
-  faceHalf(box, true);
-  m.style.fontSize=Math.max(12, shrink())+'px';
+    var f1=(mh>over) ? fs*(mh-over)/mh : 0;
+    if(f1>=20) m.style.fontSize=f1+'px';
+    else {
+      m.style.fontSize=Math.min(fs,20)+'px';
+      over=pa.offsetHeight-avail;
+      if(over>0){ m.style.maxHeight=Math.max(110, m.offsetHeight-over)+'px'; m.classList.add('stscr'); }
+    }
+  }
+  if(m.classList.contains('stscr')){
+    if(!box._scr){ box._scr=1; faceScrollTo(m, box._gi); } else m.scrollTop=st;
+    m.onscroll=function(){ faceFade(m); };
+  }
+  faceFade(m);
+}
+/* الآيةُ الجاريةُ في ربع الإطار الأعلى — وما قبلها من المقطع فوقها يُمرَّر إليه */
+function faceScrollTo(m, gi){
+  var w=m.querySelector('.mline:not(.cut) [data-gi="'+gi+'"]'); if(!w) return;
+  var ln=w.closest('.mline');
+  m.scrollTop=Math.max(0, (ln.offsetTop-m.offsetTop)-m.clientHeight*0.25);
+}
+function faceFade(m){
+  var on=m.classList.contains('stscr');
+  m.classList.toggle('sft', on && m.scrollTop>2);
+  m.classList.toggle('sfb', on && m.scrollTop+m.clientHeight<m.scrollHeight-2);
 }
 /* كلماتُ الآية gi في الوجه، بترتيبها */
 function faceWords(gi){
@@ -13435,14 +13432,11 @@ function roundRevPage(r){
       if($('btnCueHead')) $('stRow').appendChild($('btnCueHead'));
     }
     facePaint($('stFace'), rgs[0][0], function(box){
-      box._side=1;
       /* خاتمةُ ما قبله بقدر كلمات الوجه نفسِه، فلا تبدو أكبرَ ممّا تحتها */
       try{
         var mw=box.querySelector('.mline'), ca=document.querySelector('#seamCue .ayah');
         if(mw && ca) ca.style.fontSize=getComputedStyle(mw).fontSize;
       }catch(e){}
-      var hn=box.querySelector('.sthalf');
-      if(hn) hn.onclick=function(e){ e.stopPropagation(); box._side=(box._side===1)?2:1; faceHalf(box,true); };
       coverDraw();
     }, function(){ r.noFace=true; roundRevPage(r); }, rgs);
   } else
