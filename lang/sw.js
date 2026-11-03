@@ -2030,5 +2030,7 @@ NUR_I18N.add('sw', {
   "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Sahihi ✅ — kutoka ukurasa {p} hadi ukurasa {q}",
   "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Makosa mawili katika maswali ya ukurasa yanaurudisha kesho",
   "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Neno moja linasamehewa — la pili linaurudisha kesho",
-  "كشفتَ كلمتين — يعود إليك غداً": "Umefunua maneno mawili — utarudi kesho"
+  "كشفتَ كلمتين — يعود إليك غداً": "Umefunua maneno mawili — utarudi kesho",
+  "العبْ بما أتممتَ اليوم": "Cheza na ulichokamilisha leo",
+  "جواهرُ اللعب اليومَ مضاعَفة": "Leo vito vya mchezo ni mara mbili"
 });

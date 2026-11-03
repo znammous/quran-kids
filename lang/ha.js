@@ -2030,5 +2030,7 @@ NUR_I18N.add('ha', {
   "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Daidai ✅ — daga shafi {p} zuwa shafi {q}",
   "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Kuskure biyu a tambayoyin shafi suna dawo da shi gobe",
   "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Kalma ɗaya ana yafewa — ta biyu tana dawo da shi gobe",
-  "كشفتَ كلمتين — يعود إليك غداً": "Ka buɗe kalmomi biyu — zai dawo gobe"
+  "كشفتَ كلمتين — يعود إليك غداً": "Ka buɗe kalmomi biyu — zai dawo gobe",
+  "العبْ بما أتممتَ اليوم": "Yi wasa da abin da ka kammala yau",
+  "جواهرُ اللعب اليومَ مضاعَفة": "Yau duwatsun wasa sun ninka biyu"
 });

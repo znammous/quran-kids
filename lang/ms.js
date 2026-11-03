@@ -2030,5 +2030,7 @@ NUR_I18N.add('ms', {
   "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Betul ✅ — dari muka surat {p} ke muka surat {q}",
   "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Dua kesilapan dalam soalan muka surat membawanya kembali esok",
   "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Satu perkataan dimaafkan — yang kedua membawanya kembali esok",
-  "كشفتَ كلمتين — يعود إليك غداً": "Kamu membuka dua perkataan — ia kembali esok"
+  "كشفتَ كلمتين — يعود إليك غداً": "Kamu membuka dua perkataan — ia kembali esok",
+  "العبْ بما أتممتَ اليوم": "Bermainlah dengan apa yang kamu selesaikan hari ini",
+  "جواهرُ اللعب اليومَ مضاعَفة": "Permata permainan hari ini berganda"
 });

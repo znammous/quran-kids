@@ -2030,5 +2030,7 @@ NUR_I18N.add('tr', {
   "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Doğru ✅ — {p}. sayfadan {q}. sayfaya",
   "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Sayfanın sorularında iki hata onu yarın geri getirir",
   "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Bir kelime affedilir — ikincisi onu yarın geri getirir",
-  "كشفتَ كلمتين — يعود إليك غداً": "İki kelime açtın — yarın tekrar gelir"
+  "كشفتَ كلمتين — يعود إليك غداً": "İki kelime açtın — yarın tekrar gelir",
+  "العبْ بما أتممتَ اليوم": "Bugün bitirdiklerinle oyna",
+  "جواهرُ اللعب اليومَ مضاعَفة": "Bugün oyun mücevherleri iki katı"
 });

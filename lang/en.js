@@ -2030,5 +2030,7 @@ NUR_I18N.add('en', {
   "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Correct ✅ — from page {p} to page {q}",
   "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Two mistakes in a page’s questions bring it back tomorrow",
   "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "One word is forgiven — a second brings it back tomorrow",
-  "كشفتَ كلمتين — يعود إليك غداً": "You revealed two words — it comes back tomorrow"
+  "كشفتَ كلمتين — يعود إليك غداً": "You revealed two words — it comes back tomorrow",
+  "العبْ بما أتممتَ اليوم": "Play with what you finished today",
+  "جواهرُ اللعب اليومَ مضاعَفة": "Game gems are doubled today"
 });
