@@ -933,6 +933,7 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 /* صفُّ التسجيل في «اقرأ وردّد» بالمراجعة: فوق «استمع» و«ابدأ»، وسطرُ حالته تحته */
 .mfgo [hidden]{display:none!important}
 .mfgo .hintline{margin:0}
+.mfgonote{text-align:center;font-weight:900;font-size:15px;color:#eab308;line-height:1.2}
 /* «غطِّها» في عرض المقطع: آياتُه مغطّاةٌ إلّا أوّلَ كلمةٍ من كلّ آية، ولمسُ كلمةٍ يكشفها */
 .mfbody .mushaf .mw.cov{color:transparent!important;cursor:pointer;
   background:linear-gradient(#cdb8f0,#cdb8f0) center 55%/calc(100% - .14em) 58% no-repeat!important}
@@ -2927,6 +2928,7 @@ body.hastabs #btnRevQuit{display:none}
   <div class="mfgo" id="mfGo" hidden>
     <!-- الاستماعُ بجانب زرّ البدء: الزرُّ الأخضرُ يخطف العين، فلا يُترك السماعُ
          في شريطٍ صغيرٍ أسفلَ الشاشة لا يُنتبه له -->
+    <div class="mfgonote" id="mfGoNote" hidden></div>
     <div class="mfgorow" id="mfRecRow" hidden>
       <button class="btn red big pulse" id="mfRec">🎤 سجّل قراءتي</button>
       <button class="btn blue big" id="mfPlayRec" hidden>▶️ استمع لصوتي</button>
@@ -5163,7 +5165,8 @@ function mfSpanNote(lastP, curP_, txt){
     try{ navToast((txt||'↔️ نطاقك يمتدّ إلى الصفحة ')+arNum(lastP)+' — اسحب الوجه لتراه'); }catch(e){}
   }, 450);
 }
-/* note: شارةٌ تطفو على الوجه تقول ما يُطلب فيه (كـ«اقرأ وردّد» في المراجعة)،
+/* note: سطرٌ فوق الأزرار يقول ما يُطلب فيه (كـ«اقرأ وردّد» في المراجعة) — كان شارةً
+   تطفو على الوجه فتغطّي سطرَه الأوّل،
    وrec: يُسجّل فيه قراءتَه ويستمع لصوته قبل البدء */
 function segPreview(pieces, title, btn, go, note, rec){
   var M=mfMarkSet(pieces);
@@ -5177,8 +5180,8 @@ function segPreview(pieces, title, btn, go, note, rec){
   MF_PV={go:go, rec:!!rec};
   MF_COV=null; mfCovDraw();
   mfRecInit(!!rec && recBtnOn());                 /* قبل رسم الوجه: يُضبط على ما بقي له */
+  $('mfGoNote').textContent=note||''; $('mfGoNote').hidden=!note;
   mushafOpenPage(P, -1, title);
-  if(note && $('mfStep')){ $('mfStep').textContent=note; $('mfStep').hidden=false; }
   mfSpanNote(P2, P, '↔️ مقطعك يكمل في الصفحة ');
 }
 /* opt (وجهُ السؤال في القراءة والتسميع): {mark} نطاقُ المقطع بدل MF_MARK، ولا تظليلَ للمتشابهات
@@ -5670,7 +5673,6 @@ function mushafClose(){
   MF_MARK=null; MF_PV=null; MF_COV=null;
   mfGlossOff();
   if($('mfGo')) $('mfGo').hidden=true;
-  if($('mfStep') && !MF_PICK) $('mfStep').hidden=true;      /* شارةُ «اقرأ وردّد» تُطوى معه */
   try{ mfPanel(null); }catch(e){}
   if($('mfSheet')){ $('mfSheet').hidden=true; $('mfSheet').classList.remove('reader','pv'); }
 }
