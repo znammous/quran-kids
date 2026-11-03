@@ -9787,7 +9787,8 @@ function mfRecInit(on){
   $('mfRecRow').hidden=!on;
   $('mfSheet').classList.toggle('rd', on);
   $('mfRecHint').hidden=true;
-  if(on) mfRecUI('idle','اقرأ المقطع بصوتك — سجّل بـ🎤 لتسمع نفسك');
+  /* بلا سطر شرحٍ تحت الأزرار: الأزرارُ تقول ما تفعل، ولا يُكتب فيه إلّا ما تعطّل */
+  if(on) mfRecUI('idle','');
 }
 $('mfRec').onclick=function(){
   var b=this;
@@ -9799,7 +9800,7 @@ $('mfRec').onclick=function(){
     recStart(function(){
       if(!REC.url){ mfRecUI('idle','لم أسمع شيئاً — اضغط 🎤 واقرأ ثم أوقف التسجيل'); return; }
       mfRecUI('ready', REC.hitMax ? 'بلغ التسجيلُ حدَّه فتوقّف — استمعْ لما سُجّل، أو أعِدْه'
-                                  : 'استمع لصوتك، ثمّ أعِد أو انتقل إلى الأسئلة');
+                                  : '');
     }, function(){
       var msg;
       if(REC.fail==='denied') msg='لم يُسمح بالمايكروفون — اضغط 🔒 في شريط العنوان واسمح به، ثم أعِد المحاولة';
@@ -9807,7 +9808,7 @@ $('mfRec').onclick=function(){
       else msg='التسجيل غير متاح على هذا المتصفح — اقرأ بصوتك واضغط الزر';
       mfRecUI('fail',msg);
     }, function(){
-      mfRecUI('rec','أنا أستمع… اقرأ المقطع ثم اضغط إيقاف');
+      mfRecUI('rec','');
     }, 0, function(){
       mfRecUI('idle','أُلغي التسجيل — اضغط 🎤 لتبدأ من جديد');
     });
@@ -9815,7 +9816,7 @@ $('mfRec').onclick=function(){
 };
 $('mfPlayRec').onclick=function(){ try{ audStop(); }catch(e){} recPlay(this); };
 $('mfSpeedRec').onclick=function(){ recRateNext(); this.textContent=recRateLabel(); };
-$('mfAgainRec').onclick=function(){ recReset(); mfRecUI('idle','اضغط 🎤 واقرأ المقطع مرة أخرى'); };
+$('mfAgainRec').onclick=function(){ recReset(); mfRecUI('idle',''); };
 /* «استمع إليها» في «اقرأ وردّد» تحت الآية — كان في شريط الدرس فلا يُرى.
    يتلو آيتَه التي هو فيها، وإن لم تكن جولتُه آيةً بعينها فمقطعَه.
    لمسةٌ تتلو مرّةً بلا سؤالٍ عن التكرار، ولمسةٌ توقفها — بلا صندوق. وتسكت
