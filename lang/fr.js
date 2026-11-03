@@ -2038,5 +2038,8 @@ NUR_I18N.add('fr', {
   "افتحها في المصحف": "L’ouvrir dans le Mushaf",
   "ثبتت الآية!": "Le verset est solide !",
   "ارتفعت من «{a}» إلى «{b}»": "Passé de « {a} » à « {b} »",
-  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Il devient vert si tu le réussis un autre jour"
+  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Il devient vert si tu le réussis un autre jour",
+  "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Es-tu sûr de vouloir l’afficher ?<br>Si tu l’affiches, elle te reviendra demain",
+  "نعم، اكشفه": "Oui, affiche-la",
+  "لا، أُكمل التسميع": "Non, je continue à réciter"
 });

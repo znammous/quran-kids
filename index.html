@@ -13767,7 +13767,14 @@ function roundRevPage(r){
   };
   $('btnOkR').onclick=function(){ recReset(); sGood(); finishRevPage(); };
   if($('btnSkipQuiz')) $('btnSkipQuiz').onclick=function(){ recReset(); revSkipToQuiz(); };
+  /* كشفُه قبل التسجيل يعيده غداً، فيُسأل أوّلاً: كان يلمسه ليتثبّت فيفوته يومُه.
+     وبعد التسجيل مقابلةٌ لا تُحسب عليه، فيُكشف بلا سؤال */
   $('btnShow').onclick=function(){
+    if(recDone) return showPage();
+    uiBox('هل أنت متأكّد أنّك تريد الكشف؟\nإن كشفتَه عاد إليك غداً', '🤔',
+      '📖 نعم، اكشفه', 'لا، أُكمل التسميع', function(ok){ if(ok) showPage(); });
+  };
+  function showPage(){
     /* المراجعةُ الحرّة نطاقُها يمتدّ على أوجه، فيُظلَّل كلُّه لا قطعةُ هذا الوجه
        وحدَها، ويُقال له إلى أين يمتدّ — وكان يراه وجهاً واحداً فيظنّه كلَّ نطاقه.
        وأمّا الوردُ وما استحقّ من محفوظه فنطاقُهما هذا الوجهُ نفسُه */
@@ -13782,7 +13789,7 @@ function roundRevPage(r){
     /* كشفُ الوجه يعيده غداً فيُحَسّ هزّةَ الخطأ، وبعد التسجيل مقابلةٌ لا استعانةٌ فلمسةٌ خفيفة */
     hap(recDone ? 'tap' : 'bad');
     if(!recDone) revWeak(r.page);   /* بعد التسجيل يفتحه ليقابل تسميعه بالمصحف، لا استعانةً */
-  };
+  }
   $('btnAgainR').onclick=function(){
     revWeak(r.page); reveal(true);
     if(FM) $('hintR').textContent='لا بأس — اقرأها ثم أعد التسميع 💚';

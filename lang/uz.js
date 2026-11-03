@@ -2038,5 +2038,8 @@ NUR_I18N.add('uz', {
   "افتحها في المصحف": "Mushafda ochish",
   "ثبتت الآية!": "Oyat mustahkam bo‘ldi!",
   "ارتفعت من «{a}» إلى «{b}»": "“{a}” dan “{b}” ga ko‘tarildi",
-  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Boshqa kuni to‘g‘ri topsangiz yashil bo‘ladi"
+  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Boshqa kuni to‘g‘ri topsangiz yashil bo‘ladi",
+  "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Haqiqatan ham ochmoqchimisan?<br>Agar ochsang, u ertaga senga yana qaytadi",
+  "نعم، اكشفه": "Ha, och",
+  "لا، أُكمل التسميع": "Yo‘q, yoddan o‘qishni davom ettiraman"
 });

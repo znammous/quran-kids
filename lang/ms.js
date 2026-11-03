@@ -2038,5 +2038,8 @@ NUR_I18N.add('ms', {
   "افتحها في المصحف": "Buka dalam Mushaf",
   "ثبتت الآية!": "Ayat itu sudah mantap!",
   "ارتفعت من «{a}» إلى «{b}»": "Naik daripada “{a}” kepada “{b}”",
-  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Ia menjadi hijau jika kamu betul pada hari lain"
+  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Ia menjadi hijau jika kamu betul pada hari lain",
+  "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Adakah anda pasti mahu membukanya?<br>Jika anda membukanya, ia akan kembali kepada anda esok",
+  "نعم، اكشفه": "Ya, buka",
+  "لا، أُكمل التسميع": "Tidak, teruskan hafalan"
 });

@@ -2038,5 +2038,8 @@ NUR_I18N.add('ha', {
   "افتحها في المصحف": "Buɗe ta a cikin Mushafi",
   "ثبتت الآية!": "Ayar ta tabbata!",
   "ارتفعت من «{a}» إلى «{b}»": "Ta tashi daga “{a}” zuwa “{b}”",
-  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Za ta zama kore idan ka ci ta a wata rana"
+  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Za ta zama kore idan ka ci ta a wata rana",
+  "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Ka tabbata kana so ka buɗe ta?<br>Idan ka buɗe ta, za ta dawo maka gobe",
+  "نعم، اكشفه": "Ee, buɗe ta",
+  "لا، أُكمل التسميع": "A’a, in ci gaba da karatu"
 });

@@ -2038,5 +2038,8 @@ NUR_I18N.add('so', {
   "افتحها في المصحف": "Ku fur Mushafka",
   "ثبتت الآية!": "Aayaddu way adkaatay!",
   "ارتفعت من «{a}» إلى «{b}»": "Waxay ka kacday “{a}” una gudubtay “{b}”",
-  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Way cagaaran doontaa haddaad maalin kale saxdo"
+  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Way cagaaran doontaa haddaad maalin kale saxdo",
+  "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Ma hubtaa inaad rabto inaad furto?<br>Haddaad furto, berri ayay kuu soo noqonaysaa",
+  "نعم، اكشفه": "Haa, fur",
+  "لا، أُكمل التسميع": "Maya, aan sii wado akhriska"
 });

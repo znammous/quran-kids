@@ -2038,5 +2038,8 @@ NUR_I18N.add('sw', {
   "افتحها في المصحف": "Ifungue kwenye Msahafu",
   "ثبتت الآية!": "Aya imeimarika!",
   "ارتفعت من «{a}» إلى «{b}»": "Imepanda kutoka “{a}” hadi “{b}”",
-  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Itakuwa kijani ukiipata sawa siku nyingine"
+  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Itakuwa kijani ukiipata sawa siku nyingine",
+  "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Je, una uhakika unataka kuifunua?<br>Ukiifunua, itarudi kwako kesho",
+  "نعم، اكشفه": "Ndiyo, ifunue",
+  "لا، أُكمل التسميع": "Hapana, niendelee kusoma kwa moyo"
 });

@@ -2038,5 +2038,8 @@ NUR_I18N.add('tr', {
   "افتحها في المصحف": "Mushafta aç",
   "ثبتت الآية!": "Ayet sağlamlaştı!",
   "ارتفعت من «{a}» إلى «{b}»": "“{a}” seviyesinden “{b}” seviyesine çıktı",
-  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Başka bir gün doğru bilirsen yeşile döner"
+  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Başka bir gün doğru bilirsen yeşile döner",
+  "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Açmak istediğinden emin misin?<br>Açarsan yarın sana tekrar gelir",
+  "نعم، اكشفه": "Evet, aç",
+  "لا، أُكمل التسميع": "Hayır, ezberden okumaya devam et"
 });
