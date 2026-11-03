@@ -1020,6 +1020,8 @@ NUR_I18N.add('sw', {
   "سمّع عن ظهر قلب": "Soma kwa moyo bila kuangalia",
   "سمّعتُها صحيحة": "Nimeisoma kwa usahihi",
   "سمّعتُها كلها — إلى الأسئلة": "Nimezisoma zote — kwenda kwenye maswali",
+  "قرأتُه — إلى الأسئلة": "Nimeisoma — kwenda kwenye maswali",
+  "اقرأ المقطع وردّده": "Soma sehemu hii na uirudie",
   "سنراجع": "Tutarudia",
   "سهل": "Rahisi",
   "سهل — ضغطٌ واختيارٌ بلا كتابة": "Rahisi — kubonyeza na kuchagua, bila kuandika",

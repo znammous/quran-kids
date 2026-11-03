@@ -1020,6 +1020,8 @@ NUR_I18N.add('fr', {
   "سمّع عن ظهر قلب": "Réciter par cœur",
   "سمّعتُها صحيحة": "Je l’ai bien récité",
   "سمّعتُها كلها — إلى الأسئلة": "Je les ai tous récités — aux questions",
+  "قرأتُه — إلى الأسئلة": "Je l’ai lu — aux questions",
+  "اقرأ المقطع وردّده": "Lis le passage et répète-le",
   "سنراجع": "On va réviser",
   "سهل": "Facile",
   "سهل — ضغطٌ واختيارٌ بلا كتابة": "Facile — toucher et choisir, sans taper",

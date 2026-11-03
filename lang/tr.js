@@ -1020,6 +1020,8 @@ NUR_I18N.add('tr', {
   "سمّع عن ظهر قلب": "Ezberden oku",
   "سمّعتُها صحيحة": "Doğru okudum",
   "سمّعتُها كلها — إلى الأسئلة": "Hepsini okudum — sorulara geç",
+  "قرأتُه — إلى الأسئلة": "Okudum — sorulara geç",
+  "اقرأ المقطع وردّده": "Bölümü oku ve tekrarla",
   "سنراجع": "Tekrar edeceğiz",
   "سهل": "Kolay",
   "سهل — ضغطٌ واختيارٌ بلا كتابة": "Kolay — dokun ve seç, yazmak yok",

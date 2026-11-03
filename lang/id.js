@@ -1020,6 +1020,8 @@ NUR_I18N.add('id', {
   "سمّع عن ظهر قلب": "Setoran dari hafalan",
   "سمّعتُها صحيحة": "Aku menyetorkannya dengan benar",
   "سمّعتُها كلها — إلى الأسئلة": "Aku sudah menyetorkan semuanya — ke soal-soal",
+  "قرأتُه — إلى الأسئلة": "Aku sudah membacanya — ke soal-soal",
+  "اقرأ المقطع وردّده": "Baca bagian ini dan ulangi",
   "سنراجع": "Kita akan murajaah",
   "سهل": "Mudah",
   "سهل — ضغطٌ واختيارٌ بلا كتابة": "Mudah — tekan dan pilih, tanpa mengetik",

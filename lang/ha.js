@@ -1020,6 +1020,8 @@ NUR_I18N.add('ha', {
   "سمّع عن ظهر قلب": "Karanta daga ka",
   "سمّعتُها صحيحة": "Na karanta ta daidai",
   "سمّعتُها كلها — إلى الأسئلة": "Na karanta su duka — zuwa tambayoyi",
+  "قرأتُه — إلى الأسئلة": "Na karanta shi — zuwa tambayoyi",
+  "اقرأ المقطع وردّده": "Karanta sashen kuma ka maimaita shi",
   "سنراجع": "Za mu yi bita",
   "سهل": "Mai sauƙi",
   "سهل — ضغطٌ واختيارٌ بلا كتابة": "Mai sauƙi — dannawa da zaɓi, ba rubutu",

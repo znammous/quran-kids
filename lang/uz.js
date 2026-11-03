@@ -1020,6 +1020,8 @@ NUR_I18N.add('uz', {
   "سمّع عن ظهر قلب": "Yoddan oʻqib ber",
   "سمّعتُها صحيحة": "Toʻgʻri oʻqib berdim",
   "سمّعتُها كلها — إلى الأسئلة": "Hammasini oʻqib berdim — savollarga",
+  "قرأتُه — إلى الأسئلة": "Oʻqidim — savollarga",
+  "اقرأ المقطع وردّده": "Boʻlakni oʻqib, takrorla",
   "سنراجع": "Takrorlaymiz",
   "سهل": "Oson",
   "سهل — ضغطٌ واختيارٌ بلا كتابة": "Oson — bosish va tanlash, yozish yoʻq",

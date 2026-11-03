@@ -5150,7 +5150,8 @@ function mfSpanNote(lastP, curP_, txt){
     try{ navToast((txt||'↔️ نطاقك يمتدّ إلى الصفحة ')+arNum(lastP)+' — اسحب الوجه لتراه'); }catch(e){}
   }, 450);
 }
-function segPreview(pieces, title, btn, go){
+/* note: شارةٌ تطفو على الوجه تقول ما يُطلب فيه (كـ«اقرأ وردّد» في المراجعة) */
+function segPreview(pieces, title, btn, go, note){
   var M=mfMarkSet(pieces);
   if(!M.rg.length){ MF_MARK=null; if(go) go(); return; }
   var P=pageOfIdx(M.rg[0][0]), P2=pageOfIdx(M.rg[M.rg.length-1][1]-1);
@@ -5162,6 +5163,7 @@ function segPreview(pieces, title, btn, go){
   MF_PV={go:go};
   MF_COV=null; mfCovDraw();
   mushafOpenPage(P, -1, title);
+  if(note && $('mfStep')){ $('mfStep').textContent=note; $('mfStep').hidden=false; }
   mfSpanNote(P2, P, '↔️ مقطعك يكمل في الصفحة ');
 }
 /* opt (وجهُ السؤال في القراءة والتسميع): {mark} نطاقُ المقطع بدل MF_MARK، ولا تظليلَ للمتشابهات
@@ -5652,6 +5654,7 @@ function mushafClose(){
   MF_MARK=null; MF_PV=null; MF_COV=null;
   mfGlossOff();
   if($('mfGo')) $('mfGo').hidden=true;
+  if($('mfStep') && !MF_PICK) $('mfStep').hidden=true;      /* شارةُ «اقرأ وردّد» تُطوى معه */
   try{ mfPanel(null); }catch(e){}
   if($('mfSheet')){ $('mfSheet').hidden=true; $('mfSheet').classList.remove('reader','pv'); }
 }
@@ -11717,7 +11720,19 @@ function runRound(){
   var r=S.rounds[S.i];
   if(S.review && r.surah){ S.surah=r.surah; S.seg=[r.segFrom,r.segTo]; }
   r=qFit(r);
-  /* مراجعةُ اليوم: يُعرض وجهُ المقطع قبل تسميعه، مرّةً لكلّ مقطع */
+  /* مراجعةُ اليوم: أوّلُ كلِّ مقطعٍ «اقرأ وردّد» — يقرأ وجهَه ويردّده، ويستمع إليه
+     ويغطّيه إن شاء، قبل أن يُحسب عليه خطأٌ في أسئلته. وإن كان أوّلُ أسئلته التسميعَ
+     كفته هذه عن عرض الوجه قبله */
+  if(S.review && !S.rev && !S.juzTest && r.surah){
+    var rdk=r.surah.n+':'+r.segFrom;
+    if(S.rdSeen!==rdk){
+      S.rdSeen=rdk;
+      if(r.t==='recite') S.pvSeen=rdk;
+      segPreview([{s:r.surah, from:r.segFrom, to:r.segTo}], '📖 '+r.surah.name, '✅ قرأتُه — إلى الأسئلة', null,
+                 '📖 اقرأ المقطع وردّده');
+    }
+  }
+  /* ويُعرض وجهُ المقطع قبل تسميعه، مرّةً لكلّ مقطع */
   if(r.t==='recite' && S.review && !S.rev && !S.juzTest && r.surah){
     var pvk=r.surah.n+':'+r.segFrom;
     if(S.pvSeen!==pvk){

@@ -1020,6 +1020,8 @@ NUR_I18N.add('so', {
   "سمّع عن ظهر قلب": "Xifdi ka akhri (madax ka akhri)",
   "سمّعتُها صحيحة": "Si sax ah ayaan u akhriyay",
   "سمّعتُها كلها — إلى الأسئلة": "Dhammaan waan akhriyay — u gudub su’aalaha",
+  "قرأتُه — إلى الأسئلة": "Waan akhriyay — u gudub su’aalaha",
+  "اقرأ المقطع وردّده": "Akhri qaybta oo ku celceli",
   "سنراجع": "Waan muraajacoon doonnaa",
   "سهل": "Fudud",
   "سهل — ضغطٌ واختيارٌ بلا كتابة": "Fudud — riixid iyo dooris, qoraal la’aan",

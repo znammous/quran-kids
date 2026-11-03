@@ -1020,6 +1020,8 @@ NUR_I18N.add('en', {
   "سمّع عن ظهر قلب": "Recite from memory",
   "سمّعتُها صحيحة": "I recited it correctly",
   "سمّعتُها كلها — إلى الأسئلة": "I recited them all — to the questions",
+  "قرأتُه — إلى الأسئلة": "I read it — to the questions",
+  "اقرأ المقطع وردّده": "Read the passage and repeat it",
   "سنراجع": "We’ll review",
   "سهل": "Easy",
   "سهل — ضغطٌ واختيارٌ بلا كتابة": "Easy — tapping and choosing, no typing",

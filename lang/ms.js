@@ -1020,6 +1020,8 @@ NUR_I18N.add('ms', {
   "سمّع عن ظهر قلب": "Tasmik tanpa melihat",
   "سمّعتُها صحيحة": "Saya tasmik dengan betul",
   "سمّعتُها كلها — إلى الأسئلة": "Saya sudah tasmik semuanya — ke soalan",
+  "قرأتُه — إلى الأسئلة": "Saya sudah membacanya — ke soalan",
+  "اقرأ المقطع وردّده": "Baca bahagian ini dan ulang",
   "سنراجع": "Kita akan ulang kaji",
   "سهل": "Mudah",
   "سهل — ضغطٌ واختيارٌ بلا كتابة": "Mudah — tekan dan pilih, tanpa menaip",
