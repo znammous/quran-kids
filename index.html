@@ -142,8 +142,8 @@
     r=byNum(m[2]); return r==null ? null : flip(m[1])+r+flip(m[3]);
   }
   /* لغاتُ اليسار: سهمٌ في أوّل النصّ وآخره ينعكس («⬅️ التالي» ← «Next ➡️» جهةً) */
-  var LTR=LANGS[code].dir==='ltr', AMAP={'⬅':'➡','➡':'⬅','←':'→','→':'←','◀':'▶','▶':'◀','‹':'›','›':'‹','❮':'❯','❯':'❮','«':'“','»':'”'};
-  function flip(x){ return LTR && x ? x.replace(/[⬅➡←→◀▶‹›❮❯«»]/g, function(c){ return AMAP[c]; }) : x; }
+  var LTR=LANGS[code].dir==='ltr', AMAP={'⬅':'➡','➡':'⬅','←':'→','→':'←','◀':'▶','▶':'◀','‹':'›','›':'‹','❮':'❯','❯':'❮','⏮':'⏭','⏭':'⏮','«':'“','»':'”'};
+  function flip(x){ return LTR && x ? x.replace(/[⬅➡←→◀▶‹›❮❯⏮⏭«»]/g, function(c){ return AMAP[c]; }) : x; }
   /* سطرٌ من أجزاءٍ بينها «•» («خلال عشرة أشهر • 300 يوماً»): يُترجم كلُّ جزءٍ وحدَه */
   function lookParts(s){
     var r=look(s); if(r!=null) return r;
@@ -13263,7 +13263,7 @@ function roundRevPage(r){
       '<div class="hintline revrule" id="hintR">💡 إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً</div>'+
       '<div class="stbig" id="stBig"></div><div class="row strow" id="stRow"></div>'+
       ((REV.pages && REV.pi < REV.pages.length-1)
-        ? '<button class="btn ghost mini stskip" id="btnSkipQuiz">⏭️ سمّعتُها كلها — إلى الأسئلة</button>' : '')+
+        ? '<button class="btn ghost mini stskip" id="btnSkipQuiz">⏮️ سمّعتُها كلها — إلى الأسئلة</button>' : '')+
       '<div hidden id="stPool">'+
         (useRec ? '<button class="btn red big pulse" id="btnRecR">🎤 سجّل تسميعي</button>'+
                   '<button class="btn blue" id="btnPlayR">▶️ استمع لتسميعي</button>'+
@@ -13298,7 +13298,7 @@ function roundRevPage(r){
     (useRec ? '<button class="btn ghost big" id="btnNoMic3">🔇 لا أستطيع التسجيل الآن</button>' : '')+
     /* التخطّي يعني قفز الصفحات الباقية، وفي آخر صفحة لا يزيد شيئاً على ✅ فيُخفى */
     ((REV.pages && REV.pi < REV.pages.length-1)
-      ? '<button class="btn ghost big" id="btnSkipQuiz">⏭️ سمّعتُها كلها — إلى الأسئلة</button>'
+      ? '<button class="btn ghost big" id="btnSkipQuiz">⏮️ سمّعتُها كلها — إلى الأسئلة</button>'
       : '');
   var recDone=false;                  /* سجّل تسميعه والصفحةُ مكشوفةٌ للمقارنة */
   /* كلماتُ ما يُسأل عنه بترتيبها: أوّلُها مفتاحٌ ظاهر (EDGE_WORDS)، وما سواها مغطّى إلّا ما لمسه */
