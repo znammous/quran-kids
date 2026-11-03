@@ -2024,5 +2024,6 @@ NUR_I18N.add('tr', {
   "ابدأ بعد": "Şundan sonra başla",
   "أوّلُها": "Başı",
   "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Bir sayfanın sonu gösterilir, sen de sonraki sayfanın başını hatırlarsın",
-  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Doğru ✅ — {p}. sayfadan {q}. sayfaya"
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Doğru ✅ — {p}. sayfadan {q}. sayfaya",
+  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Sayfanın sorularında iki hata onu yarın geri getirir"
 });

@@ -2024,5 +2024,6 @@ NUR_I18N.add('so', {
   "ابدأ بعد": "Ka bilow kadib",
   "أوّلُها": "Bilowgiisa",
   "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Dhammaadka bog ayaa la soo bandhigaa, adiguna waxaad sheegtaa bilowga bogga xiga",
-  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Sax ✅ — bogga {p} ilaa bogga {q}"
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Sax ✅ — bogga {p} ilaa bogga {q}",
+  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Laba qalad oo ku jira su'aalaha bogga ayaa berri dib kuugu soo celinaya"
 });

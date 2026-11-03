@@ -2024,5 +2024,6 @@ NUR_I18N.add('ms', {
   "ابدأ بعد": "Mula selepas",
   "أوّلُها": "Permulaannya",
   "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Akhir sesuatu muka surat ditunjukkan, lalu kamu menyebut permulaan muka surat seterusnya",
-  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Betul ✅ — dari muka surat {p} ke muka surat {q}"
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Betul ✅ — dari muka surat {p} ke muka surat {q}",
+  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Dua kesilapan dalam soalan muka surat membawanya kembali esok"
 });

@@ -2024,5 +2024,6 @@ NUR_I18N.add('uz', {
   "ابدأ بعد": "Shundan keyin boshlang",
   "أوّلُها": "Boshi",
   "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Sahifaning oxiri koʻrsatiladi, siz esa keyingi sahifaning boshini aytasiz",
-  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Toʻgʻri ✅ — {p}-sahifadan {q}-sahifaga"
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Toʻgʻri ✅ — {p}-sahifadan {q}-sahifaga",
+  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Sahifa savollaridagi ikki xato uni ertaga qaytaradi"
 });

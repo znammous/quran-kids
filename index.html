@@ -962,6 +962,8 @@ body.light .card.bare .diffline{color:var(--on2)}
 .card.bare .stagechip.fix{background:rgba(60,200,120,.16);color:#8fe3b0;border-color:#2fa866}
 body.light .card.bare .stagechip.fix{background:#e3f6ea;color:#0b6b39;border-color:#3fae6e}
 .card.bare .fb.fixnote{color:#8fe3b0;font-size:17px}
+.fb.rulenote{color:#6a809b;font-size:14px;font-weight:800}
+.card.bare .fb.rulenote{color:var(--on3)}
 body.light .card.bare .fb.fixnote{color:#0b6b39}
 
 .stagechip{display:inline-block;background:#e2f1ff;color:var(--g1);border-radius:10px;padding:5px 12px;
@@ -1702,7 +1704,7 @@ body.light .sp-lit{fill:#1f92d4}
 .revout span{font-weight:800}
 .revrule{font-size:13px;font-weight:800;color:#6a809b;text-align:center;margin:2px 0 10px}
 /* مفتاحُ التسميع خاتمةُ ما قبل الوجه: سطرٌ واحدٌ فوقه، والتلميحُ في طرفه */
-.seamcue{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+.seamcue{display:flex;align-items:baseline;justify-content:center;gap:8px;flex-wrap:wrap;
   font-size:13px;font-weight:800;color:#6a809b;margin:0 0 8px;text-align:center}
 .seamcue .ayah{font-size:20px;line-height:1.7;color:#102b4a}
 .seamcue>span:first-child{font-size:14px}
@@ -11701,6 +11703,10 @@ function runRound(){
   $('stageChip').classList.toggle('fix', !!r.rq);
   /* أوّلُ سؤالِ تثبيتٍ في المرحلة تستقبله شاشةُ تشجيعٍ هادئة — نجمةٌ فوقها مصباحٌ ينبض —
      لا تذكر الخطأ، فالإعادةُ تدبيرٌ لا عتاب. ثمّ يُعرَّف بسطرٍ مكانَ النتيجة، وبعده تكفي الشارة */
+  /* قاعدةُ الأسئلة في أوّلها: خرجت من شاشة التسميع لتُقال حيث تنطبق */
+  if(S.rev==='quiz' && S.i===0 && !r.rq){
+    $('fb').className='fb rulenote'; $('fb').textContent='💡 خطآن في أسئلة الوجه يُعيدانه إليك غداً';
+  }
   if(r.rq && !S.fixSeen){
     S.fixSeen=1;
     $('fb').className='fb fixnote'; $('fb').textContent='🔁 نعود إليه لنثبّته';
@@ -13812,17 +13818,20 @@ function roundRecite(r){
       recTimerStop(); b.disabled=false; b.classList.remove('reclive');
       recDone=(state==='ready');
       [].slice.call(B.children).concat([].slice.call(R.children)).forEach(function(e){ pool.appendChild(e); });
-      var big=null, row=[];
+      var big=null, big2=null, row=[];
+      /* «سجّل» و«سمّعتُها» في سطرٍ واحد، كما في تسميع الوجه */
       if(state==='idle'){ big=b; b.textContent='🎤 سجّل تسميعي'; b.className='btn red big pulse';
-        ok.className='btn ghost'; ok.textContent='✅ سمّعتُها'; row=[ok,show,$('btnNoMic2')]; reveal(false); }
+        big2=ok; ok.className='btn ghost big'; ok.textContent='✅ سمّعتُها'; row=[show,$('btnNoMic2')]; reveal(false); }
       else if(state==='norec'){ big=ok; ok.className='btn green big pulse'; ok.textContent='✅ سمّعتُها صحيحة'; row=[show,again]; }
       else if(state==='wait'){ big=b; b.textContent='⏳ في انتظار إذن المايكروفون'; b.className='btn red big'; reveal(false); }
       else if(state==='rec'){ big=b; b.className='btn red big reclive'; recTimerStart(b,'⏹️ انتهيت من التسميع'); }
       else if(state==='ready'){ big=ok; ok.className='btn green big pulse'; ok.textContent='✅ سمّعتُها صحيحة';
         row=[$('btnPlayR'),$('btnSpeedR'),again]; reveal(true); }
-      else if(state==='fail'){ big=b; b.textContent='🎤 حاول التسجيل مرة أخرى'; b.className='btn red big';
-        ok.className='btn ghost'; ok.textContent='✅ سمّعتُها'; row=[ok,show,again]; }
+      else if(state==='fail'){ big=b; b.textContent='🎤 أعِد التسجيل'; b.className='btn red big';
+        big2=ok; ok.className='btn ghost big'; ok.textContent='✅ سمّعتُها'; row=[show,again]; }
       if(big) B.appendChild(big);
+      if(big2) B.appendChild(big2);
+      B.classList.toggle('two', !!big2);
       row.forEach(function(e){ if(e) R.appendChild(e); });
       R.style.visibility=row.length?'':'hidden';
       if(h && msg!=null) h.textContent=msg;

@@ -2024,5 +2024,6 @@ NUR_I18N.add('sw', {
   "ابدأ بعد": "Anza baada ya",
   "أوّلُها": "Mwanzo wake",
   "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Mwisho wa ukurasa huonyeshwa, nawe unataja mwanzo wa ukurasa unaofuata",
-  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Sahihi ✅ — kutoka ukurasa {p} hadi ukurasa {q}"
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Sahihi ✅ — kutoka ukurasa {p} hadi ukurasa {q}",
+  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Makosa mawili katika maswali ya ukurasa yanaurudisha kesho"
 });

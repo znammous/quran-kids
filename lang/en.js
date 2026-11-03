@@ -2024,5 +2024,6 @@ NUR_I18N.add('en', {
   "ابدأ بعد": "Start after",
   "أوّلُها": "Its opening",
   "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "The end of a page is shown, and you recall how the next one begins",
-  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Correct ✅ — from page {p} to page {q}"
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Correct ✅ — from page {p} to page {q}",
+  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Two mistakes in a page’s questions bring it back tomorrow"
 });

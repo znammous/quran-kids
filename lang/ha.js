@@ -2024,5 +2024,6 @@ NUR_I18N.add('ha', {
   "ابدأ بعد": "Fara bayan",
   "أوّلُها": "Farkonsa",
   "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Ana nuna ƙarshen shafi, kai kuma ka faɗi farkon shafi na gaba",
-  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Daidai ✅ — daga shafi {p} zuwa shafi {q}"
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Daidai ✅ — daga shafi {p} zuwa shafi {q}",
+  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Kuskure biyu a tambayoyin shafi suna dawo da shi gobe"
 });

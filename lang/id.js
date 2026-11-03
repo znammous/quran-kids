@@ -2024,5 +2024,6 @@ NUR_I18N.add('id', {
   "ابدأ بعد": "Mulai setelah",
   "أوّلُها": "Awalnya",
   "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Akhir sebuah halaman ditampilkan, lalu kamu menyebut awal halaman berikutnya",
-  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Benar ✅ — dari halaman {p} ke halaman {q}"
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Benar ✅ — dari halaman {p} ke halaman {q}",
+  "خطآن في أسئلة الوجه يُعيدانه إليك غداً": "Dua kesalahan dalam soal halaman membuatnya kembali besok"
 });
