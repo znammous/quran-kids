@@ -8698,9 +8698,7 @@ var REC={ mr:null, chunks:[], url:null, stream:null, rec:false, starting:false, 
    الجديدَ وهو لا يدري. */
 var RECMAX=null;
 function recMaxStop(){ if(RECMAX){ clearTimeout(RECMAX); RECMAX=null; } }
-/* أوقفه اللاعب لهذه الجلسة؟ */
-function useRecNow(){ return SET.rec!==false && !REC.off; }
-/* في التسميع يبقى زرُّ 🎤 ظاهراً ولو كان التسجيلُ مطفأً في الإعدادات،
+/* في القراءة والتسميع يبقى زرُّ 🎤 ظاهراً ولو كان التسجيلُ مطفأً في الإعدادات،
    فيعرف الطفلُ أنّه متاح؛ وضغطُه يسأل وليَّ الأمر ثمّ يشغّله ويبدأ التسجيل */
 function recBtnOn(){ return !REC.off; }
 function recAsk(go){
@@ -12459,7 +12457,7 @@ function roundRead(r){
     ? '<div class="basmala"'+(r.a===0?'':' style="visibility:hidden"')+'>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>'
     : '';
   recReset();
-  var useRec = !brief && useRecNow();
+  var useRec = !brief && recBtnOn();
   var hint0 = useRec ? 'اقرأ الآية '+marra(need)+' — سجّل بـ🎤 لتسمع نفسك، أو اضغط ✅ إن قرأتها بصوتك'
                      : 'اقرأ الآية بصوت واضح '+marra(need);
   /* في وجه المصحف: الأزرارُ تحته كما كانت تحت الصندوق، وفي أسفل الشاشة زرٌّ كبيرٌ
@@ -12606,6 +12604,9 @@ function roundRead(r){
         recUI('idle','أُلغي التسجيل — اضغط 🎤 لتبدأ من جديد');
         return;
       }
+      recAsk(recGo);
+    };
+    function recGo(){
       recUI('wait','⏳ إن سألك المتصفح عن المايكروفون فاضغط «سماح»');
       recStart(function(){
         if(!REC.url){ recUI('idle','لم أسمع شيئاً — اضغط 🎤 واقرأ ثم أوقف التسجيل'); return; }
@@ -12622,7 +12623,7 @@ function roundRead(r){
       }, 60000, function(){                            /* قراءةُ الآية: دقيقة */
         recUI('idle','أُلغي التسجيل — اضغط 🎤 لتبدأ من جديد');
       });
-    };
+    }
     /* إن سمح المستخدم من شريط العنوان بعد الرفض، تختفي الرسالة فوراً بلا تحديث الصفحة */
     recOnGrant(function(){
       if(REC.rec || REC.url) return;
