@@ -632,6 +632,8 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 #playArea.qface+.fb:empty{min-height:0;margin-top:0}
 #playArea.qface .stskip{width:100%;margin:6px 0 0;padding:4px 6px;min-height:0;height:auto;font-size:14px;background:none;box-shadow:none;
   color:var(--on1)}
+/* خطٌّ تحت النصّ وحده لا الأيقونة: يُعرف أنّه يُلمس */
+#playArea.qface .stskip .ul{text-decoration:underline;text-underline-offset:3px}
 /* القراءة: الآيةُ داكنةٌ مظلَّلة، وبقيّةُ المقطع أخفت */
 .stface.rd .mw,.stface.rd .manum{color:#8f99a9;transition:color .2s,background .2s}
 .stface.rd .cur{color:#07162b;background:rgba(255,214,102,.40)}
@@ -13416,7 +13418,7 @@ function roundRevPage(r){
       '<div class="hintline revrule" id="hintR">💡 يعود إليك غداً إن كشفتَه أو أخطأتَ فيه</div>'+
       '<div class="stbig" id="stBig"></div><div class="row strow" id="stRow"></div>'+
       ((REV.pages && REV.pi < REV.pages.length-1)
-        ? '<button class="btn ghost mini stskip" id="btnSkipQuiz">⏮️ سمّعتُها كلها — إلى الأسئلة</button>' : '')+
+        ? '<button class="btn ghost mini stskip" id="btnSkipQuiz">⏮️ <span class="ul">سمّعتُها كلها — إلى الأسئلة</span></button>' : '')+
       '<div hidden id="stPool">'+
         (useRec ? '<button class="btn red big pulse" id="btnRecR">🎤 سجّل تسميعي</button>'+
                   '<button class="btn blue" id="btnPlayR">▶️ استمع لتسميعي</button>'+
