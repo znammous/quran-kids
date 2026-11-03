@@ -1113,6 +1113,7 @@ NUR_I18N.add('uz', {
   "علي جابر": "Ali Jobir",
   "عليك {0} من المقاطع مستحقّةً للمراجعة": "Takrorlash vaqti kelgan {0} ta boʻlaging bor",
   "عمليّاتُ بحثٍ سابقة": "Oldingi qidiruvlar",
+  "آخرُ ما فُتح": "Yaqinda ochilganlar",
   "عن ظهر قلب": "Yoddan",
   "عن ظهر قلب (التشكيل غير مطلوب": "Yoddan (harakatlar shart emas",
   "عن يمين الصحن وشماله": "Hovlining oʻng va chap tomonida",

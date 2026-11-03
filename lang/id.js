@@ -1113,6 +1113,7 @@ NUR_I18N.add('id', {
   "علي جابر": "Ali Jaber",
   "عليك {0} من المقاطع مستحقّةً للمراجعة": "Kamu punya {0} bagian yang perlu dimurajaah",
   "عمليّاتُ بحثٍ سابقة": "Pencarian sebelumnya",
+  "آخرُ ما فُتح": "Terakhir dibuka",
   "عن ظهر قلب": "Dari hafalan",
   "عن ظهر قلب (التشكيل غير مطلوب": "Dari hafalan (harakat tidak diperlukan",
   "عن يمين الصحن وشماله": "Di kanan dan kiri halaman masjid",

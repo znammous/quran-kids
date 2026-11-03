@@ -1113,6 +1113,7 @@ NUR_I18N.add('ms', {
   "علي جابر": "Ali Jaber",
   "عليك {0} من المقاطع مستحقّةً للمراجعة": "Kamu ada {0} bahagian yang perlu diulang kaji",
   "عمليّاتُ بحثٍ سابقة": "Carian sebelum ini",
+  "آخرُ ما فُتح": "Dibuka baru-baru ini",
   "عن ظهر قلب": "Tanpa melihat",
   "عن ظهر قلب (التشكيل غير مطلوب": "Tanpa melihat (baris tidak diperlukan",
   "عن يمين الصحن وشماله": "Di kanan dan kiri halaman",

@@ -1113,6 +1113,7 @@ NUR_I18N.add('en', {
   "علي جابر": "Ali Jaber",
   "عليك {0} من المقاطع مستحقّةً للمراجعة": "You have {0} sections due for review",
   "عمليّاتُ بحثٍ سابقة": "Previous searches",
+  "آخرُ ما فُتح": "Recently opened",
   "عن ظهر قلب": "From memory",
   "عن ظهر قلب (التشكيل غير مطلوب": "From memory (diacritics not needed",
   "عن يمين الصحن وشماله": "To the right and left of the courtyard",

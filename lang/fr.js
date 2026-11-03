@@ -1113,6 +1113,7 @@ NUR_I18N.add('fr', {
   "علي جابر": "Ali Jaber",
   "عليك {0} من المقاطع مستحقّةً للمراجعة": "Tu as {0} passages à réviser",
   "عمليّاتُ بحثٍ سابقة": "Recherches précédentes",
+  "آخرُ ما فُتح": "Ouvertes récemment",
   "عن ظهر قلب": "Par cœur",
   "عن ظهر قلب (التشكيل غير مطلوب": "Par cœur (les voyelles ne sont pas nécessaires",
   "عن يمين الصحن وشماله": "À droite et à gauche de la cour",

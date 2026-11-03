@@ -1113,6 +1113,7 @@ NUR_I18N.add('ha', {
   "علي جابر": "Ali Jaber",
   "عليك {0} من المقاطع مستحقّةً للمراجعة": "Kana da sassa {0} da lokacin bitarsu ya yi",
   "عمليّاتُ بحثٍ سابقة": "Binciken da aka yi a baya",
+  "آخرُ ما فُتح": "Waɗanda aka buɗe kwanan nan",
   "عن ظهر قلب": "Daga ka",
   "عن ظهر قلب (التشكيل غير مطلوب": "Daga ka (wasula ba dole ba ne",
   "عن يمين الصحن وشماله": "A dama da hagun fili",

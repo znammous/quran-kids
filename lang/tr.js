@@ -1113,6 +1113,7 @@ NUR_I18N.add('tr', {
   "علي جابر": "Ali Jaber",
   "عليك {0} من المقاطع مستحقّةً للمراجعة": "Tekrar zamanı gelmiş {0} bölümün var",
   "عمليّاتُ بحثٍ سابقة": "Önceki aramalar",
+  "آخرُ ما فُتح": "Son açılanlar",
   "عن ظهر قلب": "Ezberden",
   "عن ظهر قلب (التشكيل غير مطلوب": "Ezberden (hareke gerekmez",
   "عن يمين الصحن وشماله": "Avlunun sağında ve solunda",

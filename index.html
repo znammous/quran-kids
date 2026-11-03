@@ -785,6 +785,18 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
   touch-action:manipulation;transition:transform .12s}
 .mfpgobtn:active{transform:scale(.94)}
 .mfpgobtn svg{display:block}
+/* آخرُ ما فُتح من الصفحات: رقاقاتٌ تحت خانة الرقم، يُعاد إليها بلمسة */
+.mfprec{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:2px 10px 8px;overflow-x:auto;
+  -webkit-overflow-scrolling:touch;scrollbar-width:none}
+.mfprec::-webkit-scrollbar{display:none}
+.mfprec[hidden]{display:none}
+.mfprec>b{flex:0 0 auto;font-size:12.5px;color:var(--mute);font-weight:800}
+.mfprec button{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:1px;margin:0;cursor:pointer;
+  font-family:inherit;color:var(--ttl);background:var(--pnl2);border:2px solid var(--pb);border-radius:12px;
+  padding:5px 12px;touch-action:manipulation;transition:transform .12s}
+.mfprec button:active{transform:scale(.94)}
+.mfprec button b{font-size:14px;font-weight:900;line-height:1.2}
+.mfprec button i{font-style:normal;font-size:11.5px;font-weight:700;color:var(--mute);line-height:1.2}
 .mfplist{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 10px 16px}
 .mfprow{display:flex;align-items:center;gap:10px;width:100%;text-align:start;background:none;border:0;
   border-bottom:1px solid var(--pb);padding:11px 6px;font-family:inherit;color:var(--ttl);cursor:pointer}
@@ -2927,6 +2939,7 @@ body.hastabs #btnRevQuit{display:none}
           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
       </button>
     </div>
+    <div class="mfprec" id="mfRecent" hidden></div>
     <div class="mfplist" id="mfIdxList"></div>
   </div>
   <div class="mfpanel" id="mfFind" hidden>
@@ -5268,7 +5281,7 @@ function mfBarSync(P, hlGi){
   MF_PAGE=P;
   try{ mfSimSync(); }catch(e){}
   /* ما فُتح من أيقونة المصحف يُذكر وجهُه، فيُستأنف منه في المرّة التالية */
-  if($('mfSheet').classList.contains('reader')) save('mfLast', P);
+  if($('mfSheet').classList.contains('reader')){ save('mfLast', P); mfRecentAdd(P); }
   var a=$('mfPrev'), b=$('mfNext'), f=$('mfPg'), sn=0;
   if(a) a.disabled=(P<=1);
   if(b) b.disabled=(P>=604);
@@ -5279,6 +5292,17 @@ function mfBarSync(P, hlGi){
   if($('mfMean') && !$('mfMean').hidden){ try{ mfMeanRender(); }catch(e){} }
 }
 function mfPage(){ return MF_PICK ? MF_PICK.page : MF_PAGE; }
+/* آخرُ الصفحات المفتوحة في المصحف، أحدثُها أوّلاً. التقليبُ المتّصلُ قراءةٌ واحدة:
+   ما جاور الأحدثَ بصفحتين فأقلّ يحلّ محلّه، والقفزُ (بالفهرس أو الرقم أو البحث)
+   يفتح موضعاً جديداً — فتبقى المواضعُ التي قرأ فيها لا كلُّ وجهٍ مرّ به */
+var MF_REC_MAX=5;
+function mfRecent(){ var r=load('mfRecent',[]); return Array.isArray(r) ? r : []; }
+function mfRecentAdd(P){
+  var r=mfRecent().filter(function(x){ return x!==P; });
+  if(r.length && Math.abs(r[0]-P)<=2) r.shift();
+  r.unshift(P);
+  save('mfRecent', r.slice(0, MF_REC_MAX));
+}
 /* اتّجاهُ التقليب من إزاحة الإصبع، على سَنن المصحف العربيّ: الوجهُ التالي
    على اليسار، فيُسحب إلى اليمين ليُقلَّب — إلى اليمين يمضي وإلى اليسار يرجع.
    وصفرٌ إن لم تكن الإيماءةُ أفقيّةً مقصودة — فالتمريرُ الرأسيُّ لا يقلّب،
@@ -10709,10 +10733,23 @@ function mfIdxRender(){
          '<span class="p">ص '+arNum(jp)+'</span></button>';
     }
   }
+  mfRecentRender();
   var box=$('mfIdxList');
   box.innerHTML=h;
   var here=box.querySelector('.here');
   if(here) setTimeout(function(){ try{ here.scrollIntoView({block:'center'}); }catch(e){} }, 0);
+}
+/* رقاقاتُ آخرِ ما فُتح، سوى الوجه المعروض — ولا تظهر والفهرسُ مفتوحٌ لاختيار سورةٍ تُتلى */
+function mfRecentRender(){
+  var box=$('mfRecent'); if(!box) return;
+  var r=AUD_PICKSURA ? [] : mfRecent().filter(function(x){ return x>=1 && x<=604 && x!==MF_PAGE; });
+  box.hidden=!r.length;
+  if(!r.length){ box.innerHTML=''; return; }
+  box.innerHTML='<b>🕘 آخرُ ما فُتح</b>'+r.map(function(P){
+    var pcs=[]; try{ pcs=pagePieces(P); }catch(e){}
+    return '<button type="button" data-pg="'+P+'"><b>ص '+arNum(P)+'</b>'+
+      (pcs.length ? '<i>'+esc(pcs[0].s.name)+'</i>' : '')+'</button>';
+  }).join('');
 }
 /* البحثُ في نصّ الآيات بالرسم الإملائيّ مجرّداً من الضبط، فيجد «الرحمن»
    ولو كُتبت بلا تشكيل. والفهرسُ المجرّدُ يُبنى عند أوّل بحثٍ مرّةً واحدة. */
@@ -10879,6 +10916,10 @@ function mfGoPgRun(){
 $('mfGoPgBtn').onclick=mfGoPgRun;
 $('mfGoPg').onkeydown=function(e){ if(e.key==='Enter') mfGoPgRun(); };
 $('mfFindX').onclick=function(){ mfPanel(null); };
+$('mfRecent').onclick=function(e){
+  var b=e.target.closest && e.target.closest('[data-pg]'); if(!b) return;
+  mfPanel(null); mfGoto(parseInt(b.getAttribute('data-pg'),10));
+};
 $('mfIdxTabs').onclick=function(e){
   var b=e.target.closest && e.target.closest('[data-mt]'); if(!b) return;
   MF_IDX_T=b.getAttribute('data-mt'); mfIdxRender();

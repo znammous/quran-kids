@@ -1113,6 +1113,7 @@ NUR_I18N.add('so', {
   "علي جابر": "Ali Jaber",
   "عليك {0} من المقاطع مستحقّةً للمراجعة": "Waxaa kugu waajib ah {0} qaybood oo waqtigii muraajacadoodu yimid",
   "عمليّاتُ بحثٍ سابقة": "Raadintii hore",
+  "آخرُ ما فُتح": "Kuwii ugu dambeeyay ee la furay",
   "عن ظهر قلب": "Xifdi",
   "عن ظهر قلب (التشكيل غير مطلوب": "Xifdi (xarakaynta looma baahna",
   "عن يمين الصحن وشماله": "Midigta iyo bidixda barxadda",

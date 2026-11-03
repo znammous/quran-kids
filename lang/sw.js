@@ -1113,6 +1113,7 @@ NUR_I18N.add('sw', {
   "علي جابر": "Ali Jaber",
   "عليك {0} من المقاطع مستحقّةً للمراجعة": "Una sehemu {0} zinazostahili kurudiwa",
   "عمليّاتُ بحثٍ سابقة": "Utafutaji uliopita",
+  "آخرُ ما فُتح": "Zilizofunguliwa karibuni",
   "عن ظهر قلب": "Kwa moyo",
   "عن ظهر قلب (التشكيل غير مطلوب": "Kwa moyo (irabu hazihitajiki",
   "عن يمين الصحن وشماله": "Kulia na kushoto mwa uwanja",
