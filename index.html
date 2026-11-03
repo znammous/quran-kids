@@ -630,7 +630,7 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
    ورسائلُ «أعِد» في سطر التلميح */
 #playArea.qface+.fb:empty{min-height:0;margin-top:0}
 #playArea.qface .stskip{width:100%;margin:6px 0 0;padding:4px 6px;min-height:0;height:auto;font-size:14px;background:none;box-shadow:none;
-  color:var(--on1);text-decoration:underline;text-underline-offset:3px}
+  color:var(--on1)}
 /* القراءة: الآيةُ داكنةٌ مظلَّلة، وبقيّةُ المقطع أخفت */
 .stface.rd .mw,.stface.rd .manum{color:#8f99a9;transition:color .2s,background .2s}
 .stface.rd .cur{color:#07162b;background:rgba(255,214,102,.40)}
@@ -650,7 +650,11 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .qface .stbig .btn.big{margin-bottom:8px}
 .qface .strow{margin:0;min-height:52px;flex-wrap:nowrap;gap:8px}
 .qface .strow .btn{flex:1 1 0;min-width:0;font-size:14px;padding:12px 4px;white-space:nowrap;gap:4px;overflow:hidden}
-/* زرٌّ أيقونتُه وحدها (🔇) على قدرها، فيتّسع ما بجانبه لنصّه بأيّ لغة */
+/* «لا أستطيع التسجيل»: ميكروفونٌ عليه خطٌّ أحمر — لا 🔇، فتلك كتمُ أصوات التطبيق في الشريط العلويّ */
+.nomic{position:relative;display:inline-block;line-height:1}
+.nomic::after{content:'';position:absolute;left:-12%;right:-12%;top:46%;height:.14em;min-height:2.5px;
+  background:#d63b3b;border-radius:2px;transform:rotate(45deg);box-shadow:0 0 0 1.5px #fff}
+/* زرٌّ أيقونتُه وحدها (الميكروفون المشطوب) على قدرها، فيتّسع ما بجانبه لنصّه بأيّ لغة */
 .qface .strow .btn.ico1{flex:0 0 54px;padding-inline:0}
 .qface .strow .btn.spd{flex:0 0 58px}
 .qface .stc{unicode-bidi:isolate;margin-inline-start:6px}
@@ -12431,7 +12435,7 @@ function roundRead(r){
                   '<button class="btn blue" id="btnPlayRec">▶️ استمع لصوتي</button>'+
                   '<button class="btn ghost spd" id="btnSpeedRec">'+recRateLabel()+'</button>'+
                   '<button class="btn ghost" id="btnAgainRec">🔁 أعِد</button>'+
-                  '<button class="btn ghost" id="btnNoMic">🔇 بلا تسجيل</button>' : '')+
+                  '<button class="btn ghost" id="btnNoMic"><span class="nomic">🎤</span> بلا تسجيل</button>' : '')+
         '<button class="btn green big pulse" id="btnRep"><span class="stl">✅ قرأتُها بصوتي</span><span class="stc"></span></button>'+
       '</div>';
     if(!useRec) $('stBig').appendChild($('btnRep'));
@@ -12456,7 +12460,7 @@ function roundRead(r){
               '</div>'
             : '')+
     '<button class="btn '+(useRec?'ghost big':'green big pulse')+'" id="btnRep">✅ قرأتُها بصوتي</button>'+
-    (useRec ? '<button class="btn ghost big" id="btnNoMic">🔇 لا أستطيع التسجيل الآن</button>' : '')+
+    (useRec ? '<button class="btn ghost big" id="btnNoMic"><span class="nomic">🎤</span> لا أستطيع التسجيل الآن</button>' : '')+
     '<div class="hintline" id="recHint">'+
       hint0+'</div>';
   /* مغطّاةٌ بعد قراءتها: يقرؤها من حفظه، وأوّلُ كلمةٍ ظاهرةٌ تفتح له. وما لمسه من
@@ -13268,7 +13272,7 @@ function roundRevPage(r){
         (useRec ? '<button class="btn red big pulse" id="btnRecR">🎤 سجّل تسميعي</button>'+
                   '<button class="btn blue" id="btnPlayR">▶️ استمع لتسميعي</button>'+
                   '<button class="btn ghost spd" id="btnSpeedR">'+recRateLabel()+'</button>'+
-                  '<button class="btn ghost ico1" id="btnNoMic3" aria-label="لا أستطيع التسجيل الآن">🔇</button>' : '')+
+                  '<button class="btn ghost ico1" id="btnNoMic3" aria-label="لا أستطيع التسجيل الآن"><span class="nomic">🎤</span></button>' : '')+
         '<button class="btn green big pulse" id="btnOkR">✅ سمّعتُها صحيحة</button>'+
         '<button class="btn ghost" id="btnShow">👁️ اكشفها</button>'+
         '<button class="btn ghost" id="btnAgainR">🔁 أخطأتُ فيها</button>'+
@@ -13295,7 +13299,7 @@ function roundRevPage(r){
       '<button class="btn ghost" id="btnAgainR">🔁 أخطأتُ فيها</button></div>'+
     /* القاعدةُ قبل أن يبدأ: كان يكشف الوجهَ ليتثبّت من كلمة، ولا يدري أنّه أعاده بها غداً */
     '<div class="revrule" id="revRule">💡 إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً</div>'+
-    (useRec ? '<button class="btn ghost big" id="btnNoMic3">🔇 لا أستطيع التسجيل الآن</button>' : '')+
+    (useRec ? '<button class="btn ghost big" id="btnNoMic3"><span class="nomic">🎤</span> لا أستطيع التسجيل الآن</button>' : '')+
     /* التخطّي يعني قفز الصفحات الباقية، وفي آخر صفحة لا يزيد شيئاً على ✅ فيُخفى */
     ((REV.pages && REV.pi < REV.pages.length-1)
       ? '<button class="btn ghost big" id="btnSkipQuiz">⏮️ سمّعتُها كلها — إلى الأسئلة</button>'
@@ -13575,7 +13579,7 @@ function roundRecite(r){
           (useRec ? '<button class="btn red big pulse" id="btnRecR">🎤 سجّل تسميعي</button>'+
                     '<button class="btn blue" id="btnPlayR">▶️ استمع لتسميعي</button>'+
                     '<button class="btn ghost spd" id="btnSpeedR">'+recRateLabel()+'</button>'+
-                    '<button class="btn ghost ico1" id="btnNoMic2" aria-label="لا أستطيع التسجيل الآن">🔇</button>' : '')+
+                    '<button class="btn ghost ico1" id="btnNoMic2" aria-label="لا أستطيع التسجيل الآن"><span class="nomic">🎤</span></button>' : '')+
           '<button class="btn green big pulse" id="btnOkR">✅ سمّعتُها صحيحة</button>'+
           '<button class="btn ghost" id="btnShow">👁️ اكشفها</button>'+
           '<button class="btn ghost" id="btnAgainR">🔁 سأعيدها</button>'+
@@ -13597,7 +13601,7 @@ function roundRecite(r){
       '<div class="row" id="rowR">'+
         '<button class="btn ghost" id="btnShow">📖 اعرض الوجه</button>'+
         '<button class="btn ghost" id="btnAgainR"'+(useRec?' hidden':'')+'>🔁 سأعيدها</button></div>'+
-      (useRec ? '<button class="btn ghost big" id="btnNoMic2">🔇 لا أستطيع التسجيل الآن</button>' : '');
+      (useRec ? '<button class="btn ghost big" id="btnNoMic2"><span class="nomic">🎤</span> لا أستطيع التسجيل الآن</button>' : '');
 
     /* يحجز الصندوق ارتفاع النص كاملاً من البداية، فلا يقفز عند كشفه */
     if(!FM) lockHeight($('playArea').querySelector('.ayahbox'), stageAyahHTMLs(SET.font,true),
