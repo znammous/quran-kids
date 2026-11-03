@@ -933,6 +933,7 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 /* صفُّ التسجيل في «اقرأ وردّد» بالمراجعة: فوق «استمع» و«ابدأ»، وسطرُ حالته تحته */
 .mfgo [hidden]{display:none!important}
 .mfgo .hintline{margin:0}
+.mfgorow .btn.spd{flex:0 0 62px}   /* سرعةُ صوته: زرٌّ ضيّقٌ بين «استمع لصوتي» و«أعِد» */
 .mfgonote{text-align:center;font-weight:900;font-size:15px;color:#eab308;line-height:1.2}
 /* «غطِّها» في عرض المقطع: آياتُه مغطّاةٌ إلّا أوّلَ كلمةٍ من كلّ آية، ولمسُ كلمةٍ يكشفها */
 .mfbody .mushaf .mw.cov{color:transparent!important;cursor:pointer;
@@ -2932,6 +2933,7 @@ body.hastabs #btnRevQuit{display:none}
     <div class="mfgorow" id="mfRecRow" hidden>
       <button class="btn red big pulse" id="mfRec">🎤 سجّل قراءتي</button>
       <button class="btn blue big" id="mfPlayRec" hidden>▶️ استمع لصوتي</button>
+      <button class="btn ghost big spd" id="mfSpeedRec" hidden>1×</button>
       <button class="btn ghost big" id="mfAgainRec" hidden>🔁 أعِد</button>
     </div>
     <div class="hintline" id="mfRecHint" hidden></div>
@@ -9769,10 +9771,11 @@ $('mfGoListen').onclick=function(){
    يقرأ المقطعَ كلَّه ويسجّله، ثمّ يستمع لصوته أو يُعيده — كما في «اقرأ وردّد» من الحفظ،
    لكن للمقطع جملةً لا لآيةٍ آية. ولا يُحسب فيه شيء: «قرأتُه» يمضي متى شاء */
 function mfRecUI(state,msg){
-  var b=$('mfRec'), pl=$('mfPlayRec'), ag=$('mfAgainRec'), h=$('mfRecHint');
+  var b=$('mfRec'), pl=$('mfPlayRec'), sp=$('mfSpeedRec'), ag=$('mfAgainRec'), h=$('mfRecHint');
   if(!b) return;
   recTimerStop(); b.disabled=false;
-  b.hidden=(state==='ready'); pl.hidden=ag.hidden=(state!=='ready');
+  b.hidden=(state==='ready'); pl.hidden=sp.hidden=ag.hidden=(state!=='ready');
+  sp.textContent=recRateLabel();
   if(state==='idle'){ b.textContent='🎤 سجّل قراءتي'; b.className='btn red big pulse'; }
   else if(state==='wait'){ b.textContent='⏳ في انتظار إذن المايكروفون'; b.className='btn red big'; }
   else if(state==='rec'){ b.className='btn red big reclive'; recTimerStart(b,'⏹️ إيقاف التسجيل'); }
@@ -9811,6 +9814,7 @@ $('mfRec').onclick=function(){
   });
 };
 $('mfPlayRec').onclick=function(){ try{ audStop(); }catch(e){} recPlay(this); };
+$('mfSpeedRec').onclick=function(){ recRateNext(); this.textContent=recRateLabel(); };
 $('mfAgainRec').onclick=function(){ recReset(); mfRecUI('idle','اضغط 🎤 واقرأ المقطع مرة أخرى'); };
 /* «استمع إليها» في «اقرأ وردّد» تحت الآية — كان في شريط الدرس فلا يُرى.
    يتلو آيتَه التي هو فيها، وإن لم تكن جولتُه آيةً بعينها فمقطعَه.
