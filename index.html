@@ -8700,6 +8700,13 @@ var RECMAX=null;
 function recMaxStop(){ if(RECMAX){ clearTimeout(RECMAX); RECMAX=null; } }
 /* أوقفه اللاعب لهذه الجلسة؟ */
 function useRecNow(){ return SET.rec!==false && !REC.off; }
+/* في التسميع يبقى زرُّ 🎤 ظاهراً ولو كان التسجيلُ مطفأً في الإعدادات،
+   فيعرف الطفلُ أنّه متاح؛ وضغطُه يسأل وليَّ الأمر ثمّ يشغّله ويبدأ التسجيل */
+function recBtnOn(){ return !REC.off; }
+function recAsk(go){
+  if(SET.rec){ go(); return; }
+  parentGate(function(ok){ if(!ok) return; SET.rec=true; REC.off=false; saveDB(); go(); });
+}
 function recSupported(){
   return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
 }
@@ -13373,7 +13380,7 @@ function roundAyat(r){
 }
 
 function roundRevPage(r){
-  var pcs=r.pieces, useRec=useRecNow();
+  var pcs=r.pieces, useRec=recBtnOn();
   var names=pcs.map(function(p){ return esc(tx('{s1} {0}-{1}',{s1:p.s.name, 0:arNum(p.from+1), 1:arNum(p.to)})); }).join(' • ');
   var full=pcs.map(function(p){
     var out=[];
@@ -13573,6 +13580,9 @@ function roundRevPage(r){
   $('btnRecR').onclick=function(){
     if(REC.rec){ recSaving($('btnRecR')); recStop(); return; }
     if(REC.starting){ recCancelStart(); rUI('idle','أُلغي التسجيل — اضغط 🎤 لتبدأ'); return; }
+    recAsk(recGo);
+  };
+  function recGo(){
     rUI('wait','⏳ إن سألك المتصفح عن المايكروفون فاضغط «سماح»');
     recStart(function(){
       if(!REC.url){ rUI('idle','لم أسمع شيئاً — اضغط 🎤 وسمّع'); return; }
@@ -13586,7 +13596,7 @@ function roundRevPage(r){
       rUI('fail',msg);
     }, function(){ rUI('rec','أنا أسجّل… سمّع الصفحة كاملة ثم اضغط «انتهيت»'); }, 600000,
        function(){ rUI('idle','أُلغي التسجيل — اضغط 🎤 لتبدأ'); });
-  };
+  }
   $('btnPlayR').onclick=function(){ recPlay(this,'▶️ استمع لتسميعي'); };
   $('btnSpeedR').onclick=function(){ recRateNext(); this.textContent=recRateLabel(); };
   $('btnNoMic3').onclick=function(){
@@ -13725,7 +13735,7 @@ function roundRecite(r){
     };
   } else {
     recReset();
-    var useRec=useRecNow();
+    var useRec=recBtnOn();
     /* في وجه المصحف: الآيةُ وما بعدها من المقطع مغطّاةٌ بشكل كلماتها وأرقامُها ظاهرة،
        فيرى كم بقي وأين تنتهي. والمطلوبةُ بالأزرق وأوّلُ كلمةٍ منها ظاهرة،
        ولمسُ كلمةٍ منها يكشفها وحدها — استعانةٌ أصغر من كشف الآية */
@@ -13873,6 +13883,9 @@ function roundRecite(r){
         rUI('idle','أُلغي التسجيل — اضغط 🎤 لتبدأ من جديد');
         return;
       }
+      recAsk(recGo);
+    };
+    function recGo(){
       rUI('wait','⏳ إن سألك المتصفح عن المايكروفون فاضغط «سماح»');
       recStart(function(){
         if(!REC.url){ rUI('idle','لم أسمع شيئاً — اضغط 🎤 وسمّع ثم أوقف التسجيل'); return; }
@@ -13889,7 +13902,7 @@ function roundRecite(r){
       }, 300000, function(){                             /* التسميع قد يطول: خمسُ دقائق */
         rUI('idle','أُلغي التسجيل — اضغط 🎤 لتبدأ من جديد');
       });
-    };
+    }
     $('btnPlayR').onclick=function(){ recPlay(this,'▶️ استمع لتسميعي'); };
     $('btnSpeedR').onclick=function(){ recRateNext(); this.textContent=recRateLabel(); };
     $('btnNoMic2').onclick=function(){
