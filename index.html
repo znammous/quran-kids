@@ -6503,10 +6503,13 @@ function oneBegin(s,a){
       if(q && !seen[qk]){ seen[qk]=1; out.push(q); return; }
     }
   }
+  /* ترتيبُ كلماتها أوّلاً دائماً (والقصيرةُ تُسأل عن كلمتها الناقصة)، و«المتقدّم»
+     يكتبها كاملةً، ثمّ ما سقط منها، ثمّ موضعُها بين جاراتها */
   try{
-    ask(['words','missing','miss2']);
-    ask(['missing','miss2','words']);
-    ask(['miss2','words','missing']);
+    ask(['words']);
+    if(SET.level==='hard') ask(['write']);
+    ask(['missing']);
+    if(SET.level!=='hard') ask(['miss2']);
     ask(['ayat']);
   } finally { EX.picks=keep; }
   if(!out.length){ mushafOpen(s,a); return; }
