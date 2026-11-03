@@ -2032,5 +2032,11 @@ NUR_I18N.add('en', {
   "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "One word is forgiven — a second brings it back tomorrow",
   "كشفتَ كلمتين — يعود إليك غداً": "You revealed two words — it comes back tomorrow",
   "العبْ بما أتممتَ اليوم": "Play with what you finished today",
-  "جواهرُ اللعب اليومَ مضاعَفة": "Game gems are doubled today"
+  "جواهرُ اللعب اليومَ مضاعَفة": "Game gems are doubled today",
+  "اضغط مربّعاً لتُختبر في آيته": "Tap a square to be tested on its ayah",
+  "اختبرني فيها": "Test me on it",
+  "افتحها في المصحف": "Open it in the Mushaf",
+  "ثبتت الآية!": "The ayah is firm!",
+  "ارتفعت من «{a}» إلى «{b}»": "Went up from “{a}” to “{b}”",
+  "تخضرّ إذا أصبت فيها في يومٍ آخر": "It turns green when you get it right on another day"
 });

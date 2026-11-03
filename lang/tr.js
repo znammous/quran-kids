@@ -2032,5 +2032,11 @@ NUR_I18N.add('tr', {
   "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Bir kelime affedilir — ikincisi onu yarın geri getirir",
   "كشفتَ كلمتين — يعود إليك غداً": "İki kelime açtın — yarın tekrar gelir",
   "العبْ بما أتممتَ اليوم": "Bugün bitirdiklerinle oyna",
-  "جواهرُ اللعب اليومَ مضاعَفة": "Bugün oyun mücevherleri iki katı"
+  "جواهرُ اللعب اليومَ مضاعَفة": "Bugün oyun mücevherleri iki katı",
+  "اضغط مربّعاً لتُختبر في آيته": "Ayetinde sınanmak için bir kareye dokun",
+  "اختبرني فيها": "Beni bunda sına",
+  "افتحها في المصحف": "Mushafta aç",
+  "ثبتت الآية!": "Ayet sağlamlaştı!",
+  "ارتفعت من «{a}» إلى «{b}»": "“{a}” seviyesinden “{b}” seviyesine çıktı",
+  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Başka bir gün doğru bilirsen yeşile döner"
 });

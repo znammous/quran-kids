@@ -2032,5 +2032,11 @@ NUR_I18N.add('ha', {
   "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Kalma ɗaya ana yafewa — ta biyu tana dawo da shi gobe",
   "كشفتَ كلمتين — يعود إليك غداً": "Ka buɗe kalmomi biyu — zai dawo gobe",
   "العبْ بما أتممتَ اليوم": "Yi wasa da abin da ka kammala yau",
-  "جواهرُ اللعب اليومَ مضاعَفة": "Yau duwatsun wasa sun ninka biyu"
+  "جواهرُ اللعب اليومَ مضاعَفة": "Yau duwatsun wasa sun ninka biyu",
+  "اضغط مربّعاً لتُختبر في آيته": "Taɓa murabba'i don a gwada ka a ayarsa",
+  "اختبرني فيها": "Gwada ni a kanta",
+  "افتحها في المصحف": "Buɗe ta a cikin Mushafi",
+  "ثبتت الآية!": "Ayar ta tabbata!",
+  "ارتفعت من «{a}» إلى «{b}»": "Ta tashi daga “{a}” zuwa “{b}”",
+  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Za ta zama kore idan ka ci ta a wata rana"
 });

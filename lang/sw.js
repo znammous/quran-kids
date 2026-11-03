@@ -2032,5 +2032,11 @@ NUR_I18N.add('sw', {
   "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Neno moja linasamehewa — la pili linaurudisha kesho",
   "كشفتَ كلمتين — يعود إليك غداً": "Umefunua maneno mawili — utarudi kesho",
   "العبْ بما أتممتَ اليوم": "Cheza na ulichokamilisha leo",
-  "جواهرُ اللعب اليومَ مضاعَفة": "Leo vito vya mchezo ni mara mbili"
+  "جواهرُ اللعب اليومَ مضاعَفة": "Leo vito vya mchezo ni mara mbili",
+  "اضغط مربّعاً لتُختبر في آيته": "Gusa mraba ili ujaribiwe kwenye aya yake",
+  "اختبرني فيها": "Nijaribu kwenye aya hii",
+  "افتحها في المصحف": "Ifungue kwenye Msahafu",
+  "ثبتت الآية!": "Aya imeimarika!",
+  "ارتفعت من «{a}» إلى «{b}»": "Imepanda kutoka “{a}” hadi “{b}”",
+  "تخضرّ إذا أصبت فيها في يومٍ آخر": "Itakuwa kijani ukiipata sawa siku nyingine"
 });
