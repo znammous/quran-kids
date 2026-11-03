@@ -2032,7 +2032,7 @@ NUR_I18N.add('tr', {
   "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Bir kelime affedilir — ikincisi onu yarın geri getirir",
   "كشفتَ كلمتين — يعود إليك غداً": "İki kelime açtın — yarın tekrar gelir",
   "العبْ بما أتممتَ اليوم": "Bugün bitirdiklerinle oyna",
-  "جواهرُ اللعب اليومَ مضاعَفة": "Bugün oyun mücevherleri iki katı",
+  "الجواهرُ مضاعَفةٌ في مقرَّر اليوم": "Günün planında mücevherler iki katı",
   "اضغط مربّعاً لتُختبر في آيته": "Ayetinde sınanmak için bir kareye dokun",
   "اختبرني فيها": "Beni bunda sına",
   "افتحها في المصحف": "Mushafta aç",

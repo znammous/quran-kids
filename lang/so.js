@@ -2032,7 +2032,7 @@ NUR_I18N.add('so', {
   "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Hal eray waa la cafiyaa — kan labaad ayaa berri dib u soo celinaya",
   "كشفتَ كلمتين — يعود إليك غداً": "Laba eray ayaad furtay — berri ayuu soo laabanayaa",
   "العبْ بما أتممتَ اليوم": "Ku ciyaar waxa aad maanta dhammaysay",
-  "جواهرُ اللعب اليومَ مضاعَفة": "Maanta dheemanka ciyaarta waa labanlaab",
+  "الجواهرُ مضاعَفةٌ في مقرَّر اليوم": "Dheemanku waa labanlaab qaybta maanta",
   "اضغط مربّعاً لتُختبر في آيته": "Taabo afargeesle si laguugu imtixaamo aayaddiisa",
   "اختبرني فيها": "Igu imtixaan aayaddan",
   "افتحها في المصحف": "Ku fur Mushafka",

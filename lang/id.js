@@ -2032,7 +2032,7 @@ NUR_I18N.add('id', {
   "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Satu kata dimaafkan — yang kedua membuatnya kembali besok",
   "كشفتَ كلمتين — يعود إليك غداً": "Kamu membuka dua kata — akan kembali besok",
   "العبْ بما أتممتَ اليوم": "Bermainlah dengan yang kamu selesaikan hari ini",
-  "جواهرُ اللعب اليومَ مضاعَفة": "Permata permainan hari ini berlipat dua",
+  "الجواهرُ مضاعَفةٌ في مقرَّر اليوم": "Permata berlipat dua untuk target hari ini",
   "اضغط مربّعاً لتُختبر في آيته": "Ketuk kotak untuk diuji pada ayatnya",
   "اختبرني فيها": "Uji aku di ayat ini",
   "افتحها في المصحف": "Buka di Mushaf",

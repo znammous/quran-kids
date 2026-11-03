@@ -2032,7 +2032,7 @@ NUR_I18N.add('uz', {
   "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Bitta soʻz kechiriladi — ikkinchisi uni ertaga qaytaradi",
   "كشفتَ كلمتين — يعود إليك غداً": "Ikki soʻzni ochdingiz — ertaga qaytadi",
   "العبْ بما أتممتَ اليوم": "Bugun tugatganing bilan o‘yna",
-  "جواهرُ اللعب اليومَ مضاعَفة": "Bugun o‘yin javohirlari ikki baravar",
+  "الجواهرُ مضاعَفةٌ في مقرَّر اليوم": "Bugungi reja uchun javohirlar ikki baravar",
   "اضغط مربّعاً لتُختبر في آيته": "Oyatidan sinalish uchun katakchaga bosing",
   "اختبرني فيها": "Meni shunda sinab ko‘r",
   "افتحها في المصحف": "Mushafda ochish",

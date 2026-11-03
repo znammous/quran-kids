@@ -2032,7 +2032,7 @@ NUR_I18N.add('fr', {
   "كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً": "Un mot est pardonné — un deuxième la fait revenir demain",
   "كشفتَ كلمتين — يعود إليك غداً": "Tu as dévoilé deux mots — elle revient demain",
   "العبْ بما أتممتَ اليوم": "Joue avec ce que tu as terminé aujourd’hui",
-  "جواهرُ اللعب اليومَ مضاعَفة": "Les gemmes des jeux sont doublées aujourd’hui",
+  "الجواهرُ مضاعَفةٌ في مقرَّر اليوم": "Les gemmes sont doublées pour le programme du jour",
   "اضغط مربّعاً لتُختبر في آيته": "Touche un carré pour être testé sur son verset",
   "اختبرني فيها": "Teste-moi dessus",
   "افتحها في المصحف": "L’ouvrir dans le Mushaf",
