@@ -6653,10 +6653,14 @@ function dayPlayLater(){
     CELE.then=function(){ if(prev) prev(); setTimeout(function(){ dayPlayOffer(0); },450); };
   }else setTimeout(function(){ dayPlayOffer(0); },900);   /* الاحتفالاتُ مطفأة: سطرٌ عابرٌ ثمّ العرض */
 }
+var DAY_PLAY_BUSY=/^scr-(runner|bird|shelf|exam|cert)$/;
+var DAY_PLAY_WAIT=null;                     /* يومٌ أُجّل عرضُه إلى الخروج من شاشةٍ لا تُقطع */
 function dayPlayOffer(tries){
   var p=curP(); if(!p || p.dayPlay===todayNum()) return;
-  /* في لعبةٍ أو اختبارٍ أو شهادة: لا يُقطع عليه ما هو فيه */
-  if(/^scr-(runner|bird|shelf|exam|cert)$/.test(curScreen())) return;
+  /* في لعبةٍ أو اختبارٍ أو شهادة: لا يُقطع عليه ما هو فيه، ويُعرض حين يخرج منها —
+     كان يسقط، فمن ختم سورةً بمقطع يومه رأى شهادتها ولم يرَ اللعب */
+  if(DAY_PLAY_BUSY.test(curScreen())){ DAY_PLAY_WAIT=todayNum(); return; }
+  DAY_PLAY_WAIT=null;
   /* صندوقٌ آخرُ مفتوح: يُنتظر قليلاً */
   if(($('ask') && !$('ask').hidden) || $('pgate') || CELE.on){
     if((tries||0)<6) setTimeout(function(){ dayPlayOffer((tries||0)+1); },1500);
@@ -9072,6 +9076,10 @@ function show(id){
   if(from==='scr-settings' && id!=='scr-settings'){ try{ settingsCommit(); }catch(e){} }
   if(id==='scr-start'){ try{ renderHome(); }catch(e){} }
   if(id==='scr-play'){ try{ sfxSync(); }catch(e){} }
+  if(DAY_PLAY_WAIT!=null && !DAY_PLAY_BUSY.test(id)){       /* خرج من الشهادة أو اللعبة: يُعرض اللعبُ بما أتمّ */
+    if(DAY_PLAY_WAIT===todayNum()) setTimeout(function(){ dayPlayOffer(0); },500);
+    DAY_PLAY_WAIT=null;
+  }
   try{ syncTabs(id); }catch(e){}
   try{ $('pathFabs').hidden = (id!=='scr-path'); }catch(e){}
   /* من أين دخل المسارَ؟ من الرئيسيّة غالباً («حفظ اليوم»)، ومن الفهرس أحياناً.
