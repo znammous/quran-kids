@@ -1022,6 +1022,7 @@ NUR_I18N.add('sw', {
   "سمّعتُها كلها — إلى الأسئلة": "Nimezisoma zote — kwenda kwenye maswali",
   "قرأتُه — إلى الأسئلة": "Nimeisoma — kwenda kwenye maswali",
   "اقرأ المقطع وردّده": "Soma sehemu hii na uirudie",
+  "اقرأ الوجه وردّده": "Soma ukurasa huu na uurudie",
   "اقرأ المقطع بصوتك — سجّل بـ🎤 لتسمع نفسك": "Soma sehemu hii kwa sauti — rekodi kwa 🎤 ujisikie",
   "استمع لصوتك، ثمّ أعِد أو انتقل إلى الأسئلة": "Sikiliza sauti yako, kisha rudia au nenda kwenye maswali",
   "أنا أستمع… اقرأ المقطع ثم اضغط إيقاف": "Ninasikiliza… soma sehemu hii kisha bonyeza simamisha",

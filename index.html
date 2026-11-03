@@ -16602,7 +16602,9 @@ function revStartPage(){
       stage:0, review:true, rev:'page', revPage:P, pieces:pcs,
       rounds:[{t:'revpage', page:P, pieces:pcs}], i:0, errors:0, due:[] };
   show('scr-play'); runRound();
-  segPreview(pcs, '📖 صفحة '+arNum(P), '🎤 ابدأ', null);   /* يرى وجهَه قبل أن يسمّعه */
+  /* «اقرأ وردّد» قبل تسميعه: يقرأ وجهَه ويسجّل قراءتَه ويسمع نفسه، ويستمع إليه
+     ويغطّيه إن شاء — ولا يُحسب عليه شيءٌ حتى يبدأ التسميع */
+  segPreview(pcs, '📖 صفحة '+arNum(P), '✅ ابدأ', null, '📖 اقرأ الوجه وردّده', true);
 }
 function revSkipToQuiz(){ REV.pi=REV.pages.length; revStartPage(); }
 

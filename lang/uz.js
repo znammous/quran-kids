@@ -1022,6 +1022,7 @@ NUR_I18N.add('uz', {
   "سمّعتُها كلها — إلى الأسئلة": "Hammasini oʻqib berdim — savollarga",
   "قرأتُه — إلى الأسئلة": "Oʻqidim — savollarga",
   "اقرأ المقطع وردّده": "Boʻlakni oʻqib, takrorla",
+  "اقرأ الوجه وردّده": "Sahifani oʻqib, takrorla",
   "اقرأ المقطع بصوتك — سجّل بـ🎤 لتسمع نفسك": "Boʻlakni ovoz chiqarib oʻqi — oʻzingni eshitish uchun 🎤 bilan yozib ol",
   "استمع لصوتك، ثمّ أعِد أو انتقل إلى الأسئلة": "Ovozingni tingla, soʻng qayta oʻqi yoki savollarga oʻt",
   "أنا أستمع… اقرأ المقطع ثم اضغط إيقاف": "Tinglayapman… boʻlakni oʻqib, toʻxtatishni bos",

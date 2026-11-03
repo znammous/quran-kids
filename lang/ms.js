@@ -1022,6 +1022,7 @@ NUR_I18N.add('ms', {
   "سمّعتُها كلها — إلى الأسئلة": "Saya sudah tasmik semuanya — ke soalan",
   "قرأتُه — إلى الأسئلة": "Saya sudah membacanya — ke soalan",
   "اقرأ المقطع وردّده": "Baca bahagian ini dan ulang",
+  "اقرأ الوجه وردّده": "Baca halaman ini dan ulang",
   "اقرأ المقطع بصوتك — سجّل بـ🎤 لتسمع نفسك": "Baca bahagian ini dengan suara — rakam dengan 🎤 untuk mendengar dirimu",
   "استمع لصوتك، ثمّ أعِد أو انتقل إلى الأسئلة": "Dengar suaramu, kemudian ulang atau pergi ke soalan",
   "أنا أستمع… اقرأ المقطع ثم اضغط إيقاف": "Saya sedang mendengar… baca bahagian ini kemudian tekan berhenti",

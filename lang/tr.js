@@ -1022,6 +1022,7 @@ NUR_I18N.add('tr', {
   "سمّعتُها كلها — إلى الأسئلة": "Hepsini okudum — sorulara geç",
   "قرأتُه — إلى الأسئلة": "Okudum — sorulara geç",
   "اقرأ المقطع وردّده": "Bölümü oku ve tekrarla",
+  "اقرأ الوجه وردّده": "Sayfayı oku ve tekrarla",
   "اقرأ المقطع بصوتك — سجّل بـ🎤 لتسمع نفسك": "Bölümü sesli oku — kendini duymak için 🎤 ile kaydet",
   "استمع لصوتك، ثمّ أعِد أو انتقل إلى الأسئلة": "Sesini dinle, sonra tekrarla ya da sorulara geç",
   "أنا أستمع… اقرأ المقطع ثم اضغط إيقاف": "Dinliyorum… bölümü oku, sonra durdur’a bas",

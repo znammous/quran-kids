@@ -1022,6 +1022,7 @@ NUR_I18N.add('fr', {
   "سمّعتُها كلها — إلى الأسئلة": "Je les ai tous récités — aux questions",
   "قرأتُه — إلى الأسئلة": "Je l’ai lu — aux questions",
   "اقرأ المقطع وردّده": "Lis le passage et répète-le",
+  "اقرأ الوجه وردّده": "Lis la page et répète-la",
   "اقرأ المقطع بصوتك — سجّل بـ🎤 لتسمع نفسك": "Lis le passage à voix haute — enregistre avec 🎤 pour t’écouter",
   "استمع لصوتك، ثمّ أعِد أو انتقل إلى الأسئلة": "Écoute ta voix, puis recommence ou passe aux questions",
   "أنا أستمع… اقرأ المقطع ثم اضغط إيقاف": "J’écoute… lis le passage puis appuie sur arrêter",

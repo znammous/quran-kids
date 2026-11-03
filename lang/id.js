@@ -1022,6 +1022,7 @@ NUR_I18N.add('id', {
   "سمّعتُها كلها — إلى الأسئلة": "Aku sudah menyetorkan semuanya — ke soal-soal",
   "قرأتُه — إلى الأسئلة": "Aku sudah membacanya — ke soal-soal",
   "اقرأ المقطع وردّده": "Baca bagian ini dan ulangi",
+  "اقرأ الوجه وردّده": "Baca halaman ini dan ulangi",
   "اقرأ المقطع بصوتك — سجّل بـ🎤 لتسمع نفسك": "Baca bagian ini dengan suara — rekam dengan 🎤 untuk mendengar dirimu",
   "استمع لصوتك، ثمّ أعِد أو انتقل إلى الأسئلة": "Dengarkan suaramu, lalu ulangi atau lanjut ke soal",
   "أنا أستمع… اقرأ المقطع ثم اضغط إيقاف": "Aku mendengarkan… baca bagian ini lalu tekan berhenti",

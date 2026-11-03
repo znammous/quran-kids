@@ -1022,6 +1022,7 @@ NUR_I18N.add('so', {
   "سمّعتُها كلها — إلى الأسئلة": "Dhammaan waan akhriyay — u gudub su’aalaha",
   "قرأتُه — إلى الأسئلة": "Waan akhriyay — u gudub su’aalaha",
   "اقرأ المقطع وردّده": "Akhri qaybta oo ku celceli",
+  "اقرأ الوجه وردّده": "Akhri bogga oo ku celceli",
   "اقرأ المقطع بصوتك — سجّل بـ🎤 لتسمع نفسك": "Akhri qaybta cod dheer — ku duub 🎤 si aad naftaada u maqasho",
   "استمع لصوتك، ثمّ أعِد أو انتقل إلى الأسئلة": "Dhageyso codkaaga, kadib ku celi ama u gudub su’aalaha",
   "أنا أستمع… اقرأ المقطع ثم اضغط إيقاف": "Waan dhageysanayaa… akhri qaybta kadib taabo jooji",
