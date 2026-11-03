@@ -647,7 +647,11 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .mfbtn.cvr.on{color:#fff;background:#7b52c7;border-color:#7b52c7}
 /* أسفلُ الشاشة: زرٌّ كبيرٌ وصفٌّ صغيرٌ مقاسُه ثابتٌ ولو فرغ، فلا يتحرّك شيءٌ بتبدّل الحال */
 .qface .hintline{min-height:2.9em;margin-bottom:6px}
+.qface .hintline.revrule{min-height:1.6em}
 .qface .stbig .btn.big{margin-bottom:8px}
+/* زرّان كبيران في سطرٍ واحد: «سجّل» و«سمّعتُها» */
+.qface .stbig.two{display:flex;gap:8px}
+.qface .stbig.two .btn.big{flex:1 1 0;min-width:0;padding-inline:6px;white-space:nowrap;overflow:hidden}
 .qface .strow{margin:0;min-height:52px;flex-wrap:nowrap;gap:8px}
 .qface .strow .btn{flex:1 1 0;min-width:0;font-size:14px;padding:12px 4px;white-space:nowrap;gap:4px;overflow:hidden}
 /* «لا أستطيع التسجيل»: ميكروفونٌ عليه خطٌّ أحمر — لا 🔇، فتلك كتمُ أصوات التطبيق في الشريط العلويّ */
@@ -1701,9 +1705,9 @@ body.light .sp-lit{fill:#1f92d4}
 .seamcue{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
   font-size:13px;font-weight:800;color:#6a809b;margin:0 0 8px;text-align:center}
 .seamcue .ayah{font-size:20px;line-height:1.7;color:#102b4a}
+.seamcue>span:first-child{font-size:14px}
 .card.bare .seamcue{color:var(--on3)}
 .card.bare .seamcue .ayah{color:var(--on1)}
-.seamcue .btn.mini{margin:0;padding:5px 10px;font-size:13px}
 .card.bare .revrule{color:var(--on3)}
 .revrow select{flex:1;min-width:130px}
 #scr-revpath .card.bare{border:3px solid var(--pb);border-radius:14px;padding:12px}
@@ -13379,8 +13383,9 @@ function roundRevPage(r){
   var openN=pv ? 0 : EDGE_WORDS, cueHead=cue;
   if(pv) cue='…';
   var seamCue=pv ? '<div class="seamcue" id="seamCue"><span>↩️ ابدأ بعد</span>'+
-      '<span class="ayah" translate="no">'+esc(seamTail(pv.s,pv.a,SEAM_CUE))+'</span>'+
-      '<button type="button" class="btn ghost mini" id="btnCueHead">💡 أوّلُها</button></div>' : '';
+      '<span class="ayah" translate="no">'+esc(seamTail(pv.s,pv.a,SEAM_CUE))+'</span></div>' : '';
+  /* التلميحُ زرٌّ في صفّ الأزرار تحت الوجه، لا سطرٌ وحدَه فوقه */
+  var cueBtn=pv ? '<button type="button" class="btn ghost" id="btnCueHead">💡 أوّلُها</button>' : '';
   recReset();
   /* في وجه المصحف: الوجهُ كلُّه مغطّى بأشكال كلماته وأرقامُ آياته ظاهرة، ومطلعُه ظاهرٌ مفتاحاً.
      ولمسُ كلمةٍ يكشفها وحدها — وهو كعرض الوجه: يعود إليه غداً (revWeak).
@@ -13395,7 +13400,7 @@ function roundRevPage(r){
       '<div class="qgap"></div>'+
       /* سطرٌ واحدٌ تحت الوجه: القاعدةُ قبل أن يبدأ (واسمُ الوجه ونطاقُه في الشارة فوقه)،
          ثمّ رسائلُ التسجيل في مكانها */
-      '<div class="hintline revrule" id="hintR">💡 إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً</div>'+
+      '<div class="hintline revrule" id="hintR">💡 يعود إليك غداً إن كشفتَه أو أخطأتَ فيه</div>'+
       '<div class="stbig" id="stBig"></div><div class="row strow" id="stRow"></div>'+
       ((REV.pages && REV.pi < REV.pages.length-1)
         ? '<button class="btn ghost mini stskip" id="btnSkipQuiz">⏮️ سمّعتُها كلها — إلى الأسئلة</button>' : '')+
@@ -13407,10 +13412,19 @@ function roundRevPage(r){
         '<button class="btn green big pulse" id="btnOkR">✅ سمّعتُها صحيحة</button>'+
         '<button class="btn ghost" id="btnShow">📖 اكشفها</button>'+
         '<button class="btn ghost" id="btnAgainR">🔁 أخطأتُ فيها</button>'+
+        cueBtn+
       '</div>';
-    if(!useRec){ $('stBig').appendChild($('btnOkR')); $('stRow').appendChild($('btnShow')); $('stRow').appendChild($('btnAgainR')); }
+    if(!useRec){
+      $('stBig').appendChild($('btnOkR')); $('stRow').appendChild($('btnShow')); $('stRow').appendChild($('btnAgainR'));
+      if($('btnCueHead')) $('stRow').appendChild($('btnCueHead'));
+    }
     facePaint($('stFace'), rgs[0][0], function(box){
       box._side=1;
+      /* خاتمةُ ما قبله بقدر كلمات الوجه نفسِه، فلا تبدو أكبرَ ممّا تحتها */
+      try{
+        var mw=box.querySelector('.mline'), ca=document.querySelector('#seamCue .ayah');
+        if(mw && ca) ca.style.fontSize=getComputedStyle(mw).fontSize;
+      }catch(e){}
       var hn=box.querySelector('.sthalf');
       if(hn) hn.onclick=function(e){ e.stopPropagation(); box._side=(box._side===1)?2:1; faceHalf(box,true); };
       coverDraw();
@@ -13428,9 +13442,9 @@ function roundRevPage(r){
     '<button class="btn '+(useRec?'ghost big':'green big pulse')+'" id="btnOkR">✅ سمّعتُها صحيحة</button>'+
     '<div class="row" id="rowR">'+
       '<button class="btn ghost" id="btnShow">📖 اعرض الوجه</button>'+
-      '<button class="btn ghost" id="btnAgainR">🔁 أخطأتُ فيها</button></div>'+
+      '<button class="btn ghost" id="btnAgainR">🔁 أخطأتُ فيها</button>'+cueBtn+'</div>'+
     /* القاعدةُ قبل أن يبدأ: كان يكشف الوجهَ ليتثبّت من كلمة، ولا يدري أنّه أعاده بها غداً */
-    '<div class="revrule" id="revRule">💡 إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً</div>'+
+    '<div class="revrule" id="revRule">💡 يعود إليك غداً إن كشفتَه أو أخطأتَ فيه</div>'+
     (useRec ? '<button class="btn ghost big" id="btnNoMic3"><span class="nomic">🎤</span> لا أستطيع التسجيل الآن</button>' : '')+
     /* التخطّي يعني قفز الصفحات الباقية، وفي آخر صفحة لا يزيد شيئاً على ✅ فيُخفى */
     ((REV.pages && REV.pi < REV.pages.length-1)
@@ -13507,17 +13521,20 @@ function roundRevPage(r){
     recDone=(state==='ready');
     if($('revRule')) $('revRule').style.visibility=recDone?'hidden':'';
     [].slice.call(B.children).concat([].slice.call(R.children)).forEach(function(e){ pool.appendChild(e); });
-    var big=null, row=[];
+    var big=null, big2=null, row=[], hint=$('btnCueHead');
+    /* «سجّل» و«سمّعتُها» في سطرٍ واحد: كلاهما بابٌ لإنهاء التسميع، والصفُّ الصغيرُ للعون */
     if(state==='idle'){ big=b; b.textContent='🎤 سجّل تسميعي'; b.className='btn red big pulse';
-      ok.className='btn ghost'; ok.textContent='✅ سمّعتُها'; row=[ok,show,$('btnNoMic3')]; }
-    else if(state==='norec'){ big=ok; ok.className='btn green big pulse'; ok.textContent='✅ سمّعتُها صحيحة'; row=[show,again]; }
+      big2=ok; ok.className='btn ghost big'; ok.textContent='✅ سمّعتُها'; row=[show,hint,$('btnNoMic3')]; }
+    else if(state==='norec'){ big=ok; ok.className='btn green big pulse'; ok.textContent='✅ سمّعتُها صحيحة'; row=[show,again,hint]; }
     else if(state==='wait'){ big=b; b.textContent='⏳ في انتظار إذن المايكروفون'; b.className='btn red big'; reveal(false); }
     else if(state==='rec'){ big=b; b.className='btn red big reclive'; recTimerStart(b,'⏹️ انتهيت من التسميع'); }
     else if(state==='ready'){ big=ok; ok.className='btn green big pulse'; ok.textContent='✅ سمّعتُها صحيحة';
       row=[$('btnPlayR'),$('btnSpeedR'),again]; reveal(true); }
-    else if(state==='fail'){ big=b; b.textContent='🎤 حاول التسجيل مرة أخرى'; b.className='btn red big';
-      ok.className='btn ghost'; ok.textContent='✅ سمّعتُها'; row=[ok,show,again]; }
+    else if(state==='fail'){ big=b; b.textContent='🎤 أعِد التسجيل'; b.className='btn red big';
+      big2=ok; ok.className='btn ghost big'; ok.textContent='✅ سمّعتُها'; row=[show,again,hint]; }
     if(big) B.appendChild(big);
+    if(big2) B.appendChild(big2);
+    B.classList.toggle('two', !!big2);
     row.forEach(function(e){ if(e) R.appendChild(e); });
     R.style.visibility=row.length?'':'hidden';
     if(h && msg!=null) h.innerHTML=msg;

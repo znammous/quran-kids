@@ -734,7 +734,7 @@ NUR_I18N.add('fr', {
   "تعرف به نبيّك": "Découvre ton Prophète ﷺ",
   "تعود إليه من حيث وقفت": "Reviens là où tu t’es arrêté",
   "تعود غداً": "Revient demain",
-  "إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً": "Si tu affiches la page, t’y trompes, ou fais deux erreurs dans ses questions, elle revient demain",
+  "يعود إليك غداً إن كشفتَه أو أخطأتَ فيه": "Elle revient demain si tu la dévoiles ou si tu te trompes",
   "تعود غداً ونزلت درجة": "Revient demain, un échelon plus bas",
   "رسخت فانتقلت إلى وردك": "Bien ancrée — passée dans ton wird",
   "رسخت — ولا ورد لك يتعاهدها": "Bien ancrée — mais tu n’as pas de wird pour l’entretenir",

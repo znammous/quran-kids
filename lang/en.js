@@ -734,7 +734,7 @@ NUR_I18N.add('en', {
   "تعرف به نبيّك": "Get to know your Prophet ﷺ",
   "تعود إليه من حيث وقفت": "Come back where you stopped",
   "تعود غداً": "Comes back tomorrow",
-  "إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً": "If you reveal the page, make a mistake in it, or make two mistakes in its questions, it comes back tomorrow",
+  "يعود إليك غداً إن كشفتَه أو أخطأتَ فيه": "It comes back tomorrow if you reveal it or make a mistake",
   "تعود غداً ونزلت درجة": "Comes back tomorrow, one step down",
   "رسخت فانتقلت إلى وردك": "Firmly memorized — moved to your revision",
   "رسخت — ولا ورد لك يتعاهدها": "Firmly memorized — but you have no revision to keep it fresh",

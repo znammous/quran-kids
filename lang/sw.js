@@ -734,7 +734,7 @@ NUR_I18N.add('sw', {
   "تعرف به نبيّك": "Mjue Mtume wako ﷺ",
   "تعود إليه من حيث وقفت": "Rudi pale ulipoishia",
   "تعود غداً": "Inarudi kesho",
-  "إن عرضتَ الوجه أو أخطأتَ فيه، أو أخطأتَ مرّتين في أسئلته، عاد إليك غداً": "Ukionyesha ukurasa au ukikosea ndani yake, au ukikosea mara mbili katika maswali yake, utarudi kesho",
+  "يعود إليك غداً إن كشفتَه أو أخطأتَ فيه": "Utarudiwa kesho ukiufunua au ukikosea",
   "تعود غداً ونزلت درجة": "Inarudi kesho, imeshuka daraja moja",
   "رسخت فانتقلت إلى وردك": "Imeimarika — imehamia kwenye kurudia kwako kwa kila siku",
   "رسخت — ولا ورد لك يتعاهدها": "Imeimarika — lakini huna kurudia kwa kila siku kuihifadhi",
