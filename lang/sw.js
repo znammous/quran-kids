@@ -2042,5 +2042,8 @@ NUR_I18N.add('sw', {
   "تخضرّ إذا أصبت فيها في يومٍ آخر": "Itakuwa kijani ukiipata sawa siku nyingine",
   "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Je, una uhakika unataka kuifunua?<br>Ukiifunua, itarudi kwako kesho",
   "نعم، اكشفه": "Ndiyo, ifunue",
-  "لا، أُكمل التسميع": "Hapana, niendelee kusoma kwa moyo"
+  "لا، أُكمل التسميع": "Hapana, niendelee kusoma kwa moyo",
+  "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Je, una uhakika unataka kufunua neno hili?<br>Ukilifunua, ukurasa utarudi kwako kesho",
+  "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Je, unataka kufunua neno hili?<br>Neno la kwanza linasamehewa, la pili linarudisha ukurasa kwako kesho",
+  "نعم، اكشفها": "Ndiyo, lifunue"
 });

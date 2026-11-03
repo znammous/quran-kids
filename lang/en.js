@@ -2042,5 +2042,8 @@ NUR_I18N.add('en', {
   "تخضرّ إذا أصبت فيها في يومٍ آخر": "It turns green when you get it right on another day",
   "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Are you sure you want to reveal it?<br>If you reveal it, it comes back to you tomorrow",
   "نعم، اكشفه": "Yes, reveal it",
-  "لا، أُكمل التسميع": "No, keep reciting"
+  "لا، أُكمل التسميع": "No, keep reciting",
+  "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Are you sure you want to reveal this word?<br>If you reveal it, the page comes back to you tomorrow",
+  "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Do you want to reveal this word?<br>The first word is forgiven, the second brings the page back to you tomorrow",
+  "نعم، اكشفها": "Yes, reveal it"
 });

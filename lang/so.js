@@ -2042,5 +2042,8 @@ NUR_I18N.add('so', {
   "تخضرّ إذا أصبت فيها في يومٍ آخر": "Way cagaaran doontaa haddaad maalin kale saxdo",
   "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Ma hubtaa inaad rabto inaad furto?<br>Haddaad furto, berri ayay kuu soo noqonaysaa",
   "نعم، اكشفه": "Haa, fur",
-  "لا، أُكمل التسميع": "Maya, aan sii wado akhriska"
+  "لا، أُكمل التسميع": "Maya, aan sii wado akhriska",
+  "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Ma hubtaa inaad rabto inaad furto eraygan?<br>Haddaad furto, boggu berri ayuu kuu soo noqonayaa",
+  "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Ma rabtaa inaad furto eraygan?<br>Erayga koowaad waa la cafiyaa, kan labaad wuxuu bogga kuu soo celinayaa berri",
+  "نعم، اكشفها": "Haa, fur"
 });

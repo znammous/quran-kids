@@ -2042,5 +2042,8 @@ NUR_I18N.add('ms', {
   "تخضرّ إذا أصبت فيها في يومٍ آخر": "Ia menjadi hijau jika kamu betul pada hari lain",
   "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Adakah anda pasti mahu membukanya?<br>Jika anda membukanya, ia akan kembali kepada anda esok",
   "نعم، اكشفه": "Ya, buka",
-  "لا، أُكمل التسميع": "Tidak, teruskan hafalan"
+  "لا، أُكمل التسميع": "Tidak, teruskan hafalan",
+  "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Adakah anda pasti mahu membuka perkataan ini?<br>Jika anda membukanya, halaman ini akan kembali kepada anda esok",
+  "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Adakah anda mahu membuka perkataan ini?<br>Perkataan pertama dimaafkan, perkataan kedua membawa halaman kembali kepada anda esok",
+  "نعم، اكشفها": "Ya, buka"
 });

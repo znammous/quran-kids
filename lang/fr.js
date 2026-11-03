@@ -2042,5 +2042,8 @@ NUR_I18N.add('fr', {
   "تخضرّ إذا أصبت فيها في يومٍ آخر": "Il devient vert si tu le réussis un autre jour",
   "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Es-tu sûr de vouloir l’afficher ?<br>Si tu l’affiches, elle te reviendra demain",
   "نعم، اكشفه": "Oui, affiche-la",
-  "لا، أُكمل التسميع": "Non, je continue à réciter"
+  "لا، أُكمل التسميع": "Non, je continue à réciter",
+  "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Es-tu sûr de vouloir afficher ce mot ?<br>Si tu l’affiches, la page te reviendra demain",
+  "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Veux-tu afficher ce mot ?<br>Le premier mot est pardonné, le deuxième te ramène la page demain",
+  "نعم، اكشفها": "Oui, affiche-le"
 });

@@ -2042,5 +2042,8 @@ NUR_I18N.add('id', {
   "تخضرّ إذا أصبت فيها في يومٍ آخر": "Akan menjadi hijau jika kamu benar di hari lain",
   "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Apakah kamu yakin ingin membukanya?<br>Jika kamu membukanya, ia akan kembali kepadamu besok",
   "نعم، اكشفه": "Ya, buka",
-  "لا، أُكمل التسميع": "Tidak, lanjutkan hafalan"
+  "لا، أُكمل التسميع": "Tidak, lanjutkan hafalan",
+  "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Apakah kamu yakin ingin membuka kata ini?<br>Jika kamu membukanya, halaman ini akan kembali kepadamu besok",
+  "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Apakah kamu ingin membuka kata ini?<br>Kata pertama dimaafkan, kata kedua membuat halaman kembali kepadamu besok",
+  "نعم، اكشفها": "Ya, buka"
 });

@@ -2042,5 +2042,8 @@ NUR_I18N.add('tr', {
   "تخضرّ إذا أصبت فيها في يومٍ آخر": "Başka bir gün doğru bilirsen yeşile döner",
   "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Açmak istediğinden emin misin?<br>Açarsan yarın sana tekrar gelir",
   "نعم، اكشفه": "Evet, aç",
-  "لا، أُكمل التسميع": "Hayır, ezberden okumaya devam et"
+  "لا، أُكمل التسميع": "Hayır, ezberden okumaya devam et",
+  "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Bu kelimeyi açmak istediğinden emin misin?<br>Açarsan sayfa yarın sana tekrar gelir",
+  "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Bu kelimeyi açmak istiyor musun?<br>İlk kelime affedilir, ikincisi sayfayı yarın sana geri getirir",
+  "نعم، اكشفها": "Evet, aç"
 });

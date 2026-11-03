@@ -2042,5 +2042,8 @@ NUR_I18N.add('ha', {
   "تخضرّ إذا أصبت فيها في يومٍ آخر": "Za ta zama kore idan ka ci ta a wata rana",
   "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Ka tabbata kana so ka buɗe ta?<br>Idan ka buɗe ta, za ta dawo maka gobe",
   "نعم، اكشفه": "Ee, buɗe ta",
-  "لا، أُكمل التسميع": "A’a, in ci gaba da karatu"
+  "لا، أُكمل التسميع": "A’a, in ci gaba da karatu",
+  "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Ka tabbata kana so ka buɗe wannan kalmar?<br>Idan ka buɗe ta, shafin zai dawo maka gobe",
+  "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Kana so ka buɗe wannan kalmar?<br>Ana yafe kalmar farko, ta biyu kuma za ta dawo maka da shafin gobe",
+  "نعم، اكشفها": "Ee, buɗe ta"
 });

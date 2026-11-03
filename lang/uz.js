@@ -2042,5 +2042,8 @@ NUR_I18N.add('uz', {
   "تخضرّ إذا أصبت فيها في يومٍ آخر": "Boshqa kuni to‘g‘ri topsangiz yashil bo‘ladi",
   "هل أنت متأكّد أنّك تريد الكشف؟<br>إن كشفتَه عاد إليك غداً": "Haqiqatan ham ochmoqchimisan?<br>Agar ochsang, u ertaga senga yana qaytadi",
   "نعم، اكشفه": "Ha, och",
-  "لا، أُكمل التسميع": "Yo‘q, yoddan o‘qishni davom ettiraman"
+  "لا، أُكمل التسميع": "Yo‘q, yoddan o‘qishni davom ettiraman",
+  "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Bu so‘zni ochmoqchi ekaningga ishonching komilmi?<br>Agar ochsang, sahifa ertaga senga yana qaytadi",
+  "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Bu so‘zni ochmoqchimisan?<br>Birinchi so‘z kechiriladi, ikkinchisi sahifani ertaga senga qaytaradi",
+  "نعم، اكشفها": "Ha, och"
 });
