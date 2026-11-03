@@ -12720,7 +12720,8 @@ function roundWords(r){
   var btns=$('chips').querySelectorAll('.chip'), wrongHere=0;
   for(var i=0;i<btns.length;i++){
     btns[i].onclick=function(){
-      if(this.classList.contains('gone')) return;
+      /* انتهى السؤالُ بخطأٍ أو صواب: ضغطةٌ بعده كانت تُحسب خطأً ثانياً فيُقفز السؤالُ التالي */
+      if(this.classList.contains('gone') || placed>=need) return;
       var w=this.textContent;
       if(w===seg[placed]){
         placeWord(w);
@@ -13313,7 +13314,7 @@ function roundEOrder(r){
   var btns=$('chips').querySelectorAll('.chip'), k;
   for(k=0;k<btns.length;k++){
     btns[k].onclick=function(){
-      if(this.classList.contains('gone')) return;
+      if(this.classList.contains('gone') || placed>=seq.length) return;   /* انتهى السؤال */
       if(this.textContent!==seq[placed]){
         var el=this, pl0=placed;
         el.classList.add('bad');
@@ -13360,7 +13361,7 @@ function roundAyat(r){
   var cards=$('acards').querySelectorAll('.acard');
   for(i=0;i<cards.length;i++){
     cards[i].onclick=function(){
-      if(this.classList.contains('placed')) return;
+      if(this.classList.contains('placed') || placed>=idx.length) return;   /* انتهى السؤال */
       var ai=parseInt(this.getAttribute('data-a'),10);
       /* يُقابَل بالنصّ لا برقم الآية: الآيتان المتطابقتان (الكافرون ٣ و٥)
          كانت إحداهما تُحسب خطأً وهي هي في عين الطفل. والمطابقةُ بالنصّ كاملاً
