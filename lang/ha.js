@@ -2003,7 +2003,7 @@ NUR_I18N.add('ha', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Karanta ta daga ka — taɓa kalma don ganinta, sake taɓawa don rufe ta",
   "اكشفها": "Buɗe",
   "سمّعتُها": "Na karanta",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "A cikin “Karanta ka maimaita” da “Karanta daga ka”, aya yanzu za ta iya bayyana a shafin Mushafi kansa: a wurinta a shafin, kuma za ka iya rufe ta don karanta ta daga ka — za ka iya mayar da ita rubutu a ⚙️ Saituna → ✒️ Mushafi.",
+  "صارت المراجعةُ تسأل عن وصلة الصفحات: خاتمةُ كلّ صفحةٍ وبِمَ تبدأ التي بعدها، ويبدأ تسميعُ الوجه من بعد خاتمة الصفحة التي قبله.": "Yanzu bita tana tambaya game da haɗin shafuka: ƙarshen kowane shafi da abin da shafi na gaba yake farawa da shi, kuma karatun shafi da ka yana farawa bayan ƙarshen shafin da ke gabansa.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Karanta {w} daga ka — taɓa kalma don buɗe ta",
   "مراجعةٌ حرّةٌ وحدها": "Bita ta ʼyanci kawai",
   "لا مقرَّرَ يوميّاً في خطّتك": "Babu rabon yau a tsarinka",
@@ -2017,5 +2017,12 @@ NUR_I18N.add('ha', {
   "اضبط نطاق مراجعتك الحرّة": "Saita iyakar bitarka ta ʼyanci",
   "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Bitarka ta ʼyanci ce — ci gaba a duk lokacin da kake so 🎛️",
   "إلى النصف الثاني": "Zuwa rabi na biyu",
-  "إلى النصف الأوّل": "Zuwa rabin farko"
+  "إلى النصف الأوّل": "Zuwa rabin farko",
+  "وصلةُ الصفحات": "Haɗin shafuka",
+  "خاتمةُ الصفحة": "Ƙarshen shafi",
+  "هذه خاتمةُ صفحتها — فبِمَ تبدأ الصفحةُ التي بعدها؟": "Wannan shi ne ƙarshen shafinsa — da me shafi na gaba yake farawa?",
+  "ابدأ بعد": "Fara bayan",
+  "أوّلُها": "Farkonsa",
+  "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Ana nuna ƙarshen shafi, kai kuma ka faɗi farkon shafi na gaba",
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Daidai ✅ — daga shafi {p} zuwa shafi {q}"
 });

@@ -2003,7 +2003,7 @@ NUR_I18N.add('en', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Read it from memory — tap a word to see it, tap again to cover it",
   "اكشفها": "Reveal",
   "سمّعتُها": "I recited it",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "In “Read and repeat” and “Recite”, the ayah can now appear on the Mushaf page itself: in its place on the page, and you can cover it to read from memory — you can switch back to plain text in ⚙️ Settings → ✒️ Mushaf.",
+  "صارت المراجعةُ تسأل عن وصلة الصفحات: خاتمةُ كلّ صفحةٍ وبِمَ تبدأ التي بعدها، ويبدأ تسميعُ الوجه من بعد خاتمة الصفحة التي قبله.": "Review now asks about page links: the end of each page and how the next one begins, and reciting a page starts right after the end of the page before it.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Recite {w} from memory — tap a word to reveal it",
   "مراجعةٌ حرّةٌ وحدها": "Free review only",
   "لا مقرَّرَ يوميّاً في خطّتك": "No daily portion in your plan",
@@ -2017,5 +2017,12 @@ NUR_I18N.add('en', {
   "اضبط نطاق مراجعتك الحرّة": "Set your free review range",
   "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Your review is free — go through it whenever you like 🎛️",
   "إلى النصف الثاني": "To the second half",
-  "إلى النصف الأوّل": "To the first half"
+  "إلى النصف الأوّل": "To the first half",
+  "وصلةُ الصفحات": "Page link",
+  "خاتمةُ الصفحة": "End of the page",
+  "هذه خاتمةُ صفحتها — فبِمَ تبدأ الصفحةُ التي بعدها؟": "This is the end of its page — how does the next page begin?",
+  "ابدأ بعد": "Start after",
+  "أوّلُها": "Its opening",
+  "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "The end of a page is shown, and you recall how the next one begins",
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Correct ✅ — from page {p} to page {q}"
 });

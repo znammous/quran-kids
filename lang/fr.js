@@ -2003,7 +2003,7 @@ NUR_I18N.add('fr', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Lis-le de mémoire — touche un mot pour le voir, touche-le encore pour le couvrir",
   "اكشفها": "Dévoiler",
   "سمّعتُها": "Je l’ai récité",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "Dans « Lis et répète » et « Réciter », le verset peut maintenant s’afficher sur la page même du Mushaf : à sa place dans la page, et tu peux le couvrir pour le lire de mémoire — tu peux revenir au texte simple dans ⚙️ Réglages → ✒️ Mushaf.",
+  "صارت المراجعةُ تسأل عن وصلة الصفحات: خاتمةُ كلّ صفحةٍ وبِمَ تبدأ التي بعدها، ويبدأ تسميعُ الوجه من بعد خاتمة الصفحة التي قبله.": "La révision interroge désormais sur le lien entre les pages : la fin de chaque page et le début de la suivante, et la récitation d’une page commence juste après la fin de la page précédente.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Récite {w} de mémoire — touche un mot pour le dévoiler",
   "مراجعةٌ حرّةٌ وحدها": "Révision libre uniquement",
   "لا مقرَّرَ يوميّاً في خطّتك": "Pas de portion du jour dans ton plan",
@@ -2017,5 +2017,12 @@ NUR_I18N.add('fr', {
   "اضبط نطاق مراجعتك الحرّة": "Choisis ta plage de révision libre",
   "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Ta révision est libre — avance quand tu veux 🎛️",
   "إلى النصف الثاني": "Vers la seconde moitié",
-  "إلى النصف الأوّل": "Vers la première moitié"
+  "إلى النصف الأوّل": "Vers la première moitié",
+  "وصلةُ الصفحات": "Lien entre les pages",
+  "خاتمةُ الصفحة": "Fin de la page",
+  "هذه خاتمةُ صفحتها — فبِمَ تبدأ الصفحةُ التي بعدها؟": "Voici la fin de sa page — comment commence la page suivante ?",
+  "ابدأ بعد": "Commence après",
+  "أوّلُها": "Son début",
+  "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "La fin d’une page s’affiche, et tu retrouves le début de la suivante",
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Correct ✅ — de la page {p} à la page {q}"
 });

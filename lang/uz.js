@@ -2003,7 +2003,7 @@ NUR_I18N.add('uz', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Yoddan oʻqi — soʻzni koʻrish uchun unga tegin, yopish uchun yana tegin",
   "اكشفها": "Och",
   "سمّعتُها": "Oʻqib berdim",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "«Oʻqi va takrorla» hamda «Oʻqib ber» boʻlimlarida oyat endi Mushaf sahifasining oʻzida koʻrinishi mumkin: sahifadagi oʻrnida, va yoddan oʻqishing uchun uni yopish mumkin — ⚙️ Sozlamalar → ✒️ Mushaf boʻlimida yana oddiy matnga qaytishing mumkin.",
+  "صارت المراجعةُ تسأل عن وصلة الصفحات: خاتمةُ كلّ صفحةٍ وبِمَ تبدأ التي بعدها، ويبدأ تسميعُ الوجه من بعد خاتمة الصفحة التي قبله.": "Endi takrorlash sahifalar bogʻlanishini ham soʻraydi: har bir sahifaning oxiri va keyingi sahifa nima bilan boshlanishi; sahifani yoddan oʻqish esa oldingi sahifa oxiridan keyin boshlanadi.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "{w} ni yoddan oʻqib ber — ochish uchun soʻzga tegin",
   "مراجعةٌ حرّةٌ وحدها": "Faqat erkin takrorlash",
   "لا مقرَّرَ يوميّاً في خطّتك": "Rejangda kunlik ulush yoʻq",
@@ -2017,5 +2017,12 @@ NUR_I18N.add('uz', {
   "اضبط نطاق مراجعتك الحرّة": "Erkin takrorlash oraligʻini sozla",
   "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Takrorlashing erkin — xohlagan paytda davom et 🎛️",
   "إلى النصف الثاني": "Ikkinchi yarmiga",
-  "إلى النصف الأوّل": "Birinchi yarmiga"
+  "إلى النصف الأوّل": "Birinchi yarmiga",
+  "وصلةُ الصفحات": "Sahifalar bogʻlanishi",
+  "خاتمةُ الصفحة": "Sahifa oxiri",
+  "هذه خاتمةُ صفحتها — فبِمَ تبدأ الصفحةُ التي بعدها؟": "Bu oʻz sahifasining oxiri — keyingi sahifa nima bilan boshlanadi?",
+  "ابدأ بعد": "Shundan keyin boshlang",
+  "أوّلُها": "Boshi",
+  "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Sahifaning oxiri koʻrsatiladi, siz esa keyingi sahifaning boshini aytasiz",
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Toʻgʻri ✅ — {p}-sahifadan {q}-sahifaga"
 });

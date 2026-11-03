@@ -2003,7 +2003,7 @@ NUR_I18N.add('sw', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Isome kwa moyo — gusa neno ili ulione, liguse tena ili ulifunike",
   "اكشفها": "Ifunue",
   "سمّعتُها": "Nimeisoma",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "Katika “Soma na urudie” na “Kusoma kwa moyo”, aya sasa inaweza kuonekana kwenye ukurasa wa Msahafu wenyewe: mahali pake ukurasani, na unaweza kuifunika ili uisome kwa moyo — unaweza kurudi kwenye maandishi ya kawaida katika ⚙️ Mipangilio → ✒️ Msahafu.",
+  "صارت المراجعةُ تسأل عن وصلة الصفحات: خاتمةُ كلّ صفحةٍ وبِمَ تبدأ التي بعدها، ويبدأ تسميعُ الوجه من بعد خاتمة الصفحة التي قبله.": "Sasa marudio yanauliza kuhusu kiungo cha kurasa: mwisho wa kila ukurasa na ukurasa unaofuata unaanza na nini, na kusoma ukurasa kwa moyo kunaanza baada ya mwisho wa ukurasa uliotangulia.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Soma {w} kwa moyo — gusa neno ili ulifunue",
   "مراجعةٌ حرّةٌ وحدها": "Kurudia huru pekee",
   "لا مقرَّرَ يوميّاً في خطّتك": "Hakuna sehemu ya kila siku katika mpango wako",
@@ -2017,5 +2017,12 @@ NUR_I18N.add('sw', {
   "اضبط نطاق مراجعتك الحرّة": "Weka masafa yako ya kurudia huru",
   "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Kurudia kwako ni huru — endelea wakati wowote upendao 🎛️",
   "إلى النصف الثاني": "Nenda nusu ya pili",
-  "إلى النصف الأوّل": "Nenda nusu ya kwanza"
+  "إلى النصف الأوّل": "Nenda nusu ya kwanza",
+  "وصلةُ الصفحات": "Kiungo cha kurasa",
+  "خاتمةُ الصفحة": "Mwisho wa ukurasa",
+  "هذه خاتمةُ صفحتها — فبِمَ تبدأ الصفحةُ التي بعدها؟": "Huu ni mwisho wa ukurasa wake — ukurasa unaofuata unaanza na nini?",
+  "ابدأ بعد": "Anza baada ya",
+  "أوّلُها": "Mwanzo wake",
+  "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Mwisho wa ukurasa huonyeshwa, nawe unataja mwanzo wa ukurasa unaofuata",
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Sahihi ✅ — kutoka ukurasa {p} hadi ukurasa {q}"
 });

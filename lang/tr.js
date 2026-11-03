@@ -2003,7 +2003,7 @@ NUR_I18N.add('tr', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Ezberden oku — görmek için bir kelimeye dokun, örtmek için tekrar dokun",
   "اكشفها": "Aç",
   "سمّعتُها": "Okudum",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "“Oku ve tekrarla” ile “Ezberden oku” bölümlerinde ayet artık Mushaf sayfasının kendisinde görünebiliyor: sayfadaki yerinde, ve ezberden okuman için örtülebiliyor — ⚙️ Ayarlar → ✒️ Mushaf’tan düz metne geri dönebilirsin.",
+  "صارت المراجعةُ تسأل عن وصلة الصفحات: خاتمةُ كلّ صفحةٍ وبِمَ تبدأ التي بعدها، ويبدأ تسميعُ الوجه من بعد خاتمة الصفحة التي قبله.": "Tekrar artık sayfa bağlantılarını da soruyor: her sayfanın sonu ve sonraki sayfanın neyle başladığı; sayfayı ezberden okuma da önceki sayfanın sonundan sonra başlıyor.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "{w} ezberden oku — açmak için bir kelimeye dokun",
   "مراجعةٌ حرّةٌ وحدها": "Yalnızca serbest tekrar",
   "لا مقرَّرَ يوميّاً في خطّتك": "Planında günlük ders yok",
@@ -2017,5 +2017,12 @@ NUR_I18N.add('tr', {
   "اضبط نطاق مراجعتك الحرّة": "Serbest tekrar aralığını ayarla",
   "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Tekrarın serbest — istediğin zaman ilerle 🎛️",
   "إلى النصف الثاني": "İkinci yarıya",
-  "إلى النصف الأوّل": "İlk yarıya"
+  "إلى النصف الأوّل": "İlk yarıya",
+  "وصلةُ الصفحات": "Sayfa bağlantısı",
+  "خاتمةُ الصفحة": "Sayfanın sonu",
+  "هذه خاتمةُ صفحتها — فبِمَ تبدأ الصفحةُ التي بعدها؟": "Bu, sayfasının sonu — sonraki sayfa neyle başlıyor?",
+  "ابدأ بعد": "Şundan sonra başla",
+  "أوّلُها": "Başı",
+  "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Bir sayfanın sonu gösterilir, sen de sonraki sayfanın başını hatırlarsın",
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Doğru ✅ — {p}. sayfadan {q}. sayfaya"
 });

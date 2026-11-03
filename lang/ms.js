@@ -2003,7 +2003,7 @@ NUR_I18N.add('ms', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Bacalah dari hafalan — sentuh perkataan untuk melihatnya, sentuh lagi untuk menutupnya",
   "اكشفها": "Buka",
   "سمّعتُها": "Sudah tasmik",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "Dalam “Baca dan ulang” dan “Tasmik”, ayat kini boleh dipaparkan pada muka surat Mushaf itu sendiri: di tempatnya pada muka surat, dan boleh ditutup supaya kamu membacanya dari hafalan — kamu boleh kembali kepada teks biasa di ⚙️ Tetapan → ✒️ Mushaf.",
+  "صارت المراجعةُ تسأل عن وصلة الصفحات: خاتمةُ كلّ صفحةٍ وبِمَ تبدأ التي بعدها، ويبدأ تسميعُ الوجه من بعد خاتمة الصفحة التي قبله.": "Ulang kaji kini bertanya tentang sambungan muka surat: akhir setiap muka surat dan dengan apakah muka surat seterusnya bermula, dan hafazan muka surat bermula selepas akhir muka surat sebelumnya.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Tasmik {w} dari hafalan — sentuh perkataan untuk membukanya",
   "مراجعةٌ حرّةٌ وحدها": "Ulang kaji bebas sahaja",
   "لا مقرَّرَ يوميّاً في خطّتك": "Tiada bahagian harian dalam rancangan kamu",
@@ -2017,5 +2017,12 @@ NUR_I18N.add('ms', {
   "اضبط نطاق مراجعتك الحرّة": "Tetapkan julat ulang kaji bebas kamu",
   "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Ulang kaji kamu bebas — jalani bila-bila masa kamu mahu 🎛️",
   "إلى النصف الثاني": "Ke separuh kedua",
-  "إلى النصف الأوّل": "Ke separuh pertama"
+  "إلى النصف الأوّل": "Ke separuh pertama",
+  "وصلةُ الصفحات": "Sambungan muka surat",
+  "خاتمةُ الصفحة": "Akhir muka surat",
+  "هذه خاتمةُ صفحتها — فبِمَ تبدأ الصفحةُ التي بعدها؟": "Ini akhir muka suratnya — dengan apakah muka surat seterusnya bermula?",
+  "ابدأ بعد": "Mula selepas",
+  "أوّلُها": "Permulaannya",
+  "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Akhir sesuatu muka surat ditunjukkan, lalu kamu menyebut permulaan muka surat seterusnya",
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Betul ✅ — dari muka surat {p} ke muka surat {q}"
 });

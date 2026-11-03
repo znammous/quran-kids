@@ -1695,6 +1695,13 @@ body.light .sp-lit{fill:#1f92d4}
 .revout b{color:#102b4a;font-weight:900}
 .revout span{font-weight:800}
 .revrule{font-size:13px;font-weight:800;color:#6a809b;text-align:center;margin:2px 0 10px}
+/* مفتاحُ التسميع خاتمةُ ما قبل الوجه: سطرٌ واحدٌ فوقه، والتلميحُ في طرفه */
+.seamcue{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;
+  font-size:13px;font-weight:800;color:#6a809b;margin:0 0 8px;text-align:center}
+.seamcue .ayah{font-size:20px;line-height:1.7;color:#102b4a}
+.card.bare .seamcue{color:var(--on3)}
+.card.bare .seamcue .ayah{color:var(--on1)}
+.seamcue .btn.mini{margin:0;padding:5px 10px;font-size:13px}
 .card.bare .revrule{color:var(--on3)}
 .revrow select{flex:1;min-width:130px}
 #scr-revpath .card.bare{border:3px solid var(--pb);border-radius:14px;padding:12px}
@@ -6156,6 +6163,8 @@ function qNote(r,wrong){
       if(S.slipA>r.from) trNote(p,s.n,S.slipA,false); else ayNote(p,s.n,r.from,false);
     }
   }
+  /* الوصلةُ انتقالٌ إلى مطلع الصفحة التالية — ومطلعُ سورةٍ لا انتقالَ إليه يُكتب */
+  else if(r.t==='seam'){ if(r.hs && r.ha>0) trNote(p,r.hs.n,r.ha,!wrong); }
   else return;
   t=todayBox(); t.q=(t.q||0)+1; if(!wrong) t.qok=(t.qok||0)+1;
 }
@@ -8575,8 +8584,19 @@ function buildJuzTest(j){
       rounds.push({t:'recite',a:a,pi:0,np:recitePortions(s,a),surah:s,segFrom:it.g[0],segTo:it.g[1]});
     }
   }
+  /* ووصلتان من وصلات صفحاته في مواضعَ متفرّقة: الجزءُ نسقٌ متّصل لا أوجهٌ متفرّقة */
+  var sm=[], seen={};
+  pool.forEach(function(it){
+    seamsNear(it.s,it.g[0],it.g[1],memHeld).forEach(function(q){
+      if(!seen[q.from] && juzOfGi(GIDX[q.hs.n-1]+q.ha)===j){ seen[q.from]=1; sm.push(q); }
+    });
+  });
+  shuffle(sm).slice(0,JUZ_SEAMS).forEach(function(q){
+    rounds.splice(Math.floor(Math.random()*(rounds.length+1)),0,q);
+  });
   return rounds;
 }
+var JUZ_SEAMS=2;
 
 /* =========================================================
    لوحة البيت واللاعبون
@@ -11423,6 +11443,10 @@ function buildRounds(s,seg,stage){
       if(e1) r.push(e1);
       if(e2) r.push(e2);
     }
+    /* وصلةُ الصفحات: مقطعٌ يمسّ حدَّ صفحةٍ يُربط بما وراءه إن كان محفوظاً، وبما في وسطه */
+    seamsNear(s,from,to,function(x,a){
+      return (x.n===s.n && a>=from && a<to) || memHas(x.n,a,a+1);
+    }).forEach(function(q){ r.push(q); });
     /* مطلعُ آيةٍ وخاتمةُ أخرى: يُثبّتان طرفَي الآية في الذهن */
     if(kindAllowed('aedge')){
       var a1=aedgeRound(s,from,to,'first'), a2=aedgeRound(s,from,to,'last');
@@ -11667,7 +11691,7 @@ function runRound(){
     (r.surah||S.surah).name+' '+arNum(r.from+1)+'-'+arNum(r.to);
   ({read:roundRead,words:roundWords,missing:roundMissing,miss2:roundMiss2,ayat:roundAyat,recite:roundRecite,write:roundRecite,
     aedge:roundAEdge,eorder:roundEOrder,
-    revpage:roundRevPage,edge:roundEdge})[r.t](r);
+    revpage:roundRevPage,edge:roundEdge,seam:roundSeam})[r.t](r);
   $('stageChip').classList.toggle('fix', !!r.rq);
   /* أوّلُ سؤالِ تثبيتٍ في المرحلة تستقبله شاشةُ تشجيعٍ هادئة — نجمةٌ فوقها مصباحٌ ينبض —
      لا تذكر الخطأ، فالإعادةُ تدبيرٌ لا عتاب. ثمّ يُعرَّف بسطرٍ مكانَ النتيجة، وبعده تكفي الشارة */
@@ -11791,7 +11815,7 @@ function nextRound(ok){
 /* ===== سلسلة الإجابات الصحيحة ===== */
 var CELE={ q:[], on:false, tm:0, then:null };
 var CELE_MS=5000;                                   /* مدّة الاحتفال قبل أن يذوب وحده */
-var QTYPES={ words:1, missing:1, miss2:1, ayat:1, edge:1, aedge:1, eorder:1, write:1 };   /* ما يُعرف صوابه من خطئه */
+var QTYPES={ words:1, missing:1, miss2:1, ayat:1, edge:1, aedge:1, eorder:1, write:1, seam:1 };   /* ما يُعرف صوابه من خطئه */
 /* التسميع بالصوت يقرّه اللاعب على نفسه، فلا سبيل إلى الحكم عليه:
    لا يزيد السلسلة ولا يقطعها. أمّا كتابةُ الآية فتُقابَل بالنصّ. */
 function comboCounts(r){
@@ -12834,6 +12858,100 @@ function roundEdge(r){
   }
 }
 
+/* ===== وصلةُ الصفحات 🔗 =====
+   الحافّةُ تسأل عن طرفَي الوجه من داخله، والتسميعُ كان يُعطى أوّلَ الوجه مفتاحاً — فلم يكن
+   يُسأل أبداً عمّا يصل وجهاً بالذي يليه: خاتمةُ الصفحة ثمّ ماذا؟ وهو موضعُ التعثّر المعروف
+   في الحلقات. فيُعرض آخرُ الصفحة، ويختار مطلعَ التي بعدها من مطالع صفحاتٍ أخرى (الجاراتُ أوّلاً).
+   ولا يُسأل إلّا عن طرفين محفوظين: held(سورة، آية) يقول ذلك بحسب الموضع —
+   النطاقُ في المراجعة، والمقطعُ والمحفوظُ في الحفظ، ونطاقُ الاختبار فيه. */
+function giAyah(gi){
+  for(var i=SURAHS.length-1;i>=0;i--) if(GIDX[i]<=gi) return { s:SURAHS[i], a:gi-GIDX[i] };
+  return { s:SURAHS[0], a:0 };
+}
+/* الوصلةُ بين الصفحة F والتي تليها */
+function seamRound(F, held){
+  if(!(F>=1 && F<PAGE_STARTS.length)) return null;
+  var t=pageEdgeAyah(F,'last'), h=pageEdgeAyah(F+1,'first');
+  if(!t || !h || !pageEdgePhrase(F+1,'first')) return null;
+  held=held||memHeld;
+  if(!held(t.s,t.a) || !held(h.s,h.a)) return null;
+  /* ts/a: الخاتمة، hs/ha: المطلع. وsurah/segFrom/segTo مقطعُه في الجلسة — الخاتمةُ نفسُها
+     ما لم يُنسب إلى مقطعٍ تُحسب أخطاؤه عليه (مراجعةُ المقاطع) */
+  return { t:'seam', from:F, ts:t.s, a:t.a, hs:h.s, ha:h.a,
+           surah:t.s, segFrom:t.a, segTo:t.a+1, page:F+1 };
+}
+/* وصلاتُ ما بين الآيتين [from,to) من السورة s: ما يدخل المقطعَ وما يخرج منه وما في وسطه */
+function seamsNear(s,from,to,held){
+  var P0=ayahPage(s,from), P1=ayahPage(s,to-1), out=[], F, q, gi0=GIDX[s.n-1]+from, gi1=GIDX[s.n-1]+to;
+  function inSeg(x,a){ var g=GIDX[x.n-1]+a; return g>=gi0 && g<gi1; }
+  for(F=P0-1;F<=P1;F++){
+    q=seamRound(F,held);
+    if(q && (inSeg(q.surah,q.a) || inSeg(q.hs,q.ha))) out.push(q);
+  }
+  return out;
+}
+/* ما حفظه — وهو الأصلُ حيث لا نطاق */
+function memHeld(s,a){ return memHas(s.n,a,a+1); }
+/* في المراجعة: ما في نطاقها، أو ما حفظه وإن خرج عنه — فالوجهُ الذي قبل النطاق محفوظٌ له */
+function revHeld(s,a){
+  if(memHas(s.n,a,a+1)) return true;
+  return pageScopePieces(ayahPage(s,a)).some(function(p){ return p.s.n===s.n && a>=p.from && a<p.to; });
+}
+/* وصلاتُ جلسة المراجعة: لكلّ وجهٍ ما يدخله وما يخرج منه، والمشتركةُ بين وجهين مرّةً واحدة.
+   والخطأُ فيها على الوجه الذي غاب مطلعُه إن كان في الجلسة، وإلّا فعلى وجه الجلسة */
+function revSeams(pages){
+  var seen={}, out=[];
+  pages.forEach(function(P){
+    [P-1,P].forEach(function(F){
+      if(seen[F]) return; seen[F]=1;
+      var q=seamRound(F, revHeld); if(!q) return;
+      q.page = pages.indexOf(F+1)>=0 ? F+1 : P;
+      out.push(q);
+    });
+  });
+  return out;
+}
+/* الخاتمةُ تُعرض من آخرها: طرفُها الأخيرُ هو الذي يقود إلى ما بعده */
+function seamTail(s,a,n){
+  var ws=wordsOf(ayahText(s,a));
+  return ws.length<=n ? ws.join(' ') : '… '+ws.slice(ws.length-n).join(' ');
+}
+var SEAM_WORDS=12, SEAM_CUE=6;
+function roundSeam(r){
+  var F=r.from, Q=F+1, s=r.ts||r.surah;
+  var correct=pageEdgePhrase(Q,'first');
+  if(!correct){ nextRound(true); return; }
+  var nOpts=SET.level==='hard'?4:3;
+  var opts=edgeOptions(Q,'first',nOpts-1);
+  opts.push(correct); shuffle(opts);
+  if(!r.rq) $('stageChip').textContent='🔗 وصلةُ الصفحات';
+  $('playArea').innerHTML=
+    '<div class="hintline">🏁 خاتمةُ الصفحة</div>'+
+    '<div class="ayahbox"><div class="ayah" style="font-size:'+Math.min(SET.font,32)+'px">'+esc(seamTail(s,r.a,SEAM_WORDS))+
+      '<span class="anum">'+arNum(r.a+1)+'</span></div></div>'+
+    '<div class="qtitle">هذه خاتمةُ صفحتها — فبِمَ تبدأ الصفحةُ التي بعدها؟</div>'+
+    '<div class="opts" id="opts">'+opts.map(function(o,i){
+      return '<button class="opt phrase" data-i="'+i+'">'+esc(o)+'</button>'; }).join('')+'</div>';
+  var ob=$('opts').querySelectorAll('.opt'), answered=false, i;
+  for(i=0;i<ob.length;i++){
+    ob[i].onclick=function(){
+      if(answered) return;
+      if(this.textContent===correct){
+        answered=true; this.classList.add('ok');
+        sGood(); $('fb').className='fb good';
+        $('fb').textContent=tx('صحيح ✅ — من صفحة {p} إلى صفحة {q}',{p:arNum(F), q:arNum(Q)});
+        sLater(function(){ nextRound(true); },900);
+      } else {
+        this.classList.add('no'); this.disabled=true;
+        if(examMode()){ answered=true; examMiss(function(){ examShowRight('opts','.opt',correct); }); return; }
+        if(hifzMode()){ answered=true; hifzMiss(r,function(){ examShowRight('opts','.opt',correct); }); return; }
+        sBad(); S.errors++; comboMiss();
+        $('fb').className='fb bad'; $('fb').textContent='حاول مرة أخرى 💪';
+      }
+    };
+  }
+}
+
 /* ===== نوعُ الكلمة: «Quranic Arabic Corpus» ‏(corpus.quran.com) =====
    لكلّ كلمةٍ مفتاحٌ «النوع|السوابق|الصيغة|اللواحق» (يبنيه scripts/morph-build.mjs)،
    فيكون مشتّتُ حرفِ الجرّ حرفَ جرّ، ومشتّتُ صفةِ الله صفةً لله، ومشتّتُ «يَعْلَمُونَ»
@@ -13251,6 +13369,16 @@ function roundRevPage(r){
   /* رقمُ الصفحة وحدَه لا يدلّه على ما يسمّع، فيُعطى أوّلَ كلماتها مفتاحاً */
   var ws=pcs.length ? wordsOf(ayahText(pcs[0].s,pcs[0].from)) : [];
   var cue=ws.length ? esc(ws.slice(0,EDGE_WORDS).join(' '))+' …' : 'صفحة '+arNum(r.page)+' …';
+  /* وإن كان يحفظ ما قبله فمفتاحُه خاتمةُ ما قبله — كما يقرأ المعلّمُ آخرَ الصفحة السابقة
+     فيصلها التلميذ — فيُختبر الوصلُ بالتسميع نفسِه. ومطلعُ الوجه تلميحٌ يُطلب بلمسة، ولا يُحسب
+     عليه: وصلتُه تُسأل في أسئلة الجلسة بعده */
+  var gi0=pcs.length ? GIDX[pcs[0].s.n-1]+pcs[0].from : 0, pv=gi0>0 ? giAyah(gi0-1) : null;
+  if(pv && !revHeld(pv.s,pv.a)) pv=null;
+  var openN=pv ? 0 : EDGE_WORDS, cueHead=cue;
+  if(pv) cue='…';
+  var seamCue=pv ? '<div class="seamcue" id="seamCue"><span>↩️ ابدأ بعد</span>'+
+      '<span class="ayah" translate="no">'+esc(seamTail(pv.s,pv.a,SEAM_CUE))+'</span>'+
+      '<button type="button" class="btn ghost mini" id="btnCueHead">💡 أوّلُها</button></div>' : '';
   recReset();
   /* في وجه المصحف: الوجهُ كلُّه مغطّى بأشكال كلماته وأرقامُ آياته ظاهرة، ومطلعُه ظاهرٌ مفتاحاً.
      ولمسُ كلمةٍ يكشفها وحدها — وهو كعرض الوجه: يعود إليه غداً (revWeak).
@@ -13260,6 +13388,7 @@ function roundRevPage(r){
   if(FM){
     $('playArea').className='qfill qface';
     $('playArea').innerHTML=
+      seamCue+
       '<div class="stface ts" id="stFace"></div>'+
       '<div class="qgap"></div>'+
       /* سطرٌ واحدٌ تحت الوجه: القاعدةُ قبل أن يبدأ (واسمُ الوجه ونطاقُه في الشارة فوقه)،
@@ -13287,6 +13416,7 @@ function roundRevPage(r){
   } else
   $('playArea').innerHTML=
     '<div class="hintline" id="hintR">'+tx('سمّع <b>صفحة {p}</b> عن ظهر قلب — {r}',{p:arNum(r.page), r:names})+'</div>'+
+    seamCue+
     '<div class="ayahbox pagebox" id="pageBox"><div class="ayah" id="ayHidden" style="font-size:'+Math.min(SET.font,28)+'px;color:#9db2c9">'+cue+'</div></div>'+
     (useRec ? '<button class="btn red big pulse" id="btnRecR">🎤 سجّل تسميعي</button>'+
               '<div class="row" id="rowPlayR" hidden style="margin:0 0 12px">'+
@@ -13314,25 +13444,32 @@ function roundRevPage(r){
   }
   function coverDraw(){
     pageWords().forEach(function(w,k){
-      var open=shown || k<EDGE_WORDS || !!peek[k];
+      var open=shown || k<openN || !!peek[k];
       w.classList.toggle('cov', !open);
-      w.classList.toggle('peek', !shown && k>=EDGE_WORDS && !!peek[k]);
+      w.classList.toggle('peek', !shown && k>=openN && !!peek[k]);
     });
   }
   if(FM) $('stFace').onclick=function(e){
     if(shown) return;
     var w=e.target.closest ? e.target.closest('.mw') : null; if(!w) return;
-    var k=pageWords().indexOf(w); if(k<EDGE_WORDS) return;
+    var k=pageWords().indexOf(w); if(k<openN) return;
     if(peek[k]) delete peek[k];
     else { peek[k]=1; if(!recDone) revWeak(r.page); }
     coverDraw();
   };
   function reveal(on){
-    if(FM){ shown=!!on; if(!on) peek={}; coverDraw(); return; }
+    shown=!!on;
+    if(FM){ if(!on) peek={}; coverDraw(); return; }
     $('ayHidden').innerHTML = on?esc(full):cue;
     $('ayHidden').style.color = on?'#102b4a':'#9db2c9';
     var box=$('pageBox'); if(box) box.scrollTop=0;        /* نبدأ من أوّل الصفحة دائماً */
   }
+  /* التلميح: مطلعُ الوجه كما كان مفتاحاً، ويبقى الزرُّ مكانه فلا يتحرّك ما تحته */
+  if($('btnCueHead')) $('btnCueHead').onclick=function(){
+    this.disabled=true;
+    openN=EDGE_WORDS; cue=cueHead;
+    if(FM) coverDraw(); else if(!shown && $('ayHidden')) $('ayHidden').innerHTML=cue;
+  };
   $('btnOkR').onclick=function(){ recReset(); sGood(); finishRevPage(); };
   if($('btnSkipQuiz')) $('btnSkipQuiz').onclick=function(){ recReset(); revSkipToQuiz(); };
   $('btnShow').onclick=function(){
@@ -16251,9 +16388,12 @@ function beginRevQuiz(){
       });
     }
   });
-  if(!rounds.length){ REV.quizDone=true; renderRevPath(); show('scr-revpath'); return; }
+  /* وصلاتُ الأوجه مضمونةٌ لا تُترك للقرعة، ولا يقصّها السقف: ما يدخل كلَّ وجهٍ وما يخرج منه */
+  var seams=revSeams(REV.pages).slice(0,REV_MAX_Q>>1);
+  if(!rounds.length && !seams.length){ REV.quizDone=true; renderRevPath(); show('scr-revpath'); return; }
   rounds=shuffle(rounds);                                  /* لا تتوالى أسئلة صفحة واحدة */
-  if(rounds.length>REV_MAX_Q) rounds=rounds.slice(0,REV_MAX_Q);
+  if(rounds.length>REV_MAX_Q-seams.length) rounds=rounds.slice(0,REV_MAX_Q-seams.length);
+  rounds=shuffle(rounds.concat(seams));
   var f0=rounds[0];
   S={ surah:f0.surah, seg:[f0.segFrom,f0.segTo], si:0, key:segKey(f0.surah.n,f0.segFrom),
       stage:4, review:true, rev:'quiz', rounds:rounds, i:0, errors:0, due:[] };
@@ -16389,6 +16529,7 @@ function beginReview(j){
     due=dueSegs();
     if(!due.length){ renderPath(); show('scr-path'); return; }
     due=due.slice(0,REVIEW_CAP);
+    var seamSeen={};
     due.forEach(function(d){
       var s=d.s, span=d.to-d.from;
       var a1=simAyah(s,d.from,d.to);             /* آيةٌ لها شبيهةٌ في مقطعها أولى بالفراغ */
@@ -16406,6 +16547,12 @@ function beginReview(j){
       rounds.push({t:'recite',a:a3,pi:0,np:recitePortions(s,a3),surah:s,segFrom:d.from,segTo:d.to});
       if(SET.level==='hard') writePick(s,d.from,d.to,1,a3).forEach(function(a4){
         rounds.push({t:'write',a:a4,surah:s,segFrom:d.from,segTo:d.to});
+      });
+      /* وصلةُ الصفحات التي يمسّها المقطع، مرّةً في الجلسة، وخطؤها على مقطعه */
+      seamsNear(s,d.from,d.to,memHeld).forEach(function(q){
+        if(seamSeen[q.from]) return; seamSeen[q.from]=1;
+        q.surah=s; q.segFrom=d.from; q.segTo=d.to;
+        rounds.push(q);
       });
     });
   }
@@ -16949,6 +17096,7 @@ var EX_KINDS=[['words','🧩','ترتيب الكلمات','تُبعثر كلما
               ['ayat','🔢','ترتيب الآيات','تُبعثر آياتُ المقطع فيعيد ترتيبها'],
               ['aedge','🚩','مطلعُ الآية وخاتمتُها','يُعطى شطرَ الآية فيذكر طرفَها الغائب'],
               ['eorder','🏁','رصُّ المطالع والخواتم','يرتّب أوائلَ الآيات أو أواخرَها'],
+              ['seam','🔗','وصلةُ الصفحات','تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها'],
               ['write','✍️','اكتب الآية','يكتب الآيةَ كاملةً كلمةً كلمة']];
 /* نوعٌ لا يشمله «تحدّي اليوم»: عشرون سؤالاً تُفاجئه كلَّ يوم، وكتابةُ الآية كاملةً
    على الجوال أطولُ من أن تأتيه فيها بلا طلب. وأمّا «اختبر نفسي» فـ«منوّعة» فيه
@@ -17100,6 +17248,12 @@ function examQ(it){
   var t=pool[Math.floor(Math.random()*pool.length)];
   if(t==='ayat' && (it.to-it.from)<3) t='missing';
   if(t==='write') return {t:'write',a:it.a,surah:it.s,segFrom:it.from,segTo:it.to,page:it.P};
+  /* وصلةُ وجه الآية بالذي بعده، أو بالذي قبله — وطرفاها في النطاق */
+  if(t==='seam'){
+    var sq=seamRound(it.P, EX.held) || seamRound(it.P-1, EX.held);
+    if(sq) return sq;
+    t='missing';
+  }
   if(t==='words'){
     if(ayahWords(it.s,it.a)>=ORDER_MIN){
       pick=reviewChunk(it.s,it.a);
@@ -17146,9 +17300,16 @@ function examQKey(q){
 }
 /* بناءُ الأسئلة: لا يتكرّر سؤالٌ ما دام في النطاق سعة
    — فإن ضاق النطاقُ عن العدد دار عليه من أوّله. */
+/* طرفا الوصلة في نطاق الاختبار — وفي المقصور على المحفوظ أو مقرَّر اليوم: منه */
+function examHeld(s,a){
+  var e=examEdges(), g=GIDX[s.n-1]+a, om=exOnlyMap();
+  return g>=e[0] && g<=e[1] && (!om || exOnlyHas(om,s.n,a));
+}
 function examBuild(){
   var items=examItems(); if(!items.length) return [];
   var pool=[], seen={}, i, q, key, tries=Math.max(items.length*3, EX.count*6);
+  EX.held=examHeld;
+  try{
   for(i=0;i<tries && pool.length<EX.count;i++){
     q=examQ(items[i%items.length]);
     if(!q) continue;
@@ -17156,6 +17317,7 @@ function examBuild(){
     if(seen[key]) continue;
     seen[key]=1; pool.push(q);
   }
+  } finally { EX.held=null; }
   pool=shuffle(pool);
   if(!pool.length) return [];
   var out=pool.slice(0,EX.count);
@@ -21843,7 +22005,7 @@ function bootNotes(){
    «يوجد تحديث» قبل أن ينزّله (قواميسُه القديمة لا تعرفها). ثمّ تُعرض مرّةً واحدة
    بعد أن تصل الحزمةُ — أو الصفحةُ على الموقع — لمن لم يرَها، ولا تُعرض لمن فتح
    التطبيقَ لأوّل مرّة. */
-var WHATSNEW='في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.';
+var WHATSNEW='صارت المراجعةُ تسأل عن وصلة الصفحات: خاتمةُ كلّ صفحةٍ وبِمَ تبدأ التي بعدها، ويبدأ تسميعُ الوجه من بعد خاتمة الصفحة التي قبله.';
 function newsNote(next){
   var seen=load('nur_news','');
   if(!WHATSNEW || seen===WHATSNEW || NEWS_FIRST){

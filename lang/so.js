@@ -2003,7 +2003,7 @@ NUR_I18N.add('so', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Xifdi ka akhri — erey taabo si aad u aragto, mar kale taabo si aad u daboosho",
   "اكشفها": "Fur",
   "سمّعتُها": "Waan akhriyay",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "“Akhri oo ku celi” iyo “Ka akhrin xifdi” gudahooda, aayaddu hadda waxay ka muuqan kartaa bogga Mushafka laftiisa: meesheeda bogga, waxaana la dabooli karaa si aad xifdi uga akhrido — waxaad dib ugu celin kartaa qoraal caadi ah ⚙️ Dejinta → ✒️ Mushaf.",
+  "صارت المراجعةُ تسأل عن وصلة الصفحات: خاتمةُ كلّ صفحةٍ وبِمَ تبدأ التي بعدها، ويبدأ تسميعُ الوجه من بعد خاتمة الصفحة التي قبله.": "Dib-u-eegistu hadda waxay weydiisaa isku xirka bogagga: dhammaadka bog kasta iyo waxa bogga xiga ku bilaabmo, akhrinta bogga oo xifdi ahna waxay ka bilaabataa dhammaadka bogga ka horreeya kadib.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Ka akhri {w} xifdi — erey taabo si aad u furto",
   "مراجعةٌ حرّةٌ وحدها": "Muraajaco xor ah oo keliya",
   "لا مقرَّرَ يوميّاً في خطّتك": "Qorshahaaga ma jiro qayb maalinle ah",
@@ -2017,5 +2017,12 @@ NUR_I18N.add('so', {
   "اضبط نطاق مراجعتك الحرّة": "Deji xadka muraajacadaada xorta ah",
   "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Muraajacadaadu waa xor — mar kasta oo aad rabto u soco 🎛️",
   "إلى النصف الثاني": "U gudub badhka dambe",
-  "إلى النصف الأوّل": "U gudub badhka hore"
+  "إلى النصف الأوّل": "U gudub badhka hore",
+  "وصلةُ الصفحات": "Isku xirka bogagga",
+  "خاتمةُ الصفحة": "Dhammaadka bogga",
+  "هذه خاتمةُ صفحتها — فبِمَ تبدأ الصفحةُ التي بعدها؟": "Kani waa dhammaadka boggiisa — bogga xiga maxuu ku bilaabmaa?",
+  "ابدأ بعد": "Ka bilow kadib",
+  "أوّلُها": "Bilowgiisa",
+  "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Dhammaadka bog ayaa la soo bandhigaa, adiguna waxaad sheegtaa bilowga bogga xiga",
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Sax ✅ — bogga {p} ilaa bogga {q}"
 });

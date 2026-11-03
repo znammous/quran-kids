@@ -2003,7 +2003,7 @@ NUR_I18N.add('id', {
   "اقرأها من حفظك — المس كلمةً لتراها، والمسها ثانيةً لتغطّيها": "Bacalah dari hafalan — sentuh kata untuk melihatnya, sentuh lagi untuk menutupnya",
   "اكشفها": "Buka",
   "سمّعتُها": "Sudah kusetor",
-  "في «اقرأ وردّد» و«التسميع» صارت الآيةُ تُعرض في وجه المصحف نفسِه: في موضعها من الصفحة، وتُغطّى لتقرأها من حفظك — ولك أن تعيدها نصّاً من ⚙️ الإعدادات ← ✒️ المصحف.": "Di “Baca dan ulangi” dan “Setorkan”, ayat kini bisa tampil di halaman Mushaf itu sendiri: di tempatnya pada halaman, dan bisa ditutup agar kamu membacanya dari hafalan — kamu bisa kembali ke teks biasa di ⚙️ Pengaturan → ✒️ Mushaf.",
+  "صارت المراجعةُ تسأل عن وصلة الصفحات: خاتمةُ كلّ صفحةٍ وبِمَ تبدأ التي بعدها، ويبدأ تسميعُ الوجه من بعد خاتمة الصفحة التي قبله.": "Muraja'ah kini menanyakan sambungan halaman: akhir setiap halaman dan dengan apa halaman berikutnya dimulai, dan setoran halaman dimulai tepat setelah akhir halaman sebelumnya.",
   "سمّع {w} عن ظهر قلب — المس كلمةً لتكشفها": "Setorkan {w} dari hafalan — sentuh kata untuk membukanya",
   "مراجعةٌ حرّةٌ وحدها": "Murajaah bebas saja",
   "لا مقرَّرَ يوميّاً في خطّتك": "Tidak ada porsi harian dalam rencanamu",
@@ -2017,5 +2017,12 @@ NUR_I18N.add('id', {
   "اضبط نطاق مراجعتك الحرّة": "Atur rentang murajaah bebasmu",
   "مراجعتُك حرّة — تمشي فيها متى شئت 🎛️": "Murajaahmu bebas — jalani kapan saja kamu mau 🎛️",
   "إلى النصف الثاني": "Ke separuh kedua",
-  "إلى النصف الأوّل": "Ke separuh pertama"
+  "إلى النصف الأوّل": "Ke separuh pertama",
+  "وصلةُ الصفحات": "Sambungan halaman",
+  "خاتمةُ الصفحة": "Akhir halaman",
+  "هذه خاتمةُ صفحتها — فبِمَ تبدأ الصفحةُ التي بعدها؟": "Ini akhir halamannya — dengan apa halaman berikutnya dimulai?",
+  "ابدأ بعد": "Mulai setelah",
+  "أوّلُها": "Awalnya",
+  "تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها": "Akhir sebuah halaman ditampilkan, lalu kamu menyebut awal halaman berikutnya",
+  "صحيح ✅ — من صفحة {p} إلى صفحة {q}": "Benar ✅ — dari halaman {p} ke halaman {q}"
 });
