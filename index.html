@@ -654,7 +654,10 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .qface .stbig .btn.big{margin-bottom:8px}
 /* زرّان كبيران في سطرٍ واحد: «سجّل» و«سمّعتُها» */
 .qface .stbig.two{display:flex;gap:8px}
-.qface .stbig.two .btn.big{flex:1 1 0;min-width:0;padding:16px 16px;font-size:18px;gap:8px;white-space:nowrap;overflow:hidden}
+/* «استمع إليها» في الصفّ الصغير: يحمرّ ما دام يتلو كما كان في شارته */
+.qface .strow .btn.lsn.on{background:linear-gradient(180deg,#ff8080,#d63b3b);color:#fff}
+/* الزرّان المتجاوران يلتفّ نصُّهما سطرين إن طال (Record my recitation) ولا يُقصّ */
+.qface .stbig.two .btn.big{flex:1 1 0;min-width:0;padding:12px 8px;font-size:16px;gap:6px;white-space:normal;line-height:1.2;overflow:hidden}
 .qface .stbig.two .btn.big .ico{font-size:1.15em}
 .qface .strow{margin:0;min-height:52px;flex-wrap:nowrap;gap:8px}
 .qface .strow .btn{flex:1 1 0;min-width:0;font-size:14px;padding:12px 4px;white-space:nowrap;gap:4px;overflow:hidden}
@@ -12467,12 +12470,13 @@ function roundRead(r){
     $('playArea').className='qfill qface';
     $('playArea').innerHTML=
       '<div class="stface rd" id="stFace"></div>'+
-      '<div class="mfbtnrow"><button class="mfbtn lsn" id="btnListen">🎧 <b>استمع إليها</b></button>'+
-        '<button class="mfbtn cvr" id="btnCover"></button></div>'+
+      '<div class="mfbtnrow"><button class="mfbtn cvr" id="btnCover"></button></div>'+
       '<div class="qgap"></div>'+
       '<div class="hintline" id="recHint">'+hint0+'</div>'+
-      '<div class="stbig" id="stBig"></div>'+(useRec ? '<div class="row strow" id="stRow"></div>' : '')+
+      '<div class="stbig" id="stBig"></div><div class="row strow" id="stRow"></div>'+
       '<div hidden id="stPool">'+
+        /* «استمع إليها» في الصفّ الصغير تحت «سجّل» و«قرأتُها»، وتحت الوجه «غطِّها» وحده */
+        '<button class="btn ghost lsn" id="btnListen">🎧 <b>استمع إليها</b></button>'+
         (useRec ? '<button class="btn red big" id="btnRec">🎤 سجّل قراءتي</button>'+
                   '<button class="btn blue" id="btnPlayRec">▶️ استمع لصوتي</button>'+
                   '<button class="btn ghost spd" id="btnSpeedRec">'+recRateLabel()+'</button>'+
@@ -12480,7 +12484,7 @@ function roundRead(r){
                   '<button class="btn ghost" id="btnNoMic"><span class="nomic">🎤</span> بلا تسجيل</button>' : '')+
         '<button class="btn green big pulse" id="btnRep"><span class="stl">✅ قرأتُها بصوتي</span><span class="stc"></span></button>'+
       '</div>';
-    if(!useRec) $('stBig').appendChild($('btnRep'));
+    if(!useRec){ $('stBig').appendChild($('btnRep')); $('stRow').appendChild($('btnListen')); }
     facePaint($('stFace'), gi, function(){
       faceWords(gi).forEach(function(w){ w.classList.add('cur'); w.closest('.mline').classList.add('band'); });
       var an=$('stFace').querySelector('.manum[data-gi="'+gi+'"]'); if(an) an.classList.add('cur');
@@ -12522,18 +12526,21 @@ function roundRead(r){
     var b=$('btnRec'), rep=$('btnRep'), h=$('recHint'), B=$('stBig'), R=$('stRow'), pool=$('stPool');
     if(!b||!rep||!B||!R||!pool) return;
     recTimerStop(); b.disabled=false; b.classList.remove('reclive');
-    var big=null, row=[], rl=rep.querySelector('.stl');
+    var big=null, big2=null, row=[], rl=rep.querySelector('.stl'), ls=$('btnListen');
     [].slice.call(B.children).concat([].slice.call(R.children)).forEach(function(e){ pool.appendChild(e); });
+    /* «سجّل» و«قرأتُها» في سطرٍ واحد كما في التسميع، و«استمع إليها» تحتهما */
     if(state==='idle'){ big=b; b.textContent='🎤 سجّل قراءتي'; b.className='btn red big pulse';
-      rep.className='btn ghost'; rl.textContent='✅ قرأتُها'; row=[rep,$('btnNoMic')]; }
-    else if(state==='norec'){ big=rep; rep.className='btn green big pulse'; rl.textContent='✅ قرأتُها بصوتي'; }
+      big2=rep; rep.className='btn ghost big'; rl.textContent='✅ قرأتُها'; row=[ls,$('btnNoMic')]; }
+    else if(state==='norec'){ big=rep; rep.className='btn green big pulse'; rl.textContent='✅ قرأتُها بصوتي'; row=[ls]; }
     else if(state==='wait'){ big=b; b.textContent='⏳ في انتظار إذن المايكروفون'; b.className='btn red big'; }
     else if(state==='rec'){ big=b; b.className='btn red big reclive'; recTimerStart(b,'⏹️ إيقاف التسجيل'); }
     else if(state==='ready'){ big=rep; rep.className='btn green big pulse'; rl.textContent='✅ أحسنت — احسبها مرة';
       row=[$('btnPlayRec'),$('btnSpeedRec'),$('btnAgainRec')]; }
     else if(state==='fail'){ big=b; b.textContent='🎤 حاول التسجيل مرة أخرى'; b.className='btn red big';
-      rep.className='btn ghost'; rl.textContent='✅ قرأتُها'; row=[rep]; }
+      big2=rep; rep.className='btn ghost big'; rl.textContent='✅ قرأتُها'; row=[ls]; }
     if(big) B.appendChild(big);
+    if(big2) B.appendChild(big2);
+    B.classList.toggle('two', !!big2);
     row.forEach(function(e){ if(e) R.appendChild(e); });
     R.style.visibility=row.length?'':'hidden';
     if(h && msg!=null) h.textContent=msg;
