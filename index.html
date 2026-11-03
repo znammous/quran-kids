@@ -651,10 +651,11 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .qface .strow{margin:0;min-height:52px;flex-wrap:nowrap;gap:8px}
 .qface .strow .btn{flex:1 1 0;min-width:0;font-size:14px;padding:12px 4px;white-space:nowrap;gap:4px;overflow:hidden}
 /* «لا أستطيع التسجيل»: ميكروفونٌ عليه خطٌّ أحمر — لا 🔇، فتلك كتمُ أصوات التطبيق في الشريط العلويّ */
-/* بحجم أيقونات الأزرار، والخطُّ يقطع المقبضَ دون الرأس فيبقى الميكروفونُ معروفاً */
+/* بحجم أيقونات الأزرار، والخطُّ والميكروفونُ معاً حرفُ X: خطٌّ بطوله يقطعه في منتصفه
+   على الميل المعاكس، وطرفاه حيث طرفاه */
 .nomic{position:relative;display:inline-block;line-height:1;font-size:1.25em}
-.nomic::after{content:'';position:absolute;left:-4%;width:70%;top:56%;height:.11em;min-height:2.5px;
-  background:#d63b3b;border-radius:2px;transform:rotate(45deg);box-shadow:0 0 0 1.5px #fff}
+.nomic::after{content:'';position:absolute;left:52%;top:49%;width:130%;height:.1em;min-height:2.5px;
+  background:#d63b3b;border-radius:99px;box-shadow:0 0 0 1.5px #fff;transform:translate(-50%,-50%) rotate(45deg)}
 /* زرٌّ أيقونتُه وحدها (الميكروفون المشطوب) على قدرها، فيتّسع ما بجانبه لنصّه بأيّ لغة */
 .qface .strow .btn.ico1{flex:0 0 54px;padding-inline:0}
 .qface .strow .btn.spd{flex:0 0 58px}
