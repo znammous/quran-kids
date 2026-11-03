@@ -13529,6 +13529,8 @@ function roundRevPage(r){
     if(sc){ try{ mfSpanNote(pageOfIdx(sc[1]), r.page); }catch(e){} }
     }
     reveal(true);
+    /* كشفُ الوجه يعيده غداً فيُحَسّ هزّةَ الخطأ، وبعد التسجيل مقابلةٌ لا استعانةٌ فلمسةٌ خفيفة */
+    hap(recDone ? 'tap' : 'bad');
     if(!recDone) revWeak(r.page);   /* بعد التسجيل يفتحه ليقابل تسميعه بالمصحف، لا استعانةً */
   };
   $('btnAgainR').onclick=function(){
@@ -13824,6 +13826,7 @@ function roundRecite(r){
     $('btnShow').onclick=function(){
       if(!FM) mushafOpen(s, r.a);              /* يرى موضعها في الوجه لا نصّها وحده */
       reveal(true);
+      hap(recDone ? 'tap' : 'bad');            /* كما في كشف الوجه في المراجعة */
       if(!recDone){ helped=true; S.errors++; comboMiss(); } /* بعد التسجيل يقابل قراءته بالمصحف، لا استعانةً */
     };
     $('btnAgainR').onclick=function(){
