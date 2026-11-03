@@ -13493,6 +13493,8 @@ function roundRevPage(r){
       if(!recDone && !peeked[k]){
         peeked[k]=1; peekN++;
         if(peekN>=2) revWeak(r.page);
+        /* يُحَسّ الفرقُ في اليد: الأولى لمسةٌ خفيفة، والتي تعيده غداً هزّةُ الخطأ */
+        hap(peekN>=2 ? 'bad' : 'tap');
         if($('hintR')) $('hintR').textContent = peekN>=2
           ? '↩️ كشفتَ كلمتين — يعود إليك غداً'
           : '💡 كلمةٌ تُغتفر — والثانيةُ تُعيده إليك غداً';
