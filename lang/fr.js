@@ -2041,5 +2041,20 @@ NUR_I18N.add('fr', {
   "لا، أُكمل التسميع": "Non, je continue à réciter",
   "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Es-tu sûr de vouloir afficher ce mot ?<br>Si tu l’affiches, la page te reviendra demain",
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Veux-tu afficher ce mot ?<br>Le premier mot est pardonné, le deuxième te ramène la page demain",
-  "نعم، اكشفها": "Oui, affiche-le"
+  "نعم، اكشفها": "Oui, affiche-le",
+  "جلساتي": "Mes séances",
+  "آخرُ ثلاث جلسات": "Les trois dernières séances",
+  "أطول جلسة": "Séance la plus longue",
+  "رفيق القرآن": "Compagnon du Coran",
+  "أنت رفيقُ القرآن": "Tu es un compagnon du Coran",
+  "طول جلستك": "Durée de ta séance",
+  "نصف ساعة": "une demi-heure",
+  "أمضيتَ {t} مع كتاب الله — جزاك الله خيراً": "Tu as passé {t} avec le Livre d'Allah — qu'Allah te récompense par le bien",
+  "{h} و{m}": "{h} et {m}",
+  "قبل {d}": "il y a {d}",
+  "احفظ أو راجع، فيظهر هنا كم استغرقت جلستك": "Mémorise ou révise, et la durée de ta séance s'affichera ici",
+  "#1 دقيقة واحدة": "1 minute",
+  "#n دقيقة واحدة": "{n} minutes",
+  "#1 ساعة": "1 heure",
+  "#n ساعة": "{n} heures"
 });

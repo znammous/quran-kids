@@ -2041,5 +2041,20 @@ NUR_I18N.add('so', {
   "لا، أُكمل التسميع": "Maya, aan sii wado akhriska",
   "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Ma hubtaa inaad rabto inaad furto eraygan?<br>Haddaad furto, boggu berri ayuu kuu soo noqonayaa",
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Ma rabtaa inaad furto eraygan?<br>Erayga koowaad waa la cafiyaa, kan labaad wuxuu bogga kuu soo celinayaa berri",
-  "نعم، اكشفها": "Haa, fur"
+  "نعم، اكشفها": "Haa, fur",
+  "جلساتي": "Fadhiyadayda",
+  "آخرُ ثلاث جلسات": "Saddexdii fadhi ee ugu dambeeyay",
+  "أطول جلسة": "Fadhiga ugu dheer",
+  "رفيق القرآن": "Saaxiibka Quraanka",
+  "أنت رفيقُ القرآن": "Waxaad tahay saaxiibka Quraanka",
+  "طول جلستك": "Dhererka fadhigaaga",
+  "نصف ساعة": "nus saac",
+  "أمضيتَ {t} مع كتاب الله — جزاك الله خيراً": "Waxaad {t} la qaadatay Kitaabka Alle — Alle ha kugu abaalmariyo khayr",
+  "{h} و{m}": "{h} iyo {m}",
+  "قبل {d}": "{d} ka hor",
+  "احفظ أو راجع، فيظهر هنا كم استغرقت جلستك": "Xifdi ama dib u eeg, oo halkan waxaa ka muuqan doona inta uu fadhigaagu qaatay",
+  "#1 دقيقة واحدة": "1 daqiiqo",
+  "#n دقيقة واحدة": "{n} daqiiqo",
+  "#1 ساعة": "1 saac",
+  "#n ساعة": "{n} saac"
 });

@@ -2041,5 +2041,20 @@ NUR_I18N.add('ms', {
   "لا، أُكمل التسميع": "Tidak, teruskan hafalan",
   "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Adakah anda pasti mahu membuka perkataan ini?<br>Jika anda membukanya, halaman ini akan kembali kepada anda esok",
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Adakah anda mahu membuka perkataan ini?<br>Perkataan pertama dimaafkan, perkataan kedua membawa halaman kembali kepada anda esok",
-  "نعم، اكشفها": "Ya, buka"
+  "نعم، اكشفها": "Ya, buka",
+  "جلساتي": "Sesi saya",
+  "آخرُ ثلاث جلسات": "Tiga sesi terakhir",
+  "أطول جلسة": "Sesi terpanjang",
+  "رفيق القرآن": "Sahabat al-Quran",
+  "أنت رفيقُ القرآن": "Kamu sahabat al-Quran",
+  "طول جلستك": "Tempoh sesi kamu",
+  "نصف ساعة": "setengah jam",
+  "أمضيتَ {t} مع كتاب الله — جزاك الله خيراً": "Kamu meluangkan {t} bersama Kitab Allah — semoga Allah membalas kamu dengan kebaikan",
+  "{h} و{m}": "{h} dan {m}",
+  "قبل {d}": "{d} yang lalu",
+  "احفظ أو راجع، فيظهر هنا كم استغرقت جلستك": "Hafaz atau ulang kaji, dan tempoh sesi kamu akan muncul di sini",
+  "#1 دقيقة واحدة": "1 minit",
+  "#n دقيقة واحدة": "{n} minit",
+  "#1 ساعة": "1 jam",
+  "#n ساعة": "{n} jam"
 });

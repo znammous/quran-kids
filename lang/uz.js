@@ -2041,5 +2041,20 @@ NUR_I18N.add('uz', {
   "لا، أُكمل التسميع": "Yo‘q, yoddan o‘qishni davom ettiraman",
   "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Bu so‘zni ochmoqchi ekaningga ishonching komilmi?<br>Agar ochsang, sahifa ertaga senga yana qaytadi",
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Bu so‘zni ochmoqchimisan?<br>Birinchi so‘z kechiriladi, ikkinchisi sahifani ertaga senga qaytaradi",
-  "نعم، اكشفها": "Ha, och"
+  "نعم، اكشفها": "Ha, och",
+  "جلساتي": "Mashg'ulotlarim",
+  "آخرُ ثلاث جلسات": "Oxirgi uchta mashg'ulot",
+  "أطول جلسة": "Eng uzun mashg'ulot",
+  "رفيق القرآن": "Qur'on hamrohi",
+  "أنت رفيقُ القرآن": "Sen Qur'on hamrohisan",
+  "طول جلستك": "Mashg'uloting davomiyligi",
+  "نصف ساعة": "yarim soat",
+  "أمضيتَ {t} مع كتاب الله — جزاك الله خيراً": "Alloh Kitobi bilan {t} vaqt o'tkazding — Alloh seni yaxshilik bilan mukofotlasin",
+  "{h} و{m}": "{h} {m}",
+  "قبل {d}": "{d} oldin",
+  "احفظ أو راجع، فيظهر هنا كم استغرقت جلستك": "Yodla yoki takrorla, mashg'uloting qancha davom etgani shu yerda ko'rinadi",
+  "#1 دقيقة واحدة": "1 daqiqa",
+  "#n دقيقة واحدة": "{n} daqiqa",
+  "#1 ساعة": "1 soat",
+  "#n ساعة": "{n} soat"
 });

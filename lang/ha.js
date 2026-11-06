@@ -2041,5 +2041,20 @@ NUR_I18N.add('ha', {
   "لا، أُكمل التسميع": "A’a, in ci gaba da karatu",
   "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Ka tabbata kana so ka buɗe wannan kalmar?<br>Idan ka buɗe ta, shafin zai dawo maka gobe",
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Kana so ka buɗe wannan kalmar?<br>Ana yafe kalmar farko, ta biyu kuma za ta dawo maka da shafin gobe",
-  "نعم، اكشفها": "Ee, buɗe ta"
+  "نعم، اكشفها": "Ee, buɗe ta",
+  "جلساتي": "Zamana na",
+  "آخرُ ثلاث جلسات": "Zamanna uku na ƙarshe",
+  "أطول جلسة": "Zama mafi tsawo",
+  "رفيق القرآن": "Abokin Alƙur'ani",
+  "أنت رفيقُ القرآن": "Kai abokin Alƙur'ani ne",
+  "طول جلستك": "Tsawon zamanka",
+  "نصف ساعة": "rabin awa",
+  "أمضيتَ {t} مع كتاب الله — جزاك الله خيراً": "Ka shafe {t} tare da Littafin Allah — Allah ya saka maka da alheri",
+  "{h} و{m}": "{h} da {m}",
+  "قبل {d}": "{d} da suka wuce",
+  "احفظ أو راجع، فيظهر هنا كم استغرقت جلستك": "Haddace ko ka yi bita, tsawon zamanka zai bayyana a nan",
+  "#1 دقيقة واحدة": "minti 1",
+  "#n دقيقة واحدة": "minti {n}",
+  "#1 ساعة": "awa 1",
+  "#n ساعة": "awa {n}"
 });

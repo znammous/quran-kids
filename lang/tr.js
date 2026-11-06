@@ -2041,5 +2041,20 @@ NUR_I18N.add('tr', {
   "لا، أُكمل التسميع": "Hayır, ezberden okumaya devam et",
   "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Bu kelimeyi açmak istediğinden emin misin?<br>Açarsan sayfa yarın sana tekrar gelir",
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Bu kelimeyi açmak istiyor musun?<br>İlk kelime affedilir, ikincisi sayfayı yarın sana geri getirir",
-  "نعم، اكشفها": "Evet, aç"
+  "نعم، اكشفها": "Evet, aç",
+  "جلساتي": "Oturumlarım",
+  "آخرُ ثلاث جلسات": "Son üç oturum",
+  "أطول جلسة": "En uzun oturum",
+  "رفيق القرآن": "Kur'an dostu",
+  "أنت رفيقُ القرآن": "Sen Kur'an dostusun",
+  "طول جلستك": "Oturum süren",
+  "نصف ساعة": "yarım saat",
+  "أمضيتَ {t} مع كتاب الله — جزاك الله خيراً": "Allah'ın Kitabı ile {t} geçirdin — Allah seni hayırla mükâfatlandırsın",
+  "{h} و{m}": "{h} {m}",
+  "قبل {d}": "{d} önce",
+  "احفظ أو راجع، فيظهر هنا كم استغرقت جلستك": "Ezberle veya tekrar et, oturum süren burada görünsün",
+  "#1 دقيقة واحدة": "1 dakika",
+  "#n دقيقة واحدة": "{n} dakika",
+  "#1 ساعة": "1 saat",
+  "#n ساعة": "{n} saat"
 });

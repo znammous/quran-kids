@@ -2041,5 +2041,20 @@ NUR_I18N.add('sw', {
   "لا، أُكمل التسميع": "Hapana, niendelee kusoma kwa moyo",
   "هل أنت متأكّد أنّك تريد كشف هذه الكلمة؟<br>إن كشفتَها عاد إليك الوجهُ غداً": "Je, una uhakika unataka kufunua neno hili?<br>Ukilifunua, ukurasa utarudi kwako kesho",
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Je, unataka kufunua neno hili?<br>Neno la kwanza linasamehewa, la pili linarudisha ukurasa kwako kesho",
-  "نعم، اكشفها": "Ndiyo, lifunue"
+  "نعم، اكشفها": "Ndiyo, lifunue",
+  "جلساتي": "Vikao vyangu",
+  "آخرُ ثلاث جلسات": "Vikao vitatu vya mwisho",
+  "أطول جلسة": "Kikao kirefu zaidi",
+  "رفيق القرآن": "Rafiki wa Qur'ani",
+  "أنت رفيقُ القرآن": "Wewe ni rafiki wa Qur'ani",
+  "طول جلستك": "Urefu wa kikao chako",
+  "نصف ساعة": "nusu saa",
+  "أمضيتَ {t} مع كتاب الله — جزاك الله خيراً": "Umetumia {t} pamoja na Kitabu cha Allah — Allah akulipe kheri",
+  "{h} و{m}": "{h} na {m}",
+  "قبل {d}": "{d} zilizopita",
+  "احفظ أو راجع، فيظهر هنا كم استغرقت جلستك": "Hifadhi au rudia, na urefu wa kikao chako utaonekana hapa",
+  "#1 دقيقة واحدة": "dakika 1",
+  "#n دقيقة واحدة": "dakika {n}",
+  "#1 ساعة": "saa 1",
+  "#n ساعة": "saa {n}"
 });

@@ -1271,6 +1271,9 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 .pfay small{display:block;font-size:11px;font-weight:700;color:var(--on3)}
 .pfay:active,.pfc:active{transform:scale(.94)}
 .pftr li{font-size:13.5px}
+.pfses li{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.pfses li b{font-weight:900;color:var(--ttl);white-space:nowrap}
+.pfses li.pfbest{border-top:2px solid var(--pb2);margin-top:2px}
 .pfsur{border-top:1px dashed var(--pb2);padding:6px 0}
 .pfsur summary{display:flex;justify-content:space-between;align-items:baseline;gap:8px;cursor:pointer;
   color:var(--ttl);font-weight:900;font-size:15px;padding:4px 0;list-style:none}
@@ -6240,6 +6243,96 @@ function qNote(r,wrong){
   t=todayBox(); t.q=(t.q||0)+1; if(!wrong) t.qok=(t.qok||0)+1;
 }
 /* =========================================================
+   طولُ الجلسة — يُشكر الطفلُ على وقته مع القرآن
+   الجلسةُ وقتُ عملِه بالقرآن: الدرسُ والتسميعُ والمراجعةُ ووجهُ المصحف، لا الألعابُ ولا
+   القصصُ ولا المتجر. ويتوقّف العدّ إذا غاب التطبيق، أو مرّت SES_IDLE بلا لمسةٍ ولا تلاوةٍ
+   ولا تسجيل — فالهاتفُ المتروكُ على الدرس لا يُحسب. وتنتهي بعد SES_GAP بلا عمل، فتُكتب في
+   p.sess: [يومُها، دقائقُها]، وp.sesBest أطولُها. والجاريةُ في p.ses تبقى إن أُغلق التطبيق.
+   وكلَّ SES_STEP منها احتفالٌ «رفيق القرآن» بلا جواهر: يُشكر على وقته ولا يُجازى بإطالته.
+   ولا يُقطع به شيء: يُؤجَّل في p.sesCele حتى تهدأ شاشةٌ لا عملَ فيها ولا فوقها شيء، فلا
+   يقع فوق احتفالٍ ولا سؤالٍ ولا نتيجةٍ ولا شهادة؛ ومن أغلق قبلها رآه في دخوله التالي.
+   ========================================================= */
+var SES_TICK=2000, SES_IDLE=4*60000, SES_GAP=15*60000, SES_STEP=30*60000, SES_KEEP=30, SES_CALM_MS=3000;
+var SES_WORK=/^scr-(play|exam)$/, SES_QUIET=/^scr-(start|path|map|juz|rev|revpath|bqn|perf)$/;
+var SES_TOUCH=Date.now(), SES_RUN=0, SES_WHO=null, SES_SAVED=0, SES_CALM=0;
+document.addEventListener('pointerdown', function(){ SES_TOUCH=Date.now(); }, true);
+function sesWorking(){
+  var mf=$('mfSheet');
+  if(document.hidden || !(SES_WORK.test(curScreen()) || (mf && !mf.hidden))) return false;
+  if(Date.now()-SES_TOUCH<SES_IDLE) return true;
+  try{ return recBusy() || !!(AUD.q.length && AUD.el && !AUD.el.paused); }catch(e){ return false; }
+}
+function sesMin(ms){ return Math.floor((ms||0)/60000); }
+function sesClose(p){
+  var c=p.ses, m=sesMin(c&&c.ms);
+  p.ses=null;
+  if(m>=1){
+    (p.sess||(p.sess=[])).push([c.d,m]);
+    if(p.sess.length>SES_KEEP) p.sess=p.sess.slice(-SES_KEEP);
+    if(m>(p.sesBest||0)) p.sesBest=m;
+  }
+  saveDB();
+}
+/* لا شيءَ يعمل ولا شيءَ مفتوح ولا احتفالَ منتظَر */
+function sesCalm(){
+  var sp=$('splash'), mf=$('mfSheet'), bg=document.querySelectorAll('.modal-bg'), i;
+  if((sp && !sp.__off) || (mf && !mf.hidden) || !SES_QUIET.test(curScreen()) || document.hidden) return false;
+  if(CELE.on || CELE.q.length || CELE.then || FX.wait || DAY_PLAY_WAIT!=null) return false;
+  for(i=0;i<bg.length;i++) if(!bg[i].hidden) return false;
+  return true;
+}
+function sesCheer(p,now){
+  var e=p.sesCele;
+  if(!e || !sesCalm()){ SES_CALM=0; return; }
+  if(!SES_CALM){ SES_CALM=now; return; }
+  /* هدأت قليلاً، ولا يدُه على الشاشة: فلا تبتلع الشاشةُ ضغطتَه */
+  if(now-SES_CALM<SES_CALM_MS || now-SES_TOUCH<1500) return;
+  SES_CALM=0; p.sesCele=null; saveDB();
+  if(todayNum()-e[0]>1) return;                     /* مضى زمنُها: لا يُشكر على ما نسيه */
+  celeShow({ ic:'📖', kick:'⏳ '+tx('طول جلستك'), title:tx('أنت رفيقُ القرآن'),
+    sub:tx('أمضيتَ {t} مع كتاب الله — جزاك الله خيراً',{t:sesTime(e[1])}) });
+}
+function sesTick(){
+  var p=null, now=Date.now(), c, n;
+  try{ p=curP(); }catch(e){}
+  if(!p) return;
+  if(DB.cur!==SES_WHO){ SES_WHO=DB.cur; SES_RUN=0; SES_CALM=0; }
+  c=p.ses;
+  if(c && now-c.last>SES_GAP){ sesClose(p); c=null; }
+  if(sesWorking()){
+    c=c||(p.ses={ d:todayNum(), ms:0, last:now, hit:0 });
+    if(SES_RUN) c.ms+=Math.max(0,Math.min(now-SES_RUN,SES_TICK*3));   /* المؤقّتُ يتوقّف في الخلفيّة */
+    SES_RUN=now; c.last=now;
+    n=Math.floor(c.ms/SES_STEP);
+    if(n>(c.hit||0)){ c.hit=n; p.sesCele=[c.d,sesMin(c.ms)]; saveDB(); }
+    else if(c.hit && p.sesCele) p.sesCele[1]=sesMin(c.ms);   /* يُشكر على ما بلغه حين يراه */
+    if(now-SES_SAVED>60000){ SES_SAVED=now; saveDB(); }
+  }else SES_RUN=0;
+  sesCheer(p,now);
+}
+setInterval(sesTick,SES_TICK);
+/* «٣٤ دقيقة»، «نصف ساعة»، «ساعة و٥ دقائق» */
+function sesTime(m){
+  var h=Math.floor(m/60), r=m%60;
+  if(!h) return r===30 ? tx('نصف ساعة') : arCount(r,C_MIN);
+  return r ? tx('{h} و{m}',{h:arCount(h,C_HOUR), m:arCount(r,C_MIN)}) : arCount(h,C_HOUR);
+}
+function sesDay(d){
+  var n=todayNum()-d;
+  return n<=0 ? tx('اليوم') : n===1 ? tx('أمس') : tx('قبل {d}',{d:arCount(n,C_DAYS)});
+}
+function sesCard(p){
+  var L=(p.sess||[]).slice(), c=p.ses, m=sesMin(c&&c.ms), best=p.sesBest||0;
+  if(m>=1){ L.push([c.d,m]); if(m>best) best=m; }
+  var h='<div class="bfam"><div class="fh"><span>⏳ '+tx('جلساتي')+'</span><small>'+tx('آخرُ ثلاث جلسات')+'</small></div>';
+  if(!L.length) return h+'<p class="pfmute">'+tx('احفظ أو راجع، فيظهر هنا كم استغرقت جلستك')+'</p></div>';
+  h+='<ul class="pflines pfses">'+L.slice(-3).reverse().map(function(x){
+    return '<li><span>'+esc(sesDay(x[0]))+(x[1]*60000>=SES_STEP?'<small>🌟 '+tx('رفيق القرآن')+'</small>':'')+'</span>'+
+           '<b>'+esc(sesTime(x[1]))+'</b></li>';
+  }).join('')+'<li class="pfbest"><span>🏆 '+tx('أطول جلسة')+'</span><b>'+esc(sesTime(best))+'</b></li></ul></div>';
+  return h;
+}
+/* =========================================================
    أدائي — الطفلُ يُقارَن بنفسه وحدَها
    من السجلّين: أيّامُه (p.days) وآياتُه (p.ay وp.tr). لا مقارنةَ بالإخوة ولا أرقامَ سرعة.
    وموعدُ المراجعة يبقى على المقطع: ما هنا تشخيصٌ وتدريبٌ موجَّه لا غير.
@@ -6407,6 +6500,7 @@ function perfHTML(){
   h+='<div class="bfam"><div class="fh"><span>📅 '+tx('أسبوعي')+'</span><small>'+tx('آخرُ سبعة أيّام')+'</small></div>'+
      (lines.length ? '<ul class="pflines">'+lines.join('')+'</ul>'
                    : '<p class="pfmute">'+tx('أسبوعك يبدأ اليوم — احفظ مقطعاً أو راجع، فيظهر هنا ما عملت')+' 🌱'+'</p>')+'</div>';
+  h+=sesCard(p);
   h+='<div class="bfam"><div class="fh"><span>📊 '+tx('أيّامي')+'</span><small>'+tx('آخرُ أربعة عشر يوماً')+'</small></div>'+perfChart(p)+'</div>';
   h+='<div class="bfam"><div class="fh"><span>💪 '+tx('آياتٌ تحتاج تثبيتاً')+'</span></div>';
   if(W.length || T.length){
@@ -11778,6 +11872,8 @@ function arCount(n,f){
 }
 var C_PAGE=['صفحة واحدة','صفحتان','صفحات','صفحة'];
 var C_SESS=['جلسة واحدة','جلستان','جلسات','جلسة'];
+var C_MIN=['دقيقة واحدة','دقيقتان','دقائق','دقيقة'];
+var C_HOUR=['ساعة','ساعتان','ساعات','ساعة'];
 var C_QUES=['سؤال واحد','سؤالان','أسئلة','سؤالاً'];
 var C_AYAH=['آية واحدة','آيتان','آيات','آية'];
 var C_SURAH=['سورة واحدة','سورتان','سور','سورة'];
