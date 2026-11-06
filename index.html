@@ -1606,6 +1606,19 @@ html[lang=ru] .hijri{white-space:normal}
   color:var(--on2);line-height:1.7;margin-top:2px}
 .goalcard .gcgo{flex:0 0 auto;font-size:20px;color:var(--on3);opacity:.7}
 /* بطاقةٌ لا عملَ وراءها: تُخبر ولا تُضغط، فلا تُغري بمؤشّرٍ ولا تنخفض */
+.percards .perwhy{display:block}
+.percards.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.percards.two .goalcard{flex-direction:column;align-items:center;text-align:center;gap:4px;margin-bottom:0;padding-inline:8px}
+.percards.two .perwhy,.percards.two .gcgo{display:none}
+/* الشاشةُ القصيرة: هيئةٌ نحيفة، فلا تنزل بطاقةُ يوم الاختبار تحت الزرّين العائمين */
+@media (max-height:720px){
+  .percards .goalcard{padding:7px 12px;gap:9px;margin-bottom:8px}
+  .percards.two .goalcard{flex-direction:row;text-align:start;gap:7px;padding-inline:8px}
+  .percards .goalcard .gcic{width:36px;height:36px;font-size:20px;border-radius:10px}
+  .percards .goalcard .gctx b{font-size:15px;line-height:1.3}
+  .percards .goalcard .gctx i{font-size:12px}
+  .percards .perwhy{display:none}
+}
 .goalcard.flat{cursor:default}
 .goalcard.flat:active{transform:none;box-shadow:0 5px 0 rgba(0,0,0,.16)}
 /* تمّت؟ فحدٌّ أخضرُ وأيقونةٌ تُطمئنه */
@@ -3088,6 +3101,7 @@ body.hastabs #btnRevQuit{display:none}
       <span class="gctx"><b>مراجعة اليوم</b><i id="cardRevTxt">—</i></span>
       <span class="gcgo">❮</span>
     </button>
+    <div class="percards" id="perCards" hidden></div>
     <!-- يبقيان مخفيّين: بقيّةُ الشيفرة تنبض بهما وتضغطهما -->
     <div hidden aria-hidden="true">
       <button type="button" id="btnGoMap">📖 ابدأ الحفظ</button>
@@ -12047,7 +12061,7 @@ function runRound(){
   $('pSeg').textContent=S.review?('☀️ '+arNum(r.segFrom+1)+'-'+arNum(r.segTo)):segLabel();
   var seghere = S.surah.name+' '+arNum(S.seg[0]+1)+'-'+arNum(S.seg[1]);
   $('stageChip').textContent =
-      S.rev==='exam' ? ((S.fix?'💪 تثبيت • ':S.daily?'🎯 تحدّي اليوم • ':'📝 اختبار • ')+seghere)
+      S.rev==='exam' ? ((S.fix?'💪 تثبيت • ':S.per==='w'?'📅 اختبار الأسبوع • ':S.per==='m'?'🏅 اختبار الشهر • ':S.daily?'🎯 تحدّي اليوم • ':'📝 اختبار • ')+seghere)
     : S.rev==='quiz' ? ('🧩 أسئلة المراجعة • '+seghere)
     : S.review       ? ('☀️ مراجعة اليوم • '+seghere)
     :                  (STAGES[S.stage].t+' • '+seghere);
@@ -14355,6 +14369,7 @@ function finishStage(){
     p.done=true;
     if(p.due==null){ p.box=0; p.due=todayNum()+INTERVALS[0]; p.ld=todayNum(); p.lk=2; }
     memAdd(S.surah.n, S.seg[0], S.seg[1]);
+    actNote(first?'h':'r', S.surah.n, S.seg[0], S.seg[1]);   /* حفظٌ في التطبيق، لا تسجيلُ محفوظ */
     saveProg();
     if(first) noteSeg(S.seg[1]-S.seg[0]);
     var t=surahStats(S.surah);
@@ -16896,6 +16911,9 @@ function finishRevQuiz(){
   tal().revpg=(tal().revpg||0)+donePages.length;
   if(!S.errors) tal().perfect++;
   noteReview(weakList.length===0, donePages.length);
+  donePages.forEach(function(P){
+    pageMemPieces(P).forEach(function(pc){ actNote('r', pc.s.n, pc.from, pc.to); });
+  });
   try{ donePages.forEach(function(P){ pageMemPieces(P).forEach(function(q){ dayRevNote(q.s.n,q.from,q.to); }); }); }catch(e){}
   try{ dayPartDone('r'); }catch(e){}
   /* إتمامُ الدورة على المحفوظ كلّه: منزلةٌ تُذكر، لا جلسةٌ تمرّ */
@@ -17039,6 +17057,7 @@ function revSegDone(d){
   (d.alt||[]).forEach(function(k){ var q=getP(k); q.box=p.box; q.due=p.due; q.ld=p.ld; q.lk=p.lk; });   /* مفاتيحُه القديمة تتبعه */
   d.r={ n:1, bad:!ok, drop:!ok && (p.box||0)<b0, grad:ok && d0!=null && p.due==null, next:p.due };
   saveProg();
+  actNote('r', d.s.n, d.from, d.to);
   noteReview(e===0, segsPages([d]), !S.revCounted);   /* بالأوجه كالورد، والجلسةُ تُعدّ مرّة */
   try{ dayRevNote(d.s.n,d.from,d.to); dayPartDone('r'); }catch(e){}
   S.revCounted=true;
@@ -17758,8 +17777,10 @@ function examHeld(s,a){
   var e=examEdges(), g=GIDX[s.n-1]+a, om=exOnlyMap();
   return g>=e[0] && g<=e[1] && (!om || exOnlyHas(om,s.n,a));
 }
-function examBuild(){
+/* spread: تُخلط الآياتُ أوّلاً، فتتوزّع الأسئلةُ على النطاق كلِّه لا على أوّله */
+function examBuild(spread){
   var items=examItems(); if(!items.length) return [];
+  if(spread) items=shuffle(items);
   var pool=[], seen={}, i, q, key, tries=Math.max(items.length*3, EX.count*6);
   EX.held=examHeld;
   try{
@@ -18125,7 +18146,9 @@ function examWire(k){
    أُغلق التطبيقُ عاد إليه من سؤاله نفسِه. وللاختبار حفظُه ولتحدّي اليوم
    حفظُه، وتحدّي اليوم لا يُستأنف في غير يومه. والسورةُ في الأسئلة كائنٌ
    كبير، فتُحفظ برقمها وتُردّ عند الاستئناف. */
-function examPauseKey(daily){ return daily ? 'dyPause' : 'exPause'; }
+function examPauseKey(daily){
+  return daily==='w' ? 'wkPause' : daily==='m' ? 'moPause' : daily ? 'dyPause' : 'exPause';
+}
 function examSave(){
   if(!S || S.rev!=='exam' || S.fix) return;
   var p; try{ p=curP(); }catch(e){ return; }
@@ -18140,7 +18163,7 @@ function examSave(){
       return v;
     });
   } finally { S.i=i0; }
-  p[examPauseKey(S.daily)]={ s:s, log:EX.log.slice(), el:Date.now()-EX.t0, day:todayNum(),
+  p[examPauseKey(S.per||S.daily)]={ s:s, log:EX.log.slice(), el:Date.now()-EX.t0, day:todayNum(),
     ex:{ fromS:EX.fromS, fromA:EX.fromA, toS:EX.toS, toA:EX.toA, memOnly:EX.memOnly,
          dayOnly:EX.dayOnly, dayMap:EX.dayOnly?EX.dayMap:null } };
   saveDB();
@@ -18183,16 +18206,18 @@ function examResume(daily){
 /* الخروجُ إيقاف: يُحفظ ويعود إليه من الموضع نفسِه */
 function examQuitAsk(){
   if(S && S.fix){ fixQuit(); return; }
-  var daily=!!(S&&S.daily);
-  /* جملتان كاملتان لكلٍّ منهما: الاختبارُ وتحدّي اليوم */
-  uiBox('⏸️ <b>'+(daily ? tx('أتوقف تحدّي اليوم الآن؟') : tx('أتوقف الاختبار الآن؟'))+'</b>'+String.fromCharCode(10)+String.fromCharCode(10)+
-    (daily ? tx('يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله متى شئت من زرّ «تحدّي اليوم» — اليومَ نفسَه.')
+  var daily=!!(S&&S.daily), per=S&&S.per;
+  /* جملٌ كاملةٌ لكلٍّ منها: الاختبارُ وتحدّي اليوم واختبارا الأسبوع والشهر */
+  uiBox('⏸️ <b>'+(per==='w' ? tx('أتوقف اختبار الأسبوع الآن؟') : per==='m' ? tx('أتوقف اختبار الشهر الآن؟')
+        : daily ? tx('أتوقف تحدّي اليوم الآن؟') : tx('أتوقف الاختبار الآن؟'))+'</b>'+String.fromCharCode(10)+String.fromCharCode(10)+
+    (per ? tx('يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في الرئيسيّة — اليومَ نفسَه.')
+     : daily ? tx('يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله متى شئت من زرّ «تحدّي اليوم» — اليومَ نفسَه.')
            : 'يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله متى شئت من زرّ «اختبر نفسي».'),
     '⏸️', '⏸️ أوقِفه الآن', '↩️ أُكمل', function(ok){
       if(!ok) return;
       examSave();
       S=null; renderPlayers(); show('scr-start');
-      try{ navToast('⏸️ '+(daily ? tx('حُفظ تحدّيك — تعود إليه من حيث وقفت') : tx('حُفظ اختبارك — تعود إليه من حيث وقفت'))); }catch(e){}
+      try{ navToast('⏸️ '+((daily && !per) ? tx('حُفظ تحدّيك — تعود إليه من حيث وقفت') : tx('حُفظ اختبارك — تعود إليه من حيث وقفت'))); }catch(e){}
     });
 }
 /* ===== الاختبار نفسه ===== */
@@ -18204,12 +18229,12 @@ function examBegin(){
 }
 /* daily: تحدّي اليوم — أسئلتُه كالاختبار، وخاتمتُه غيرُ خاتمته.
    fix: «ثبّتها الآن» من شاشة أدائي — لا تُحفظ ولا تمسّ الاختبارَ الموقوف */
-function examRun(rounds, daily, fix){
-  if(!fix) examDrop(daily);                /* بدأ جديداً: يُترك الموقوفُ من نوعه */
+function examRun(rounds, daily, fix, per){
+  if(!fix) examDrop(per||daily);           /* بدأ جديداً: يُترك الموقوفُ من نوعه */
   EX.log=[]; EX.t0=Date.now();
   var f0=rounds[0];
   S={ surah:f0.surah, seg:[f0.segFrom,f0.segTo], si:0, key:segKey(f0.surah.n,f0.segFrom),
-      stage:4, review:true, rev:'exam', daily:!!daily, fix:!!fix, rounds:rounds, i:0, errors:0, due:[] };
+      stage:4, review:true, rev:'exam', daily:!!daily, fix:!!fix, per:per||null, rounds:rounds, i:0, errors:0, due:[] };
   show('scr-play'); runRound();
 }
 function examNote(r, ok){
@@ -18235,7 +18260,8 @@ function examWeakest(){
 var EX_LAST=null;   /* آخرُ نتيجةٍ — لتُطبع بعد قراءتها */
 function finishExam(){
   if(S && S.fix){ finishFix(); return; }
-  examDrop(!!(S && S.daily));             /* انتهى: لا موقوفَ بعده */
+  examDrop(S && (S.per||S.daily));        /* انتهى: لا موقوفَ بعده */
+  if(S && S.per){ perFinish(S.per); return; }
   if(S && S.daily){ finishDaily(); return; }
   var tot=EX.log.length||1, right=0, i;
   for(i=0;i<EX.log.length;i++) if(EX.log[i].ok) right++;
@@ -18395,9 +18421,173 @@ function finishDaily(){
     '<button class="btn green big pulse" id="btnDailyHome" style="margin:0">🏠 البداية</button></div>';
   $('btnDailyHome').onclick=function(){ S=null; renderPlayers(); show('scr-start'); };
 }
+/* =========================================================
+   اختبار الأسبوع واختبار الشهر
+   يوم الجمعة بطاقةٌ في الرئيسيّة، وآخرَ جمعةٍ من الشهر (الميلاديّ) بطاقةٌ ثانية. ولا
+   يُسأل فيهما إلّا عمّا عمله في التطبيق في مدّتهما: ما أتمّ حفظَه أو أتمّ مراجعتَه.
+   وأمّا ما سجّله محفوظاً من قبل فلا يدخل حتى يراجعه هنا. و p.mem لا يفرّق بينهما،
+   فصار لذلك سجلٌّ بيومه: p.act[يوم]={h:[[سورة،من،إلى)…], r:[…]} — h حفظ، وr مراجعة.
+   ولا تُحسب الألعابُ ولا الاختباراتُ مراجعةً: ما يُكتب إلّا ما تمّ به مقرَّرٌ.
+   وعند أوّل قراءةٍ يُستأنس بما سبق السجلَّ: حقلُ ld في المقاطع لا يكتبه إلّا الحفظُ
+   والمراجعةُ، فلا يأتي شهرُ الميلاد الأوّلُ خالياً. وأمّا p.per فنتائجهما.
+   والجولةُ جائزتُها مرّةً، ولا تُستأنف في غير يومها.
+   ========================================================= */
+var ACT_KEEP=45, PER_FRI=5;
+var PER={ w:{ ic:'📅', name:'اختبار الأسبوع', max:20, min:5, x:2, glass:3 },
+          m:{ ic:'🏅', name:'اختبار الشهر',   max:40, min:10, x:3, glass:6 } };
+function actAll(p){
+  if(p.act) return p.act;
+  var A=p.act={}, t=todayNum(), P=p.prog||{};
+  Object.keys(P).forEach(function(k){
+    var v=P[k], m=/^(\d+)_/.exec(k), s, g, i, o;
+    if(!m || !v || !v.done || v.ld==null || t-v.ld>ACT_KEEP) return;
+    s=surahBy(parseInt(m[1],10)); if(!s) return;
+    g=segsOf(s);
+    for(i=0;i<g.length;i++) if(gk(s.n,g[i])===k){
+      o=A[v.ld]||(A[v.ld]={h:[],r:[]});
+      o[v.lk===2?'h':'r'].push([s.n,g[i][0],g[i][1]]);
+      break;
+    }
+  });
+  return A;
+}
+function actNote(kind,n,from,to){
+  if(!(to>from)) return;
+  var p=curP(), A=actAll(p), d=todayNum(), o=A[d]||(A[d]={h:[],r:[]}), L=o[kind], i, ks;
+  for(i=0;i<L.length;i++) if(L[i][0]===n && L[i][1]===from && L[i][2]===to) return;
+  L.push([n,from,to]);
+  ks=Object.keys(A);
+  if(ks.length>ACT_KEEP+10) ks.forEach(function(k){ if(d-parseInt(k,10)>ACT_KEEP) delete A[k]; });
+  saveDB();
+}
+/* خريطةُ ما عمله بين يومين، على هيئة المحفوظ: {سورة: [[من، إلى)]} */
+function actMap(d0,d1){
+  var A=actAll(curP()), R={}, d, o, n;
+  function add(L){ (L||[]).forEach(function(x){ (R[x[0]]||(R[x[0]]=[])).push([x[1],x[2]]); }); }
+  for(d=d0;d<=d1;d++){ o=A[d]; if(o){ add(o.h); add(o.r); } }
+  for(n in R){
+    R[n]=R[n].sort(function(a,b){ return a[0]-b[0]; }).reduce(function(out,g){
+      var l=out[out.length-1];
+      if(l && g[0]<=l[1]) l[1]=Math.max(l[1],g[1]); else out.push([g[0],g[1]]);
+      return out;
+    },[]);
+  }
+  return R;
+}
+function perDate(t){ return new Date((t-DAY_SHIFT)*86400000); }
+/* مدّةُ الاختبار إن كان اليومُ يومَه، وإلّا null. الأسبوعُ من السبت إلى الجمعة،
+   والشهرُ من بعد آخر جمعةٍ في الشهر الذي قبله: فلا يقع يومٌ بين شهرين */
+function perSpan(kind){
+  var t=todayNum(), d=perDate(t), last;
+  if(d.getUTCDay()!==PER_FRI) return null;
+  if(kind==='w') return [t-6,t];
+  if(perDate(t+7).getUTCMonth()===d.getUTCMonth()) return null;
+  last=t-d.getUTCDate();                                   /* آخرُ يومٍ في الشهر الماضي */
+  last-=(perDate(last).getUTCDay()-PER_FRI+7)%7;
+  return [last+1,t];
+}
+function perData(kind){
+  var p=curP(), P=p.per||(p.per={});
+  return P[kind]||(P[kind]={ done:null, res:{} });
+}
+/* أهو قائمٌ الآن؟ يومُه، ولم يُتمَّه، وفي مدّته ما يصلح للسؤال */
+function perInfo(kind){
+  var sp=perSpan(kind); if(!sp || perData(kind).done===todayNum()) return null;
+  var map=actMap(sp[0],sp[1]), ay=0, ok=false, n, i, a, s;
+  for(n in map){
+    s=surahBy(parseInt(n,10)); if(!s) continue;
+    for(i=0;i<map[n].length;i++) for(a=map[n][i][0];a<map[n][i][1];a++){
+      ay++;
+      if(!ok) try{ ok=wordsOf(ayahText(s,a)).length>=MISS_MIN; }catch(e){}
+    }
+  }
+  if(!ok) return null;
+  var C=PER[kind];
+  return { kind:kind, map:map, ayat:ay, n:Math.min(C.max, Math.max(C.min, ay*2)) };
+}
+function perCardHTML(I){
+  var C=PER[I.kind], z=examPaused(I.kind), at=null;
+  if(z) try{ var o=JSON.parse(z.s); at=tx('وقفتَ عند السؤال {i} من {n}، فأكمله',{i:arNum(o.i+1), n:arNum(o.rounds.length)}); }catch(e){}
+  return '<button type="button" class="goalcard now" data-per="'+I.kind+'">'+
+    '<span class="gcic">'+C.ic+'</span>'+
+    '<span class="gctx"><b>'+C.name+'</b><i>'+
+      '<span class="perwhy">'+(I.kind==='w' ? tx('ممّا حفظتَه وراجعتَه هذا الأسبوع') : tx('ممّا حفظتَه وراجعتَه هذا الشهر'))+'</span>'+
+      '<span>'+(at || (arCount(I.ayat,C_AYAH)+' • '+arCount(I.n,C_QUES)))+'</span>'+
+    '</i></span><span class="gcgo">❮</span></button>';
+}
+var PER_SIG=null;
+function perRender(){
+  var box=$('perCards'); if(!box) return;
+  var L=[], sig, i;
+  try{ ['m','w'].forEach(function(k){ var I=perInfo(k); if(I) L.push(I); }); }catch(e){ L=[]; }
+  sig=curP().name+'|'+L.map(function(I){ return I.kind+I.ayat+'/'+((examPaused(I.kind)||{}).el||0); }).join();
+  if(sig===PER_SIG) return;
+  PER_SIG=sig;
+  box.hidden=!L.length;
+  box.className='percards'+(L.length>1?' two':'');
+  box.innerHTML=L.map(perCardHTML).join('');
+  var bs=box.querySelectorAll('[data-per]');
+  for(i=0;i<bs.length;i++) bs[i].onclick=function(){ perBegin(this.getAttribute('data-per')); };
+  try{ homeFit(); }catch(e){}
+}
+function perBegin(kind){
+  var I=perInfo(kind);
+  if(!I){ perRender(); return; }
+  if(examResume(kind)) return;
+  var keep=[EX.fromS,EX.fromA,EX.toS,EX.toA,EX.memOnly,EX.dayOnly,EX.dayMap,EX.count,EX.picks];
+  var e=examMemEdges(I.map), A=bqnIdx(e[0]), B=bqnIdx(e[1]), rounds;
+  EX.fromS=A.s.n; EX.fromA=A.a; EX.toS=B.s.n; EX.toA=B.a;
+  EX.memOnly=0; EX.dayOnly=1; EX.dayMap=I.map; EX.count=I.n;
+  EX.picks=exKindKeys().filter(function(t){ return !EX_SOLO[t]; });
+  try{ rounds=examBuild(true); }
+  finally{
+    EX.fromS=keep[0]; EX.fromA=keep[1]; EX.toS=keep[2]; EX.toA=keep[3];
+    EX.memOnly=keep[4]; EX.dayOnly=keep[5]; EX.dayMap=keep[6]; EX.count=keep[7]; EX.picks=keep[8];
+  }
+  if(!rounds.length){ uiAlert('ما حفظتَه لا يكفي لتحدٍّ بعد — احفظ مقطعاً ثمّ عُد',PER[kind].ic); return; }
+  examRun(rounds, false, false, kind);
+}
+function perFinish(kind){
+  var C=PER[kind], D=perData(kind), day=todayNum(), tot=EX.log.length||1, right=0, i;
+  for(i=0;i<EX.log.length;i++) if(EX.log[i].ok) right++;
+  var pct=Math.round(100*right/tot), g=examGrade(pct);
+  var secs=Math.max(1, Math.round((Date.now()-EX.t0)/1000));
+  var first=(D.done!==day), gems=0, iron=0, glass=0;
+  if(first){
+    gems=EX_GEM*right*C.x; iron=Math.max(1,Math.floor(right/4)); glass=(pct>=90?C.glass:0);
+    addGems(gems); addMat('iron',iron);
+    if(glass) addMat('glass',glass);
+    D.done=day; D.res[day]=[right,tot];
+    saveDB();
+  }
+  var weak=examWeakest();
+  EX_LAST={ right:right, tot:tot, pct:pct, grade:g[1], ic:g[2], secs:secs,
+            kind:'منوّعة — كلُّ الأنواع', title:C.ic+' '+C.name,
+            what:(kind==='w' ? tx('ما حُفظ ورُوجع هذا الأسبوع') : tx('ما حُفظ ورُوجع هذا الشهر')),
+            weak:weak, gems:gems, iron:iron, glass:glass, date:greg() };
+  $('playCard').classList.remove('bare');
+  $('mosque').removeAttribute('hidden');
+  $('mosque').innerHTML=mosqueSVG(1);
+  $('stageChip').textContent=C.ic+' '+(kind==='w' ? tx('أتممتَ اختبار الأسبوع') : tx('أتممتَ اختبار الشهر'));
+  $('barFill').style.width='100%';
+  $('playArea').className='';
+  $('playArea').innerHTML=
+    '<div style="text-align:center"><div style="font-size:52px">'+g[2]+'</div>'+
+    '<h2 style="color:var(--g1);margin:6px 0">'+esc(g[1])+'</h2>'+
+    '<div class="exscore">'+arNum(right)+' / '+arNum(tot)+'<span>'+arNum(pct)+'%</span></div>'+
+    '<p style="color:#3d5b7a;font-size:15px;margin:0 0 10px">'+
+      C.ic+' '+C.name+' • '+arCount(tot,C_QUES)+' • ⏱️ '+examDur(secs)+
+      (weak.length? ('<br>'+tx('راجِع: <b>{w}</b>',{w:esc(weak.join(' • '))})) : '<br>لم تُخطئ في موضع 👌')+
+      '<br>'+(kind==='w' ? tx('واختبارُ الأسبوع القادم يومَ الجمعة المقبل') : tx('واختبارُ الشهر القادم آخرَ جمعةٍ من الشهر المقبل'))+'</p>'+
+    (first ? ('<div style="color:#8a6100;font-weight:800;margin-bottom:12px">'+matLine(gems,iron,glass)+'</div>') : '')+
+    '<button class="btn green big pulse" id="btnExPrint">🖨️ اطبع نتيجتك</button>'+
+    '<button class="btn ghost big" id="btnPerHome" style="margin:0">🏠 البداية</button></div>';
+  $('btnExPrint').onclick=function(){ showExamCert(); };
+  $('btnPerHome').onclick=function(){ S=null; renderPlayers(); show('scr-start'); };
+}
 /* تبلغ الساعةُ التاسعة والرئيسيّةُ مفتوحة: يظهر الزرُّ دون أن يُعاد فتحُها */
 setInterval(function(){
-  try{ if($('scr-start').classList.contains('active')) dailyRender(); }catch(e){}
+  try{ if($('scr-start').classList.contains('active')){ dailyRender(); perRender(); } }catch(e){}
 }, 60000);
 /* شهادةُ النتيجة: تُطبع كما تُطبع شهادةُ الحفظ */
 function showExamCert(){
@@ -18407,12 +18597,12 @@ function showExamCert(){
   $('certWrap').innerHTML=
     '<div class="cert">'+
       '<div class="orn">❖ ❖ ❖ ❖ ❖</div>'+
-      '<h2>📝 نتيجة اختبار</h2>'+
+      '<h2>'+(R.title ? esc(R.title) : '📝 نتيجة اختبار')+'</h2>'+
       '<div class="ph" id="certAvatar"></div>'+
       '<div style="font-size:14px;color:#4a627e">اختبر</div>'+
       '<div class="who">'+esc(profile.name||'الطالب')+'</div>'+
       '<div style="font-size:14px;color:#4a627e">نفسَه في</div>'+
-      '<div class="what">'+esc(tx('{a} ← {b}',{a:R.from, b:R.to}))+'</div>'+
+      '<div class="what">'+esc(R.what || tx('{a} ← {b}',{a:R.from, b:R.to}))+'</div>'+
       '<div class="exscore big">'+arNum(R.right)+' / '+arNum(R.tot)+'<span>'+arNum(R.pct)+'%</span></div>'+
       '<div style="font-weight:900;color:#a1791a;font-size:19px;margin:4px 0 8px">'+R.ic+' '+esc(R.grade)+'</div>'+
       '<div style="font-size:14px;color:#4a627e">'+esc(R.kind)+' • '+arCount(R.tot,C_QUES)+' • ⏱️ '+examDur(R.secs)+'</div>'+
@@ -18791,6 +18981,7 @@ function renderHome(){
   try{ renderKhatma(); }catch(e){}
   try{ renderHomeCards(); }catch(e){}
   try{ dailyRender(); }catch(e){}
+  try{ perRender(); }catch(e){}
   try{
     var tb=topBadge(), el=$('homeTopBadge');
     if(el){
@@ -22210,7 +22401,7 @@ $('btnReset').onclick=function(){
     bkSave(true)['catch'](function(){});      /* تُحفظ قبل المسح، فيُرجَع إليها من «استعادة نسخة» */
     curP().prog={}; curP().mem={}; curP().gems=0; curP().owned={}; curP().badges={}; curP().built={}; curP().mat={};
     curP().streak={count:0,last:null,freezes:0}; curP().today={d:null,stages:0,segs:0,reviews:0};
-    curP().days={}; curP().ay={}; curP().tr={};
+    curP().days={}; curP().ay={}; curP().tr={}; curP().act={}; curP().per={};
     bindPlayer(); saveDB(); renderMap(); show('scr-map');
   },'🗑️');
 };
@@ -22500,7 +22691,7 @@ function bootNotes(){
    «يوجد تحديث» قبل أن ينزّله (قواميسُه القديمة لا تعرفها). ثمّ تُعرض مرّةً واحدة
    بعد أن تصل الحزمةُ — أو الصفحةُ على الموقع — لمن لم يرَها، ولا تُعرض لمن فتح
    التطبيقَ لأوّل مرّة. */
-var WHATSNEW='صارت المراجعةُ تسأل عن وصلة الصفحات: خاتمةُ كلّ صفحةٍ وبِمَ تبدأ التي بعدها، ويبدأ تسميعُ الوجه من بعد خاتمة الصفحة التي قبله.';
+var WHATSNEW='صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.';
 function newsNote(next){
   var seen=load('nur_news','');
   if(!WHATSNEW || seen===WHATSNEW || NEWS_FIRST){
