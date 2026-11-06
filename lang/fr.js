@@ -2083,5 +2083,11 @@ NUR_I18N.add('fr', {
   "ما حُفظ ورُوجع في ذلك الأسبوع": "Ce qui a été mémorisé et révisé cette semaine-là",
   "ما حُفظ ورُوجع في ذلك الشهر": "Ce qui a été mémorisé et révisé ce mois-là",
   "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Enregistré à cette question avec les réponses précédentes ; termine-le aujourd’hui depuis sa carte sur l’accueil, et après aujourd’hui depuis « Progrès ».",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Enregistré à cette question avec les réponses précédentes ; termine-le depuis sa carte dans « Progrès »."
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Enregistré à cette question avec les réponses précédentes ; termine-le depuis sa carte dans « Progrès ».",
+  "تخطّي الاختبار": "Passer le test",
+  "هل أنت متأكّد من تخطّي اختبار الأسبوع؟": "Es-tu sûr de vouloir passer le test de la semaine ?",
+  "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Es-tu sûr de vouloir passer le test du mois ?",
+  "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Sa carte disparaît de « Progrès » et ne reviendra pas, sans récompense.",
+  "نعم، تخطَّه": "Oui, passer",
+  "لا، أبقِه": "Non, le garder"
 });

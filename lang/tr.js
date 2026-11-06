@@ -2083,5 +2083,11 @@ NUR_I18N.add('tr', {
   "ما حُفظ ورُوجع في ذلك الأسبوع": "O hafta ezberlenen ve tekrar edilenler",
   "ما حُفظ ورُوجع في ذلك الشهر": "O ay ezberlenen ve tekrar edilenler",
   "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Bu soruda ve önceki cevaplarınla kaydedilir; bugün ana ekrandaki kartından, bugünden sonra “Performans” bölümünden bitirirsin.",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Bu soruda ve önceki cevaplarınla kaydedilir; “Performans” bölümündeki kartından bitirirsin."
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Bu soruda ve önceki cevaplarınla kaydedilir; “Performans” bölümündeki kartından bitirirsin.",
+  "تخطّي الاختبار": "Sınavı atla",
+  "هل أنت متأكّد من تخطّي اختبار الأسبوع؟": "Haftanın sınavını atlamak istediğinden emin misin?",
+  "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Ayın sınavını atlamak istediğinden emin misin?",
+  "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Kartı “Performans” bölümünden kaybolur ve geri gelmez, ödülü de olmaz.",
+  "نعم، تخطَّه": "Evet, atla",
+  "لا، أبقِه": "Hayır, kalsın"
 });

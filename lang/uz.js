@@ -2083,5 +2083,11 @@ NUR_I18N.add('uz', {
   "ما حُفظ ورُوجع في ذلك الأسبوع": "Oʻsha hafta yodlangan va takrorlanganlar",
   "ما حُفظ ورُوجع في ذلك الشهر": "Oʻsha oy yodlangan va takrorlanganlar",
   "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Shu savolda oldingi javoblaring bilan saqlanadi; bugun bosh ekrandagi kartasidan, bugundan keyin esa “Natijalar”dan tugatasan.",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Shu savolda oldingi javoblaring bilan saqlanadi; uni “Natijalar”dagi kartasidan tugatasan."
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Shu savolda oldingi javoblaring bilan saqlanadi; uni “Natijalar”dagi kartasidan tugatasan.",
+  "تخطّي الاختبار": "Imtihonni oʻtkazib yuborish",
+  "هل أنت متأكّد من تخطّي اختبار الأسبوع؟": "Hafta imtihonini oʻtkazib yuborishga ishonching komilmi?",
+  "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Oy imtihonini oʻtkazib yuborishga ishonching komilmi?",
+  "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Uning kartasi “Natijalar”dan yoʻqoladi va qaytmaydi, mukofoti ham yoʻq.",
+  "نعم، تخطَّه": "Ha, oʻtkazib yubor",
+  "لا، أبقِه": "Yoʻq, qolsin"
 });

@@ -2083,5 +2083,11 @@ NUR_I18N.add('ha', {
   "ما حُفظ ورُوجع في ذلك الأسبوع": "Abin da aka haddace aka kuma maimaita a wancan mako",
   "ما حُفظ ورُوجع في ذلك الشهر": "Abin da aka haddace aka kuma maimaita a wancan wata",
   "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Za a adana a wannan tambayar tare da amsoshin da suka gabata; ka kammala ta yau daga katinta a shafin farko, bayan yau kuma daga “Cigaba”.",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Za a adana a wannan tambayar tare da amsoshin da suka gabata; ka kammala ta daga katinta a “Cigaba”."
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Za a adana a wannan tambayar tare da amsoshin da suka gabata; ka kammala ta daga katinta a “Cigaba”.",
+  "تخطّي الاختبار": "Tsallake jarabawar",
+  "هل أنت متأكّد من تخطّي اختبار الأسبوع؟": "Ka tabbata kana so ka tsallake jarabawar mako?",
+  "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Ka tabbata kana so ka tsallake jarabawar wata?",
+  "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Katinta zai ɓace daga “Cigaba” kuma ba zai dawo ba, babu lada a kanta.",
+  "نعم، تخطَّه": "Ee, tsallake ta",
+  "لا، أبقِه": "A’a, a bar ta"
 });

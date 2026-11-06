@@ -2083,5 +2083,11 @@ NUR_I18N.add('id', {
   "ما حُفظ ورُوجع في ذلك الأسبوع": "Yang dihafal dan dimurajaah pekan itu",
   "ما حُفظ ورُوجع في ذلك الشهر": "Yang dihafal dan dimurajaah bulan itu",
   "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Disimpan di soal ini beserta jawaban sebelumnya; selesaikan hari ini dari kartunya di beranda, dan setelah hari ini dari “Prestasi”.",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Disimpan di soal ini beserta jawaban sebelumnya; selesaikan dari kartunya di “Prestasi”."
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Disimpan di soal ini beserta jawaban sebelumnya; selesaikan dari kartunya di “Prestasi”.",
+  "تخطّي الاختبار": "Lewati ujian",
+  "هل أنت متأكّد من تخطّي اختبار الأسبوع؟": "Yakin ingin melewati ujian pekanan?",
+  "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Yakin ingin melewati ujian bulanan?",
+  "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Kartunya hilang dari “Prestasi” dan tidak kembali, tanpa hadiah.",
+  "نعم، تخطَّه": "Ya, lewati",
+  "لا، أبقِه": "Tidak, simpan"
 });

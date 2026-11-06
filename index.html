@@ -1608,6 +1608,11 @@ html[lang=ru] .hijri{white-space:normal}
 /* بطاقةٌ لا عملَ وراءها: تُخبر ولا تُضغط، فلا تُغري بمؤشّرٍ ولا تنخفض */
 .percards .perwhy{display:block}
 .percards .goalcard{position:relative}
+.permiss{margin-bottom:14px}
+.permiss .goalcard{margin-bottom:4px}
+.perskip{display:block;margin:0 auto;min-height:36px;padding:6px 14px;background:none;border:0;cursor:pointer;
+  font-family:inherit;font-size:13.5px;font-weight:800;color:var(--on3);-webkit-tap-highlight-color:transparent}
+.perskip:active{opacity:.6}
 .percards .dfuse{left:-3px;top:-3px}
 .percards.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .percards.two .goalcard{flex-direction:column;align-items:center;text-align:center;gap:4px;margin-bottom:0;padding-inline:8px}
@@ -6585,6 +6590,8 @@ function perfOpen(){
   w.innerHTML=perMissHTML()+perfHTML();
   var b=w.querySelectorAll('[data-ps]'), i, pb=w.querySelectorAll('[data-per]');
   for(i=0;i<pb.length;i++) pb[i].onclick=function(){ perBegin(this.getAttribute('data-per')); };
+  pb=w.querySelectorAll('[data-perskip]');
+  for(i=0;i<pb.length;i++) pb[i].onclick=function(){ perSkipAsk(this.getAttribute('data-perskip')); };
   for(i=0;i<b.length;i++) b[i].onclick=function(){
     var s=surahBy(parseInt(this.getAttribute('data-ps'),10)), a=parseInt(this.getAttribute('data-pa'),10);
     if(!s) return;
@@ -18645,7 +18652,24 @@ if(window.ResizeObserver) try{
 function perMissHTML(){
   var L=[];
   try{ ['m','w'].forEach(function(k){ var I=perInfo(k); if(I && !I.today) L.push(I); }); }catch(e){ L=[]; }
-  return L.length ? '<div class="percards">'+L.map(perCardHTML).join('')+'</div>' : '';
+  return L.length ? '<div class="percards">'+L.map(function(I){
+    return '<div class="permiss">'+perCardHTML(I)+
+      '<button type="button" class="perskip" data-perskip="'+I.kind+'">⏭️ '+tx('تخطّي الاختبار')+'</button></div>';
+  }).join('')+'</div>' : '';
+}
+/* تخطّي ما فات: قد لا يريد أن يُختبر فيه. يُسأل أوّلاً، ثمّ يُطوى موعدُه بلا جائزة
+   كأنّه أتمّه، فلا تعود بطاقتُه حتى يحين الموعدُ الذي بعده. ويُقيَّد 'skip' لا درجة */
+function perSkipAsk(kind){
+  uiBox('<b>'+(kind==='w' ? tx('هل أنت متأكّد من تخطّي اختبار الأسبوع؟') : tx('هل أنت متأكّد من تخطّي اختبار الشهر؟'))+'</b>'+
+      String.fromCharCode(10)+String.fromCharCode(10)+tx('تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.'),
+    '⏭️', '⏭️ '+tx('نعم، تخطَّه'), '↩️ '+tx('لا، أبقِه'), function(ok){
+      if(!ok) return;
+      var I=perInfo(kind), D=perData(kind);
+      if(I){ D.done=Math.max(D.done||0,I.occ); D.res[I.occ]='skip'; }
+      examDrop(kind);
+      saveDB();
+      perfOpen();
+    });
 }
 function perBegin(kind){
   var I=perInfo(kind);

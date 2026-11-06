@@ -2083,5 +2083,11 @@ NUR_I18N.add('so', {
   "ما حُفظ ورُوجع في ذلك الأسبوع": "Waxa la xifdiyay oo dib loo eegay toddobaadkaas",
   "ما حُفظ ورُوجع في ذلك الشهر": "Waxa la xifdiyay oo dib loo eegay bishaas",
   "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Waxaa lagu kaydinayaa su’aashan iyo jawaabihii ka horreeyay; maanta ka dhammee kaarkiisa bogga hore, maanta ka dibna “Horumar”.",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Waxaa lagu kaydinayaa su’aashan iyo jawaabihii ka horreeyay; ka dhammee kaarkiisa “Horumar”."
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Waxaa lagu kaydinayaa su’aashan iyo jawaabihii ka horreeyay; ka dhammee kaarkiisa “Horumar”.",
+  "تخطّي الاختبار": "Ka bood imtixaanka",
+  "هل أنت متأكّد من تخطّي اختبار الأسبوع؟": "Ma hubtaa inaad ka boodayso imtixaanka toddobaadka?",
+  "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Ma hubtaa inaad ka boodayso imtixaanka bisha?",
+  "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Kaarkiisu wuxuu ka baxayaa “Horumar” dib uma soo laabanayo, abaalmarin ma leh.",
+  "نعم، تخطَّه": "Haa, ka bood",
+  "لا، أبقِه": "Maya, daa"
 });

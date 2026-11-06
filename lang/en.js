@@ -2083,5 +2083,11 @@ NUR_I18N.add('en', {
   "ما حُفظ ورُوجع في ذلك الأسبوع": "What was memorized and reviewed that week",
   "ما حُفظ ورُوجع في ذلك الشهر": "What was memorized and reviewed that month",
   "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Saved at this question with the answers before it; finish it today from its card on the home screen, and after today from “Progress”.",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Saved at this question with the answers before it; finish it from its card in “Progress”."
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Saved at this question with the answers before it; finish it from its card in “Progress”.",
+  "تخطّي الاختبار": "Skip the test",
+  "هل أنت متأكّد من تخطّي اختبار الأسبوع؟": "Are you sure you want to skip the weekly test?",
+  "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Are you sure you want to skip the monthly test?",
+  "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Its card disappears from “Progress” and won’t come back, and there is no reward for it.",
+  "نعم، تخطَّه": "Yes, skip it",
+  "لا، أبقِه": "No, keep it"
 });

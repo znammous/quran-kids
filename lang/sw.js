@@ -2083,5 +2083,11 @@ NUR_I18N.add('sw', {
   "ما حُفظ ورُوجع في ذلك الأسبوع": "Yaliyohifadhiwa na kurudiwa wiki ile",
   "ما حُفظ ورُوجع في ذلك الشهر": "Yaliyohifadhiwa na kurudiwa mwezi ule",
   "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Linahifadhiwa kwenye swali hili pamoja na majibu ya awali; likamilishe leo kutoka kadi yake kwenye ukurasa wa mwanzo, na baada ya leo kutoka “Maendeleo”.",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Linahifadhiwa kwenye swali hili pamoja na majibu ya awali; likamilishe kutoka kadi yake kwenye “Maendeleo”."
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Linahifadhiwa kwenye swali hili pamoja na majibu ya awali; likamilishe kutoka kadi yake kwenye “Maendeleo”.",
+  "تخطّي الاختبار": "Ruka jaribio",
+  "هل أنت متأكّد من تخطّي اختبار الأسبوع؟": "Una uhakika unataka kuruka jaribio la wiki?",
+  "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Una uhakika unataka kuruka jaribio la mwezi?",
+  "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Kadi yake inatoweka kutoka “Maendeleo” na haitarudi, na hakuna zawadi.",
+  "نعم، تخطَّه": "Ndiyo, liruke",
+  "لا، أبقِه": "Hapana, libaki"
 });

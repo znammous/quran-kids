@@ -2083,5 +2083,11 @@ NUR_I18N.add('ms', {
   "ما حُفظ ورُوجع في ذلك الأسبوع": "Yang dihafal dan diulang kaji minggu itu",
   "ما حُفظ ورُوجع في ذلك الشهر": "Yang dihafal dan diulang kaji bulan itu",
   "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Disimpan pada soalan ini bersama jawapan sebelumnya; habiskan hari ini daripada kadnya di laman utama, dan selepas hari ini daripada “Prestasi”.",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Disimpan pada soalan ini bersama jawapan sebelumnya; habiskan daripada kadnya di “Prestasi”."
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Disimpan pada soalan ini bersama jawapan sebelumnya; habiskan daripada kadnya di “Prestasi”.",
+  "تخطّي الاختبار": "Langkau ujian",
+  "هل أنت متأكّد من تخطّي اختبار الأسبوع؟": "Pasti mahu melangkau ujian mingguan?",
+  "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Pasti mahu melangkau ujian bulanan?",
+  "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Kadnya hilang daripada “Prestasi” dan tidak kembali, tanpa ganjaran.",
+  "نعم، تخطَّه": "Ya, langkau",
+  "لا، أبقِه": "Tidak, simpan"
 });
