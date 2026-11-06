@@ -6749,35 +6749,41 @@ function celeDay(){
     sub:sub,
     rew:(n>1?('🏮 '+tx('مواظبة {d} بلا انقطاع',{d:arCount(n,C_DAYS)})):'🏮 بدأتَ مواظبتك — لا تنقطع')
   });
-  dayPlayLater();
 }
 /* ===== «العبْ بما أتممتَ اليوم» =====
-   بعد احتفال إتمام المقرَّر — لا قبله ولا فوقه — بطاقتا العصفور والعدّاء،
-   وآياتُهما من مقرَّر اليوم نفسِه وجواهرُهما مضاعَفة: لمسةٌ واحدةٌ إلى اللعب،
-   بلا ركن المغامرة ولا سؤالِ «من أين تأتي الآيات». ويُعرض مرّةً في اليوم */
-function dayPlayLater(){
+   بعد إتمام حفظ اليوم، وبعد إتمام مراجعته، كلٌّ على حدة — لا قبل الاحتفال ولا فوقه —
+   بطاقتا العصفور والعدّاء، وآياتُهما من مقرَّر اليوم نفسِه وجواهرُهما مضاعَفة: لمسةٌ
+   واحدةٌ إلى اللعب، بلا ركن المغامرة ولا سؤالِ «من أين تأتي الآيات».
+   ويُعرض مرّةً في اليوم لكلّ شطر. كان لا يُعرض إلّا بتمام الشطرين معاً، فمن حفظ
+   وأجّل مراجعته لم يره. part: 'h' الحفظ، 'r' المراجعة */
+function dayPartDone(part){
+  var G=goalChecks();
+  if(part==='r' ? G.r : G.h) dayPlayLater(part);
+}
+function dayPlayLater(part){
   if(CELE.on){
     var prev=CELE.then;
-    CELE.then=function(){ if(prev) prev(); setTimeout(function(){ dayPlayOffer(0); },450); };
-  }else setTimeout(function(){ dayPlayOffer(0); },900);   /* الاحتفالاتُ مطفأة: سطرٌ عابرٌ ثمّ العرض */
+    CELE.then=function(){ if(prev) prev(); setTimeout(function(){ dayPlayOffer(0,part); },450); };
+  }else setTimeout(function(){ dayPlayOffer(0,part); },900);   /* الاحتفالاتُ مطفأة: سطرٌ عابرٌ ثمّ العرض */
 }
 var DAY_PLAY_BUSY=/^scr-(runner|bird|shelf|exam|cert)$/;
-var DAY_PLAY_WAIT=null;                     /* يومٌ أُجّل عرضُه إلى الخروج من شاشةٍ لا تُقطع */
-function dayPlayOffer(tries){
-  var p=curP(); if(!p || p.dayPlay===todayNum()) return;
+var DAY_PLAY_WAIT=null;                     /* {d:يوم, part:شطر} أُجّل عرضُه إلى الخروج من شاشةٍ لا تُقطع */
+function dayPlayOffer(tries,part){
+  var p=curP(), mark=(part==='r' ? 'dayPlayR' : 'dayPlayH');
+  /* p.dayPlay: ما عُرض قبل فصل الشطرين، فلا يُعاد في يومه */
+  if(!p || p[mark]===todayNum() || p.dayPlay===todayNum()) return;
   /* في لعبةٍ أو اختبارٍ أو شهادة: لا يُقطع عليه ما هو فيه، ويُعرض حين يخرج منها —
      كان يسقط، فمن ختم سورةً بمقطع يومه رأى شهادتها ولم يرَ اللعب */
-  if(DAY_PLAY_BUSY.test(curScreen())){ DAY_PLAY_WAIT=todayNum(); return; }
+  if(DAY_PLAY_BUSY.test(curScreen())){ DAY_PLAY_WAIT={d:todayNum(), part:part}; return; }
   DAY_PLAY_WAIT=null;
   /* صندوقٌ آخرُ مفتوح: يُنتظر قليلاً */
-  if(($('ask') && !$('ask').hidden) || $('pgate') || CELE.on){
-    if((tries||0)<6) setTimeout(function(){ dayPlayOffer((tries||0)+1); },1500);
+  if(($('ask') && !$('ask').hidden) || $('pgate') || $('dayPlay') || CELE.on){
+    if((tries||0)<6) setTimeout(function(){ dayPlayOffer((tries||0)+1,part); },1500);
     return;
   }
   var n=0; try{ n=dayPool().length; }catch(e){}
   if(!n) return;                              /* لا آيةَ تصلح للسؤال */
-  p.dayPlay=todayNum(); saveDB();
-  if($('dayPlay')) $('dayPlay').remove();
+  p[mark]=todayNum(); saveDB();
   var ids=['bird','runner'], h='';
   ids.forEach(function(id){
     GAMES.forEach(function(g){
@@ -6817,6 +6823,7 @@ function noteSeg(ay){
   /* إتمامُ حفظ اليوم يُعلَّم ليومه: فإن زاد بعده وفتح مقطعاً جديداً ولم يُتمّه،
      بقيت علامةُ اليوم خضراءَ كما هي — فالزيادةُ لا تنقض ما تمّ */
   try{ var T=bqnToday(); if(T ? T.hifzDone : goalHifzMet()) todayBox().hifz=1; }catch(e){}
+  try{ dayPartDone('h'); }catch(e){}
 }
 /* الأجر بالأوجه المراجَعة لا بعدد الجلسات — فلا يربح من قسّم وردَه قِطعاً صغيرة */
 /* sess=false: جزءٌ من جلسةٍ عُدّت من قبل — يُكافأ ولا تُعدّ جلسةً ثانية */
@@ -9185,7 +9192,7 @@ function show(id){
   if(id==='scr-start'){ try{ renderHome(); }catch(e){} }
   if(id==='scr-play'){ try{ sfxSync(); }catch(e){} }
   if(DAY_PLAY_WAIT!=null && !DAY_PLAY_BUSY.test(id)){       /* خرج من الشهادة أو اللعبة: يُعرض اللعبُ بما أتمّ */
-    if(DAY_PLAY_WAIT===todayNum()) setTimeout(function(){ dayPlayOffer(0); },500);
+    if(DAY_PLAY_WAIT.d===todayNum()){ var dpPart=DAY_PLAY_WAIT.part; setTimeout(function(){ dayPlayOffer(0,dpPart); },500); }
     DAY_PLAY_WAIT=null;
   }
   try{ syncTabs(id); }catch(e){}
@@ -16887,6 +16894,7 @@ function finishRevQuiz(){
   tal().revpg=(tal().revpg||0)+donePages.length;
   if(!S.errors) tal().perfect++;
   noteReview(weakList.length===0, donePages.length);
+  try{ dayPartDone('r'); }catch(e){}
   /* إتمامُ الدورة على المحفوظ كلّه: منزلةٌ تُذكر، لا جلسةٌ تمرّ */
   if(wirdRound){
     var np=0; try{ np=wirdPages().length; }catch(e){}
@@ -17029,6 +17037,7 @@ function revSegDone(d){
   d.r={ n:1, bad:!ok, drop:!ok && (p.box||0)<b0, grad:ok && d0!=null && p.due==null, next:p.due };
   saveProg();
   noteReview(e===0, segsPages([d]), !S.revCounted);   /* بالأوجه كالورد، والجلسةُ تُعدّ مرّة */
+  try{ dayPartDone('r'); }catch(e){}
   S.revCounted=true;
 }
 /* بعد كلّ سؤال: إن كان آخرَ أسئلة مقطعه (التالي من غيره أو لا تالي) حُسم المقطع */
