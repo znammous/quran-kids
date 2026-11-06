@@ -280,7 +280,7 @@ if(document.documentElement.lang==='ps') document.write('<style>'+['400','600','
   --ovl:rgba(1,10,26,.78); --cel1:rgba(14,68,145,.97); --cel2:rgba(2,10,26,.98);
   --tabbg:rgba(4,23,58,.97); --tabfg:#8fb6e8; --startxt:#cdf3ff;
   --selbg:#eaf6ff; --selsh:#bcdcf5;
-  --mute:#9db4cf; --rew:#ffe9a8; --warm:#ffe9b0; --warm2:var(--gold);
+  --mute:#9db4cf; --mute0:#9db4cf; --muteP:#4d6782; --rew:#ffe9a8; --warm:#ffe9b0; --warm2:var(--gold);
   --wire:#dde6f1;                     /* خطُّ المسار المتقطّع */
 }
 /* ===== الوضع النهاريّ ===== */
@@ -294,7 +294,7 @@ body.light{
   --ovl:rgba(12,40,78,.42); --cel1:rgba(234,245,255,.97); --cel2:rgba(183,213,245,.98);
   --tabbg:rgba(255,255,255,.97); --tabfg:#3d5b7a; --startxt:#9ec8ef;
   --selbg:#dbecfd; --selsh:#9dc4e8;
-  --mute:#4d6782; --rew:#7a5600; --warm:#494d54; --warm2:#6b4e00;
+  --mute:#4d6782; --mute0:#4d6782; --rew:#7a5600; --warm:#494d54; --warm2:#6b4e00;
   /* خطُّ المسار: الفاتحُ يذوب في سماء النهار، فأزرقُ أعمقُ من حدود البطاقات */
   --wire:#7aa6d6;
 }
@@ -383,6 +383,11 @@ body.bgrest #bg *{animation-play-state:paused}
 h1{font-size:30px;margin:12px 0 4px;color:var(--ttl);text-shadow:0 3px 0 rgba(0,0,0,.25);text-align:center}
 .sub{text-align:center;color:var(--ttl2);margin:0 0 16px;font-size:15px}
 .card{background:var(--paper);border-radius:var(--radius);padding:18px;box-shadow:0 12px 30px rgba(0,0,0,.28);margin-bottom:16px}
+/* النصُّ الخافت لونان: --mute فاتحٌ لليل على الألواح الداكنة، وهو يذوب على ما بقي فاتحاً في الوضعين
+   (الورق والأبيض: بطاقةُ الترحيب وصفوفُ فهرس السور…) — فهذه تأخذ الداكنَ --muteP،
+   وما كان داخلها بلوحٍ داكنٍ أو بلا خلفيّة يعود إلى لون وضعه --mute0 */
+.card,.juz,.srow,.seg,.switchrow,.onbopt,.pkh,.item,.mat,.shelf,.ansline{--mute:var(--muteP)}
+.card.bare,.card .foldh,.card .mfpanel{--mute:var(--mute0)}
 /* hidden يجب أن يُخفي فعلاً: قواعدنا تضع display فتتغلّب على قاعدة المتصفح */
 [hidden]{display:none!important}
 /* داخل تطبيق الجوّال: أبوابُ المتصفّح لا معنى لها (التثبيت، وتنزيل الأوجه، ووضع الفحص)،
