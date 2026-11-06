@@ -1146,7 +1146,8 @@ body.light .card.bare .fb.fixnote{color:#0b6b39}
 .cele h2{color:var(--gink);font-size:29px;margin:14px 0 8px;line-height:1.5}
 .cele p{color:var(--on2);font-size:16px;font-weight:700;margin:0;line-height:1.75;max-width:24em;white-space:pre-line}
 .cele .rew{color:var(--rew);font-weight:800;font-size:20px;margin-top:12px}
-.cele .tap{color:var(--on1);font-size:12px;font-weight:700;margin-top:22px}
+.cele .tap{color:var(--on1);font-size:12px;font-weight:700;margin-top:22px;animation:celetap .25s linear 1.5s both}
+@keyframes celetap{from{opacity:0}to{opacity:1}}
 .cele .cbar{position:absolute;inset-inline:0;bottom:0;height:5px;background:rgba(255,255,255,.12)}
 .cele .cbar i{display:block;height:100%;width:100%;transform-origin:right center;
   background:linear-gradient(90deg,#48d98a,var(--gold));animation:cdrain 5s linear forwards}
@@ -12189,6 +12190,9 @@ function nextRound(ok){
 /* ===== سلسلة الإجابات الصحيحة ===== */
 var CELE={ q:[], on:false, tm:0, then:null };
 var CELE_MS=5000;                                   /* مدّة الاحتفال قبل أن يذوب وحده */
+/* أوّلَ ظهوره لا تُذهبه لمسة: يقع غالباً وإصبعُ الطفل ماضٍ إلى ما تحته، فيضيع قبل أن يُقرأ.
+   و«اضغط للمتابعة» لا يظهر إلّا حين تصلح اللمسة (animation-delay في .cele .tap) */
+var CELE_HOLD=1500;
 var QTYPES={ words:1, missing:1, miss2:1, ayat:1, edge:1, aedge:1, eorder:1, write:1, seam:1 };   /* ما يُعرف صوابه من خطئه */
 /* التسميع بالصوت يقرّه اللاعب على نفسه، فلا سبيل إلى الحكم عليه:
    لا يزيد السلسلة ولا يقطعها. أمّا كتابةُ الآية فتُقابَل بالنصّ. */
@@ -12460,7 +12464,8 @@ function celeNext(){
   if(!o.calm) sWin();
   clearTimeout(CELE.tm);
   CELE.tm=setTimeout(celeDone,CELE_MS);
-  el.onclick=celeDone;
+  var at=Date.now();
+  el.onclick=function(){ if(Date.now()-at>=CELE_HOLD) celeDone(); };
 }
 function celeDone(){ clearTimeout(CELE.tm); $('cele').hidden=true; $('cele').onclick=null; celeNext(); }
 
