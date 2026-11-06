@@ -2219,6 +2219,36 @@ body.light .dfpic{filter:drop-shadow(0 3px 5px rgba(90,58,0,.4))}
   82%{transform:rotate(-6deg) scale(1.12)}
   90%{transform:rotate(0) scale(1)}
 }
+/* الفتيل: إطارُ الزرّ يحترق من التاسعة إلى منتصف الليل (dailyFuse) */
+.dfuse{position:absolute;left:-2px;top:-2px;overflow:visible;pointer-events:none;z-index:2}
+.dfuse path{fill:none}
+.dfuse .dfb{stroke:rgba(10,8,6,.72);stroke-width:2.4}
+.dfuse .dfl{stroke:#ffc43c;stroke-width:2.6;stroke-linecap:round;filter:drop-shadow(0 0 3px rgba(255,160,40,.85))}
+.dfuse .f1{fill:#ff7a1a;stroke:none;filter:drop-shadow(0 0 5px rgba(255,110,20,.95))}
+.dfuse .f2{fill:#ffe27a;stroke:none}
+.dfuse .dffz{transition:transform .4s}
+.dfuse .dffi{animation:dfflick .34s ease-in-out infinite alternate}
+@keyframes dfflick{from{transform:scale(.88,1.04) rotate(-5deg)}to{transform:scale(1.08,.9) rotate(5deg)}}
+.dfuse .sp{fill:#ffd24a;opacity:0}
+.dfuse.low .sp{animation:dfspark .8s ease-out infinite}
+.dfuse.low .s2{animation-delay:.27s}
+.dfuse.low .s3{animation-delay:.54s}
+.dfuse.low .s1{--sx:-11px;--sy:-13px}
+.dfuse.low .s2{--sx:12px;--sy:-10px}
+.dfuse.low .s3{--sx:3px;--sy:-18px}
+@keyframes dfspark{0%{opacity:1;transform:translate(0,-2px)}100%{opacity:0;transform:translate(var(--sx),var(--sy))}}
+.dfuse.low .dfl{stroke:#ff9a2e}
+.dfuse.end .dfl{stroke:#ff5a2e;filter:drop-shadow(0 0 5px rgba(255,70,30,1))}
+.dfuse.end .dffi{animation-duration:.2s}
+.dfuse.end .sp{animation-duration:.5s}
+body.light .dfuse .dfb{stroke:rgba(70,50,30,.55)}
+body.light .dfuse .dfl{stroke:#c77700}
+body.light .dfuse.low .dfl{stroke:#d9570a}
+body.light .dfuse.end .dfl{stroke:#c9260a}
+body.glow-off .dfuse .dffi,body.glow-off .dfuse .sp{animation:none}
+@media (prefers-reduced-motion:reduce){
+  body:not(.glow-force) .dfuse .dffi,body:not(.glow-force) .dfuse .sp{animation:none}
+}
 .dfplbl{font-size:14.5px;font-weight:900;color:var(--ttl);letter-spacing:.2px;white-space:nowrap}
 body.light .dfplbl{color:#4a3000}
 body.glow-off .dailyfp{animation:none;box-shadow:0 4px 0 rgba(0,0,0,.18)}
@@ -3126,6 +3156,14 @@ body.hastabs #btnRevQuit{display:none}
         <span class="dfpic">🎯</span>
       </span>
       <span class="dfplbl">تحدّي اليوم</span>
+      <svg class="dfuse" aria-hidden="true">
+        <path class="dfb"/><path class="dfl"/>
+        <g class="dff"><g class="dffz"><g class="dffi">
+          <path class="f1" d="M0,-14 C3,-9 6.5,-6 6.5,-1 A6.5,6.5 0 0 1 -6.5,-1 C-6.5,-6 -3,-9 0,-14 Z"/>
+          <path class="f2" d="M0,-7 C1.6,-4.6 3.2,-3.2 3.2,-.8 A3.2,3.2 0 0 1 -3.2,-.8 C-3.2,-3.2 -1.6,-4.6 0,-7 Z"/>
+          <circle class="sp s1" r="1.3"/><circle class="sp s2" r="1"/><circle class="sp s3" r="1.1"/>
+        </g></g></g>
+      </svg>
     </button>
     <div class="row">
       <button class="btn blue" id="btnBuild">🕌 مسجدي</button>
@@ -18340,10 +18378,44 @@ function dailyOpen(){
 function dailyRender(){
   var b=$('btnDaily'); if(!b) return;
   var on=false; try{ on=dailyOpen(); }catch(e){}
-  if(b.hidden===!on) return;
-  b.hidden=!on;
-  try{ homeFit(); }catch(e){}
+  if(b.hidden!==!on){
+    b.hidden=!on;
+    try{ homeFit(); }catch(e){}
+  }
+  if(on) try{ dailyFuse(); }catch(e){}
 }
+/* ===== فتيلُ التحدّي =====
+   التحدّي عمرُه من التاسعة إلى منتصف الليل، ثمّ يذهب. فإطارُ زرّه فتيلٌ يحترق من أعلاه
+   مع عقارب الساعة: ما مضى من وقته متفحّم، والشعلةُ على طرف ما بقي. وفي آخر ثلاث ساعاتٍ
+   تكبر ويتطاير شررُها، وفي آخر ساعةٍ يحمرّ الفتيل. والمقاسُ يتبدّل بالترجمة وبتصغير
+   الزرّين (fpsm)، فيُعاد الرسمُ مع كلّ تغيّر، ومرّةً في الدقيقة مع dailyRender. */
+var FUSE_LOW=180, FUSE_END=60;
+function dailyFuseLeft(){
+  var d=new Date();
+  return Math.max(0, 1440-d.getHours()*60-d.getMinutes());
+}
+function dailyFuse(){
+  var b=$('btnDaily'), v=b && b.querySelector('.dfuse');
+  if(!v || !b.offsetWidth) return;
+  var w=b.offsetWidth, h=b.offsetHeight, r=h/2, a=r-1;
+  var d='M'+(w/2)+',1H'+(w-r)+'A'+a+','+a+' 0 0 1 '+(w-r)+','+(h-1)+'H'+r+'A'+a+','+a+' 0 0 1 '+r+',1Z';
+  v.setAttribute('width',w); v.setAttribute('height',h);
+  var pb=v.querySelector('.dfb'), pl=v.querySelector('.dfl');
+  pb.setAttribute('d',d); pl.setAttribute('d',d);
+  var left=dailyFuseLeft(), L=pl.getTotalLength();
+  var R=L*Math.min(1, left/((24-DAILY_H)*60)), B=L-R, p=pl.getPointAtLength(B);
+  /* الباقي بعد موضع الاحتراق؛ والمحترقُ يُرسم وحده فلا يظهر تحت الباقي */
+  pl.setAttribute('stroke-dasharray',R+' '+L);
+  pl.setAttribute('stroke-dashoffset',-B);
+  pb.setAttribute('stroke-dasharray',B+' '+L);
+  v.querySelector('.dff').setAttribute('transform','translate('+p.x+','+p.y+')');
+  v.querySelector('.dffz').style.transform='scale('+(left<=FUSE_END?1.75:left<=FUSE_LOW?1.35:1)+')';
+  v.classList.toggle('low', left<=FUSE_LOW);
+  v.classList.toggle('end', left<=FUSE_END);
+}
+if(window.ResizeObserver) try{
+  new ResizeObserver(function(){ try{ dailyFuse(); }catch(e){} }).observe($('btnDaily'));
+}catch(e){}
 function dailyRounds(){
   var D=dailyData(), all=dailyItems(), day=todayNum(), byKey={}, i, j, it, k, q;
   if(!all.length) return [];
