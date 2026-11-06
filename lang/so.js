@@ -709,7 +709,7 @@ NUR_I18N.add('so', {
   "تشجيع بين الإخوة — لا منافسة مع أحد خارج البيت": "Dhiirrigelin walaalaha dhexdooda ah — tartan lala galo qof guriga ka baxsan ma jiro",
   "تشهد أسرة تطبيق «نور الوحي» بأن": "Qoyska app-ka “Nur Al-Wahy” waxay markhaati ka yihiin in",
   "تصفير التقدّم": "Eber ka dhig horumarka",
-  "تصلح للسؤال": "Su’aal ahaan loo isticmaali karo",
+  "{n} تصلح للسؤال": "{n} su’aal ahaan loo isticmaali karo",
   "تطوير: زهير النموس": "Waxaa sameeyay: Zuhair Al-Nammous",
   "تظليلُ المتشابهات: ظاهر": "Iftiiminta weedhaha isu eg: way muuqataa",
   "تظليلُ المتشابهات: مخفيّ": "Iftiiminta weedhaha isu eg: way qarsoon tahay",

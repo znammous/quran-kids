@@ -709,7 +709,7 @@ NUR_I18N.add('en', {
   "تشجيع بين الإخوة — لا منافسة مع أحد خارج البيت": "Encouragement between siblings — no competing with anyone outside the home",
   "تشهد أسرة تطبيق «نور الوحي» بأن": "The “Nur Al-Wahy” app family certifies that",
   "تصفير التقدّم": "Reset progress",
-  "تصلح للسؤال": "Can be asked",
+  "{n} تصلح للسؤال": "{n} for questions",
   "تطوير: زهير النموس": "Developed by: Zuhair Al-Nammous",
   "تظليلُ المتشابهات: ظاهر": "Similar-phrase highlighting: on",
   "تظليلُ المتشابهات: مخفيّ": "Similar-phrase highlighting: off",

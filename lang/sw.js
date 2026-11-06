@@ -709,7 +709,7 @@ NUR_I18N.add('sw', {
   "تشجيع بين الإخوة — لا منافسة مع أحد خارج البيت": "Kutiana moyo kati ya ndugu — hakuna kushindana na yeyote nje ya nyumbani",
   "تشهد أسرة تطبيق «نور الوحي» بأن": "Familia ya programu ya “Nur Al-Wahy” inathibitisha kwamba",
   "تصفير التقدّم": "Weka upya maendeleo",
-  "تصلح للسؤال": "Inaweza kuulizwa",
+  "{n} تصلح للسؤال": "{n} kwa maswali",
   "تطوير: زهير النموس": "Imetengenezwa na: Zuhair Al-Nammous",
   "تظليلُ المتشابهات: ظاهر": "Kuangazia maneno yanayofanana: kumewashwa",
   "تظليلُ المتشابهات: مخفيّ": "Kuangazia maneno yanayofanana: kumezimwa",

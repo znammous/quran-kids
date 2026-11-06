@@ -709,7 +709,7 @@ NUR_I18N.add('ha', {
   "تشجيع بين الإخوة — لا منافسة مع أحد خارج البيت": "Ƙarfafa gwiwa tsakanin ʼyan’uwa — babu gasa da kowa a wajen gida",
   "تشهد أسرة تطبيق «نور الوحي» بأن": "Iyalin manhajar “Nur Al-Wahy” suna shaidawa cewa",
   "تصفير التقدّم": "Mayar da cigaba farko",
-  "تصلح للسؤال": "Ana iya tambaya a kanta",
+  "{n} تصلح للسؤال": "{n} don tambaya",
   "تطوير: زهير النموس": "Mai haɓakawa: Zuhair Al-Nammous",
   "تظليلُ المتشابهات: ظاهر": "Haskaka jumloli masu kama da juna: a kunne",
   "تظليلُ المتشابهات: مخفيّ": "Haskaka jumloli masu kama da juna: a kashe",

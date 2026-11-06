@@ -709,7 +709,7 @@ NUR_I18N.add('uz', {
   "تشجيع بين الإخوة — لا منافسة مع أحد خارج البيت": "Aka-uka, opa-singillar orasida ragʻbatlantirish — uydan tashqaridagi hech kim bilan musobaqa yoʻq",
   "تشهد أسرة تطبيق «نور الوحي» بأن": "“Nur Al-Wahy” ilovasi oilasi tasdiqlaydiki",
   "تصفير التقدّم": "Natijani nolga tushirish",
-  "تصلح للسؤال": "Soʻralishi mumkin",
+  "{n} تصلح للسؤال": "Soʻraladigan {n}",
   "تطوير: زهير النموس": "Ishlab chiquvchi: Zuhair Al-Nammous",
   "تظليلُ المتشابهات: ظاهر": "Oʻxshash iboralarni belgilash: yoqilgan",
   "تظليلُ المتشابهات: مخفيّ": "Oʻxshash iboralarni belgilash: oʻchirilgan",

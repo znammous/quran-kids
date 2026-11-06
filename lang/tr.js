@@ -709,7 +709,7 @@ NUR_I18N.add('tr', {
   "تشجيع بين الإخوة — لا منافسة مع أحد خارج البيت": "Kardeşler arasında teşvik — ev dışında kimseyle yarış yok",
   "تشهد أسرة تطبيق «نور الوحي» بأن": "“Nur Al-Wahy” uygulaması ailesi şunu belgeler:",
   "تصفير التقدّم": "İlerlemeyi sıfırla",
-  "تصلح للسؤال": "Soru olabilir",
+  "{n} تصلح للسؤال": "{n} soru için",
   "تطوير: زهير النموس": "Geliştiren: Zuhair Al-Nammous",
   "تظليلُ المتشابهات: ظاهر": "Benzer ifadeleri vurgulama: açık",
   "تظليلُ المتشابهات: مخفيّ": "Benzer ifadeleri vurgulama: kapalı",

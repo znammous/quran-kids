@@ -709,7 +709,7 @@ NUR_I18N.add('id', {
   "تشجيع بين الإخوة — لا منافسة مع أحد خارج البيت": "Saling menyemangati antar saudara — tanpa bersaing dengan siapa pun di luar rumah",
   "تشهد أسرة تطبيق «نور الوحي» بأن": "Keluarga aplikasi “Nur Al-Wahy” menyatakan bahwa",
   "تصفير التقدّم": "Atur ulang kemajuan",
-  "تصلح للسؤال": "Bisa dijadikan soal",
+  "{n} تصلح للسؤال": "{n} bisa dijadikan soal",
   "تطوير: زهير النموس": "Dikembangkan oleh: Zuhair Al-Nammous",
   "تظليلُ المتشابهات: ظاهر": "Penyorotan ayat mirip: nyala",
   "تظليلُ المتشابهات: مخفيّ": "Penyorotan ayat mirip: mati",
