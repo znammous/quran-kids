@@ -2069,12 +2069,19 @@ NUR_I18N.add('en', {
   "وقفتَ عند السؤال {i} من {n}، فأكمله": "You stopped at question {i} of {n} — continue",
   "أتوقف اختبار الأسبوع الآن؟": "Pause the weekly test now?",
   "أتوقف اختبار الشهر الآن؟": "Pause the monthly test now?",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في الرئيسيّة — اليومَ نفسَه.": "Saved at this question with the answers before it; finish it from its card on the home screen — the same day.",
   "أتممتَ اختبار الأسبوع": "You finished the weekly test",
   "أتممتَ اختبار الشهر": "You finished the monthly test",
   "واختبارُ الأسبوع القادم يومَ الجمعة المقبل": "The next weekly test is next Friday",
   "واختبارُ الشهر القادم آخرَ جمعةٍ من الشهر المقبل": "The next monthly test is on the last Friday of next month",
   "ما حُفظ ورُوجع هذا الأسبوع": "What was memorized and reviewed this week",
   "ما حُفظ ورُوجع هذا الشهر": "What was memorized and reviewed this month",
-  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Every Friday you now have a weekly test, and on the last Friday of each month a monthly test: they appear as cards on the home screen and ask only about what you memorized and reviewed in the app."
+  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Every Friday you now have a weekly test, and on the last Friday of each month a monthly test: they appear as cards on the home screen and ask only about what you memorized and reviewed in the app.",
+  "فاتك اختبار الأسبوع": "You missed the weekly test",
+  "فاتك اختبار الشهر": "You missed the monthly test",
+  "ممّا حفظتَه وراجعتَه في ذلك الأسبوع": "From what you memorized and reviewed that week",
+  "ممّا حفظتَه وراجعتَه في ذلك الشهر": "From what you memorized and reviewed that month",
+  "ما حُفظ ورُوجع في ذلك الأسبوع": "What was memorized and reviewed that week",
+  "ما حُفظ ورُوجع في ذلك الشهر": "What was memorized and reviewed that month",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Saved at this question with the answers before it; finish it today from its card on the home screen, and after today from “Progress”.",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Saved at this question with the answers before it; finish it from its card in “Progress”."
 });

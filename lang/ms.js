@@ -2069,12 +2069,19 @@ NUR_I18N.add('ms', {
   "وقفتَ عند السؤال {i} من {n}، فأكمله": "Kamu berhenti pada soalan {i} daripada {n} — sambung",
   "أتوقف اختبار الأسبوع الآن؟": "Jeda ujian minggu ini sekarang?",
   "أتوقف اختبار الشهر الآن؟": "Jeda ujian bulan ini sekarang?",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في الرئيسيّة — اليومَ نفسَه.": "Disimpan pada soalan ini bersama jawapan sebelumnya; habiskan daripada kadnya di laman utama — pada hari yang sama.",
   "أتممتَ اختبار الأسبوع": "Kamu telah menamatkan ujian minggu ini",
   "أتممتَ اختبار الشهر": "Kamu telah menamatkan ujian bulan ini",
   "واختبارُ الأسبوع القادم يومَ الجمعة المقبل": "Ujian minggu berikutnya pada Jumaat depan",
   "واختبارُ الشهر القادم آخرَ جمعةٍ من الشهر المقبل": "Ujian bulan berikutnya pada Jumaat terakhir bulan depan",
   "ما حُفظ ورُوجع هذا الأسبوع": "Yang dihafal dan diulang kaji minggu ini",
   "ما حُفظ ورُوجع هذا الشهر": "Yang dihafal dan diulang kaji bulan ini",
-  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Kini setiap Jumaat ada ujian mingguan, dan pada Jumaat terakhir setiap bulan ada ujian bulanan: keduanya muncul sebagai kad di laman utama dan hanya bertanya tentang yang kamu hafal dan ulang kaji dalam aplikasi."
+  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Kini setiap Jumaat ada ujian mingguan, dan pada Jumaat terakhir setiap bulan ada ujian bulanan: keduanya muncul sebagai kad di laman utama dan hanya bertanya tentang yang kamu hafal dan ulang kaji dalam aplikasi.",
+  "فاتك اختبار الأسبوع": "Kamu terlepas ujian mingguan",
+  "فاتك اختبار الشهر": "Kamu terlepas ujian bulanan",
+  "ممّا حفظتَه وراجعتَه في ذلك الأسبوع": "Daripada yang kamu hafal dan ulang kaji minggu itu",
+  "ممّا حفظتَه وراجعتَه في ذلك الشهر": "Daripada yang kamu hafal dan ulang kaji bulan itu",
+  "ما حُفظ ورُوجع في ذلك الأسبوع": "Yang dihafal dan diulang kaji minggu itu",
+  "ما حُفظ ورُوجع في ذلك الشهر": "Yang dihafal dan diulang kaji bulan itu",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Disimpan pada soalan ini bersama jawapan sebelumnya; habiskan hari ini daripada kadnya di laman utama, dan selepas hari ini daripada “Prestasi”.",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Disimpan pada soalan ini bersama jawapan sebelumnya; habiskan daripada kadnya di “Prestasi”."
 });

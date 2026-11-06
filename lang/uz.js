@@ -2069,12 +2069,19 @@ NUR_I18N.add('uz', {
   "وقفتَ عند السؤال {i} من {n}، فأكمله": "{n} tadan {i}-savolda toʻxtading — davom et",
   "أتوقف اختبار الأسبوع الآن؟": "Hafta imtihoni hozir toʻxtatilsinmi?",
   "أتوقف اختبار الشهر الآن؟": "Oy imtihoni hozir toʻxtatilsinmi?",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في الرئيسيّة — اليومَ نفسَه.": "Shu savolda oldingi javoblaring bilan saqlanadi; uni bosh ekrandagi kartasidan oʻsha kuniyoq tugatasan.",
   "أتممتَ اختبار الأسبوع": "Hafta imtihonini tugatding",
   "أتممتَ اختبار الشهر": "Oy imtihonini tugatding",
   "واختبارُ الأسبوع القادم يومَ الجمعة المقبل": "Keyingi hafta imtihoni kelasi juma kuni",
   "واختبارُ الشهر القادم آخرَ جمعةٍ من الشهر المقبل": "Keyingi oy imtihoni kelasi oyning oxirgi jumasida",
   "ما حُفظ ورُوجع هذا الأسبوع": "Shu hafta yodlangan va takrorlanganlar",
   "ما حُفظ ورُوجع هذا الشهر": "Shu oy yodlangan va takrorlanganlar",
-  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Endi har juma hafta imtihoni, har oyning oxirgi jumasida esa oy imtihoni bor: ular bosh ekranda karta boʻlib chiqadi va faqat ilovada yodlagan va takrorlaganlaringdan soʻraydi."
+  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Endi har juma hafta imtihoni, har oyning oxirgi jumasida esa oy imtihoni bor: ular bosh ekranda karta boʻlib chiqadi va faqat ilovada yodlagan va takrorlaganlaringdan soʻraydi.",
+  "فاتك اختبار الأسبوع": "Hafta imtihonini oʻtkazib yubording",
+  "فاتك اختبار الشهر": "Oy imtihonini oʻtkazib yubording",
+  "ممّا حفظتَه وراجعتَه في ذلك الأسبوع": "Oʻsha hafta yodlagan va takrorlaganlaringdan",
+  "ممّا حفظتَه وراجعتَه في ذلك الشهر": "Oʻsha oy yodlagan va takrorlaganlaringdan",
+  "ما حُفظ ورُوجع في ذلك الأسبوع": "Oʻsha hafta yodlangan va takrorlanganlar",
+  "ما حُفظ ورُوجع في ذلك الشهر": "Oʻsha oy yodlangan va takrorlanganlar",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Shu savolda oldingi javoblaring bilan saqlanadi; bugun bosh ekrandagi kartasidan, bugundan keyin esa “Natijalar”dan tugatasan.",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Shu savolda oldingi javoblaring bilan saqlanadi; uni “Natijalar”dagi kartasidan tugatasan."
 });

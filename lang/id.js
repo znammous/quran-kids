@@ -2069,12 +2069,19 @@ NUR_I18N.add('id', {
   "وقفتَ عند السؤال {i} من {n}، فأكمله": "Kamu berhenti di soal {i} dari {n} — lanjutkan",
   "أتوقف اختبار الأسبوع الآن؟": "Jeda ujian pekan ini sekarang?",
   "أتوقف اختبار الشهر الآن؟": "Jeda ujian bulan ini sekarang?",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في الرئيسيّة — اليومَ نفسَه.": "Disimpan di soal ini beserta jawaban sebelumnya; selesaikan dari kartunya di beranda — pada hari yang sama.",
   "أتممتَ اختبار الأسبوع": "Kamu menyelesaikan ujian pekan ini",
   "أتممتَ اختبار الشهر": "Kamu menyelesaikan ujian bulan ini",
   "واختبارُ الأسبوع القادم يومَ الجمعة المقبل": "Ujian pekan berikutnya Jumat depan",
   "واختبارُ الشهر القادم آخرَ جمعةٍ من الشهر المقبل": "Ujian bulan berikutnya pada Jumat terakhir bulan depan",
   "ما حُفظ ورُوجع هذا الأسبوع": "Yang dihafal dan dimurajaah pekan ini",
   "ما حُفظ ورُوجع هذا الشهر": "Yang dihafal dan dimurajaah bulan ini",
-  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Kini setiap Jumat ada ujian pekanan, dan pada Jumat terakhir tiap bulan ada ujian bulanan: keduanya tampil sebagai kartu di beranda dan hanya menanyakan yang kamu hafal dan murajaah di aplikasi."
+  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Kini setiap Jumat ada ujian pekanan, dan pada Jumat terakhir tiap bulan ada ujian bulanan: keduanya tampil sebagai kartu di beranda dan hanya menanyakan yang kamu hafal dan murajaah di aplikasi.",
+  "فاتك اختبار الأسبوع": "Kamu melewatkan ujian pekanan",
+  "فاتك اختبار الشهر": "Kamu melewatkan ujian bulanan",
+  "ممّا حفظتَه وراجعتَه في ذلك الأسبوع": "Dari yang kamu hafal dan murajaah pekan itu",
+  "ممّا حفظتَه وراجعتَه في ذلك الشهر": "Dari yang kamu hafal dan murajaah bulan itu",
+  "ما حُفظ ورُوجع في ذلك الأسبوع": "Yang dihafal dan dimurajaah pekan itu",
+  "ما حُفظ ورُوجع في ذلك الشهر": "Yang dihafal dan dimurajaah bulan itu",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Disimpan di soal ini beserta jawaban sebelumnya; selesaikan hari ini dari kartunya di beranda, dan setelah hari ini dari “Prestasi”.",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Disimpan di soal ini beserta jawaban sebelumnya; selesaikan dari kartunya di “Prestasi”."
 });

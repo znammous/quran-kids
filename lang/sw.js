@@ -2069,12 +2069,19 @@ NUR_I18N.add('sw', {
   "وقفتَ عند السؤال {i} من {n}، فأكمله": "Ulisimama kwenye swali la {i} kati ya {n} — endelea",
   "أتوقف اختبار الأسبوع الآن؟": "Usimamishe jaribio la wiki sasa?",
   "أتوقف اختبار الشهر الآن؟": "Usimamishe jaribio la mwezi sasa?",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في الرئيسيّة — اليومَ نفسَه.": "Linahifadhiwa kwenye swali hili pamoja na majibu ya awali; likamilishe kutoka kadi yake kwenye ukurasa wa mwanzo — siku hiyo hiyo.",
   "أتممتَ اختبار الأسبوع": "Umekamilisha jaribio la wiki",
   "أتممتَ اختبار الشهر": "Umekamilisha jaribio la mwezi",
   "واختبارُ الأسبوع القادم يومَ الجمعة المقبل": "Jaribio lijalo la wiki ni Ijumaa ijayo",
   "واختبارُ الشهر القادم آخرَ جمعةٍ من الشهر المقبل": "Jaribio lijalo la mwezi ni Ijumaa ya mwisho ya mwezi ujao",
   "ما حُفظ ورُوجع هذا الأسبوع": "Yaliyohifadhiwa na kurudiwa wiki hii",
   "ما حُفظ ورُوجع هذا الشهر": "Yaliyohifadhiwa na kurudiwa mwezi huu",
-  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Sasa kila Ijumaa una jaribio la wiki, na Ijumaa ya mwisho ya kila mwezi jaribio la mwezi: yanaonekana kama kadi kwenye ukurasa wa mwanzo na yanauliza tu ulichohifadhi na kurudia kwenye programu."
+  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Sasa kila Ijumaa una jaribio la wiki, na Ijumaa ya mwisho ya kila mwezi jaribio la mwezi: yanaonekana kama kadi kwenye ukurasa wa mwanzo na yanauliza tu ulichohifadhi na kurudia kwenye programu.",
+  "فاتك اختبار الأسبوع": "Umekosa jaribio la wiki",
+  "فاتك اختبار الشهر": "Umekosa jaribio la mwezi",
+  "ممّا حفظتَه وراجعتَه في ذلك الأسبوع": "Kutokana na ulichohifadhi na kurudia wiki ile",
+  "ممّا حفظتَه وراجعتَه في ذلك الشهر": "Kutokana na ulichohifadhi na kurudia mwezi ule",
+  "ما حُفظ ورُوجع في ذلك الأسبوع": "Yaliyohifadhiwa na kurudiwa wiki ile",
+  "ما حُفظ ورُوجع في ذلك الشهر": "Yaliyohifadhiwa na kurudiwa mwezi ule",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Linahifadhiwa kwenye swali hili pamoja na majibu ya awali; likamilishe leo kutoka kadi yake kwenye ukurasa wa mwanzo, na baada ya leo kutoka “Maendeleo”.",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Linahifadhiwa kwenye swali hili pamoja na majibu ya awali; likamilishe kutoka kadi yake kwenye “Maendeleo”."
 });

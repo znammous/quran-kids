@@ -2069,12 +2069,19 @@ NUR_I18N.add('fr', {
   "وقفتَ عند السؤال {i} من {n}، فأكمله": "Tu t’es arrêté à la question {i} sur {n} — continue",
   "أتوقف اختبار الأسبوع الآن؟": "Mettre le test de la semaine en pause ?",
   "أتوقف اختبار الشهر الآن؟": "Mettre le test du mois en pause ?",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في الرئيسيّة — اليومَ نفسَه.": "Enregistré à cette question avec les réponses précédentes ; termine-le depuis sa carte sur l’accueil — le jour même.",
   "أتممتَ اختبار الأسبوع": "Tu as terminé le test de la semaine",
   "أتممتَ اختبار الشهر": "Tu as terminé le test du mois",
   "واختبارُ الأسبوع القادم يومَ الجمعة المقبل": "Le prochain test de la semaine est vendredi prochain",
   "واختبارُ الشهر القادم آخرَ جمعةٍ من الشهر المقبل": "Le prochain test du mois est le dernier vendredi du mois prochain",
   "ما حُفظ ورُوجع هذا الأسبوع": "Ce qui a été mémorisé et révisé cette semaine",
   "ما حُفظ ورُوجع هذا الشهر": "Ce qui a été mémorisé et révisé ce mois-ci",
-  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Chaque vendredi, tu as maintenant un test de la semaine et, le dernier vendredi de chaque mois, un test du mois : ils apparaissent en cartes sur l’accueil et ne portent que sur ce que tu as mémorisé et révisé dans l’application."
+  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Chaque vendredi, tu as maintenant un test de la semaine et, le dernier vendredi de chaque mois, un test du mois : ils apparaissent en cartes sur l’accueil et ne portent que sur ce que tu as mémorisé et révisé dans l’application.",
+  "فاتك اختبار الأسبوع": "Tu as manqué le test de la semaine",
+  "فاتك اختبار الشهر": "Tu as manqué le test du mois",
+  "ممّا حفظتَه وراجعتَه في ذلك الأسبوع": "Sur ce que tu as mémorisé et révisé cette semaine-là",
+  "ممّا حفظتَه وراجعتَه في ذلك الشهر": "Sur ce que tu as mémorisé et révisé ce mois-là",
+  "ما حُفظ ورُوجع في ذلك الأسبوع": "Ce qui a été mémorisé et révisé cette semaine-là",
+  "ما حُفظ ورُوجع في ذلك الشهر": "Ce qui a été mémorisé et révisé ce mois-là",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Enregistré à cette question avec les réponses précédentes ; termine-le aujourd’hui depuis sa carte sur l’accueil, et après aujourd’hui depuis « Progrès ».",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Enregistré à cette question avec les réponses précédentes ; termine-le depuis sa carte dans « Progrès »."
 });

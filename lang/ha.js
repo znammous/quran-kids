@@ -2069,12 +2069,19 @@ NUR_I18N.add('ha', {
   "وقفتَ عند السؤال {i} من {n}، فأكمله": "Ka tsaya a tambaya ta {i} cikin {n} — ka ci gaba",
   "أتوقف اختبار الأسبوع الآن؟": "A dakatar da jarabawar mako yanzu?",
   "أتوقف اختبار الشهر الآن؟": "A dakatar da jarabawar wata yanzu?",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في الرئيسيّة — اليومَ نفسَه.": "Za a adana a wannan tambayar tare da amsoshin da suka gabata; ka kammala ta daga katinta a shafin farko — a ranar nan.",
   "أتممتَ اختبار الأسبوع": "Ka kammala jarabawar mako",
   "أتممتَ اختبار الشهر": "Ka kammala jarabawar wata",
   "واختبارُ الأسبوع القادم يومَ الجمعة المقبل": "Jarabawar mako ta gaba ita ce Jumma’a mai zuwa",
   "واختبارُ الشهر القادم آخرَ جمعةٍ من الشهر المقبل": "Jarabawar wata ta gaba ita ce Jumma’ar ƙarshe ta wata mai zuwa",
   "ما حُفظ ورُوجع هذا الأسبوع": "Abin da aka haddace aka kuma maimaita a wannan mako",
   "ما حُفظ ورُوجع هذا الشهر": "Abin da aka haddace aka kuma maimaita a wannan wata",
-  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Yanzu kowace Jumma’a kana da jarabawar mako, kuma a Jumma’ar ƙarshe ta kowane wata jarabawar wata: suna bayyana a matsayin katuna a shafin farko, kuma ba sa tambaya sai abin da ka haddace ka kuma maimaita a cikin manhajar."
+  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Yanzu kowace Jumma’a kana da jarabawar mako, kuma a Jumma’ar ƙarshe ta kowane wata jarabawar wata: suna bayyana a matsayin katuna a shafin farko, kuma ba sa tambaya sai abin da ka haddace ka kuma maimaita a cikin manhajar.",
+  "فاتك اختبار الأسبوع": "Jarabawar mako ta wuce ka",
+  "فاتك اختبار الشهر": "Jarabawar wata ta wuce ka",
+  "ممّا حفظتَه وراجعتَه في ذلك الأسبوع": "Daga abin da ka haddace ka kuma maimaita a wancan mako",
+  "ممّا حفظتَه وراجعتَه في ذلك الشهر": "Daga abin da ka haddace ka kuma maimaita a wancan wata",
+  "ما حُفظ ورُوجع في ذلك الأسبوع": "Abin da aka haddace aka kuma maimaita a wancan mako",
+  "ما حُفظ ورُوجع في ذلك الشهر": "Abin da aka haddace aka kuma maimaita a wancan wata",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Za a adana a wannan tambayar tare da amsoshin da suka gabata; ka kammala ta yau daga katinta a shafin farko, bayan yau kuma daga “Cigaba”.",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Za a adana a wannan tambayar tare da amsoshin da suka gabata; ka kammala ta daga katinta a “Cigaba”."
 });

@@ -2069,12 +2069,19 @@ NUR_I18N.add('so', {
   "وقفتَ عند السؤال {i} من {n}، فأكمله": "Waxaad ku istaagtay su’aasha {i} ee {n} — sii wad",
   "أتوقف اختبار الأسبوع الآن؟": "Ma hakisaa imtixaanka toddobaadka hadda?",
   "أتوقف اختبار الشهر الآن؟": "Ma hakisaa imtixaanka bisha hadda?",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في الرئيسيّة — اليومَ نفسَه.": "Waxaa lagu kaydinayaa su’aashan iyo jawaabihii ka horreeyay; ka dhammee kaarkiisa bogga hore — isla maalintaas.",
   "أتممتَ اختبار الأسبوع": "Waad dhammaysay imtixaanka toddobaadka",
   "أتممتَ اختبار الشهر": "Waad dhammaysay imtixaanka bisha",
   "واختبارُ الأسبوع القادم يومَ الجمعة المقبل": "Imtixaanka toddobaadka xiga waa Jimcaha soo socda",
   "واختبارُ الشهر القادم آخرَ جمعةٍ من الشهر المقبل": "Imtixaanka bisha xigta waa Jimcaha ugu dambeeya ee bisha soo socota",
   "ما حُفظ ورُوجع هذا الأسبوع": "Waxa la xifdiyay oo dib loo eegay toddobaadkan",
   "ما حُفظ ورُوجع هذا الشهر": "Waxa la xifdiyay oo dib loo eegay bishan",
-  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Hadda Jimce kasta waxaad leedahay imtixaanka toddobaadka, Jimcaha ugu dambeeya ee bil kastana imtixaanka bisha: waxay u muuqdaan kaarar bogga hore, waxayna ku weydiinayaan oo keliya waxaad ku xifdisay oo aad dib ugu eegtay barnaamijka."
+  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Hadda Jimce kasta waxaad leedahay imtixaanka toddobaadka, Jimcaha ugu dambeeya ee bil kastana imtixaanka bisha: waxay u muuqdaan kaarar bogga hore, waxayna ku weydiinayaan oo keliya waxaad ku xifdisay oo aad dib ugu eegtay barnaamijka.",
+  "فاتك اختبار الأسبوع": "Imtixaankii toddobaadka ayaa kaa dhaafay",
+  "فاتك اختبار الشهر": "Imtixaankii bisha ayaa kaa dhaafay",
+  "ممّا حفظتَه وراجعتَه في ذلك الأسبوع": "Waxaad xifdisay oo aad dib u eegtay toddobaadkaas",
+  "ممّا حفظتَه وراجعتَه في ذلك الشهر": "Waxaad xifdisay oo aad dib u eegtay bishaas",
+  "ما حُفظ ورُوجع في ذلك الأسبوع": "Waxa la xifdiyay oo dib loo eegay toddobaadkaas",
+  "ما حُفظ ورُوجع في ذلك الشهر": "Waxa la xifdiyay oo dib loo eegay bishaas",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Waxaa lagu kaydinayaa su’aashan iyo jawaabihii ka horreeyay; maanta ka dhammee kaarkiisa bogga hore, maanta ka dibna “Horumar”.",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Waxaa lagu kaydinayaa su’aashan iyo jawaabihii ka horreeyay; ka dhammee kaarkiisa “Horumar”."
 });

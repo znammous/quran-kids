@@ -2069,12 +2069,19 @@ NUR_I18N.add('tr', {
   "وقفتَ عند السؤال {i} من {n}، فأكمله": "{n} sorudan {i}. soruda kaldın — devam et",
   "أتوقف اختبار الأسبوع الآن؟": "Haftanın sınavı şimdi duraklatılsın mı?",
   "أتوقف اختبار الشهر الآن؟": "Ayın sınavı şimdi duraklatılsın mı?",
-  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في الرئيسيّة — اليومَ نفسَه.": "Bu soruda ve önceki cevaplarınla kaydedilir; ana ekrandaki kartından aynı gün içinde bitirirsin.",
   "أتممتَ اختبار الأسبوع": "Haftanın sınavını bitirdin",
   "أتممتَ اختبار الشهر": "Ayın sınavını bitirdin",
   "واختبارُ الأسبوع القادم يومَ الجمعة المقبل": "Bir sonraki haftanın sınavı gelecek cuma",
   "واختبارُ الشهر القادم آخرَ جمعةٍ من الشهر المقبل": "Bir sonraki ayın sınavı gelecek ayın son cuması",
   "ما حُفظ ورُوجع هذا الأسبوع": "Bu hafta ezberlenen ve tekrar edilenler",
   "ما حُفظ ورُوجع هذا الشهر": "Bu ay ezberlenen ve tekrar edilenler",
-  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Artık her cuma haftanın sınavı, her ayın son cuması da ayın sınavı var: ana ekranda kart olarak görünürler ve yalnızca uygulamada ezberlediklerini ve tekrar ettiklerini sorarlar."
+  "صار لك كلَّ جمعةٍ اختبارُ الأسبوع، وآخرَ جمعةٍ من كلّ شهرٍ اختبارُ الشهر: يظهران بطاقةً في الرئيسيّة، ولا يُسأل فيهما إلّا عمّا حفظتَه وراجعتَه في التطبيق.": "Artık her cuma haftanın sınavı, her ayın son cuması da ayın sınavı var: ana ekranda kart olarak görünürler ve yalnızca uygulamada ezberlediklerini ve tekrar ettiklerini sorarlar.",
+  "فاتك اختبار الأسبوع": "Haftanın sınavını kaçırdın",
+  "فاتك اختبار الشهر": "Ayın sınavını kaçırdın",
+  "ممّا حفظتَه وراجعتَه في ذلك الأسبوع": "O hafta ezberlediklerinden ve tekrar ettiklerinden",
+  "ممّا حفظتَه وراجعتَه في ذلك الشهر": "O ay ezberlediklerinden ve tekrar ettiklerinden",
+  "ما حُفظ ورُوجع في ذلك الأسبوع": "O hafta ezberlenen ve tekrar edilenler",
+  "ما حُفظ ورُوجع في ذلك الشهر": "O ay ezberlenen ve tekrar edilenler",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله اليومَ من بطاقته في الرئيسيّة، وبعد اليوم من «أدائي».": "Bu soruda ve önceki cevaplarınla kaydedilir; bugün ana ekrandaki kartından, bugünden sonra “Performans” bölümünden bitirirsin.",
+  "يُحفظ عند سؤالك هذا وما أجبتَه قبله، وتكمله من بطاقته في «أدائي».": "Bu soruda ve önceki cevaplarınla kaydedilir; “Performans” bölümündeki kartından bitirirsin."
 });
