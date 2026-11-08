@@ -2048,7 +2048,6 @@ NUR_I18N.add('id', {
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Apakah kamu ingin membuka kata ini?<br>Kata pertama dimaafkan, kata kedua membuat halaman kembali kepadamu besok",
   "نعم، اكشفها": "Ya, buka",
   "جلساتي": "Sesiku",
-  "آخرُ ثلاث جلسات": "Tiga sesi terakhir",
   "أطول جلسة": "Sesi terpanjang",
   "رفيق القرآن": "Sahabat Al-Qur'an",
   "أنت رفيقُ القرآن": "Kamu sahabat Al-Qur'an",

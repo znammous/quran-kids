@@ -2048,7 +2048,6 @@ NUR_I18N.add('so', {
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Ma rabtaa inaad furto eraygan?<br>Erayga koowaad waa la cafiyaa, kan labaad wuxuu bogga kuu soo celinayaa berri",
   "نعم، اكشفها": "Haa, fur",
   "جلساتي": "Fadhiyadayda",
-  "آخرُ ثلاث جلسات": "Saddexdii fadhi ee ugu dambeeyay",
   "أطول جلسة": "Fadhiga ugu dheer",
   "رفيق القرآن": "Saaxiibka Quraanka",
   "أنت رفيقُ القرآن": "Waxaad tahay saaxiibka Quraanka",

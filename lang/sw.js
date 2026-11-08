@@ -2048,7 +2048,6 @@ NUR_I18N.add('sw', {
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Je, unataka kufunua neno hili?<br>Neno la kwanza linasamehewa, la pili linarudisha ukurasa kwako kesho",
   "نعم، اكشفها": "Ndiyo, lifunue",
   "جلساتي": "Vikao vyangu",
-  "آخرُ ثلاث جلسات": "Vikao vitatu vya mwisho",
   "أطول جلسة": "Kikao kirefu zaidi",
   "رفيق القرآن": "Rafiki wa Qur'ani",
   "أنت رفيقُ القرآن": "Wewe ni rafiki wa Qur'ani",

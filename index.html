@@ -1289,6 +1289,14 @@ body.hastabs:has(#scr-start.active) #qaBar{bottom:calc(146px + env(safe-area-ins
 .pfses li{display:flex;justify-content:space-between;align-items:center;gap:10px}
 .pfses li b{font-weight:900;color:var(--ttl);white-space:nowrap}
 .pfses li.pfbest{border-top:2px solid var(--pb2);margin-top:2px}
+button.pfcol{background:none;border:0;padding:0;font-family:inherit;color:inherit;border-radius:7px;cursor:pointer}
+button.pfcol:disabled{cursor:default}
+button.pfcol.sel{background:var(--psel)}
+.pfseschart{height:112px;margin-bottom:6px}
+.pfstack{display:flex;flex-direction:column;gap:2px;width:78%;min-height:0}
+.pfstack i{width:100%!important;min-height:3px;border-radius:2px!important;background:#2f9cf0!important}
+.pfstack i:nth-child(even){background:#7fdcff!important}
+.pfsdh{margin:0;padding:4px 2px 0;color:var(--on3);font-size:12.5px;font-weight:800}
 .pfsur{border-top:1px dashed var(--pb2);padding:6px 0}
 .pfsur summary{display:flex;justify-content:space-between;align-items:baseline;gap:8px;cursor:pointer;
   color:var(--ttl);font-weight:900;font-size:15px;padding:4px 0;list-style:none}
@@ -6332,12 +6340,12 @@ function qNote(r,wrong){
    الجلسةُ وقتُ عملِه بالقرآن: الدرسُ والتسميعُ والمراجعةُ ووجهُ المصحف، لا الألعابُ ولا
    القصصُ ولا المتجر. ويتوقّف العدّ إذا غاب التطبيق، أو مرّت SES_IDLE بلا لمسةٍ ولا تلاوةٍ
    ولا تسجيل — فالهاتفُ المتروكُ على الدرس لا يُحسب. وتنتهي بعد SES_GAP بلا عمل، فتُكتب في
-   p.sess: [يومُها، دقائقُها]، وp.sesBest أطولُها. والجاريةُ في p.ses تبقى إن أُغلق التطبيق.
+   p.sess: [يومُها، دقائقُها] لآخر SES_DAYS يوماً، وp.sesBest أطولُها منذ البداية وp.sesBestD يومُها. والجاريةُ في p.ses تبقى إن أُغلق التطبيق.
    وكلَّ SES_STEP منها احتفالٌ «رفيق القرآن» بلا جواهر: يُشكر على وقته ولا يُجازى بإطالته.
    ولا يُقطع به شيء: يُؤجَّل في p.sesCele حتى تهدأ شاشةٌ لا عملَ فيها ولا فوقها شيء، فلا
    يقع فوق احتفالٍ ولا سؤالٍ ولا نتيجةٍ ولا شهادة؛ ومن أغلق قبلها رآه في دخوله التالي.
    ========================================================= */
-var SES_TICK=2000, SES_IDLE=4*60000, SES_GAP=15*60000, SES_STEP=30*60000, SES_KEEP=30, SES_CALM_MS=3000;
+var SES_TICK=2000, SES_IDLE=4*60000, SES_GAP=15*60000, SES_STEP=30*60000, SES_DAYS=14, SES_CALM_MS=3000;
 var SES_WORK=/^scr-(play|exam)$/, SES_QUIET=/^scr-(start|path|map|juz|rev|revpath|bqn|perf)$/;
 var SES_TOUCH=Date.now(), SES_RUN=0, SES_WHO=null, SES_SAVED=0, SES_CALM=0;
 document.addEventListener('pointerdown', function(){ SES_TOUCH=Date.now(); }, true);
@@ -6351,10 +6359,11 @@ function sesMin(ms){ return Math.floor((ms||0)/60000); }
 function sesClose(p){
   var c=p.ses, m=sesMin(c&&c.ms);
   p.ses=null;
+  sesBestDate(p);
   if(m>=1){
     (p.sess||(p.sess=[])).push([c.d,m]);
-    if(p.sess.length>SES_KEEP) p.sess=p.sess.slice(-SES_KEEP);
-    if(m>(p.sesBest||0)) p.sesBest=m;
+    if(m>(p.sesBest||0)){ p.sesBest=m; p.sesBestD=c.d; }
+    p.sess=p.sess.filter(function(x){ return todayNum()-x[0]<SES_DAYS; });
   }
   saveDB();
 }
@@ -6409,16 +6418,70 @@ function sesDay(d){
   var n=todayNum()-d;
   return n<=0 ? tx('اليوم') : n===1 ? tx('أمس') : tx('قبل {d}',{d:arCount(n,C_DAYS)});
 }
+/* يومُ الرقم القياسيّ لمن سبق حفظُه بلا تاريخ: يُؤخذ من سجلّه إن بقيت الجلسةُ فيه، وإلّا فلا تاريخ */
+function sesBestDate(p){
+  if(!p.sesBest || p.sesBestD!=null) return;
+  var L=p.sess||[], i;
+  for(i=0;i<L.length;i++) if(L[i][1]===p.sesBest){ p.sesBestD=L[i][0]; return; }
+}
+/* رقمُ اليوم في التطبيق ← ظهرُ ذلك اليوم بتوقيت الجهاز، فلا ينزلق يوماً مع فرق التوقيت */
+function sesWhen(d){
+  var u=new Date((d-DAY_SHIFT-QA_DAYS)*86400000);
+  return new Date(u.getUTCFullYear(),u.getUTCMonth(),u.getUTCDate(),12);
+}
+/* التاريخُ الهجريّ ليومٍ بالأرقام اللاتينيّة كبقيّة البطاقة */
+function sesHijri(o,d){
+  return (hijriDate(o,sesWhen(d))||'').replace(/[٠-٩]/g,function(c){ return '٠١٢٣٤٥٦٧٨٩'.indexOf(c); });
+}
+/* جلساتُ آخر أربعة عشر يوماً بما فيها الجارية، مجموعةً بيومها */
+function sesByDay(p){
+  var L=(p.sess||[]).slice(), c=p.ses, m=sesMin(c&&c.ms), t=todayNum(), by={};
+  if(m>=1) L.push([c.d,m]);
+  L.forEach(function(x){ if(t-x[0]<SES_DAYS) (by[x[0]]||(by[x[0]]=[])).push(x[1]); });
+  return by;
+}
+function sesDetail(d,L){
+  return '<p class="pfsdh">'+esc(sesDay(d))+' — '+esc(sesHijri({day:'numeric',month:'long'},d))+'</p>'+
+    '<ul class="pflines pfses">'+L.map(function(x,i){
+      return '<li><span>'+arNum(i+1)+(x*60000>=SES_STEP?'<small>🌟 '+tx('رفيق القرآن')+'</small>':'')+'</span>'+
+             '<b>'+esc(sesTime(x))+'</b></li>';
+    }).join('')+'</ul>';
+}
 function sesCard(p){
-  var L=(p.sess||[]).slice(), c=p.ses, m=sesMin(c&&c.ms), best=p.sesBest||0;
-  if(m>=1){ L.push([c.d,m]); if(m>best) best=m; }
-  var h='<div class="bfam"><div class="fh"><span>⏳ '+tx('جلساتي')+'</span><small>'+tx('آخرُ ثلاث جلسات')+'</small></div>';
-  if(!L.length) return h+'<p class="pfmute">'+tx('احفظ أو راجع، فيظهر هنا كم استغرقت جلستك')+'</p></div>';
-  h+='<ul class="pflines pfses">'+L.slice(-3).reverse().map(function(x){
-    return '<li><span>'+esc(sesDay(x[0]))+(x[1]*60000>=SES_STEP?'<small>🌟 '+tx('رفيق القرآن')+'</small>':'')+'</span>'+
-           '<b>'+esc(sesTime(x[1]))+'</b></li>';
-  }).join('')+'<li class="pfbest"><span>🏆 '+tx('أطول جلسة')+'</span><b>'+esc(sesTime(best))+'</b></li></ul></div>';
-  return h;
+  sesBestDate(p);
+  var c=p.ses, m=sesMin(c&&c.ms), best=p.sesBest||0, bestD=p.sesBestD, by=sesByDay(p), t=todayNum(), mx=1, sel=null, d, h;
+  if(m>best){ best=m; bestD=c.d; }
+  for(d=t-SES_DAYS+1;d<=t;d++) if(by[d]){
+    sel=d;
+    mx=Math.max(mx,by[d].reduce(function(a,x){ return a+x; },0));
+  }
+  h='<div class="bfam"><div class="fh"><span>⏳ '+tx('جلساتي')+'</span><small>'+tx('آخرُ أربعة عشر يوماً')+'</small></div>';
+  if(sel==null) h+='<p class="pfmute">'+tx('احفظ أو راجع، فيظهر هنا كم استغرقت جلستك')+'</p>';
+  else{
+    h+='<div class="pfchart pfseschart">';
+    for(d=t-SES_DAYS+1;d<=t;d++){
+      var L=by[d]||[], sum=L.reduce(function(a,x){ return a+x; },0);
+      /* عمودٌ قطعُه جلساتُه بأطوالها؛ واليومُ الذي بلا جلسات يبقى فارغاً بلا لومٍ ولا لمس */
+      h+='<button type="button" class="pfcol'+(d===t?' now':'')+(d===sel?' sel':'')+'"'+
+         (L.length?' data-sesd="'+d+'" aria-label="'+esc(sesDay(d)+': '+sesTime(sum))+'"':' disabled')+'>'+
+         '<span class="pfstack" style="height:'+(L.length?Math.max(6,Math.round(100*sum/mx)):0)+'%">'+
+         L.map(function(x){ return '<i style="flex:'+x+' 0 0"></i>'; }).join('')+'</span>'+
+         '<span class="pfd">'+esc(sesHijri({day:'numeric'},d))+'</span></button>';
+    }
+    h+='</div><div id="sesDet">'+sesDetail(sel,by[sel])+'</div>';
+  }
+  if(best) h+='<ul class="pflines pfses"><li class="pfbest"><span>🏆 '+tx('أطول جلسة')+
+    (bestD!=null?'<small>🌙 '+esc(sesHijri(null,bestD))+'</small>':'')+'</span><b>'+esc(sesTime(best))+'</b></li></ul>';
+  return h+'</div>';
+}
+function sesBind(w){
+  var b=w.querySelectorAll('[data-sesd]'), i;
+  for(i=0;i<b.length;i++) b[i].onclick=function(){
+    var d=parseInt(this.getAttribute('data-sesd'),10), L=sesByDay(curP())[d], j;
+    if(!L || !$('sesDet')) return;
+    for(j=0;j<b.length;j++) b[j].classList.toggle('sel',b[j]===this);
+    $('sesDet').innerHTML=sesDetail(d,L);
+  };
 }
 /* =========================================================
    أدائي — الطفلُ يُقارَن بنفسه وحدَها
@@ -6626,6 +6689,7 @@ function perfOpen(){
     if(this.classList.contains('pfc')) oneAsk(s,a); else mushafOpen(s,a);
   };
   if($('btnFixGo')) $('btnFixGo').onclick=fixBegin;
+  sesBind(w);
   show('scr-perf');
 }
 /* ===== ثبّتها الآن =====
@@ -17241,14 +17305,15 @@ function hijriGregNames(loc){
   }catch(e){}
   return n;
 }
-function hijriDate(o){
+function hijriDate(o,when){
+  var at=when||new Date();
   o=o||{day:'numeric',month:'long',year:'numeric'};
   var ls=[dateLoc('ar-SA'),'en','ar-SA'], i, f, r, g;
   for(i=0;i<ls.length;i++){
     try{
       f=new Intl.DateTimeFormat(ls[i]+'-u-ca-islamic-umalqura',o);
       if(!/^islamic/.test(f.resolvedOptions().calendar)) continue;
-      r=f.format(new Date());
+      r=f.format(at);
       if(!o.month) return r;
       g=hijriGregNames(ls[i]).concat(hijriGregNames('en'));
       if(!r.toLowerCase().split(/[\s,.،]+/).some(function(w){ return w && g.indexOf(w)>=0; })) return r;
@@ -17258,12 +17323,12 @@ function hijriDate(o){
   try{
     var p={};
     new Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-latn',{day:'numeric',month:'numeric',year:'numeric'})
-      .formatToParts(new Date()).forEach(function(x){ p[x.type]=parseInt(x.value,10); });
+      .formatToParts(at).forEach(function(x){ p[x.type]=parseInt(x.value,10); });
     if(!p.month || !p.year || p.year<1300) return '';
     /* الأسماءُ عربيّةٌ في كلّ لغة: بحرفها لمن يكتب به (الأرديّة والفارسيّة والبشتو)، وباللاتينيّ لغيرهم */
     var ar=!NUR_I18N.on || NUR_I18N.code==='ar' || (NUR_I18N.langs[NUR_I18N.code]||{}).dir==='rtl';
     var mn=(ar?HIJRI_MONTHS.ar:HIJRI_MONTHS.en)[p.month-1];
-    return [o.day?arNum(p.day):'', mn, o.year?(arNum(p.year)+(ar?' هـ':' AH')):''].join(' ').trim();
+    return [o.day?arNum(p.day):'', o.month?mn:'', o.year?(arNum(p.year)+(ar?' هـ':' AH')):''].join(' ').trim();
   }catch(e){}
   return '';
 }

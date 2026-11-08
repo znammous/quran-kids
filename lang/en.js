@@ -2048,7 +2048,6 @@ NUR_I18N.add('en', {
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Do you want to reveal this word?<br>The first word is forgiven, the second brings the page back to you tomorrow",
   "نعم، اكشفها": "Yes, reveal it",
   "جلساتي": "My sessions",
-  "آخرُ ثلاث جلسات": "Last three sessions",
   "أطول جلسة": "Longest session",
   "رفيق القرآن": "Quran companion",
   "أنت رفيقُ القرآن": "You are a companion of the Quran",

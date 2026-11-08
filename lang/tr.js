@@ -2048,7 +2048,6 @@ NUR_I18N.add('tr', {
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Bu kelimeyi açmak istiyor musun?<br>İlk kelime affedilir, ikincisi sayfayı yarın sana geri getirir",
   "نعم، اكشفها": "Evet, aç",
   "جلساتي": "Oturumlarım",
-  "آخرُ ثلاث جلسات": "Son üç oturum",
   "أطول جلسة": "En uzun oturum",
   "رفيق القرآن": "Kur'an dostu",
   "أنت رفيقُ القرآن": "Sen Kur'an dostusun",

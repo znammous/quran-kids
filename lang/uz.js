@@ -2048,7 +2048,6 @@ NUR_I18N.add('uz', {
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Bu so‘zni ochmoqchimisan?<br>Birinchi so‘z kechiriladi, ikkinchisi sahifani ertaga senga qaytaradi",
   "نعم، اكشفها": "Ha, och",
   "جلساتي": "Mashg'ulotlarim",
-  "آخرُ ثلاث جلسات": "Oxirgi uchta mashg'ulot",
   "أطول جلسة": "Eng uzun mashg'ulot",
   "رفيق القرآن": "Qur'on hamrohi",
   "أنت رفيقُ القرآن": "Sen Qur'on hamrohisan",

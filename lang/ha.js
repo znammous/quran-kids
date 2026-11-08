@@ -2048,7 +2048,6 @@ NUR_I18N.add('ha', {
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Kana so ka buɗe wannan kalmar?<br>Ana yafe kalmar farko, ta biyu kuma za ta dawo maka da shafin gobe",
   "نعم، اكشفها": "Ee, buɗe ta",
   "جلساتي": "Zamana na",
-  "آخرُ ثلاث جلسات": "Zamanna uku na ƙarshe",
   "أطول جلسة": "Zama mafi tsawo",
   "رفيق القرآن": "Abokin Alƙur'ani",
   "أنت رفيقُ القرآن": "Kai abokin Alƙur'ani ne",

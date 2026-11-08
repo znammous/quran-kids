@@ -2048,7 +2048,6 @@ NUR_I18N.add('ms', {
   "هل تريد كشف هذه الكلمة؟<br>الكلمةُ الأولى تُغتفر، والثانيةُ تُعيد الوجهَ إليك غداً": "Adakah anda mahu membuka perkataan ini?<br>Perkataan pertama dimaafkan, perkataan kedua membawa halaman kembali kepada anda esok",
   "نعم، اكشفها": "Ya, buka",
   "جلساتي": "Sesi saya",
-  "آخرُ ثلاث جلسات": "Tiga sesi terakhir",
   "أطول جلسة": "Sesi terpanjang",
   "رفيق القرآن": "Sahabat al-Quran",
   "أنت رفيقُ القرآن": "Kamu sahabat al-Quran",
