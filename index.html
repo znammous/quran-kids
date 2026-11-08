@@ -1167,6 +1167,16 @@ body.glow-off .cele .spk{display:none}
 .fxscr,.cele .fxbg{position:fixed;inset:0;z-index:140;pointer-events:none}
 .cele .fxbg{position:absolute}
 .cele .fxbig{width:150px;height:150px;margin:0 auto}
+/* على التابلت تكبر الشاشةُ بما يناسبه: كانت مقاساتُها ثابتة، فتبدو الحركةُ صغيرةً وسط الفراغ. والهاتفُ كما هو */
+@media (min-width:600px) and (min-height:600px){
+  .cele .kick{font-size:min(22px,3.4vmin)}
+  .cele .big{font-size:min(170px,21vmin)}
+  .cele .fxbig{width:min(280px,34vmin);height:min(280px,34vmin)}
+  .cele h2{font-size:min(50px,6.4vmin)}
+  .cele p{font-size:min(26px,3.3vmin)}
+  .cele .rew{font-size:min(32px,4.2vmin)}
+  .cele .tap{font-size:min(18px,2.2vmin)}
+}
 @media print{ .fxtap,.fxscr{display:none!important} }
 /* نجماتُ إتمام المرحلة في وسط لوحةٍ أكثرُها فراغ: تُكبَّر لتملأ مكانها */
 [data-fx="dance"] svg{transform:scale(1.9)!important}
