@@ -1025,6 +1025,10 @@ body.light .card.bare .fb.fixnote{color:#0b6b39}
   padding-bottom:6px;overflow:hidden;border-bottom:2px solid rgba(150,195,240,.45)}
 @media(max-width:520px){ .ansrow{font-size:23px} }
 .ansrow .chip{box-shadow:none}
+/* سؤالٌ يضيق عن الشاشة: تصغر كلماتُ الإجابة دون الخيارات (lines._fit في roundWords) */
+.anslines.tight{gap:6px;margin:6px 0 2px}
+.anslines.tight .ansrow,.anslines.tight .chip{font-size:19px}
+.anslines.tight .chip{padding-inline:8px}
 /* زرّ سرعة الاستماع: ضيّق بجانب زرّ التشغيل */
 .btn.spd{flex:0 0 auto;min-width:62px;padding-inline:10px;font-variant-numeric:tabular-nums}
 .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
@@ -13108,7 +13112,7 @@ function roundWords(r){
   /* كم سطراً تحتاجه الإجابة؟ نحاكيها على سطر مخفيّ بعرض السطر الحقيقي،
      ثم نعرض ثلاثة أسطر على الأقل — فلا يتغيّر الشكل بين آية وأخرى. */
   var lines=$('ansLines');
-  var rowsNeeded=(function(){
+  function measureRows(){
     var probe=document.createElement('div');
     probe.className='ansrow';
     probe.style.cssText='position:absolute;visibility:hidden;pointer-events:none;width:'+lines.offsetWidth+'px';
@@ -13122,10 +13126,24 @@ function roundWords(r){
     }
     probe.parentNode.removeChild(probe);
     return rows;
-  })();
+  }
   var rowHTML='';
-  for(var rn=0;rn<Math.max(3,rowsNeeded);rn++) rowHTML+='<div class="ansrow"></div>';
+  for(var rn=0,rn0=Math.max(3,measureRows());rn<rn0;rn++) rowHTML+='<div class="ansrow"></div>';
   lines.innerHTML=rowHTML;
+  /* الأسطرُ الثلاثةُ حدٌّ أدنى للشكل لا حاجة، والمهمُّ حجمُ الخيارات. فإن طال السؤالُ عن الشاشة
+     ذهب ما زاد على حاجة المقطع، فإن لم يكفِ صغرت كلماتُ الإجابة وحدها فقلّت أسطرُها وضاق
+     ما بينها، قبل أن يصغر السؤالُ كلُّه. يناديها qScreenFit بلا zoom فيُقاس على المقاس
+     الحقيقيّ — وكان القياسُ عند الرسم يرث تصغيرَ السؤال السابق. والرقمُ بين الآيتين يزيد العرضَ */
+  lines._fit=function(h){
+    var pa=$('playArea'), xtra=a2>r.a+1?1:0;
+    function setRows(){
+      var want=measureRows()+xtra;
+      while(lines.children.length<want) lines.appendChild(document.createElement('div')).className='ansrow';
+      while(pa.offsetHeight>h && lines.children.length>want) lines.removeChild(lines.lastChild);
+    }
+    setRows();
+    if(pa.offsetHeight>h){ lines.classList.add('tight'); setRows(); }
+  };
   var curRow=0;
   function placeWord(w){
     var rows=lines.children;
@@ -18975,6 +18993,8 @@ function qScreenFit(fresh){
   /* مقاسٌ واحدٌ للجهاز من ارتفاع شاشته، لا لكلّ سؤالٍ مقاسُه — فلا تكبر
      الصناديقُ مرّةً وتصغر أخرى. ولا يُصغَّر دونه إلّا سؤالٌ لا يسعه */
   var dev=Math.max(0.72, Math.min(1, window.innerHeight/800));
+  var al=$('ansLines');                                   /* أسطرُ «رتّب الكلمات» الفارغة تذهب قبل الخطّ */
+  if(al && al._fit){ al._fit(avail/dev); need=pa.offsetHeight; }
   var k=Math.min(dev, avail/need);
   if(!fresh) k=Math.min(k, QZ);
   k=Math.max(0.72, k);
