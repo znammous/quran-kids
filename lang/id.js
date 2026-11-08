@@ -2052,6 +2052,8 @@ NUR_I18N.add('id', {
   "أطول جلسة": "Sesi terpanjang",
   "رفيق القرآن": "Sahabat Al-Qur'an",
   "أنت رفيقُ القرآن": "Kamu sahabat Al-Qur'an",
+  "ما أجملَ صحبتَك للقرآن!": "Betapa indahnya kebersamaanmu dengan Al-Qur'an!",
+  "هنيئاً لك هذا الوقتُ المبارك!": "Selamat atas waktu yang penuh berkah ini!",
   "طول جلستك": "Lama sesimu",
   "نصف ساعة": "setengah jam",
   "أمضيتَ {t} مع كتاب الله — جزاك الله خيراً": "Kamu menghabiskan {t} bersama Kitab Allah — semoga Allah membalasmu dengan kebaikan",

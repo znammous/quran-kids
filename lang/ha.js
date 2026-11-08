@@ -2052,6 +2052,8 @@ NUR_I18N.add('ha', {
   "أطول جلسة": "Zama mafi tsawo",
   "رفيق القرآن": "Abokin Alƙur'ani",
   "أنت رفيقُ القرآن": "Kai abokin Alƙur'ani ne",
+  "ما أجملَ صحبتَك للقرآن!": "Abotarka da Alƙur'ani tana da kyau ƙwarai!",
+  "هنيئاً لك هذا الوقتُ المبارك!": "Barka da wannan lokaci mai albarka!",
   "طول جلستك": "Tsawon zamanka",
   "نصف ساعة": "rabin awa",
   "أمضيتَ {t} مع كتاب الله — جزاك الله خيراً": "Ka shafe {t} tare da Littafin Allah — Allah ya saka maka da alheri",

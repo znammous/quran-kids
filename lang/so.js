@@ -2052,6 +2052,8 @@ NUR_I18N.add('so', {
   "أطول جلسة": "Fadhiga ugu dheer",
   "رفيق القرآن": "Saaxiibka Quraanka",
   "أنت رفيقُ القرآن": "Waxaad tahay saaxiibka Quraanka",
+  "ما أجملَ صحبتَك للقرآن!": "Saaxiibtinimadaada Qur'aanka waa mid qurux badan!",
+  "هنيئاً لك هذا الوقتُ المبارك!": "Hambalyo waqtigan barakaysan!",
   "طول جلستك": "Dhererka fadhigaaga",
   "نصف ساعة": "nus saac",
   "أمضيتَ {t} مع كتاب الله — جزاك الله خيراً": "Waxaad {t} la qaadatay Kitaabka Alle — Alle ha kugu abaalmariyo khayr",

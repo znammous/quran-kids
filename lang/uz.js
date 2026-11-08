@@ -2052,6 +2052,8 @@ NUR_I18N.add('uz', {
   "أطول جلسة": "Eng uzun mashg'ulot",
   "رفيق القرآن": "Qur'on hamrohi",
   "أنت رفيقُ القرآن": "Sen Qur'on hamrohisan",
+  "ما أجملَ صحبتَك للقرآن!": "Qur'on bilan hamrohliging naqadar go'zal!",
+  "هنيئاً لك هذا الوقتُ المبارك!": "Bu muborak vaqt senga qutlug' bo'lsin!",
   "طول جلستك": "Mashg'uloting davomiyligi",
   "نصف ساعة": "yarim soat",
   "أمضيتَ {t} مع كتاب الله — جزاك الله خيراً": "Alloh Kitobi bilan {t} vaqt o'tkazding — Alloh seni yaxshilik bilan mukofotlasin",

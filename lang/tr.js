@@ -2052,6 +2052,8 @@ NUR_I18N.add('tr', {
   "أطول جلسة": "En uzun oturum",
   "رفيق القرآن": "Kur'an dostu",
   "أنت رفيقُ القرآن": "Sen Kur'an dostusun",
+  "ما أجملَ صحبتَك للقرآن!": "Kur'an ile dostluğun ne kadar güzel!",
+  "هنيئاً لك هذا الوقتُ المبارك!": "Bu bereketli vakit sana kutlu olsun!",
   "طول جلستك": "Oturum süren",
   "نصف ساعة": "yarım saat",
   "أمضيتَ {t} مع كتاب الله — جزاك الله خيراً": "Allah'ın Kitabı ile {t} geçirdin — Allah seni hayırla mükâfatlandırsın",

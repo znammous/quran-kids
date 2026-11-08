@@ -2052,6 +2052,8 @@ NUR_I18N.add('sw', {
   "أطول جلسة": "Kikao kirefu zaidi",
   "رفيق القرآن": "Rafiki wa Qur'ani",
   "أنت رفيقُ القرآن": "Wewe ni rafiki wa Qur'ani",
+  "ما أجملَ صحبتَك للقرآن!": "Uzuri ulioje wa urafiki wako na Qur'ani!",
+  "هنيئاً لك هذا الوقتُ المبارك!": "Hongera kwa wakati huu uliobarikiwa!",
   "طول جلستك": "Urefu wa kikao chako",
   "نصف ساعة": "nusu saa",
   "أمضيتَ {t} مع كتاب الله — جزاك الله خيراً": "Umetumia {t} pamoja na Kitabu cha Allah — Allah akulipe kheri",

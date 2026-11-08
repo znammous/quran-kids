@@ -2052,6 +2052,8 @@ NUR_I18N.add('fr', {
   "أطول جلسة": "Séance la plus longue",
   "رفيق القرآن": "Compagnon du Coran",
   "أنت رفيقُ القرآن": "Tu es un compagnon du Coran",
+  "ما أجملَ صحبتَك للقرآن!": "Que ta compagnie du Coran est belle !",
+  "هنيئاً لك هذا الوقتُ المبارك!": "Félicitations pour ce temps béni !",
   "طول جلستك": "Durée de ta séance",
   "نصف ساعة": "une demi-heure",
   "أمضيتَ {t} مع كتاب الله — جزاك الله خيراً": "Tu as passé {t} avec le Livre d'Allah — qu'Allah te récompense par le bien",

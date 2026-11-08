@@ -6364,7 +6364,10 @@ function sesCheer(p,now){
   if(now-SES_CALM<SES_CALM_MS || now-SES_TOUCH<1500) return;
   SES_CALM=0; p.sesCele=null; saveDB();
   if(todayNum()-e[0]>1) return;                     /* مضى زمنُها: لا يُشكر على ما نسيه */
-  celeShow({ ic:'📖', kick:'⏳ '+tx('طول جلستك'), title:tx('أنت رفيقُ القرآن'),
+  /* تعلو الحركةُ والعنوانُ بما بلغه: نصفُ ساعة، ثمّ ساعة، ثمّ ساعةٌ ونصف فأكثر */
+  var k=(e[1]>=90)?3:(e[1]>=60)?2:1;
+  celeShow({ fx:'ses'+k, ic:'📖', kick:'⏳ '+tx('طول جلستك'),
+    title:tx(['','أنت رفيقُ القرآن','ما أجملَ صحبتَك للقرآن!','هنيئاً لك هذا الوقتُ المبارك!'][k]),
     sub:tx('أمضيتَ {t} مع كتاب الله — جزاك الله خيراً',{t:sesTime(e[1])}) });
 }
 function sesTick(){
@@ -12400,7 +12403,7 @@ function fxLoad(){
   if(FX.asked) return;
   FX.asked=true;
   var s=document.createElement('script');
-  s.src='data/fx.js?v=5'; s.async=true; s.onload=fxWarm;
+  s.src='data/fx.js?v=6'; s.async=true; s.onload=fxWarm;
   document.head.appendChild(s);
 }
 /* تُبنى كلُّ حركةٍ مرّةً في الخفاء حين تصل: أوّلُ بناءٍ يُعِدّ بياناتِها، فلا يتأخّر أوّلُ جوابٍ عن ضغطته */
