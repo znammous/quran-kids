@@ -13784,35 +13784,6 @@ function roundAyat(r){
       return '<div class="acard" data-a="'+ai+'"><span class="ord">؟</span><span>'+esc(t)+'</span></div>';
     }).join('')+'</div>';
   var cards=$('acards').querySelectorAll('.acard');
-  /* يكفي الترتيبَ مطلعُ الآية: فإن طال السؤالُ عن الشاشة قصرت البطاقاتُ كلمةً كلمة، الأطولُ
-     فالأطول، قبل أن يُصغَّر خطُّها — كان السؤالُ كلُّه يصغر إلى ٧٢٪. ولا تنقص عن أربع كلمات،
-     ولا إلى مطلعٍ تشاركها فيه آيةٌ غيرُها. يناديها qScreenFit بالارتفاع المتاح */
-  var fw=[], fn=[];
-  for(i=0;i<cards.length;i++){
-    var ai0=parseInt(cards[i].getAttribute('data-a'),10);
-    fw.push(wordsOf(ayahText(s,ai0)));
-    fn.push(cardTxt(ai0).replace('…','').trim().split(' ').length);
-  }
-  function trimOk(c,n){
-    if(n<4) return false;
-    var p=fw[c].slice(0,n).join(' ');
-    for(var o=0;o<cards.length;o++)
-      if(o!==c && fw[o].join(' ')!==fw[c].join(' ') && fw[o].slice(0,n).join(' ')===p) return false;
-    return true;
-  }
-  $('acards')._trim=function(h){
-    var pa=$('playArea'), guard=400;
-    while(pa.offsetHeight>h && guard--){
-      var c=-1, L=0;
-      for(var q=0;q<cards.length;q++){
-        var l=fw[q].slice(0,fn[q]).join(' ').length;
-        if(l>L && trimOk(q,fn[q]-1)){ L=l; c=q; }
-      }
-      if(c<0) return;
-      fn[c]--;
-      cards[c].lastChild.textContent=fw[c].slice(0,fn[c]).join(' ')+' …';
-    }
-  };
   for(i=0;i<cards.length;i++){
     cards[i].onclick=function(){
       if(this.classList.contains('placed') || placed>=idx.length) return;   /* انتهى السؤال */
@@ -19004,8 +18975,6 @@ function qScreenFit(fresh){
   /* مقاسٌ واحدٌ للجهاز من ارتفاع شاشته، لا لكلّ سؤالٍ مقاسُه — فلا تكبر
      الصناديقُ مرّةً وتصغر أخرى. ولا يُصغَّر دونه إلّا سؤالٌ لا يسعه */
   var dev=Math.max(0.72, Math.min(1, window.innerHeight/800));
-  var ac=$('acards');                                     /* بطاقاتُ الترتيب تقصر قبل أن يصغر خطُّها */
-  if(ac && ac._trim){ ac._trim(avail/dev); need=pa.offsetHeight; }
   var k=Math.min(dev, avail/need);
   if(!fresh) k=Math.min(k, QZ);
   k=Math.max(0.72, k);
