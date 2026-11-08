@@ -1167,6 +1167,20 @@ body.glow-off .cele .spk{display:none}
 .fxscr,.cele .fxbg{position:fixed;inset:0;z-index:140;pointer-events:none}
 .cele .fxbg{position:absolute}
 .cele .fxbig{width:150px;height:150px;margin:0 auto}
+/* الحديثُ يقرؤه: تصغر الحركةُ لتتّسع له، وما زاد عن الشاشة يُمرَّر داخله */
+.cele.hashd .fxbig{width:92px;height:92px}
+.cele.hashd .big{font-size:60px}
+.cele.hashd h2{font-size:23px;margin:6px 0 4px}
+.cele.hashd .kick{margin-bottom:6px}
+.cele.hashd p{font-size:14px;line-height:1.55}
+.cele .hd{width:100%;max-width:34em;margin-top:12px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.08);
+  overflow-y:auto;flex:0 1 auto;min-height:0;position:relative;-webkit-overflow-scrolling:touch}
+body.light .cele .hd{background:rgba(0,0,0,.06)}
+.cele .hdar{color:var(--gink);font-size:18px;font-weight:800;line-height:1.85}
+.cele .hdgl{color:var(--on1);font-size:13px;font-weight:700;margin-top:6px;line-height:1.6}
+.cele .hdtr{color:var(--on2);font-size:15px;font-weight:600;line-height:1.6;margin-top:8px}
+.cele .hdsrc{color:var(--on1);font-size:12.5px;font-weight:800;margin-top:8px}
+.cele.hashd .tap{margin-top:12px}
 /* على التابلت تكبر الشاشةُ بما يناسبه: كانت مقاساتُها ثابتة، فتبدو الحركةُ صغيرةً وسط الفراغ. والهاتفُ كما هو */
 @media (min-width:600px) and (min-height:600px){
   .cele .kick{font-size:min(22px,3.4vmin)}
@@ -1176,6 +1190,13 @@ body.glow-off .cele .spk{display:none}
   .cele p{font-size:min(26px,3.3vmin)}
   .cele .rew{font-size:min(32px,4.2vmin)}
   .cele .tap{font-size:min(18px,2.2vmin)}
+  .cele.hashd .fxbig{width:min(170px,21vmin);height:min(170px,21vmin)}
+  .cele.hashd h2{font-size:min(38px,5vmin)}
+  .cele.hashd p{font-size:min(22px,2.8vmin)}
+  .cele .hdar{font-size:min(30px,3.8vmin)}
+  .cele .hdgl{font-size:min(20px,2.5vmin)}
+  .cele .hdtr{font-size:min(24px,3vmin)}
+  .cele .hdsrc{font-size:min(18px,2.3vmin)}
 }
 @media print{ .fxtap,.fxscr{display:none!important} }
 /* نجماتُ إتمام المرحلة في وسط لوحةٍ أكثرُها فراغ: تُكبَّر لتملأ مكانها */
@@ -6390,7 +6411,19 @@ function sesCheer(p,now){
   var k=(e[1]>=90)?3:(e[1]>=60)?2:1;
   celeShow({ fx:'ses'+k, ic:'📖', kick:'⏳ '+tx('طول جلستك'),
     title:tx(['','أنت رفيقُ القرآن','ما أجملَ صحبتَك للقرآن!','هنيئاً لك هذا الوقتُ المبارك!'][k]),
-    sub:tx('أمضيتَ {t} مع كتاب الله — جزاك الله خيراً',{t:sesTime(e[1])}) });
+    sub:tx('أمضيتَ {t} مع كتاب الله — جزاك الله خيراً',{t:sesTime(e[1])}), hd:sesHadith(p) });
+}
+/* حديثٌ في فضل القرآن، بالتتابع فلا يتكرّر حتى تتمّ (data/hadith.js). نصُّه عربيٌّ في كلّ لغة، وتحته ترجمتُه */
+var SES_SRC={ m:'رواه مسلم', b:'رواه البخاري', t:'رواه الترمذي', d:'رواه أبو داود' };
+function sesHadith(p){
+  var A=window.NUR_HADITH, code=NUR_I18N.code, h, tr, dir, html;
+  if(!A || !A.length || !celeOn()) return '';
+  h=A[(p.sesHad||0)%A.length]; p.sesHad=(p.sesHad||0)+1; saveDB();
+  tr=code && h.tr[code]; dir=tr && NUR_I18N.langs[code].dir;
+  html='<div class="hdar" dir="rtl" lang="ar" translate="no">'+esc(h.ar)+'</div>';
+  if(h.gl && !tr) html+='<div class="hdgl" dir="rtl" lang="ar" translate="no">'+esc(h.gl)+'</div>';
+  if(tr) html+='<div class="hdtr" dir="'+dir+'" lang="'+code+'" translate="no">'+esc(tr)+'</div>';
+  return html+'<div class="hdsrc">'+esc(tx(SES_SRC[h.s]))+'</div>';
 }
 function sesTick(){
   var p=null, now=Date.now(), c, n;
@@ -12493,6 +12526,8 @@ function fxLoad(){
   var s=document.createElement('script');
   s.src='data/fx.js?v=6'; s.async=true; s.onload=fxWarm;
   document.head.appendChild(s);
+  s=document.createElement('script'); s.src='data/hadith.js?v=1'; s.async=true;
+  document.head.appendChild(s);
 }
 /* تُبنى كلُّ حركةٍ مرّةً في الخفاء حين تصل: أوّلُ بناءٍ يُعِدّ بياناتِها، فلا يتأخّر أوّلُ جوابٍ عن ضغطته */
 function fxWarm(){
@@ -12633,16 +12668,18 @@ function celeNext(){
     ((fx && o.fx)?'<div class="big fxbig"></div>':'<div class="big">'+o.ic+'</div>')+
     '<h2>'+esc(o.title)+'</h2>'+
     (o.sub?'<p>'+esc(o.sub)+'</p>':'')+
+    (o.hd?'<div class="hd">'+o.hd+'</div>':'')+
     (o.rew?'<div class="rew">'+esc(o.rew)+'</div>':'')+
     '<div class="tap">اضغط للمتابعة</div>'+
-    '<div class="cbar"><i></i></div>';
+    (o.hd?'':'<div class="cbar"><i></i></div>');
+  el.classList.toggle('hashd', !!o.hd);
   el.hidden=false;
   if(fx && !o.calm) FX.cele=fxPlay(el.querySelector('.fxbg'), 'conf', { fit:'slice', done:function(an){
     fxGone(an); if(FX.cele===an) FX.cele=null; } });   /* تمّت: تُزال، لا تبقى قطعُها معلّقة */
   if(fx && o.fx) FX.celeIc=fxPlay(el.querySelector('.fxbig'), o.fx, { loop:true });
   if(!o.calm) sWin();
   clearTimeout(CELE.tm);
-  CELE.tm=setTimeout(celeDone,CELE_MS);
+  if(!o.hd) CELE.tm=setTimeout(celeDone,CELE_MS);       /* الحديثُ يُقرأ: لا يذوب قبل أن يضغط */
   var at=Date.now();
   el.onclick=function(){ if(Date.now()-at>=CELE_HOLD) celeDone(); };
 }
