@@ -622,7 +622,9 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 /* الكعبُ وأطرافُ الأوراق في الحشوة وحدها، فلا يقع ظلُّها على طرف السطر */
 .stface .mspine.l{background-size:13px 100%,5px 100%}
 .stface .mspine.r{background-size:13px 100%,5px 100%}
-.stface .mushaf.qcf .mline{height:1.2em}
+/* الوجهُ أعرضُ من عمود الأزرار قليلاً فيكبر حرفُه، وكعبُه وأطرافُ أوراقه في حشوته كما هي */
+.qface .stface{margin-inline:-8px}
+.stface .mushaf.qcf .mline{height:var(--flh,1.2em)}
 .stface .mushaf.qcf .mline.mhead{margin-block:.18em}
 .stface .mline.cut,.stface .mpgno{display:none}
 .stface .mout{opacity:.32}
@@ -766,6 +768,9 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
   background-size:18px 100%,7px 100%;background-position:left top,right top}
 .mspine.r{--spd:to left;background-image:var(--sp),var(--ed);
   background-size:18px 100%,7px 100%;background-position:right top,left top}
+/* عرضُ المقطع قبل بدئه: الوجهُ ملء الشاشة بلا إطار، فكعبُه وأوراقُه أوضح ليُعرف يمينٌ هو أم يسار */
+#mfSheet.pv .mspine{--sp:linear-gradient(var(--spd),rgba(100,70,25,.68),rgba(100,70,25,.26) 35%,rgba(100,70,25,0));
+  --ed:repeating-linear-gradient(to right,rgba(130,92,28,.8) 0 1px,transparent 1px 2.5px);background-size:20px 100%,10px 100%}
 /* الوجهُ المضبوطُ على إطاره ثابتٌ على الجوال: يسعه الإطارُ فلا يُمرَّر رأسيّاً،
    ولا ترتدّ الصفحةُ تحت الإصبع — والسحبُ الأفقيُّ للتقليب باقٍ بأحداث المؤشّر */
 @media (pointer:coarse){
@@ -13011,7 +13016,7 @@ function faceFit(pa, avail){
   if(!m || !box._L) return;
   var st=m.scrollTop, rk=box._rg+'|'+window.innerWidth+'x'+window.innerHeight, rknown=FACE_ROOM.k===rk;
   faceRoomSet(pa, rknown && FACE_ROOM.on);
-  m.style.maxHeight=''; m.classList.remove('stscr');
+  m.style.maxHeight=''; m.classList.remove('stscr'); m.style.removeProperty('--flh');
   m.style.fontSize='20px';
   var rows=m.querySelectorAll('.mline:not(.cut) .mtxt'), w=0, i;
   for(i=0;i<rows.length;i++) w=Math.max(w, rows[i].getBoundingClientRect().width);
@@ -13036,6 +13041,13 @@ function faceFit(pa, avail){
   if(!rknown){
     FACE_ROOM={k:rk, on:avail-pa.offsetHeight>=FACE_ROOM_NEED && !m.classList.contains('stscr')};
     faceRoomSet(pa, FACE_ROOM.on);
+  }
+  /* ما فضل تحت الأزرار في الترتيب الأقدم يوسّع ما بين الأسطر، إلى ربع السطر أكثر،
+     فيبدو الوجهُ أكبر ولا يتغيّر ما بينه وبين الأزرار */
+  if(pa.classList.contains('roomy') && !m.classList.contains('stscr')){
+    var fpx=parseFloat(m.style.fontSize), lines=m.querySelectorAll('.mline:not(.cut)').length,
+        spr=avail-pa.offsetHeight-4;
+    if(fpx && lines && spr>lines) m.style.setProperty('--flh',(fpx*1.2+Math.min(spr/lines,fpx*0.25)).toFixed(1)+'px');
   }
 }
 /* الآيةُ الجاريةُ في ربع الإطار الأعلى — وما قبلها من المقطع فوقها يُمرَّر إليه */
