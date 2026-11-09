@@ -676,6 +676,20 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .qface .strow .btn.ico1{flex:0 0 54px;padding-inline:0}
 .qface .strow .btn.spd{flex:0 0 58px}
 .qface .stc{unicode-bidi:isolate;margin-inline-start:6px}
+/* مقطعٌ قصيرٌ على شاشةٍ طويلة (faceFit): الأزرارُ في مكانها أسفل الشاشة بمقاسها الكبير، زرٌّ فوق زرّ.
+   و«سجّل» هو الأسفل، فيظهر «إيقاف» ثمّ «احسبها» تحت الإبهام في موضعه نفسه */
+.qface.roomy .stbig.two{display:flex;flex-direction:column-reverse;gap:0}
+.qface.roomy .stbig .btn.big,.qface.roomy .stbig.two .btn.big{flex:none;padding:18px;font-size:20px;gap:8px;margin-bottom:10px;white-space:normal;line-height:1.2}
+.qface.roomy .stbig.two .btn.big .ico{font-size:1.35em}
+.qface.roomy .strow{min-height:56px}
+.qface.roomy .strow .btn{font-size:15px;padding-block:14px}
+.qface.roomy .mfbtnrow:empty{display:none}
+.qface.roomy .strow.fitw .btn:not(.ico1):not(.spd){flex:1 1 auto}
+.qface.roomy .strow.fitw .btn{font-size:14px}
+/* «غطِّها» في الصفّ الصغير مع إخوته؛ وإن ضاق عنه بقيت أيقونتُه */
+.qface .strow .btn.cvr{color:#5a3d8a;background:#f3ecff}
+.qface .strow .btn.cvr.on{color:#fff;background:#7b52c7}
+.qface .strow .btn.cvr.ico1 b{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
 /* وجه المصحف ملء الشاشة */
 .mfsheet{position:fixed;inset:0;z-index:120;background:var(--paper);display:flex;flex-direction:column}
 /* ملءُ الشاشة: يُترك شريطُ الساعة والبطّاريّة فوقه بكحليّ التطبيق — كانت ترويسةُ
@@ -12967,8 +12981,37 @@ function faceCrop(box, rgs, gi){
   });
   if(f<0){ f=0; l=L.length-1; }
   while(f>0 && !L[f-1].querySelector('[data-gi]')) f--;
-  box._L=L; box._f=f; box._l=l; box._gi=gi;
+  box._L=L; box._f=f; box._l=l; box._gi=gi; box._rg=rgs.join(';');
   L.forEach(function(x,i){ x.classList.toggle('cut', i<f || i>l); });
+}
+/* الأزرارُ الكبيرة تأخذ نحو ١١٠ نقطةً زيادةً على الشكل المضغوط. فإن فضلت من الشاشة قيست
+   مرّةً لكلّ مقطعٍ ومقاس شاشة، فلا يتبدّل مقاسُها من آيةٍ إلى أخرى */
+var FACE_ROOM={k:'',on:false};
+var FACE_ROOM_NEED=110;
+/* «غطِّها» تحت الوجه، وفي الوضع الواسع ينزل إلى الصفّ الصغير قرب الإبهام */
+function faceCover(){
+  var pa=$('playArea'), cb=$('btnCover'), R=$('stRow');
+  if(!pa||!cb||!R) return;
+  var home=pa.querySelector('.mfbtnrow'), on=pa.classList.contains('roomy');
+  cb.classList.remove('ico1'); R.classList.remove('fitw');
+  cb.classList.toggle('mfbtn',!on); cb.classList.toggle('btn',on); cb.classList.toggle('ghost',on);
+  if(!on){
+    if(home && cb.parentNode!==home) home.appendChild(cb);
+    R.style.visibility=R.children.length?'':'hidden';
+    return;
+  }
+  var kids=[].slice.call(R.children).filter(function(e){ return e!==cb; });
+  function over(){ return [].some.call(R.children,function(e){ return e.scrollWidth>e.clientWidth+1; }); }
+  if(kids.length>=3){ R.appendChild(cb); cb.classList.add('ico1'); R.classList.add('fitw'); }
+  else R.insertBefore(cb, kids[1]||null);
+  R.style.visibility='';
+  /* يوسَّع كلُّ زرٍّ على قدر نصّه أوّلاً، فإن لم يكفِ بقيت أيقونةُ «غطِّها» */
+  if(over()){ R.classList.add('fitw'); if(over()) cb.classList.add('ico1'); }
+  /* ثلاثةُ أزرارٍ بنصوصٍ طويلة (بعد التسجيل وفي بعض اللغات): يعود إلى مكانه تحت الوجه ولا يُقصّ نصٌّ */
+  if(over() && home){
+    home.appendChild(cb); cb.classList.remove('ico1','btn','ghost'); cb.classList.add('mfbtn');
+    R.classList.toggle('fitw', kids.length>=3);
+  }
 }
 /* يُنادى من qScreenFit: الحرفُ بعرض السطر، فإن لم يسع الشاشةَ صغُر ما بقي عشرين فأكثر،
    وإلّا بقي عشرين وصار الوجهُ يُمرَّر في مكانه بما بقي من الشاشة. والمقطعُ كلُّه فيه —
@@ -12977,7 +13020,8 @@ function faceCrop(box, rgs, gi){
 function faceFit(pa, avail){
   var box=pa.querySelector('.stface'), m=box && box.querySelector('.mushaf');
   if(!m || !box._L) return;
-  var st=m.scrollTop;
+  var st=m.scrollTop, rk=box._rg+'|'+window.innerWidth+'x'+window.innerHeight, rknown=FACE_ROOM.k===rk;
+  pa.classList.toggle('roomy', rknown && FACE_ROOM.on); faceCover();
   m.style.maxHeight=''; m.classList.remove('stscr');
   m.style.fontSize='20px';
   var rows=m.querySelectorAll('.mline:not(.cut) .mtxt'), w=0, i;
@@ -13000,6 +13044,12 @@ function faceFit(pa, avail){
     m.onscroll=function(){ faceFade(m); };
   }
   faceFade(m);
+  if(!rknown){
+    var cvh=pa.querySelector('.mfbtnrow'), free=avail-pa.offsetHeight;
+    if(cvh) free+=cvh.offsetHeight+12;                 /* مكانُ «غطِّها» يفرغ بنزوله */
+    FACE_ROOM={k:rk, on:free>=FACE_ROOM_NEED && !m.classList.contains('stscr')};
+    pa.classList.toggle('roomy', FACE_ROOM.on); faceCover();
+  }
 }
 /* الآيةُ الجاريةُ في ربع الإطار الأعلى — وما قبلها من المقطع فوقها يُمرَّر إليه */
 function faceScrollTo(m, gi){
@@ -13117,6 +13167,7 @@ function roundRead(r){
     B.classList.toggle('two', !!big2);
     row.forEach(function(e){ if(e) R.appendChild(e); });
     R.style.visibility=row.length?'':'hidden';
+    faceCover();
     if(h && msg!=null) h.textContent=msg;
   }
   function recUIT(state,msg){
