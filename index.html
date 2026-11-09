@@ -6978,6 +6978,9 @@ function dayPlayOffer(tries,part){
      كان يسقط، فمن ختم سورةً بمقطع يومه رأى شهادتها ولم يرَ اللعب */
   if(DAY_PLAY_BUSY.test(curScreen())){ DAY_PLAY_WAIT={d:todayNum(), part:part}; return; }
   DAY_PLAY_WAIT=null;
+  /* النجومُ الخمس تدقّ مع كلّ نجمة: لا تُغطّيها النافذةُ قبل تمامها، ولا تُحسب هذه الانتظارةُ من المحاولات */
+  var fh=FX.hold, fw=fh && fh.box.isConnected ? fh.until-Date.now() : 0;
+  if(fw>0){ setTimeout(function(){ dayPlayOffer(tries,part); },fw+450); return; }
   /* صندوقٌ آخرُ مفتوح: يُنتظر قليلاً */
   if(($('ask') && !$('ask').hidden) || $('pgate') || $('dayPlay') || CELE.on){
     if((tries||0)<6) setTimeout(function(){ dayPlayOffer((tries||0)+1,part); },1500);
@@ -12558,6 +12561,7 @@ function fxPlay(box, name, o){
     rendererSettings:{ preserveAspectRatio:'xMidYMid '+(o.fit||'meet') } });
   an.setSpeed(n*(c[1]-c[0])/J.fr/c[2]);
   if(o.wait) setTimeout(function(){ if(an.renderer) an.play(); }, o.wait);
+  if(hf) FX.hold={ box:box, until:Date.now()+(o.wait||0)+c[2]*1000 };   /* نوافذُ العرض تنتظر تمامها: انظر dayPlayOffer */
   if(hf) an.addEventListener('enterFrame', function(){
     /* لا يدقّ لحركةٍ غابت شاشتُها */
     while(hi<hf.length && an.firstFrame+an.currentFrame>=hf[hi]){ hi++; if(box.isConnected) hap('star'); }
