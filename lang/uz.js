@@ -959,6 +959,7 @@ NUR_I18N.add('uz', {
   "ربع صفحة": "Chorak sahifa",
   "رتّب آيات المقطع": "Boʻlak oyatlarini tartibla",
   "رتّب أوّلَ الآية": "Oyat boshini tartibla",
+  "أكملِ الآيةَ إلى آخرها": "Oyatni oxirigacha yakunlang",
   "رتّب الآيات": "Oyatlarni tartibla",
   "رتّب الكلمات": "Soʻzlarni tartibla",
   "رتّبِ الآيةَ من اليمين — ولك ❤️ ثلاثةُ قلوب": "Oyatni oʻngdan tart — senda ❤️ uchta yurak bor",

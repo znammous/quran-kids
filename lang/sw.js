@@ -959,6 +959,7 @@ NUR_I18N.add('sw', {
   "ربع صفحة": "Robo ukurasa",
   "رتّب آيات المقطع": "Panga aya za sehemu",
   "رتّب أوّلَ الآية": "Panga mwanzo wa aya",
+  "أكملِ الآيةَ إلى آخرها": "Kamilisha aya hadi mwisho wake",
   "رتّب الآيات": "Panga aya",
   "رتّب الكلمات": "Panga maneno",
   "رتّبِ الآيةَ من اليمين — ولك ❤️ ثلاثةُ قلوب": "Panga aya kuanzia kulia — una ❤️ mioyo mitatu",

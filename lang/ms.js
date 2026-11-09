@@ -959,6 +959,7 @@ NUR_I18N.add('ms', {
   "ربع صفحة": "Suku muka surat",
   "رتّب آيات المقطع": "Susun ayat-ayat bahagian ini",
   "رتّب أوّلَ الآية": "Susun awal ayat",
+  "أكملِ الآيةَ إلى آخرها": "Lengkapkan ayat hingga akhir",
   "رتّب الآيات": "Susun ayat",
   "رتّب الكلمات": "Susun perkataan",
   "رتّبِ الآيةَ من اليمين — ولك ❤️ ثلاثةُ قلوب": "Susun ayat dari kanan — kamu ada ❤️ tiga nyawa",

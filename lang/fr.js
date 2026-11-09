@@ -959,6 +959,7 @@ NUR_I18N.add('fr', {
   "ربع صفحة": "Quart de page",
   "رتّب آيات المقطع": "Ordonne les versets du passage",
   "رتّب أوّلَ الآية": "Ordonne le début du verset",
+  "أكملِ الآيةَ إلى آخرها": "Complète l’ayah jusqu’à la fin",
   "رتّب الآيات": "Ordonne les versets",
   "رتّب الكلمات": "Ordonne les mots",
   "رتّبِ الآيةَ من اليمين — ولك ❤️ ثلاثةُ قلوب": "Range le verset en partant de la droite — tu as ❤️ trois cœurs",

@@ -959,6 +959,7 @@ NUR_I18N.add('en', {
   "ربع صفحة": "Quarter page",
   "رتّب آيات المقطع": "Order the section’s ayahs",
   "رتّب أوّلَ الآية": "Order the start of the ayah",
+  "أكملِ الآيةَ إلى آخرها": "Complete the ayah to its end",
   "رتّب الآيات": "Order the ayahs",
   "رتّب الكلمات": "Order the words",
   "رتّبِ الآيةَ من اليمين — ولك ❤️ ثلاثةُ قلوب": "Arrange the ayah from the right — you have ❤️ three hearts",

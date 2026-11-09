@@ -20242,8 +20242,72 @@ function runPool(){
      start  ترتيبُ أوّل الآية (حتى أربع كلمات)، ويسبقها طرفُ الآية التي قبلها
    ولا يُذكر رقمُ الآية: الحافظُ يعرف الآيةَ بلفظها لا بعددها، فالسياقُ هو الدليل.
    والفراغُ حيث تفترق الآيةُ عن شبيهتها إن كانت، وكلمةُ الشبيهة أوّلُ ما يُعرض خطأً. */
-var RUN_KIND={ fill1:'املأ الفراغ', fill2:'املأ الفراغين', start:'رتّب أوّلَ الآية' };
+var RUN_KIND={ fill1:'املأ الفراغ', fill2:'املأ الفراغين', start:'رتّب أوّلَ الآية', whole:'أكملِ الآيةَ إلى آخرها' };
+/* ===== اللعبُ من حفظ اليوم: الآيةُ كاملة =====
+   خلافَ بقيّة المصادر: هذا ما حفظه لتوّه، فالتقاطُها كلمةً كلمة إلى آخرها تسميعٌ لها.
+   والآياتُ مخلوطةٌ لا تعود إحداها حتى يمرّ المقرَّرُ كلُّه، والمجموعةُ على المصدر لا على
+   الجولة: فمن نفدت قلوبُه في آيةٍ بدأ محاولتَه التالية بآيةٍ غيرها. */
+function gameWhole(G){ return !!(G.pool && G.pool.part==='h'); }
+function gameWholePick(G){
+  var P=G.pool, it, ws=[], k, guard=0, seen={}, rest=[];
+  do{
+    if(!P.deck || !P.deck.length){
+      P.deck=shuffle(P.items.slice());
+      if(P.prev && P.deck.length>1 && P.deck[0].s===P.prev.s && P.deck[0].a===P.prev.a) P.deck.push(P.deck.shift());
+    }
+    it=P.deck.shift();
+    ws=wordsOf(ayahText(it.s,it.a));
+  }while(!ws.length && guard++<=P.items.length);
+  P.prev=G.last=it;
+  G.ay={ s:it.s, a:it.a, ws:ws, kind:'whole', tg:ws.map(function(w,i){ return i; }), show:[0,ws.length], i:0, to:ws.length };
+  function add(w){ var m=norm(w); if(m && !seen[m]){ seen[m]=1; rest.push(w); } }
+  for(k=Math.max(0,it.a-2);k<=Math.min(it.s.ayat.length-1,it.a+2);k++) if(k!==it.a) wordsOf(ayahText(it.s,k)).forEach(add);
+  for(k=0;k<40 && rest.length<10;k++){ var o=P.items[Math.floor(Math.random()*P.items.length)]; wordsOf(ayahText(o.s,o.a)).forEach(add); }
+  ws.forEach(add);                                    /* آيةٌ منفردةٌ في مقرَّرها: لا تخلو القائمة */
+  G.decoys=shuffle(rest); G.nTw=0; G.ti=0; G.di=0; G.hide={}; G.mc={};
+}
+/* الكلمةُ الخطأ للكلمة المطلوبة الآن: شبيهتُها مرّةً، ثمّ ما يأتي بعدها من الآية نفسها
+   فيُختبر ترتيبُها، ثمّ ما كان من نوعها، ثمّ المجاورات. ولا تكون المطلوبةَ بلفظها أبداً */
+function gameWholeDecoy(G){
+  var ay=G.ay, i=ay.i, want=norm(ay.ws[i]), L=[], k, w;
+  if(ay.twi!==i){
+    ay.twi=i;
+    try{ w=simTwin(ay.s,ay.a,ay.a+1,ay.a,i); }catch(e){ w=null; }
+    if(w && norm(w)!==want) return w;
+  }
+  if(Math.random()<0.4){
+    for(k=i+1;k<ay.to;k++) if(norm(ay.ws[k])!==want) L.push(ay.ws[k]);
+    if(L.length) return L[Math.floor(Math.random()*L.length)];
+  }
+  G.hide={}; G.hide[want]=1;
+  if(Math.random()<0.7 && (w=gameDecoy(G)) && norm(w)!==want) return w;
+  L=G.decoys.filter(function(x){ return norm(x)!==want; });
+  return L.length ? L[Math.floor(Math.random()*L.length)] : '…';
+}
+/* ما على الشاشة من كلماتٍ يُعاد الحكمُ عليه بعد كلّ التقاطة: قد تكون الكلمةُ
+   القادمةُ هي التالية في الآية، فلا تُعدّ خطأً وقد جاء دورُها */
+function gameWholeMark(G){
+  var ay=G.ay, want;
+  if(!ay || ay.kind!=='whole' || ay.i>=ay.to) return;
+  want=norm(ay.ws[ay.i]);
+  G.items.forEach(function(o){ if(o.t && !o.dead && !o.taken) o.good=(norm(o.t)===want); });
+}
+/* السطرُ يمشي معه: ما التقطه قريباً، فموضعُه، فبضعُ خاناتٍ — فلا تضيق به الآيةُ الطويلة */
+function gameWholeLine(ay, el){
+  var i=ay.i, n=ay.to, fin=i>=n, from=Math.max(0, fin ? n-8 : i-5), L='', k;
+  if(from>0) L+='<span class="rw ctx">…</span>';
+  else if(ay.a>0){
+    var pw=wordsOf(ayahText(ay.s,ay.a-1));
+    L+='<span class="rw ctx">'+(pw.length>3?'… ':'')+esc(pw.slice(-3).join(' '))+'</span>';
+  }else L+='<span class="rw ctx">أوّلُ السورة:</span>';
+  for(k=from;k<Math.min(i,n);k++) L+='<span class="rw got">'+esc(ay.ws[k])+'</span>';
+  if(!fin) L+='<span class="rw next">؟</span>';
+  for(k=i+1;k<n && k<=i+3;k++) L+='<span class="rw todo">ـــ</span>';
+  if(i+3<n-1) L+='<span class="rw ctx">…</span>';
+  el.innerHTML=L; el.classList.toggle('done', fin);
+}
 function runPickAyah(){
+  if(gameWhole(RUN)){ gameWholePick(RUN); RUN.wait=0; RUN.dist=0; RUN.gap=RUN.speed*0.9; runHud(); return; }
   var P=RUN.pool.items, it, ws, tries=0, k, n;
   do{ it=P[Math.floor(Math.random()*P.length)]; ws=wordsOf(ayahText(it.s,it.a)); tries++; }
   while(tries<30 && (ws.length<MISS_MIN || (RUN.last && P.length>1 && RUN.last.s===it.s && RUN.last.a===it.a)));
@@ -20282,6 +20346,7 @@ function runPickAyah(){
 function gameGap(min){ return min+Math.floor(Math.random()*(4-min)); }
 function runDecoy(){
   var D=RUN.decoys, ay=RUN.ay, want=ay.ws[ay.tg[ay.i]]||'', best=null, k, w;
+  if(ay.kind==='whole') return gameWholeDecoy(RUN);
   if(RUN.di<RUN.nTw) return D[RUN.di++];
   if((w=gameDecoy(RUN))) return w;                    /* من نوع الكلمة المطلوبة */
   if(D.length<=RUN.nTw) return D[Math.floor(Math.random()*D.length)];
@@ -20299,6 +20364,7 @@ function runHud(){
   gemHud('runGem', RUN.gems||0);
   if(!ay) return;
   $('runRef').textContent='سورة '+ay.s.name+' • '+RUN_KIND[ay.kind];
+  if(ay.kind==='whole'){ gameWholeLine(ay, $('runLine')); return; }
   var L='', sh=ay.show;
   if(ay.kind==='start'){
     if(ay.a>0){ var pw=wordsOf(ayahText(ay.s,ay.a-1));
@@ -20359,8 +20425,8 @@ function gameGemBox(){
 }
 function gameGemCap(gid){ return Math.max(0, GAME_GEM_CAP-(gameGemBox()[gid]||0)); }
 /* تُعطي ما وسعه السقفُ وتُخبر بما أعطت، فلا يُعلَن للطفل عمّا لم يقع */
-function gameGems(gid, pool){
-  var n=(pool && pool.day) ? GAME_GEMS*2 : GAME_GEMS;
+function gameGems(gid, pool, mult){              /* mult: الآيةُ الكاملةُ بحسب طولها */
+  var n=((pool && pool.day) ? GAME_GEMS*2 : GAME_GEMS)*(mult||1);
   var give=Math.min(n, gameGemCap(gid));
   if(give<=0) return 0;
   var b=gameGemBox(); b[gid]=(b[gid]||0)+give;
@@ -20577,10 +20643,11 @@ function dayAyat(part){
 /* لا سؤالَ في آيةٍ دون ثلاث كلمات، فتُصفّى قبل اللعب: مقرَّرُ اليوم صندوقٌ
    صغيرٌ لا يحتمل أن تُسحب منه آيةٌ لا تصلح، بخلاف المحفوظ الواسع */
 function dayPool(part){
-  var A=dayAyat(part), out=[], i, ws;
+  /* حفظُ اليوم يُلعب بالآية كاملةً، فتصلح القصيرةُ كغيرها */
+  var A=dayAyat(part), out=[], i, ws, min=(part==='h' ? 1 : MISS_MIN);
   for(i=0;i<A.length;i++){
     try{ ws=wordsOf(ayahText(A[i].s,A[i].a)); }catch(e){ ws=[]; }
-    if(ws.length>=MISS_MIN) out.push(A[i]);
+    if(ws.length>=min) out.push(A[i]);
   }
   return out;
 }
@@ -21613,13 +21680,15 @@ function runTouch(o){
     ay.i++; RUN.score++; RUN.words++;
     runBurst(cx,cy,'#9ff0c0',16);
     if(ay.i>=ay.to){                                   /* تمّ السؤال */
-      RUN.score+=(ay.kind==='fill1'?3:5); RUN.done++; sWin();
-      var gm=0; try{ gm=gameGems('runner', RUN.pool); }catch(e){}
+      var wh=(ay.kind==='whole');                      /* الآيةُ الكاملة: نقاطُها وجواهرُها بطولها، ويعود بها قلب */
+      RUN.score+=wh ? 3+Math.floor(ay.to/4) : (ay.kind==='fill1'?3:5); RUN.done++; sWin();
+      if(wh) RUN.hearts=Math.min(RUN_HEARTS, RUN.hearts+1);
+      var gm=0; try{ gm=gameGems('runner', RUN.pool, wh?Math.ceil(ay.to/8):1); }catch(e){}
       RUN.gems=(RUN.gems||0)+gm; RUN.flash=gameWinLine('runner', gm);
       RUN.flashT=1.3; RUN.rest=1.4;
       RUN.items.forEach(function(it){ if(it.kind==='word' && !it.dead){ it.dead=true; runBurst(it.x+it.w/2, runPillY(it), '#ffffff', 6); } });
       runHud();
-    } else { sPick(); runHud(); }
+    } else { gameWholeMark(RUN); sPick(); runHud(); }
   } else {
     runBurst(cx,cy,'#ffd23f',12);
     runSay('ليست هذه الكلمة');
@@ -22200,6 +22269,7 @@ function birdTop(){ return 26; }
 function birdMidY(){ return Math.round((birdTop()+BD.G)/2); }
 /* السؤالُ من آيةٍ كما في العدّاء: فراغٌ أو فراغان، أو ترتيبُ أوّلها */
 function birdPickAyah(){
+  if(gameWhole(BD)){ gameWholePick(BD); birdHud(); return; }
   var P=BD.pool.items, it, ws, tries=0, k, n;
   do{ it=P[Math.floor(Math.random()*P.length)]; ws=wordsOf(ayahText(it.s,it.a)); tries++; }
   while(tries<30 && (ws.length<MISS_MIN || (BD.last && P.length>1 && BD.last.s===it.s && BD.last.a===it.a)));
@@ -22251,6 +22321,7 @@ function birdHud(){
   gemHud('birdGem', BD.gems||0);
   if(!ay) return;
   $('birdRef').textContent='سورة '+ay.s.name+' • '+RUN_KIND[ay.kind];
+  if(ay.kind==='whole'){ gameWholeLine(ay, $('birdLine')); return; }
   var L='', sh=ay.show;
   if(ay.kind==='start'){
     if(ay.a>0){ var pw=wordsOf(ayahText(ay.s,ay.a-1));
@@ -22383,6 +22454,7 @@ function birdSpawn(){
   var good=!goodOn && (BD.wait<=0 || !BD.decoys.length);
   /* الخطأُ: كلمةُ الآية الشبيهة أوّلاً، ثمّ من نوع المطلوبة، وإلّا فمن المجاورات */
   var t=good ? want
+        : ay.kind==='whole' ? gameWholeDecoy(BD)
         : BD.ti<BD.nTw ? BD.decoys[BD.ti++]
         : (gameDecoy(BD) || birdWords(want, 2)[0]);
   var w=birdCloudW(t, c), h=52;
@@ -22407,13 +22479,15 @@ function birdTouch(o){
     ay.i++; BD.score++;
     birdBurst(o.x+o.w/2, o.y, '#9ff0c0', 16);
     if(ay.i>=ay.to){
-      BD.score+=(ay.kind==='fill1'?3:5); BD.done++; sWin();
-      var gm=0; try{ gm=gameGems('bird', BD.pool); }catch(e){}
+      var wh=(ay.kind==='whole');                      /* الآيةُ الكاملة: نقاطُها وجواهرُها بطولها، ويعود بها قلب */
+      BD.score+=wh ? 3+Math.floor(ay.to/4) : (ay.kind==='fill1'?3:5); BD.done++; sWin();
+      if(wh) BD.hearts=Math.min(BIRD_HEARTS, BD.hearts+1);
+      var gm=0; try{ gm=gameGems('bird', BD.pool, wh?Math.ceil(ay.to/8):1); }catch(e){}
       BD.gems=(BD.gems||0)+gm; BD.flash=gameWinLine('bird', gm);
       BD.flashT=1.3; BD.rest=1.2;
       BD.items.forEach(function(it){ if(it.kind==='cloud' && !it.taken){ it.taken=true; it.fade=1; } });
       birdHud();
-    } else { sPick(); birdHud(); }
+    } else { gameWholeMark(BD); sPick(); birdHud(); }
   } else {
     birdBurst(o.x+o.w/2, o.y, '#ffd23f', 12);
     birdSay('ليست هذه الكلمة'); birdHurt();

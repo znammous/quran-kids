@@ -959,6 +959,7 @@ NUR_I18N.add('so', {
   "ربع صفحة": "Rubuc bog",
   "رتّب آيات المقطع": "Habee aayadaha qaybta",
   "رتّب أوّلَ الآية": "Habee bilowga aayadda",
+  "أكملِ الآيةَ إلى آخرها": "Dhammaystir aayadda ilaa dhammaadkeeda",
   "رتّب الآيات": "Habee aayadaha",
   "رتّب الكلمات": "Habee erayada",
   "رتّبِ الآيةَ من اليمين — ولك ❤️ ثلاثةُ قلوب": "Aayadda midig ka habee — waxaad haysataa ❤️ saddex wadne",

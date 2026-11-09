@@ -959,6 +959,7 @@ NUR_I18N.add('tr', {
   "ربع صفحة": "Çeyrek sayfa",
   "رتّب آيات المقطع": "Bölümün ayetlerini sırala",
   "رتّب أوّلَ الآية": "Ayetin başını sırala",
+  "أكملِ الآيةَ إلى آخرها": "Ayeti sonuna kadar tamamla",
   "رتّب الآيات": "Ayetleri sırala",
   "رتّب الكلمات": "Kelimeleri sırala",
   "رتّبِ الآيةَ من اليمين — ولك ❤️ ثلاثةُ قلوب": "Ayeti sağdan dizmeye başla — ❤️ üç canın var",

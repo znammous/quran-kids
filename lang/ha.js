@@ -959,6 +959,7 @@ NUR_I18N.add('ha', {
   "ربع صفحة": "Rubu’in shafi",
   "رتّب آيات المقطع": "Jera ayoyin sashe",
   "رتّب أوّلَ الآية": "Jera farkon ayar",
+  "أكملِ الآيةَ إلى آخرها": "Kammala aya har ƙarshenta",
   "رتّب الآيات": "Jera ayoyi",
   "رتّب الكلمات": "Jera kalmomi",
   "رتّبِ الآيةَ من اليمين — ولك ❤️ ثلاثةُ قلوب": "Jera ayar daga dama — kana da ❤️ zukata uku",
