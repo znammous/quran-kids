@@ -19128,6 +19128,9 @@ function qScreenFit(fresh){
   else if(QTAP || Date.now()-QT0>600){ qOverflowFix(); return; }
   var pa=$('playArea'), mq=$('mosque'), scr=$('scr-play'), B=document.body, W=document.querySelector('.wrap');
   if(!pa) return;
+  /* أوّلُ سؤالٍ بعد شاشة النتيجة: كان يُقاس وتنسيقُها باقٍ (يفكّه مراقبُ المسجد بعد الرسم)،
+     وفيه كلُّ كلمةٍ بسطرها، فيُحسب طويلاً ويصغر ويبقى صغيراً حتى السؤال التالي */
+  if(mq && mq.hasAttribute('hidden') && B.classList.contains('resfit')) playFit();
   /* سؤالُ الوجه (القراءة والتسميع): لا يُصغَّر كلُّه — حرفُ الوجه يُضبط على العرض
      ثمّ على ما بقي من الارتفاع (faceFit)، والأزرارُ في أسفل الشاشة في كلّ مقاس */
   if(pa.classList.contains('qface') && W && scr && scr.classList.contains('active') && mq && mq.hasAttribute('hidden')){
