@@ -694,6 +694,15 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .qface.roomy .stbig .btn.big,.qface.roomy .stbig.two .btn.big{padding:18px;font-size:20px;gap:8px;margin-bottom:12px;white-space:normal;line-height:1.2}
 .qface.roomy .stbig.two .btn.big .ico{font-size:1.35em}
 .qface.roomy .strow .btn{font-size:15px;padding-block:14px}
+.qface.roomy.snug #repDots{display:none}
+.qface.roomy.snug .stc{display:inline}
+.qface.roomy.snug .stbig .btn.big,.qface.roomy.snug .stbig.two .btn.big{padding:12px 18px;margin-bottom:8px}
+.qface.roomy.snug .strow{min-height:52px}
+.qface.roomy.snug .strow .btn{padding-block:12px}
+.qface.roomy.snug .hintline{margin-top:2px}
+.qface.roomy.tight #btnNoMic{padding:8px 18px;font-size:16px}
+.qface.roomy.tight .stbig .btn.big,.qface.roomy.tight .stbig.two .btn.big{margin-bottom:6px}
+.qface.roomy.tight .hintline{font-size:12px;min-height:0;margin-top:0}
 /* وجه المصحف ملء الشاشة */
 .mfsheet{position:fixed;inset:0;z-index:120;background:var(--paper);display:flex;flex-direction:column}
 /* ملءُ الشاشة: يُترك شريطُ الساعة والبطّاريّة فوقه بكحليّ التطبيق — كانت ترويسةُ
@@ -12991,13 +13000,15 @@ function faceCrop(box, rgs, gi){
   box._L=L; box._f=f; box._l=l; box._gi=gi; box._rg=rgs.join(';');
   L.forEach(function(x,i){ x.classList.toggle('cut', i<f || i>l); });
 }
-/* الترتيبُ الأقدم أطولُ من المضغوط بنحو ١٥٠ نقطة. فإن فضلت من الشاشة قيست
-   مرّةً لكلّ مقطعٍ ومقاس شاشة، فلا يتبدّل الشكلُ من آيةٍ إلى أخرى */
-var FACE_ROOM={k:'',on:false};
-var FACE_ROOM_NEED=150;
-function faceRoomSet(pa, on){
-  if(pa.classList.contains('roomy')===!!on) return;
-  pa.classList.toggle('roomy', !!on);
+/* الترتيبُ الأقدم يُجرَّب على الشاشة نفسها: فإن لم يسعه ما تحت الوجه جُرّب أضيقَ قليلاً
+   (snug: حشوةٌ أقلّ والعدُّ في الزرّ بدل النقاط)، وإلّا بقي المضغوط — ولا يصغر الوجهُ لأجله.
+   ويُقاس مرّةً لكلّ وجهٍ ومقطعٍ ومقاس شاشة، فلا يتبدّل الشكلُ من آيةٍ إلى أخرى */
+/* الدرجة: ٠ المضغوط، ١ الأقدم، ٢ أضيق (snug)، ٣ أضيقُ منه (tight: «لا أستطيع» أصغر وسطرُ الشرح بخطٍّ أصغر) */
+var FACE_ROOM={k:'',lv:0};
+function faceRoomSet(pa, lv){
+  var cur=pa.classList.contains('roomy') ? (pa.classList.contains('tight')?3:pa.classList.contains('snug')?2:1) : 0;
+  if(cur===lv) return;
+  pa.classList.toggle('roomy', lv>=1); pa.classList.toggle('snug', lv>=2); pa.classList.toggle('tight', lv>=3);
   if(pa._ui) pa._ui();
 }
 /* «استمع إليها» في الترتيب الأقدم بجانب «غطِّها» تحت الوجه، وفي المضغوط في الصفّ الصغير */
@@ -13014,8 +13025,8 @@ function faceListenHome(pa, on){
 function faceFit(pa, avail){
   var box=pa.querySelector('.stface'), m=box && box.querySelector('.mushaf');
   if(!m || !box._L) return;
-  var st=m.scrollTop, rk=box._rg+'|'+window.innerWidth+'x'+window.innerHeight, rknown=FACE_ROOM.k===rk;
-  faceRoomSet(pa, rknown && FACE_ROOM.on);
+  var st=m.scrollTop, rk=box._rg+'|'+pageOfIdx(box._gi)+'|'+window.innerWidth+'x'+window.innerHeight, rknown=FACE_ROOM.k===rk;
+  faceRoomSet(pa, rknown ? FACE_ROOM.lv : 0);
   m.style.maxHeight=''; m.classList.remove('stscr'); m.style.removeProperty('--flh');
   m.style.fontSize='20px';
   var rows=m.querySelectorAll('.mline:not(.cut) .mtxt'), w=0, i;
@@ -13039,8 +13050,11 @@ function faceFit(pa, avail){
   }
   faceFade(m);
   if(!rknown){
-    FACE_ROOM={k:rk, on:avail-pa.offsetHeight>=FACE_ROOM_NEED && !m.classList.contains('stscr')};
-    faceRoomSet(pa, FACE_ROOM.on);
+    var lv=0, t;
+    if(!m.classList.contains('stscr') && pa.offsetHeight<=avail)
+      for(t=1;t<=3 && !lv;t++){ faceRoomSet(pa, t); if(pa.offsetHeight<=avail) lv=t; }
+    faceRoomSet(pa, lv);
+    FACE_ROOM={k:rk, lv:lv};
   }
   /* ما فضل تحت الأزرار في الترتيب الأقدم يوسّع ما بين الأسطر، إلى ربع السطر أكثر،
      فيبدو الوجهُ أكبر ولا يتغيّر ما بينه وبين الأزرار */
