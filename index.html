@@ -3477,18 +3477,29 @@ body.hastabs #btnRevQuit{display:none}
   </section>
 
   <section class="screen" id="scr-badges">
-    <h1>🎖️ شاراتي</h1>
+    <h1>📈 أدائي</h1>
+    <!-- الأداءُ والشاراتُ شاشتان تحت زرٍّ واحدٍ في الشريط: تبويبان، كمسجدي ومتجري -->
+    <div class="advtabs pftabs">
+      <button type="button" data-pft="perf"><span class="ati">📈</span>أدائي</button>
+      <button type="button" data-pft="badges"><span class="ati">🎖️</span>شاراتي</button>
+    </div>
     <!-- شريطُ حصيلته كاملةً: المواظبةُ والجواهرُ والنجومُ والآياتُ والبناء —
          ليرى كلَّ ما يخصّه في مكانٍ واحد، ولكلّ عدّادٍ شرحُه بنقرة -->
     <div class="hud" id="badgeHud"></div>
     <p class="sub" id="badgeSub">—</p>
     <div id="badgeWrap"></div>
-    <button class="btn primary big" id="btnBadgesBack" style="margin:0">➡️ رجوع</button>
+    <!-- مخفيٌّ: الشريطُ السفليّ يُغني عنه، ويبقى ليضغطه زرُّ الرجوع في الجهاز -->
+    <button class="btn primary big" id="btnBadgesBack" hidden style="margin:0">➡️ رجوع</button>
   </section>
 
   <!-- أدائي: يُقارَن فيها الطفلُ بنفسه وحدَها — أسبوعُه بالذي قبله، وأيّامُه، وما زلّ فيه من الآيات -->
   <section class="screen" id="scr-perf">
     <h1>📈 أدائي</h1>
+    <!-- الأداءُ والشاراتُ شاشتان تحت زرٍّ واحدٍ في الشريط: تبويبان، كمسجدي ومتجري -->
+    <div class="advtabs pftabs">
+      <button type="button" data-pft="perf"><span class="ati">📈</span>أدائي</button>
+      <button type="button" data-pft="badges"><span class="ati">🎖️</span>شاراتي</button>
+    </div>
     <p class="sub">تُقارَن هنا بنفسك وحدَها — لا بأحدٍ غيرك</p>
     <div id="perfWrap"></div>
     <!-- مخفيٌّ: الشريطُ السفليّ يُغني عنه، ويبقى ليضغطه زرُّ الرجوع في الجهاز -->
@@ -9419,7 +9430,8 @@ var TABS=[
   {id:'scr-games',    ic:'🎪', n:'المغامرة',  also:['scr-story'], go:function(){ advGo(ADV_V); }},
   /* والمتجرُ تبويبٌ في «مسجدي»: يُنفق فيه ما يكسب كما يبني به، فمكانُهما واحد */
   {id:'scr-build',    ic:'🕌', n:'مسجدي',    also:['scr-shop'], go:function(){ $('btnBuild').click(); }},
-  {id:'scr-perf',     ic:'📈', n:'أدائي',    go:function(){ perfOpen(); }},
+  /* والشاراتُ تبويبٌ في «أدائي»: كلاهما يحكي للطفل عن نفسه */
+  {id:'scr-perf',     ic:'📈', n:'أدائي',    also:['scr-badges'], go:function(){ perfOpen(); }},
   {id:'scr-settings', ic:'⚙️', n:'الإعدادات', go:function(){ $('btnSettings').click(); }}
 ];
 /* تختفي أثناء الدرس والشهادة والمعالج، كما تفعل دولينجو داخل الدرس */
@@ -12878,6 +12890,14 @@ function badgeCount(){
   for(k in b) if(b[k] && k.indexOf('b:')===0) n++;
   return n;
 }
+/* شارةٌ نالها ولم يفتح «شاراتي» بعدها: نقطةٌ على تبويبها وعلى «أدائي» في الشريط.
+   ومن لم يُعرف ما رآه (قبل هذه النقطة) فكأنّه رأى ما عنده */
+function badgeFresh(){
+  var p=curP(); if(!p) return false;
+  var n=badgeCount();
+  if(typeof p.bSeen!=='number'){ p.bSeen=n; return false; }
+  return n>p.bSeen;
+}
 function badgeTotal(){ return BADGE_FAM.length*TIERS.length + BADGE_SP.length; }
 /* mode: true = صامت تماماً (لمن استحقّها قبل النظام)
         'defer' = يمنح ويُرجع القائمة ليُعلنها المُنادي في احتفاله
@@ -12960,6 +12980,8 @@ function badgeFill(t,v){
 function renderBadges(){
   tal();                                              /* تُصحَّح شاراتُ «بلا خطأ» القديمة قبل أن تُعدّ */
   var p=curP(), h=crownRowHTML();
+  if(p.bSeen!==badgeCount()){ p.bSeen=badgeCount(); saveDB(); }   /* رآها: تزول نقطةُ الجديد */
+  try{ tabDot(); }catch(e){}
   try{ renderHUDInto('badgeHud'); }catch(e){}
   $('badgeSub').textContent='نلتَ '+arNum(badgeCount())+' من '+arNum(badgeTotal())+' شارة — اضغط أيّ شارةٍ لتعرف شرطَها';
   BADGE_FAM.forEach(function(F){
@@ -20435,6 +20457,18 @@ $('btnBuild').onclick=function(){ renderBuild(); show('scr-build'); };
     };
   }
 })();
+/* تبويبا «أدائي»: الأداءُ والشارات */
+(function(){
+  var bs=document.querySelectorAll('.pftabs [data-pft]'), i;
+  for(i=0;i<bs.length;i++){
+    bs[i].classList.toggle('on', bs[i].getAttribute('data-pft')===(bs[i].closest('#scr-badges')?'badges':'perf'));
+    bs[i].onclick=function(){
+      var v=this.getAttribute('data-pft');
+      if(v==='badges'){ if(curScreen()!=='scr-badges') $('btnBadges').click(); }
+      else if(curScreen()!=='scr-perf') perfOpen();
+    };
+  }
+})();
 $('btnBuildBack').onclick=function(){ show('scr-start'); };
 /* من أين جاء إلى المتجر؟ فيُردّ إليه لا إلى البداية */
 var SHOP_BACK='';
@@ -21118,6 +21152,9 @@ function advSync(){
 function advGo(v){ if(v==='stories') storiesOpen(); else gamesOpen(); }
 /* نقطةُ «الجديد» على زرّ المغامرة في الشريط السفليّ — تُرى من أيّ شاشة */
 function tabDot(){
+  var bf=false, k; try{ bf=badgeFresh(); }catch(e){}
+  var ts=document.querySelectorAll('.pftabs [data-pft="badges"]');
+  for(k=0;k<ts.length;k++) ts[k].classList.toggle('newdot', bf);
   var bar=$('tabbar'); if(!bar) return;
   var i, idx=-1;
   for(i=0;i<TABS.length;i++) if(TABS[i].id==='scr-games') idx=i;
@@ -21125,6 +21162,9 @@ function tabDot(){
   var b=bar.querySelector('[data-tab="'+idx+'"]'); if(!b) return;
   var fresh=0; try{ fresh=stNew().length; }catch(e){}
   if(fresh) b.classList.add('newdot'); else b.classList.remove('newdot');
+  for(i=0;i<TABS.length;i++) if(TABS[i].id==='scr-perf'){
+    var pb=bar.querySelector('[data-tab="'+i+'"]'); if(pb) pb.classList.toggle('newdot', bf);
+  }
   try{ updDot(); }catch(e){}
 }
 
