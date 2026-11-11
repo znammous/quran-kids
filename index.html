@@ -654,12 +654,11 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .stface.ts .mw.rv{color:#0b4f7d;background:rgba(31,176,239,.12)}
 .stface.ts .manum.nowno{color:#1f7fd0}
 /* موضعُ الكلمة: ما أصاب أخضر، وما لمسه خطأً يُكشف أحمرَ لحظة، ومواضعُها الأخرى بعد الجواب زرقاء.
-   وفي المتقدّم أرقامُ الآيات مغطّاةٌ مع كلماتها */
+   وأرقامُ الآيات ظاهرةٌ في الدرجات كلّها (قرارُ صاحب التطبيق) */
 .stface.wp .mw{cursor:pointer}
 .stface.wp .mw.wpok{color:#0f7a35;background:rgba(46,196,96,.24);border-radius:6px}
 .stface.wp .mw.wpno{color:#c62828;background:rgba(229,57,53,.16);border-radius:6px}
 .stface.wp .mw.wpalt{color:#0b4f7d;background:rgba(31,176,239,.16);border-radius:6px}
-.stface.wph .mushaf .manum{color:transparent;background:linear-gradient(#e3e9f1,#e3e9f1) center 55%/60% 58% no-repeat}
 /* السؤالُ فوق الوجه في كلّ ترتيب: يُقرأ أوّلاً ثمّ يُبحث عن موضعه */
 #playArea.qface .hintline.wpq{order:-1;min-height:0;margin:0 0 8px;font-size:17px;font-weight:800;color:var(--on2);line-height:1.6}
 .wpq .wpw{font-family:"UthmanicHafs","Amiri Quran",serif;font-size:1.45em;font-weight:400;color:#1d5f99;
@@ -13590,7 +13589,7 @@ function roundEdge(r){
    واحدة، و«وَرَبُّكَ» غيرُها. وتكرارُها في الوجه يُسأل عنه بحسب الدرجة:
    سهل (any)     : الكلمةُ التي لا تتكرّر أولى، فإن تكرّرت قُبل أيُّ موضعٍ منها
    متوسّط (all)  : يُعطى عددَ مواضعها فيلمسها كلَّها، والتي تتكرّر أولى
-   متقدّم (ctx)  : يُعطى ما قبلها فيلمسها في ذلك الموضع وحدَه، وأرقامُ الآيات مغطّاةٌ معها
+   متقدّم (ctx)  : يُعطى ما قبلها فيلمسها في ذلك الموضع وحدَه
    ولا يُسأل عن حرفٍ قصير ولا عن كلمةٍ كثيرة التكرار، ولا عن كلمةٍ ظاهرةٍ في الوجه خارج نطاقه.
    وخطآن يكشفان موضعَها ويمضي، وفي الاختبار خطأٌ واحد كسائر الأسئلة. */
 var WPOS_MAX=4, WPOS_CTX=2, WPOS_TRIES=2, WPOS_MINW=12, JUZ_WPOS=2;
@@ -13711,7 +13710,7 @@ function roundWpos(r){
   $('playArea').className='qfill qface';
   $('playArea').innerHTML=
     '<div class="hintline wpq">👆 '+ask+'</div>'+
-    '<div class="stface ts wp'+(hard?' wph':'')+'" id="stFace"></div>'+
+    '<div class="stface ts wp" id="stFace"></div>'+
     '<div class="qgap"></div>'+
     '<div class="hintline revrule wpn" id="wpNote"></div>';
   function note(t,c){ var n=$('wpNote'); if(n){ n.textContent=t||''; n.className='hintline revrule wpn'+(c?' '+c:''); } }
