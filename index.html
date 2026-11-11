@@ -660,9 +660,14 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .stface.wp .mw.wpno{color:#c62828;background:rgba(229,57,53,.16);border-radius:6px}
 .stface.wp .mw.wpalt{color:#0b4f7d;background:rgba(31,176,239,.16);border-radius:6px}
 /* السؤالُ فوق الوجه في كلّ ترتيب: يُقرأ أوّلاً ثمّ يُبحث عن موضعه */
-#playArea.qface .hintline.wpq{order:-1;min-height:0;margin:0 0 8px;font-size:17px;font-weight:800;color:var(--on2);line-height:1.6}
-.wpq .wpw{font-family:"UthmanicHafs","Amiri Quran",serif;font-size:1.45em;font-weight:400;color:#1d5f99;
-  padding:0 .3em;border-radius:8px;background:#e8f5ff;border:1.5px solid #a6cdf2;white-space:nowrap}
+/* وإن طال فانكسر سطرين لم تتراكب صناديقُه: كلٌّ منها كتلةٌ بارتفاعها، وبين السطرين فسحة */
+#playArea.qface .hintline.wpq{order:-1;min-height:0;margin:4px 0 8px;font-size:15px;font-weight:800;color:var(--on2);
+  line-height:1.3;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px 6px}
+/* خطُّ الآيات لا UthmanicHafs: ذاك يُظهر الصفرَ المستدير (۟) دائرةً منقّطة */
+.wpq .wpw{display:inline-block;font-family:"Amiri Quran","Traditional Arabic","Scheherazade New",serif;font-size:1.3em;font-weight:400;color:#1d5f99;
+  line-height:1.5;padding:0 .35em;border-radius:8px;background:#e8f5ff;border:1.5px solid #a6cdf2;white-space:nowrap}
+/* رقمُ الوجه تحته كما في صفحة القراءة */
+.stface.wp .mpgno{display:block}
 .wpq .wpc{color:#5a3d8a;background:#f3ecff;border-color:#cdb8f0}
 #playArea.qface .hintline.wpn{font-size:16px;font-weight:800;color:var(--on1)}
 #playArea.qface .hintline.wpn.ok{color:#2ec460}
@@ -13090,6 +13095,15 @@ function faceFit(pa, avail){
         spr=avail-pa.offsetHeight-4;
     if(fpx && lines && spr>lines) m.style.setProperty('--flh',(fpx*1.2+Math.min(spr/lines,fpx*0.25)).toFixed(1)+'px');
   }
+  /* «موضعُ الكلمة» لا أزرارَ تحته: ما فضل كلُّه بين الأسطر، إلى سعة صفحة القراءة (١٫٩ من الحرف) —
+     فيُرى الوجهُ بقدّه الذي يقرؤه فيه، لا مضغوطاً وتحته فراغ */
+  if(pa.classList.contains('qwp') && !m.classList.contains('stscr')){
+    var fw=parseFloat(m.style.fontSize), lw=m.querySelectorAll('.mline:not(.cut)').length;
+    m.style.removeProperty('--flh');
+    /* والسؤالُ قد يمتدّ إلى ارتفاع الشاشة فتملأ الفجوةُ (qgap) ما بقي: فهو من الفاضل أيضاً */
+    var gp=pa.querySelector('.qgap'), sw=avail-pa.offsetHeight-4+(gp ? Math.max(0, gp.offsetHeight-10) : 0);
+    if(fw && lw && sw>0) m.style.setProperty('--flh',Math.min(fw*1.9, fw*1.2+sw/lw).toFixed(1)+'px');
+  }
 }
 /* الآيةُ الجاريةُ في ربع الإطار الأعلى — وما قبلها من المقطع فوقها يُمرَّر إليه */
 function faceScrollTo(m, gi){
@@ -13707,7 +13721,7 @@ function roundWpos(r){
           : all  ? tx('اضغط على كلّ مواضع {w} في الوجه',{w:wq})
           :        tx('اضغط على موضع {w} في الوجه',{w:wq});
   $('stageChip').textContent='👆 موضعُ الكلمة';
-  $('playArea').className='qfill qface';
+  $('playArea').className='qfill qface qwp';
   $('playArea').innerHTML=
     '<div class="hintline wpq">👆 '+ask+'</div>'+
     '<div class="stface ts wp" id="stFace"></div>'+
