@@ -10142,6 +10142,7 @@ $('mfRec').onclick=function(){
     mfRecUI('wait','⏳ إن سألك المتصفح عن المايكروفون فاضغط «سماح»');
     recStart(function(){
       if(!REC.url){ mfRecUI('idle','لم أسمع شيئاً — اضغط 🎤 واقرأ ثم أوقف التسجيل'); return; }
+      if(MF_COV){ MF_COV=null; mfCovDraw(); }       /* انتهى تسجيلُه: تُكشف الآياتُ ليقابل قراءتَه بها */
       mfRecUI('ready', REC.hitMax ? 'بلغ التسجيلُ حدَّه فتوقّف — استمعْ لما سُجّل، أو أعِدْه'
                                   : '');
     }, function(){
@@ -13269,6 +13270,8 @@ function roundRead(r){
       recUI('wait','⏳ إن سألك المتصفح عن المايكروفون فاضغط «سماح»');
       recStart(function(){
         if(!REC.url){ recUI('idle','لم أسمع شيئاً — اضغط 🎤 واقرأ ثم أوقف التسجيل'); return; }
+        /* انتهى تسجيلُه وهي مغطّاة: تُكشف ليقابل قراءتَه بها، فلا يلمسها كلمةً كلمة */
+        if(FM && cov){ cov=false; peek={}; coverDraw(); }
         recUI('ready', REC.hitMax ? 'بلغ التسجيلُ حدَّه فتوقّف — استمعْ لما سُجّل، أو أعِدْه'
                                   : 'استمع لصوتك، فإن أعجبك احسبها مرة ✅');
       }, function(){
