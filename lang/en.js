@@ -2095,5 +2095,15 @@ NUR_I18N.add('en', {
   "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Are you sure you want to skip the monthly test?",
   "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Its card disappears from “Progress” and won’t come back, and there is no reward for it.",
   "نعم، تخطَّه": "Yes, skip it",
-  "لا، أبقِه": "No, keep it"
+  "لا، أبقِه": "No, keep it",
+  "موضعُ الكلمة": "Word position",
+  "وهذه مواضعُها": "And these are its places",
+  "وهذا موضعُها": "And this is its place",
+  "هذه في موضعٍ آخر — انظر ما قبلها": "That one is in another place — look at what comes before it",
+  "يُغطّى الوجه فيلمس موضعَ الكلمة فيه": "The page is covered, and you tap where the word is",
+  "اضغط على {w} التي بعد {c}": "Tap {w} that comes after {c}",
+  "اضغط على كلّ مواضع {w} في الوجه": "Tap every place of {w} on the page",
+  "اضغط على موضع {w} في الوجه": "Tap where {w} is on the page",
+  "وجدتَ {i} من {n}": "Found {i} of {n}",
+  "صحيح ✅ — وتكرّرت في الوجه {n}": "Correct ✅ — it appears on the page {n}"
 });

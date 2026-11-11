@@ -2095,5 +2095,15 @@ NUR_I18N.add('id', {
   "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Yakin ingin melewati ujian bulanan?",
   "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Kartunya hilang dari “Prestasi” dan tidak kembali, tanpa hadiah.",
   "نعم، تخطَّه": "Ya, lewati",
-  "لا، أبقِه": "Tidak, simpan"
+  "لا، أبقِه": "Tidak, simpan",
+  "موضعُ الكلمة": "Letak kata",
+  "وهذه مواضعُها": "Dan inilah letak-letaknya",
+  "وهذا موضعُها": "Dan inilah letaknya",
+  "هذه في موضعٍ آخر — انظر ما قبلها": "Yang ini di tempat lain — lihat kata sebelumnya",
+  "يُغطّى الوجه فيلمس موضعَ الكلمة فيه": "Halaman ditutup, lalu kamu menekan letak kata itu",
+  "اضغط على {w} التي بعد {c}": "Tekan {w} yang sesudah {c}",
+  "اضغط على كلّ مواضع {w} في الوجه": "Tekan semua letak {w} di halaman",
+  "اضغط على موضع {w} في الوجه": "Tekan letak {w} di halaman",
+  "وجدتَ {i} من {n}": "Ketemu {i} dari {n}",
+  "صحيح ✅ — وتكرّرت في الوجه {n}": "Benar ✅ — kata ini muncul di halaman {n}"
 });

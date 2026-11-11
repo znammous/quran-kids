@@ -653,6 +653,21 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 .stface.ts .mw.peek{color:#b35f00;background:rgba(255,170,60,.16)}
 .stface.ts .mw.rv{color:#0b4f7d;background:rgba(31,176,239,.12)}
 .stface.ts .manum.nowno{color:#1f7fd0}
+/* موضعُ الكلمة: ما أصاب أخضر، وما لمسه خطأً يُكشف أحمرَ لحظة، ومواضعُها الأخرى بعد الجواب زرقاء.
+   وفي المتقدّم أرقامُ الآيات مغطّاةٌ مع كلماتها */
+.stface.wp .mw{cursor:pointer}
+.stface.wp .mw.wpok{color:#0f7a35;background:rgba(46,196,96,.24);border-radius:6px}
+.stface.wp .mw.wpno{color:#c62828;background:rgba(229,57,53,.16);border-radius:6px}
+.stface.wp .mw.wpalt{color:#0b4f7d;background:rgba(31,176,239,.16);border-radius:6px}
+.stface.wph .mushaf .manum{color:transparent;background:linear-gradient(#e3e9f1,#e3e9f1) center 55%/60% 58% no-repeat}
+/* السؤالُ فوق الوجه في كلّ ترتيب: يُقرأ أوّلاً ثمّ يُبحث عن موضعه */
+#playArea.qface .hintline.wpq{order:-1;min-height:0;margin:0 0 8px;font-size:17px;font-weight:800;color:var(--on2);line-height:1.6}
+.wpq .wpw{font-family:"UthmanicHafs","Amiri Quran",serif;font-size:1.45em;font-weight:400;color:#1d5f99;
+  padding:0 .3em;border-radius:8px;background:#e8f5ff;border:1.5px solid #a6cdf2;white-space:nowrap}
+.wpq .wpc{color:#5a3d8a;background:#f3ecff;border-color:#cdb8f0}
+#playArea.qface .hintline.wpn{font-size:16px;font-weight:800;color:var(--on1)}
+#playArea.qface .hintline.wpn.ok{color:#2ec460}
+#playArea.qface .hintline.wpn.no{color:#ff6b6b}
 .mfbtn.cvr{color:#5a3d8a;background:#f3ecff;border-color:#cdb8f0}
 .mfbtn.cvr.on{color:#fff;background:#7b52c7;border-color:#7b52c7}
 /* أسفلُ الشاشة: زرٌّ كبيرٌ وصفٌّ صغيرٌ مقاسُه ثابتٌ ولو فرغ، فلا يتحرّك شيءٌ بتبدّل الحال */
@@ -9118,6 +9133,18 @@ function buildJuzTest(j){
   shuffle(sm).slice(0,JUZ_SEAMS).forEach(function(q){
     rounds.splice(Math.floor(Math.random()*(rounds.length+1)),0,q);
   });
+  /* وموضعُ كلمةٍ في وجهين من أوجهه المحفوظة */
+  var pgs=[], pseen={};
+  pool.forEach(function(it){
+    for(var a=it.g[0];a<it.g[1];a++){ var P=ayahPage(it.s,a); if(!pseen[P]){ pseen[P]=1; pgs.push(P); } }
+  });
+  var wn=0;
+  shuffle(pgs).forEach(function(P){
+    if(wn>=JUZ_WPOS) return;
+    var q=wposRound(P, wposHeldRgs(P, function(s,a){ return memHeld(s,a) && juzOfGi(GIDX[s.n-1]+a)===j; }));
+    if(!q) return;
+    wn++; rounds.splice(Math.floor(Math.random()*(rounds.length+1)),0,q);
+  });
   return rounds;
 }
 var JUZ_SEAMS=2;
@@ -12308,7 +12335,7 @@ function runRound(){
     (r.surah||S.surah).name+' '+arNum(r.from+1)+'-'+arNum(r.to);
   ({read:roundRead,words:roundWords,missing:roundMissing,miss2:roundMiss2,ayat:roundAyat,recite:roundRecite,write:roundRecite,
     aedge:roundAEdge,eorder:roundEOrder,
-    revpage:roundRevPage,edge:roundEdge,seam:roundSeam})[r.t](r);
+    revpage:roundRevPage,edge:roundEdge,seam:roundSeam,wpos:roundWpos})[r.t](r);
   $('stageChip').classList.toggle('fix', !!r.rq);
   /* أوّلُ سؤالِ تثبيتٍ في المرحلة تستقبله شاشةُ تشجيعٍ هادئة — نجمةٌ فوقها مصباحٌ ينبض —
      لا تذكر الخطأ، فالإعادةُ تدبيرٌ لا عتاب. ثمّ يُعرَّف بسطرٍ مكانَ النتيجة، وبعده تكفي الشارة */
@@ -12439,7 +12466,7 @@ var CELE_MS=5000;                                   /* مدّة الاحتفال
 /* أوّلَ ظهوره لا تُذهبه لمسة: يقع غالباً وإصبعُ الطفل ماضٍ إلى ما تحته، فيضيع قبل أن يُقرأ.
    و«اضغط للمتابعة» لا يظهر إلّا حين تصلح اللمسة (animation-delay في .cele .tap) */
 var CELE_HOLD=1500;
-var QTYPES={ words:1, missing:1, miss2:1, ayat:1, edge:1, aedge:1, eorder:1, write:1, seam:1 };   /* ما يُعرف صوابه من خطئه */
+var QTYPES={ words:1, missing:1, miss2:1, ayat:1, edge:1, aedge:1, eorder:1, write:1, seam:1, wpos:1 };   /* ما يُعرف صوابه من خطئه */
 /* التسميع بالصوت يقرّه اللاعب على نفسه، فلا سبيل إلى الحكم عليه:
    لا يزيد السلسلة ولا يقطعها. أمّا كتابةُ الآية فتُقابَل بالنصّ. */
 function comboCounts(r){
@@ -13555,6 +13582,188 @@ function roundEdge(r){
       }
     };
   }
+}
+
+/* ===== موضعُ الكلمة 👆 =====
+   الوجهُ مغطّى بأشكال كلماته، ويُسأل عن كلمةٍ منه فيلمس موضعَها: يُختبر ما يحفظه الحافظُ
+   بعينه — أين تقع الكلمةُ من وجهها. والكلمةُ تُقارَن بحروفها بلا تشكيل: «رَبُّكَ» و«رَبِّكَ»
+   واحدة، و«وَرَبُّكَ» غيرُها. وتكرارُها في الوجه يُسأل عنه بحسب الدرجة:
+   سهل (any)     : الكلمةُ التي لا تتكرّر أولى، فإن تكرّرت قُبل أيُّ موضعٍ منها
+   متوسّط (all)  : يُعطى عددَ مواضعها فيلمسها كلَّها، والتي تتكرّر أولى
+   متقدّم (ctx)  : يُعطى ما قبلها فيلمسها في ذلك الموضع وحدَه، وأرقامُ الآيات مغطّاةٌ معها
+   ولا يُسأل عن حرفٍ قصير ولا عن كلمةٍ كثيرة التكرار، ولا عن كلمةٍ ظاهرةٍ في الوجه خارج نطاقه.
+   وخطآن يكشفان موضعَها ويمضي، وفي الاختبار خطأٌ واحد كسائر الأسئلة. */
+var WPOS_MAX=4, WPOS_CTX=2, WPOS_TRIES=2, WPOS_MINW=12, JUZ_WPOS=2;
+var WPOS_STOP={};
+('من في ما لا ان او ام ثم بل قد لم لن اذ اذا الا الي علي عن هو هي هم هن انا نحن انت انتم كم '+
+ 'له لها لهم لكم به بها بهم فيه فيها فيهم منه منها منهم عليه عليها عليهم عليكم اليه اليهم انه انها انهم '+
+ 'انما الذي الذين التي اللاتي ذلك ذلكم تلك هذا هذه هذان هولاء اولايك كان كانوا يكن ولا وما ومن فلا فمن '+
+ 'لقد ولقد لما كل كلا يا ان').split(' ').forEach(function(w){ WPOS_STOP[w]=1; });
+function wposMode(){ return SET.level==='hard' ? 'ctx' : SET.level==='mid' ? 'all' : 'any'; }
+/* حروفُ الكلمة للمقارنة: بلا تشكيلٍ ولا علامات وقف ولا فراغ */
+function wposKey(w){ return norm(stripMarks(w)).replace(/\s+/g,''); }
+/* كلماتُ الوجه بترتيبها كما يقطّعها المصحف: {gi, wi, w, k, inr} — inr: في نطاق السؤال */
+function wposList(P, rgs){
+  var b=pageBounds(P), out=[], gi, ws, wi, M={rg:rgs}, loc;
+  for(gi=b[0];gi<=b[1];gi++){
+    loc=mLoc(gi); ws=mushafWords(loc[0],loc[1]);
+    for(wi=0;wi<ws.length;wi++)
+      out.push({ gi:gi, wi:wi, w:stripMarks(ws[wi]), k:wposKey(ws[wi]), inr:mfInRg(M,gi) });
+  }
+  return out;
+}
+/* نطاقاتُ الوجه [من، إلى) بفهرسها العامّ، من قطعه */
+function wposRgs(pcs){
+  return (pcs||[]).map(function(p){ var b0=GIDX[p.s.n-1]; return [b0+p.from, b0+p.to]; });
+}
+/* ما يُسأل عنه من الوجه: آياتُه التي يرضاها held(سورة، آية)، متّصلةً نطاقات */
+function wposHeldRgs(P, held){
+  var out=[], run=null;
+  pagePieces(P).forEach(function(p){
+    for(var a=p.from;a<p.to;a++){
+      var g=GIDX[p.s.n-1]+a;
+      if(held(p.s,a)){ if(run && run[1]===g) run[1]=g+1; else { run=[g,g+1]; out.push(run); } }
+      else run=null;
+    }
+  });
+  return out;
+}
+/* ما قبل الموضع i في نطاقه: n كلمات، أو أقلّ إن بدأ النطاقُ قبلها */
+function wposBefore(L, i, n){
+  var out=[], j;
+  for(j=i-1;j>=0 && out.length<n;j--){ if(!L[j].inr) break; out.unshift(L[j]); }
+  return out;
+}
+function wposRound(P, rgs, mode){
+  if(!rgs || !rgs.length) return null;
+  mode=mode||wposMode();
+  var L=wposList(P,rgs), grp={}, outK={}, inN=0, first=-1, i, x, k, keys, pool, pick, tgt, ctx='';
+  for(i=0;i<L.length;i++){
+    x=L[i];
+    if(!x.inr){ outK[x.k]=1; continue; }
+    inN++; if(first<0){ first=i; continue; }     /* أوّلُ كلمةٍ من نطاقه لا يُسأل عنها */
+    (grp[x.k]||(grp[x.k]=[])).push(i);
+  }
+  if(inN<WPOS_MINW) return null;
+  keys=Object.keys(grp).filter(function(k){
+    return k.length>=3 && !WPOS_STOP[k] && !outK[k] && grp[k].length<=WPOS_MAX;
+  });
+  if(!keys.length) return null;
+  function by(f){ return keys.filter(function(k){ return f(grp[k].length); }); }
+  if(mode==='any') pool=by(function(c){ return c===1; });
+  else if(mode==='all') pool=by(function(c){ return c>=2; });
+  else {
+    /* السياقُ يميّز موضعاً واحداً: ما قبله لا يتكرّر قبل غيره من مواضعها */
+    pool=[];
+    shuffle(keys.slice()).forEach(function(k){
+      if(pool.length) return;
+      var oc=grp[k]; if(oc.length<2) return;
+      var cand=shuffle(oc.slice());
+      for(var c=0;c<cand.length;c++){
+        var bf=wposBefore(L,cand[c],WPOS_CTX); if(bf.length<WPOS_CTX) continue;
+        var sig=bf.map(function(z){ return z.k; }).join(' ');
+        var uniq=oc.every(function(o){
+          return o===cand[c] || wposBefore(L,o,WPOS_CTX).map(function(z){ return z.k; }).join(' ')!==sig;
+        });
+        if(uniq){ pool=[k]; tgt=cand[c]; ctx=bf.map(function(z){ return z.w; }).join(' '); return; }
+      }
+    });
+    /* لا كلمةَ متكرّرةً يميّزها سياق: كلمةٌ واحدةُ الموضع، ويُعطى ما قبلها كذلك */
+    if(!pool.length){
+      by(function(c){ return c===1; }).some(function(k){
+        var bf=wposBefore(L,grp[k][0],WPOS_CTX); if(bf.length<WPOS_CTX) return false;
+        pool=[k]; tgt=grp[k][0]; ctx=bf.map(function(z){ return z.w; }).join(' '); return true;
+      });
+    }
+  }
+  if(!pool.length) pool=keys;
+  pick=pool[Math.floor(Math.random()*pool.length)];
+  var occ=grp[pick].map(function(j){ return { gi:L[j].gi, wi:L[j].wi }; });
+  if(mode!=='ctx' || !ctx) tgt=null;
+  var tg=tgt!=null ? [grp[pick].indexOf(tgt)] : occ.map(function(o,j){ return j; });
+  var m=occ[tg[0]], ga=giAyah(m.gi), b0=GIDX[ga.s.n-1], seg=[ga.a, ga.a+1];
+  /* مقطعُه في الجلسة: نطاقُ الوجه الذي فيه الموضع، من سورته */
+  rgs.forEach(function(g){
+    if(m.gi>=g[0] && m.gi<g[1]) seg=[Math.max(g[0],b0)-b0, Math.min(g[1],b0+ga.s.ayat.length)-b0];
+  });
+  return { t:'wpos', page:P, mode:(tgt!=null?'ctx':mode), rgs:rgs, w:L[grp[pick][tg[0]]].w,
+           ctx:(tgt!=null?ctx:''), occ:occ, tg:tg,
+           surah:ga.s, a:ga.a, wi:m.wi, segFrom:seg[0], segTo:seg[1] };
+}
+/* بلا وجهٍ (أُطفئ أو تعذّر خطُّه) لا موضعَ يُلمس: يُسأل عن الكلمة نفسِها ناقصةً من آيتها */
+function wposFall(r){
+  var m=r.occ[r.tg[0]], ga=giAyah(m.gi);
+  r.t='missing'; r.surah=ga.s; r.a=ga.a; r.wi=m.wi; r.segFrom=ga.a; r.segTo=ga.a+1;
+  S.rounds[S.i]=r;
+  runRound();
+}
+function roundWpos(r){
+  if(!faceOn(r)){ wposFall(r); return; }
+  var all=r.mode==='all' && r.tg.length>1, hard=r.mode==='ctx', found={}, nf=0, miss=0, done=false;
+  var tgk={}, ock={};
+  r.occ.forEach(function(o,j){ ock[o.gi+':'+o.wi]=1; });
+  r.tg.forEach(function(j){ tgk[r.occ[j].gi+':'+r.occ[j].wi]=1; });
+  var wq='<span class="wpw" translate="no">'+esc(r.w)+'</span>';
+  var ask = hard ? tx('اضغط على {w} التي بعد {c}',{w:wq, c:'<span class="wpw wpc" translate="no">'+esc(r.ctx)+'</span>'})
+          : all  ? tx('اضغط على كلّ مواضع {w} في الوجه',{w:wq})
+          :        tx('اضغط على موضع {w} في الوجه',{w:wq});
+  $('stageChip').textContent='👆 موضعُ الكلمة';
+  $('playArea').className='qfill qface';
+  $('playArea').innerHTML=
+    '<div class="hintline wpq">👆 '+ask+'</div>'+
+    '<div class="stface ts wp'+(hard?' wph':'')+'" id="stFace"></div>'+
+    '<div class="qgap"></div>'+
+    '<div class="hintline revrule wpn" id="wpNote"></div>';
+  function note(t,c){ var n=$('wpNote'); if(n){ n.textContent=t||''; n.className='hintline revrule wpn'+(c?' '+c:''); } }
+  function cnt(){ if(all) note(tx('وجدتَ {i} من {n}',{i:arNum(nf), n:arNum(r.tg.length)})); }
+  function words(){
+    var box=$('stFace'); return box ? [].slice.call(box.querySelectorAll('.mw[data-gi]')) : [];
+  }
+  /* موضعُ الكلمة: «فهرسُ الآية:ترتيبُها في الآية» — يُعدّ من كلمات آيتها في الوجه */
+  function keyOf(w){
+    var gi=w.getAttribute('data-gi');
+    return gi+':'+faceWords(+gi).indexOf(w);
+  }
+  function draw(){
+    words().forEach(function(w){
+      if(w.classList.contains('mout')) return;
+      var k=keyOf(w);
+      w.classList.toggle('cov', !found[k] && !w.classList.contains('wpno') && !(done && ock[k]));
+      w.classList.toggle('wpok', !!found[k] || (done && !!tgk[k]));
+      w.classList.toggle('wpalt', done && !!ock[k] && !tgk[k] && !found[k]);
+    });
+  }
+  function showRight(){ done=true; draw(); }
+  facePaint($('stFace'), r.rgs[0][0], function(){ draw(); cnt(); },
+            function(){ r.noFace=true; wposFall(r); }, r.rgs);
+  $('stFace').onclick=function(e){
+    if(done) return;
+    var w=e.target.closest ? e.target.closest('.mw') : null;
+    if(!w || w.classList.contains('mout') || w.classList.contains('wpno')) return;
+    var k=keyOf(w);
+    if(found[k]) return;
+    if(tgk[k]){
+      found[k]=1; nf++;
+      if(all && nf<r.tg.length){ hap('tap'); draw(); cnt(); return; }
+      done=true; draw(); sGood();
+      note(r.occ.length>1 && !all
+        ? tx('صحيح ✅ — وتكرّرت في الوجه {n}',{n:marra(r.occ.length)}) : 'صحيح ✅', 'ok');
+      sLater(function(){ nextRound(true); }, r.occ.length>1 ? 1500 : 1000);
+      return;
+    }
+    /* الكلمةُ التي لمسها تُكشف لحظةً ليرى ما ضغط، ثمّ تعود مغطّاة */
+    w.classList.remove('cov'); w.classList.add('wpno');
+    setTimeout(function(){ w.classList.remove('wpno'); if(w.isConnected){ draw(); if(!done) cnt(); } }, 1100);
+    miss++;
+    if(examMode()){ done=true; draw(); examMiss(showRight); return; }
+    if(miss>=WPOS_TRIES){
+      sBad(); showRight(); note(r.tg.length>1 && all ? 'وهذه مواضعُها' : 'وهذا موضعُها', 'no');
+      sLater(function(){ nextRound(false); }, 1800);
+      return;
+    }
+    sBad(); S.errors++; comboMiss();
+    note(hard && ock[k] ? 'هذه في موضعٍ آخر — انظر ما قبلها 💪' : 'حاول مرة أخرى 💪', 'no');
+  };
 }
 
 /* ===== وصلةُ الصفحات 🔗 =====
@@ -17066,7 +17275,7 @@ function revStartPage(){
 }
 function revSkipToQuiz(){ REV.pi=REV.pages.length; revStartPage(); }
 
-var REV_KINDS=['missing','words','ayat','edge','miss2','aedge','eorder'];
+var REV_KINDS=['missing','words','ayat','edge','miss2','aedge','eorder','wpos'];
 /* تسلسلُ أنواع أسئلة الصفحة: يُخلط ترتيبُها ويُعاد الخلطُ كلّما دارت.
    وكان النوعُ يُؤخذ بحاصل قسمة العدّاد، فمن اختار ثلاثةَ أسئلةٍ للصفحة
    لم يبلغه النوعان الأخيران أبداً — يُكتبان ولا يُرَيان. */
@@ -17095,6 +17304,12 @@ function revQuestion(it,P,k){
       : null;
     if(eq) return eq;
     kind='missing';                                           /* صفحة لا تصلح: نعود للناقصة */
+  }
+  /* موضعُ الكلمة في الوجه كلِّه: ما يُراجَع منه، فلا يُسأل عن آيةٍ خارج نطاقه */
+  if(kind==='wpos'){
+    var wq=wposRound(P, wposRgs(pageScopePieces(P)));
+    if(wq) return wq;
+    kind='missing';                                 /* لا كلمةَ تصلح في الوجه */
   }
   if(kind==='aedge'){
     var ar1=aedgeRound(it.s,it.from,it.to);
@@ -17882,6 +18097,7 @@ var EX_KINDS=[['words','🧩','ترتيب الكلمات','تُبعثر كلما
               ['aedge','🚩','مطلعُ الآية وخاتمتُها','يُعطى شطرَ الآية فيذكر طرفَها الغائب'],
               ['eorder','🏁','رصُّ المطالع والخواتم','يرتّب أوائلَ الآيات أو أواخرَها'],
               ['seam','🔗','وصلةُ الصفحات','تُعرض خاتمةُ صفحةٍ فيذكر مطلعَ التي بعدها'],
+              ['wpos','👆','موضعُ الكلمة','يُغطّى الوجه فيلمس موضعَ الكلمة فيه'],
               ['write','✍️','اكتب الآية','يكتب الآيةَ كاملةً كلمةً كلمة']];
 /* نوعٌ لا يشمله «تحدّي اليوم»: عشرون سؤالاً تُفاجئه كلَّ يوم، وكتابةُ الآية كاملةً
    على الجوال أطولُ من أن تأتيه فيها بلا طلب. وأمّا «اختبر نفسي» فـ«منوّعة» فيه
@@ -18052,6 +18268,11 @@ function examQ(it){
     lo=Math.min(it.a, it.to-span);
     if(lo<it.from) lo=it.from;
     return {t:'ayat',from:lo,to:lo+span,surah:it.s,segFrom:it.from,segTo:it.to,page:it.P};
+  }
+  if(t==='wpos'){
+    var wx=wposRound(it.P, wposHeldRgs(it.P, EX.held));
+    if(wx) return wx;
+    t='missing';
   }
   if(t==='aedge'){
     var ax=aedgeRound(it.s,it.from,it.to);

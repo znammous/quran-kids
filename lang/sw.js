@@ -2095,5 +2095,15 @@ NUR_I18N.add('sw', {
   "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Una uhakika unataka kuruka jaribio la mwezi?",
   "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Kadi yake inatoweka kutoka “Maendeleo” na haitarudi, na hakuna zawadi.",
   "نعم، تخطَّه": "Ndiyo, liruke",
-  "لا، أبقِه": "Hapana, libaki"
+  "لا، أبقِه": "Hapana, libaki",
+  "موضعُ الكلمة": "Mahali pa neno",
+  "وهذه مواضعُها": "Na hapa ndipo mahali pake",
+  "وهذا موضعُها": "Na hapa ndipo mahali pake",
+  "هذه في موضعٍ آخر — انظر ما قبلها": "Hili liko mahali pengine — tazama lililo kabla yake",
+  "يُغطّى الوجه فيلمس موضعَ الكلمة فيه": "Ukurasa hufunikwa, nawe unagusa mahali pa neno",
+  "اضغط على {w} التي بعد {c}": "Gusa {w} lililo baada ya {c}",
+  "اضغط على كلّ مواضع {w} في الوجه": "Gusa kila mahali pa {w} kwenye ukurasa",
+  "اضغط على موضع {w} في الوجه": "Gusa mahali pa {w} kwenye ukurasa",
+  "وجدتَ {i} من {n}": "Umepata {i} kati ya {n}",
+  "صحيح ✅ — وتكرّرت في الوجه {n}": "Sahihi ✅ — limekuja kwenye ukurasa {n}"
 });

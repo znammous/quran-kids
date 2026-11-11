@@ -2095,5 +2095,15 @@ NUR_I18N.add('tr', {
   "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Ayın sınavını atlamak istediğinden emin misin?",
   "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Kartı “Performans” bölümünden kaybolur ve geri gelmez, ödülü de olmaz.",
   "نعم، تخطَّه": "Evet, atla",
-  "لا، أبقِه": "Hayır, kalsın"
+  "لا، أبقِه": "Hayır, kalsın",
+  "موضعُ الكلمة": "Kelimenin yeri",
+  "وهذه مواضعُها": "Ve işte yerleri",
+  "وهذا موضعُها": "Ve işte yeri",
+  "هذه في موضعٍ آخر — انظر ما قبلها": "Bu başka bir yerde — önündekine bak",
+  "يُغطّى الوجه فيلمس موضعَ الكلمة فيه": "Sayfa kapatılır, sen de kelimenin yerine dokunursun",
+  "اضغط على {w} التي بعد {c}": "{c} sonrasındaki {w} kelimesine dokun",
+  "اضغط على كلّ مواضع {w} في الوجه": "Sayfada {w} geçen her yere dokun",
+  "اضغط على موضع {w} في الوجه": "Sayfada {w} kelimesinin yerine dokun",
+  "وجدتَ {i} من {n}": "{n} yerden {i} tanesini buldun",
+  "صحيح ✅ — وتكرّرت في الوجه {n}": "Doğru ✅ — sayfada {n} geçiyor"
 });

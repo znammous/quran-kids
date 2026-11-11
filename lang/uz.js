@@ -2095,5 +2095,15 @@ NUR_I18N.add('uz', {
   "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Oy imtihonini oʻtkazib yuborishga ishonching komilmi?",
   "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Uning kartasi “Natijalar”dan yoʻqoladi va qaytmaydi, mukofoti ham yoʻq.",
   "نعم، تخطَّه": "Ha, oʻtkazib yubor",
-  "لا، أبقِه": "Yoʻq, qolsin"
+  "لا، أبقِه": "Yoʻq, qolsin",
+  "موضعُ الكلمة": "Soʻzning oʻrni",
+  "وهذه مواضعُها": "Mana uning oʻrinlari",
+  "وهذا موضعُها": "Mana uning oʻrni",
+  "هذه في موضعٍ آخر — انظر ما قبلها": "Bu boshqa oʻrinda — oldidagisiga qarang",
+  "يُغطّى الوجه فيلمس موضعَ الكلمة فيه": "Sahifa yopiladi, siz esa soʻz oʻrniga bosasiz",
+  "اضغط على {w} التي بعد {c}": "{c} dan keyingi {w} ga bosing",
+  "اضغط على كلّ مواضع {w} في الوجه": "Sahifadagi {w} ning hamma oʻrinlariga bosing",
+  "اضغط على موضع {w} في الوجه": "Sahifadagi {w} oʻrniga bosing",
+  "وجدتَ {i} من {n}": "{n} tadan {i} tasi topildi",
+  "صحيح ✅ — وتكرّرت في الوجه {n}": "Toʻgʻri ✅ — sahifada {n} kelgan"
 });

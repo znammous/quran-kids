@@ -2095,5 +2095,15 @@ NUR_I18N.add('so', {
   "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Ma hubtaa inaad ka boodayso imtixaanka bisha?",
   "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Kaarkiisu wuxuu ka baxayaa “Horumar” dib uma soo laabanayo, abaalmarin ma leh.",
   "نعم، تخطَّه": "Haa, ka bood",
-  "لا، أبقِه": "Maya, daa"
+  "لا، أبقِه": "Maya, daa",
+  "موضعُ الكلمة": "Meesha erayga",
+  "وهذه مواضعُها": "Kuwanina waa meelihiisa",
+  "وهذا موضعُها": "Tanina waa meeshiisa",
+  "هذه في موضعٍ آخر — انظر ما قبلها": "Kani meel kale ayuu ku jiraa — eeg waxa ka horreeya",
+  "يُغطّى الوجه فيلمس موضعَ الكلمة فيه": "Bogga waa la daboolaa, adiguna waxaad taabataa meesha erayga",
+  "اضغط على {w} التي بعد {c}": "Taabo {w} ee ka dambeeya {c}",
+  "اضغط على كلّ مواضع {w} في الوجه": "Taabo dhammaan meelaha {w} ee bogga",
+  "اضغط على موضع {w} في الوجه": "Taabo meesha {w} ee bogga",
+  "وجدتَ {i} من {n}": "Waxaad heshay {i} ka mid ah {n}",
+  "صحيح ✅ — وتكرّرت في الوجه {n}": "Waa sax ✅ — bogga wuxuu ku soo noqday {n}"
 });

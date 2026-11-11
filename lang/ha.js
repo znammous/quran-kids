@@ -2095,5 +2095,15 @@ NUR_I18N.add('ha', {
   "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Ka tabbata kana so ka tsallake jarabawar wata?",
   "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Katinta zai ɓace daga “Cigaba” kuma ba zai dawo ba, babu lada a kanta.",
   "نعم، تخطَّه": "Ee, tsallake ta",
-  "لا، أبقِه": "A’a, a bar ta"
+  "لا، أبقِه": "A’a, a bar ta",
+  "موضعُ الكلمة": "Wurin kalma",
+  "وهذه مواضعُها": "Kuma waɗannan su ne wuraren ta",
+  "وهذا موضعُها": "Kuma wannan shi ne wurin ta",
+  "هذه في موضعٍ آخر — انظر ما قبلها": "Wannan a wani wuri yake — duba abin da ke gabanta",
+  "يُغطّى الوجه فيلمس موضعَ الكلمة فيه": "Ana rufe shafin, kai kuma ka taɓa wurin kalmar",
+  "اضغط على {w} التي بعد {c}": "Taɓa {w} da ke bayan {c}",
+  "اضغط على كلّ مواضع {w} في الوجه": "Taɓa duk wuraren {w} a shafin",
+  "اضغط على موضع {w} في الوجه": "Taɓa wurin {w} a shafin",
+  "وجدتَ {i} من {n}": "Ka samu {i} daga {n}",
+  "صحيح ✅ — وتكرّرت في الوجه {n}": "Daidai ✅ — ta zo a shafin {n}"
 });

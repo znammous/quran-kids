@@ -2095,5 +2095,15 @@ NUR_I18N.add('fr', {
   "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Es-tu sûr de vouloir passer le test du mois ?",
   "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Sa carte disparaît de « Progrès » et ne reviendra pas, sans récompense.",
   "نعم، تخطَّه": "Oui, passer",
-  "لا، أبقِه": "Non, le garder"
+  "لا، أبقِه": "Non, le garder",
+  "موضعُ الكلمة": "Place du mot",
+  "وهذه مواضعُها": "Et voici ses places",
+  "وهذا موضعُها": "Et voici sa place",
+  "هذه في موضعٍ آخر — انظر ما قبلها": "Celui-ci est à une autre place — regarde ce qui le précède",
+  "يُغطّى الوجه فيلمس موضعَ الكلمة فيه": "La page est couverte, et tu touches l’endroit du mot",
+  "اضغط على {w} التي بعد {c}": "Touche {w} qui vient après {c}",
+  "اضغط على كلّ مواضع {w} في الوجه": "Touche chaque place de {w} sur la page",
+  "اضغط على موضع {w} في الوجه": "Touche l’endroit de {w} sur la page",
+  "وجدتَ {i} من {n}": "Trouvé {i} sur {n}",
+  "صحيح ✅ — وتكرّرت في الوجه {n}": "Correct ✅ — il revient sur la page {n}"
 });

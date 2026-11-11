@@ -2095,5 +2095,15 @@ NUR_I18N.add('ms', {
   "هل أنت متأكّد من تخطّي اختبار الشهر؟": "Pasti mahu melangkau ujian bulanan?",
   "تختفي بطاقتُه من «أدائي» ولا يعود، ولا جائزةَ له.": "Kadnya hilang daripada “Prestasi” dan tidak kembali, tanpa ganjaran.",
   "نعم، تخطَّه": "Ya, langkau",
-  "لا، أبقِه": "Tidak, simpan"
+  "لا، أبقِه": "Tidak, simpan",
+  "موضعُ الكلمة": "Kedudukan perkataan",
+  "وهذه مواضعُها": "Dan inilah kedudukan-kedudukannya",
+  "وهذا موضعُها": "Dan inilah kedudukannya",
+  "هذه في موضعٍ آخر — انظر ما قبلها": "Yang ini di tempat lain — lihat perkataan sebelumnya",
+  "يُغطّى الوجه فيلمس موضعَ الكلمة فيه": "Muka surat ditutup, lalu kamu menekan kedudukan perkataan itu",
+  "اضغط على {w} التي بعد {c}": "Tekan {w} yang selepas {c}",
+  "اضغط على كلّ مواضع {w} في الوجه": "Tekan semua kedudukan {w} di muka surat",
+  "اضغط على موضع {w} في الوجه": "Tekan kedudukan {w} di muka surat",
+  "وجدتَ {i} من {n}": "Jumpa {i} daripada {n}",
+  "صحيح ✅ — وتكرّرت في الوجه {n}": "Betul ✅ — perkataan ini muncul di muka surat {n}"
 });
