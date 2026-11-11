@@ -656,6 +656,8 @@ body.hastabs:not(.tabsgone) #scr-onb.editing .onbnav{bottom:calc(98px + env(safe
 /* موضعُ الكلمة: ما أصاب أخضر، وما لمسه خطأً يُكشف أحمرَ لحظة، ومواضعُها الأخرى بعد الجواب زرقاء.
    وأرقامُ الآيات ظاهرةٌ في الدرجات كلّها (قرارُ صاحب التطبيق) */
 .stface.wp .mw{cursor:pointer}
+/* السطورُ الظاهرة دليلٌ على الوجه لا جواب: بلونٍ أهدأ، ولا تُلمس */
+.stface.wp .mw.wpshow{color:#4a5a70;cursor:default}
 .stface.wp .mw.wpok{color:#0f7a35;background:rgba(46,196,96,.24);border-radius:6px}
 .stface.wp .mw.wpno{color:#c62828;background:rgba(229,57,53,.16);border-radius:6px}
 .stface.wp .mw.wpalt{color:#0b4f7d;background:rgba(31,176,239,.16);border-radius:6px}
@@ -13650,7 +13652,7 @@ function wposBefore(L, i, n){
 function wposRound(P, rgs, mode){
   if(!rgs || !rgs.length) return null;
   mode=mode||wposMode();
-  var L=wposList(P,rgs), grp={}, outK={}, inN=0, first=-1, i, x, k, keys, pool, pick, tgt, ctx='';
+  var L=wposList(P,rgs), grp={}, outK={}, inN=0, first=-1, i, x, k, keys, pool, pick, tgt, ctx='', cxw=[];
   for(i=0;i<L.length;i++){
     x=L[i];
     if(!x.inr){ outK[x.k]=1; continue; }
@@ -13678,14 +13680,14 @@ function wposRound(P, rgs, mode){
         var uniq=oc.every(function(o){
           return o===cand[c] || wposBefore(L,o,WPOS_CTX).map(function(z){ return z.k; }).join(' ')!==sig;
         });
-        if(uniq){ pool=[k]; tgt=cand[c]; ctx=bf.map(function(z){ return z.w; }).join(' '); return; }
+        if(uniq){ pool=[k]; tgt=cand[c]; cxw=bf; ctx=bf.map(function(z){ return z.w; }).join(' '); return; }
       }
     });
     /* لا كلمةَ متكرّرةً يميّزها سياق: كلمةٌ واحدةُ الموضع، ويُعطى ما قبلها كذلك */
     if(!pool.length){
       by(function(c){ return c===1; }).some(function(k){
         var bf=wposBefore(L,grp[k][0],WPOS_CTX); if(bf.length<WPOS_CTX) return false;
-        pool=[k]; tgt=grp[k][0]; ctx=bf.map(function(z){ return z.w; }).join(' '); return true;
+        pool=[k]; tgt=grp[k][0]; cxw=bf; ctx=bf.map(function(z){ return z.w; }).join(' '); return true;
       });
     }
   }
@@ -13701,6 +13703,7 @@ function wposRound(P, rgs, mode){
   });
   return { t:'wpos', page:P, mode:(tgt!=null?'ctx':mode), rgs:rgs, w:L[grp[pick][tg[0]]].w,
            ctx:(tgt!=null?ctx:''), occ:occ, tg:tg,
+           cx:(tgt!=null?cxw.map(function(z){ return { gi:z.gi, wi:z.wi }; }):[]),
            surah:ga.s, a:ga.a, wi:m.wi, segFrom:seg[0], segTo:seg[1] };
 }
 /* بلا وجهٍ (أُطفئ أو تعذّر خطُّه) لا موضعَ يُلمس: يُسأل عن الكلمة نفسِها ناقصةً من آيتها */
@@ -13737,22 +13740,48 @@ function roundWpos(r){
     var gi=w.getAttribute('data-gi');
     return gi+':'+faceWords(+gi).indexOf(w);
   }
+  /* سطران أو ثلاثةٌ متتاليةٌ من الوجه ظاهرة، في موضعٍ عشوائيّ منه: يعرف بها أيَّ وجهٍ هو.
+     ولا يظهر سطرٌ فيه الكلمةُ في موضعٍ من مواضعها، ولا ما قبلها في المتقدّم — وإلّا كُشف الجواب.
+     وتُختار مرّةً للسؤال (r.lines) فلا تتبدّل إن أُعيد رسمُه */
+  var shown={};
+  function pickLines(){
+    var L=[].slice.call($('stFace').querySelectorAll('.mline:not(.cut)')), bad={}, ok=[], runs=[], i, j, n;
+    r.occ.concat(r.cx||[]).forEach(function(o){ bad[o.gi+':'+o.wi]=1; });
+    for(i=0;i<L.length;i++){
+      var ws=[].slice.call(L[i].querySelectorAll('.mw[data-gi]:not(.mout)'));
+      ok[i]=ws.length>0 && ws.every(function(w){ return !bad[keyOf(w)]; });
+    }
+    if(!r.lines){
+      n=Math.random()<0.5 ? 2 : 3;
+      for(;n>=1 && !runs.length;n--)
+        for(i=0;i+n<=L.length;i++){
+          for(j=i;j<i+n && ok[j];j++);
+          if(j===i+n) runs.push([i,n]);
+        }
+      r.lines=runs.length ? runs[Math.floor(Math.random()*runs.length)] : [0,0];
+    }
+    for(i=r.lines[0];i<r.lines[0]+r.lines[1] && i<L.length;i++){
+      if(!ok[i]) continue;
+      [].slice.call(L[i].querySelectorAll('.mw[data-gi]:not(.mout)')).forEach(function(w){ shown[keyOf(w)]=1; w.classList.add('wpshow'); });
+    }
+  }
   function draw(){
     words().forEach(function(w){
       if(w.classList.contains('mout')) return;
       var k=keyOf(w);
+      if(shown[k]){ w.classList.remove('cov'); return; }
       w.classList.toggle('cov', !found[k] && !w.classList.contains('wpno') && !(done && ock[k]));
       w.classList.toggle('wpok', !!found[k] || (done && !!tgk[k]));
       w.classList.toggle('wpalt', done && !!ock[k] && !tgk[k] && !found[k]);
     });
   }
   function showRight(){ done=true; draw(); }
-  facePaint($('stFace'), r.rgs[0][0], function(){ draw(); cnt(); },
+  facePaint($('stFace'), r.rgs[0][0], function(){ try{ pickLines(); }catch(e){} draw(); cnt(); },
             function(){ r.noFace=true; wposFall(r); }, r.rgs);
   $('stFace').onclick=function(e){
     if(done) return;
     var w=e.target.closest ? e.target.closest('.mw') : null;
-    if(!w || w.classList.contains('mout') || w.classList.contains('wpno')) return;
+    if(!w || w.classList.contains('mout') || w.classList.contains('wpno') || w.classList.contains('wpshow')) return;
     var k=keyOf(w);
     if(found[k]) return;
     if(tgk[k]){
